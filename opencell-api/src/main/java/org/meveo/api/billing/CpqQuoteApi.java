@@ -109,6 +109,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.base.MeveoFunctionMapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -1227,7 +1228,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
             if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
             	var recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
-            	Long recurrenceDuration=Long.valueOf(getDurationTerminInMonth(recurringCharge));
+            	Long recurrenceDuration=Long.valueOf(getDurationTerminInMonth(recurringCharge, quoteOffer, quoteArticleLine.getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
                 //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
                 quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
@@ -1278,12 +1279,20 @@ public class CpqQuoteApi extends BaseApi {
         return accountingPrices;
     }
     
-    private Integer getDurationTerminInMonth(RecurringChargeTemplate recurringCharge) {
+    private Integer getDurationTerminInMonth(RecurringChargeTemplate recurringCharge,  QuoteOffer quoteOffer, QuoteProduct quoteproduct) {
     	 Integer durationTermInMonth = null;
     	 if(recurringCharge.getAttributeDuration() != null &&
-    			 recurringCharge.getAttributeDuration().getAttributeType() == AttributeTypeEnum.NUMERIC &&
-    			 	recurringCharge.getAttributeDuration().getDefaultValue() != null) {
+    			 recurringCharge.getAttributeDuration().getAttributeType() == AttributeTypeEnum.NUMERIC) {
+    		 var durationValue = MeveoFunctionMapper.getAttributeValue(
+						quoteOffer.getQuoteVersion().getId(), 
+						quoteOffer.getOfferTemplate().getCode(), 
+						quoteproduct.getProductVersion().getProduct().getCode(), 
+						recurringCharge.getAttributeDuration() != null ? recurringCharge.getAttributeDuration().getCode() : null);
+    		 if(durationValue != null) {
+        		 durationTermInMonth = ((Double)durationValue).intValue();
+    		 }else if(recurringCharge.getAttributeDuration().getDefaultValue() != null) {
     		 durationTermInMonth = Integer.parseInt(recurringCharge.getAttributeDuration().getDefaultValue());
+    		 }
     	 }
     	 return durationTermInMonth != null ? durationTermInMonth : 
     			 												recurringCharge.getDurationTermInMonth() != null ? recurringCharge.getDurationTermInMonth() : 1;
@@ -1704,7 +1713,7 @@ public class CpqQuoteApi extends BaseApi {
                           discountQuotePrice.setQuoteVersion(quoteVersion);
                           discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
                           if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
-                              	Long recurrenceDuration=Long.valueOf(getDurationTerminInMonth((RecurringChargeTemplate) quotePrice.getChargeTemplate()));
+                              	Long recurrenceDuration=Long.valueOf(getDurationTerminInMonth((RecurringChargeTemplate) quotePrice.getChargeTemplate(), quoteOffer, quoteproduct));
                               	discountQuotePrice.setRecurrenceDuration(recurrenceDuration);
                                   //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
                               	discountQuotePrice.setAmountWithTax(discountQuotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));

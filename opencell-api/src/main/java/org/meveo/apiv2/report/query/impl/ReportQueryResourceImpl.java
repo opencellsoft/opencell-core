@@ -112,7 +112,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 													.append("_")
 													.append(houreFormat.format(dateNow)).append("_")
 													.append(queryExecutionResult.getCode());
-				var content = reportQueryApiService.donwloadQueryExecutionResult(queryExecutionResult, format, fileName.toString());
+				var content = reportQueryApiService.downloadQueryExecutionResult(queryExecutionResult, format, fileName.toString());
 				fileName.append(format.getExtension());
 				if(content != null) {
 					response.setReportContent(content);

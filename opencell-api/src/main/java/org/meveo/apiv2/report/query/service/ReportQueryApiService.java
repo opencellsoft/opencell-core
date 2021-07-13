@@ -119,11 +119,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return of(reportQueryService.findByCode(code, fetchFields));
     }
 
-	public byte[] donwloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
+	public byte[] downloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
 		if(format == QueryExecutionResultFormatEnum.CSV) {
 			return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName);
 		}else if(format == QueryExecutionResultFormatEnum.EXCEL) {
-			
+			return reportQueryService.generateExcelFromResultReportQuery(reportQuery, fileName);
 		}
 		return null;
 	}
