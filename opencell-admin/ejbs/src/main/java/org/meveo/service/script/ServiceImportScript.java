@@ -2,17 +2,24 @@ package org.meveo.service.script;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 public class ServiceImportScript extends Script {
 
@@ -21,7 +28,8 @@ public class ServiceImportScript extends Script {
 
 	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
 			"ServiceInstanceService");
-
+	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
+			"CustomFieldTemplateService");
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
 		try {
@@ -75,7 +83,7 @@ public class ServiceImportScript extends Script {
 		}
 	}
 
-	private void updateService(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws ParseException {
+	private void updateService(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws Exception {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 		String OC_ServiceInstance_subscriptionDate = (String) recordMap.get("OC_ServiceInstance_subscriptionDate");
 		String OC_ServiceInstance_rateUntilDate = (String) recordMap.get("OC_ServiceInstance_rateUntilDate");
@@ -93,10 +101,101 @@ public class ServiceImportScript extends Script {
 		serviceInstance.setQuantity(new BigDecimal(OC_ServiceInstance_quantity));
 		serviceInstance.setDescription(OC_ServiceInstance_description);
 		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
-				.forEach(key -> serviceInstance.setCfValue(key.substring(3), recordMap.get(key)));
+				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
 		serviceInstanceService.update(serviceInstance);
 	}
 	public enum ServiceInstanceActionEnum {
 		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
+		
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+        if (stringCF == null) {
+            return null;
+        }
+
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value + "|" + s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
 	}
 }
