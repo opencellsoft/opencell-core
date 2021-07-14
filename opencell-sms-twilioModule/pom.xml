@@ -6,7 +6,7 @@
 
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell-sms-twilioModule</artifactId>
-    <version>V11.0.3.Snapshot-SNAPSHOT</version>
+    <version>V11.0.3-Snapshot</version>
     <packaging>jar</packaging>
     <name>Opencell SMS Twilio module</name>
 
