@@ -114,7 +114,6 @@ import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.base.MeveoFunctionMapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -1259,14 +1258,15 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
             quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
             if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
-                var recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
-                Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth()));
+                RecurringChargeTemplate recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
+
+                Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
                 //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
                 overrideAmounts(quotePrice, recurrenceDuration);
             } else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum())){
                 UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
-                Long quantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1));
+                Long quantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, wo.getServiceInstance().getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(quantity);
                 overrideAmounts(quotePrice, quantity);
             }
@@ -1320,14 +1320,39 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
     }
 
-    private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue) {
+    private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
         Integer durationTermInMonth = null;
         if (durationOrQuantityAttribute != null &&
                 durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.NUMERIC &&
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_TEXT &&
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INFO &&
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.TEXT &&
                 durationOrQuantityAttribute.getDefaultValue() != null) {
-            durationTermInMonth = Integer.parseInt(durationOrQuantityAttribute.getDefaultValue());
-        }
+            Optional<QuoteAttribute> offerQuoteAttribute = quoteOffer.getQuoteAttributes()
+                    .stream()
+                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
+                    .findAny();
+            if(offerQuoteAttribute.isPresent()){
+                durationTermInMonth = getDurationTermInMonth(offerQuoteAttribute);
+            }
+            Optional<QuoteAttribute> productQuoteAttribute = quoteProduct.getQuoteAttributes()
+                    .stream()
+                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
+                    .findAny();
+            if(productQuoteAttribute.isPresent())
+                durationTermInMonth = getDurationTermInMonth(offerQuoteAttribute);
+            }
         return durationTermInMonth != null ? durationTermInMonth : defaultValue != null ? defaultValue : 1;
+    }
+
+    private Integer getDurationTermInMonth(Optional<QuoteAttribute> offerQuoteAttribute) {
+        Object value = offerQuoteAttribute.get().getAttribute().getAttributeType().getValue(offerQuoteAttribute.get());
+        if(value instanceof String){
+            return Integer.parseInt((String) value);
+        } else if(value instanceof Double){
+            return new BigDecimal((Double) value).intValue();
+        }
+        return null;
     }
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
@@ -1747,7 +1772,7 @@ public class CpqQuoteApi extends BaseApi {
                         discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
                         if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
                             RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) quotePrice.getChargeTemplate();
-                            Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth()));
+                            Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth(), quoteOffer, quoteproduct));
                             discountQuotePrice.setRecurrenceDuration(recurrenceDuration);
                             //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
                             discountQuotePrice.setAmountWithTax(discountQuotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
@@ -1759,7 +1784,7 @@ public class CpqQuoteApi extends BaseApi {
                             quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTax().add(discountQuotePrice.getAmountWithoutTax()));
                         }else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum()) && ((UsageChargeTemplate) quotePrice.getChargeTemplate()).getUsageQuantityAttribute() != null){
                             UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) quotePrice.getChargeTemplate();
-                            Long usageQuantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1));
+                            Long usageQuantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, quoteproduct));
                             quotePrice.setRecurrenceDuration(usageQuantity);
                             overrideAmounts(quotePrice, usageQuantity);
                         }
