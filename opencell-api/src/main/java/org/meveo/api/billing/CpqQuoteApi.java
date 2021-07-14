@@ -1346,11 +1346,10 @@ public class CpqQuoteApi extends BaseApi {
     private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
         Integer durationTermInMonth = null;
         if (durationOrQuantityAttribute != null &&
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.NUMERIC &&
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_TEXT &&
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INFO &&
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.TEXT &&
-                durationOrQuantityAttribute.getDefaultValue() != null) {
+                (durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.NUMERIC ||
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_TEXT ||
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INFO ||
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.TEXT)) {
             Optional<QuoteAttribute> offerQuoteAttribute = quoteOffer.getQuoteAttributes()
                     .stream()
                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
@@ -1363,7 +1362,7 @@ public class CpqQuoteApi extends BaseApi {
                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
                     .findAny();
             if(productQuoteAttribute.isPresent())
-                durationTermInMonth = getDurationTermInMonth(offerQuoteAttribute);
+                durationTermInMonth = getDurationTermInMonth(productQuoteAttribute);
             }
         return durationTermInMonth != null ? durationTermInMonth : defaultValue != null ? defaultValue : 1;
     }
