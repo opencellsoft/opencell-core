@@ -3,6 +3,7 @@ package org.meveo.model.report.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobInstance;
 
@@ -25,7 +26,7 @@ import org.meveo.model.jobs.JobInstance;
 @Table(name = "query_scheduler")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @Parameter(name = "sequence_name", value = "query_scheduler_seq"), })
-public class QueryScheduler extends AuditableEntity {
+public class QueryScheduler extends BusinessEntity {
 
     /**
 	 * 
@@ -35,7 +36,7 @@ public class QueryScheduler extends AuditableEntity {
 	@Column(name = "file_format")
     private String fileFormat;
     
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE )
     @JoinTable(name = "query_scheduler_users", joinColumns = @JoinColumn(name = "query_scheduler_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<User> usersToNotify = new ArrayList<>();
     
@@ -45,7 +46,7 @@ public class QueryScheduler extends AuditableEntity {
     private List<String> emailsToNotify = new ArrayList<>();
     
     @Embedded
-    private QueryTimer queryTimer;
+    private QueryTimer queryTimer = new QueryTimer();
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_query_id")
@@ -75,20 +76,12 @@ public class QueryScheduler extends AuditableEntity {
 		this.usersToNotify = usersToNotify;
 	}
 
-	public QueryTimer getQuerTimer() {
-		return queryTimer;
-	}
-
-	public void setQuerTimer(QueryTimer querTimer) {
-		this.queryTimer = querTimer;
+	public void setQueryTimer(QueryTimer queryTimer) {
+		this.queryTimer = queryTimer;
 	}
 
 	public QueryTimer getQueryTimer() {
 		return queryTimer;
-	}
-
-	public void setQueryTimer(QueryTimer queryTimer) {
-		this.queryTimer = queryTimer;
 	}
 
 	public ReportQuery getReportQuery() {
@@ -106,5 +99,15 @@ public class QueryScheduler extends AuditableEntity {
 	public void setJobInstance(JobInstance jobInstance) {
 		this.jobInstance = jobInstance;
 	}
+
+	public List<String> getEmailsToNotify() {
+		return emailsToNotify;
+	}
+
+	public void setEmailsToNotify(List<String> emailsToNotify) {
+		this.emailsToNotify = emailsToNotify;
+	}
+	
+	
 
 }
