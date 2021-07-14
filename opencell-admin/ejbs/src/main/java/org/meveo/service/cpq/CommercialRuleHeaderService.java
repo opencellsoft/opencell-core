@@ -350,7 +350,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             if(sourceOffer.isPresent()){
                 sourceOffer.get().getQuoteProduct()
                         .stream()
-                        .filter(product -> product.getProductVersion().getProduct().getCode().equals(commercialRuleLine.getSourceProduct().getId()))
+                        .filter(product -> product.getProductVersion().getProduct().getId().equals(commercialRuleLine.getSourceProduct().getId()))
                         .forEach(
                                 product -> {
                                     Optional<QuoteAttribute> sourceProductAttribute = product.getQuoteAttributes().stream()
