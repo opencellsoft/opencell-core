@@ -1,5 +1,7 @@
 package org.meveo.apiv2.report.query.service;
 
+import static java.util.Optional.empty;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +50,8 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
 
 	@Override
 	public List<QueryScheduler> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		// TODO Auto-generated method stub
 		return null;
+		
 	}
 
 	@Override
@@ -60,32 +62,27 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
 
 	@Override
 	public Optional<QueryScheduler> findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<QueryScheduler> update(Long id, QueryScheduler baseEntity) {
-		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<QueryScheduler> patch(Long id, QueryScheduler baseEntity) {
-		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<QueryScheduler> delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<QueryScheduler> findByCode(String code) {
-		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 }
