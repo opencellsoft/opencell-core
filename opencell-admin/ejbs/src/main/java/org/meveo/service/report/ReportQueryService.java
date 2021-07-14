@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -131,4 +132,24 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                       (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     	return result;
     }
+
+	public ReportQuery create(ReportQuery reportQuery, String creator) {
+		try {
+			ReportQuery entity = (ReportQuery) getEntityManager()
+					.createNamedQuery("ReportQuery.ReportQueryByCreatorVisibilityCode")
+					.setParameter("code", reportQuery.getCode())
+					.setParameter("visibility", reportQuery.getVisibility())
+					.getSingleResult();
+			if (entity != null) {
+				if(entity.getAuditable().getCreator().equals(creator)) {
+					throw new BusinessException("Query Already exists and belong to you");
+				} else {
+					throw new BusinessException("Query Already exists and belong to other user");
+				}
+			}
+		} catch (NoResultException noResultException) {
+			super.create(reportQuery);
+		}
+		return reportQuery;
+	}
 }
