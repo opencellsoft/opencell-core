@@ -60,7 +60,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
             entity.setGeneratedQuery(generateQuery(entity, targetEntity.getSimpleName()));
-            reportQueryService.create(entity);
+            reportQueryService.create(entity, currentUser.getUserName());
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
