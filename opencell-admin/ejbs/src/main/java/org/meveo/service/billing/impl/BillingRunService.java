@@ -84,6 +84,7 @@ import org.meveo.service.order.OrderService;
  * @author Wassim Drira
  * @author Tien Lan PHUNG
  * @author Abdelmounaim Akadid
+ * @author anasseh
  * @lastModifiedVersion 7.0.0
  */
 @Stateless
@@ -596,28 +597,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     private List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
 
-        BillingCycle billingCycle = billingRun.getBillingCycle();
-
+        BillingCycle billingCycle = billingRun.getBillingCycle();       
         if (billingCycle != null) {
 
             Date startDate = billingRun.getStartDate();
-            Date endDate = billingRun.getEndDate();
-
+            Date endDate = billingRun.getEndDate();           
             if ((startDate != null) && (endDate == null)) {
                 endDate = new Date();
-            }
-
+            }          
             if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
                 return subscriptionService.findSubscriptions(billingCycle, startDate, endDate);
-            }
-
+            }            
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
                 return orderService.findOrders(billingCycle, startDate, endDate);
             }
-
-            return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+            return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);           
 
         } else {
+        	
             List<BillingAccount> result = new ArrayList<BillingAccount>();
             String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 
@@ -625,7 +622,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 // Long baId = Long.valueOf(id);
                 // result.add(baId);
                 result.add(billingAccountService.findById(new Long(id)));
-            }
+            }            
             return result;
         }
     }
@@ -810,6 +807,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 	}
 	
+	 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void processInvoiceNumberAssignements(BillingRun billingRun, long nbRuns, long waitingMillis,
 			Long jobInstanceId, JobExecutionResultImpl result, InvoicesToNumberInfo invoicesToNumberInfo,
 			List<Long> invoices) {
@@ -857,13 +855,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void rejectBAWithoutBillableTransactions(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
             throws BusinessException {
-    	
-            List<BillingAccount> billingAccounts = billingAccountService.findNotProcessedBillingAccounts(billingRun);
+    	    	
+            List<Long> billingAccounts = billingAccountService.findNotProcessedBillingAccounts(billingRun);
   
-            SubListCreator<BillingAccount> subListCreator = null;
+            SubListCreator<Long> subListCreator = null;
 
             try {
-                subListCreator = new SubListCreator<BillingAccount>(billingAccounts, (int) nbRuns);
+                subListCreator = new SubListCreator<Long>(billingAccounts, (int) nbRuns);
             } catch (Exception e1) {
                 throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
             }
@@ -886,7 +884,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     log.error("Failed to increment BA next invoicing date", e);
                     throw new BusinessException(e);
                 }
-            }
+            }           
     }
 
     /**
@@ -1126,12 +1124,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+           
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
                 BillingAccount ba = getEntityManager().getReference(BillingAccount.class, rejectedBillingAccountId);
                 rejectedBillingAccountService
-                        .create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
+                        .create(ba.getId(), getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
             });
-        }
+        }       
     }
     
     
@@ -1339,8 +1338,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
-        }
-
+        }      
         return query.getResultList();
     }
 
@@ -1350,39 +1348,42 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRunId the billing run id
      * @throws BusinessException the business exception
      */
-    public void forceValidate(Long billingRunId) throws BusinessException {
-        BillingRun billingRun = findById(billingRunId);
-        if (billingRun == null) {
-            throw new BusinessException("Cant find BillingRun with id:" + billingRunId);
-        }
-        detach(billingRun);
-        log.debug("forceValidate, billingRun status={}", billingRun.getStatus());
-        switch (billingRun.getStatus()) {
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void forceValidate(Long billingRunId) throws BusinessException {
+		BillingRun billingRun = findById(billingRunId);
+		if (billingRun == null) {
+			throw new BusinessException("Cant find BillingRun with id:" + billingRunId);
+		}
+		detach(billingRun);
+		log.info("forceValidate, billingRun status={}", billingRun.getStatus());
+		long nbThreads = paramBeanFactory.getInstance().getPropertyAsInteger("invoicing.api.nbThreads",4);
+		long waitingMillis = paramBeanFactory.getInstance().getPropertyAsInteger("invoicing.api.waitingMillis",0);
+		switch (billingRun.getStatus()) {
 
-        case POSTINVOICED:
-        case POSTVALIDATED:
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, 1, 0, null, null);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
-            break;
+		case POSTINVOICED:
+		case POSTVALIDATED:
+			assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbThreads, waitingMillis, null, null);
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);			
+			break;
 
-        case PREINVOICED:
-        case PREVALIDATED:
-            createAgregatesAndInvoice(billingRun, 1, 0, null);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.INVOICES_GENERATED, null);
-            break;
+		case PREINVOICED:
+		case PREVALIDATED:
+			createAgregatesAndInvoice(billingRun, nbThreads, waitingMillis, null);
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.INVOICES_GENERATED, null);
+			break;
 
-        case INVOICES_GENERATED:
-            billingRunService.applyThreshold(billingRun);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
-            break;
+		case INVOICES_GENERATED:
+			billingRunService.applyThreshold(billingRun);
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
+			break;
 
-        case VALIDATED:
-        case CANCELED:
-        case NEW:
-        default:
-            throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");
-        }
-    }
+		case VALIDATED:
+		case CANCELED:
+		case NEW:
+		default:
+			throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");
+		}
+	}
 
     /**
      * Launch invoicing rejected BA.

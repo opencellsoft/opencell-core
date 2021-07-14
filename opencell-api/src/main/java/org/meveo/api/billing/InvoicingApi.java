@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -205,7 +207,8 @@ public class InvoicingApi extends BaseApi {
         PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
         return postInvoicingReportsDTO;
     }
-
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validateBillingRun(Long billingRunId) throws MissingParameterException, BusinessException {
         if (billingRunId == null || billingRunId.longValue() == 0) {
             missingParameters.add("billingRunId");

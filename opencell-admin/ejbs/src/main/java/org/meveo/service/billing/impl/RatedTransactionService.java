@@ -65,6 +65,7 @@ import java.util.Map.Entry;
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
  * 
+ * @author anasseh
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
@@ -456,7 +457,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public IBillableEntity updateEntityTotalAmountsAndLinkToBR(IBillableEntity entity, BillingRun billingRun, MinAmountForAccounts minAmountForAccounts) throws BusinessException {
 
-        log.debug("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
+        log.info("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
         BillingAccount billingAccount = null;
         if (entity instanceof BillingAccount) {
@@ -478,6 +479,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         // MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
+
         calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, minAmountForAccounts);
 
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
@@ -494,7 +496,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (entity instanceof Subscription) {
             subscriptionService.updateNoCheck((Subscription) entity);
         }
-
+        
         return entity;
     }
 

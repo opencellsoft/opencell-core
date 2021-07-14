@@ -29,6 +29,7 @@ import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -75,6 +76,9 @@ public class InvoicingAsync {
 
     @Inject
     private RejectedBillingAccountService rejectedBillingAccountService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
 
     /**
      * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
@@ -104,7 +108,7 @@ public class InvoicingAsync {
             i++;
             if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
-            }
+            }           
             IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(entity, billingRun, minAmountForAccounts);
             if (billableEntity != null) {
                 billableEntities.add(billableEntity);
@@ -256,40 +260,41 @@ public class InvoicingAsync {
      * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
      * @param billingRun the billing run to process
-     * @param billingAccounts the billingAccounts to be rejected
+     * @param billingAccounts the billingAccounts IDs to be rejected
      * @param jobInstanceId the job instance id
      * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> rejectBAWithoutBillableTransactions(BillingRun billingRun, List<BillingAccount> billingAccounts,
-            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
-        currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        int i = 0;
-        for (BillingAccount ba : billingAccounts) {
-            i++;
-            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
-                break;
-            }
-            try {
-                invoiceService.incrementBAInvoiceDate(billingRun, ba);
-        		String reason = null;
-        	    if(ba.getNextInvoiceDate()==null) {
-        	    	reason = "Next Invoicing Date is null";
-        		} else {
-                    reason = "No billable transaction";
-        		}
-        		rejectedBillingAccountService.create(ba, billingRun, reason);
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public Future<String> rejectBAWithoutBillableTransactions(BillingRun billingRun, List<Long> billingAccounts, Long jobInstanceId, JobExecutionResultImpl result,
+			MeveoUser lastCurrentUser) {
+		currentUserProvider.reestablishAuthentication(lastCurrentUser);
+		int i = 0;
+		for (Long baId : billingAccounts) {
+			i++;
+			if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+				break;
+			}
+			try {
+				invoiceService.incrementBAInvoiceDate(billingRun, baId);
+				String reason = null;
+				BillingAccount ba = billingAccountService.findById(baId);
+				if (ba.getNextInvoiceDate() == null) {
+					reason = "Next Invoicing Date is null";
+				} else {
+					reason = "No billable transaction";
+				}
+				rejectedBillingAccountService.create(baId, billingRun, reason);
 
-            } catch (Exception e) {
-                log.error("Failed to increment next invoicing date for billingAccount {}", ba.getId(), e);
-            }
-        }
-        return new AsyncResult<String>("OK");
-    }
+			} catch (Exception e) {
+				log.error("Failed to increment next invoicing date for billingAccount {}", baId, e);
+			}
+		}
+		return new AsyncResult<String>("OK");
+	}
 
     /**
      * Generate pdf async for a list of given invoice ids. One invoice at a time in a separate transaction.
