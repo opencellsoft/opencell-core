@@ -32,6 +32,8 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -118,6 +120,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ActionStatus validateBillingRun(Long billingRunId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.info("validateBillingRun request={}", billingRunId);
@@ -133,6 +136,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ActionStatus validateBillingRun(ValidateBillingRunRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

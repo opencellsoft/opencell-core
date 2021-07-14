@@ -20,16 +20,19 @@ package org.meveo.service.billing.impl;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class RejectedBillingAccountService extends PersistenceService<RejectedBillingAccount> {
+	
+	@Inject
+	private BillingAccountService billingAccountService;
 
     /**
      * Register that billing account invoicing has failed
@@ -41,8 +44,8 @@ public class RejectedBillingAccountService extends PersistenceService<RejectedBi
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void create(BillingAccount billingAccount, BillingRun billingRun, String reason) throws BusinessException {
-        RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, reason);
+    public void create(Long billingAccountId, BillingRun billingRun, String reason) throws BusinessException {
+        RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccountService.findById(billingAccountId), billingRun, reason);
         super.create(rejectedBA);
     }
 }

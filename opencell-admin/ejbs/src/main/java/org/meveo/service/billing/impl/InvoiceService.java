@@ -172,6 +172,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 /**
  * The Class InvoiceService.
  *
+ * @autor  anasseh
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
@@ -573,6 +574,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
             PaymentMethod defaultPaymentMethod) throws BusinessException {
 
+    	
         List<RatedTransaction> ratedTransactions = getRatedTransactions(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
 
         // If retrieved RT and pagination size does not match, it means no more RTs are pending to be processed and invoice can be closed
@@ -717,7 +719,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, MinAmountForAccounts minAmountForAccounts, boolean isDraft) throws BusinessException {
 
-        log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+    	log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
         if (billingRun == null) {
             if (invoiceDate == null) {
@@ -815,7 +817,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (entityToInvoice instanceof BillingAccount) {
                 BillingAccount ba = (BillingAccount) entityToInvoice;
                 if (billingRun != null) {
-                    rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), e.getMessage());
+                    rejectedBillingAccountService.create(ba.getId(), getEntityManager().getReference(BillingRun.class, billingRun.getId()), e.getMessage());
                 } else {
                     throw e instanceof BusinessException ? (BusinessException) e : new BusinessException(e);
                 }
@@ -880,7 +882,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
             PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
-        List<Invoice> invoiceList = new ArrayList<>();
+    	List<Invoice> invoiceList = new ArrayList<>();
         boolean moreRatedTransactionsExpected = true;
 
         PaymentMethod paymentMethod = defaultPaymentMethod;
@@ -1069,7 +1071,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
-
         return invoiceList;
 
     }
@@ -2029,7 +2030,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Invoice> generateInvoice(IBillableEntity entityToInvoice, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft, CustomFieldValues customFieldValues)
             throws BusinessException {
-
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
                 || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
