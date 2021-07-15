@@ -115,6 +115,10 @@ import org.meveo.model.tax.TaxClass;
         
         @NamedQuery(name = "WalletOperation.detachWOsFromSubscription", query = "UPDATE WalletOperation set chargeInstance = null, serviceInstance = null where chargeInstance.id IN (SELECT id from ChargeInstance where subscription=:subscription)"),
 
+        @NamedQuery(name = "WalletOperation.countNotBilledWOBySubscription", query = "SELECT count(*) FROM WalletOperation o WHERE o.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.moveNotBilledWOToUA", query = "UPDATE WalletOperation o SET o.oldWallet=o.wallet, o.wallet=:newWallet WHERE o.id IN (SELECT o1.id FROM WalletOperation o1 left join o1.ratedTransaction rt WHERE (o1.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') OR (o1.status='TREATED' AND rt.status='OPEN')) AND o1.subscription=:subscription)"),
+        @NamedQuery(name = "WalletOperation.moveAndRerateNotBilledWOToUA", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.oldWallet=o.wallet, o.wallet=:newWallet WHERE o.id IN (SELECT o1.id FROM WalletOperation o1 left join o1.ratedTransaction rt WHERE (o1.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') OR (o1.status='TREATED' AND rt.status='OPEN')) AND o1.subscription=:subscription)"),
+        
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
@@ -158,6 +162,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
+
+    /**
+     * The old wallet on which the operation is applied. (in case of subscription transfer)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "old_wallet_id")
+    private WalletInstance oldWallet;
 
     /**
      * Operation date
@@ -1272,5 +1283,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+
+    /**
+     * @return the oldWallet
+     */
+    public WalletInstance getOldWallet() {
+        return oldWallet;
+    }
+
+    /**
+     * @param oldWallet the oldWallet to set
+     */
+    public void setOldWallet(WalletInstance oldWallet) {
+        this.oldWallet = oldWallet;
     }
 }
