@@ -15,19 +15,19 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
-import org.meveo.apiv2.report.ImmutableReportQueries;
-import org.meveo.apiv2.report.ImmutableReportQuery;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
+import org.meveo.apiv2.report.ImmutableReportQueries;
+import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.QuerySchedulerInput;
 import org.meveo.apiv2.report.ReportQueries;
 import org.meveo.apiv2.report.ReportQueryInput;
 import org.meveo.apiv2.report.query.resource.ReportQueryResource;
+import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
+import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.ReportQuery;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.javaparser.utils.Log;
 
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
@@ -37,6 +37,11 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     private QueryExecutionResultApiService queryExecutionResultApiService;
 
     private ReportQueryMapper mapper = new ReportQueryMapper();
+    
+    @Inject
+    private QuerySchedulerApiService querySchedulerApiService;
+    
+    private QuerySchedulerMapper querySchedulermapper = new QuerySchedulerMapper();
 
     @Override
     public Response find(Long id) {
@@ -127,5 +132,16 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 		}catch(BusinessException e) {
 			throw new BadRequestException(e.getMessage());
 		}
+	}
+	
+	@Override
+	public Response createQueryScheduler(Long reportId, QuerySchedulerInput queryScheduler) {
+		ReportQuery reportQuery = reportQueryApiService.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("The query with {" + reportId + "} does not exists"));
+		QueryScheduler entity = querySchedulerApiService.create(querySchedulermapper.toEntity(reportQuery, queryScheduler));
+        return Response
+                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .entity(querySchedulermapper.toResource(entity))
+                .build();
 	}
 }
