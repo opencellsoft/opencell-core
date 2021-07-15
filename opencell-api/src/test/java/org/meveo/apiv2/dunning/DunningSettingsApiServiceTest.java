@@ -76,7 +76,6 @@ public class DunningSettingsApiServiceTest {
     @Test(expected = BadRequestException.class)
     public void shouldReturnBadRequestWhenUpdateExitingDunningSetting() {
     	when(dunningSettingsService.findById(anyLong())).thenReturn(null);
-    	when(dunningSettingsService.update(any())).thenReturn(null);
     	dunningSettingsApiService.update(1L, dunningSettings);
     	
     }
@@ -85,7 +84,6 @@ public class DunningSettingsApiServiceTest {
     @Test(expected = BadRequestException.class)
     public void shouldReturnBadRequestWhenDeletingExitingDunningSetting() {
     	when(dunningSettingsService.findById(anyLong())).thenReturn(null);
-    	doNothing().when(dunningSettingsService).remove(dunningSettings);
     	dunningSettingsApiService.delete(1L);
     }
     
