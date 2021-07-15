@@ -128,6 +128,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
         }
 
+        if (entity.getCheckThreshold() == null) {
+            entity.setCheckThreshold(ThresholdOptionsEnum.BEFORE_DISCOUNT);
+        }
         return entity;
     }
 
