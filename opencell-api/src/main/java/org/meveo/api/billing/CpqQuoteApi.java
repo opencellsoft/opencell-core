@@ -1369,7 +1369,7 @@ public class CpqQuoteApi extends BaseApi {
 
     private Integer getDurationTermInMonth(Optional<QuoteAttribute> offerQuoteAttribute) {
         Object value = offerQuoteAttribute.get().getAttribute().getAttributeType().getValue(offerQuoteAttribute.get());
-        if(value instanceof String){
+        if(value instanceof String && !((String) value).isEmpty()){
             return Integer.parseInt((String) value);
         } else if(value instanceof Double){
             return new BigDecimal((Double) value).intValue();
