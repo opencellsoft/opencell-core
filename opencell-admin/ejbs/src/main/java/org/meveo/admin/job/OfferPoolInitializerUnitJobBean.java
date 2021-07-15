@@ -79,6 +79,7 @@ public class OfferPoolInitializerUnitJobBean {
                         BigDecimal volumePerCard = getVolumePerCard(serviceTemplate);
                         BigDecimal totalPool = volumePerCard.multiply(new BigDecimal(subCount));
 
+                        poolPerOfferMap.put(userAccountCode + "_creation_timeMillis", (double) System.currentTimeMillis());
                         poolPerOfferMap.put(userAccountCode + "_number_of_cards", subCount.doubleValue());
                         poolPerOfferMap.put(userAccountCode + "_initial", totalPool.doubleValue());
                         poolPerOfferMap.put(userAccountCode + "_value", totalPool.doubleValue());
