@@ -129,7 +129,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
 
         if (entity.getCheckThreshold() == null) {
-            entity.setCheckThreshold(ThresholdOptionsEnum.BEFORE_DISCOUNT);
+            entity.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         }
         return entity;
     }
