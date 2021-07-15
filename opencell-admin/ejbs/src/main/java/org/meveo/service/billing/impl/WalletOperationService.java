@@ -1499,4 +1499,26 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public void detachWOsFromSubscription(Subscription subscription) {
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
+
+    public Long countNotBilledWOBySubscription(Subscription subscription) {
+    
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotBilledWOBySubscription").setParameter("subscription", subscription).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotBilledWOBySubscription", e);
+            return 0L;
+        }
+    }
+
+    public int moveNotBilledWOToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("subscription", subscription).executeUpdate();
+    }
+
+    public int moveAndRerateNotBilledWOToUA(WalletInstance wallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
+                .setParameter("newWallet", wallet)
+                .setParameter("subscription", subscription).executeUpdate();
+    }
 }
