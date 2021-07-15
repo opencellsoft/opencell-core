@@ -53,6 +53,21 @@ public class DunningSettings extends BusinessEntity  {
 		this.accountingArticle = accountingArticle;
 	}
 
+	public DunningSettings(DunningSettings copy) {
+		super();
+		this.dunningMode = copy.dunningMode;
+		this.maxDunningLevels = copy.maxDunningLevels;
+		this.maxDaysOutstanding = copy.maxDaysOutstanding;
+		this.allowInterestForDelay = copy.allowInterestForDelay;
+		this.interestForDelayRate = copy.interestForDelayRate;
+		this.allowDunningCharges = copy.allowDunningCharges;
+		this.applyDunningChargeFxExchangeRate = copy.applyDunningChargeFxExchangeRate;
+		this.accountingArticle = copy.accountingArticle;
+		this.code = copy.code;
+	}
+	
+	
+
 
 
 	/**
