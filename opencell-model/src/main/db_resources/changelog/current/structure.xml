@@ -3338,4 +3338,8 @@ END $$;]]>
 	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
     </changeSet>
     
+    <changeSet id="INTRD-1049_20210712" author="anasseh">
+	    <sql>CREATE INDEX rt_type_idx   ON ${db.schema.adapted}billing_rated_transaction (type);</sql>	    
+    </changeSet>
+    
 </databaseChangeLog>
