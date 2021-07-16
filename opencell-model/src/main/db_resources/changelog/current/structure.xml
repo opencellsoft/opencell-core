@@ -3342,4 +3342,10 @@ END $$;]]>
 	    <sql>CREATE INDEX rt_type_idx   ON ${db.schema.adapted}billing_rated_transaction (type);</sql>	    
     </changeSet>
     
+    <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
+		<addColumn tableName="billing_wallet_operation">
+        	<column name="old_wallet_id" type="bigint" />
+        </addColumn>
+     </changeSet>
+
 </databaseChangeLog>

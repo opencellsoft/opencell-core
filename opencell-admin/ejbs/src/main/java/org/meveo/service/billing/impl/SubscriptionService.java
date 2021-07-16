@@ -881,4 +881,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
          }
 
     }
+
+    public int updateOwner(Subscription subscription, UserAccount newOwner) {
+        return getEntityManager().createNamedQuery("Subscription.updateOwner")
+                .setParameter("newOwner", newOwner)
+                .setParameter("id", subscription.getId()).executeUpdate();
+    }
 }
