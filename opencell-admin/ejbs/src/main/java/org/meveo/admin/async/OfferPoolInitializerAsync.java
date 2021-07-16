@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.meveo.admin.async;
 
 import java.math.BigInteger;
@@ -26,49 +23,45 @@ import org.slf4j.Logger;
 
 /**
  * @author Mounir BOUKAYOUA
+ * @author Amine BEN AICHA
  */
 @Stateless
 public class OfferPoolInitializerAsync {
-
-//    // Old version
-//    private static final String OFFER_AGENCIES_COUNTERS_QUERY = "select ua.code, count(sub.id) \n"
-//            + "from billing_subscription sub \n"
-//            + "join account_entity ua on sub.user_account_id = ua.id \n"
-//            + "where sub.offer_id=:offerId \n"
-//            + "and sub.status='ACTIVE' \n"
-//            + "and sub.subscription_date <= :counterEndDate \n"
-//            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
-//            + "group by ua.code";
     
-    private static final String OFFER_AGENCIES_COUNTERS_QUERY = "select t.agency_code, count(*)\n"
-            + "from\n"
-            + "(   select ua.code as agency_code,\n"
+    private static final String OFFER_AGENCIES_COUNTERS_QUERY = "select agency.code, count(t.sub_id)\n"
+            + "from account_entity agency\n"
+            + "join billing_user_account ua on agency.id = ua.id\n"
+            + "join billing_billing_account ba on ua.billing_account_id = ba.id\n"
+            + "left join \n"
+            + "(   select sub.id as sub_id,\n"
+            + "    sub.user_account_id as agency_id,\n"
             + "    case\n"
             + "        when sub.cardWithExemption is not null and sub.cardWithExemption=true then sub.exemptionEndDate\n"
             + "        else sub.subscription_date\n"
             + "    end as activated_at\n"
             + "    from billing_service_instance si\n"
-            + "    join (select s.id,\n"
-            + "            (cast(s.cf_values as json)#>>'{cardWithExemption, 0, boolean}')\\:\\:boolean as cardWithExemption,\n"
-            + "            (cast(s.cf_values as json)#>>'{exemptionEndDate, 0, date}')\\:\\:timestamp as exemptionEndDate,\n"
-            + "            s.subscription_date,\n"
-            + "            s.user_account_id,\n"
-            + "            s.offer_id\n"
-            + "          from billing_subscription s\n"
-            + "          where offer_id=:offerId \n"
-            + "          and s.status='ACTIVE'\n"
-            + "          and ( s.termination_date is null or \n"
-            + "                    (cast(s.cf_values as json)#>>'{dateTerminated, 0, date}')\\:\\:timestamp >= :counterEndDate \n"
-            + "                  )\n"
-            + "         ) sub\n"
-            + "      on si.subscription_id=sub.id\n"
-            + "    join account_entity ua on sub.user_account_id = ua.id\n"
-            + "    where si.code like '%_SUBSCRIPTION'\n"
-            + "    and si.status='ACTIVE'\n"
-            + "    and sub.offer_id=:offerId \n"
-            + ") t\n"
-            + "where t.activated_at <= :counterEndDate \n"
-            + "group by t.agency_code";
+            + "    join (  select s.id,\n"
+            + "                s.user_account_id,\n"
+            + "                (cast(s.cf_values as json)#>>'{cardWithExemption, 0, string}')\\:\\:boolean as cardWithExemption,\n"
+            + "                (cast(s.cf_values as json)#>>'{exemptionEndDate, 0, date}')\\:\\:timestamp as exemptionEndDate,\n"
+            + "                s.subscription_date\n"
+            + "            from billing_subscription s\n"
+            + "            where s.offer_id = :offerId \n"
+            + "            and s.status = 'ACTIVE'\n"
+            + "            and ( s.termination_date is null \n"
+            + "                  or (\n"
+            + "                        (cast(s.cf_values as json)#>>'{dateTerminated, 0, date}')\\:\\:timestamp is not null\n"
+            + "                        and\n"
+            + "                        (cast(s.cf_values as json)#>>'{dateTerminated, 0, date}')\\:\\:timestamp >= :counterStartDate \n"
+            + "                     )\n"
+            + "                )\n"
+            + "          ) sub on si.subscription_id = sub.id\n"
+            + "    join account_entity agency on sub.user_account_id = agency.id\n"
+            + "    where si.code like '%_REC_%'\n"
+            + "    and si.status = 'ACTIVE'\n"
+            + ") t on (t.agency_id = agency.id and t.activated_at <= :counterEndDate )\n"
+            + "where ba.status = 'ACTIVE'\n"
+            + "group by agency.code";
 
     @Inject
     private Logger log;
@@ -88,7 +81,8 @@ public class OfferPoolInitializerAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterStartDate, Date counterEndDate, JobExecutionResultImpl result,
+    @SuppressWarnings("unchecked")
+    public Future<String> launchAndForget(List<BigInteger> offerIds, Date executionDate, Date counterStartDate, Date counterEndDate, JobExecutionResultImpl result,
             MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -97,9 +91,11 @@ public class OfferPoolInitializerAsync {
         int i = 0;
         for (BigInteger offerId : offerIds) {
             i++;
-            @SuppressWarnings("unchecked")
+
             List<Object[]> items = emWrapper.getEntityManager().createNativeQuery(OFFER_AGENCIES_COUNTERS_QUERY)
-                .setParameter("offerId", offerId.longValue()).setParameter("counterEndDate", counterEndDate).getResultList();
+                .setParameter("offerId", offerId.longValue())
+                .setParameter("counterStartDate", counterStartDate)
+                .setParameter("counterEndDate", counterEndDate).getResultList();
 
             for (Object[] item : items) {
                 i++;
@@ -110,7 +106,7 @@ public class OfferPoolInitializerAsync {
                 String userAccountCode = (String) item[0];
                 BigInteger countSubs = (BigInteger) item[1];
 
-                offerPoolInitializerUnitJobBean.execute(result, offerId, userAccountCode, countSubs, counterStartDate);
+                offerPoolInitializerUnitJobBean.execute(result, offerId, userAccountCode, countSubs, executionDate, counterStartDate);
             }
         }
 

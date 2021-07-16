@@ -33,6 +33,10 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Mounir BOUKAYOUA
+ * @author Amine BEN AICHA
+ */
 @Stateless
 public class OfferPoolInitializerJob extends Job {
 
@@ -84,6 +88,7 @@ public class OfferPoolInitializerJob extends Job {
         customFieldDate.setAllowEdit(true);
         customFieldDate.setDescription("DATE");
         customFieldDate.setFieldType(CustomFieldTypeEnum.STRING);
+        customFieldDate.setMaxValue(10L);
         customFieldDate.setDefaultValue(null);
         customFieldDate.setValueRequired(false);
         customFieldDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:2");

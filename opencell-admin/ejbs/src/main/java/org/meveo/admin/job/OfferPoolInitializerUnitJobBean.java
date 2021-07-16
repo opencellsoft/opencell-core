@@ -35,8 +35,9 @@ public class OfferPoolInitializerUnitJobBean {
 
     private static final String CF_POOL_PER_OFFER_MAP = "POOL_PER_OFFER_MAP";
 
-    private static final String SERVICE_TEMPLATE_QUERY = "select ost.serviceTemplate " + "from OfferServiceTemplate ost \n"
-            + "where ost.serviceTemplate.code like '%USAGE' and ost.offerTemplate.id=:offerId";
+    private static final String SERVICE_TEMPLATE_QUERY = "select ost.serviceTemplate "
+            + "from OfferServiceTemplate ost \n"
+            + "where ost.serviceTemplate.code like '%_USG_%' and ost.offerTemplate.id=:offerId";
 
     @Inject
     private Logger log;
@@ -58,7 +59,7 @@ public class OfferPoolInitializerUnitJobBean {
     @SuppressWarnings({ "unchecked" })
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, BigInteger offerId, String userAccountCode, BigInteger subCount, Date counterStartDate) {
+    public void execute(JobExecutionResultImpl result, BigInteger offerId, String userAccountCode, BigInteger subCount, Date executionDate, Date counterStartDate) {
 
         log.info("Start pool counters initialization for offerId={}, userAccountCode={}", offerId, userAccountCode);
 
@@ -79,7 +80,7 @@ public class OfferPoolInitializerUnitJobBean {
                         BigDecimal volumePerCard = getVolumePerCard(serviceTemplate);
                         BigDecimal totalPool = volumePerCard.multiply(new BigDecimal(subCount));
 
-                        poolPerOfferMap.put(userAccountCode + "_creation_timeMillis", (double) System.currentTimeMillis());
+                        poolPerOfferMap.put(userAccountCode + "_creation_timeMillis", (double) executionDate.getTime());
                         poolPerOfferMap.put(userAccountCode + "_number_of_cards", subCount.doubleValue());
                         poolPerOfferMap.put(userAccountCode + "_initial", totalPool.doubleValue());
                         poolPerOfferMap.put(userAccountCode + "_value", totalPool.doubleValue());

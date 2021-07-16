@@ -30,55 +30,17 @@ import org.slf4j.Logger;
 
 /**
  * @author Mounir BOUKAYOUA
+ * @author Amine BEN AICHA
  */
 @Stateless
 public class OfferPoolInitializerJobBean extends BaseJobBean {
 
     private static final String DATE_PATTERN = "MM/yyyy";
 
-//    private static final int TERMINATION_DELAY = 90; // 3 months
-
-//    //Old version
-//    private static final String FROM_CLAUSE = "from billing_subscription sub \n"
-//            + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
-//            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
-//            + "and sub.status='ACTIVE' \n"
-//            + "and sub.subscription_date <= :counterEndDate \n"
-//            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterStartDate ) \n"
-//            + "group by sub.user_account_id, offerId \n"
-//            + "having count(sub.id) > 0";
-
-    private static final String FROM_CLAUSE = "from\n"
-            + "( select sub.user_account_id,\n"
-            + "    sub.offer_id,\n"
-            + "    case\n"
-            + "        when sub.cardWithExemption is not null and sub.cardWithExemption=true then sub.exemptionEndDate\n"
-            + "        else sub.subscription_date\n"
-            + "    end as activated_at\n"
-            + "    from billing_service_instance si\n"
-            + "    join (select s.id,\n"
-            + "                (cast(s.cf_values as json)#>>'{cardWithExemption, 0, boolean}')\\:\\:boolean as cardWithExemption,\n"
-            + "                (cast(s.cf_values as json)#>>'{exemptionEndDate, 0, date}')\\:\\:timestamp as exemptionEndDate,\n"
-            + "                s.subscription_date,\n"
-            + "                s.user_account_id,\n"
-            + "                s.offer_id\n"
-            + "              from billing_subscription s\n"
-            + "              join cat_offer_template offer on s.offer_id=offer.id\n"
-            + "              where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}'='OF'\n"
-            + "              and s.status='ACTIVE'\n"
-            + "              and ( s.termination_date is null or \n"
-            + "                    (cast(s.cf_values as json)#>>'{dateTerminated, 0, date}')\\:\\:timestamp >= :counterStartDate \n"
-            + "                  )\n"
-            + "          ) sub on si.subscription_id = sub.id\n"
-            + "    where si.code like '%_SUBSCRIPTION'\n"
-            + "    and si.status = 'ACTIVE'\n"
-            + ") t\n"
-            + "where t.activated_at <= :counterEndDate \n"
-            + "group by t.user_account_id, t.offer_id";
-
-    private static final String OFFER_INIT_COUNT_QUERY = "select count(1) from " + "(select t.user_account_id, t.offer_id, count(*) \n" + FROM_CLAUSE + ") c";
-
-    private static final String OFFERS_TO_INITILIZE = "select distinct t.offer_id \n" + FROM_CLAUSE;
+    private static final String OFFERS_TO_INITILIZE = "select offer.id\n"
+            + "from cat_offer_template offer\n"
+            + "where offer.business_offer_model_id is not null\n"
+            + "and cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}'='OF'";
 
     @Inject
     @MeveoJpa
@@ -90,6 +52,7 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
     @Inject
     private OfferPoolInitializerAsync offerPoolInitializerAsync;
 
+    @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -101,34 +64,22 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
+        Date executionDate = new Date();
         Date counterStartDate = getCounterStartDate(jobInstance);
         Date counterEndDate = getCounterEndDate(counterStartDate);
 
         try {
-            BigInteger offerCountersNbr = (BigInteger) emWrapper.getEntityManager()
-                .createNativeQuery(OFFER_INIT_COUNT_QUERY)
-                .setParameter("counterStartDate", counterStartDate)
-                .setParameter("counterEndDate", counterEndDate)
-                .getSingleResult();
-
-            log.info("Total of agencies/offers counters to be initialized: {}", offerCountersNbr.longValue());
-            result.setNbItemsToProcess(offerCountersNbr.longValue());
-
-            @SuppressWarnings("unchecked")
-            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE)
-                .setParameter("counterStartDate", counterStartDate)
-                .setParameter("counterEndDate", counterEndDate)
-                .getResultList();
+            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE).getResultList();
 
             log.info("Total of sahred offers that pools should be initialized: {}", offerIds.size());
+            result.setNbItemsToProcess(offerIds.size());
 
             SubListCreator<BigInteger> subListCreator = new SubListCreator<>(offerIds, nbRuns.intValue());
             List<Future<String>> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             while (subListCreator.isHasNext()) {
-                futures
-                    .add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterStartDate, counterEndDate, result, lastCurrentUser));
+                futures.add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), executionDate, counterStartDate, counterEndDate, result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
