@@ -149,7 +149,12 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByChargeInstance", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance=:chargeInstance group by wo.chargeInstance.id"),
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByChargeInstance", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance=:chargeInstance group by wo.chargeInstance.id"),
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id"),
-        @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id") })
+        @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id"),
+
+        @NamedQuery(name = "WalletOperation.countNotBilledWOBySubscription", query = "SELECT count(*) FROM WalletOperation o WHERE o.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.moveNotBilledWOToUA", query = "UPDATE WalletOperation o SET o.oldWallet=o.wallet, o.wallet=:newWallet WHERE o.id IN (SELECT o1.id FROM WalletOperation o1 left join o1.ratedTransaction rt WHERE (o1.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') OR (o1.status='TREATED' AND rt.status='OPEN')) AND o1.subscription=:subscription)"),
+        @NamedQuery(name = "WalletOperation.moveAndRerateNotBilledWOToUA", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.oldWallet=o.wallet, o.wallet=:newWallet WHERE o.id IN (SELECT o1.id FROM WalletOperation o1 left join o1.ratedTransaction rt WHERE (o1.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') OR (o1.status='TREATED' AND rt.status='OPEN')) AND o1.subscription=:subscription)"),
+       })
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -187,6 +192,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
+
+    /**
+     * The old wallet on which the operation is applied. (in case of subscription transfer)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "old_wallet_id")
+    private WalletInstance oldWallet;
 
     /**
      * Operation date
@@ -759,6 +771,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
+    }
+    
+    public WalletInstance getOldWallet() {
+        return oldWallet;
+    }
+
+    public void setOldWallet(WalletInstance oldWallet) {
+        this.oldWallet = oldWallet;
     }
 
     public Date getOperationDate() {

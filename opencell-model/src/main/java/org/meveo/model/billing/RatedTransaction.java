@@ -167,6 +167,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachRTsFromInvoice", query = "UPDATE RatedTransaction set invoice = null, invoiceAgregateF = null where invoiceAgregateF.id IN (SELECT id from SubCategoryInvoiceAgregate where invoice=:invoice)"),
         @NamedQuery(name = "RatedTransaction.invalidateRTByInvoice", query = "UPDATE RatedTransaction r set r.invoice=null, r.status='OPEN' WHERE r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByRtIdInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.id in (:ids) group by r.billingAccount.id"),
+
+        @NamedQuery(name = "RatedTransaction.countNotBilledRTBySubscription", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status='OPEN' AND r.subscription=:subscription"),
+        @NamedQuery(name = "RatedTransaction.moveNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.status='OPEN' AND r.subscription=:subscription"),
+        @NamedQuery(name = "RatedTransaction.moveAndRerateNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.status='RERATED', r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.status='TO_RERATE' AND o.subscription=:subscription) OR (r.status='OPEN' AND r.subscription=:subscription)"),
 })
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 

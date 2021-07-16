@@ -1942,4 +1942,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	public void invalidateRTs(Invoice invoice) {
 		getEntityManager().createNamedQuery("RatedTransaction.invalidateRTByInvoice").setParameter("invoice", invoice).executeUpdate();
 	}
+
+	public Long countNotBilledRTBySubscription(Subscription subscription) {
+
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotBilledRTBySubscription").setParameter("subscription", subscription).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotBilledRTBySubscription", e);
+            return 0L;
+        }
+    }
+
+    public int moveNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("RatedTransaction.moveNotBilledRTToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("newBillingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("subscription", subscription).executeUpdate();
+    }
+
+    public int moveAndRerateNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("RatedTransaction.moveAndRerateNotBilledRTToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("newBillingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("subscription", subscription).executeUpdate();
+    }
 }
