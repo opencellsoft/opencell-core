@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 /**
  * Calculate the overrun by Agency-Offer-ChargeType and create WalletOperation
  *
- * @author BEN AICHA Amine
- * @author BOUKAYOUA Mounir
+ * @author Mounir BOUKAYOUA
+ * @author BEN AICHA AMINE
  */
 @Stateless
 public class OfferPoolRatingUnitJobBean {
@@ -65,9 +65,9 @@ public class OfferPoolRatingUnitJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
-    @SuppressWarnings({ "unchecked" })
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @SuppressWarnings({ "unchecked" })
     public void execute(JobExecutionResultImpl result, Long walletOperationId) throws BusinessException {
         log.info("Check overage usage on walletOperationId={}", walletOperationId);
         try {

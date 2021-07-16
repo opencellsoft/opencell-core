@@ -54,6 +54,7 @@ public class OfferPoolRatingAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @SuppressWarnings("unchecked")
     public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -62,7 +63,7 @@ public class OfferPoolRatingAsync {
         int i = 0;
         for (BigInteger offerId : offerIds) {
             i++;
-            @SuppressWarnings("unchecked")
+
             List<BigInteger> walletOperations = emWrapper.getEntityManager().createNativeQuery(OFFER_OPENED_WO_QUERY)
                     .setParameter("offerId", offerId.longValue())
                     .getResultList();

@@ -30,17 +30,19 @@ import org.slf4j.Logger;
 @Stateless
 public class OfferPoolRatingJobBean extends BaseJobBean {
 
-    public static final String WO_FILTER_QUERY = "AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
-            "AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL') \n" +
-            "AND wo.status != 'CANCELED'";
+    public static final String WO_FILTER_QUERY = "AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n"
+            + "AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL') \n"
+            + "AND wo.status != 'CANCELED'";
 
-    private static final String SUB_QUERY = "FROM billing_wallet_operation wo \n" +
-            "INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id \n" +
-            "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n" + WO_FILTER_QUERY;
+    private static final String SUB_QUERY = "FROM billing_wallet_operation wo \n"
+            + "INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id \n"
+            + "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
+            + WO_FILTER_QUERY;
 
     private static final String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id) \n" + SUB_QUERY;
 
     private static final String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id \n" + SUB_QUERY;
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -53,6 +55,7 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @SuppressWarnings("unchecked")
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
 
@@ -70,7 +73,6 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
             log.info("Total of WOs with offers shared pools to check: {}", offersWOsCount.longValue());
             result.setNbItemsToProcess(offersWOsCount.longValue());
 
-            @SuppressWarnings("unchecked")
             List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFER_WITH_SHARED_POOL)
                     .getResultList();
 

@@ -35,7 +35,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 /**
- * The Class OfferPoolRatingJob create overage RatedTransaction for all opened WalletOperation
+ * The class OfferPoolRatingJob create overage WalletOperation for all opened WalletOperation
  * 
  * @author Mounir BOUKAYOUA
  * @author BEN AICHA AMINE
