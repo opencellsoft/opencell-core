@@ -86,7 +86,7 @@ public class PDFParametersConstruction {
                 ClassLoader cl = new URLClassLoader(new URL[] { resource });
                 parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
             } else {
-                log.error("the reports/fonts.jar not found");
+                log.warn("the reports/fonts.jar not found");
             }
             currencyFormat.setMinimumFractionDigits(2);
 
