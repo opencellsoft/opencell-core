@@ -46,6 +46,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
@@ -356,9 +357,6 @@ public class ProductApi extends BaseApi {
 
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
 		checkMandatoryFields(postData);
-		if(postData.getValidity() == null || postData.getValidity().getFrom() == null) {
-			missingParameters.add("validity.from");
-		}
 		handleMissingParameters();
 		Product product = checkProductExiste(postData);
 		ProductVersion  productVersion= new ProductVersion();
@@ -372,6 +370,12 @@ public class ProductApi extends BaseApi {
 		productVersion.setShortDescription(postData.getShortDescription());
 		productVersion.setLongDescription(postData.getLongDescription());
 		productVersion.setCurrentVersion(postData.getCurrentVersion());
+		if(postData.getValidity() == null) {
+			var datePeriod = new DatePeriod();
+			datePeriod.setFrom(Calendar.getInstance().getTime());
+		}else if(postData.getValidity() != null && postData.getValidity().getFrom() == null)
+			postData.getValidity().setFrom(Calendar.getInstance().getTime());
+		
 		productVersion.setValidity(postData.getValidity());
 		productVersion.setStatus(VersionStatusEnum.DRAFT);
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
@@ -432,6 +436,14 @@ public class ProductApi extends BaseApi {
 	private ProductVersion updateProductVersion(ProductVersionDto postData, ProductVersion productVersion) {
 		productVersion.setShortDescription(postData.getShortDescription());
 		productVersion.setLongDescription(postData.getLongDescription());
+		if(postData.getValidity() == null) {
+			var datePeriod = new DatePeriod();
+			datePeriod.setFrom(Calendar.getInstance().getTime());
+			productVersion.setValidity(datePeriod);
+		}else if(postData.getValidity() != null && postData.getValidity().getFrom() == null) {
+			postData.getValidity().setFrom(Calendar.getInstance().getTime());
+			productVersion.setValidity(postData.getValidity());
+		}
 		productVersion.setValidity(postData.getValidity());
 		productVersion.setStatus(postData.getStatus() == null ? VersionStatusEnum.DRAFT : postData.getStatus());
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
