@@ -2445,7 +2445,7 @@ public class SubscriptionApi extends BaseApi {
 
         // populate Electronic Billing Fields
         populateElectronicBillingFields(postData, subscription);
-        
+
         CustomFieldsDto cfs = postData.getCustomFields();
     	if(cfs!=null) {
         // populate customFields
@@ -2569,6 +2569,7 @@ public class SubscriptionApi extends BaseApi {
             throw new InvalidParameterException("A version already exists for effectiveDate=" + formatter.format(effectiveDate) + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
+        // terminaison code
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
         if (subscriptionTerminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
@@ -2584,8 +2585,10 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
 
-        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
-
+        existingSubscription.setToValidity(effectiveDate);
+        Subscription terminateSubscription = subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+        // fin terminaison
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
@@ -2606,10 +2609,25 @@ public class SubscriptionApi extends BaseApi {
         }
         createAccess(existingSubscriptionDto);
 
+        // get subscription date of the very first version of the subscription
+        Date initialSubscriptionDate = subscriptionService.findListByCode(code).stream()
+                .filter(sub -> sub.getValidity() == null || sub.getValidity().getFrom() == null)
+                .findFirst().get().getSubscriptionDate();
+
         if (subscriptionPatchDto.getServicesToInstantiate() != null) {
             List<ServiceToInstantiateDto> serviceToInstantiateDtos = checkCompatibilityAndGetServiceToInstantiate(newSubscription, subscriptionPatchDto.getServicesToInstantiate());
-            serviceToInstantiateDtos.stream()
-                    .forEach(s -> s.setSubscriptionDate(effectiveDate));
+            serviceToInstantiateDtos.forEach(s -> {
+                s.setSubscriptionDate(effectiveDate);
+                //services calendars should start by default from first version sub date
+                if (s.getCalendarInitDate() == null) {
+                    s.setCalendarInitDate(initialSubscriptionDate);
+                }
+                // by default when changing offer, the new offer recurring
+                // charges prorata should not be applied
+                if (s.getOfferChangeProrata() == null) {
+                    s.setOfferChangeProrata(subscriptionPatchDto.getOfferChangeProrata());
+                }
+            });
             for (ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos) {
                 instantiateServiceForSubscription(serviceToInstantiateDto, newSubscription, null, null, null);
             }
@@ -2618,9 +2636,24 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptionPatchDto.getServicesToActivate() != null) {
             subscriptionPatchDto.getServicesToActivate()
                     .getService()
-                    .stream()
-                    .forEach(s -> s.setSubscriptionDate(effectiveDate));
+                    .forEach(s -> {
+                        s.setSubscriptionDate(effectiveDate);
+                        // services calendars should start by default from first version sub date
+                        if (s.getCalendarInitDate() == null) {
+                            s.setCalendarInitDate(initialSubscriptionDate);
+                        }
+                        // by default when changing offer, the new offer recurring
+                        // charges prorata should not be applied
+                        if (s.getOfferChangeProrata() == null) {
+                            s.setOfferChangeProrata(subscriptionPatchDto.getOfferChangeProrata());
+                        }
+                    });
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
+        }
+
+        if (isImmediateTermination) {
+            // set subscription to status activate and activate its instantiated services
+            subscriptionService.activateInstantiatedService(newSubscription);
         }
 
         versionCreatedEvent.fire(newSubscription);
