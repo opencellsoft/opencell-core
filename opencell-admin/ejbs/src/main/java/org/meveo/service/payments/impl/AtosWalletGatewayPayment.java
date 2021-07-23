@@ -166,21 +166,15 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
         // Execute and get the response
-        HttpResponse httpResponse;
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            httpResponse = httpClient.execute(httpPost);
-        } catch (IOException e) {
-            processError("Error occurred while calling WalletOrder method", e, paymentResponseDto);
-            return paymentResponseDto;
-        }
-
         WalletOrderResponse response;
-        try {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+
             String responseBody = EntityUtils.toString(httpResponse.getEntity());
             log.debug("WallerOrderResponse: {}", responseBody);
             response = mapper.readValue(responseBody, WalletOrderResponse.class);
         } catch (IOException e) {
-            processError("Unable to parse JSON response", e, paymentResponseDto);
+            processError("Error occurred while calling WalletOrder method", e, paymentResponseDto);
             return paymentResponseDto;
         }
 
@@ -294,7 +288,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         request.setOrderChannel(OrderChannel.INTERNET.name());
         request.setInterfaceVersion(interfaceVersion);
         request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-        request.setTransactionReference(System.currentTimeMillis() + "_-_" + paymentMethod.getCustomerAccount().getId());
+        request.setTransactionReference(System.currentTimeMillis() + "CA" + paymentMethod.getCustomerAccount().getId());
 
         // Needed for backward compatibility purpose, in 5.X version, the merchant wallet ID is the customer account ID
         // Starting at 9.X version, the merchant wallet ID match the token ID of payment method
