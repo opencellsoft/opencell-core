@@ -2521,6 +2521,7 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
 
+        existingSubscription.setToValidity(effectiveDate);
         Subscription terminateSubscription = subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
         boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
         // fin terminaison
