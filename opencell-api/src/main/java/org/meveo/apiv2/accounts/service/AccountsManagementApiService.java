@@ -1,8 +1,6 @@
 package org.meveo.apiv2.accounts.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
@@ -15,6 +13,9 @@ import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditableFieldNameEnum;
+import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
@@ -23,6 +24,10 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.AuditableFieldService;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -58,6 +63,15 @@ public class AccountsManagementApiService {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
+    @Inject
+    private AuditLogService auditLogService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
      * 
@@ -180,6 +194,18 @@ public class AccountsManagementApiService {
             .flatMap(List::stream).peek(walletOperation -> walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE))
             .forEach(walletOperation -> walletOperationService.update(walletOperation));
 
+        auditableFieldService.createFieldHistory(customerAccount, "customer", AuditChangeTypeEnum.OTHER, newCustomerParent.getCode(), oldCustomerParent.getCode());
+        createAuditLog();
         log.info("the parent customer for the customer account {}, changed from {} to {}", customerAccount.getCode(), oldCustomerParent.getCode(), newCustomerParent.getCode());
+    }
+
+    private void createAuditLog() {
+        AuditLog auditLog = new AuditLog();
+        auditLog.setActor(currentUser.getUserName());
+        auditLog.setCreated(new Date());
+        auditLog.setEntity(CustomerAccount.class.getName());
+        auditLog.setOrigin("API");
+        auditLog.setAction("update");
+        auditLogService.create(auditLog);
     }
 }
