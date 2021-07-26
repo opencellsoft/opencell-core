@@ -10,9 +10,6 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -427,7 +424,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param invoiceLine
+	 * @param invoiceLineRessource
+	 * @param invoiceLineId
 	 */
 	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
@@ -515,54 +513,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (filters.containsKey("SQL")) {
             queryBuilder = new QueryBuilder(filters.get("SQL"));
         } else {
-            PaginationConfiguration configuration = new PaginationConfiguration(convertFilters(filters));
+            FilterConverter converter = new FilterConverter(RatedTransaction.class);
+            PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
             queryBuilder = ratedTransactionService.getQuery(configuration);
         }
         return queryBuilder;
-    }
-
-    /**
-     * Convert filters maps from String to field type
-     * filters : Map of filters Map<String, String>
-     * Return : converted map of filters Map<String, Object>
-     */
-    private Map<String, Object> convertFilters(Map<String, String> filters) {
-        Map<String, Object> convertedFilters = new HashMap<>();
-        for (Map.Entry<String, String> entry : filters.entrySet()) {
-            String[] fieldsName = entry.getKey().split(" ");
-            if (fieldsName.length == 1) {
-                convertedFilters.put(entry.getKey(), convert(RatedTransaction.class, entry, entry.getKey()));
-            } else {
-                convertedFilters.put(entry.getKey(), convert(RatedTransaction.class, entry, fieldsName[1]));
-            }
-        }
-        return convertedFilters;
-    }
-
-    private Object convert(Class<?> entity, Map.Entry<String, String> filterEntry, String fieldName) {
-        try {
-            Field field = entity.getDeclaredField(fieldName);
-            if (!field.getType().isEnum() && !field.getType().isAssignableFrom(String.class)) {
-                if (Number.class.isAssignableFrom(field.getType())) {
-                    return toNumber(entity, fieldName, filterEntry.getValue());
-                }
-            }
-            if (field.getType().isEnum()) {
-                return Enum.valueOf((Class<Enum>) field.getType(), filterEntry.getValue().toUpperCase());
-            }
-            return filterEntry.getValue();
-        } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException |
-                InvocationTargetException exception) {
-            log.error(exception.getMessage());
-        }
-        return null;
-    }
-
-    private Object toNumber(Class<?> entity, String key, String value) throws NoSuchFieldException, NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException {
-        Long longValue = Long.valueOf(value);
-        Class<?> type = entity.getDeclaredField(key).getType();
-        Method method = type.getMethod("valueOf", long.class);
-        return method.invoke(type, longValue);
     }
 }
