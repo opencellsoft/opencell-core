@@ -10118,6 +10118,7 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="aggregate_id_f" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -12867,6 +12868,12 @@
                                  constraintName="fk_dm_custom_generic_entity_code_sequence_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="generic_sequence" />
+    </changeSet>
+    <changeSet author="ZBariki" id="rebuild-str-fk-1374">
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="cpq_invoice_line"
+                                 constraintName="fk_il_aggregate_id_f" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
 
     <!-- media post FK -->
@@ -16121,6 +16128,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-257_20210625" author="ZBariki" />
     <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" />
     <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-1090_20210714" author="ZBariki"/>
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
