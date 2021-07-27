@@ -37,8 +37,8 @@ import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.ICustomFieldEntity;
@@ -46,6 +46,8 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.report.query.QueryScheduler;
+import org.meveo.model.report.query.QueryTimer;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -278,7 +280,12 @@ public class JobInstanceService extends BusinessService<JobInstance> {
                 job = getJobByName(jobInstance.getJobTemplate());
             }
 
-            ScheduleExpression scheduleExpression = getScheduleExpression(jobInstance.getTimerEntity());
+            ScheduleExpression scheduleExpression;
+            if (jobInstance.getQueryScheduler() != null) {
+                scheduleExpression = getScheduleExpression(jobInstance.getQueryScheduler());
+            } else {
+                scheduleExpression = getScheduleExpression(jobInstance.getTimerEntity());
+            }
             log.info("Scheduling job {} of type {} for {}", jobInstance.getCode(), jobInstance.getJobTemplate(), scheduleExpression);
 
             // detach(jobInstance);
@@ -286,7 +293,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             return true;
 
         } else {
-            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(), jobInstance.getJobTemplate(), currentNode);
+            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(),
+                jobInstance.getJobTemplate(), currentNode);
         }
 
         return false;
@@ -329,6 +337,19 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         expression.second(timerEntity.getSecond());
         expression.start(timerEntity.getStart());
         expression.year(timerEntity.getYear());
+        return expression;
+    }
+
+    private ScheduleExpression getScheduleExpression(QueryScheduler queryScheduler) {
+        QueryTimer timer = queryScheduler.getQueryTimer();
+        ScheduleExpression expression = new ScheduleExpression();
+        expression.dayOfMonth(StringUtils.isBlank(timer.getDayOfMonth()) ? "*" : (timer.isEveryDayOfMonth() ? "*/" + timer.getDayOfMonth() : timer.getDayOfMonth()));
+        expression.dayOfWeek(StringUtils.isBlank(timer.getDayOfWeek()) ? "*" : (timer.isEveryDayOfWeek() ? "*/" + timer.getDayOfWeek() : timer.getDayOfWeek()));
+        expression.hour(StringUtils.isBlank(timer.getHour()) ? "*" : (timer.isEveryHour() ? "*/" + timer.getHour() : timer.getHour()));
+        expression.minute(StringUtils.isBlank(timer.getMinute()) ? "*" : (timer.isEveryMinute() ? "*/" + timer.getMinute() : timer.getMinute()));
+        expression.month(StringUtils.isBlank(timer.getMonth()) ? "*" : (timer.isEveryMonth() ? "*/" + timer.getMonth() : timer.getMonth()));
+        expression.second(StringUtils.isBlank(timer.getSecond()) ? "*" : (timer.isEverySecond() ? "*/" + timer.getSecond() : timer.getSecond()));
+        expression.year(StringUtils.isBlank(timer.getYear()) ? "*" : timer.getYear());
         return expression;
     }
 
