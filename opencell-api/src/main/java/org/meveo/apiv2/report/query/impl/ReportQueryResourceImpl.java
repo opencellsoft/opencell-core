@@ -1,5 +1,8 @@
 package org.meveo.apiv2.report.query.impl;
 
+import static java.util.Collections.EMPTY_LIST;
+import static org.meveo.apiv2.report.ImmutableExecutionResult.builder;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
+import org.meveo.apiv2.report.ExecutionResult;
 import org.meveo.apiv2.report.ImmutableReportQueries;
 import org.meveo.apiv2.report.ImmutableReportQuery;
 import org.meveo.apiv2.report.QuerySchedulerInput;
@@ -169,4 +173,19 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
                 .entity(queryScheduleMapper.toResource(qsEntity))
                 .build();
 	}
+
+    @Override
+    public Response execute(Long id, boolean async) {
+        if(async) {
+            reportQueryApiService.execute(id, async);
+            return Response.accepted().entity("Execution request accepted").build();
+        } else {
+            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async).orElse(EMPTY_LIST);
+            ExecutionResult executionResult = builder()
+                    .executionResults(result)
+                    .total(result.size())
+                    .build();
+            return Response.ok().entity(executionResult).build();
+        }
+    }
 }

@@ -134,6 +134,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
                    attributes.put(attributeValue.getAttribute().getCode(), value);
                }
            }
+	       if(serviceInstance.getProductVersion() == null) {
+    		   return null;
+    	   }
            Optional<AccountingArticle> accountingArticle = Optional.empty();
            try {
         	   accountingArticle = getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargeInstance.getChargeTemplate(),attributes);

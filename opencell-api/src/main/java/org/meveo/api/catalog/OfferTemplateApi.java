@@ -569,12 +569,20 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             var productCodes = new HashSet<String>();
         	offerTemplate.getOfferComponents().clear();
             if(hasOfferComponentDtos) {
-	            for (OfferProductsDto offerProductDto : offerProductDtos) {
-	            	if(offerProductDto.getProduct() == null || !productCodes.add(offerProductDto.getProduct().getCode())) continue;
-	            	offerComponent = getOfferComponentFromDto(offerProductDto);
+            	for (int i = 0; i < offerProductDtos.size(); i++) {
+					var currentOfferProduct = offerProductDtos.get(i);
+					if(offerProductDtos.size() != (i + 1)) {
+						for (int j = i + 1; j < offerProductDtos.size(); j++) {
+							var nextOfferProduct = offerProductDtos.get(j);
+							if(currentOfferProduct.getSequence() == nextOfferProduct.getSequence()) 
+								throw new MeveoApiException("Offer product can not have the same sequence between products");
+						}
+					}
+					if(currentOfferProduct.getProduct() == null || !productCodes.add(currentOfferProduct.getProduct().getCode())) continue;
+					offerComponent = getOfferComponentFromDto(currentOfferProduct);
 	            	offerComponent.setOfferTemplate(offerTemplate);
 	            	newOfferProductDtos.add(offerComponent);
-	            }
+				}
 	            offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
             }
     }
@@ -666,6 +674,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerComponent.setQuantityMin(offerComponentDto.getQuantityMin());
         offerComponent.setQuantityMax(offerComponentDto.getQuantityMax());
         offerComponent.setProductSet(offerComponentDto.getProductSet());
+        offerComponent.setSequence(offerComponentDto.getSequence());
         return offerComponent;
     }
 

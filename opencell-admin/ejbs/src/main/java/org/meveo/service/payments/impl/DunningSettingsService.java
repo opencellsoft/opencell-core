@@ -16,4 +16,10 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class DunningSettingsService extends BusinessService<DunningSettings> {
 
+	public DunningSettings duplicate(DunningSettings dunningSettings) {
+		var duplicate = new DunningSettings(dunningSettings);
+		duplicate.setCode(this.findDuplicateCode(duplicate));
+		this.create(duplicate);
+		return duplicate;
+	}
 }
