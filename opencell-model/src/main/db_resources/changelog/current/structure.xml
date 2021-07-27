@@ -9502,4 +9502,11 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-264_20210714" author="HatimOUDAD">
+    	<addColumn tableName="query_scheduler">
+           <column name="code" type="varchar(255)"/>
+           <column name="description" type="varchar(255)" />
+       </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

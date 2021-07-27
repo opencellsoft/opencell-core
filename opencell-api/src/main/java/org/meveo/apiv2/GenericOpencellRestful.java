@@ -30,18 +30,13 @@ import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
+import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
 import org.meveo.apiv2.generic.VersionImpl;
 import org.meveo.apiv2.generic.core.GenericHelper;
-import org.meveo.apiv2.generic.exception.BadRequestExceptionMapper;
-import org.meveo.apiv2.generic.exception.BusinessExceptionMapper;
-import org.meveo.apiv2.generic.exception.EJBTransactionRolledbackExceptionMapper;
-import org.meveo.apiv2.generic.exception.ForbiddenExceptionMapper;
-import org.meveo.apiv2.generic.exception.IllegalArgumentExceptionMapper;
-import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
-import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
-import org.meveo.apiv2.generic.exception.ValidationExceptionMapper;
+import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
@@ -82,12 +77,14 @@ public class GenericOpencellRestful extends Application {
 		Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class,
 				NotYetImplementedResource.class, NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
 				MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
-				EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class, OpenApiResource.class, DocumentResourceImpl.class,
+				EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class,
+                EntityDoesNotExistsExceptionMapper.class,
+                OpenApiResource.class, DocumentResourceImpl.class,
 				GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, ValidationExceptionMapper.class,
-				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class)
+				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
