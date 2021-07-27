@@ -14786,7 +14786,7 @@ $$ LANGUAGE plpgsql;
         <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
     </changeSet>
 
-    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+    <changeSet id="#INTRD-257_20210625-rebuild" author="ZBariki">
         <createTable tableName="report_query">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
@@ -14827,7 +14827,7 @@ $$ LANGUAGE plpgsql;
 
     </changeSet>
     
-    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD">
+    <changeSet id="#INTRD-682_20210707-rebuild" author="HatimOUDAD">
     	
         <createTable tableName="query_scheduler">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -14920,7 +14920,7 @@ $$ LANGUAGE plpgsql;
             referencedColumnNames="id" referencedTableName="report_query" />
     </changeSet>
     
-    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
+    <changeSet id="#INTRD-634_20210706-rebuild" author="Mbarek-Ay">
     
         <createTable tableName="dunning_settings">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -16117,7 +16117,10 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA" />
     <changeSet id="#INTRD-264_20210714" author="HatimOUDAD"/>
-    <changeSet id="#INTRD-339_20210625" author="ZBariki">
+    <changeSet id="#INTRD-339_20210625" author="ZBariki" />
+    <changeSet id="#INTRD-257_20210625" author="ZBariki" />
+    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" />
+    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
