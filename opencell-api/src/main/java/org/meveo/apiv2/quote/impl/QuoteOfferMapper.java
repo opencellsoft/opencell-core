@@ -1,0 +1,37 @@
+package org.meveo.apiv2.quote.impl;
+
+import java.util.stream.Collectors;
+
+import org.meveo.api.dto.cpq.QuoteAttributeDTO;
+import org.meveo.api.dto.cpq.QuoteProductDTO;
+import org.meveo.apiv2.generic.ResourceMapper;
+import org.meveo.apiv2.quote.ImmutableQuoteOffer;
+import org.meveo.model.cpq.offer.QuoteOffer;
+
+public class QuoteOfferMapper extends ResourceMapper<org.meveo.apiv2.quote.QuoteOffer, QuoteOffer> {
+
+	@Override
+	protected org.meveo.apiv2.quote.QuoteOffer toResource(QuoteOffer entity) {
+		return ImmutableQuoteOffer.builder()
+				.id(entity.getId())
+				.discountPlan(createResource(entity.getDiscountPlan()))
+				.offerTemplate(createResource(entity.getOfferTemplate()))
+				.billableAccount(createResource(entity.getBillableAccount()))
+				.quoteVersion(createResource(entity.getQuoteVersion()))
+				.quoteLot(createResource(entity.getQuoteLot()))
+				.contractCode(entity.getContractCode())
+				.position(entity.getPosition())
+				.sequence(entity.getSequence())
+				.quoteProduct(entity.getQuoteProduct().stream().map(qp -> new QuoteProductDTO(qp, true)).collect(Collectors.toList()))
+				.quoteAttributes(entity.getQuoteAttributes().stream().map(qa -> new QuoteAttributeDTO(qa)).collect(Collectors.toList()))
+				.build();
+	}
+	
+
+	@Override
+	protected QuoteOffer toEntity(org.meveo.apiv2.quote.QuoteOffer resource) {
+
+		return null;
+	}
+
+}
