@@ -1263,7 +1263,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice produceInvoicePdf(Invoice invoice) throws BusinessException {
 
         produceInvoicePdfNoUpdate(invoice);
+        if(!InvoiceStatusEnum.PAID.equals(invoice.getStatus())){
         invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        }
 
         pdfGeneratedEventProducer.fire(invoice);
 
