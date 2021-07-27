@@ -9033,7 +9033,7 @@ public class OrderAdvancement extends ModuleScript {
         ]]></sql>
     </changeSet>
 
-    <changeSet id="#INTRD-242_20210623" author="Zbariki">
+    <changeSet id="#INTRD-242_20210623" author="ZBariki">
         <addColumn tableName="billing_billing_run">
             <column name="filters" type="text">
                 <constraints nullable="true" />
