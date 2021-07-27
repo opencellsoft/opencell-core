@@ -8999,15 +8999,6 @@ public class OrderAdvancement extends ModuleScript {
     	<addNotNullConstraint tableName="crm_customer_category" columnName="tax_category_id"/>
     </changeSet>
     
-    <changeSet id="#20210607_540_563" author="TarikFA.">
-    	<sql>INSERT INTO ${db.schema.adapted}billing_accounting_article (id,"version",created,creator,code,description,tax_class_id,invoice_sub_category_id,description_i18n,disabled,uuid)
-				VALUES (nextval('billing_accounting_article_seq'),1,'2021-06-03 16:23:10.262','opencell.admin','PROD-STD','PROD-STD',-1,-2,'{}',0,'63ef9cee-f498-4908-PROD-STD');</sql>
-		<sql>INSERT INTO ${db.schema.adapted}billing_accounting_article (id,"version",created,creator,code,description,tax_class_id,invoice_sub_category_id,description_i18n,disabled,uuid)
-				VALUES (nextval('billing_accounting_article_seq'),1,'2021-06-03 16:23:10.262','opencell.admin','ADV-STD','ADV-STD',-1,-2,'{}',0,'63ef9cee-f498-4908-ADV-STD');</sql>
-		<sql>INSERT INTO ${db.schema.adapted}cat_discount_plan (id,"version",disabled,created,updated,code,description,max_duration,min_duration,creator,updater,uuid,start_date,end_date,duration_unit,discount_plan_type,status,status_date,initial_quantity,used_quantity,application_limit)
-				VALUES (nextval('cat_discount_plan_seq'),0,0,'2021-06-07 15:52:06.068','2021-06-07 15:52:06.643','DISC-STD','DISC-STD',99999,0,'opencell.admin','opencell.admin','bb686d5b-4c81-432c-bfd9','2021-01-01','2022-12-31','DAY','PRODUCT','ACTIVE','2021-06-07 15:51:06.643',0,0,0);</sql>
-    </changeSet>
-    
     <changeSet id="#20210608-540-527" author="Rachid.Aityaazza">
         <addColumn tableName="cpq_commercial_order">
             <column name="discount_plan_id" type="bigint"/>
