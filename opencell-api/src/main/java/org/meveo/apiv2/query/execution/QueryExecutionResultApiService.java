@@ -10,7 +10,6 @@ import javax.ws.rs.BadRequestException;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.apiv2.query.commons.utils;
 import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.model.report.query.QueryStatusEnum;
 import org.meveo.security.CurrentUser;
