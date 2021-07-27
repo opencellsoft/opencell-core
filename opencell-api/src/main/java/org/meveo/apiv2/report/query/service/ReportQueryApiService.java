@@ -1,25 +1,31 @@
 package org.meveo.apiv2.report.query.service;
 
-import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.joining;
+import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.apiv2.report.query.impl.ReportQueryMapper;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.HashMap;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
@@ -27,9 +33,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Inject
     private ReportQueryService reportQueryService;
 
+    private ReportQueryMapper mapper = new ReportQueryMapper();
+
     @Inject
     @CurrentUser
-    protected MeveoUser currentUser;
+    private MeveoUser currentUser;
 
     private List<String> fetchFields = asList("fields");
 
@@ -54,39 +62,33 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Override
     public ReportQuery create(ReportQuery entity) {
-        Class<?> targetEntity = validateTargetEntity(entity.getTargetEntity());
+        Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
-            entity.setGeneratedQuery(generateQuery(entity, targetEntity.getSimpleName()));
-            reportQueryService.create(entity);
+            entity.setGeneratedQuery(generateQuery(entity, targetEntity));
+            reportQueryService.create(entity, currentUser.getUserName());
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
     }
 
-    private Class<?> validateTargetEntity(String targetEntity) {
-        try {
-            return forName(targetEntity);
-        } catch (ClassNotFoundException exception) {
-            throw new NotFoundException("Target entity does not exist");
-        }
-    }
-
-    private String generateQuery(ReportQuery entity, String targetEntity) {
+    private String generateQuery(ReportQuery entity, Class<?> targetEntity) {
         PersistenceService persistenceService =
-                (PersistenceService) getServiceInterface(targetEntity + "Service");
-        PaginationConfiguration configuration = new PaginationConfiguration(null);
+                (PersistenceService) getServiceInterface(targetEntity.getSimpleName() + "Service");
+        QueryBuilder queryBuilder;
         if(entity.getFilters() != null) {
-            configuration.setFilters(new HashMap<>(entity.getFilters()));
+            Map<String, Object> filters = new FilterConverter(targetEntity).convertFilters(entity.getFilters());
+            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(filters));
+        } else {
+            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null));
         }
-        QueryBuilder queryBuilder = persistenceService.getQuery(configuration);
         String generatedQuery;
         if (entity.getFields() != null && !entity.getFields().isEmpty()) {
             generatedQuery = addFields(queryBuilder.getSqlString(), entity.getFields());
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
-        return generatedQuery;
+        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
     }
 
     private String addFields(String query, List<String> fields) {
@@ -122,5 +124,35 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Override
     public Optional<ReportQuery> findByCode(String code) {
         return of(reportQueryService.findByCode(code, fetchFields));
+    }
+
+	public byte[] downloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
+		if(format == QueryExecutionResultFormatEnum.CSV) {
+			return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName);
+		}else if(format == QueryExecutionResultFormatEnum.EXCEL) {
+			return reportQueryService.generateExcelFromResultReportQuery(reportQuery, fileName);
+		}
+		return null;
+	}
+
+    /**
+     *
+     * @param queryId report query Id
+     * @param async execution type; by default false
+     *                      true  : asynchronous execution
+     *                      false : synchronous execution
+     */
+    public Optional<Object> execute(Long queryId, boolean async) {
+        ReportQuery query = findById(queryId).orElseThrow(() ->
+                new NotFoundException("Query with id ${" + queryId +"} does not exists"));
+        Class<?> targetEntity = getEntityClass(query.getTargetEntity());
+        Optional<Object> result;
+        if(async) {
+            reportQueryService.executeAsync(query, targetEntity, currentUser);
+            result = of("Accepted");
+        } else {
+            result = of(reportQueryService.execute(query, targetEntity));
+        }
+        return result;
     }
 }

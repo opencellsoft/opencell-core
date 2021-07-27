@@ -2,20 +2,33 @@ package org.meveo.apiv2.report.query.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.io.IOException;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
+import org.meveo.apiv2.models.ApiException;
+import org.meveo.apiv2.report.QuerySchedulerInput;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
+import org.meveo.model.report.query.ReportQuery;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.report.ReportQueryInput;
-import org.meveo.apiv2.models.ApiException;
-import org.meveo.model.report.query.ReportQuery;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
 
 @Path("/queryManagement/reportQueries")
 @Consumes(APPLICATION_JSON)
@@ -85,5 +98,41 @@ public interface ReportQueryResource {
     		                    @ApiResponse(responseCode = "404",
     		                            description = "the Report query execution does not exist / the file path is missing / file path doesn't exist / file extension is not CSV format ") })
     Response findQueryResult(@PathParam("queryexecutionResultId") Long queryexecutionResultId);
+    
+    @GET
+    @Path("/{queryId}/download")
+    @Operation( summary = "This API will download result query as csv or excel format.", 
+    			tags = {"ReportQuery"}, 
+    			description = "download result query execution as scv or excel format",
+    		            responses = {
+    		                    @ApiResponse(responseCode = "200",
+    		                            description = "query execution result is downloaded"),
+    		                    @ApiResponse(responseCode = "404",
+    		                            description = "the Report query execution does not exist") })
+    Response downloadQueryExecutionResult(@PathParam("queryId" ) Long queryExecutionResultId, 
+    									 @Parameter(description = "format of the file to be downloaded, by default it CSV format", required = false) @QueryParam("format") @DefaultValue("CSV") QueryExecutionResultFormatEnum format) throws IOException;
 
+    @POST
+    @Path("/{reportQueryId}/schedule")
+    @Operation(summary = "Create a new query scheduler", tags = {"QueryScheduler" }, description = "Create a new query scheduler",
+            responses = {
+                    @ApiResponse(responseCode = "204",
+                            description = "Query scheduler successfully created"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Target entity does not exist") })
+    Response createQueryScheduler(
+    		@Parameter(description = "report query id", required = true) @PathParam("reportQueryId") Long id,
+            @Parameter(description = "Query scheduler object", required = true) QuerySchedulerInput queryScheduler);
+
+    @POST
+    @Path("/{queryId}/execute")
+    @Operation(summary = "execute report query", tags = {"ReportQuery"}, description = "Execute report query",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Query successfully executed"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Query does not exists")})
+    Response execute(@Parameter(description = "Query id", required = true) @PathParam("queryId") Long id,
+                     @Parameter(description = "Execution type Synchronously or asynchronously")
+                     @QueryParam("async") boolean async);
 }

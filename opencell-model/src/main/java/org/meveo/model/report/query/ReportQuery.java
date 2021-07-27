@@ -15,6 +15,8 @@ import java.util.Map;
 @Table(name = "report_query")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @Parameter(name = "sequence_name", value = "report_query_seq"), })
+@NamedQueries({@NamedQuery(name = "ReportQuery.ReportQueryByCreatorVisibilityCode", query = "SELECT rp FROM ReportQuery rp where rp.code = :code AND rp.visibility = :visibility")
+})
 public class ReportQuery extends BusinessEntity {
 
     @Column(name = "target_entity")

@@ -3,6 +3,7 @@ package org.meveo.apiv2.query.execution;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -10,12 +11,16 @@ import javax.ws.rs.BadRequestException;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.apiv2.query.commons.utils;
 import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.model.report.query.QueryStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.report.QueryExecutionResultService;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 public class QueryExecutionResultApiService implements ApiService<QueryExecutionResult> {
 
@@ -75,10 +80,25 @@ public class QueryExecutionResultApiService implements ApiService<QueryExecution
 				throw new BadRequestException("File Path not exist");
 			if(!queryExecutionResult.getFilePath().toLowerCase().endsWith("csv")) 
 				throw new BadRequestException("Only File CSV format is accepted");
-			var result = utils.convertCsvReportToJson(filePath, ";", true);
+			var result = convertCsvReportToJson(filePath, ";", true);
 			return result;
 		}
 		return null;
+	}
+	
+	private String convertCsvReportToJson(File input, String separator,boolean hasHeader) {
+		try {	  
+		 	CsvSchema csvSchema = CsvSchema.builder().setUseHeader(hasHeader).setColumnSeparator(separator.charAt(0)).build();
+		    CsvMapper csvMapper = new CsvMapper();
+		    csvMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+		    List<Object> readAll = csvMapper.readerFor(Map.class).with(csvSchema).readValues(input).readAll();
+		    ObjectMapper mapper = new ObjectMapper();
+		    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(readAll);
+	      } catch(Exception e) {
+	         e.printStackTrace();
+	      }
+		return null;
+
 	}
 
 }

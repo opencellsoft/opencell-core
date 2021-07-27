@@ -22,6 +22,8 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.tax.TaxClassService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,10 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     private List<String> fetchFields;
     @Inject
     private AccountingArticleService accountingArticleService;
+    @Inject
+    private TaxClassService taxClassService;
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
     
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -93,11 +99,15 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         }
         AccountingArticle accountingArticle = accountingArticleOtional.get();
         if(baseEntity.getTaxClass() != null && baseEntity.getTaxClass().getId() != null) {
-	        TaxClass taxClass = (TaxClass) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getTaxClass());
+	        TaxClass taxClass = taxClassService.findById(baseEntity.getTaxClass().getId());
+	        if(taxClass == null)
+	        	throw new BadRequestException("No taxClass found for id : " + baseEntity.getTaxClass().getId());
 	        accountingArticle.setTaxClass(taxClass);
         }
         if(baseEntity.getInvoiceSubCategory() != null && baseEntity.getInvoiceSubCategory().getId() != null) {
-	        InvoiceSubCategory invoiceSubCategory = (InvoiceSubCategory) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getInvoiceSubCategory());
+	        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(baseEntity.getInvoiceSubCategory().getId());
+	        if(invoiceSubCategory == null)
+	        	throw new BadRequestException("No invoiceSubCategory found for id : " + baseEntity.getInvoiceSubCategory().getId());
 	        accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
         }
         if(baseEntity.getAccountingCode() != null){

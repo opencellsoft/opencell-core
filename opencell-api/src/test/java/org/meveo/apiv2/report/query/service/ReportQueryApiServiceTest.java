@@ -1,9 +1,14 @@
 package org.meveo.apiv2.report.query.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PUBLIC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReportQueryApiServiceTest {
@@ -34,6 +37,8 @@ public class ReportQueryApiServiceTest {
         reportQuery.setVisibility(PUBLIC);
         reportQuery.setDescription("description");
         reportQuery.setCode("code");
+        reportQuery.setGeneratedQuery("select name, code, description from Product");
+        reportQuery.setFields(List.of("description", "name", "code"));
 
         when(reportQueryService.findById(any(), any())).thenReturn(reportQuery);
     }

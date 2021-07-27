@@ -14833,6 +14833,8 @@ $$ LANGUAGE plpgsql;
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="query_scheduler_pkey" />
             </column>
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -16114,6 +16116,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-257_20210706" author="ZBariki" />
     <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-264_20210714" author="HatimOUDAD"/>
+    <changeSet id="#INTRD-339_20210625" author="ZBariki">
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
