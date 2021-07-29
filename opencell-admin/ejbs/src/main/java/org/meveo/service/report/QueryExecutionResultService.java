@@ -6,6 +6,6 @@ import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class QueryExecutionResultService extends PersistenceService<QueryExecutionResult>{
+public class QueryExecutionResultService extends PersistenceService<QueryExecutionResult> {
 
 }

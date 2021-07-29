@@ -3,22 +3,10 @@ package org.meveo.apiv2.report.query.impl;
 import static java.util.Collections.EMPTY_LIST;
 import static org.meveo.apiv2.report.ImmutableExecutionResult.builder;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
-import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
-import org.meveo.apiv2.report.ImmutableReportQueries;
-import org.meveo.apiv2.report.ImmutableReportQuery;
-import org.meveo.apiv2.report.QuerySchedulerInput;
-import org.meveo.apiv2.report.ReportQueries;
-import org.meveo.apiv2.report.ReportQueryInput;
-import org.meveo.apiv2.report.*;
-import org.meveo.apiv2.report.query.resource.ReportQueryResource;
-import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
-import org.meveo.apiv2.report.query.service.ReportQueryApiService;
-import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
-import org.meveo.model.report.query.QueryScheduler;
-import org.meveo.model.report.query.ReportQuery;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -27,25 +15,48 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
+import org.meveo.apiv2.ordering.common.LinkGenerator;
+import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
+import org.meveo.apiv2.report.ExecutionResult;
+import org.meveo.apiv2.report.ImmutableReportQueries;
+import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.QuerySchedulerInput;
+import org.meveo.apiv2.report.ReportQueries;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.query.resource.ReportQueryResource;
+import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
+import org.meveo.apiv2.report.query.service.ReportQueryApiService;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
+import org.meveo.model.report.query.QueryScheduler;
+import org.meveo.model.report.query.ReportQuery;
+import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.report.QuerySchedulerService;
 
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Inject
     private ReportQueryApiService reportQueryApiService;
-
+    
     @Inject
     private QueryExecutionResultApiService queryExecutionResultApiService;
-
-    private ReportQueryMapper mapper = new ReportQueryMapper();
     
     @Inject
     private QuerySchedulerApiService querySchedulerApiService;
     
-    private QuerySchedulerMapper querySchedulermapper = new QuerySchedulerMapper();
+    @Inject
+    private QuerySchedulerService querySchedulerService;
+    
+    @Inject
+    private JobInstanceService jobInstanceService;
+    
+    private ReportQueryMapper mapper = new ReportQueryMapper();
+
+    private QuerySchedulerMapper queryScheduleMapper = new QuerySchedulerMapper();
 
     @Override
     public Response find(Long id) {
@@ -137,15 +148,29 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 			throw new BadRequestException(e.getMessage());
 		}
 	}
-
+	
 	@Override
 	public Response createQueryScheduler(Long reportId, QuerySchedulerInput queryScheduler) {
 		ReportQuery reportQuery = reportQueryApiService.findById(reportId)
                 .orElseThrow(() -> new NotFoundException("The query with {" + reportId + "} does not exists"));
-		QueryScheduler entity = querySchedulerApiService.create(querySchedulermapper.toEntity(reportQuery, queryScheduler));
+		QueryScheduler qsEntity = querySchedulerApiService.create(queryScheduleMapper.toEntity(reportQuery, queryScheduler));
+
+		JobInstance jobInstance = new JobInstance();
+		jobInstance.setCode(reportQuery.getCode() + "_Job");
+		jobInstance.setDescription("Job for report query='" + reportQuery.getCode() + "'");
+		jobInstance.setJobCategoryEnum(MeveoJobCategoryEnum.REPORTING_QUERY);
+		jobInstance.setJobTemplate("ReportQueryJob");
+		jobInstance.setQueryScheduler(qsEntity);
+		jobInstance.setCfValue("reportQuery", reportQuery);
+		jobInstanceService.create(jobInstance);
+
+		// Update QueryScheduler
+		qsEntity.setJobInstance(jobInstance);
+        querySchedulerService.update(qsEntity);
+
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
-                .entity(querySchedulermapper.toResource(entity))
+                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, qsEntity.getId()).build())
+                .entity(queryScheduleMapper.toResource(qsEntity))
                 .build();
 	}
 

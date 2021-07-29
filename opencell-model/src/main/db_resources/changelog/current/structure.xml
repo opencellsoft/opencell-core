@@ -9486,7 +9486,7 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                            
  
- </changeSet>
+ 	</changeSet>
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
         <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
@@ -9528,4 +9528,12 @@ public class OrderAdvancement extends ModuleScript {
     	
     </changeSet>
     
+    <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA">
+        <addColumn tableName="meveo_job_instance">
+            <column name="query_scheduler_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
+    </changeSet>
+
 </databaseChangeLog>
