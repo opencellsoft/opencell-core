@@ -39,6 +39,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
         		if(userService.findById(user.getId()) == null) {
         			throw new NotFoundException("The user with id {" + user.getId() + "} does not exists");
         		}
+        		user.setVersion(userService.findById(user.getId()).getVersion());
         	}
         	querySchedulerService.create(entity);
             return entity;
