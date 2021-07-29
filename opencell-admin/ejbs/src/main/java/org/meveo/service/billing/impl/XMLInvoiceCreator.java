@@ -68,7 +68,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return generated xml file
      * @throws BusinessException business exception
      */
-    public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
+    public File createXMLInvoice(Invoice invoice, boolean isVirtual, boolean rtBillingProcess) throws BusinessException {
 
         invoice = this.retrieveIfNotManaged(invoice);
 
@@ -87,7 +87,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
                 if (script instanceof IXmlInvoiceCreatorScript) {
 
-                    file = ((IXmlInvoiceCreatorScript) script).createDocumentAndFile(invoice, isVirtual, fullXmlFilePath);
+                    file = ((IXmlInvoiceCreatorScript) script).createDocumentAndFile(invoice, isVirtual, fullXmlFilePath, rtBillingProcess);
 
                 } else {
 
@@ -105,7 +105,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
 
             } else {
-                file = defaultXmlInvoiceCreatorScript.createDocumentAndFile(invoice, isVirtual, fullXmlFilePath);
+                file = defaultXmlInvoiceCreatorScript.createDocumentAndFile(invoice, isVirtual, fullXmlFilePath, rtBillingProcess);
             }
 
             if (file != null) {
@@ -161,6 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     @Deprecated
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
-        return ((XmlInvoiceCreatorScript) defaultXmlInvoiceCreatorScript).createDocument(invoice, isVirtual);
+        return ((XmlInvoiceCreatorScript) defaultXmlInvoiceCreatorScript).createDocument(invoice, isVirtual, true);
     }
 }

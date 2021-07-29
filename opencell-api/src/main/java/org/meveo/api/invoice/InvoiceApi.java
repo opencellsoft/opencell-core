@@ -240,7 +240,7 @@ public class InvoiceApi extends BaseApi {
         }
         // pdf and xml are added to response if requested
         if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
-            invoice = invoiceService.produceInvoiceXml(invoice, null);
+            invoice = invoiceService.produceInvoiceXml(invoice, null, true);
             String invoiceXml = invoiceService.getInvoiceXml(invoice);
             if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml())) {
                 response.setXmlInvoice(invoiceXml);
@@ -758,7 +758,7 @@ public class InvoiceApi extends BaseApi {
         // Generate XML file if requested, but not available yet
         if (includeXml && !xmlExists) {
             try {
-                invoiceService.produceInvoiceXml(invoice, null);
+                invoiceService.produceInvoiceXml(invoice, null, true);
             } catch (BusinessException e) {
                 log.error("Failed to generate XML file for invoice " + invoice.getId());
             }

@@ -519,4 +519,25 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         return queryBuilder;
     }
+
+    /**
+     * Retrieve invoice lines associated to an invoice
+     *
+     * @param invoice Invoice
+     * @return A list of invoice Lines
+     */
+    public List<InvoiceLine> getInvoiceLinesByInvoice(Invoice invoice, boolean includeFree) {
+        if (invoice.getId() == null) {
+            return new ArrayList<>();
+        }
+        if (includeFree) {
+            return getEntityManager().createNamedQuery("InvoiceLine.listByInvoice", InvoiceLine.class)
+                    .setParameter("invoice", invoice)
+                    .getResultList();
+        } else {
+            return getEntityManager().createNamedQuery("InvoiceLine.listByInvoiceNotFree", InvoiceLine.class)
+                    .setParameter("invoice", invoice)
+                    .getResultList();
+        }
+    }
 }

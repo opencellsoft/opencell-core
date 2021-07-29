@@ -257,7 +257,7 @@ public class QuoteService extends BusinessService<Quote> {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
-            File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
+            File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true, true);
 
             if (generatePdf) {
                 invoiceService.produceInvoicePdfNoUpdate(invoice);
