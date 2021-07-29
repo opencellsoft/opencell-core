@@ -1,6 +1,7 @@
 package org.meveo.service.report;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.reverse;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
@@ -8,34 +9,47 @@ import static java.util.stream.Collectors.toList;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryExecutionModeEnum.BACKGROUND;
 import static org.meveo.model.report.query.QueryExecutionModeEnum.IMMEDIATE;
-import static org.meveo.model.report.query.QueryStatusEnum.*;
+import static org.meveo.model.report.query.QueryStatusEnum.SUCCESS;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.Transient;
+import javax.transaction.Transactional;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.report.query.QueryExecutionModeEnum;
@@ -49,19 +63,6 @@ import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.util.ApplicationProvider;
-
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.persistence.Transient;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
 
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
@@ -101,18 +102,20 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         return list(configuration);
     }
 
-    @SuppressWarnings("unchecked")
-	private List<String> executeQuery(ReportQuery reportQuery) {
-    	QueryBuilder queryBuilder = new QueryBuilder(reportQuery.getGeneratedQuery());
-    	var query = queryBuilder.getQuery(this.getEntityManager());
-    	List<Object[]> result = query.getResultList();
+    @Transactional
+	@SuppressWarnings("unchecked")
+	private List<String> executeQuery(ReportQuery reportQuery, Class<?> targetEntity) {
+    	List<Object> result = execute(reportQuery, targetEntity, false);
     	List<String> response = new ArrayList<String>();
-    	
-    	for (Object[] object : result) {
+		for(Object object : result) {
     		var line = "";
-    		for (Object value : object) {
-				line += value.toString() +";"; 
-			}
+				Map<String, Object> entries = (Map<String, Object>)object;
+				for (Object entry : entries.values()) {
+					if(entry != null)
+						line += entry.toString() +";"; 
+					else
+						line += ";";
+				}
     		response.add(line);
 		}
     	return response;
@@ -120,17 +123,18 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     
     private static final String RESULT_EMPTY_MSG = "Execution of the query doesn't return any data";
 
-	public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName) throws IOException, BusinessException {
-    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV);
+	public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
+    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV, targetEntity);
     }
 
-	public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName) throws IOException, BusinessException {
-    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL);
+	public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
+    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL, targetEntity);
     }
 	
-	private byte[] generateFileByExtension(ReportQuery reportQuery, String fileName, QueryExecutionResultFormatEnum format) throws IOException, BusinessException  {
+	@Transactional
+	private byte[] generateFileByExtension(ReportQuery reportQuery, String fileName, QueryExecutionResultFormatEnum format, Class<?> targetEntity) throws IOException, BusinessException  {
 		var columnnHeader = findColumnHeaderForReportQuery(reportQuery);
-    	List<String> selectResult = executeQuery(reportQuery);
+    	List<String> selectResult = executeQuery(reportQuery, targetEntity);
     	if(selectResult == null || selectResult.isEmpty())
     		throw new BusinessException(RESULT_EMPTY_MSG);
     	Path tempFile = Files.createTempFile(fileName, format.getExtension());
@@ -197,13 +201,20 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return query result
      */
     public List<Object> execute(ReportQuery reportQuery, Class<?> targetEntity) {
+        return execute(reportQuery, targetEntity, true);
+    }
+
+
+    @SuppressWarnings("unchecked")
+	private List<Object> execute(ReportQuery reportQuery, Class<?> targetEntity, boolean saveQueryResult) {
         Date startDate = new Date();
         List<Object> reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
         Date endDate = new Date();
-        saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
+        if(saveQueryResult)
+        	saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
         return toExecutionResult(reportQuery.getFields(), reportResult);
     }
-
+    
     /**
      * Asynchronous execution for a specific report query
      *
@@ -304,7 +315,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     }
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult) {
-        if(fields != null) {
+        if(fields != null && !fields.isEmpty()) {
             List<Object>response = new ArrayList<>();
             int size = fields.size();
             Map<String, Object> item = new HashMap<>();
