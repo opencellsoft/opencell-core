@@ -607,6 +607,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
   	@JoinColumn(name = "commercial_order_id", referencedColumnName = "id")
   	private CommercialOrder commercialOrder;
 
+    @Transient
+    private List<InvoiceLine> draftInvoiceLines = new ArrayList<>();
+
 
     public Invoice() {
 	}
@@ -1552,8 +1555,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setCommercialOrder(CommercialOrder commercialOrder) {
 		this.commercialOrder = commercialOrder;
 	}
-	
-	
-    
-    
+
+
+    public List<InvoiceLine> getDraftInvoiceLines() {
+        return draftInvoiceLines;
+    }
+
+    public void setDraftInvoiceLines(List<InvoiceLine> draftInvoiceLines) {
+        this.draftInvoiceLines = draftInvoiceLines;
+    }
 }

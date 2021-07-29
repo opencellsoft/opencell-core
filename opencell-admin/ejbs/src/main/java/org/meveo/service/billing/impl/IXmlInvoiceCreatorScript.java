@@ -26,11 +26,12 @@ public interface IXmlInvoiceCreatorScript extends ScriptInterface {
      * @param invoice Invoice to convert invoice used to create xml
      * @param isVirtual Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
      * @param fullXmlFilePath Full xml file path
+     * @param rtBillingProcess invoicing process : true old process using RT, false : new process using invoiceLines
      * @return DOM element xml file
      * @throws BusinessException business exception
      * @throws ParserConfigurationException parsing exception
      * @throws SAXException sax exception
      * @throws IOException IO exception
      */
-    File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath) throws BusinessException, ParserConfigurationException, SAXException, IOException;
+    File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath, boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException;
 }

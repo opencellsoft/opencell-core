@@ -13864,7 +13864,22 @@ Opencell team.
             </column>
         </insert>
     </changeSet>
-    
+
+    <changeSet id="#20210607_540_563" author="TarikFA.">
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-10'/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="PROD-STD"/>
+            <column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-2"/>
+            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
+            <column name="description" value='Invoice discount'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
+        </insert>
+    </changeSet>
+
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
