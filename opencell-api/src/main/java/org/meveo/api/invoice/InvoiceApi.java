@@ -21,7 +21,6 @@ package org.meveo.api.invoice;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -67,14 +65,12 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -388,22 +384,8 @@ public class InvoiceApi extends BaseApi {
 
         handleMissingParameters();
 
-        IBillableEntity entity = null;
-        if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-            if (BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-                entity = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
-            } else if (BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-                entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
-            } else if (BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-                entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getTargetCode());
-            }
-        } else {
-            if (!StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-                entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getOrderNumber());
-            } else {
-                entity = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
-            }
-        }
+        IBillableEntity entity = invoiceService.getBillableEntity(generateInvoiceRequestDto.getTargetCode(),
+                generateInvoiceRequestDto.getTargetType(), generateInvoiceRequestDto.getOrderNumber(), generateInvoiceRequestDto.getBillingAccountCode());
 
         if (entity == null) {
             throw new EntityDoesNotExistsException(IBillableEntity.class, generateInvoiceRequestDto.getTargetCode());
