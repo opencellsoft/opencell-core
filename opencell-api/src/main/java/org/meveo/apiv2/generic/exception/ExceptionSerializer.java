@@ -1,23 +1,36 @@
 package org.meveo.apiv2.generic.exception;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.models.Cause;
 import org.meveo.apiv2.models.ImmutableApiException;
 import org.meveo.apiv2.models.ImmutableCause;
 
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 class ExceptionSerializer {
 
     private final Response.Status status;
 
+    ExceptionSerializer() {
+        this.status = null;
+    }
+
     ExceptionSerializer(Response.Status status) {
         this.status = status;
+    }
+
+    public ApiException toApiError(UnprocessableEntityException exception) {
+        final List<Cause>  cause = getCause(exception);
+        return ImmutableApiException.builder()
+                .status(null)
+                .details(exception.getMessage() != null ? exception.getMessage() : getStackTrace(exception.getStackTrace()))
+                .addAllCauses(cause)
+                .build();
     }
 
     public ApiException toApiError(Exception exception) {
