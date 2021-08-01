@@ -157,9 +157,15 @@ public class AccountsManagementApiService {
             throw new InvalidParameterException("parent account id or code are required for this operation.");
         }
 
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
-        if (Objects.isNull(customerAccount)) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+        CustomerAccount customerAccount = null;
+        try{
+            Long id = Long.parseLong(customerAccountCode);
+            customerAccount = customerAccountService.findById(id, Arrays.asList("paymentMethods"));
+            if (Objects.isNull(customerAccount)) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, id);
+            }
+        }catch (NumberFormatException e){
+            customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
         }
         Customer newCustomerParent = parentInput.getParentId() != null ? customerService.findById(parentInput.getParentId(), Arrays.asList("customerAccounts"))
                 : customerService.findByCode(parentInput.getParentCode(), Arrays.asList("customerAccounts"));
