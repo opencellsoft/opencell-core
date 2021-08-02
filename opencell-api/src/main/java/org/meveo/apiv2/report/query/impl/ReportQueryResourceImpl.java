@@ -156,7 +156,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response execute(Long id, boolean async) {
         if(async) {
             reportQueryApiService.execute(id, async);
-            return Response.accepted().entity("Execution request accepted").build();
+            return Response.ok().entity("Execution request accepted").build();
         } else {
             List<Object> result = (List<Object>) reportQueryApiService.execute(id, async).orElse(EMPTY_LIST);
             ExecutionResult executionResult = builder()

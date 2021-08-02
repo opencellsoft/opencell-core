@@ -40,6 +40,13 @@ public class ReportQuery extends BusinessEntity {
     @Column(name = "generated_query", columnDefinition = "text")
     private String generatedQuery;
 
+    @Column(name = "sort_by")
+    private String sortBy;
+
+    @Enumerated(value = STRING)
+    @Column(name = "sort_order", length = 15)
+    private SortOrderEnum sortOrder;
+
     public String getTargetEntity() {
         return targetEntity;
     }
@@ -78,5 +85,21 @@ public class ReportQuery extends BusinessEntity {
 
     public void setGeneratedQuery(String generatedQuery) {
         this.generatedQuery = generatedQuery;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
+
+    public SortOrderEnum getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(SortOrderEnum sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

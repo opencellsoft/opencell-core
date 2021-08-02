@@ -395,10 +395,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult) {
         if(fields != null && !fields.isEmpty()) {
-            List<Object>response = new ArrayList<>();
+            List<Object> response = new ArrayList<>();
             int size = fields.size();
-            Map<String, Object> item = new HashMap<>();
             for (Object result : executionResult) {
+                Map<String, Object> item = new HashMap<>();
                 for (int index = 0; index < size; index++) {
                     item.put(fields.get(index), ((Object[]) result)[index]);
                 }
@@ -468,8 +468,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     public ReportQuery create(ReportQuery reportQuery, String creator) {
         try {
-            ReportQuery entity = (ReportQuery) getEntityManager().createNamedQuery("ReportQuery.ReportQueryByCreatorVisibilityCode").setParameter("code", reportQuery.getCode())
-                .setParameter("visibility", reportQuery.getVisibility()).getSingleResult();
+            ReportQuery entity = (ReportQuery) getEntityManager()
+                    .createNamedQuery("ReportQuery.ReportQueryByCreatorVisibilityCode")
+                    .setParameter("code", reportQuery.getCode())
+                    .setParameter("visibility", reportQuery.getVisibility())
+                    .getSingleResult();
             if (entity != null) {
                 if (entity.getAuditable().getCreator().equals(creator)) {
                     throw new BusinessException("Query Already exists and belong to you");

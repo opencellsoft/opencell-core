@@ -90,7 +90,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
-        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
+        if(entity.getSortBy() != null && entity.getSortOrder() != null) {
+            StringBuilder sortOptions = new StringBuilder(" order by ")
+                    .append(entity.getSortBy())
+                    .append(" ")
+                    .append(entity.getSortOrder().getLabel());
+            return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ") + sortOptions;
+        }
+        return  generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
     }
 
     private String addFields(String query, List<String> fields) {
@@ -144,7 +151,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
      */
     public Optional<Object> execute(Long queryId, boolean async) {
-        ReportQuery query = findById(queryId).orElseThrow(() -> new NotFoundException("Query with id ${" + queryId + "} does not exists"));
+        ReportQuery query = findById(queryId).orElseThrow(() ->
+                new NotFoundException("Query with id " + queryId + " does not exists"));
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
