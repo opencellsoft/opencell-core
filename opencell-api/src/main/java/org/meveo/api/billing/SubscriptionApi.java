@@ -2445,7 +2445,7 @@ public class SubscriptionApi extends BaseApi {
 
         // populate Electronic Billing Fields
         populateElectronicBillingFields(postData, subscription);
-        
+
         CustomFieldsDto cfs = postData.getCustomFields();
     	if(cfs!=null) {
         // populate customFields
@@ -2554,6 +2554,10 @@ public class SubscriptionApi extends BaseApi {
         if (existingSubscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, code);
         }
+        if (existingSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+                || existingSubscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+            throw new BusinessApiException("Couldn't patch a subscription with status RESILIATED or CANCELED");
+        }
 
         Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date(): subscriptionPatchDto.getEffectiveDate();
 
@@ -2580,8 +2584,10 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
 
-        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
-
+        existingSubscription.setToValidity(effectiveDate);
+        Subscription terminateSubscription = subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+        // fin terminaison
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
@@ -2617,6 +2623,11 @@ public class SubscriptionApi extends BaseApi {
                     .stream()
                     .forEach(s -> s.setSubscriptionDate(effectiveDate));
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
+        }
+
+        if (isImmediateTermination) {
+            // set subscription to status activate and activate its instantiated services
+            subscriptionService.activateInstantiatedService(newSubscription);
         }
 
         versionCreatedEvent.fire(newSubscription);
