@@ -13880,6 +13880,21 @@ Opencell team.
         </insert>
     </changeSet>
 
+    <changeSet id="#INTRD-1090_20210729" author="ZBariki">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="2021-07-29 00:04:19.913"/>
+            <column name="job_category" value="INVOICING"/>
+            <column name="job_template" value="XMLInvoiceGenerationJobV2"/>
+            <column name="code" value="XMLInvoiceGenerationJobV2"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+            <column name="timerentity_id" valueNumeric="-3"/>
+            <column name="uuid" value="XML_Invoice_Generation_Job_V2"/>
+        </insert>
+    </changeSet>
+
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
