@@ -31,12 +31,21 @@ import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
-import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
 import org.meveo.apiv2.generic.VersionImpl;
 import org.meveo.apiv2.generic.core.GenericHelper;
-import org.meveo.apiv2.generic.exception.*;
+import org.meveo.apiv2.generic.exception.BadRequestExceptionMapper;
+import org.meveo.apiv2.generic.exception.BusinessExceptionMapper;
+import org.meveo.apiv2.generic.exception.ConflictExceptionMapper;
+import org.meveo.apiv2.generic.exception.EJBTransactionRolledbackExceptionMapper;
+import org.meveo.apiv2.generic.exception.EntityDoesNotExistsExceptionMapper;
+import org.meveo.apiv2.generic.exception.ForbiddenExceptionMapper;
+import org.meveo.apiv2.generic.exception.IllegalArgumentExceptionMapper;
+import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
+import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
+import org.meveo.apiv2.generic.exception.UnprocessableEntityExceptionMapper;
+import org.meveo.apiv2.generic.exception.ValidationExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
@@ -55,8 +64,8 @@ public class GenericOpencellRestful extends Application {
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
-    public static List<Map<String,String>> VERSION_INFO = new ArrayList<>();
-    public static Map<String,List<String>> ENTITIES_MAP = new HashMap<>();
+    public static List<Map<String, String>> VERSION_INFO = new ArrayList<>();
+    public static Map<String, List<String>> ENTITIES_MAP = new HashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
@@ -86,7 +95,7 @@ public class GenericOpencellRestful extends Application {
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, ValidationExceptionMapper.class,
 				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class,
-				QuoteOfferResourceImpl.class)
+				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class )
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
@@ -107,7 +116,7 @@ public class GenericOpencellRestful extends Application {
                     Object obj = parser.parse(new String(url.openStream().readAllBytes()));
                     JSONObject jsonObject = (JSONObject) obj;
 
-                    Map<String,String> versionInfo = new HashedMap();
+                    Map<String, String> versionInfo = new HashedMap();
                     versionInfo.put("name", (String) jsonObject.get("name"));
                     versionInfo.put("version", (String) jsonObject.get("version"));
                     versionInfo.put("commit", (String) jsonObject.get("commit"));
@@ -126,13 +135,13 @@ public class GenericOpencellRestful extends Application {
 
     private void loadEntitiesList() {
         List<String> listEntities = new ArrayList<>();
-        for ( Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet() ) {
-            listEntities.add( entry.getValue().getSimpleName() );
+        for (Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet()) {
+            listEntities.add(entry.getValue().getSimpleName());
         }
-        ENTITIES_MAP.put( "entities", listEntities );
+        ENTITIES_MAP.put("entities", listEntities);
     }
 
-    public boolean shouldExtractList(){
+    public boolean shouldExtractList() {
         return GENERIC_API_REQUEST_EXTRACT_LIST;
     }
 }

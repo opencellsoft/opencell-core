@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -5820,4 +5821,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return duplicateInvoice;
 	}
 
+	public IBillableEntity getBillableEntity(String targetCode, String targetType, String orderNumber, String billingAccountCode) {
+        IBillableEntity entity = null;
+        if (StringUtils.isBlank(billingAccountCode)) {
+            if (BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(targetType)) {
+                entity = billingAccountService.findByCode(targetCode, asList("billingRun"));
+            } else if (BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(targetType)) {
+                entity = subscriptionService.findByCode(targetCode, asList("billingRun"));
+            } else if (BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(targetType)) {
+                entity = orderService.findByCodeOrExternalId(targetCode);
+            }
+        } else {
+            if (!StringUtils.isBlank(orderNumber)) {
+                entity = orderService.findByCodeOrExternalId(orderNumber);
+            } else {
+                entity = billingAccountService.findByCode(billingAccountCode, asList("billingRun"));
+            }
+        }
+        return entity;
+	}
 }

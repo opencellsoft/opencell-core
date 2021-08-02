@@ -17,13 +17,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.response.InvoicesDto;
-import org.meveo.apiv2.billing.BasicInvoice;
-import org.meveo.apiv2.billing.Invoice;
-import org.meveo.apiv2.billing.InvoiceInput;
-import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesToRemove;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
-import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.models.ApiException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -251,7 +245,7 @@ public interface InvoiceResource {
     @Path("/{invoicId}/duplication")
     @Operation(
     		summary = "this endpoint allow to duplicate invoice",
-    		description = "dupicate invoice with the new status",
+    		description = "duplicate invoice with the new status",
     		responses = {
     				@ApiResponse(description= "will return new invoice duplicated",
     							content=@Content(
@@ -260,4 +254,19 @@ public interface InvoiceResource {
     		})
     Response duplicate(@PathParam("invoicId") Long invoiceId);
 
+
+	@POST
+	@Path("/generate")
+	@Operation(
+			summary=" Launch all the invoicing process for a given billingAccount",
+			description=" Launch all the invoicing process for a given billingAccount, that's mean.  " +
+					"<ul> <li>Create rated transactions <li>Create an exceptional billingRun with given dates " +
+					"<li>Validate the pre-invoicing report <li>Validate the post-invoicing report <li>Validate the BillingRun  </ul>",
+			responses = {
+					@ApiResponse(description="invoice response",
+							content = @Content(
+									schema = @Schema(
+											implementation = Invoice.class)))
+			})
+	Response generate(GenerateInvoiceInput invoiceInput);
 }

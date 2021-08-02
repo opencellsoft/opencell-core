@@ -26,16 +26,13 @@ import org.meveo.apiv2.report.ImmutableReportQuery;
 import org.meveo.apiv2.report.QuerySchedulerInput;
 import org.meveo.apiv2.report.ReportQueries;
 import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.apiv2.report.query.resource.ReportQueryResource;
 import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.ReportQuery;
-import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.report.QuerySchedulerService;
 
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
@@ -48,12 +45,6 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     @Inject
     private QuerySchedulerApiService querySchedulerApiService;
     
-    @Inject
-    private QuerySchedulerService querySchedulerService;
-    
-    @Inject
-    private JobInstanceService jobInstanceService;
-    
     private ReportQueryMapper mapper = new ReportQueryMapper();
 
     private QuerySchedulerMapper queryScheduleMapper = new QuerySchedulerMapper();
@@ -61,16 +52,16 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     @Override
     public Response find(Long id) {
         ReportQuery reportQuery = reportQueryApiService.findById(id)
-                .orElseThrow(() -> new NotFoundException("The query with {" + id + "} does not exists"));
+                .orElseThrow(() -> new NotFoundException("The query with " + id + " does not exists"));
         return Response.ok().entity(mapper.toResource(reportQuery)).build();
     }
 
     @Override
     public Response delete(Long id) {
         if (reportQueryApiService.delete(id).isEmpty()) {
-            throw new NotFoundException("The query with {" + id + "} does not exists");
+            throw new NotFoundException("The query with " + id + " does not exists");
         }
-        return null;
+        return Response.ok().build();
     }
 
     @Override
@@ -105,7 +96,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response createReportQuery(ReportQueryInput resource) {
         ReportQuery entity = reportQueryApiService.create(mapper.toEntity(resource));
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
                 .entity(mapper.toResource(entity))
                 .build();
     }
@@ -153,24 +144,11 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 	public Response createQueryScheduler(Long reportId, QuerySchedulerInput queryScheduler) {
 		ReportQuery reportQuery = reportQueryApiService.findById(reportId)
                 .orElseThrow(() -> new NotFoundException("The query with {" + reportId + "} does not exists"));
-		QueryScheduler qsEntity = querySchedulerApiService.create(queryScheduleMapper.toEntity(reportQuery, queryScheduler));
-
-		JobInstance jobInstance = new JobInstance();
-		jobInstance.setCode(reportQuery.getCode() + "_Job");
-		jobInstance.setDescription("Job for report query='" + reportQuery.getCode() + "'");
-		jobInstance.setJobCategoryEnum(MeveoJobCategoryEnum.REPORTING_QUERY);
-		jobInstance.setJobTemplate("ReportQueryJob");
-		jobInstance.setQueryScheduler(qsEntity);
-		jobInstance.setCfValue("reportQuery", reportQuery);
-		jobInstanceService.create(jobInstance);
-
-		// Update QueryScheduler
-		qsEntity.setJobInstance(jobInstance);
-        querySchedulerService.update(qsEntity);
+		QueryScheduler entity = querySchedulerApiService.create(queryScheduleMapper.toEntity(reportQuery, queryScheduler));
 
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, qsEntity.getId()).build())
-                .entity(queryScheduleMapper.toResource(qsEntity))
+                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .entity(queryScheduleMapper.toResource(entity))
                 .build();
 	}
 
@@ -187,5 +165,11 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
                     .build();
             return Response.ok().entity(executionResult).build();
         }
+    }
+
+    @Override
+    public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
+        reportQueryApiService.verifyReportQuery(verifyQueryInput);
+        return Response.ok("Success").build();
     }
 }

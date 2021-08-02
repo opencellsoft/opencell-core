@@ -45,6 +45,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
+import javax.persistence.TypedQuery;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -58,6 +59,7 @@ import org.meveo.model.report.query.QueryExecutionModeEnum;
 import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryStatusEnum;
+import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
@@ -479,5 +481,30 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             super.create(reportQuery);
         }
         return reportQuery;
+    }
+
+    /**
+     * find by code and visibility
+     * 
+     * @param code
+     * @param visibility
+     * @return
+     */
+    public ReportQuery findByCodeAndVisibility(String code, QueryVisibilityEnum visibility) {
+        if (code == null) {
+            return null;
+        }
+
+        TypedQuery<ReportQuery> query = getEntityManager().createQuery("select r from ReportQuery r where lower(r.code)=:code and visibility=:visibility", entityClass)
+            .setParameter("code", code.toLowerCase())
+            .setParameter("visibility", visibility)
+            .setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No ReportQuery of code {} and visibility {} found", entityClass.getSimpleName(), code, visibility);
+            return null;
+        }
     }
 }

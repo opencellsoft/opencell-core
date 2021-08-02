@@ -86,7 +86,7 @@ public class ReportQueryResourceImplTest {
                 .visibility(PUBLIC)
                 .build();
         Response response = reportQueryResource.createReportQuery(input);
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
         assertThat(response.getEntity(), instanceOf(ImmutableReportQuery.class));
         org.meveo.apiv2.report.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
         assertEquals(2, reportQuery.getFields().size());
@@ -106,7 +106,7 @@ public class ReportQueryResourceImplTest {
     @Test
     public void shouldDeleteCustomQuery() {
         Response response = reportQueryResource.delete(2L);
-        assertEquals(null, response);
+        assertEquals(200, response.getStatus());
     }
 
     @Test(expected = NotFoundException.class)
