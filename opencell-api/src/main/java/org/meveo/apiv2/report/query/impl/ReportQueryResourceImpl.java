@@ -52,16 +52,16 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     @Override
     public Response find(Long id) {
         ReportQuery reportQuery = reportQueryApiService.findById(id)
-                .orElseThrow(() -> new NotFoundException("The query with {" + id + "} does not exists"));
+                .orElseThrow(() -> new NotFoundException("The query with " + id + " does not exists"));
         return Response.ok().entity(mapper.toResource(reportQuery)).build();
     }
 
     @Override
     public Response delete(Long id) {
         if (reportQueryApiService.delete(id).isEmpty()) {
-            throw new NotFoundException("The query with {" + id + "} does not exists");
+            throw new NotFoundException("The query with " + id + " does not exists");
         }
-        return null;
+        return Response.ok().build();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response createReportQuery(ReportQueryInput resource) {
         ReportQuery entity = reportQueryApiService.create(mapper.toEntity(resource));
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
                 .entity(mapper.toResource(entity))
                 .build();
     }
