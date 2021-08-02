@@ -128,14 +128,15 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return of(reportQueryService.findByCode(code, fetchFields));
     }
 
-    public byte[] downloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException {
-        if (format == QueryExecutionResultFormatEnum.CSV) {
-            return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName);
-        } else if (format == QueryExecutionResultFormatEnum.EXCEL) {
-            return reportQueryService.generateExcelFromResultReportQuery(reportQuery, fileName);
-        }
-        return null;
-    }
+	public byte[] downloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
+        Class<?> targetEntity = getEntityClass(reportQuery.getTargetEntity());
+		if(format == QueryExecutionResultFormatEnum.CSV) {
+			return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName, targetEntity);
+		}else if(format == QueryExecutionResultFormatEnum.EXCEL) {
+			return reportQueryService.generateExcelFromResultReportQuery(reportQuery, fileName, targetEntity);
+		}
+		return null;
+	}
 
     /**
      *

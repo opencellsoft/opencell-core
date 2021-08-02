@@ -40,9 +40,11 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Entity;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.Transient;
+import javax.transaction.Transactional;
 import javax.persistence.TypedQuery;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -50,7 +52,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.report.query.QueryExecutionModeEnum;
@@ -106,28 +108,79 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         return list(configuration);
     }
 
-    private List<String> executeQuery(ReportQuery reportQuery) {
-        QueryBuilder queryBuilder = new QueryBuilder(reportQuery.getGeneratedQuery());
-        var query = queryBuilder.getQuery(this.getEntityManager());
-        List<?> result = query.getResultList();
-        List<String> response = new ArrayList<>();
+    @Transactional
+	@SuppressWarnings("unchecked")
+	private List<String> executeQuery(ReportQuery reportQuery, Class<?> targetEntity) {
+    	List<Object> result = execute(reportQuery, targetEntity, false);
+    	List<String> response = new ArrayList<String>();
+		for(Object object : result) {
+    		var line = "";
+				Map<String, Object> entries = (Map<String, Object>)object;
+				for (Object entry : entries.values()) {
+					if(entry != null)
+						line += entry.toString() +";"; 
+					else
+						line += ";";
+				}
+    		response.add(line);
+		}
+    	return response;
+    }
+    
 
-        for (Object object : result) {
-            var line = new StringBuilder();
-
-            if (object.getClass().isArray()) {
-                for (Object value : (Object[]) object) {
-                    line.append(value.toString()).append(";");
-                }
-            } else {
-                line.append(object.toString());
-            }
-
-            response.add(line.toString());
-        }
-        return response;
+	public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
+    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV, targetEntity);
     }
 
+	public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
+    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL, targetEntity);
+    }
+	
+	@Transactional
+	private byte[] generateFileByExtension(ReportQuery reportQuery, String fileName, QueryExecutionResultFormatEnum format, Class<?> targetEntity) throws IOException, BusinessException  {
+		var columnnHeader = findColumnHeaderForReportQuery(reportQuery);
+    	List<String> selectResult = executeQuery(reportQuery, targetEntity);
+    	if(selectResult == null || selectResult.isEmpty())
+    		throw new BusinessException(RESULT_EMPTY_MSG);
+    	Path tempFile = Files.createTempFile(fileName, format.getExtension());
+    	try(FileWriter fw = new FileWriter(tempFile.toFile(), true); BufferedWriter bw = new BufferedWriter(fw)){
+    		if(format == QueryExecutionResultFormatEnum.CSV) {
+	    		bw.write(String.join(";", columnnHeader));
+		    	for (String line : selectResult) {
+		    		bw.newLine();
+		    		bw.write(line);
+				}
+		    	bw.close();
+		    	fw.close();
+    		}else if (format == QueryExecutionResultFormatEnum.EXCEL) {
+    			var wb = new XSSFWorkbook();
+    			XSSFSheet  sheet = wb.createSheet(reportQuery.getTargetEntity());
+    			int i = 0;
+    			int j = 0;
+				var rowHeader = sheet.createRow(i++);
+    			for (String header : columnnHeader) {
+    				Cell cell = rowHeader.createCell(j++);
+    				cell.setCellValue(header);
+				}
+    			for (String rowSelect : selectResult) {
+    				rowHeader = sheet.createRow(i++);
+    				j = 0;
+    				var splitLine = rowSelect.split(";");
+    				for (String field : splitLine) {
+    					Cell cell = rowHeader.createCell(j++);
+        				cell.setCellValue(field);
+					}
+				}
+
+    			FileOutputStream fileOut = new FileOutputStream(tempFile.toFile());
+    			wb.write(fileOut);
+    			fileOut.close();
+    			wb.close();
+    		}
+    	}
+    	return Files.readAllBytes(tempFile);
+	}
+    
     /**
      * Execute report query from ReportQueryJob
      * 
@@ -148,7 +201,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         queryResult.setStartDate(new Date());
         List<String> selectResult = null;
         try {
-            selectResult = executeQuery(reportQuery);
+            Map<String, Class> entitiesByName  = ReflectionUtils.getClassesAnnotatedWith(Entity.class).stream().collect(Collectors.toMap(clazz -> clazz.getSimpleName().toLowerCase(), clazz -> clazz));
+            selectResult = executeQuery(reportQuery, entitiesByName.get(reportQuery.getTargetEntity().toLowerCase()));
         } catch (Exception e) {
             queryResult.setQueryStatus(QueryStatusEnum.ERROR);
             queryResult.setErrorMessage(e.getClass().getSimpleName() + " : " + e.getMessage());
@@ -166,25 +220,6 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         queryResult.setExecutionDuration(queryResult.getEndDate().getTime() - queryResult.getStartDate().getTime());
         queryResult.setLineCount(selectResult.size());
         queryResult.setFilePath(outputFile.getAbsolutePath());
-    }
-
-    public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName) throws IOException, BusinessException {
-        return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV);
-    }
-
-    public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName) throws IOException, BusinessException {
-        return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL);
-    }
-
-    private byte[] generateFileByExtension(ReportQuery reportQuery, String fileName, QueryExecutionResultFormatEnum format) throws IOException, BusinessException {
-        var columnnHeader = findColumnHeaderForReportQuery(reportQuery);
-        List<String> selectResult = executeQuery(reportQuery);
-        if (selectResult == null || selectResult.isEmpty()) {
-            throw new BusinessException(RESULT_EMPTY_MSG);
-        }
-        Path tempFile = Files.createTempFile(fileName, format.getExtension());
-        writeOutputFile(tempFile.toFile(), format, columnnHeader, selectResult);
-        return Files.readAllBytes(tempFile);
     }
 
     private void writeOutputFile(File file, QueryExecutionResultFormatEnum format, Set<String> columnnHeader, List<String> selectResult) throws IOException {
@@ -245,13 +280,20 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return query result
      */
     public List<Object> execute(ReportQuery reportQuery, Class<?> targetEntity) {
+        return execute(reportQuery, targetEntity, true);
+    }
+
+
+    @SuppressWarnings("unchecked")
+	private List<Object> execute(ReportQuery reportQuery, Class<?> targetEntity, boolean saveQueryResult) {
         Date startDate = new Date();
         List<Object> reportResult = prepareQueryToExecute(reportQuery, targetEntity).getResultList();
         Date endDate = new Date();
-        saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
+        if(saveQueryResult)
+        	saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
         return toExecutionResult(reportQuery.getFields(), reportResult);
     }
-
+    
     /**
      * Asynchronous execution for a specific report query
      *
@@ -352,7 +394,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     }
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult) {
-        if(fields != null) {
+        if(fields != null && !fields.isEmpty()) {
             List<Object>response = new ArrayList<>();
             int size = fields.size();
             Map<String, Object> item = new HashMap<>();

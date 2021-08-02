@@ -16130,6 +16130,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-257_20210625" author="ZBariki" />
     <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" />
     <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-1441_20210728" author="Mbarek-Ay" />
     <changeSet id="#INTRD-1090_20210714" author="ZBariki"/>
     <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA" />
 
