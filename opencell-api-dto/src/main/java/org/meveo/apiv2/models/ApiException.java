@@ -27,7 +27,7 @@ import java.util.List;
 
 @Value.Immutable
 @JsonSerialize
-public interface ApiException extends Resource{
+public interface ApiException extends Resource {
     @Nullable
     Long getId();
     @Nullable
