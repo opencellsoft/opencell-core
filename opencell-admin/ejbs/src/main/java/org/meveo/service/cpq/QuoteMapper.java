@@ -179,7 +179,13 @@ public class QuoteMapper {
     
     
     private org.meveo.api.dto.cpq.xml.Product mapToProduct(QuoteProduct quoteProduct) {
-    	org.meveo.api.dto.cpq.xml.Product quoteProductDto = new  org.meveo.api.dto.cpq.xml.Product(quoteProduct,entityToDtoConverter.getCustomFieldsDTO(quoteProduct));
+
+        List<QuotePrice> price = quoteProduct.getQuoteArticleLines().stream()
+                .map(line -> line.getQuotePrices().stream())
+                .flatMap(identity())
+                .collect(toList());
+        
+    	org.meveo.api.dto.cpq.xml.Product quoteProductDto = new  org.meveo.api.dto.cpq.xml.Product(quoteProduct,entityToDtoConverter.getCustomFieldsDTO(quoteProduct), aggregatePricesPerType(price));
 
     	quoteProductDto.setAttributes(quoteProduct.getQuoteAttributes().stream()
     			.map(product ->  mapToAttribute(product))
