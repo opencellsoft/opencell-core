@@ -174,7 +174,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             // the connected user has query_manager role and the query name already exist with visibility PROTECTED or PRIVATE and belongs to another user
             if (currentUser.hasRole("query_manager") && (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED || reportQuery.getVisibility() == QueryVisibilityEnum.PRIVATE)
                     && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belongs to another user");
+                throw new ConflictException("The query already exists and belong you");
             }
 
             // the query name already exist with visibility PROTECTED and belongs to another user
