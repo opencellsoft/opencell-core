@@ -2540,6 +2540,12 @@ public class SubscriptionApi extends BaseApi {
 
         Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy());
 
+        if (subscriptionPatchDto.getReengageCustomer() == Boolean.FALSE) {
+            newSubscription.setAutoEndOfEngagement(Boolean.FALSE);
+            newSubscription.setEndAgreementDate(existingSubscription.getEndAgreementDate());
+            subscriptionService.update(newSubscription);
+        }
+
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
         }
