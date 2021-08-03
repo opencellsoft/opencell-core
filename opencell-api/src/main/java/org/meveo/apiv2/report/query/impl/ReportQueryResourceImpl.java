@@ -170,6 +170,6 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     @Override
     public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
         reportQueryApiService.verifyReportQuery(verifyQueryInput);
-        return Response.ok("Success").build();
+        return Response.ok().build();
     }
 }
