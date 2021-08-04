@@ -2365,7 +2365,7 @@ public class ValidateBRScript extends Script {
 
       </changeSet>
 
-    <changeSet id="#5921-2021-02-02_43" author="ZBariki">
+    <changeSet id="#5921-2021-02-02_43" author="ZBariki" failOnError="false">
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
@@ -3908,7 +3908,7 @@ Opencell team.
         </insert>
     </changeSet>
     
-    <changeSet id="#20210607_540_563" author="TarikFA.">
+    <changeSet id="#20210607_540_563" author="TarikFA." failOnError="false">
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-10'/>
         	<column name="version" valueNumeric="0" />
