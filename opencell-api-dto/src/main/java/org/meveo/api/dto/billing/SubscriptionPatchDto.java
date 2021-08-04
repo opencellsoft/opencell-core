@@ -19,6 +19,7 @@ public class SubscriptionPatchDto {
     private ServicesToInstantiateDto servicesToInstantiate;
     private ServicesToActivateDto servicesToActivate;
     private Boolean updateSubscriptionDate;
+    private Boolean reengageCustomer = Boolean.TRUE;
     private Boolean resetRenewalTerms;
     /** if we should apply prorata on offer change */
     private Boolean offerChangeProrata = Boolean.FALSE;
@@ -78,6 +79,14 @@ public class SubscriptionPatchDto {
 
     public void setUpdateSubscriptionDate(Boolean updateSubscriptionDate) {
         this.updateSubscriptionDate = updateSubscriptionDate;
+    }
+
+    public Boolean getReengageCustomer() {
+        return reengageCustomer;
+    }
+
+    public void setReengageCustomer(Boolean reengageCustomer) {
+        this.reengageCustomer = reengageCustomer;
     }
 
     public Boolean getResetRenewalTerms() {
