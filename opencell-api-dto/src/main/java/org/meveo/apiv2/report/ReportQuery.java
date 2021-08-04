@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.report.query.QueryVisibilityEnum;
+import org.meveo.model.report.query.SortOrderEnum;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -38,4 +39,12 @@ public interface ReportQuery extends Resource {
     @Schema(description = "Generated query")
     @Nullable
     String getGeneratedQuery();
+
+    @Nullable
+    @Schema(description = "Sort by")
+    String getSortBy();
+
+    @Nullable
+    @Schema(description = "Sort order", example = "Possible value are : DESCENDING, ASCENDING")
+    SortOrderEnum getSortOrder();
 }

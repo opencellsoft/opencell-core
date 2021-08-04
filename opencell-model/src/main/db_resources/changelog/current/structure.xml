@@ -9537,4 +9537,11 @@ public class OrderAdvancement extends ModuleScript {
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
     </changeSet>
 
+    <changeSet id="#INTRD-1174_20210802" author="ZBariki">
+        <addColumn tableName="report_query">
+            <column name="sort_by" type="varchar(255)" />
+            <column name="sort_order" type="varchar(15)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
