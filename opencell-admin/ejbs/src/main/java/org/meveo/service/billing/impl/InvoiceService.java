@@ -20,6 +20,8 @@ package org.meveo.service.billing.impl;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -49,6 +51,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -89,6 +92,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
@@ -258,6 +262,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    @InvoiceNumberAssigned
+    private Event<Invoice> invoiceNumberAssignedEventProducer;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -436,6 +444,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber(prefix + invoiceNumber);
+
+        invoiceNumberAssignedEventProducer.fire(invoice);
     }
 
     /**
@@ -989,7 +999,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
             }
             if (orderNums != null && !orderNums.isEmpty()) {
-                List<Order> orders = new ArrayList<Order>();
+                List<Order> orders = new ArrayList<>();
                 for (String orderNum : orderNums) {
                     orders.add(orderService.findByCodeOrExternalId(orderNum));
                 }
@@ -1982,7 +1992,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = invoiceService.createInvoice(entityToInvoice, generateInvoiceRequestDto, ratedTxFilter, isDraft);
 
-        List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
+        List<Invoice> invoicesWNumber = new ArrayList<>();
         for (Invoice invoice : invoices) {
             if (customFieldValues != null) {
                 invoice.setCfValues(customFieldValues);
@@ -2562,7 +2572,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (billingAccount.getContactInformation() != null) {
                 to.add(billingAccount.getContactInformation().getEmail());
             }
-            if (billingAccount.getCcedEmails() != null) {
+            if (!StringUtils.isBlank(billingAccount.getCcedEmails())) {
                 cc.addAll(Arrays.asList(billingAccount.getCcedEmails().split(",")));
             }
             if (billingAccount.getEmailTemplate() != null) {
@@ -2580,7 +2590,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 to.clear();
                 to.add(subscription.getEmail());
                 cc.clear();
-                if (subscription.getCcedEmails() != null) {
+                if (!StringUtils.isBlank(subscription.getCcedEmails())) {
                     cc.addAll(Arrays.asList(subscription.getCcedEmails().split(",")));
                 }
                 emailTemplate = (subscription.getEmailTemplate() != null) ? subscription.getEmailTemplate() : emailTemplate;
@@ -2593,7 +2603,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 to.clear();
                 to.add(order.getEmail());
                 cc.clear();
-                if (order.getCcedEmails() != null) {
+                if (!StringUtils.isBlank(order.getCcedEmails())) {
                     cc.addAll(Arrays.asList(order.getCcedEmails().split(",")));
                 }
                 emailTemplate = (order.getEmailTemplate() != null) ? order.getEmailTemplate() : emailTemplate;
@@ -2637,13 +2647,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @return a list of invoices
      * @throws BusinessException
+     * @param billingCycleCodes
+     * @param invoiceDateRangeFrom
+     * @param invoiceDateRangeTo
      */
     @SuppressWarnings("unchecked")
-    public List<Invoice> findByNotAlreadySentAndDontSend() throws BusinessException {
+    public List<Invoice> findByNotAlreadySentAndDontSend(List<String> billingCycleCodes, Date invoiceDateRangeFrom, Date invoiceDateRangeTo) throws BusinessException {
         List<Invoice> result = new ArrayList<Invoice>();
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
         qb.addCriterionEntity("alreadySent", false);
         qb.addCriterionEntity("dontSend", false);
+        if(billingCycleCodes != null)
+            qb.addCriterionEntityInList("billingRun.code", billingCycleCodes);
+        if(invoiceDateRangeFrom != null)
+            qb.addCriterionDateRangeFromTruncatedToDay("invoiceDate", invoiceDateRangeFrom);
+        if(invoiceDateRangeTo != null)
+            qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", invoiceDateRangeTo, false);
         try {
             result = (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
@@ -2755,10 +2774,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.subCategoryAggregates
                 : new HashMap<>();
 
-        Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<String>();
+        Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<>();
 
-        String scaKey = null;
-        String scaKeyWithoutTax = null;
+        String scaKey;
+        String scaKeyWithoutTax;
 
         if (log.isTraceEnabled()) {
             log.trace("ratedTransactions.totalAmountWithoutTax={}",
@@ -2868,6 +2887,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
+        if (subscription == null && billingAccount != null) {
+            List<DiscountPlanInstance> discountPlanInstances = fromBillingAccount(billingAccount);
+            List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount);
+            ofNullable(result).ifPresent(discountPlans -> subscriptionApplicableDiscountPlanItems.addAll(discountPlans));
+        }
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
@@ -3035,9 +3059,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             for (SubCategoryInvoiceAgregate discountAggregate : discountAggregates) {
-                invoice.addAmountWithoutTax(discountAggregate.getAmountWithoutTax());
-                invoice.addAmountWithTax(discountAggregate.getAmountWithTax());
-                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : discountAggregate.getAmountTax());
+                invoice.addAmountWithoutTax(discountAggregate != null ? discountAggregate.getAmountWithoutTax() : BigDecimal.ZERO);
+                invoice.addAmountWithTax(discountAggregate != null ? discountAggregate.getAmountWithTax() : BigDecimal.ZERO);
+                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : discountAggregate != null ? discountAggregate.getAmountTax() : BigDecimal.ZERO);
             }
         }
 
@@ -3052,6 +3076,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+    }
+
+    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
+        return billingAccount.getUsersAccounts().stream()
+                        .map(userAccount -> userAccount.getSubscriptions())
+                        .map(this::addSubscriptionDiscountPlan)
+                        .flatMap(Collection::stream)
+                        .collect(toList());
+    }
+
+    private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
+        return subscriptions.stream()
+                .map(Subscription::getDiscountPlanInstances)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding,

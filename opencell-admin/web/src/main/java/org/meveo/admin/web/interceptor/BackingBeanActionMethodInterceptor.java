@@ -17,6 +17,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.encryption.EncyptionException;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.service.audit.AuditOrigin;
 import org.slf4j.Logger;
@@ -91,6 +92,11 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                 	message = ((org.hibernate.exception.ConstraintViolationException)cause).getSQLException().getMessage();
                     log.error("Database operation was unsuccessful because of constraint violation: "+message);
                     messageKey = "error.database.constraint.violation";
+                    break;
+                    
+                } else if (cause instanceof EncyptionException) {
+                    message = cause.getMessage();
+                    log.error("Error while de/encrypting: " + cause.getMessage(), cause);
                     break;
                 }
                 cause = cause.getCause();

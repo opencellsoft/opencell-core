@@ -635,7 +635,7 @@ public class UsageRatingService implements Serializable {
             List<UsageChargeInstance> usageChargeInstances = null;
 
             // Charges should be already ordered by priority and id (why id??)
-            usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
+            usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription().getId(), edr.getEventDate());
             if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                 throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
             }

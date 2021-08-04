@@ -30,6 +30,7 @@ import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.InstantiateWF;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.Processed;
@@ -44,6 +45,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -245,6 +247,17 @@ public class DefaultObserver {
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.debug("DefaultObserver.counterUpdated " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
+    }
+    
+    /**
+     * Handle Invoice number assigned event
+     * 
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void invoiceNumberAssigned(@Observes @InvoiceNumberAssigned Invoice invoice) throws BusinessException {
+        log.debug("Defaut observer: Assigned a number to the invoice {} ", invoice.getId());
+        checkEvent(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED, invoice);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {

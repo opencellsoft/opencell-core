@@ -113,6 +113,6 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	long convert(Object s) {
 		long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
-		return result;
-	}
+        return result;
+    }
 }
