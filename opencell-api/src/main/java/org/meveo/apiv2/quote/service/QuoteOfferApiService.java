@@ -57,7 +57,7 @@ public class QuoteOfferApiService {
 		quoteOfferService.create(duplicate);
 		
 		duplicateQuoteProduct(duplicate, quoteProducts);
-		duplicateQuoteAttribute(null, quoteOffer, quoteAttribute);
+		duplicateQuoteAttribute(null, duplicate, quoteAttribute);
 		return duplicate;
 	}
 	
