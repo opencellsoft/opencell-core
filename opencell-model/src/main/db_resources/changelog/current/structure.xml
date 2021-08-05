@@ -9181,5 +9181,12 @@ public class OrderAdvancement extends ModuleScript {
     		<where>charge_template_id  is null</where>
     	</update>
     </changeSet>
-
+    
+    <changeSet id="INTRD-1310_050821" author="Mbarek-Ay">
+     <addColumn tableName="billing_subscription">
+            <column name="order_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
 </databaseChangeLog>
