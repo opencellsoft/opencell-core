@@ -15781,6 +15781,16 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA." />
     <changeSet id="#20210622-INTRD-272" author="TarikFA." />
     <changeSet id="#INTRD-242_20210623" author="ZBariki" />
+    <changeSet id="#6168_20210624" author="HatimOUDAD" />
+    <changeSet id="#INTRD-257_20210706" author="ZBariki" />
+    <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA" />
+    <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-264_20210714" author="HatimOUDAD"/>
+    <changeSet id="#INTRD-339_20210625" author="ZBariki" />
+    <changeSet id="#INTRD-257_20210625" author="ZBariki" />
+    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" />
+    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-1441_20210728" author="Mbarek-Ay" />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

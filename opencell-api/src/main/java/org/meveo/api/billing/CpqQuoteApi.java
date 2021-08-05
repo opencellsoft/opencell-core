@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.print.attribute.standard.Media;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -130,6 +131,7 @@ import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -238,6 +240,9 @@ public class CpqQuoteApi extends BaseApi {
     @Inject
     @StatusUpdated
     protected Event<CpqQuote> cpqQuoteStatusUpdatedEvent;
+    
+    @Inject
+    private MediaService mediaService;
 
 
 
@@ -292,7 +297,15 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setQuoteDate(quote.getQuoteDate());
 
         cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
-
+        
+        if(quote.getMediaCodes() != null) {
+        	quote.getMediaCodes().forEach(mediaCode -> {
+        		var media = mediaService.findByCode(mediaCode);
+        		if(media == null)
+        			throw new EntityDoesNotExistsException(Media.class, mediaCode);
+        		cpqQuote.getMedias().add(media);
+        	});
+        }
         try {
             cpqQuoteService.create(cpqQuote);
             quoteVersionService.create(populateNewQuoteVersion(quote.getQuoteVersion(), cpqQuote));
@@ -598,6 +611,15 @@ public class CpqQuoteApi extends BaseApi {
         if(!Strings.isEmpty(quoteDto.getDiscountPlanCode())) {
         	quote.setDiscountPlan(loadEntityByCode(discountPlanService, quoteDto.getDiscountPlanCode(), DiscountPlan.class));
         }
+        quote.getMedias().clear();
+        if(quoteDto.getMediaCodes() != null) {
+        	quoteDto.getMediaCodes().forEach(mediaCode -> {
+        		var media = mediaService.findByCode(mediaCode);
+        		if(media == null)
+        			throw new EntityDoesNotExistsException(Media.class, mediaCode);
+        		quote.getMedias().add(media);
+        	});
+        }
         try {
             cpqQuoteService.update(quote);
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
@@ -678,8 +700,8 @@ public class CpqQuoteApi extends BaseApi {
         final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
         if (quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
-        if (quote.getStatus().equals(QuoteStatusEnum.CANCELLED) ||
-                quote.getStatus().equals(QuoteStatusEnum.REJECTED)) {
+        if (quote.getStatus().equals(QuoteStatusEnum.CANCELLED.toString()) ||
+                quote.getStatus().equals(QuoteStatusEnum.REJECTED.toString())) {
             List<QuoteVersion> versions = quoteVersionService.findByQuoteId(quote.getId());
             versions.forEach(qv -> {
                 quoteVersionService.remove(qv);
@@ -1052,7 +1074,7 @@ public class CpqQuoteApi extends BaseApi {
         final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException("No quote version with number = " + version + " for the quote code = " + quoteCode);
-
+        quote.getMedias().size();
         return cpqQuoteService.duplicate(quote, quoteVersion, false, true);
     }
 
