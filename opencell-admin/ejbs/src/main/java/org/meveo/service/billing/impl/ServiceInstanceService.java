@@ -515,6 +515,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
+			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+				recurringChargeInstance.setChargeToDateOnTermination(recurringChargeInstance.getChargedToDate());
+			}
+
             recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
             recurringChargeInstance.setTerminationDate(terminationDate);
 
