@@ -153,7 +153,7 @@ public class QuoteMapperTest {
         QuoteLot quoteLot = createQuoteLot();
 
         QuotePrice recurring = createQuotePrice(PriceTypeEnum.RECURRING);
-        QuotePrice oneShot = createQuotePrice(PriceTypeEnum.ONE_SHOT);
+        QuotePrice oneShot = createQuotePrice(PriceTypeEnum.ONE_SHOT_OTHER);
 
         InvoiceCategory invoiceCategory = createInvoiceCategory();
 
@@ -210,7 +210,7 @@ public class QuoteMapperTest {
         assertThat(quoteLine.getQuantity()).isEqualTo(valueOf(10));
         assertThat(quoteLine.getPrices()).isNotEmpty();
         assertThat(quoteLine.getPrices().get(0).getPriceType()).isEqualTo(PriceTypeEnum.RECURRING);
-        assertThat(quoteLine.getPrices().get(1).getPriceType()).isEqualTo(PriceTypeEnum.ONE_SHOT);
+        assertThat(quoteLine.getPrices().get(1).getPriceType()).isEqualTo(PriceTypeEnum.ONE_SHOT_OTHER);
 
         String formattedQuote = xmlQuoteFormatter.format(quoteXmlDto);
 //        assertThat(formattedQuote).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +

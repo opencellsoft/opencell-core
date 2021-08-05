@@ -9159,4 +9159,27 @@ public class OrderAdvancement extends ModuleScript {
     	
     </changeSet>
     
+    
+    <changeSet id="INTRD-1221_20210803" author="TarikFA.">
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_SUBSCRIPTION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'SUBSCRIPTION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_TERMINATION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'TERMINATION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'OTHER')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  is null</where>
+    	</update>
+    </changeSet>
+
 </databaseChangeLog>
