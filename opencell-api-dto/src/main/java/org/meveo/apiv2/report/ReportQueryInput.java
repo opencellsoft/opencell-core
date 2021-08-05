@@ -16,6 +16,7 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableReportQueryInput.class)
 public interface ReportQueryInput {
 
+    @Nullable
     @Schema(description = "Report query code")
     String getQueryName();
 
@@ -23,9 +24,11 @@ public interface ReportQueryInput {
     @Schema(description = "Report query description")
     String getQueryDescription();
 
+    @Nullable
     @Schema(description = "Report query description")
     String getTargetEntity();
 
+    @Nullable
     @Schema(description = "Report query description")
     QueryVisibilityEnum getVisibility();
 

@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
@@ -91,7 +92,7 @@ public class ReportQueryResourceImplTest {
         assertEquals(2, reportQuery.getFields().size());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionInCaseOfMissingAttributes() {
         ReportQueryInput input = builder()
                 .queryName("code")

@@ -94,11 +94,24 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Override
     public Response createReportQuery(ReportQueryInput resource) {
+        validateResource(resource);
         ReportQuery entity = reportQueryApiService.create(mapper.toEntity(resource));
         return Response
                 .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
                 .entity(mapper.toResource(entity))
                 .build();
+    }
+
+    private void validateResource(ReportQueryInput resource) {
+        if(resource.getQueryName() == null) {
+            throw new BadRequestException("Report query name is missing");
+        }
+        if (resource.getTargetEntity() == null) {
+            throw new BadRequestException("Target entity is missing");
+        }
+        if (resource.getVisibility() == null) {
+            throw new BadRequestException("Report query visibility is missing");
+        }
     }
 
 	@Override
