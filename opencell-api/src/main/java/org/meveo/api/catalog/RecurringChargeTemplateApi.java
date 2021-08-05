@@ -56,7 +56,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
     @Inject
     private CalendarService calendarService;
-    
+
     @Inject
     private AttributeService attributeService;
 
@@ -68,7 +68,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         }
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
-        } 
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -88,7 +88,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        } 
+        }
         if (postData.getCalendar() != null && StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         }
@@ -127,12 +127,12 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         } else {
             chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         }
-        
-        if(!Strings.isEmpty(postData.getAttributeCalendarCode())) {
-        	chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
+
+        if (!Strings.isEmpty(postData.getAttributeCalendarCode())) {
+            chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
         }
-        if(!Strings.isEmpty(postData.getAttributeDurationCode())) {
-        	chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
+        if (!Strings.isEmpty(postData.getAttributeDurationCode())) {
+            chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
         }
 
         super.dtoToEntity(postData, chargeTemplate, isNew);
@@ -146,9 +146,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
             chargeTemplate.setCalendar(calendar);
         }
 
-        if (postData.getDurationTermInMonth() != null) {
-            chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
-        }
+        chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
         if (postData.getSubscriptionProrata() != null) {
             chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
         }
@@ -182,13 +180,13 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         if (postData.getRecurrenceType() != null) {
             chargeTemplate.setRecurrenceType(postData.getRecurrenceType());
         }
-        
+
         return chargeTemplate;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -212,9 +210,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
     public RecurringChargeTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
         RecurringChargeTemplateResponseDto result = new RecurringChargeTemplateResponseDto();
-        result.setPaging( pagingAndFiltering );
+        result.setPaging(pagingAndFiltering);
 
-        List<RecurringChargeTemplate> recurringChargeTemplates = recurringChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        List<RecurringChargeTemplate> recurringChargeTemplates = recurringChargeTemplateService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (recurringChargeTemplates != null) {
             for (RecurringChargeTemplate chargeTemplate : recurringChargeTemplates) {
                 result.getRecurringChargeTemplates().getRecurringChargeTemplates()

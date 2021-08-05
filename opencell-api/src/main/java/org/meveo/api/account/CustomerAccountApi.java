@@ -348,32 +348,41 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     private void updatePaymentMethods(CustomerAccount customerAccount, CustomerAccountDto postData) {
-        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
-            if (customerAccount.getPaymentMethods() == null) {
-                customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
-            }
+		if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+			if (customerAccount.getPaymentMethods() == null) {
+				customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
+			}else {
+				for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
+					paymentMethod.setPreferred(false);
+				}
+			}
 
-            List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
+			List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
+            //workaround 550 case
+			boolean isFirst = true;
 
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
+			for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+				if (isFirst) {
+					paymentMethodDto.setPreferred(true);
+					isFirst = false;
+				}
+				PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
 
-                int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
-                if (index < 0) {
-                    customerAccount.addPaymentMethod(paymentMethodFromDto);
-                    paymentMethodsFromDto.add(paymentMethodFromDto);
-                } else {
-                    PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
-                    paymentMethod.updateWith(paymentMethodFromDto);
-                    paymentMethodsFromDto.add(paymentMethod);
-                    customerAccount.addPaymentMethodToAudit(new Object() {
-                    }.getClass().getEnclosingMethod().getName(), paymentMethod);
-                }
+				int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
+				if (index < 0) {
+					customerAccount.addPaymentMethod(paymentMethodFromDto);
+					paymentMethodsFromDto.add(paymentMethodFromDto);
+				} else {
+					PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
+					paymentMethod.updateWith(paymentMethodFromDto);
+					paymentMethodsFromDto.add(paymentMethod);
+					customerAccount.addPaymentMethodToAudit(new Object() {
+					}.getClass().getEnclosingMethod().getName(), paymentMethod);
+				}
 
-            }
-            customerAccount.getPaymentMethods().retainAll(paymentMethodsFromDto);
-        }
-    }
+			}
+		}
+	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, boolean calculateBalances) throws Exception {

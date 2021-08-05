@@ -26,6 +26,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,21 +35,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ExtraMinAmount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.MinAmountData;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.MinAmountsResult;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -67,6 +54,7 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
@@ -84,6 +72,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private MinAmountService minAmountService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     public List<InvoiceLine> findByCommercialOrder(CommercialOrder commercialOrder) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByCommercialOrder", InvoiceLine.class)
@@ -160,7 +151,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         return emptyList();
     }
-    
+
     public List<InvoiceLine> listInvoiceLinesByInvoice(long invoiceId) {
         try {
             return getEntityManager().createNamedQuery("InvoiceLine.InvoiceLinesByInvoiceID", InvoiceLine.class)
@@ -171,7 +162,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-    
+
 
     public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         InvoiceLine invoiceLine = new InvoiceLine();
@@ -347,12 +338,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public MinAmountForAccounts isMinAmountForAccountsActivated(IBillableEntity entity, ApplyMinimumModeEnum applyMinimumModeEnum) {
         return new MinAmountForAccounts(minAmountService.isMinUsed(), entity, applyMinimumModeEnum);
     }
-    
-    
+
+
 	/**
-	 * @param invoice 
+	 * @param invoice
 	 * @param invoiceLineRessource
-	 * @return 
+	 * @return
 	 */
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
 		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
@@ -360,7 +351,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		create(invoiceLine);
 		return invoiceLine;
 	}
-	
+
 	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
 		if(invoiceLine==null) {
 			invoiceLine = new InvoiceLine();
@@ -380,7 +371,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
-		
+
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
 		}
@@ -411,29 +402,30 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		if(resource.getOfferTemplateCode()!=null) {
 			invoiceLine.setOfferTemplate((OfferTemplate)tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
 		}
-		
+
 		if(resource.isTaxRecalculated()!=null){
 			invoiceLine.setTaxRecalculated( resource.isTaxRecalculated());
 		}
-		
+
 		var datePeriod = new DatePeriod();
 		if(resource.getStartDate() != null)
 			datePeriod.setFrom(resource.getStartDate());
 		if(resource.getEndDate() != null)
 			datePeriod.setTo(resource.getEndDate());
-		
+
 		invoiceLine.setValidity(datePeriod);
 		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
 		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
 		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
 		invoiceLine.setBillingRun((BillingRun)tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
-		
+
 		return invoiceLine;
 	}
-	
+
 	/**
 	 * @param invoice
-	 * @param invoiceLine
+	 * @param invoiceLineRessource
+	 * @param invoiceLineId
 	 */
 	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
@@ -478,7 +470,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }
-    
+
     /**
      * Get a list of invoiceable Invoice Liness for a given BllingAccount and a list of ids
      *
@@ -507,7 +499,45 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         try {
             return qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<InvoiceLine>();
+            return new ArrayList<>();
         }
 	}
+
+    /**
+     * Create Query builder from a map of filters
+     * filters : Map of filters
+     * Return : QueryBuilder
+     */
+    public QueryBuilder fromFilters(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if (filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            FilterConverter converter = new FilterConverter(RatedTransaction.class);
+            PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
+        return queryBuilder;
+    }
+
+    /**
+     * Retrieve invoice lines associated to an invoice
+     *
+     * @param invoice Invoice
+     * @return A list of invoice Lines
+     */
+    public List<InvoiceLine> getInvoiceLinesByInvoice(Invoice invoice, boolean includeFree) {
+        if (invoice.getId() == null) {
+            return new ArrayList<>();
+        }
+        if (includeFree) {
+            return getEntityManager().createNamedQuery("InvoiceLine.listByInvoice", InvoiceLine.class)
+                    .setParameter("invoice", invoice)
+                    .getResultList();
+        } else {
+            return getEntityManager().createNamedQuery("InvoiceLine.listByInvoiceNotFree", InvoiceLine.class)
+                    .setParameter("invoice", invoice)
+                    .getResultList();
+        }
+    }
 }

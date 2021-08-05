@@ -43,6 +43,9 @@ public class NativeExpressionFactory {
 
         switch (exp.getCondition()) {
             case "fromRange":
+                queryBuilder.addValueIsGreaterThanOrEqualField(extractFieldWithAlias(exp.getFieldName()), value, false);
+                break;
+            case "fromRangeExclusive":
                 queryBuilder.addValueIsGreaterThanField(extractFieldWithAlias(exp.getFieldName()), value, false);
                 break;
             case "fromOptionalRange":

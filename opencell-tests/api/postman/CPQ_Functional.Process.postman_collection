@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bd8e2256-094c-47c3-b4ab-2c4dfdce5caa",
+		"_postman_id": "72400996-34d1-49ac-8859-6afbcc8b95b3",
 		"name": "CPQ Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -29,7 +29,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tagTypeOneCode}}\",\r\n    \"description\": \"This is tag type one test description\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tagTypeOneCode}}\",\r\n    \"description\": \"TAG TYPE One\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -37,14 +37,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/cpq/tags/tagType",
+									"raw": "{{opencell.url}}/cpq/tags/tagTypes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"cpq",
 										"tags",
-										"tagType"
+										"tagTypes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -69,7 +69,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tagOneCode}}\",\r\n    \"name\": \"TAG_1_NAME\",\r\n    \"description\": \"This is tag One test description\",\r\n    \"tagTypeCode\": \"{{tagTypeOneCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tagOneCode}}\",\r\n    \"name\": \"TAG_1_NAME\",\r\n    \"description\": \"TAG ONE\",\r\n    \"tagTypeCode\": \"{{tagTypeOneCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -108,7 +108,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tagTypeTwoCode}}\",\r\n    \"description\": \"This is tag type Two test description\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tagTypeTwoCode}}\",\r\n    \"description\": \"TAG TYPE Two\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -116,14 +116,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/cpq/tags/tagType",
+									"raw": "{{opencell.url}}/cpq/tags/tagTypes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"cpq",
 										"tags",
-										"tagType"
+										"tagTypes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -148,7 +148,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{tagTwoCode}}\",\r\n  \"description\": \"This is tag two test description\",\r\n  \"name\":\"TAG_2_NAME\",\r\n  \"tagTypeCode\": \"{{tagTypeTwoCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{tagTwoCode}}\",\r\n  \"description\": \"TAG TWO\",\r\n  \"name\":\"TAG_2_NAME\",\r\n  \"tagTypeCode\": \"{{tagTypeTwoCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -187,7 +187,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tagTypeVipCode}}\",\r\n    \"description\": \"This is tag type VIP test description\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tagTypeVipCode}}\",\r\n    \"description\": \"VIP TAG TAYP\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -195,14 +195,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/cpq/tags/tagType",
+									"raw": "{{opencell.url}}/cpq/tags/tagTypes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"cpq",
 										"tags",
-										"tagType"
+										"tagTypes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -227,7 +227,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{tagVipCode}}\",\r\n  \"description\": \"This is tag VIP test description\",\r\n  \"name\":\"TAG_VIP_NAME\",\r\n  \"tagTypeCode\": \"{{tagTypeVipCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{tagVipCode}}\",\r\n  \"description\": \"VIP TAG\",\r\n  \"name\":\"TAG_VIP_NAME\",\r\n  \"tagTypeCode\": \"{{tagTypeVipCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -298,7 +298,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountCode}}\",\n    \"description\": \"The Customer_UserAccount description\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
+									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountCode}}\",\n    \"description\": \"Customer_UserAccount\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -359,7 +359,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountTwoCode}}\",\n    \"description\": \"The Customer_UserAccount description\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
+									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountTwoCode}}\",\n    \"description\": \"Customer_UserAccount\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -393,7 +393,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{billableAccountCode}}\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"taxCategoryCode\": \"Tax category\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{billableAccountCode}}\",\r\n    \"description\": \"Billing Account One\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"taxCategoryCode\": \"Tax category\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -433,7 +433,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{billableAccountTwoCode}}\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"taxCategoryCode\": \"Tax category\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{billableAccountTwoCode}}\",\r\n    \"description\": \"Billing Account Two\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"taxCategoryCode\": \"Tax category\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -504,7 +504,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{recChargeTemplateCode}}\",\r\n    \"description\": \"This is the recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": 24,\r\n    \"subscriptionProrata\": false,\r\n    \"terminationProrata\": false,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}"
+									"raw": "{\r\n    \"code\": \"{{recChargeTemplateCode}}\",\r\n    \"description\": \"Recurring Charge\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": 24,\r\n    \"subscriptionProrata\": false,\r\n    \"terminationProrata\": false,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
@@ -564,7 +564,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{oneShotTemplateCode}}\",\r\n    \"description\": \"This is the one shot charge test description\",\r\n    \"oneShotChargeTemplateType\":\"OTHER\",\r\n    \"invoiceSubCategory\":\"SUB_DATA\",\r\n    \"taxClassCode\": \"SUB_DATA\"\r\n}"
+									"raw": "{\r\n    \"code\": \"{{oneShotTemplateCode}}\",\r\n    \"description\": \"One Shot Charge\",\r\n    \"oneShotChargeTemplateType\":\"OTHER\",\r\n    \"invoiceSubCategory\":\"SUB_DATA\",\r\n    \"taxClassCode\": \"SUB_DATA\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
@@ -583,7 +583,7 @@
 					]
 				},
 				{
-					"name": "Media Management",
+					"name": "Medias",
 					"item": [
 						{
 							"name": "Create The Media 1",
@@ -603,7 +603,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{mediaOneCode}}\",\r\n    \"mediaName\": \"{{mediaOneName}}\",\r\n    \"description\": \"This is media one test desc\",\r\n    \"mediaPath\": \"/path/created/dir1\",\r\n    \"label\": \"This is media label\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true\r\n}",
+									"raw": "{\r\n    \"code\": \"{{mediaOneCode}}\",\r\n    \"mediaName\": \"{{mediaOneName}}\",\r\n    \"description\": \"Media One\",\r\n    \"mediaPath\": \"/path/created/dir1\",\r\n    \"label\": \"This is media label\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -669,7 +669,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{mediaTwoCode}}\",\r\n    \"mediaName\": \"{{mediaTwoName}}\",\r\n    \"description\": \"This is media two test desc\",\r\n    \"label\": \"This is media label\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/path/created/dir2\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{mediaTwoCode}}\",\r\n    \"mediaName\": \"{{mediaTwoName}}\",\r\n    \"description\": \"Media Two\",\r\n    \"label\": \"The media label\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/path/created/dir2\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -740,7 +740,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{billingCycleAttribute}}\",\r\n    \"description\": \"This is billing cycle attribute description\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"disabled\": true,\r\n    \"mandatory\": true,\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{billingCycleAttribute}}\",\r\n    \"description\": \"Billing Cycle Attribute\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"disabled\": true,\r\n    \"mandatory\": true,\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -748,12 +748,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -777,18 +777,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/attribute?code={{billingCycleAttribute}}",
+									"raw": "{{opencell.url}}/attributes/{{billingCycleAttribute}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{billingCycleAttribute}}"
-										}
+										"attributes",
+										"{{billingCycleAttribute}}"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -813,7 +808,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{engagementAttributeCode}}\",\r\n  \"description\": \"This is engagement duration test description\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n  }",
+									"raw": "{\r\n  \"code\": \"{{engagementAttributeCode}}\",\r\n  \"description\": \"Engagement Duration Attribute\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n  }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -821,12 +816,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -850,18 +845,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/attribute?code={{engagementAttributeCode}}",
+									"raw": "{{opencell.url}}/attributes/{{engagementAttributeCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{engagementAttributeCode}}"
-										}
+										"attributes",
+										"{{engagementAttributeCode}}"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -886,7 +876,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{billingCycleAttributeTwo}}\",\r\n    \"description\": \"This is billing cycle attribute description\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"disabled\": true,\r\n    \"mandatory\": true,\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{billingCycleAttributeTwo}}\",\r\n    \"description\": \"New Billing Cycle Attribute\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"disabled\": true,\r\n    \"mandatory\": true,\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -894,12 +884,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -924,7 +914,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{engagementAttributeTwo}}\",\r\n  \"description\": \"This is engagement duration test description\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n  }",
+									"raw": "{\r\n  \"code\": \"{{engagementAttributeTwo}}\",\r\n  \"description\": \"New Engagement Duration Attribute\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n  }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -932,12 +922,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -962,7 +952,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\",\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"Grouped Attribute\",\r\n    \"mandatory\": true,\r\n    \"display\": true,\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1006,7 +996,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productLineCode}}\",\r\n    \"description\": \"This is product line test description\",\r\n    \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productLineCode}}\",\r\n    \"description\": \"TEST Product Line\",\r\n    \"sellerCode\": \"{{sellerCode}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1014,14 +1004,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productLine",
+									"raw": "{{opencell.url}}/catalog/products/productLines",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productLine"
+										"products",
+										"productLines"
 									]
 								},
 								"description": "Create a product line if it doesn't exist or update an existing product line"
@@ -1055,7 +1045,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{recChargeTemplateCode}}\"\r\n        },\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"Product One label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"isModel\": true,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{recChargeTemplateCode}}\"\r\n        },\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1063,13 +1053,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
+									"raw": "{{opencell.url}}/catalog/products",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
+										"products"
 									]
 								},
 								"description": "Creation of the product"
@@ -1093,22 +1083,73 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
+									"raw": "{{opencell.url}}/catalog/products/{{productOneCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
-									],
-									"query": [
-										{
-											"key": "productCode",
-											"value": "{{productOneCode}}"
-										}
+										"products",
+										"{{productOneCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Dulicate Product 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"Product One label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"isModel\": true,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{recChargeTemplateCode}}\"\r\n        },\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/products/{{productOneCode}}/duplication?duplicateHierarchy=true",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"{{productOneCode}}",
+										"duplication"
+									],
+									"query": [
+										{
+											"key": "duplicateHierarchy",
+											"value": "true"
+										}
+									]
+								},
+								"description": "Creation of the product"
 							},
 							"response": []
 						},
@@ -1130,7 +1171,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": {{productOneVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-11-25\"\r\n    },\r\n    \"groupedAttributeCodes\" : [\"{{groupedAttributeCode}}\"],\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product One Default Version\",\r\n    \"currentVersion\": {{productOneVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"The Version One of Product One\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-11-25\"\r\n    },\r\n    \"groupedAttributeCodes\" : [\"{{groupedAttributeCode}}\"],\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1138,14 +1179,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"raw": "{{opencell.url}}/catalog/products/productVersions",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion"
+										"products",
+										"productVersions"
 									]
 								},
 								"description": "create a product version if it doesn't exist or update an existing product line"
@@ -1158,19 +1199,54 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productOneVersion}}",
+									"raw": "{{opencell.url}}/catalog/products/{{productOneCode}}/productVersions/{{productOneVersion}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion",
+										"products",
 										"{{productOneCode}}",
+										"productVersions",
 										"{{productOneVersion}}"
 									]
 								},
 								"description": "Find all related product versions to a product"
+							},
+							"response": []
+						},
+						{
+							"name": "Publish Product 1 Version 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/products/{{productOneCode}}/productVersions/{{productOneVersion}}/status/PUBLISHED",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"{{productOneCode}}",
+										"productVersions",
+										"{{productOneVersion}}",
+										"status",
+										"PUBLISHED"
+									]
+								},
+								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
 							},
 							"response": []
 						},
@@ -1197,67 +1273,22 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/{{productOneCode}}/update/status?status=ACTIVE",
+									"raw": "{{opencell.url}}/catalog/products/{{productOneCode}}/status/ACTIVE",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
+										"products",
 										"{{productOneCode}}",
-										"update",
-										"status"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "ACTIVE"
-										}
+										"status",
+										"ACTIVE"
 									]
 								},
 								"description": "Creation of the product"
-							},
-							"response": []
-						},
-						{
-							"name": "Publish Product 1 Version 1",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productOneVersion}}?status=PUBLISHED",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"productVersion",
-										"{{productOneCode}}",
-										"{{productOneVersion}}"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "PUBLISHED"
-										}
-									]
-								},
-								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
 							},
 							"response": []
 						},
@@ -1288,7 +1319,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"Product Two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1296,13 +1327,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
+									"raw": "{{opencell.url}}/catalog/products",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
+										"products"
 									]
 								},
 								"description": "Creation of the product"
@@ -1327,7 +1358,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{productTwoCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": {{productTwoVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-09-08\",\r\n        \"to\": \"2021-05-15\"\r\n    },\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{productTwoCode}}\",\r\n    \"shortDescription\": \"Product Two Default Version\",\r\n    \"currentVersion\": {{productTwoVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"The Version One of Product Two\",\r\n    \"validity\": {\r\n        \"from\": \"2020-09-08\",\r\n        \"to\": \"2021-05-15\"\r\n    },\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1335,17 +1366,52 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"raw": "{{opencell.url}}/catalog/products/productVersions",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion"
+										"products",
+										"productVersions"
 									]
 								},
 								"description": "create a product version if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Publish Product 2 Version 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/products/{{productTwoCode}}/productVersions/{{productTwoVersion}}/status/PUBLISHED",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"{{productTwoCode}}",
+										"productVersions",
+										"{{productTwoVersion}}",
+										"status",
+										"PUBLISHED"
+									]
+								},
+								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
 							},
 							"response": []
 						},
@@ -1372,25 +1438,19 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/{{productTwoCode}}/update/status?status=ACTIVE",
+									"raw": "{{opencell.url}}/catalog/products/{{productTwoCode}}/status/ACTIVE",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
+										"products",
 										"{{productTwoCode}}",
-										"update",
-										"status"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "ACTIVE"
-										}
+										"status",
+										"ACTIVE"
 									]
 								},
 								"description": "Creation of the product"
@@ -1414,19 +1474,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product?productCode={{productTwoCode}}",
+									"raw": "{{opencell.url}}/catalog/products/{{productTwoCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
-									],
-									"query": [
-										{
-											"key": "productCode",
-											"value": "{{productTwoCode}}"
-										}
+										"products",
+										"{{productTwoCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -1484,7 +1539,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"name\": \"Offer Classic Commission\",\r\n    \"description\": \"Classic Offer Template\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"name\": \"Offer Classic Commission\",\r\n    \"description\": \"Classic Offer Template\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"isModel\": true,\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -1556,16 +1611,15 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{commercialRuleOneCode}}\",\r\n    \"description\": \"This is commercial rule 1 test description\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\r\n    \"tagCode\": \"{{tagOneCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_ONE\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule 1\",\r\n                    \"tagCode\": \"{{tagOneCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{commercialRuleOneCode}}\",\r\n    \"description\": \"Commercial Rule One\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\r\n    \"tagCode\": \"{{tagOneCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_ONE\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule one\",\r\n                    \"tagCode\": \"{{tagOneCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/",
+									"raw": "{{opencell.url}}/commercialRules",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
-										""
+										"commercialRules"
 									]
 								}
 							},
@@ -1577,18 +1631,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule?code={{commercialRuleOneCode}}",
+									"raw": "{{opencell.url}}/commercialRules/{{commercialRuleOneCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{commercialRuleOneCode}}"
-										}
+										"commercialRules",
+										"{{commercialRuleOneCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -1646,16 +1695,15 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{commercialRuleTwoCode}}\",\r\n    \"description\": \"This is commercial rule 2 test description\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n    \"tagCode\": \"{{tagTwoCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_TWO\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule 2\",\r\n                    \"tagCode\": \"{{tagTwoCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{commercialRuleTwoCode}}\",\r\n    \"description\": \"Commercial Rule Two\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n    \"tagCode\": \"{{tagTwoCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_TWO\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule two\",\r\n                    \"tagCode\": \"{{tagTwoCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/",
+									"raw": "{{opencell.url}}/commercialRules",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
-										""
+										"commercialRules"
 									]
 								}
 							},
@@ -1667,18 +1715,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule?code={{commercialRuleTwoCode}}",
+									"raw": "{{opencell.url}}/commercialRules/{{commercialRuleTwoCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{commercialRuleTwoCode}}"
-										}
+										"commercialRules",
+										"{{commercialRuleTwoCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -1698,6 +1741,9 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
 								"auth": {
 									"type": "basic",
@@ -1714,7 +1760,7 @@
 										}
 									]
 								},
-								"method": "POST",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
@@ -1732,13 +1778,12 @@
 									"raw": "{\r\n  \"filters\": {\r\n    \"ruleType\": \"PRE_REQUISITE\"\r\n  }\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/list",
+									"raw": "{{opencell.url}}/commercialRules",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
-										"list"
+										"commercialRules"
 									]
 								}
 							},
@@ -1787,19 +1832,14 @@
 									}
 								],
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/tagRules?tagCode={{tagOneCode}}",
+									"raw": "{{opencell.url}}/commercialRules/tagRules/{{tagOneCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
-										"tagRules"
-									],
-									"query": [
-										{
-											"key": "tagCode",
-											"value": "{{tagOneCode}}"
-										}
+										"commercialRules",
+										"tagRules",
+										"{{tagOneCode}}"
 									]
 								}
 							},
@@ -1848,12 +1888,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/productRules?offerCode={{offerTemplateCode}}&productCode={{productOneCode}}&productVersion={{productOneVersion}}",
+									"raw": "{{opencell.url}}/commercialRules/productRules?offerCode={{offerTemplateCode}}&productCode={{productOneCode}}&productVersion={{productOneVersion}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
+										"commercialRules",
 										"productRules"
 									],
 									"query": [
@@ -1901,7 +1941,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tvDecoderCode}}\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"label\": \"This is the tv decoder product label\",\r\n    \"status\": \"ACTIVE\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tvDecoderCode}}\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"label\": \"TV Decoder Product\",\r\n    \"status\": \"ACTIVE\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1909,55 +1949,16 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
+									"raw": "{{opencell.url}}/catalog/products",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
+										"products"
 									]
 								},
 								"description": "Creation of the product"
-							},
-							"response": []
-						},
-						{
-							"name": "Activate TV_DECODER Product",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/{{tvDecoderCode}}/update/status?status=ACTIVE",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"{{tvDecoderCode}}",
-										"update",
-										"status"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "ACTIVE"
-										}
-									]
-								},
-								"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
 							},
 							"response": []
 						},
@@ -1979,7 +1980,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": {{tvDecoderVersion}},\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
+									"raw": "{\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"shortDescription\": \"TV_DECODER Product version\",\r\n  \"currentVersion\": {{tvDecoderVersion}},\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1987,14 +1988,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"raw": "{{opencell.url}}/catalog/products/productVersions",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion"
+										"products",
+										"productVersions"
 									]
 								},
 								"description": "create a product version if it doesn't exist or update an existing product line"
@@ -2015,28 +2016,57 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion/{{tvDecoderCode}}/{{tvDecoderVersion}}?status=PUBLISHED",
+									"raw": "{{opencell.url}}/catalog/products/{{tvDecoderCode}}/productVersions/{{tvDecoderVersion}}/status/PUBLISHED",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion",
+										"products",
 										"{{tvDecoderCode}}",
-										"{{tvDecoderVersion}}"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "PUBLISHED"
-										}
+										"productVersions",
+										"{{tvDecoderVersion}}",
+										"status",
+										"PUBLISHED"
 									]
 								},
 								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+							},
+							"response": []
+						},
+						{
+							"name": "Activate TV_DECODER Product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/products/{{tvDecoderCode}}/status/ACTIVE",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"{{tvDecoderCode}}",
+										"status",
+										"ACTIVE"
+									]
+								},
+								"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
 							},
 							"response": []
 						},
@@ -2057,19 +2087,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product?productCode={{tvDecoderCode}}",
+									"raw": "{{opencell.url}}/catalog/products/{{tvDecoderCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
-									],
-									"query": [
-										{
-											"key": "productCode",
-											"value": "{{tvDecoderCode}}"
-										}
+										"products",
+										"{{tvDecoderCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -2094,7 +2119,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tvGroupedAttributeCode}}\",\r\n    \"description\": \"This is the grouped tv attribute description\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tvGroupedAttributeCode}}\",\r\n    \"description\": \"Grouped TV Attribute\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2133,7 +2158,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{setupPriceAttribute}}\",\r\n    \"description\": \"This is setup price attribute desc\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"115\",\r\n        \"205\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
+									"raw": "{\r\n    \"code\": \"{{setupPriceAttribute}}\",\r\n    \"description\": \"Setup Price Attribute\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"115\",\r\n        \"205\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2141,12 +2166,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -2171,7 +2196,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{brandAttribute}}\",\r\n  \"description\": \"This is brand attribute desc\", \r\n  \"disabled\": true,\r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"SAMSUNG\",\"SONY\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+									"raw": "{\r\n  \"code\": \"{{brandAttribute}}\",\r\n  \"description\": \"Brand Attribute\", \r\n  \"disabled\": true,\r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"SAMSUNG\",\"SONY\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2179,12 +2204,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -2218,7 +2243,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{televisionCode}}\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"label\": \"This is TV product test description\",\r\n    \"status\": \"ACTIVE\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{televisionCode}}\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"label\": \"Television Product\",\r\n    \"status\": \"ACTIVE\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2226,55 +2251,16 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
+									"raw": "{{opencell.url}}/catalog/products",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
+										"products"
 									]
 								},
 								"description": "Creation of the product"
-							},
-							"response": []
-						},
-						{
-							"name": "Activate TELEVISION Product",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/{{televisionCode}}/update/status?status=ACTIVE",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"{{televisionCode}}",
-										"update",
-										"status"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "ACTIVE"
-										}
-									]
-								},
-								"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
 							},
 							"response": []
 						},
@@ -2296,7 +2282,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{televisionCode}}\",\r\n    \"shortDescription\": \"TELEVISION product version description\",\r\n    \"currentVersion\": {{televisionVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for TELEVISION product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-12-25\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{televisionCode}}\",\r\n    \"shortDescription\": \"Television Product version\",\r\n    \"currentVersion\": {{televisionVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for TELEVISION product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-12-25\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2304,14 +2290,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"raw": "{{opencell.url}}/catalog/products/productVersions",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion"
+										"products",
+										"productVersions"
 									]
 								},
 								"description": "create a product version if it doesn't exist or update an existing product line"
@@ -2332,28 +2318,57 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion/{{televisionCode}}/{{televisionVersion}}?status=PUBLISHED",
+									"raw": "{{opencell.url}}/catalog/products/{{televisionCode}}/productVersions/{{televisionVersion}}/status/PUBLISHED",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
-										"productVersion",
+										"products",
 										"{{televisionCode}}",
-										"{{televisionVersion}}"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "PUBLISHED"
-										}
+										"productVersions",
+										"{{televisionVersion}}",
+										"status",
+										"PUBLISHED"
 									]
 								},
 								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+							},
+							"response": []
+						},
+						{
+							"name": "Activate TELEVISION Product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/products/{{televisionCode}}/status/ACTIVE",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"{{televisionCode}}",
+										"status",
+										"ACTIVE"
+									]
+								},
+								"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
 							},
 							"response": []
 						},
@@ -2374,19 +2389,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product?productCode={{televisionCode}}",
+									"raw": "{{opencell.url}}/catalog/products/{{televisionCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
-									],
-									"query": [
-										{
-											"key": "productCode",
-											"value": "{{televisionCode}}"
-										}
+										"products",
+										"{{televisionCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -2411,7 +2421,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{bouquetsAttribute}}\",\r\n    \"description\": \"This is bouquets attribute desc\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"Netflix\",\r\n        \"Canal\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
+									"raw": "{\r\n    \"code\": \"{{bouquetsAttribute}}\",\r\n    \"description\": \"Bouquets Attribute\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"Netflix\",\r\n        \"Canal\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2419,12 +2429,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/attribute",
+									"raw": "{{opencell.url}}/attributes",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"attribute"
+										"attributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -2482,7 +2492,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tvDecoderOffer}}\",\r\n    \"name\": \"tv decoder offer\",\r\n    \"description\": \"This the desc of TV and decoder offer\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{tvDecoderCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{tvDecoderOffer}}\",\r\n    \"name\": \"TV Decoder Offer\",\r\n    \"description\": \"TV And Decoder Offer\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{tvDecoderCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -2549,16 +2559,15 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n  \"targetAttributeValue\": \"SONY\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{televisionVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
+									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"TV Commerciale Rule\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n  \"targetAttributeValue\": \"SONY\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{televisionVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/",
+									"raw": "{{opencell.url}}/commercialRules",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
-										""
+										"commercialRules"
 									]
 								}
 							},
@@ -2615,16 +2624,15 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\r\n  \"code\": \"{{repCommercialRuleCode}}\",\r\n  \"description\": \"This is replacement commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"REPLACEMENT\",\r\n  \"attributeCode\":\"{{brandAttribute}}\",\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{tvDecoderVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",\r\n          \"attributeCode\": \"{{brandAttribute}}\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
+									"raw": "  {\r\n  \"code\": \"{{repCommercialRuleCode}}\",\r\n  \"description\": \"Replacement Commerciale Rule\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"REPLACEMENT\",\r\n  \"attributeCode\":\"{{brandAttribute}}\",\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{tvDecoderVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",\r\n          \"attributeCode\": \"{{brandAttribute}}\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule/",
+									"raw": "{{opencell.url}}/commercialRules",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule",
-										""
+										"commercialRules"
 									]
 								}
 							},
@@ -2636,18 +2644,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule?code={{tvCommercialRuleCode}}",
+									"raw": "{{opencell.url}}/commercialRules/{{tvCommercialRuleCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{tvCommercialRuleCode}}"
-										}
+										"commercialRules",
+										"{{tvCommercialRuleCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -2660,18 +2663,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/commercialRule?code={{repCommercialRuleCode}}",
+									"raw": "{{opencell.url}}/commercialRules/{{repCommercialRuleCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"commercialRule"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{repCommercialRuleCode}}"
-										}
+										"commercialRules",
+										"{{repCommercialRuleCode}}"
 									]
 								},
 								"description": "Retrieving a product with its code"
@@ -2679,7 +2677,7 @@
 							"response": []
 						},
 						{
-							"name": "List Products with Attributes",
+							"name": "List Offers with Attributes",
 							"event": [
 								{
 									"listen": "test",
@@ -2725,15 +2723,15 @@
 									"raw": "{\r\n    \"offerCode\": \"{{tvDecoderOffer}}\",\r\n    \"selectedProducts\": [\r\n        {\r\n            \"productCode\": \"{{televisionCode}}\"\r\n        },\r\n        {\r\n            \"productCode\": \"{{tvDecoderCode}}\",\r\n            \"selectedAttributes\": {\r\n                \"brand\": \"SONY\"\r\n            }\r\n        }\r\n    ],\r\n    \"customerContextDTO\": {\r\n        \"requestedTagTypes\": []\r\n    }\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/cpq/list",
+									"raw": "{{opencell.url}}/catalog/products/cpq/offers",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
+										"products",
 										"cpq",
-										"list"
+										"offers"
 									]
 								},
 								"description": "List Products with Attributes that Match The Quote Offer Context"
@@ -2766,7 +2764,7 @@
 					"name": "Catalog Browsing",
 					"item": [
 						{
-							"name": "List products w/ Customer & Commercial Rules",
+							"name": "List Offers w/ Customer & Commercial Rules",
 							"event": [
 								{
 									"listen": "test",
@@ -2812,15 +2810,15 @@
 									"raw": "{\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"selectedProducts\": [\r\n        {\r\n            \"productCode\": \"{{billingCycleAttribute}}\"\r\n        }\r\n    ],\r\n    \"customerContextDTO\": {\r\n        \"requestedTagTypes\": [\r\n            \"{{tagOneCode}}\"\r\n        ]\r\n    }\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/cpq/list",
+									"raw": "{{opencell.url}}/catalog/products/cpq/offers",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product",
+										"products",
 										"cpq",
-										"list"
+										"offers"
 									]
 								},
 								"description": "List products with the customer context and commercial Rules"
@@ -2929,7 +2927,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{ppmRcCode}}\",\n    \"eventCode\": \"{{recChargeTemplateCode}}\",\n    \"amountWithoutTax\": 100\n}",
+							"raw": "{\n    \"code\": \"{{ppmRcCode}}\",\n    \"eventCode\": \"{{recChargeTemplateCode}}\",\n    \"description\": \"Reccuring Charge Price Plan\",\n    \"amountWithoutTax\": 100\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3021,7 +3019,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"description\": \"This is the price plan description\",\n    \"amountWithoutTax\": 120\n}",
+							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"description\": \"OneShot Charge Price Plan\",\n    \"amountWithoutTax\": 120\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3197,7 +3195,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.collectionVariables.set(\"ppmRcVersion\",pm.response.json().pricePlanVersion.version);"
 								],
 								"type": "text/javascript"
 							}
@@ -3223,7 +3221,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2022-01-03\"\n    }\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Rec. Price Plan version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2022-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3277,7 +3275,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmOsCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"amountWithTax\": 100,\n    \"amountWithoutTax\": 90,\n    \"version\": {{ppmOsVersion}},\n    \"isMatrix\": false,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2023-01-03\"\n    }\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmOsCode}}\",\n    \"label\": \"OS Price Plan version\",\n    \"amountWithTax\": 100,\n    \"amountWithoutTax\": 90,\n    \"version\": {{ppmOsVersion}},\n    \"isMatrix\": false,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2023-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3319,17 +3317,17 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/duplicate/{{ppmOsCode}}/{{ppmOsVersion}}",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmOsCode}}/pricePlanMatrixVersions/{{ppmOsVersion}}/duplication",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixVersion",
-								"duplicate",
 								"{{ppmOsCode}}",
-								"{{ppmOsVersion}}"
+								"pricePlanMatrixVersions",
+								"{{ppmOsVersion}}",
+								"duplication"
 							]
 						}
 					},
@@ -3337,8 +3335,11 @@
 				},
 				{
 					"name": "List Price Plan Matrix Versions",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -3384,22 +3385,18 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmRcCode}}/{{ppmRcVersion}}?status=PUBLISHED",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/pricePlanMatrixVersions/{{ppmRcVersion}}/status/PUBLISHED",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixVersion",
 								"{{ppmRcCode}}",
-								"{{ppmRcVersion}}"
-							],
-							"query": [
-								{
-									"key": "status",
-									"value": "PUBLISHED"
-								}
+								"pricePlanMatrixVersions",
+								"{{ppmRcVersion}}",
+								"status",
+								"PUBLISHED"
 							]
 						}
 					},
@@ -3426,22 +3423,18 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmOsCode}}/{{ppmOsVersion}}?status=PUBLISHED",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmOsCode}}/pricePlanMatrixVersions/{{ppmOsVersion}}/status/PUBLISHED",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixVersion",
 								"{{ppmOsCode}}",
-								"{{ppmOsVersion}}"
-							],
-							"query": [
-								{
-									"key": "status",
-									"value": "PUBLISHED"
-								}
+								"pricePlanMatrixVersions",
+								"{{ppmOsVersion}}",
+								"status",
+								"PUBLISHED"
 							]
 						}
 					},
@@ -3480,7 +3473,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{billingCycleColumnCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"elValue\": \"elValue\",\n    \"isRange\": false,\n    \"position\": 3\n}",
+							"raw": "{\n    \"code\": \"{{billingCycleColumnCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"elValue\": \"elValue\",\n    \"isRange\": false,\n    \"position\": 3\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3488,14 +3481,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/pricePlanMatrixVersions/{{ppmRcVersion}}/pricePlanMatrixColumns",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixColumn"
+								"{{ppmRcCode}}",
+								"pricePlanMatrixVersions",
+								"{{ppmRcVersion}}",
+								"pricePlanMatrixColumns"
 							]
 						}
 					},
@@ -3522,20 +3518,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn?pricePlanMatrixColumnCode={{billingCycleColumnCode}}",
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumns/{{billingCycleColumnCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixColumn"
-							],
-							"query": [
-								{
-									"key": "pricePlanMatrixColumnCode",
-									"value": "{{billingCycleColumnCode}}"
-								}
+								"pricePlanMatrixColumns",
+								"{{billingCycleColumnCode}}"
 							]
 						}
 					},
@@ -3574,7 +3565,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{engagementColumnCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"elValue\": \"elValue\",\n    \"isRange\": false,\n    \"position\": 3\n}",
+							"raw": "{\n    \"code\": \"{{engagementColumnCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"elValue\": \"elValue\",\n    \"isRange\": false,\n    \"position\": 3\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3582,14 +3573,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/pricePlanMatrixVersions/{{ppmRcVersion}}/pricePlanMatrixColumns",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixColumn"
+								"{{ppmRcCode}}",
+								"pricePlanMatrixVersions",
+								"{{ppmRcVersion}}",
+								"pricePlanMatrixColumns"
 							]
 						}
 					},
@@ -3616,33 +3610,28 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn?pricePlanMatrixColumnCode={{engagementColumnCode}}",
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumns/{{engagementColumnCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixColumn"
-							],
-							"query": [
-								{
-									"key": "pricePlanMatrixColumnCode",
-									"value": "{{engagementColumnCode}}"
-								}
+								"pricePlanMatrixColumns",
+								"{{engagementColumnCode}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create Price Plan Matrix Line (Monthly 24)",
+					"name": "Create Price Plan Matrix Lines",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.collectionVariables.set(\"ppmLineM24Id\", pm.response.json().pricePlanVersion.id);"
 								],
 								"type": "text/javascript"
 							}
@@ -3668,7 +3657,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 24,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 24\n        }\n    ]\n}",
+							"raw": "{\n    \"pricePlanMatrixLines\": [\n        {\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n                    \"stringValue\": \"Monthly\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n                    \"longValue\": 24\n                }\n            ],\n            \"pricetWithoutTax\": 30,\n            \"priority\": 1000\n        },\n        {\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n                    \"stringValue\": \"Monthly\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n                    \"longValue\": 12\n                }\n            ],\n            \"pricetWithoutTax\": 15,\n            \"priority\": 1001\n        },\n        {\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n                    \"stringValue\": \"Annually\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n                    \"longValue\": 24\n                }\n            ],\n            \"pricetWithoutTax\": 18,\n            \"priority\": 1002\n        },\n        {\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n                    \"stringValue\": \"Annually\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n                    \"longValue\": 12\n                }\n            ],\n            \"pricetWithoutTax\": 13,\n            \"priority\": 1003\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3676,21 +3665,24 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/pricePlanMatrixVersions/{{ppmRcVersion}}/pricePlanMatrixLines",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"addPricePlanMatrixLine"
+								"{{ppmRcCode}}",
+								"pricePlanMatrixVersions",
+								"{{ppmRcVersion}}",
+								"pricePlanMatrixLines"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Read Price Plan Matrix Line (Monthly 24)",
+					"name": "Read Price Plan Matrix Lines",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -3710,144 +3702,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixLine/{{ppmLineM24Id}}",
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixLines/{{ppmLineM24Id}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"pricePlanMatrixLine",
+								"pricePlanMatrixLines",
 								"{{ppmLineM24Id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Price Plan Matrix Line (Monthly 12)",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 15,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 12\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"addPricePlanMatrixLine"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Price Plan Matrix Line (Annually 24)",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 18,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n        \"longValue\": 24\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"addPricePlanMatrixLine"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Price Plan Matrix Line (Annually 12)",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 13,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n        \"longValue\": 12\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"addPricePlanMatrixLine"
 							]
 						}
 					},
@@ -3875,7 +3738,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"pricePlanMatrixCode\": \"{{ppmOsCode}}\",\r\n    \"pricePlanMatrixVersion\": 1,\r\n    \"pricePlanMatrixLines\": [\r\n        {\r\n            \"pricetWithoutTax\": 60,\r\n            \"priority\": 1,\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 10\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"pricetWithoutTax\": 80,\r\n            \"priority\": 1,\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 20\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"pricePlanMatrixLines\": [\r\n        {\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 48\r\n                }\r\n            ],\r\n            \"pricetWithoutTax\": 30,\r\n            \"priority\": 100\r\n        },\r\n        {\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 48\r\n                }\r\n            ],\r\n            \"pricetWithoutTax\": 55,\r\n            \"priority\": 101\r\n        },\r\n        {\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 12\r\n                }\r\n            ],\r\n            \"pricetWithoutTax\": 25,\r\n            \"priority\": 102\r\n        },\r\n        {\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 12\r\n                }\r\n            ],\r\n            \"pricetWithoutTax\": 15,\r\n            \"priority\": 103\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3883,14 +3746,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/updatePricePlanMatrixLines",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmOsCode}}/pricePlanMatrixVersions/{{ppmOsVersion}}/pricePlanMatrixLines",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"updatePricePlanMatrixLines"
+								"{{ppmOsCode}}",
+								"pricePlanMatrixVersions",
+								"{{ppmOsVersion}}",
+								"pricePlanMatrixLines"
 							]
 						}
 					},
@@ -3919,7 +3785,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{contractCode}}\",\r\n    \"description\": \"This is the contract test description\",\r\n    \"contractAccountLevel\": \"BILLING_ACCOUNT\",\r\n    \"accountCode\": \"{{billableAccountCode}}\",\r\n    \"contractDate\": \"2021-03-03\",\r\n    \"beginDate\": \"2021-01-01\",\r\n    \"endDate\": \"2021-12-31\"\r\n}",
+							"raw": "{\r\n    \"code\": \"{{contractCode}}\",\r\n    \"description\": \"Default Contract\",\r\n    \"contractAccountLevel\": \"BILLING_ACCOUNT\",\r\n    \"accountCode\": \"{{billableAccountCode}}\",\r\n    \"contractDate\": \"2021-03-03\",\r\n    \"beginDate\": \"2021-01-01\",\r\n    \"endDate\": \"2021-12-31\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4000,7 +3866,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{contractLineCode}}\",\r\n    \"description\": \"The contract line test description\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"chargeTemplateCode\": \"{{recChargeTemplateCode}}\",\r\n    \"contractRateType\": \"FIXED\",\r\n    \"amountWithoutTax\": 155\r\n}",
+							"raw": "{\r\n    \"code\": \"{{contractLineCode}}\",\r\n    \"description\": \"Default Contract line\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"chargeTemplateCode\": \"{{recChargeTemplateCode}}\",\r\n    \"contractRateType\": \"FIXED\",\r\n    \"amountWithoutTax\": 155\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4083,7 +3949,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{quoteCode}}\",\r\n    \"description\": \"This is a quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"applicantAccountCode\": \"{{billableAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"quoteVersion\": {\r\n        \"shortDescription\": \"Quote version description\",\r\n        \"quoteCode\": \"{{quoteCode}}\",\r\n        \"currentVersion\": {{QuoteVersion}},\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{quoteCode}}\",\r\n    \"description\": \"Default Quote\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"applicantAccountCode\": \"{{billableAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"quoteVersion\": {\r\n        \"quoteCode\": \"{{quoteCode}}\",\r\n        \"shortDescription\": \"Default Quote version\",\r\n        \"currentVersion\": {{QuoteVersion}},\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4098,40 +3964,6 @@
 							"path": [
 								"cpq",
 								"quotes"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish The Quote Version",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/status/PUBLISHED",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"quotes",
-								"quoteVersions",
-								"{{quoteCode}}",
-								"{{QuoteVersion}}",
-								"status",
-								"PUBLISHED"
 							]
 						}
 					},
@@ -4158,8 +3990,11 @@
 				},
 				{
 					"name": "Read Quotes with Criteria",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -4171,14 +4006,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/cpq/quotes/filtering",
+							"raw": "{{opencell.url}}/cpq/quotes",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"cpq",
-								"quotes",
-								"filtering"
+								"quotes"
 							]
 						}
 					},
@@ -4217,7 +4051,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{standardArticleCode}}\",\r\n    \"description\": \"This is the act-std accounting article desc\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{standardArticleCode}}\",\r\n    \"description\": \"Standard Accounting Article\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4225,13 +4059,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/article",
+							"raw": "{{opencell.url}}/v2/articles",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
-								"article"
+								"articles"
 							]
 						}
 					},
@@ -4270,7 +4104,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{accountingArticleCode}}\",\r\n    \"description\": \"This is the accounting article desc\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{accountingArticleCode}}\",\r\n    \"description\": \"New Accounting Article\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4278,13 +4112,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/article",
+							"raw": "{{opencell.url}}/v2/articles",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
-								"article"
+								"articles"
 							]
 						}
 					},
@@ -4292,6 +4126,62 @@
 				},
 				{
 					"name": "Read The Accounting Article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"accArticleId\",pm.response.json().data[0].id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filters\": {}\r\n}\r\n\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/articles",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update The Accounting Article",
 					"event": [
 						{
 							"listen": "test",
@@ -4319,17 +4209,26 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{accountingArticleCode}}\",\r\n    \"description\": \"The New Accounting Article\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/article/{{accountingArticleCode}}",
+							"raw": "{{opencell.url}}/v2/articles/{{accArticleId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
-								"article",
-								"{{accountingArticleCode}}"
+								"articles",
+								"{{accArticleId}}"
 							]
 						}
 					},
@@ -4368,7 +4267,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{articleMappingCode}}\",\r\n    \"description\": \"This is the article mapping desc\"\r\n}",
+							"raw": "{\r\n    \"code\": \"{{articleMappingCode}}\",\r\n    \"description\": \"Article Mapping\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4418,13 +4317,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/articleMappingLine",
+							"raw": "{{opencell.url}}/v2/articleMappingLines",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
-								"articleMappingLine"
+								"articleMappingLines"
 							]
 						}
 					},
@@ -4432,6 +4331,9 @@
 				},
 				{
 					"name": "List Accounting Articles by Tax Class",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -4448,7 +4350,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -4460,14 +4362,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/article/list",
+							"raw": "{{opencell.url}}/v2/articles",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
-								"article",
-								"list"
+								"articles"
 							]
 						}
 					},
@@ -4491,7 +4392,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"discount plan test description\",  \r\n  \"startDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"Default Discount Plan\",  \r\n  \"startDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4530,7 +4431,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 1\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4593,13 +4494,48 @@
 					"response": []
 				},
 				{
-					"name": "Create Monthly Quote Offer",
+					"name": "Read The Discount Plan Item",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/discountPlanItem?discountPlanItemCode={{discountPlanCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"discountPlanItem"
+							],
+							"query": [
+								{
+									"key": "discountPlanItemCode",
+									"value": "{{discountPlanCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Monthly Quote Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"offerOneId}\",pm.response.json().quoteOfferDto.quoteOfferId);"
 								],
 								"type": "text/javascript"
 							}
@@ -4632,7 +4568,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Annually Quote Offer",
+					"name": "Publish The Quote Version",
 					"event": [
 						{
 							"listen": "test",
@@ -4645,26 +4581,21 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"offerId\": {{offerOneId}},\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{opencell.url}}/cpq/quotes/quoteItems",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/status/PUBLISHED",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"cpq",
 								"quotes",
-								"quoteItems"
+								"quoteVersions",
+								"{{quoteCode}}",
+								"{{QuoteVersion}}",
+								"status",
+								"PUBLISHED"
 							]
 						}
 					},
@@ -4702,6 +4633,45 @@
 					"response": []
 				},
 				{
+					"name": "Create Annually Quote Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"offerTwoId}\",pm.response.json().quoteOfferDto.quoteOfferId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"offerId\": {{offerOneId}},\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"quotes",
+								"quoteItems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Read Annually Quote Offer",
 					"event": [
 						{
@@ -4733,7 +4703,7 @@
 					"response": []
 				},
 				{
-					"name": "Read Products w/ Attributes & Quote Offer Context",
+					"name": "Read Offers w/ Attributes & Quote Offer Context",
 					"event": [
 						{
 							"listen": "test",
@@ -4779,22 +4749,22 @@
 							"raw": "{\r\n    \"offerCode\":\"{{offerTemplateCode}}\", \r\n    \r\n    \"selectedProducts\": [\r\n        \r\n        {\r\n        \"productCode\":\"{{tvDecoderCode}}\",\r\n        \"selectedAttributes\": {\r\n        \"brand\":\"SONY\"\r\n      }\r\n        }\r\n        \r\n        ] ,\r\n    \"customerContextDTO\": {\r\n    \"requestedTagTypes\":[]\r\n    }\r\n\r\n} \r\n\r\n"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"raw": "{{opencell.url}}/catalog/products/cpq/offers",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
-								"product",
+								"products",
 								"cpq",
-								"list"
+								"offers"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Read Products w/ Commercial Rule Replacement & Quote Offer Context",
+					"name": "Read Offers w/ Commercial Rule Replacement & Quote Offer Context",
 					"event": [
 						{
 							"listen": "test",
@@ -4840,15 +4810,15 @@
 							"raw": "{\r\n    \"offerCode\":\"{{offerTemplateCode}}\", \r\n    \r\n    \"selectedProducts\": [\r\n        \r\n        {\r\n        \"productCode\":\"{{tvDecoderCode}}\",\r\n        \"selectedAttributes\": {\r\n        \"brand\":\"SONY\"\r\n      }\r\n        }\r\n        \r\n        ] ,\r\n    \"customerContextDTO\": {\r\n    \"requestedTagTypes\":[]\r\n    }\r\n\r\n} \r\n\r\n"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"raw": "{{opencell.url}}/catalog/products/cpq/offers",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
-								"product",
+								"products",
 								"cpq",
-								"list"
+								"offers"
 							]
 						}
 					},
@@ -4897,12 +4867,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{opencell.url}}/commercialRule/groupedAttributeRules?groupedAttributeCode={{tvGroupedAttributeCode}}&productCode={{tvDecoderCode}}",
+							"raw": "{{opencell.url}}/commercialRules/groupedAttributeRules?groupedAttributeCode={{tvGroupedAttributeCode}}&productCode={{tvDecoderCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialRule",
+								"commercialRules",
 								"groupedAttributeRules"
 							],
 							"query": [
@@ -5077,49 +5047,6 @@
 					"response": []
 				},
 				{
-					"name": "Load All Product Prices",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"ppmCode\": \"{{ppmRcCode}}\",\n    \"ppmVersion\": {{ppmRcVersion}},\n    \"quoteProductId\": 1\n}\n\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/loadPrices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"loadPrices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Place The Order",
 					"event": [
 						{
@@ -5183,6 +5110,9 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -5199,7 +5129,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -5211,14 +5141,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/orderManagement/commercialOrders/list",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"orderManagement",
-								"commercialOrders",
-								"list"
+								"commercialOrders"
 							]
 						}
 					},
@@ -5323,7 +5252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{invoicePlanCode}}\",\n    \"description\": \"This is the invoicing plan test desc\"\n}",
+							"raw": "{\n    \"code\": \"{{invoicePlanCode}}\",\n    \"description\": \"Default Invoicing Plan\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5672,7 +5601,7 @@
 					"response": []
 				},
 				{
-					"name": "Execute Invoice XML Job",
+					"name": "Execute Invoice XML Job /!\\",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -5719,7 +5648,7 @@
 					"response": []
 				},
 				{
-					"name": "Execute Invoice PDF Job",
+					"name": "Execute Invoice PDF Job /!\\",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -5896,11 +5825,11 @@
 		},
 		{
 			"key": "productOneCode",
-			"value": "TEST_PRODUCT_1"
+			"value": "TEST_PRODUCT1"
 		},
 		{
 			"key": "productTwoCode",
-			"value": "TEST_PRODUCT_2"
+			"value": "TEST_PRODUCT2"
 		},
 		{
 			"key": "groupedAttributeCode",
@@ -5908,19 +5837,19 @@
 		},
 		{
 			"key": "tagTypeOneCode",
-			"value": "TEST_TAG_TYPE_1"
+			"value": "TEST_TAG_TYPE1"
 		},
 		{
 			"key": "tagTypeTwoCode",
-			"value": "TEST_TAG_TYPE_2"
+			"value": "TEST_TAG_TYPE2"
 		},
 		{
 			"key": "tagOneCode",
-			"value": "TEST_TAG_1"
+			"value": "TEST_TAG1"
 		},
 		{
 			"key": "tagTwoCode",
-			"value": "TEST_TAG_2"
+			"value": "TEST_TAG2"
 		},
 		{
 			"key": "sellerCode",
@@ -5928,7 +5857,7 @@
 		},
 		{
 			"key": "recChargeTemplateCode",
-			"value": "REC_CH_TEMPLATE"
+			"value": "TEST_REC_CH_TEMPLATE"
 		},
 		{
 			"key": "billableAccountCode",
@@ -5944,19 +5873,19 @@
 		},
 		{
 			"key": "billingCycleAttribute",
-			"value": "BILLING_CYCLE_ATTRIBUTE"
+			"value": "TEST_BILLING_CYCLE_ATT1"
 		},
 		{
 			"key": "billingCycleAttributeTwo",
-			"value": "BILLING_CYCLE_ATTRIBUTE_2"
+			"value": "TEST_BILLING_CYCLE_ATT2"
 		},
 		{
 			"key": "engagementAttributeCode",
-			"value": "ENGAGEMENT_DURATION_ATTRIBUTE"
+			"value": "TEST_ENG_DURATION_ATT1"
 		},
 		{
 			"key": "engagementAttributeTwo",
-			"value": "ENGAGEMENT_DURATION_ATTRIBUTE_2"
+			"value": "TEST_ENG_DURATION_ATT2"
 		},
 		{
 			"key": "billingCycleCode",
@@ -5964,7 +5893,7 @@
 		},
 		{
 			"key": "offerTemplateCode",
-			"value": "OF_CLASSIC_COMMISSION"
+			"value": "CLASSIC_COMMISSION_OFFER"
 		},
 		{
 			"key": "ppmRcCode",
@@ -5976,11 +5905,11 @@
 		},
 		{
 			"key": "ppmColumnCode",
-			"value": "PRICE_PLAN_COLUMN"
+			"value": "TEST_PRICE_PLAN_COL"
 		},
 		{
 			"key": "accountingArticleCode",
-			"value": "ACCOUNTING_ARTICLE"
+			"value": "TEST_ACCOUNTING_ARTICLE"
 		},
 		{
 			"key": "discountPlanCode",
@@ -5988,51 +5917,47 @@
 		},
 		{
 			"key": "engagementColumnCode",
-			"value": "ENGAGEMENT_DURATION_COLUMN"
+			"value": "TEST_ENG_DURATION_COL"
 		},
 		{
 			"key": "billingCycleColumnCode",
-			"value": "BILLING_CYCLE_COLUMN"
+			"value": "TEST_BILLING_CYCLE_COL"
 		},
 		{
 			"key": "commercialRuleOneCode",
-			"value": "COMMERCIAL_RULE_1"
+			"value": "TEST_COMM_RULE1"
 		},
 		{
 			"key": "commercialRuleTwoCode",
-			"value": "COMMERCIAL_RULE_2"
+			"value": "TEST_COMM_RULE2"
 		},
 		{
 			"key": "commercialRuleThreeCode",
-			"value": "COMMERCIAL_RULE_3"
-		},
-		{
-			"key": "tagTwoCode",
-			"value": "TEST_TAG_2"
+			"value": "TEST_COMM_RULE3"
 		},
 		{
 			"key": "tvDecoderCode",
-			"value": "TV_DECODER"
+			"value": "TEST_TV_DECODER"
 		},
 		{
 			"key": "tvGroupedAttributeCode",
-			"value": "TV_GR_ATTRIBUTE"
+			"value": "TEST_TV_GR_ATT"
 		},
 		{
 			"key": "setupPriceAttribute",
-			"value": "SETUP_PRICE_ATTRIBUTE"
+			"value": "TEST_SETUP_PRICE_ATT"
 		},
 		{
 			"key": "brandAttribute",
-			"value": "BRAND_ATTRIBUTE"
+			"value": "TEST_BRAND_ATT"
 		},
 		{
 			"key": "televisionCode",
-			"value": "TELEVISION"
+			"value": "TEST_TELEVISION"
 		},
 		{
 			"key": "bouquetsAttribute",
-			"value": "BOUQUETS"
+			"value": "TEST_BOUQUETS_ATT"
 		},
 		{
 			"key": "tvDecoderOffer",
@@ -6040,11 +5965,11 @@
 		},
 		{
 			"key": "tvCommercialRuleCode",
-			"value": "TV_COMMERCIAL_RULE"
+			"value": "TEST_TV_COMM_RULE"
 		},
 		{
 			"key": "repCommercialRuleCode",
-			"value": "REPLACEMENT_COMMERCIAL_RULE"
+			"value": "REP_COMM_RULE"
 		},
 		{
 			"key": "orderTypeCode",
@@ -6052,27 +5977,27 @@
 		},
 		{
 			"key": "tagTypeVipCode",
-			"value": "TEST_TAG_TYPE_VIP"
+			"value": "VIP_TAG_TYPE"
 		},
 		{
 			"key": "tagVipCode",
-			"value": "TEST_TAG_VIP"
+			"value": "TEST_VIP_TAG"
 		},
 		{
 			"key": "mediaOneCode",
-			"value": "TEST_MEDIA_1"
+			"value": "TEST_MEDIA1"
 		},
 		{
 			"key": "mediaOneName",
-			"value": "MEDIA_NAME_1"
+			"value": "TEST_MEDIA1NAME"
 		},
 		{
 			"key": "mediaTwoCode",
-			"value": "TEST_MEDIA_2"
+			"value": "TEST_MEDIA2"
 		},
 		{
 			"key": "mediaTwoName",
-			"value": "MEDIA_NAME_2"
+			"value": "TEST_MEDIA2NAME"
 		},
 		{
 			"key": "contractAccountLevel",
@@ -6080,7 +6005,7 @@
 		},
 		{
 			"key": "oneShotTemplateCode",
-			"value": "OS_CH_TEMPLATE"
+			"value": "TEST_OS_CH_TEMPLATE"
 		},
 		{
 			"key": "ppmOsCode",
@@ -6088,19 +6013,19 @@
 		},
 		{
 			"key": "invoicePlanCode",
-			"value": "INVOICE_PLAN_CODE"
+			"value": "TEST_INVOICE_PLAN"
 		},
 		{
 			"key": "advancement30Code",
-			"value": "TEST_ADVANCEMENT_30"
+			"value": "TEST_ADVANCEMENT30"
 		},
 		{
 			"key": "advancement70Code",
-			"value": "TEST_ADVANCEMENT_70"
+			"value": "TEST_ADVANCEMENT70"
 		},
 		{
 			"key": "standardArticleCode",
-			"value": "ACT-STD"
+			"value": "TEST_ACT-STD"
 		},
 		{
 			"key": "articleMappingCode",
@@ -6116,7 +6041,7 @@
 		},
 		{
 			"key": "orderTwoNumber",
-			"value": "000000002"
+			"value": "000000001"
 		},
 		{
 			"key": "productOneVersion",
@@ -6201,6 +6126,18 @@
 		{
 			"key": "orderOfferId",
 			"value": "5"
+		},
+		{
+			"key": "offerTwoId}",
+			"value": ""
+		},
+		{
+			"key": "offerOneId}",
+			"value": ""
+		},
+		{
+			"key": "accArticleId",
+			"value": ""
 		}
 	]
 }

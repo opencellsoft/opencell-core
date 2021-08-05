@@ -123,7 +123,8 @@ import org.meveo.model.shared.DateUtils;
                 + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
-        @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED")
+        @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
+        @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -607,6 +608,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
   	@JoinColumn(name = "commercial_order_id", referencedColumnName = "id")
   	private CommercialOrder commercialOrder;
 
+    @Transient
+    private List<InvoiceLine> draftInvoiceLines = new ArrayList<>();
+
 
     public Invoice() {
 	}
@@ -635,6 +639,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.cfValues = copy.cfValues;
 		this.cfAccumulatedValues = copy.cfAccumulatedValues;
 		this.seller = copy.seller;
+		this.invoiceType = copy.invoiceType;
 
 		this.quote = null;
 		this.commercialOrder = null;
@@ -1551,8 +1556,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setCommercialOrder(CommercialOrder commercialOrder) {
 		this.commercialOrder = commercialOrder;
 	}
-	
-	
-    
-    
+
+
+    public List<InvoiceLine> getDraftInvoiceLines() {
+        return draftInvoiceLines;
+    }
+
+    public void setDraftInvoiceLines(List<InvoiceLine> draftInvoiceLines) {
+        this.draftInvoiceLines = draftInvoiceLines;
+    }
 }

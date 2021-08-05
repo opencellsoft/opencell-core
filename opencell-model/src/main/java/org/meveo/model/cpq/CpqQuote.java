@@ -2,15 +2,20 @@ package org.meveo.model.cpq;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -222,6 +227,10 @@ public class CpqQuote extends BusinessEntity  {
 	@Column(name = "pdf_filename", length = 255)
 	@Size(max = 255)
 	private String pdfFilename;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "cpq_quote_media", joinColumns = @JoinColumn(name = "quote_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+	private List<Media> medias = new ArrayList<Media>();
 	    
 	/**
 	 * @return the seller
@@ -413,7 +422,8 @@ public class CpqQuote extends BusinessEntity  {
 	 * @param status the status to set
 	 */
 	public void setStatus(String status) {
-		this.previousStatus = this.status;
+		if(!status.equals(this.status))
+			this.previousStatus = this.status;
 		this.status = status;
 	}
 	/**
@@ -498,6 +508,20 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setPreviousStatus(String previousStatus) {
 		this.previousStatus = previousStatus;
+	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
 	}
 
 	

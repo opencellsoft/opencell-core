@@ -30,6 +30,8 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.CommercialRuleHeaderService;
+import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductService;
@@ -63,6 +65,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	
     @Inject
     private MediaService mediaService;
+
+    @Inject
+    private CommercialRuleLineService commercialRuleLineService;
 	
 
 	@Override
@@ -259,7 +264,17 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(productVersion==null) {
 			throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentProductVersion,"currentVersion");
 		}
-       GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,false);
+       GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,true);
+		getProductVersionResponse.getAttributes()
+				.stream()
+				.forEach(
+						att -> {
+							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
+							if (sourceRules != null && !sourceRules.isEmpty()) {
+								att.setRuled(true);
+							}
+						}
+				);
 		
 		GetProductDtoResponse result = new GetProductDtoResponse(product);   
 		result.setCurrentProductVersion(getProductVersionResponse);

@@ -141,6 +141,9 @@ public class Attribute extends EnableBusinessCFEntity{
 	@Column(name = "default_value", length = 255)
 	private String defaultValue;
 
+	@ManyToMany(mappedBy = "attributes")
+	private List<GroupedAttributes> groupedAttributes;
+
     public Attribute(){
 
 	}
@@ -345,5 +348,13 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	public List<GroupedAttributes> getGroupedAttributes() {
+		return groupedAttributes;
+	}
+
+	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
 	}
 }

@@ -790,7 +790,7 @@ public class QueryBuilder {
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom) {
-        return addCriterionDateRangeFromTruncatedToDay(field, valueFrom, false);
+        return addCriterionDateRangeFromTruncatedToDay(field, valueFrom, false, false);
     }
 
     /**
@@ -801,12 +801,15 @@ public class QueryBuilder {
      * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder.
      */
-    public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom, boolean isFieldValueOptional) {
+    public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom, boolean isFieldValueOptional, boolean exclusive) {
         if (StringUtils.isBlank(valueFrom)) {
             return this;
         }
         Calendar calFrom = Calendar.getInstance();
         calFrom.setTime(valueFrom);
+        if (exclusive) {
+            calFrom.add(Calendar.DATE, 1);
+        }
         calFrom.set(Calendar.HOUR_OF_DAY, 0);
         calFrom.set(Calendar.MINUTE, 0);
         calFrom.set(Calendar.SECOND, 0);
@@ -977,11 +980,22 @@ public class QueryBuilder {
     public QueryBuilder addValueIsGreaterThanField(String field, Object value, boolean optional) {
 
         if (value instanceof Double) {
+            addCriterion(field, " > ", BigDecimal.valueOf((Double) value), false, optional);
+        } else if (value instanceof Number) {
+            addCriterion(field, " > ", value, false, optional);
+        } else if (value instanceof Date) {
+            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional, true);
+        }
+        return this;
+    }
+
+    public QueryBuilder addValueIsGreaterThanOrEqualField(String field, Object value, boolean optional) {
+        if (value instanceof Double) {
             addCriterion(field, " >= ", BigDecimal.valueOf((Double) value), false, optional);
         } else if (value instanceof Number) {
             addCriterion(field, " >= ", value, false, optional);
         } else if (value instanceof Date) {
-            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional);
+            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional,false);
         }
         return this;
     }

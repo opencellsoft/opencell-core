@@ -1,29 +1,18 @@
 package org.meveo.apiv2.billing.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.apiv2.billing.BasicInvoice;
-import org.meveo.apiv2.billing.ImmutableFile;
-import org.meveo.apiv2.billing.ImmutableInvoice;
-import org.meveo.apiv2.billing.ImmutableInvoices;
-import org.meveo.apiv2.billing.InvoiceInput;
-import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
-import org.meveo.apiv2.billing.InvoiceLinesToRemove;
-import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
@@ -34,7 +23,6 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
-	
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	
@@ -239,4 +227,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
     	
         return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResource(invoiceApiService.duplicate(invoice)))).build();
     }
+
+	@Override
+	public Response generate(GenerateInvoiceInput input) {
+		GenerateInvoiceRequestDto invoiceRequest = invoiceMapper.toGenerateInvoiceRequestDto(input);
+		List<GenerateInvoiceResult> invoices = invoiceApiService.generate(invoiceRequest, input.getIsDraft()).get();
+		return Response.ok().entity(invoices).build();
+	}
 }

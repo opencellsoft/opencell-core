@@ -18,7 +18,10 @@
 
 package org.meveo.apiv2.ordering.resource.mappers;
 
+import static java.lang.Boolean.FALSE;
+import static org.junit.Assert.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -31,15 +34,17 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.meveo.apiv2.billing.ImmutableInvoice;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.Invoice;
 
 public class InvoiceMapperTest {
-	
 
     private Random random = new Random();
+
+	private InvoiceMapper invoiceMapper = new InvoiceMapper();
  
 	public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
 		T instance = null;
@@ -60,9 +65,8 @@ public class InvoiceMapperTest {
 			}
 			instance =  (T)build.invoke(builder);
 		} else {
-			final Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
-			if(constructors!=null && constructors.length>0) {
-				final Constructor<T> constructor = constructors[0];
+			final Constructor<T> constructor = clazz.getConstructor();
+			if(constructor!=null) {
 				Object[] cargs = new Object[constructor.getParameterCount()];
 				instance = constructor.newInstance(cargs);
 				for (Field field : clazz.getDeclaredFields()) {
@@ -112,7 +116,6 @@ public class InvoiceMapperTest {
     @Test
 	public void test_immutable_to_entity_init_mapping() throws Exception {
 		ImmutableInvoice resource = instantiateRandomObject(ImmutableInvoice.class, true);
-		InvoiceMapper invoiceMapper = new InvoiceMapper();
 		Invoice entity = invoiceMapper.toEntity(resource);
 		assertInvoiceAndResourceAreEquals(resource, entity);
 		
@@ -120,7 +123,6 @@ public class InvoiceMapperTest {
 
     @Test
 	public void test_entity_to_immutable_init_mapping() throws Exception {
-		InvoiceMapper invoiceMapper = new InvoiceMapper();
 		Invoice entity = instantiateRandomObject(Invoice.class, true);
 		org.meveo.apiv2.billing.Invoice resource = invoiceMapper.toResource(entity);
 		
@@ -168,6 +170,45 @@ public class InvoiceMapperTest {
 		assertThat(resource.getXmlDate()).isEqualTo(entity.getXmlDate());
 		assertThat(resource.getXmlFilename()).isEqualTo(entity.getXmlFilename());
 	}
-    
 
+	@Test
+	public void shouldReturnGenerateInvoiceRequestDto() {
+		GenerateInvoiceInput invoiceInput = ImmutableGenerateInvoiceInput.builder()
+				.billingAccountCode("code")
+				.invoicingDate(new Date())
+				.targetType("BILLINGACCOUNT")
+				.isDraft(FALSE)
+				.build();
+
+		GenerateInvoiceRequestDto generateInvoiceRequest = invoiceMapper.toGenerateInvoiceRequestDto(invoiceInput);
+
+		assertEquals("code", generateInvoiceRequest.getBillingAccountCode());
+		assertEquals("BILLINGACCOUNT", generateInvoiceRequest.getTargetType());
+		assertEquals(FALSE, generateInvoiceRequest.getGeneratePDF());
+		assertEquals(FALSE, generateInvoiceRequest.getGenerateXML());
+		assertEquals(FALSE, generateInvoiceRequest.getGenerateAO());
+	}
+
+	@Test
+	public void shouldCreateGenerateInvoiceResult() {
+		Invoice invoice = new Invoice();
+		invoice.setId(1L);
+		invoice.setAmountTax(new BigDecimal(10l));
+		invoice.setAmount(new BigDecimal(20l));
+		invoice.setAmountWithoutTax(new BigDecimal(10l));
+		invoice.setAmountWithTax(new BigDecimal(20l));
+		invoice.setInvoiceNumber("INV_122222");
+		invoice.setTemporaryInvoiceNumber("TMP_122222");
+		invoice.setDueDate(new Date());
+		invoice.setNetToPay(new BigDecimal(20l));
+		invoice.setStatus(VALIDATED);
+		invoice.setInvoiceDate(new Date());
+
+		GenerateInvoiceResult result = invoiceMapper.toGenerateInvoiceResult(invoice, "COM", 1L);
+
+		assertEquals("COM", result.getInvoiceTypeCode());
+		assertEquals("INV_122222", result.getInvoiceNumber());
+		assertEquals(VALIDATED, result.getStatus());
+		assertEquals(new BigDecimal(20l), result.getAmount());
+	}
 }

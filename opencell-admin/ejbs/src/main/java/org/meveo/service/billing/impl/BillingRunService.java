@@ -17,6 +17,9 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.joining;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -159,6 +162,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    private  InvoiceLineService invoiceLineService;
 
     private static final  int rtPaginationSize = 30000;
 
@@ -633,10 +639,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
+            if(billingRun.isExceptionalBR() &&
+                    ((billingRun.getExceptionalILIds() != null && billingRun.getExceptionalILIds().isEmpty()) ||
+                            (billingRun.getExceptionalRTIds() != null && billingRun.getExceptionalRTIds().isEmpty()))) {
+                return EMPTY_LIST;
+            }
             if (billingRun.getExceptionalRTIds() != null && !billingRun.getExceptionalRTIds().isEmpty()) {
                 return (List<BillingAccount>) ratedTransactionService.getEntityManager()
                         .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
                         .setParameter("ids", billingRun.getExceptionalRTIds())
+                        .getResultList();
+            }
+            if (billingRun.getExceptionalILIds() != null && !billingRun.getExceptionalILIds().isEmpty()) {
+                return (List<BillingAccount>) invoiceLineService.getEntityManager()
+                        .createNamedQuery("InvoiceLine.BillingAccountByILIds")
+                        .setParameter("ids", billingRun.getExceptionalILIds())
                         .getResultList();
             }
             List<BillingAccount> result = new ArrayList<>();
@@ -741,7 +758,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
             for (IBillableEntity be :  billableEntities){
                 ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(),
-                        billingRun.isExceptionalBR() ? createRatedTransactionFilter(billingRun.getFilters()) : null, rtPaginationSize));
+                        billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
             }
         }
         return ratedTransactions;
@@ -1040,7 +1057,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         if(billingRun.isExceptionalBR()) {
             if(billingRun.getExceptionalRTIds().isEmpty()) {
-                return Collections.EMPTY_LIST;
+                return EMPTY_LIST;
             }
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.sumTotalInvoiceableByRtIdInBatch", AmountsToInvoice.class)
@@ -1358,8 +1375,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             try {
                 invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
-                        null, null, null, null,
-                        minAmountForAccounts, false, automaticInvoiceCheck, false);
+                        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
+                        null, null, null, minAmountForAccounts,
+                        false, automaticInvoiceCheck, false);
             } catch (Exception e1) {
                 log.error("Failed to create invoices for entity {}/{}",
                         entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
@@ -1369,17 +1387,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return new AsyncResult<>("OK");
     }
 
-    public Filter createRatedTransactionFilter(Map<String, String> filters) {
+    public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
         QueryBuilder queryBuilder;
-        if(filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        Filter filter = new Filter();
+        if(invoicingV2) {
+            filter.setPollingQuery("SELECT il from InvoiceLine il WHERE il.id in (" +
+                    billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
+                            .collect(joining(",")) + ")");
         } else {
-            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
-            queryBuilder = ratedTransactionService.getQuery(configuration);
+            Map<String, String> filters = billingRun.getFilters();
+            if(filters.containsKey("SQL")) {
+                queryBuilder = new QueryBuilder(filters.get("SQL"));
+            } else {
+                PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+                queryBuilder = ratedTransactionService.getQuery(configuration);
+            }
+            filter.setPollingQuery(buildPollingQuery(queryBuilder));
         }
-        Filter rtFilter = new Filter();
-        rtFilter.setPollingQuery(buildPollingQuery(queryBuilder));
-        return rtFilter;
+        return filter;
     }
 
     private String buildPollingQuery(QueryBuilder queryBuilder) {
