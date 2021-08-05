@@ -2269,16 +2269,22 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createILSection(Document doc, Invoice invoice, InvoiceLine invoiceLine, String invoiceDateFormat) {
         Element line = doc.createElement("line");
-        Date periodStartDateRT = invoiceLine.getValidity().getFrom();
-        Date periodEndDateRT = invoiceLine.getValidity().getTo();
-        line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
-        line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
+        Date periodStartDate = invoiceLine.getValidity().getFrom();
+        Date periodEndDate = invoiceLine.getValidity().getTo();
+        line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
+        line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
         line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
-        Element lebel = doc.createElement("label");
-        lebel.appendChild(doc.createTextNode(getDefaultIfNull(invoiceLine.getLabel(), "")));
-        line.appendChild(lebel);
+        Element label = doc.createElement("label");
+        label.appendChild(doc.createTextNode(getDefaultIfNull(invoiceLine.getLabel(), "")));
+        line.appendChild(label);
+        Element article = doc.createElement("article");
+        String articleCode = invoiceLine.getRatedTransactions().get(0).getCode();
+        article.appendChild(doc.createTextNode(getDefaultIfNull(articleCode, "")));
+        article.setAttribute("code", articleCode);
+        article.setAttribute("label", invoiceLine.getLabel());
+        line.appendChild(article);
 
         if (invoiceLine.getUnitPrice() != null) {
             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
@@ -2297,6 +2303,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element quantity = doc.createElement("quantity");
         Text quantityTxt = doc.createTextNode(invoiceLine.getQuantity() != null ? invoiceLine.getQuantity().toPlainString() : "");
         quantity.appendChild(quantityTxt);
+        Element unitPrice = doc.createElement("unitPrice");
+        Text unitPriceTxt = doc.createTextNode(invoiceLine.getUnitPrice() != null ? invoiceLine.getUnitPrice().toPlainString() : "");
+        unitPrice.appendChild(unitPriceTxt);
+        line.appendChild(unitPrice);
         line.appendChild(quantity);
         Element usageDate = doc.createElement("usageDate");
         Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoiceLine.getValueDate(), invoiceDateFormat));
