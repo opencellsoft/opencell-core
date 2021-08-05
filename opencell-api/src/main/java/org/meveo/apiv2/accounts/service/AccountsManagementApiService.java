@@ -176,7 +176,10 @@ public class AccountsManagementApiService {
             Long id = Long.parseLong(customerAccountCode);
             customerAccount = customerAccountService.findById(id, Arrays.asList("paymentMethods"));
             if (Objects.isNull(customerAccount)) {
-                throw new EntityDoesNotExistsException(CustomerAccount.class, id);
+                customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
+                if (Objects.isNull(customerAccount)) {
+                    throw new EntityDoesNotExistsException(CustomerAccount.class, id);
+                }
             }
         }catch (NumberFormatException e){
             customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
