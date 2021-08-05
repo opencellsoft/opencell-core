@@ -58,10 +58,9 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Override
     public Response delete(Long id) {
-        if (reportQueryApiService.delete(id).isEmpty()) {
-            throw new NotFoundException("The query with " + id + " does not exists");
-        }
-        return Response.ok().build();
+        ReportQuery reportQuery = reportQueryApiService.delete(id)
+                .orElseThrow(() -> new NotFoundException("The query with id " + id + " does not exists"));
+        return Response.ok("The query with name " + reportQuery.getCode() + " is successfully deleted").build();
     }
 
     @Override
