@@ -2476,6 +2476,7 @@
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="filters" type="text" />
+            <column name="invoice_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -14058,6 +14059,11 @@
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
     </changeSet>
+    
+    <changeSet id="rebuild-str-fk-1633" author="MohammedELAZZOUZI">
+    	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_billing_run" constraintName="fk__billing_billing_run__invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16154,6 +16160,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA" />
     <changeSet id="#INTRD-1441_20210728" author="TarikFA." />
     <changeSet id="#INTRD-1174_20210802" author="ZBariki" />
+    <changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

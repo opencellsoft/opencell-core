@@ -9543,5 +9543,13 @@ public class OrderAdvancement extends ModuleScript {
             <column name="sort_order" type="varchar(15)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI">
+    	<addColumn tableName="billing_billing_run">
+            <column name="invoice_type_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_billing_run" constraintName="fk__billing_billing_run__invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
 
 </databaseChangeLog>
