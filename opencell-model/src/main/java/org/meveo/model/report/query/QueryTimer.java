@@ -5,15 +5,10 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 
 @Embeddable
 public class QueryTimer {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2335885769252517249L;
-	
+
 	@Column(name = "year")
     private String year;
 
@@ -174,5 +169,4 @@ public class QueryTimer {
 	public void setEverySecond(boolean everySecond) {
 		this.everySecond = everySecond;
 	}
-
 }

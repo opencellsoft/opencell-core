@@ -26,11 +26,11 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,13 +86,13 @@ public class ReportQueryResourceImplTest {
                 .visibility(PUBLIC)
                 .build();
         Response response = reportQueryResource.createReportQuery(input);
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
         assertThat(response.getEntity(), instanceOf(ImmutableReportQuery.class));
         org.meveo.apiv2.report.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
         assertEquals(2, reportQuery.getFields().size());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionInCaseOfMissingAttributes() {
         ReportQueryInput input = builder()
                 .queryName("code")
@@ -106,7 +106,7 @@ public class ReportQueryResourceImplTest {
     @Test
     public void shouldDeleteCustomQuery() {
         Response response = reportQueryResource.delete(2L);
-        assertEquals(null, response);
+        assertEquals(200, response.getStatus());
     }
 
     @Test(expected = NotFoundException.class)
@@ -145,7 +145,7 @@ public class ReportQueryResourceImplTest {
     public void shouldReturnExecutionResult() {
         ReportQuery reportQuery = new ReportQuery();
         reportQuery.setTargetEntity("Invoice");
-        reportQuery.setFields(Arrays.asList("invoiceNumber","amountWithTax", "status"));
+        reportQuery.setFields(asList("invoiceNumber","amountWithTax", "status"));
         reportQuery.setVisibility(PRIVATE);
         reportQuery.setGeneratedQuery("SELECT a.invoiceNumber, a.amountWithTax, a.status FROM Invoice a");
         Map<String, Object> item = of("invoiceNumber", "INV_001",
@@ -157,7 +157,7 @@ public class ReportQueryResourceImplTest {
         Map<String, Object> item3 = of("invoiceNumber", "INV_003",
                 "amountWithTax", 30.0,
                 "status", "VALIDATED");
-        List<Object> executionResult = Arrays.asList(item, item2, item3);
+        List<Object> executionResult = asList(item, item2, item3);
 
         when(reportQueryApiService.execute(1L, false)).thenReturn(of(executionResult));
         Response response = reportQueryResource.execute(1L, false);
@@ -176,14 +176,14 @@ public class ReportQueryResourceImplTest {
     public void shouldReturnAsyncExecutionResult() {
         ReportQuery reportQuery = new ReportQuery();
         reportQuery.setTargetEntity("Invoice");
-        reportQuery.setFields(Arrays.asList("invoiceNumber","amountWithTax", "status"));
+        reportQuery.setFields(asList("invoiceNumber","amountWithTax", "status"));
         reportQuery.setVisibility(PRIVATE);
         reportQuery.setGeneratedQuery("SELECT a.invoiceNumber, a.amountWithTax, a.status FROM Invoice a");
 
         when(reportQueryApiService.execute(1L, true)).thenReturn(of("Accepted"));
         Response response = reportQueryResource.execute(1L, true);
 
-        assertEquals(202, response.getStatus());
+        assertEquals(200, response.getStatus());
         assertEquals("Execution request accepted", response.getEntity());
     }
 }

@@ -2365,7 +2365,7 @@ public class ValidateBRScript extends Script {
 
       </changeSet>
 
-    <changeSet id="#5921-2021-02-02_43" author="ZBariki">
+    <changeSet id="#5921-2021-02-02_43" author="ZBariki" failOnError="false">
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
@@ -3679,102 +3679,102 @@ public class ServiceTemplateToProductScript extends Script {
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-116"/>
+			<column name="id" valueNumeric="-216"/>
 			<column name="name" value="All queries visualization"/>
 			<column name="permission" value="all_queries_visualization"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-116" />
+			<column name="permission_id" valueNumeric="-216" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-117"/>
+			<column name="id" valueNumeric="-217"/>
 			<column name="name" value="Protected queries visualization"/>
 			<column name="permission" value="protected_queries_visualization"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-117" />
+			<column name="permission_id" valueNumeric="-217" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-118"/>
+			<column name="id" valueNumeric="-218"/>
 			<column name="name" value="Public queries visualization"/>
 			<column name="permission" value="public_queries_visualization"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-118" />
+			<column name="permission_id" valueNumeric="-218" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-119"/>
+			<column name="id" valueNumeric="-219"/>
 			<column name="name" value="All queries management"/>
 			<column name="permission" value="all_queries_management"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-119" />
+			<column name="permission_id" valueNumeric="-219" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-120"/>
+			<column name="id" valueNumeric="-220"/>
 			<column name="name" value="Protected queries management"/>
 			<column name="permission" value="protected_queries_management"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-120" />
+			<column name="permission_id" valueNumeric="-220" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-121"/>
+			<column name="id" valueNumeric="-221"/>
 			<column name="name" value="Public queries management"/>
 			<column name="permission" value="public_queries_management"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-121" />
+			<column name="permission_id" valueNumeric="-221" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-122"/>
+			<column name="id" valueNumeric="-222"/>
 			<column name="name" value="All queries execution"/>
 			<column name="permission" value="all_queries_execution"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-122" />
+			<column name="permission_id" valueNumeric="-222" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-123"/>
+			<column name="id" valueNumeric="-223"/>
 			<column name="name" value="Protected queries execution"/>
 			<column name="permission" value="protected_queries_execution"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-123" />
+			<column name="permission_id" valueNumeric="-223" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-124"/>
+			<column name="id" valueNumeric="-224"/>
 			<column name="name" value="Public queries execution"/>
 			<column name="permission" value="public_queries_execution"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-121" />
-			<column name="permission_id" valueNumeric="-124" />
+			<column name="permission_id" valueNumeric="-224" />
 		</insert>
 	</changeSet>
 	
@@ -3793,58 +3793,58 @@ public class ServiceTemplateToProductScript extends Script {
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-125"/>
+			<column name="id" valueNumeric="-225"/>
 			<column name="name" value="Protected queries visualization"/>
 			<column name="permission" value="protected_queries_visualization"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-122" />
-			<column name="permission_id" valueNumeric="-125" />
+			<column name="permission_id" valueNumeric="-225" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-126"/>
+			<column name="id" valueNumeric="-226"/>
 			<column name="name" value="Public queries visualization"/>
 			<column name="permission" value="public_queries_visualization"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-122" />
-			<column name="permission_id" valueNumeric="-126" />
+			<column name="permission_id" valueNumeric="-226" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-127"/>
+			<column name="id" valueNumeric="-227"/>
 			<column name="name" value="Public queries management"/>
 			<column name="permission" value="public_queries_management"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-122" />
-			<column name="permission_id" valueNumeric="-127" />
+			<column name="permission_id" valueNumeric="-227" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-128"/>
+			<column name="id" valueNumeric="-228"/>
 			<column name="name" value="Protected queries execution"/>
 			<column name="permission" value="protected_queries_execution"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-122" />
-			<column name="permission_id" valueNumeric="-128" />
+			<column name="permission_id" valueNumeric="-228" />
 		</insert>
 		
 		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-129"/>
+			<column name="id" valueNumeric="-229"/>
 			<column name="name" value="Public queries execution"/>
 			<column name="permission" value="public_queries_execution"/>
 		</insert>
 		
 		<insert tableName="adm_role_permission">
 			<column name="role_id" valueNumeric="-122" />
-			<column name="permission_id" valueNumeric="-129" />
+			<column name="permission_id" valueNumeric="-229" />
 		</insert>
 		
 	</changeSet>
@@ -3908,7 +3908,7 @@ Opencell team.
         </insert>
     </changeSet>
     
-    <changeSet id="#20210607_540_563" author="TarikFA.">
+    <changeSet id="#20210607_540_563" author="TarikFA." failOnError="false">
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-10'/>
         	<column name="version" valueNumeric="0" />
@@ -3920,6 +3920,21 @@ Opencell team.
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-1090_20210729" author="ZBariki">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="2021-07-29 00:04:19.913"/>
+            <column name="job_category" value="INVOICING"/>
+            <column name="job_template" value="XMLInvoiceGenerationJobV2"/>
+            <column name="code" value="XMLInvoiceGenerationJobV2"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+            <column name="timerentity_id" valueNumeric="-3"/>
+            <column name="uuid" value="XML_Invoice_Generation_Job_V2"/>
         </insert>
     </changeSet>
 		

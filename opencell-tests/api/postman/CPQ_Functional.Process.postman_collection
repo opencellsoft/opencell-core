@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "cf4ffb42-c021-4b93-94cd-6d28c2c01021",
+		"_postman_id": "72400996-34d1-49ac-8859-6afbcc8b95b3",
 		"name": "CPQ Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4431,7 +4431,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 1\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5041,45 +5041,6 @@
 								"generic",
 								"all",
 								"QuoteProduct"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Load All Product Prices /!\\",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/pricePlanMatrixVersions/{{ppmRcVersion}}/quoteProduct/{{quoteProduct}}/pricing",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"{{ppmRcCode}}",
-								"pricePlanMatrixVersions",
-								"{{ppmRcVersion}}",
-								"quoteProduct",
-								"{{quoteProduct}}",
-								"pricing"
 							]
 						}
 					},

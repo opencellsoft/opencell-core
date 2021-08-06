@@ -3,25 +3,36 @@
  */
 package org.meveo.apiv2.billing.service;
 
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.apiv2.billing.BasicInvoice;
-import org.meveo.apiv2.billing.ImmutableInvoiceLine;
-import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
-import org.meveo.apiv2.billing.InvoiceLine;
-import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.billing.*;
+import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.filter.Filter;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.filter.FilterService;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
 	
@@ -32,7 +43,20 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	@Inject
 	private InvoiceLineService invoiceLinesService;
-	
+
+	@Inject
+	private FilterService filterService;
+
+	@Inject
+	@CurrentUser
+	protected MeveoUser currentUser;
+
+	@Inject
+	private InvoiceBaseApi invoiceBaseApi;
+
+	@Inject
+	protected ResourceBundle resourceMessages;
+
 	
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -189,8 +213,8 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(), input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation());
 	}
 	
-	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
-		return invoiceService.update(invoice, input, invoiceRessource);
+	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+		return invoiceService.update(invoice, input, invoiceResource);
 	}
 
 	/**
@@ -205,4 +229,64 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 
+	/**
+	 * Generate Invoice
+	 * @param invoice Invoice input
+	 * @param isDraft
+	 */
+    public Optional<List<GenerateInvoiceResult>> generate(GenerateInvoiceRequestDto invoice, boolean isDraft) {
+		IBillableEntity entity = invoiceService.getBillableEntity(invoice.getTargetCode(), invoice.getTargetType(),
+				invoice.getOrderNumber(), invoice.getBillingAccountCode());
+    	Filter ratedTransactionFilter = null;
+		if(invoice.getFilter() != null) {
+			ratedTransactionFilter = getFilterFromInput(invoice.getFilter());
+			if (ratedTransactionFilter == null) {
+				throw new NotFoundException("Filter does not exists");
+			}
+		}
+		if (isDraft) {
+			if (invoice.getGeneratePDF() == null) {
+				invoice.setGeneratePDF(Boolean.TRUE);
+			}
+			if (invoice.getGenerateAO() != null) {
+				invoice.setGenerateAO(Boolean.FALSE);
+			}
+		}
+		ICustomFieldEntity customFieldEntity = new Invoice();
+		customFieldEntity =
+				invoiceBaseApi.populateCustomFieldsForGenericApi(invoice.getCustomFields(), customFieldEntity, false);
+		List<Invoice> invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
+				isDraft, customFieldEntity.getCfValues(), false);
+		if (invoices == null || invoices.isEmpty()) {
+			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+		}
+		List<GenerateInvoiceResult> generateInvoiceResults = new ArrayList<>();
+		InvoiceMapper invoiceMapper = new InvoiceMapper();
+		for (Invoice inv : invoices) {
+			List<Object[]> invoiceInfo = (List<Object[]>) invoiceService.getEntityManager().createNamedQuery("Invoice.getInvoiceTypeANDRecordedInvoiceID")
+					.setParameter("id", inv.getId())
+					.getResultList();
+			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));
+		}
+    	return of(generateInvoiceResults);
+    }
+
+	private Filter getFilterFromInput(FilterDto filterDto) throws MeveoApiException {
+		Filter filter = null;
+		if (StringUtils.isBlank(filterDto.getCode()) && StringUtils.isBlank(filterDto.getInputXml())) {
+			throw new BadRequestException("code or inputXml");
+		}
+		if (!StringUtils.isBlank(filterDto.getCode())) {
+			filter = filterService.findByCode(filterDto.getCode());
+			if (filter == null && StringUtils.isBlank(filterDto.getInputXml())) {
+				throw new NotFoundException("Filter with code does not exists : " + filterDto.getCode());
+			}
+			if (filter != null && !filter.getShared()) {
+				if (!filter.getAuditable().isCreator(currentUser)) {
+					throw new BadRequestException("INVALID_FILTER_OWNER");
+				}
+			}
+		}
+		return filter;
+	}
 }

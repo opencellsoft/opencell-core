@@ -20,45 +20,54 @@ public interface QueryScheduler extends Resource {
     String getFileFormat();
 
     @Schema(description = "Users to notify")
+    @Nullable
     List<User> getUsersToNotify();
     
     @Schema(description = "Emails to notify")
+    @Nullable
     List<String> getEmailsToNotify();
     
     @Schema(description = "Query scheduler year")
+    @Nullable
     String getYear();
     
     @Schema(description = "Query scheduler month")
+    @Nullable
     String getMonth();
     
     @Schema(description = "Query scheduler every month")
     boolean getEveryMonth();
     
     @Schema(description = "Query scheduler day of month")
+    @Nullable
     String getDayOfMonth();
     
     @Schema(description = "Query scheduler every day of month")
     boolean getEveryDayOfMonth();
     
     @Schema(description = "Query scheduler day of week")
+    @Nullable
     String getDayOfWeek();
     
     @Schema(description = "Query scheduler every day of week")
     boolean getEveryDayOfWeek();
     
     @Schema(description = "Query scheduler hour")
+    @Nullable
     String getHour();
     
     @Schema(description = "Query scheduler every hour")
     boolean getEveryHour();
     
     @Schema(description = "Query scheduler minute")
+    @Nullable
     String getMinute();
     
     @Schema(description = "Query scheduler every minute")
     boolean getEveryMinute();
     
     @Schema(description = "Query scheduler second")
+    @Nullable
     String getSecond();
     
     @Schema(description = "Query scheduler every second")

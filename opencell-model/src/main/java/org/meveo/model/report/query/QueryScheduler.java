@@ -13,6 +13,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -25,12 +27,11 @@ import org.meveo.model.jobs.JobInstance;
 @Entity
 @Table(name = "query_scheduler")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = { @Parameter(name = "sequence_name", value = "query_scheduler_seq"), })
+        parameters = { @Parameter(name = "sequence_name", value = "query_scheduler_seq") })
+@NamedQueries({
+    @NamedQuery(name = "QueryScheduler.findByReportQuery", query = "select qs from QueryScheduler qs where qs.reportQuery = :reportQuery") })
 public class QueryScheduler extends BusinessEntity {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 6103654572821099121L;
 
 	@Column(name = "file_format")
@@ -107,7 +108,4 @@ public class QueryScheduler extends BusinessEntity {
 	public void setEmailsToNotify(List<String> emailsToNotify) {
 		this.emailsToNotify = emailsToNotify;
 	}
-	
-	
-
 }

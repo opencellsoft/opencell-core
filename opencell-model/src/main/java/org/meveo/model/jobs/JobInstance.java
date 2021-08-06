@@ -47,6 +47,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.report.query.QueryScheduler;
 
 /**
  * The Class JobInstance.
@@ -60,7 +61,8 @@ import org.meveo.model.ModuleItem;
 @CustomFieldEntity(cftCodePrefix = "JobInstance", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "JobInstance.listByTemplate", query = "SELECT ji FROM JobInstance ji where ji.jobTemplate=:jobTemplate order by ji.code"),
         @NamedQuery(name = "JobInstance.findByJobTemplate", query = "select ji FROM JobInstance ji WHERE ji.jobTemplate=:jobTemplate") })
 public class JobInstance extends EnableBusinessCFEntity {
@@ -101,6 +103,13 @@ public class JobInstance extends EnableBusinessCFEntity {
     @JoinColumn(name = "timerentity_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private TimerEntity timerEntity;
+
+    /**
+     * Job schedule
+     */
+    @JoinColumn(name = "query_scheduler_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private QueryScheduler queryScheduler;
 
     /**
      * Following job to execute once job is completely finished
@@ -476,5 +485,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setJobSpeed(JobSpeedEnum jobSpeed) {
         this.jobSpeed = jobSpeed;
+    }
+
+    /**
+     * @return the queryScheduler
+     */
+    public QueryScheduler getQueryScheduler() {
+        return queryScheduler;
+    }
+
+    /**
+     * @param queryScheduler the queryScheduler to set
+     */
+    public void setQueryScheduler(QueryScheduler queryScheduler) {
+        this.queryScheduler = queryScheduler;
     }
 }

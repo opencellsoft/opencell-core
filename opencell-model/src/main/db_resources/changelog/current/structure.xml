@@ -9127,7 +9127,7 @@ public class OrderAdvancement extends ModuleScript {
             
     </changeSet>
 
-    <changeSet id="#INTRD-339_20210625" author="ZBariki">
+    <changeSet id="#INTRD-339_20210625" author="ZBariki" failOnError="false">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
@@ -9172,11 +9172,12 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="cust_query"/>
     </changeSet>
-
+<!--
     <changeSet id="#INTRD-339_20210625" author="ZBariki">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
+-->
     
     <changeSet id="#6168_20210624" author="HatimOUDAD">
         <addColumn tableName="com_meveo_instance">
@@ -9186,7 +9187,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
-    <changeSet id="#INTRD-257_20210706" author="ZBariki">
+    <changeSet id="#INTRD-257_20210706" author="ZBariki" failOnError="false">
         <dropForeignKeyConstraint baseTableName="custom_query_fields" constraintName="fk_custom_query_fields_id" />
         <dropUniqueConstraint tableName="custom_query_fields" constraintName="uk_cust_query_composed"
                               uniqueColumns="code, creator, visibility" />
@@ -9241,7 +9242,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="report_query_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_scheduler" constraintName="fk_report_query_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="report_query" />
+            referencedColumnNames="id" referencedTableName="cust_query" />
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="query_scheduler" constraintName="fk_job_instance_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="meveo_job_instance" />
         
@@ -9298,7 +9299,7 @@ public class OrderAdvancement extends ModuleScript {
 		<addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_execution_result" constraintName="fk_scheduler_result" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="report_query" />
+            referencedColumnNames="id" referencedTableName="cust_query" />
     </changeSet>  
     <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
@@ -9486,7 +9487,7 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                            
  
- </changeSet>
+ 	</changeSet>
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
         <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
@@ -9499,5 +9500,48 @@ public class OrderAdvancement extends ModuleScript {
            <column name="description" type="varchar(255)" />
        </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-1090_20210714" author="ZBariki">
+        <addColumn tableName="cpq_invoice_line">
+            <column name="aggregate_id_f" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="cpq_invoice_line"
+                                 constraintName="fk_il_aggregate_id_f" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
+    </changeSet>
     
+    <changeSet id="#INTRD-1441_20210728" author="TarikFA.">
+    	<createTable tableName="cpq_quote_media">
+    		<column name="quote_id" type="bigint" />
+    		<column name="media_id" type="bigint" />
+    	</createTable>
+    	
+    	<addPrimaryKey columnNames="quote_id, media_id" tableName="cpq_quote_media"/>
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_quote_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_quote"/>  
+        <addForeignKeyConstraint baseColumnNames="media_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_media_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_media"/>  
+    	
+    </changeSet>
+    
+    <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA">
+        <addColumn tableName="meveo_job_instance">
+            <column name="query_scheduler_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
+    </changeSet>
+
+    <changeSet id="#INTRD-1174_20210802" author="ZBariki">
+        <addColumn tableName="report_query">
+            <column name="sort_by" type="varchar(255)" />
+            <column name="sort_order" type="varchar(15)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

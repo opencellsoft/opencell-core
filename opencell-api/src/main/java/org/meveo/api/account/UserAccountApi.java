@@ -157,7 +157,7 @@ public class UserAccountApi extends AccountEntityApi {
      *
      * @param userAccount Entity to populate
      * @param postData DTO entity object to populate from
-     * @param checkCustomField Should a check be made if CF field is required
+     * @param checkCustomFields Should a check be made if CF field is required
      * @param businessAccountModel Business account model
      **/
     private void dtoToEntity(UserAccount userAccount, UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
@@ -193,6 +193,7 @@ public class UserAccountApi extends AccountEntityApi {
         if (businessAccountModel != null) {
             userAccount.setBusinessAccountModel(businessAccountModel);
         }
+        userAccount.setIsCompany(postData.getIsCompany());
 
         // Validate and populate customFields
         try {

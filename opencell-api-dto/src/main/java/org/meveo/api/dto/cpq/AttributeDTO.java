@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -134,6 +135,10 @@ public class AttributeDTO extends EnableBusinessDto {
 
     @Schema(description = "default value for attribute")
     protected String defaultValue;
+
+	@XmlElementWrapper(name = "groupedAttributes")
+	@XmlElement(name ="groupedAttributes")
+	private List<GroupedAttributeDto> groupedAttributes;
     
     public AttributeDTO() {
     }
@@ -162,8 +167,16 @@ public class AttributeDTO extends EnableBusinessDto {
         		assignedAttributeCodes.add(attr.getCode());
         	}
         }
-        
-        
+		if(attribute.getGroupedAttributes() != null){
+			this.groupedAttributes = attribute.getGroupedAttributes().stream()
+					.map(ga -> new GroupedAttributeDto(ga))
+					.collect(Collectors.toList());
+		}
+		if(attribute.getTags() != null){
+			this.tagCodes = attribute.getTags().stream()
+								.map(tag -> tag.getCode())
+								.collect(Collectors.toList());
+		}
     }
     
     public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {
@@ -472,21 +485,11 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.sequence = sequence;
 	}
 
+	public List<GroupedAttributeDto> getGroupedAttributes() {
+		return groupedAttributes;
+	}
 
- 
-	
-
-
-	
- 
-
-
-
-	 
-
-	
-	
-
-
-    
+	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
 }
