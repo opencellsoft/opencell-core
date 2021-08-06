@@ -2603,7 +2603,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft,boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
         InvoiceType invoiceType = null;
-
+        
+        if(billingRun.getInvoiceType()!=null) {
+			return billingRun.getInvoiceType();
+		}
+        
         if (isPrepaid) {
             invoiceType = invoiceTypeService.getDefaultPrepaid();
 
