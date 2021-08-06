@@ -17,6 +17,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
@@ -38,13 +40,13 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Inject
     private ReportQueryApiService reportQueryApiService;
-    
+
     @Inject
     private QueryExecutionResultApiService queryExecutionResultApiService;
-    
+
     @Inject
     private QuerySchedulerApiService querySchedulerApiService;
-    
+
     private ReportQueryMapper mapper = new ReportQueryMapper();
 
     private QuerySchedulerMapper queryScheduleMapper = new QuerySchedulerMapper();
@@ -64,8 +66,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     }
 
     @Override
-    public Response getReportQueries(Long offset, Long limit, String sort, String orderBy,
-                                     String filter, Request request) {
+    public Response getReportQueries(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
         List<ReportQuery> reportQueryEntities = reportQueryApiService.list(offset, limit, sort, orderBy, filter);
         EntityTag etag = new EntityTag(Integer.toString(reportQueryEntities.hashCode()));
         CacheControl cc = new CacheControl();
@@ -102,7 +103,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     }
 
     private void validateResource(ReportQueryInput resource) {
-        if(resource.getQueryName() == null) {
+        if (resource.getQueryName() == null) {
             throw new BadRequestException("Report query name is missing");
         }
         if (resource.getTargetEntity() == null) {
@@ -182,6 +183,9 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     @Override
     public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
         reportQueryApiService.verifyReportQuery(verifyQueryInput);
-        return Response.ok().build();
+        ActionStatus result = new ActionStatus();
+        result.setStatus(ActionStatusEnum.SUCCESS);
+        result.setMessage("New query");
+        return Response.ok(result).build();
     }
 }

@@ -97,7 +97,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
                     .append(entity.getSortOrder().getLabel());
             return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ") + sortOptions;
         }
-        return  generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
+        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
     }
 
     private String addFields(String query, List<String> fields) {
@@ -137,13 +137,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
 	public byte[] downloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
         Class<?> targetEntity = getEntityClass(reportQuery.getTargetEntity());
-		if(format == QueryExecutionResultFormatEnum.CSV) {
-			return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName, targetEntity);
-		}else if(format == QueryExecutionResultFormatEnum.EXCEL) {
-			return reportQueryService.generateExcelFromResultReportQuery(reportQuery, fileName, targetEntity);
-		}
-		return null;
-	}
+        if (format == QueryExecutionResultFormatEnum.CSV) {
+            return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName, targetEntity);
+        } else if (format == QueryExecutionResultFormatEnum.EXCEL) {
+            return reportQueryService.generateExcelFromResultReportQuery(reportQuery, fileName, targetEntity);
+        }
+        return null;
+    }
 
     /**
      *
@@ -166,8 +166,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     public void verifyReportQuery(VerifyQueryInput verifyQueryInput) {
 
-        if (verifyQueryInput == null || StringUtils.isBlank(verifyQueryInput.getQueryName()) || verifyQueryInput.getVisibility() == null) {
+        if (verifyQueryInput == null) {
             throw new ForbiddenException("The queryName and visibility must be non-null");
+        }
+        if (StringUtils.isBlank(verifyQueryInput.getQueryName())) {
+            throw new ForbiddenException("The queryName parameter is missing.");
+        }
+        if (verifyQueryInput == null || StringUtils.isBlank(verifyQueryInput.getQueryName()) || verifyQueryInput.getVisibility() == null) {
+            throw new ForbiddenException("The visibility parameter is missing.");
         }
 
         ReportQuery reportQuery = reportQueryService.findByCodeAndVisibility(verifyQueryInput.getQueryName(), verifyQueryInput.getVisibility());
