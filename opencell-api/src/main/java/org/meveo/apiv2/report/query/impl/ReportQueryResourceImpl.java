@@ -20,13 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
-import org.meveo.apiv2.report.ExecutionResult;
-import org.meveo.apiv2.report.ImmutableReportQueries;
-import org.meveo.apiv2.report.ImmutableReportQuery;
-import org.meveo.apiv2.report.QuerySchedulerInput;
-import org.meveo.apiv2.report.ReportQueries;
-import org.meveo.apiv2.report.ReportQueryInput;
-import org.meveo.apiv2.report.VerifyQueryInput;
+import org.meveo.apiv2.report.*;
 import org.meveo.apiv2.report.query.resource.ReportQueryResource;
 import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
@@ -60,7 +54,10 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response delete(Long id) {
         ReportQuery reportQuery = reportQueryApiService.delete(id)
                 .orElseThrow(() -> new NotFoundException("The query with id " + id + " does not exists"));
-        return Response.ok("The query with name " + reportQuery.getCode() + " is successfully deleted").build();
+        return Response.ok(ImmutableSuccessResponse.builder()
+                .status("SUCCESS")
+                .message("The query with name " + reportQuery.getCode() + " is successfully deleted")
+                .build()).build();
     }
 
     @Override
@@ -168,7 +165,10 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response execute(Long id, boolean async) {
         if(async) {
             reportQueryApiService.execute(id, async);
-            return Response.ok().entity("Execution request accepted").build();
+            return Response.ok().entity(ImmutableSuccessResponse.builder()
+                    .status("ACCEPTED")
+                    .message("Execution request accepted")
+                    .build()).build();
         } else {
             List<Object> result = (List<Object>) reportQueryApiService.execute(id, async).orElse(EMPTY_LIST);
             ExecutionResult executionResult = builder()
