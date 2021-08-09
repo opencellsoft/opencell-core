@@ -14774,7 +14774,23 @@ $$ LANGUAGE plpgsql;
         </createTable>
         <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
     </changeSet>
-
+    <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
+    	<createTable tableName="cpq_quote_media">
+    		<column name="quote_id" type="bigint" />
+    		<column name="media_id" type="bigint" />
+    	</createTable>
+    	
+    	<addPrimaryKey columnNames="quote_id, media_id" tableName="cpq_quote_media"/>
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_quote_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_quote"/>  
+        <addForeignKeyConstraint baseColumnNames="media_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_media_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_media"/>  
+    	
+    </changeSet>
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
