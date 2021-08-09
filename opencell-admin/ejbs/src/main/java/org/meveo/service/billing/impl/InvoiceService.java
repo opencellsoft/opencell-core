@@ -2603,7 +2603,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft,boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
         InvoiceType invoiceType = null;
-
+        
+        if(billingRun.getInvoiceType()!=null) {
+			return billingRun.getInvoiceType();
+		}
+        
         if (isPrepaid) {
             invoiceType = invoiceTypeService.getDefaultPrepaid();
 
@@ -5659,13 +5663,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     /**
-     * @param toUpdate
+     * @param toUpdate invoice to update
      * @param input
-     * @return
+     * @param invoiceResource invoice resource
+     * @return Updated invoice
      */
-    public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
+    public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+        toUpdate = refreshOrRetrieve(toUpdate);
         final InvoiceStatusEnum status = toUpdate.getStatus();
-        if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status)|| InvoiceStatusEnum.NEW.equals(status))) {
+        if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status)
+                || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
         }
         if(input.getComment()!=null) {
@@ -5680,13 +5687,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(input.getDueDate()!=null) {
             toUpdate.setDueDate(input.getDueDate());
         }
-        if(invoiceRessource.getPaymentMethod()!=null) {
-            final Long pmId = invoiceRessource.getPaymentMethod().getId();
+        if(invoiceResource.getPaymentMethod()!=null) {
+            final Long pmId = invoiceResource.getPaymentMethod().getId();
             PaymentMethod pm = (PaymentMethod)tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
             toUpdate.setPaymentMethod(pm);
         }
-        if(invoiceRessource.getListLinkedInvoices()!=null) {
-            for (Long invoiceId : invoiceRessource.getListLinkedInvoices()) {
+        if(invoiceResource.getListLinkedInvoices() != null) {
+            for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
@@ -5698,21 +5705,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         
-        if(invoiceRessource.getOrder()!=null) {
-            final Long orderId = invoiceRessource.getOrder().getId();
+        if(invoiceResource.getOrder()!=null) {
+            final Long orderId = invoiceResource.getOrder().getId();
             Order order = (Order)tryToFindByEntityClassAndId(Order.class, orderId);
             toUpdate.setOrder(order);
         }
         
-        if(invoiceRessource.getDiscountPlan()!=null) {
-            final Long dpId = invoiceRessource.getDiscountPlan().getId();
+        if(invoiceResource.getDiscountPlan()!=null) {
+            final Long dpId = invoiceResource.getDiscountPlan().getId();
             DiscountPlan discountPlan = (DiscountPlan)tryToFindByEntityClassAndId(DiscountPlan.class, dpId);
             toUpdate.setDiscountPlan(discountPlan);
         }
         
-        if(invoiceRessource.getCommercialOrder()!=null) {
-            final Long commercialorderId = invoiceRessource.getCommercialOrder().getId();
-            CommercialOrder commercialOrder = (CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, commercialorderId);
+        if(invoiceResource.getCommercialOrder()!=null) {
+            final Long commercialOrderId = invoiceResource.getCommercialOrder().getId();
+            CommercialOrder commercialOrder =
+                    (CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, commercialOrderId);
             toUpdate.setCommercialOrder(commercialOrder);
         }
         
