@@ -15134,6 +15134,50 @@ $$ LANGUAGE plpgsql;
                                  referencedColumnNames="id" referencedTableName="cpq_media"/>  
     	
     </changeSet>
+    
+    <changeSet id="#INTRD-1291_20210804-rebuild" author="HatimOUDAD">
+    	<createSequence sequenceName="accounting_period_seq" startValue="1" />
+        <createTable tableName="accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="accounting_period_year" type="int4" />
+            <column name="status" type="varchar(255)"/>
+            <column name="sub_accounting_period_type" type="varchar(255)"/>
+            <column name="sub_accounting_period_progress" type="varchar(255)"/>
+            <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
+        </createTable>
+        
+        <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
+        <createTable tableName="sub_accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sub_accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="number" type="int4" />
+            <column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+            <column name="regular_users_sub_period_status" type="varchar(255)"/>
+            <column name="regular_users_closed_date" type="datetime"/>
+            <column name="effective_closed_date" type="datetime"/>
+            <column name="accounting_period_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="accounting_period" />
+	</changeSet>
 
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
@@ -16160,8 +16204,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA" />
     <changeSet id="#INTRD-1441_20210728" author="TarikFA." />
     <changeSet id="#INTRD-1174_20210802" author="ZBariki" />
-    <changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
-    
+	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
+	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
