@@ -428,11 +428,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         PersistenceService persistenceService = (PersistenceService)
                 getServiceInterface(targetEntity.getSimpleName() + "Service");
         Query result = persistenceService.getEntityManager().createQuery(reportQuery.getGeneratedQuery());
-        FilterConverter converter = new FilterConverter(targetEntity);
-        Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
-        for (Entry<String, Object> entry : filters.entrySet()) {
-            if(!(entry.getValue() instanceof Boolean)) {
-                result.setParameter("a_" + entry.getKey(), entry.getValue());
+        if (reportQuery.getFilters() != null && !reportQuery.getFilters().isEmpty()) {
+            FilterConverter converter = new FilterConverter(targetEntity);
+            Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
+            for (Entry<String, Object> entry : filters.entrySet()) {
+                if(!(entry.getValue() instanceof Boolean)) {
+                    result.setParameter("a_" + entry.getKey(), entry.getValue());
+                }
             }
         }
         return result;

@@ -9,9 +9,12 @@ import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -45,6 +48,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     private MeveoUser currentUser;
 
     private List<String> fetchFields = asList("fields");
+
+    private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
 
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -101,13 +106,28 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     private String addFields(String query, List<String> fields) {
-        String generatedQuery;
-        generatedQuery = new StringBuilder("select ")
-                .append(fields.stream().map(field -> "a." + field).collect(joining(", ")))
+        List<String> groupByField = new ArrayList<>();
+        StringBuilder queryField = new StringBuilder();
+        for (String field : fields) {
+            Matcher matcher = pattern.matcher(field);
+            if(matcher.find()) {
+                queryField.append(field);
+            } else {
+                queryField.append("a." + field);
+                groupByField.add(field);
+            }
+            queryField.append(" ,");
+        }
+        StringBuilder generatedQuery = new StringBuilder("select ")
+                .append(queryField.deleteCharAt(queryField.length() - 1))
                 .append(" ")
-                .append(query)
-                .toString();
-        return generatedQuery;
+                .append(query);
+        if(fields.size() != groupByField.size()) {
+            generatedQuery
+                    .append(" group by ")
+                    .append(groupByField.stream().map(field -> "a." + field).collect(joining(", ")));
+        }
+        return generatedQuery.toString();
     }
 
     @Override
