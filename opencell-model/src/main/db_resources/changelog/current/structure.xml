@@ -3950,5 +3950,11 @@ END $$;]]>
         	<column name="old_wallet_id" type="bigint" />
         </addColumn>
      </changeSet>
+     
+    <changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
