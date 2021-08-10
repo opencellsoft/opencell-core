@@ -32,5 +32,10 @@ public enum ActionStatusEnum {
     /**
      * Request failed. See ActionStatus.errorCode for an error code.
      */
-    FAIL
+    FAIL,
+
+    /**
+     * Request warning. See ActionStatus.errorCode for an error code.
+     */
+    WARNING
 }

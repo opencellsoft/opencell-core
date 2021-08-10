@@ -2476,6 +2476,7 @@
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="filters" type="text" />
+            <column name="invoice_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -5461,6 +5462,7 @@
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
+            <column name="query_scheduler_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -10118,6 +10120,7 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="aggregate_id_f" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -12868,6 +12871,12 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="generic_sequence" />
     </changeSet>
+    <changeSet author="ZBariki" id="rebuild-str-fk-1374">
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="cpq_invoice_line"
+                                 constraintName="fk_il_aggregate_id_f" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
+    </changeSet>
 
     <!-- media post FK -->
 
@@ -14050,6 +14059,11 @@
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
     </changeSet>
+    
+    <changeSet id="rebuild-str-fk-1633" author="MohammedELAZZOUZI">
+    	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_billing_run" constraintName="fk__billing_billing_run__invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -14786,7 +14800,7 @@ $$ LANGUAGE plpgsql;
         <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
     </changeSet>
 
-    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+    <changeSet id="#INTRD-257_20210625-rebuild" author="ZBariki">
         <createTable tableName="report_query">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
@@ -14810,6 +14824,8 @@ $$ LANGUAGE plpgsql;
             </column>
             <column name="filters" type="text" />
             <column name="generated_query" type="text" />
+            <column name="sort_by" type="varchar(255)" />
+            <column name="sort_order" type="varchar(15)" />
         </createTable>
         <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_report_query_composed"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="report_query" />
@@ -14827,7 +14843,7 @@ $$ LANGUAGE plpgsql;
 
     </changeSet>
     
-    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD">
+    <changeSet id="#INTRD-682_20210707-rebuild" author="HatimOUDAD">
     	
         <createTable tableName="query_scheduler">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -14863,7 +14879,8 @@ $$ LANGUAGE plpgsql;
             referencedColumnNames="id" referencedTableName="report_query" />
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="query_scheduler" constraintName="fk_job_instance_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="meveo_job_instance" />
-        
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+        	referencedColumnNames="id" referencedTableName="query_scheduler" />
         
         <createTable tableName="query_scheduler_users">
 			<column name="query_scheduler_id" type="bigint">
@@ -14920,7 +14937,7 @@ $$ LANGUAGE plpgsql;
             referencedColumnNames="id" referencedTableName="report_query" />
     </changeSet>
     
-    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
+    <changeSet id="#INTRD-634_20210706-rebuild" author="Mbarek-Ay">
     
         <createTable tableName="dunning_settings">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -15099,6 +15116,68 @@ $$ LANGUAGE plpgsql;
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                                                                                                                         
     </changeSet>
+
+    <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
+    	<createTable tableName="cpq_quote_media">
+    		<column name="quote_id" type="bigint" />
+    		<column name="media_id" type="bigint" />
+    	</createTable>
+    	
+    	<addPrimaryKey columnNames="quote_id, media_id" tableName="cpq_quote_media"/>
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_quote_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_quote"/>  
+        <addForeignKeyConstraint baseColumnNames="media_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_media_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_media"/>  
+    	
+    </changeSet>
+    
+    <changeSet id="#INTRD-1291_20210804-rebuild" author="HatimOUDAD">
+    	<createSequence sequenceName="accounting_period_seq" startValue="1" />
+        <createTable tableName="accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="accounting_period_year" type="int4" />
+            <column name="status" type="varchar(255)"/>
+            <column name="sub_accounting_period_type" type="varchar(255)"/>
+            <column name="sub_accounting_period_progress" type="varchar(255)"/>
+            <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
+        </createTable>
+        
+        <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
+        <createTable tableName="sub_accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sub_accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="number" type="int4" />
+            <column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+            <column name="regular_users_sub_period_status" type="varchar(255)"/>
+            <column name="regular_users_closed_date" type="datetime"/>
+            <column name="effective_closed_date" type="datetime"/>
+            <column name="accounting_period_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="accounting_period" />
+	</changeSet>
 
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
@@ -16117,7 +16196,16 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA" />
     <changeSet id="#INTRD-264_20210714" author="HatimOUDAD"/>
-
+    <changeSet id="#INTRD-339_20210625" author="ZBariki" />
+    <changeSet id="#INTRD-257_20210625" author="ZBariki" />
+    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" />
+    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-1090_20210714" author="ZBariki"/>
+    <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-1441_20210728" author="TarikFA." />
+    <changeSet id="#INTRD-1174_20210802" author="ZBariki" />
+	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
+	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

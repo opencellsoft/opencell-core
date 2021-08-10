@@ -92,7 +92,7 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
     private void generateXml(Long invoiceId, JobExecutionResultImpl jobExecutionResult) {
 
         Invoice invoice = invoiceService.findById(invoiceId);
-        invoiceService.produceInvoiceXml(invoice, null);
+        invoiceService.produceInvoiceXml(invoice, null, true);
     }
 
     private List<Long> fetchInvoiceIdsToProcess(List<InvoiceStatusEnum> statusList, Long billingRunId) {

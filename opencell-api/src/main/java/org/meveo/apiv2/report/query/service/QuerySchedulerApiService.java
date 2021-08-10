@@ -11,10 +11,14 @@ import javax.ws.rs.NotFoundException;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.model.report.query.QueryScheduler;
+import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.report.QuerySchedulerService;
 
 public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
@@ -23,14 +27,14 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
     private QuerySchedulerService querySchedulerService;
     
     @Inject
+    private JobInstanceService jobInstanceService;
+    
+    @Inject
     private UserService userService;
 
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-
-
-    
 
     @Override
     public QueryScheduler create(QueryScheduler entity) {
@@ -39,8 +43,23 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
         		if(userService.findById(user.getId()) == null) {
         			throw new NotFoundException("The user with id {" + user.getId() + "} does not exists");
         		}
+        		user.setVersion(userService.findById(user.getId()).getVersion());
         	}
         	querySchedulerService.create(entity);
+        	
+        	ReportQuery reportQuery = entity.getReportQuery();
+        	JobInstance jobInstance = new JobInstance();
+            jobInstance.setCode(reportQuery.getCode() + "_Job");
+            jobInstance.setDescription("Job for report query='" + reportQuery.getCode() + "'");
+            jobInstance.setJobCategoryEnum(MeveoJobCategoryEnum.REPORTING_QUERY);
+            jobInstance.setJobTemplate("ReportQueryJob");
+            jobInstance.setQueryScheduler(entity);
+            jobInstance.setCfValue("reportQuery", reportQuery);
+            jobInstanceService.create(jobInstance);
+
+            // Update the QueryScheduler
+            entity.setJobInstance(jobInstance);
+            querySchedulerService.update(entity);
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage());

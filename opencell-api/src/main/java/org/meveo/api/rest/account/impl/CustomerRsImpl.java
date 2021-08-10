@@ -20,15 +20,12 @@ package org.meveo.api.rest.account.impl;
 
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.CustomerSequenceApi;
-import org.meveo.api.custom.GenericCodeApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
-import org.meveo.api.dto.custom.GenericCodeDto;
-import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
@@ -52,12 +49,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.util.Date;
 import java.util.List;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -74,9 +66,6 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
     @Inject
     private CustomerSequenceApi customerSequenceApi;
-
-    @Inject
-    private GenericCodeApi genericCodeApi;
 
     @Override
     public ActionStatus create(CustomerDto postData) {

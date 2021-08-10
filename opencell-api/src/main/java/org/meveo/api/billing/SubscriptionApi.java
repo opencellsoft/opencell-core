@@ -275,9 +275,9 @@ public class SubscriptionApi extends BaseApi {
     @Inject
     @VersionRemoved
     private Event<Subscription> versionRemovedEvent;
-    
 
-	@Inject 
+
+	@Inject
 	private AttributeInstanceService attributeInstanceService;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
@@ -538,7 +538,7 @@ public class SubscriptionApi extends BaseApi {
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
         	updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
         }
-        
+
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
@@ -594,7 +594,7 @@ public class SubscriptionApi extends BaseApi {
 
         return subscription;
     }
-    
+
 
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
@@ -840,7 +840,7 @@ public class SubscriptionApi extends BaseApi {
         			throw e;
         		}
         	}
-        
+
     }
 
     private void getServiceToActivate(List<ServiceToActivateDto> services, List<ServiceTemplate> serviceToActivate,
@@ -1525,7 +1525,7 @@ public class SubscriptionApi extends BaseApi {
                 CustomFieldsDto customFieldsDTO = null;
                 customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
                 var productInstanceDto = new ProductInstanceDto(productInstance, customFieldsDTO);
-                
+
                 dto.getProductInstances().add(productInstanceDto);
             }
         }
@@ -2461,7 +2461,7 @@ public class SubscriptionApi extends BaseApi {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Subscription subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
     	Subscription subscription=create(postData);
-    	
+
     	if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
     		List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
     		if(products!=null && !products.isEmpty()) {
@@ -2471,7 +2471,7 @@ public class SubscriptionApi extends BaseApi {
     	}
     	return subscription;
     }
-    
+
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
     	if(serviceInstanceDtos != null) {
     		serviceInstanceDtos.forEach(serviceInstanceDto -> {
@@ -2505,8 +2505,8 @@ public class SubscriptionApi extends BaseApi {
     		});
     	}
     }
-    
-    
+
+
     private Subscription createSubscription(SubscriptionDto postData, boolean extraValidtion) throws MeveoApiException, BusinessException {
         if (extraValidtion) {
             if (StringUtils.isBlank(postData.getCode())) {
@@ -2577,7 +2577,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
-        
+
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -2705,7 +2705,7 @@ public class SubscriptionApi extends BaseApi {
         }
         return subscription;
     }
-    
+
    /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
     	List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
     	for(Subscription sub: subscriptions) {
@@ -2758,6 +2758,10 @@ public class SubscriptionApi extends BaseApi {
         if (existingSubscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, code);
         }
+        if (existingSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+                || existingSubscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+            throw new BusinessApiException("Couldn't patch a subscription with status RESILIATED or CANCELED");
+        }
 
         Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date(): subscriptionPatchDto.getEffectiveDate();
 
@@ -2784,8 +2788,10 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
 
-        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, null);
-
+        existingSubscription.setToValidity(effectiveDate);
+        Subscription terminateSubscription = subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+        // fin terminaison
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
@@ -2821,6 +2827,11 @@ public class SubscriptionApi extends BaseApi {
                     .stream()
                     .forEach(s -> s.setSubscriptionDate(effectiveDate));
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
+        }
+
+        if (isImmediateTermination) {
+            // set subscription to status activate and activate its instantiated services
+            subscriptionService.activateInstantiatedService(newSubscription);
         }
 
         versionCreatedEvent.fire(newSubscription);
@@ -2879,11 +2890,11 @@ public class SubscriptionApi extends BaseApi {
     }
     @Inject
 	private ProductService productService;
-    
+
     private void processProduct(Subscription subscription,  ProductToInstantiateDto productDto) {
     	if (StringUtils.isBlank(productDto.getProductCode())) {
     		missingParameters.add("productCode");
-    	} 
+    	}
     	if (StringUtils.isBlank(productDto.getQuantity())) {
     		missingParameters.add("quantity");
     	}

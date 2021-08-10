@@ -73,6 +73,4 @@ public interface QuerySchedulerInput {
     
     @Schema(description = "Query scheduler every second")
     boolean getEverySecond();
-    
-    
 }

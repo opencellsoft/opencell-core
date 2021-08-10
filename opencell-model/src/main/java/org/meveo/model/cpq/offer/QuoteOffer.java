@@ -118,7 +118,7 @@ public class QuoteOffer extends AuditableCFEntity {
     protected Integer sequence=0;
     
     
-    @OneToMany(mappedBy = "quoteOffer")
+    @OneToMany(mappedBy = "quoteOffer", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuotePrice> quotePrices = new ArrayList<QuotePrice>();
 

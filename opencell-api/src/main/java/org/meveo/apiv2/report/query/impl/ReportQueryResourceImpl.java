@@ -3,22 +3,10 @@ package org.meveo.apiv2.report.query.impl;
 import static java.util.Collections.EMPTY_LIST;
 import static org.meveo.apiv2.report.ImmutableExecutionResult.builder;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
-import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
-import org.meveo.apiv2.report.ImmutableReportQueries;
-import org.meveo.apiv2.report.ImmutableReportQuery;
-import org.meveo.apiv2.report.QuerySchedulerInput;
-import org.meveo.apiv2.report.ReportQueries;
-import org.meveo.apiv2.report.ReportQueryInput;
-import org.meveo.apiv2.report.*;
-import org.meveo.apiv2.report.query.resource.ReportQueryResource;
-import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
-import org.meveo.apiv2.report.query.service.ReportQueryApiService;
-import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
-import org.meveo.model.report.query.QueryScheduler;
-import org.meveo.model.report.query.ReportQuery;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -27,10 +15,26 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
+import org.meveo.apiv2.ordering.common.LinkGenerator;
+import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
+import org.meveo.apiv2.report.ExecutionResult;
+import org.meveo.apiv2.report.ImmutableReportQueries;
+import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.QuerySchedulerInput;
+import org.meveo.apiv2.report.ReportQueries;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.VerifyQueryInput;
+import org.meveo.apiv2.report.query.resource.ReportQueryResource;
+import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
+import org.meveo.apiv2.report.query.service.ReportQueryApiService;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
+import org.meveo.model.report.query.QueryScheduler;
+import org.meveo.model.report.query.ReportQuery;
 
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
@@ -40,31 +44,29 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     @Inject
     private QueryExecutionResultApiService queryExecutionResultApiService;
 
-    private ReportQueryMapper mapper = new ReportQueryMapper();
-    
     @Inject
     private QuerySchedulerApiService querySchedulerApiService;
-    
-    private QuerySchedulerMapper querySchedulermapper = new QuerySchedulerMapper();
+
+    private ReportQueryMapper mapper = new ReportQueryMapper();
+
+    private QuerySchedulerMapper queryScheduleMapper = new QuerySchedulerMapper();
 
     @Override
     public Response find(Long id) {
         ReportQuery reportQuery = reportQueryApiService.findById(id)
-                .orElseThrow(() -> new NotFoundException("The query with {" + id + "} does not exists"));
+                .orElseThrow(() -> new NotFoundException("The query with " + id + " does not exists"));
         return Response.ok().entity(mapper.toResource(reportQuery)).build();
     }
 
     @Override
     public Response delete(Long id) {
-        if (reportQueryApiService.delete(id).isEmpty()) {
-            throw new NotFoundException("The query with {" + id + "} does not exists");
-        }
-        return null;
+        ReportQuery reportQuery = reportQueryApiService.delete(id)
+                .orElseThrow(() -> new NotFoundException("The query with id " + id + " does not exists"));
+        return Response.ok("The query with name " + reportQuery.getCode() + " is successfully deleted").build();
     }
 
     @Override
-    public Response getReportQueries(Long offset, Long limit, String sort, String orderBy,
-                                     String filter, Request request) {
+    public Response getReportQueries(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
         List<ReportQuery> reportQueryEntities = reportQueryApiService.list(offset, limit, sort, orderBy, filter);
         EntityTag etag = new EntityTag(Integer.toString(reportQueryEntities.hashCode()));
         CacheControl cc = new CacheControl();
@@ -92,11 +94,24 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Override
     public Response createReportQuery(ReportQueryInput resource) {
+        validateResource(resource);
         ReportQuery entity = reportQueryApiService.create(mapper.toEntity(resource));
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
                 .entity(mapper.toResource(entity))
                 .build();
+    }
+
+    private void validateResource(ReportQueryInput resource) {
+        if (resource.getQueryName() == null) {
+            throw new BadRequestException("Report query name is missing");
+        }
+        if (resource.getTargetEntity() == null) {
+            throw new BadRequestException("Target entity is missing");
+        }
+        if (resource.getVisibility() == null) {
+            throw new BadRequestException("Report query visibility is missing");
+        }
     }
 
 	@Override
@@ -137,15 +152,16 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 			throw new BadRequestException(e.getMessage());
 		}
 	}
-
+	
 	@Override
 	public Response createQueryScheduler(Long reportId, QuerySchedulerInput queryScheduler) {
 		ReportQuery reportQuery = reportQueryApiService.findById(reportId)
                 .orElseThrow(() -> new NotFoundException("The query with {" + reportId + "} does not exists"));
-		QueryScheduler entity = querySchedulerApiService.create(querySchedulermapper.toEntity(reportQuery, queryScheduler));
+		QueryScheduler entity = querySchedulerApiService.create(queryScheduleMapper.toEntity(reportQuery, queryScheduler));
+
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
-                .entity(querySchedulermapper.toResource(entity))
+                .entity(queryScheduleMapper.toResource(entity))
                 .build();
 	}
 
@@ -153,7 +169,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response execute(Long id, boolean async) {
         if(async) {
             reportQueryApiService.execute(id, async);
-            return Response.accepted().entity("Execution request accepted").build();
+            return Response.ok().entity("Execution request accepted").build();
         } else {
             List<Object> result = (List<Object>) reportQueryApiService.execute(id, async).orElse(EMPTY_LIST);
             ExecutionResult executionResult = builder()
@@ -162,5 +178,14 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
                     .build();
             return Response.ok().entity(executionResult).build();
         }
+    }
+
+    @Override
+    public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
+        reportQueryApiService.verifyReportQuery(verifyQueryInput);
+        ActionStatus result = new ActionStatus();
+        result.setStatus(ActionStatusEnum.SUCCESS);
+        result.setMessage("New query");
+        return Response.ok(result).build();
     }
 }

@@ -19,6 +19,8 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,7 +28,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -95,6 +96,8 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The status date")
 	private Date statusDate;
+	
+	private Set<String> mediaCodes = new HashSet<String>();
 
 	/**
 	 * @return the quoteDate
@@ -316,6 +319,22 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	public void setStatusDate(Date statusDate) {
 		this.statusDate = statusDate;
+	}
+
+
+	/**
+	 * @return the mediaCodes
+	 */
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
+	}
+
+
+	/**
+	 * @param mediaCodes the mediaCodes to set
+	 */
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
 	}
 
 

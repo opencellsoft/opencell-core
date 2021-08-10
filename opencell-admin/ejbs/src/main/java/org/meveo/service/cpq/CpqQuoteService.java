@@ -52,6 +52,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
@@ -84,6 +85,9 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	@Inject
 	private EmailSender emailSender;
 	
+	@Inject
+	private MediaService mediaService;
+	
 	
 	@Inject
     @PDFGenerated
@@ -105,12 +109,20 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	         String code = findDuplicateCode(duplicate);
 	   	   	duplicate.setCode(code);
 	   	 }
+
+		 var medias = new ArrayList<>(quote.getMedias());
+		 duplicate.setMedias(new ArrayList<Media>());
+		 if(quote.getMedias() != null) {
+			 for (Media media : medias) {
+				 duplicate.getMedias().add(mediaService.findById(media.getId()));
+			}
+		 }
+		 
 		 try {
 		   	 	super.create(duplicate);
 	   	 }catch(BusinessException e) {
 	   		 throw new MeveoApiException(e);
 	   	 }
-		 
 		 if(duplicateHierarchy) {
 			 catalogHierarchyBuilderService.duplicateQuoteVersion(duplicate, quoteVersion);
 		 }

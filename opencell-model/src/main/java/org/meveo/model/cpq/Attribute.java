@@ -30,6 +30,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.ManyToAny;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
@@ -145,6 +146,9 @@ public class Attribute extends EnableBusinessCFEntity{
 	
 	@Column(name = "default_value", length = 255)
 	private String defaultValue;
+
+	@ManyToMany(mappedBy = "attributes")
+	private List<GroupedAttributes> groupedAttributes;
 
     public Attribute(){
 
@@ -365,12 +369,12 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
-	
-	
-	
-	
-	
-    
-    
 
+	public List<GroupedAttributes> getGroupedAttributes() {
+		return groupedAttributes;
+	}
+
+	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
 }

@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.report.QuerySchedulerInput;
 import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.ReportQuery;
 
@@ -88,7 +89,7 @@ public interface ReportQueryResource {
             @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery);
     
     @GET
-    @Path(("/queryExecutionResult/{queryexecutionResultId}/results"))
+    @Path("/queryExecutionResult/{queryexecutionResultId}/results")
     @Operation( summary = "This API will convert the generate report file to json.", 
     			tags = {"ReportQuery"}, 
     			description = "look for the query result by its id get its path location, and transform csv file to json",
@@ -135,4 +136,21 @@ public interface ReportQueryResource {
     Response execute(@Parameter(description = "Query id", required = true) @PathParam("queryId") Long id,
                      @Parameter(description = "Execution type Synchronously or asynchronously")
                      @QueryParam("async") boolean async);
+    
+    @POST
+    @Path("/verify")
+    @Operation(summary = "Verify report query",
+            tags = {"ReportQuery" },
+            description = "Verify the existing of the report query according to its visibility and creator",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "The query not exists with the visibility"),
+                    @ApiResponse(responseCode = "409",
+                            description = "The query already exists and belong another user"),
+                    @ApiResponse(responseCode = "409",
+                            description = "The query already exists and belong you"),
+                    @ApiResponse(responseCode = "422",
+                            description = "The query already exists and belong to another user") })
+    Response verifyReportQuery(
+            @Parameter(description = "Verify report query request", required = true) VerifyQueryInput verifyQueryInput);
 }

@@ -396,7 +396,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public void generateXmlInvoice() throws BusinessException {
         try {
             entity = invoiceService.refreshOrRetrieve(entity);
-            entity = invoiceService.produceInvoiceXml(entity, null);
+            entity = invoiceService.produceInvoiceXml(entity, null, true);
             xmlGenerated = true;
             messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
 
