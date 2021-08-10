@@ -2004,6 +2004,9 @@
             <column name="dunning_document_id" type="bigint" />
             <column name="invoice_id" type="bigint" />
             <column name="collection_date" type="datetime"/>
+            <column name="status" type="varchar(20)"/>
+            <column name="reason" type="varchar(30)"/>
+            <column name="accounting_export_file" type="varchar(255)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -16206,8 +16209,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-1174_20210802" author="ZBariki" />
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
 	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
-	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
-
+    <changeSet id="#INTRD-1275_20210805" author="ZBariki" />
+   	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

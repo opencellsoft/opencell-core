@@ -9543,6 +9543,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="sort_order" type="varchar(15)" />
         </addColumn>
     </changeSet>
+
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI">
     	<addColumn tableName="billing_billing_run">
             <column name="invoice_type_id" type="bigint"></column>
@@ -9594,6 +9595,14 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
 	</changeSet>
+
+	<changeSet id="#INTRD-1275_20210805" author="ZBariki">
+        <addColumn tableName="ar_account_operation">
+            <column name="status" type="varchar(20)" />
+            <column name="reason" type="varchar(30)" />
+            <column name="accounting_export_file" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 
 	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
     	<addColumn tableName="ar_account_operation">
