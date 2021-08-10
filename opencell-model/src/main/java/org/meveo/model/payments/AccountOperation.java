@@ -376,6 +376,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "collection_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date collectionDate;
+    
+    /**
+     * An accounting date.
+     */
+    @Column(name = "accounting_date")
+    private Date accountingDate;
 
     public Date getDueDate() {
         return dueDate;
@@ -868,5 +874,19 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
+    }
+
+    /**
+     * @return the accountingDate
+     */
+    public Date getAccountingDate() {
+        return accountingDate;
+    }
+
+    /**
+     * @param accountingDate the accountingDate to set
+     */
+    public void setAccountingDate(Date accountingDate) {
+        this.accountingDate = accountingDate;
     }
 }

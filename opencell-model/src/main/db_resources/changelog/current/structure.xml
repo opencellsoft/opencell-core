@@ -9594,4 +9594,10 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
 	</changeSet>
+
+	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
