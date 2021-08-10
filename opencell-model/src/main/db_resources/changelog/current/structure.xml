@@ -9603,7 +9603,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="accounting_export_file" type="varchar(255)" />
         </addColumn>
     </changeSet>
-	</databaseChangeLog>
+
 	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD">
     	<createSequence sequenceName="journal_seq" startValue="1" />
         <createTable tableName="journal">
@@ -9632,3 +9632,10 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_account_operation" constraintName="fk_journal_account_operation_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="journal" />
 		</changeSet>
+
+	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
