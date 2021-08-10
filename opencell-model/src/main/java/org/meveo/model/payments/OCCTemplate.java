@@ -64,6 +64,13 @@ public class OCCTemplate extends BusinessEntity {
     @Column(name = "occ_category")
     @Enumerated(EnumType.STRING)
     private OperationCategoryEnum occCategory;
+    
+    /**
+     * journal
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "journal_id")
+    private Journal journal;
 
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
@@ -117,5 +124,13 @@ public class OCCTemplate extends BusinessEntity {
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
+    
+    public Journal getJournal() {
+		return journal;
+	}
+
+	public void setJournal(Journal journal) {
+		this.journal = journal;
+	}
 
 }
