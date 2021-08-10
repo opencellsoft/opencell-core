@@ -9596,7 +9596,7 @@ public class OrderAdvancement extends ModuleScript {
             referencedColumnNames="id" referencedTableName="accounting_period" />
 	</changeSet>
 
-    <changeSet id="#INTRD-1275_20210805" author="ZBariki">
+	<changeSet id="#INTRD-1275_20210805" author="ZBariki">
         <addColumn tableName="ar_account_operation">
             <column name="status" type="varchar(20)" />
             <column name="reason" type="varchar(30)" />
@@ -9604,4 +9604,9 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
+	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
