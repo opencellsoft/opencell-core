@@ -376,6 +376,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "collection_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date collectionDate;
+    
+    /**
+     * journal
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "journal_id")
+    private Journal journal;
 
     public Date getDueDate() {
         return dueDate;
@@ -869,4 +876,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
     }
+    
+    public Journal getJournal() {
+		return journal;
+	}
+
+	public void setJournal(Journal journal) {
+		this.journal = journal;
+	}
 }
