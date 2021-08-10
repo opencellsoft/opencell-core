@@ -1,6 +1,8 @@
 package org.meveo.apiv2.accounts.service;
 
 import static org.meveo.apiv2.accounts.ImmutableConsumerInput.builder;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +66,7 @@ public class AccountsManagementApiServiceTest {
 
         when(userAccountService.findById(0L)).thenReturn(null);
         when(userAccountService.findById(1L)).thenReturn(ua1);
-        when(subscriptionService.findByCode("TR_SU")).thenReturn(terminatedSU);
+        when(subscriptionService.findByCode(eq("TR_SU"), anyList())).thenReturn(terminatedSU);
     }
 
     @Test(expected = ForbiddenException.class)

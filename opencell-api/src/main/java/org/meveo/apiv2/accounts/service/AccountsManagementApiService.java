@@ -1,6 +1,9 @@
 package org.meveo.apiv2.accounts.service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
@@ -14,7 +17,6 @@ import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -72,6 +74,7 @@ public class AccountsManagementApiService {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
      * 
@@ -108,7 +111,7 @@ public class AccountsManagementApiService {
         }
 
         // Check subscription
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode, Arrays.asList("userAccount"));
 
         if (subscription == null) {
             throw new NotFoundException("Subscription {code=[code]} doesn't exist".replace("[code]", subscriptionCode));
@@ -118,6 +121,8 @@ public class AccountsManagementApiService {
             throw new ForbiddenException(
                 "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode));
         }
+
+        String oldUserAccount = subscription.getUserAccount().getCode();
 
         // Check WalletInstance
         WalletInstance newWallet = walletService.findByUserAccount(newOwner);
@@ -157,6 +162,10 @@ public class AccountsManagementApiService {
         subscription.setUserAccount(newOwner);
         subscriptionService.updateOwner(subscription, newOwner);
 
+        // The change must be logged (audit log + make Subscription.userAccount into auditable field)
+        createAuditLog(Subscription.class.getName());
+        auditableFieldService.createFieldHistory(subscription, "userAccount", AuditChangeTypeEnum.OTHER, oldUserAccount, newOwner.getCode());
+
         return count;
     }
 
@@ -172,16 +181,16 @@ public class AccountsManagementApiService {
         }
 
         CustomerAccount customerAccount = null;
-        try{
-            Long id = Long.parseLong(customerAccountCode);
-            customerAccount = customerAccountService.findById(id, Arrays.asList("paymentMethods"));
+        try {
+            customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
             if (Objects.isNull(customerAccount)) {
-                customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
+                Long id = Long.parseLong(customerAccountCode);
+                customerAccount = customerAccountService.findById(id, Arrays.asList("paymentMethods"));
                 if (Objects.isNull(customerAccount)) {
                     throw new EntityDoesNotExistsException(CustomerAccount.class, id);
                 }
             }
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
         }
         Customer newCustomerParent = parentInput.getParentId() != null ? customerService.findById(parentInput.getParentId(), Arrays.asList("customerAccounts"))
@@ -204,15 +213,15 @@ public class AccountsManagementApiService {
             .forEach(walletOperation -> walletOperationService.update(walletOperation));
 
         auditableFieldService.createFieldHistory(customerAccount, "customer", AuditChangeTypeEnum.OTHER, newCustomerParent.getCode(), oldCustomerParent.getCode());
-        createAuditLog();
+        createAuditLog(CustomerAccount.class.getName());
         log.info("the parent customer for the customer account {}, changed from {} to {}", customerAccount.getCode(), oldCustomerParent.getCode(), newCustomerParent.getCode());
     }
 
-    private void createAuditLog() {
+    private void createAuditLog(String entity) {
         AuditLog auditLog = new AuditLog();
         auditLog.setActor(currentUser.getUserName());
         auditLog.setCreated(new Date());
-        auditLog.setEntity(CustomerAccount.class.getName());
+        auditLog.setEntity(entity);
         auditLog.setOrigin("API");
         auditLog.setAction("update");
         auditLogService.create(auditLog);
