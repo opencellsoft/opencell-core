@@ -1,0 +1,12 @@
+{
+	"code" : "Seller_ThangNguNgu",
+	"description": "new description for seller Thang",
+	"defaultLevel": false,
+	"accountType": "ACCT_S",
+	"tradingCurrency": {
+		"id": -2
+	},
+	"tradingLanguage": {
+		"id": -1
+	}
+}
