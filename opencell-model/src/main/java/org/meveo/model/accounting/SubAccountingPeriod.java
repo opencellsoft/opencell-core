@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,8 +39,9 @@ public class SubAccountingPeriod extends BaseEntity {
     @Column(name = "end_date")
     private Date endDate;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "regular_users_sub_period_status")
-    private String regularUsersSubPeriodStatus;
+    private SubAccountingPeriodStatusEnum regularUsersSubPeriodStatus;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "regular_users_closed_date")
@@ -80,11 +83,11 @@ public class SubAccountingPeriod extends BaseEntity {
         this.endDate = endDate;
     }
 
-    public String getRegularUsersSubPeriodStatus() {
+    public SubAccountingPeriodStatusEnum getRegularUsersSubPeriodStatus() {
         return regularUsersSubPeriodStatus;
     }
 
-    public void setRegularUsersSubPeriodStatus(String regularUsersSubPeriodStatus) {
+    public void setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum regularUsersSubPeriodStatus) {
         this.regularUsersSubPeriodStatus = regularUsersSubPeriodStatus;
     }
 

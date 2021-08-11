@@ -37,16 +37,17 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
+import org.meveo.model.accounting.SubAccountingPeriod;
+import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
@@ -485,21 +486,29 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * 
      * @param accountOperation
      */
-    private void handleAccountingPeriods(AccountOperation accountOperation) {
+    public void handleAccountingPeriods(AccountOperation accountOperation) {
         
-        Integer year = null;
+        Date accountingDate = null;
         // if transaction is of type “invoice” then the control is performed on transaction_date
-        if (accountOperation instanceof RecordedInvoice) {
-            year = DateUtils.getYearFromDate(accountOperation.getTransactionDate());
+        if (accountOperation.getType().equals("I")) {
+            accountingDate = accountOperation.getTransactionDate();
         }
         // if transaction is of type “payment” then the control is performed on collection_date
-        else if (accountOperation instanceof Payment) {
-            year = DateUtils.getYearFromDate(accountOperation.getCollectionDate());
+        else if (accountOperation.getType().equals("P")) {
+            accountingDate = accountOperation.getCollectionDate();
         }
 
-        AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
-        if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.OPEN) {
-            
+        if (accountingDate != null) {
+            Integer year = DateUtils.getYearFromDate(accountingDate);
+            AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
+            if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.OPEN) {
+                SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
+                SubAccountingPeriodStatusEnum status = subAccountingPeriod.getRegularUsersSubPeriodStatus();
+                if (status == SubAccountingPeriodStatusEnum.OPEN) {
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                    accountOperation.setAccountingDate(accountingDate);
+                }
+            }
         }
     }
 }

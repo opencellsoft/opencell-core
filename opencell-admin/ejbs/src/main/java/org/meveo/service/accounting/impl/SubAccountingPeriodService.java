@@ -1,7 +1,6 @@
 package org.meveo.service.accounting.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -14,14 +13,14 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
 
-    public List<SubAccountingPeriod> findByAccountingPeriod(AccountingPeriod accountingPeriod, Date date) {
+    public SubAccountingPeriod findByAccountingPeriod(AccountingPeriod accountingPeriod, Date accountingDate) {
         TypedQuery<SubAccountingPeriod> query = getEntityManager()
-            .createQuery("select s from " + entityClass.getSimpleName() + " s where accountingPeriod=:accountingPeriod and :date between startDate and endDate", entityClass)
-            .setParameter("accountingPeriod", accountingPeriod).setParameter("date", date);
+            .createQuery("select s from " + entityClass.getSimpleName() + " s where accountingPeriod=:accountingPeriod and :accountingDate between startDate and endDate",
+                entityClass)
+            .setParameter("accountingPeriod", accountingPeriod).setParameter("accountingDate", accountingDate);
         try {
-            return query.getResultList();
+            return query.getSingleResult();
         } catch (NoResultException e) {
-            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod);
             return null;
         }
     }
