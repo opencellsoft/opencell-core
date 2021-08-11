@@ -378,21 +378,30 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "collection_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date collectionDate;
-    
+
     /**
      * An accounting date.
      */
     @Column(name = "accounting_date")
     private Date accountingDate;
 
+    /**
+     * Account operation status
+     */
     @Column(name = "status", length = 20)
     @Enumerated(EnumType.STRING)
     private AccountOperationStatus status = POSTED;
 
+    /**
+     * Account operation rejection reason
+     */
     @Column(name = "reason", length = 30)
     @Enumerated(EnumType.STRING)
     private AccountOperationRejectionReason reason;
 
+    /**
+     * Account export file
+     */
     @Column(name = "accounting_export_file")
     private String accountingExportFile;
 
