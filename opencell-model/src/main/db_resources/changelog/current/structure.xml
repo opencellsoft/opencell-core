@@ -9543,6 +9543,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="sort_order" type="varchar(15)" />
         </addColumn>
     </changeSet>
+
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI">
     	<addColumn tableName="billing_billing_run">
             <column name="invoice_type_id" type="bigint"></column>
@@ -9594,4 +9595,47 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
 	</changeSet>
+
+	<changeSet id="#INTRD-1275_20210805" author="ZBariki">
+        <addColumn tableName="ar_account_operation">
+            <column name="status" type="varchar(20)" />
+            <column name="reason" type="varchar(30)" />
+            <column name="accounting_export_file" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD">
+    	<createSequence sequenceName="journal_seq" startValue="1" />
+        <createTable tableName="journal">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="journal_pkey" />
+            </column>
+           	<column name="code" type="varchar(255)"/>
+         	<column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+        </createTable>
+        <addColumn tableName="ar_occ_template">
+            <column name="journal_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="journal_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_occ_template" constraintName="fk_journal_template_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="journal" />
+        <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_account_operation" constraintName="fk_journal_account_operation_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="journal" />
+		</changeSet>
+
+	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

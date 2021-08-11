@@ -37,6 +37,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
+import org.primefaces.model.SortOrder;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
@@ -53,13 +54,15 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, fetchFields, null, null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
+                limit.intValue(), null, filter, fetchFields, orderBy, SortOrder.valueOf(sort));
         return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
     }
 
     @Override
     public Long getCount(String filter) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null, null, filter, null, null, null);
+        PaginationConfiguration paginationConfiguration =
+                new PaginationConfiguration(null, null, null, filter, null, null, null);
         return reportQueryService.count(paginationConfiguration);
     }
 
@@ -216,5 +219,9 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
                 throw new UnprocessableEntityException("The query already exists and belongs to another user");
             }
         }
+    }
+
+    public Long countAllowedQueriesForUser() {
+        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName());
     }
 }

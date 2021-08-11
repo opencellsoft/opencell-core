@@ -15,10 +15,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.apiv2.report.ExecutionResult;
-import org.meveo.apiv2.report.ReportQueries;
-import org.meveo.apiv2.report.ReportQueryInput;
-import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.*;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.report.query.ReportQuery;
 import org.mockito.InjectMocks;
@@ -183,7 +180,9 @@ public class ReportQueryResourceImplTest {
         when(reportQueryApiService.execute(1L, true)).thenReturn(of("Accepted"));
         Response response = reportQueryResource.execute(1L, true);
 
+        ImmutableSuccessResponse successResponse = (ImmutableSuccessResponse) response.getEntity();
         assertEquals(200, response.getStatus());
-        assertEquals("Execution request accepted", response.getEntity());
+        assertEquals("ACCEPTED", successResponse.getStatus());
+        assertEquals("Execution request accepted", successResponse.getMessage());
     }
 }
