@@ -2009,7 +2009,8 @@
 			<column name="status" type="varchar(20)"/>
             <column name="reason" type="varchar(30)"/>
             <column name="accounting_export_file" type="varchar(255)"/>
-			</createTable>
+            <column name="accounting_date" type="datetime"></column>
+		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
         <createTable tableName="ar_action_dunning">
