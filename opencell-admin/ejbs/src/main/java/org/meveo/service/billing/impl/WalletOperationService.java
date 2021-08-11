@@ -17,9 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.util.Collections.emptyList;
-import static org.meveo.commons.utils.NumberUtils.round;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -98,6 +95,9 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
+
+import static java.util.Collections.emptyList;
+import static org.meveo.commons.utils.NumberUtils.round;
 
 /**
  * Service class for WalletOperation entity
@@ -1139,14 +1139,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public List<Object[]> openWalletOperationsByCharge(WalletInstance walletInstance) {
 
         try {
-            // todo ejbQL and make namedQuery
-            List<Object[]> resultList = getEntityManager().createNativeQuery("select op.description ,sum(op.quantity) QT, sum(op.amount_without_tax) MT ,op.input_unit_description from "
-                    + "billing_wallet_operation op , cat_charge_template ct, billing_charge_instance ci " + "where op.wallet_id = " + walletInstance.getId()
-                    + " and  op.status = 'OPEN'  and op.charge_instance_id = ci.id and ci.charge_template_id = ct.id and ct.id in (select id from cat_charge_template where charge_type 'U') "
-                    + "group by op.description, op.input_unit_description")
-                .getResultList();
-
-            return resultList;
+            return getEntityManager().createNamedQuery("WalletInstance.openWalletOperationsByCharge").setParameter("walletInsanceId", walletInstance.getId()).getResultList();
         } catch (NoResultException e) {
             return Collections.emptyList();
         }
