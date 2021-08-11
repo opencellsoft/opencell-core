@@ -15,7 +15,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
     public SubAccountingPeriod findByAccountingPeriod(AccountingPeriod accountingPeriod, Date accountingDate) {
         TypedQuery<SubAccountingPeriod> query = getEntityManager()
-            .createQuery("select s from " + entityClass.getSimpleName() + " s where accountingPeriod=:accountingPeriod and :accountingDate between startDate and endDate",
+            .createQuery("select s from " + entityClass.getSimpleName() + " s where accountingPeriod=:accountingPeriod and (:accountingDate >= startDate and :accountingDate <= endDate)",
                 entityClass)
             .setParameter("accountingPeriod", accountingPeriod).setParameter("accountingDate", accountingDate);
         try {

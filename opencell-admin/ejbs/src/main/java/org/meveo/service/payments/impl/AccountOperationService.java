@@ -35,12 +35,14 @@ import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationRejectionReason;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -500,13 +502,29 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         if (accountingDate != null) {
             Integer year = DateUtils.getYearFromDate(accountingDate);
+
             AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
-            if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.OPEN) {
-                SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
-                SubAccountingPeriodStatusEnum status = subAccountingPeriod.getRegularUsersSubPeriodStatus();
-                if (status == SubAccountingPeriodStatusEnum.OPEN) {
-                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+            AccountingPeriodStatusEnum accountingPeriodStatus = accountingPeriod.getAccountingPeriodStatus();
+            SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
+            SubAccountingPeriodStatusEnum subAccountingPeriodStatus = subAccountingPeriod.getRegularUsersSubPeriodStatus();
+            
+            // if condition is OK
+            if (accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN && subAccountingPeriodStatus == SubAccountingPeriodStatusEnum.OPEN) {
+                // account operation is created with status “posted”
+                accountOperation.setStatus(AccountOperationStatus.POSTED);
+                // accounting_date equals Transaction date for “invoice” or Collection date for “payment”
+                accountOperation.setAccountingDate(accountingDate);
+            }
+            else {
+                if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
                     accountOperation.setAccountingDate(accountingDate);
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                    accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+                }
+                else {
+                    accountOperation.setAccountingDate(null);
+                    accountOperation.setStatus(AccountOperationStatus.REJECTED);
+                    accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
                 }
             }
         }
