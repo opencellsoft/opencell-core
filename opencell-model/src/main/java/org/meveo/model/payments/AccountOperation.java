@@ -17,6 +17,9 @@
  */
 package org.meveo.model.payments;
 
+import static javax.persistence.EnumType.STRING;
+import static org.meveo.model.payments.AccountOperationStatus.POSTED;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +30,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
@@ -131,13 +133,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Operation category Debit/Credit
      */
     @Column(name = "transaction_category")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private OperationCategoryEnum transactionCategory;
 
     /**
      * Reference
      */
-    @Column(name = "reference", length = 255)
+    @Column(name = "reference")
     @Size(max = 255)
     private String reference;
 
@@ -158,7 +160,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Deprecated in 5.2. Use accountingCode instead
      */
     @Deprecated
-    @Column(name = "account_code_client_side", length = 255)
+    @Column(name = "account_code_client_side")
     @Size(max = 255)
     private String accountCodeClientSide;
 
@@ -202,7 +204,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Matching status
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = "matching_status")
     private MatchingStatusEnum matchingStatus;
 
@@ -249,7 +251,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Bank reference
      */
-    @Column(name = "bank_reference", length = 255)
+    @Column(name = "bank_reference")
     @Size(max = 255)
     private String bankReference;
 
@@ -271,7 +273,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Payment method
      */
     @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private PaymentMethodEnum paymentMethod;
 
     /**
@@ -283,72 +285,72 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Additional payment information - // IBAN for direct debit
      */
-    @Column(name = "payment_info", length = 255)
+    @Column(name = "payment_info")
     @Size(max = 255)
     private String paymentInfo;
 
     /**
      * Additional payment information - bank code
      */
-    @Column(name = "payment_info1", length = 255)
+    @Column(name = "payment_info1")
     @Size(max = 255)
     private String paymentInfo1;
 
     /**
      * Additional payment information - Code box/code guichet
      */
-    @Column(name = "payment_info2", length = 255)
+    @Column(name = "payment_info2")
     @Size(max = 255)
     private String paymentInfo2;
 
     /**
      * Additional payment information - Account number
      */
-    @Column(name = "payment_info3", length = 255)
+    @Column(name = "payment_info3")
     @Size(max = 255)
     private String paymentInfo3;
 
     /**
      * Additional payment information - RIB
      */
-    @Column(name = "payment_info4", length = 255)
+    @Column(name = "payment_info4")
     @Size(max = 255)
     private String paymentInfo4;
 
     /**
      * Additional payment information - Bank name
      */
-    @Column(name = "payment_info5", length = 255)
+    @Column(name = "payment_info5")
     @Size(max = 255)
     private String paymentInfo5;
 
     /**
      * Additional payment information - BIC
      */
-    @Column(name = "payment_info6", length = 255)
+    @Column(name = "payment_info6")
     @Size(max = 255)
     private String paymentInfo6;
 
     /**
      * Billing account name
      */
-    @Column(name = "billing_account_name", length = 255)
+    @Column(name = "billing_account_name")
     @Size(max = 255)
     private String billingAccountName;
 
     /**
      * DD request item
      */
-    @ManyToOne(optional = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
 
 
-    @ManyToOne(optional = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
 
-    @ManyToOne(optional = true)
+    @ManyToOne
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
@@ -368,7 +370,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
       name = "ar_ao_payment_histories",
       joinColumns = @JoinColumn(name = "ao_id"),
       inverseJoinColumns = @JoinColumn(name = "history_id"))
-    private List<PaymentHistory> paymentHistories = new ArrayList<PaymentHistory>();
+    private List<PaymentHistory> paymentHistories = new ArrayList<>();
 
     /**
      * A collection date.
@@ -376,6 +378,28 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "collection_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date collectionDate;
+	/**
+     * An accounting date.
+     */
+    @Column(name = "accounting_date")
+    private Date accountingDate;
+
+/**
+     * journal
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "journal_id")
+    private Journal journal;
+    @Column(name = "status", length = 20)
+    @Enumerated(STRING)
+    private AccountOperationStatus status = POSTED;
+
+    @Column(name = "reason", length = 30)
+    @Enumerated(STRING)
+    private AccountOperationRejectionReason reason;
+
+    @Column(name = "accounting_export_file")
+    private String accountingExportFile;
 
     public Date getDueDate() {
         return dueDate;
@@ -868,5 +892,50 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
+    }
+    public AccountOperationStatus getStatus() {
+		return status;
+    }
+
+    public void setStatus(AccountOperationStatus status) {
+        this.status = status;
+    }
+
+    public AccountOperationRejectionReason getReason() {
+        return reason;
+    }
+
+    public void setReason(AccountOperationRejectionReason reason) {
+        this.reason = reason;
+    }
+
+    public String getAccountingExportFile() {
+        return accountingExportFile;
+    }
+
+    public void setAccountingExportFile(String accountingExportFile) {
+        this.accountingExportFile = accountingExportFile;
+    }
+	
+	public Journal getJournal() {
+		return journal;
+	}
+
+	public void setJournal(Journal journal) {
+		this.journal = journal;
+	}
+
+/**
+     * @return the accountingDate
+     */
+    public Date getAccountingDate() {
+        return accountingDate;
+    }
+
+    /**
+     * @param accountingDate the accountingDate to set
+     */
+    public void setAccountingDate(Date accountingDate) {
+        this.accountingDate = accountingDate;
     }
 }

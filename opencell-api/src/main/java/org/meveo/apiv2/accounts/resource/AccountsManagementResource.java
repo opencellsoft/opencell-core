@@ -41,9 +41,7 @@ public interface AccountsManagementResource {
      * Change a payer account's parent using API to attach it to an other account.
      *
      * @param customerAccountCode The customer account's code or id
-     * @param id The parent customer id
-     * @param code The parent customer code
-     * @return counter instances.
+     * @param parentInput The parent customer code or id
      */
     @POST
     @Path("/customerAccounts/{customerAccountCode}/moving")
