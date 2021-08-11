@@ -35,6 +35,8 @@ import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -42,8 +44,12 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.accounting.impl.AccountingPeriodService;
+import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -67,6 +73,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /** The matching code service. */
     @Inject
     private MatchingCodeService matchingCodeService;
+    
+    @Inject
+    private AccountingPeriodService accountingPeriodService;
+
+    @Inject
+    private SubAccountingPeriodService subAccountingPeriodService;
 
     /**
      * Account operation action Enum
@@ -464,6 +476,30 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
             // Update the old account operation
             accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
+        }
+    }
+    
+    /**
+     * Step 1 : verify if the account operation is on open period.<br>
+     * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
+     * 
+     * @param accountOperation
+     */
+    private void handleAccountingPeriods(AccountOperation accountOperation) {
+        
+        Integer year = null;
+        // if transaction is of type “invoice” then the control is performed on transaction_date
+        if (accountOperation instanceof RecordedInvoice) {
+            year = DateUtils.getYearFromDate(accountOperation.getTransactionDate());
+        }
+        // if transaction is of type “payment” then the control is performed on collection_date
+        else if (accountOperation instanceof Payment) {
+            year = DateUtils.getYearFromDate(accountOperation.getCollectionDate());
+        }
+
+        AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
+        if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.OPEN) {
+            
         }
     }
 }

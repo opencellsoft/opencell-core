@@ -9604,4 +9604,9 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA">
+    	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
+        <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
+    </changeSet>
+
 </databaseChangeLog>
