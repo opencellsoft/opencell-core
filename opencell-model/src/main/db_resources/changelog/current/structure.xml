@@ -9638,4 +9638,13 @@ public class OrderAdvancement extends ModuleScript {
             <column name="accounting_date" type="datetime"></column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA">
+    	<addColumn tableName="accounting_period">
+            <column name="accounting_operation_action" type="varchar(255)" />
+            <column name="regular_user_lock_option" type="varchar(255)" />
+            <column name="custom_lock_number_days" type="int4" />
+            <column name="custom_lock_option" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
