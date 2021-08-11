@@ -10,13 +10,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MyStepdefs {
-    private List<String> scenarios;
+    private List<String> scenarioNames;
 
     @Before
     public void setUp(Scenario scenario) throws Exception {
 
         List<String> tags = (ArrayList<String>) scenario.getSourceTagNames();
-        System.out.println("At Hooks: " + scenario.getId());
+        String name = scenario.getName();
+        System.out.println("name : " + name);
+        System.out.println("At Hooks : " + scenario.getId());
         for (String aTag : tags)
             System.out.println( "aTag : " + aTag );
 
@@ -47,11 +49,11 @@ public class MyStepdefs {
 
     @Given("complex scenario composed of {string}")
     public void complexScenarioComposedOf(String arg0) {
-        scenarios = new ArrayList<>(Arrays.asList(arg0.split(" ")));
-        System.out.println( "scenarios.size() : " + scenarios.size() );
+        scenarioNames = new ArrayList<>(Arrays.asList(arg0.split(" ")));
+        System.out.println( "scenarioNames.size() : " + scenarioNames.size() );
     }
 
-    @Then("Execute a complex scenario")
+    @Then("execute a complex scenario")
     public void executeAComplexScenario() {
         System.out.println( "test executeAComplexScenario HERE" );
     }
