@@ -77,7 +77,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
                 .stream()
                 .map(customQuery -> mapper.toResource(customQuery))
                 .toArray(ImmutableReportQuery[]::new);
-        Long count = Long.valueOf(reportQueryEntities.size());
+        Long count = reportQueryApiService.countAllowedQueriesForUser();
         ReportQueries reportQueries = ImmutableReportQueries.builder()
                 .addData(reportQueriesList)
                 .offset(offset)

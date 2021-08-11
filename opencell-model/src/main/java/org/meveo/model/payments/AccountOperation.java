@@ -378,7 +378,18 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "collection_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date collectionDate;
+	/**
+     * An accounting date.
+     */
+    @Column(name = "accounting_date")
+    private Date accountingDate;
 
+/**
+     * journal
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "journal_id")
+    private Journal journal;
     @Column(name = "status", length = 20)
     @Enumerated(STRING)
     private AccountOperationStatus status = POSTED;
@@ -882,9 +893,8 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
     }
-
     public AccountOperationStatus getStatus() {
-        return status;
+		return status;
     }
 
     public void setStatus(AccountOperationStatus status) {
@@ -905,5 +915,27 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setAccountingExportFile(String accountingExportFile) {
         this.accountingExportFile = accountingExportFile;
+    }
+	
+	public Journal getJournal() {
+		return journal;
+	}
+
+	public void setJournal(Journal journal) {
+		this.journal = journal;
+	}
+
+/**
+     * @return the accountingDate
+     */
+    public Date getAccountingDate() {
+        return accountingDate;
+    }
+
+    /**
+     * @param accountingDate the accountingDate to set
+     */
+    public void setAccountingDate(Date accountingDate) {
+        this.accountingDate = accountingDate;
     }
 }
