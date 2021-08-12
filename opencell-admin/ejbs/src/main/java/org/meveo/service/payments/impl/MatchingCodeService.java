@@ -201,15 +201,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
             
             if(accountOperation instanceof RecordedInvoice) {
-                Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
-                if(withWriteOff) {
-                    invoice.setStatus(InvoiceStatusEnum.ABANDONED);
-                } else if(withRefund) {
-                    invoice.setStatus(InvoiceStatusEnum.REFUNDED);
-                } else if(fullMatch) {
-                    invoice.setStatus(InvoiceStatusEnum.PAID);
-                } else if(!fullMatch) {
-                    invoice.setStatus(InvoiceStatusEnum.PPAID);
+                Invoice invoice = ((RecordedInvoice) accountOperation).getInvoice();
+                if (invoice != null) {
+                    if (withWriteOff) {
+                        invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                    } else if (withRefund) {
+                        invoice.setStatus(InvoiceStatusEnum.REFUNDED);
+                    } else if (fullMatch) {
+                        invoice.setStatus(InvoiceStatusEnum.PAID);
+                    } else if (!fullMatch) {
+                        invoice.setStatus(InvoiceStatusEnum.PPAID);
+                    }
                 }
             }
 
