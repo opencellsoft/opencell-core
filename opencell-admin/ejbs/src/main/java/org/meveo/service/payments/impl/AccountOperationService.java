@@ -17,6 +17,8 @@
  */
 package org.meveo.service.payments.impl;
 
+import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,14 +38,10 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.admin.User;
+import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -67,6 +65,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /** The matching code service. */
     @Inject
     private MatchingCodeService matchingCodeService;
+
+    @Inject
+    private UserService userService;
 
     /**
      * Account operation action Enum
@@ -465,5 +466,19 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             // Update the old account operation
             accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
         }
+    }
+
+    @Override
+    public AccountOperation update(AccountOperation updatedAccountOperation) throws BusinessException {
+        AccountOperation currentAccountOperation = findById(updatedAccountOperation.getId());
+        User lastUser = userService.findByUsername(currentAccountOperation.getAuditable().getLastUser());
+        boolean hasFinanceManagementPermission = lastUser.getRoles()
+                .stream()
+                .anyMatch(role -> role.hasPermission("financeManagement"));
+        if (currentAccountOperation.getStatus().equals(EXPORTED) && hasFinanceManagementPermission
+                && currentAccountOperation.getAccountingDate().compareTo(updatedAccountOperation.getAccountingDate()) != 0) {
+            throw new BusinessException("Can not update accounting date, account operation is EXPORTED by user with financeManagement permission");
+        }
+        return super.update(updatedAccountOperation);
     }
 }

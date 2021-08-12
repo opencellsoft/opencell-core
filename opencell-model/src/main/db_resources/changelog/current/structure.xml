@@ -3957,4 +3957,12 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-1275_20210805" author="ZBariki">
+        <addColumn tableName="ar_account_operation">
+            <column name="status" type="varchar(20)" />
+            <column name="reason" type="varchar(30)" />
+            <column name="accounting_export_file" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -19,19 +19,15 @@
 package org.meveo.api.rest.payment;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -50,7 +46,6 @@ import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -114,7 +109,7 @@ public interface AccountOperationRs extends IBaseRs {
 								)
 				)}
 	)
-    public AccountOperationsResponseDto listGet(@Deprecated @QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("query") String query,
+    AccountOperationsResponseDto listGet(@Deprecated @QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("query") String query,
             @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -139,7 +134,7 @@ public interface AccountOperationRs extends IBaseRs {
 								)
 				)}
 	)
-    public AccountOperationsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    AccountOperationsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Match operations
@@ -277,7 +272,7 @@ public interface AccountOperationRs extends IBaseRs {
 								)
 				)}
 	)
-    public MatchedOperationsResponseDto listMatchedOperations(@PathParam("accountOperationId") Long accountOperationId);
+    MatchedOperationsResponseDto listMatchedOperations(@PathParam("accountOperationId") Long accountOperationId);
 
     /**
      * Transfer an account operation from one customer to another.
@@ -325,5 +320,5 @@ public interface AccountOperationRs extends IBaseRs {
 								)
 				)}
 	)
-    public AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
+    AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 }

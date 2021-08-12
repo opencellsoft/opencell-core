@@ -17,6 +17,8 @@
  */
 package org.meveo.model.payments;
 
+import static org.meveo.model.payments.AccountOperationStatus.POSTED;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -368,7 +370,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
       name = "ar_ao_payment_histories",
       joinColumns = @JoinColumn(name = "ao_id"),
       inverseJoinColumns = @JoinColumn(name = "history_id"))
-    private List<PaymentHistory> paymentHistories = new ArrayList<PaymentHistory>();
+    private List<PaymentHistory> paymentHistories = new ArrayList<>();
 
     /**
      * A collection date.
@@ -376,12 +378,32 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "collection_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date collectionDate;
-    
+
     /**
      * An accounting date.
      */
     @Column(name = "accounting_date")
     private Date accountingDate;
+
+    /**
+     * Account operation status
+     */
+    @Column(name = "status", length = 20)
+    @Enumerated(EnumType.STRING)
+    private AccountOperationStatus status = POSTED;
+
+    /**
+     * Account operation rejection reason
+     */
+    @Column(name = "reason", length = 30)
+    @Enumerated(EnumType.STRING)
+    private AccountOperationRejectionReason reason;
+
+    /**
+     * Account export file
+     */
+    @Column(name = "accounting_export_file")
+    private String accountingExportFile;
 
     public Date getDueDate() {
         return dueDate;
@@ -888,5 +910,29 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     public void setAccountingDate(Date accountingDate) {
         this.accountingDate = accountingDate;
+    }
+
+    public AccountOperationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccountOperationStatus status) {
+        this.status = status;
+    }
+
+    public AccountOperationRejectionReason getReason() {
+        return reason;
+    }
+
+    public void setReason(AccountOperationRejectionReason reason) {
+        this.reason = reason;
+    }
+
+    public String getAccountingExportFile() {
+        return accountingExportFile;
+    }
+
+    public void setAccountingExportFile(String accountingExportFile) {
+        this.accountingExportFile = accountingExportFile;
     }
 }
