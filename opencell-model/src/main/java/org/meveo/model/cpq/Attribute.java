@@ -3,6 +3,8 @@
  */
 package org.meveo.model.cpq;
 
+import static javax.persistence.EnumType.STRING;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +32,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.ManyToAny;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
@@ -144,14 +145,23 @@ public class Attribute extends EnableBusinessCFEntity{
     @Column(name = "read_only")
     protected Boolean readOnly = Boolean.FALSE;
 	
-	@Column(name = "default_value", length = 255)
+	@Column(name = "default_value")
 	private String defaultValue;
 
 	@ManyToMany(mappedBy = "attributes")
 	private List<GroupedAttributes> groupedAttributes;
 
-    public Attribute(){
+	@Column(name = "validation_type", length = 10)
+	@Enumerated(STRING)
+	private AttributeValidationType validationType;
 
+	@Column(name = "validation_pattern", length = 2000)
+	private String validationPattern;
+
+	@Column(name = "validation_label")
+	private String validationLabel;
+
+    public Attribute(){
 	}
 
 	public Attribute(Long id) {
@@ -376,5 +386,29 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
+	}
+
+	public AttributeValidationType getValidationType() {
+		return validationType;
+	}
+
+	public void setValidationType(AttributeValidationType validationType) {
+		this.validationType = validationType;
+	}
+
+	public String getValidationPattern() {
+		return validationPattern;
+	}
+
+	public void setValidationPattern(String validationPattern) {
+		this.validationPattern = validationPattern;
+	}
+
+	public String getValidationLabel() {
+		return validationLabel;
+	}
+
+	public void setValidationLabel(String validationLabel) {
+		this.validationLabel = validationLabel;
 	}
 }

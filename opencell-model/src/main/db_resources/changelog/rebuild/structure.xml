@@ -9205,6 +9205,9 @@
             <column name="unit_nb_decimal" type="int4" />
             <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="default_value" type="varchar(255)"></column>
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-458" author="NabilOUACHI">
@@ -15813,6 +15816,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" />
     <changeSet id="#INTRD-1441_20210728" author="Mbarek-Ay" />
     <changeSet id="#INTRD-1310_050821" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-1396_20210812" author="ZBariki" />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
