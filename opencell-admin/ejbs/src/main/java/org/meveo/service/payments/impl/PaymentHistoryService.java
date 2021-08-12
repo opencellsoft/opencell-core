@@ -116,6 +116,9 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		}
 
 		for (AccountOperation ao : aoToPay) {
+			if (ao.getPaymentHistories() == null) {
+				ao.setPaymentHistories(new ArrayList<>());
+			}
 			ao.getPaymentHistories().add(paymentHistory);
 			paymentHistory.getListAoPaid().add(ao);
 		}
