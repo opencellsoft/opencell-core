@@ -52,9 +52,9 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -62,6 +62,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
@@ -104,6 +105,9 @@ public class AccountOperationApi extends BaseApi {
     
     @Inject
     private AccountingCodeService accountingCodeService;
+    
+    @Inject
+    private JournalService journalService;
 
     /**
      * Creates the.
@@ -182,6 +186,7 @@ public class AccountOperationApi extends BaseApi {
                 accountOperation.setAccountingCode(accountingCode);
             } 
         }
+        
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setAmount(postData.getAmount());
         accountOperation.setMatchingAmount(postData.getMatchingAmount());
@@ -204,6 +209,14 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
         accountOperation.setCollectionDate(postData.getCollectionDate());
+        
+        if (!StringUtils.isBlank(postData.getJournalCode())) {
+        	Journal journal = journalService.findByCode(postData.getJournalCode());
+            if (journal == null) {
+                throw new EntityDoesNotExistsException(Journal.class, postData.getJournalCode());
+            }
+            accountOperation.setJournal(journal);
+        }
 
         // populate customFields
         try {
