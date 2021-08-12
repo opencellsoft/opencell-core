@@ -35,8 +35,15 @@ import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.accounting.AccountingOperationAction;
+import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodStatusEnum;
+import org.meveo.model.accounting.SubAccountingPeriod;
+import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationRejectionReason;
+import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -44,6 +51,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.accounting.impl.AccountingPeriodService;
+import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -67,6 +76,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /** The matching code service. */
     @Inject
     private MatchingCodeService matchingCodeService;
+    
+    @Inject
+    private AccountingPeriodService accountingPeriodService;
+
+    @Inject
+    private SubAccountingPeriodService subAccountingPeriodService;
 
     /**
      * Account operation action Enum
@@ -464,6 +479,54 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
             // Update the old account operation
             accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
+        }
+    }
+    
+    /**
+     * Step 1 : verify if the account operation is on open period.<br>
+     * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
+     * 
+     * @param accountOperation
+     */
+    public void handleAccountingPeriods(AccountOperation accountOperation) {
+        
+        Date accountingDate = null;
+        // if transaction is of type “invoice” then the control is performed on transaction_date
+        if (accountOperation.getType().equals("I")) {
+            accountingDate = accountOperation.getTransactionDate();
+        }
+        // if transaction is of type “payment” then the control is performed on collection_date
+        else if (accountOperation.getType().equals("P")) {
+            accountingDate = accountOperation.getCollectionDate();
+        }
+
+        if (accountingDate != null) {
+            Integer year = DateUtils.getYearFromDate(accountingDate);
+
+            AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
+            AccountingPeriodStatusEnum accountingPeriodStatus = accountingPeriod.getAccountingPeriodStatus();
+            SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
+            SubAccountingPeriodStatusEnum subAccountingPeriodStatus = subAccountingPeriod.getRegularUsersSubPeriodStatus();
+            
+            // if condition is OK
+            if (accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN && subAccountingPeriodStatus == SubAccountingPeriodStatusEnum.OPEN) {
+                // account operation is created with status “posted”
+                accountOperation.setStatus(AccountOperationStatus.POSTED);
+                // accounting_date equals Transaction date for “invoice” or Collection date for “payment”
+                accountOperation.setAccountingDate(accountingDate);
+            }
+            else {
+                if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
+                    accountOperation.setAccountingDate(accountingDate);
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                    accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+                }
+                else {
+                    accountOperation.setAccountingDate(null);
+                    accountOperation.setStatus(AccountOperationStatus.REJECTED);
+                    accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
+                }
+            }
         }
     }
 }

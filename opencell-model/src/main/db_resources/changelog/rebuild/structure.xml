@@ -15178,7 +15178,13 @@ $$ LANGUAGE plpgsql;
             <column name="sub_accounting_period_type" type="varchar(255)"/>
             <column name="sub_accounting_period_progress" type="varchar(255)"/>
             <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
+            <column name="accounting_operation_action" type="varchar(255)" />
+            <column name="regular_user_lock_option" type="varchar(255)" />
+            <column name="custom_lock_number_days" type="int4" />
+            <column name="custom_lock_option" type="varchar(255)" />
         </createTable>
+        <addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
+        <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
         
         <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
         <createTable tableName="sub_accounting_period">
@@ -16255,8 +16261,10 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
 	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
     <changeSet id="#INTRD-1275_20210805" author="ZBariki" />
+    <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD" />
+   	<changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA" />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
