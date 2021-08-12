@@ -21,6 +21,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.exception.ConflictException;
@@ -55,7 +56,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
-                limit.intValue(), null, filter, fetchFields, orderBy, SortOrder.valueOf(sort));
+                limit.intValue(), null, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
         return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
     }
 
@@ -147,8 +148,16 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     public Optional<ReportQuery> delete(Long id) {
         ReportQuery reportQuery = reportQueryService.findById(id);
         if (reportQuery != null) {
-            reportQueryService.remove(reportQuery);
-            return of(reportQuery);
+            try {
+                reportQueryService.remove(reportQuery);
+                return of(reportQuery);
+            } catch (Exception exception) {
+                if(exception.getCause().getCause().getCause() instanceof ConstraintViolationException) {
+                    throw new BusinessException("The query with id "+ id + " is referenced");
+                } else {
+                    throw new BusinessException(exception.getMessage());
+                }
+            }
         }
         return empty();
     }
