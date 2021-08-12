@@ -46,11 +46,11 @@ public class AccountingPeriod extends BaseEntity {
     @Column(name = "regular_user_lock_option")
     private RegularUserLockOption regularUserLockOption;
 
-    @Column(name = "custom_lock_number_days ")
+    @Column(name = "custom_lock_number_days")
     private Integer customLockNumberDays;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "custom_lock_option ")
+    @Column(name = "custom_lock_option")
     private CustomLockOption customLockOption;
 
     public AccountingPeriod() {

@@ -518,13 +518,10 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		debtorAccount.setId(identification);
 	}
 
-	private Object[] getPreferredPaymentMethod(Long customerAccountID) {
-		String queryString = "SELECT ca.id, ace.code, ace.description, pm.token_type, pm.bic, pm.iban, pm.alias, pm.mandate_identification, pm.mandate_date " +
-				"FROM ar_customer_account ca JOIN account_entity ace ON ace.id = ca.id JOIN ar_payment_token pm on ca.id = pm.customer_account_id " +
-				"WHERE ca.id IN ( SELECT ao.customer_account_id FROM ar_account_operation ao WHERE ao.ddrequest_item_id = :id) AND pm.is_default = 1";
+	private Object[] getPreferredPaymentMethod(Long ddRequestItemID) {
 		return (Object[]) paymentMethodService.getEntityManager()
-					.createNativeQuery(queryString)
-					.setParameter("id", customerAccountID)
+					.createNamedQuery("PaymentMethod.getPreferredPaymentMethodForDDRequestItem")
+					.setParameter("id", ddRequestItemID)
 					.getSingleResult();
 	}
 
