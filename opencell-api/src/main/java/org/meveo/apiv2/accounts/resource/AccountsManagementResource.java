@@ -32,7 +32,7 @@ public interface AccountsManagementResource {
                     @ApiResponse(responseCode = "204", description = "Success, no return data"),
                     @ApiResponse(responseCode = "200", description = "Success (in case of moved WO/RT) Returns the ids of moved WO/RT"),
                     @ApiResponse(responseCode = "404", description = "Either Customer Account or Customer not found"),
-                    @ApiResponse(responseCode = "403", description = "Cannot move subscription") })
+                    @ApiResponse(responseCode = "409", description = "Cannot move subscription") })
     Response transferSubscription(@Parameter(description = "The subscription code", required = true) @PathParam("subscriptionCode") String subscriptionCode,
             @Parameter(description = "Consumer id or code", required = true) ConsumerInput consumerInput,
             @Parameter(description = "Open transactions action ") @DefaultValue("NONE") @QueryParam("openTransactionsAction") OpenTransactionsActionEnum action);
