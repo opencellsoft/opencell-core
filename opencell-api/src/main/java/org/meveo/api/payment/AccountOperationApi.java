@@ -18,6 +18,8 @@
 
 package org.meveo.api.payment;
 
+import static org.meveo.commons.utils.ReflectionUtils.getSubclassObjectByDiscriminatorValue;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,21 +48,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.Journal;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.payments.RejectedPayment;
-import org.meveo.model.payments.WriteOff;
+import org.meveo.model.payments.*;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
@@ -110,10 +101,10 @@ public class AccountOperationApi extends BaseApi {
     private JournalService journalService;
 
     /**
-     * Creates the.
+     * Create account operation.
      *
-     * @param postData the post data
-     * @return the long
+     * @param postData AccountOperation resource
+     * @return account operation id
      * @throws MeveoApiException the meveo api exception
      * @throws BusinessException the business exception
      */
@@ -124,7 +115,7 @@ public class AccountOperationApi extends BaseApi {
             handleMissingParameters();
         }
 
-        Object aoSubclassObject = ReflectionUtils.getSubclassObjectByDiscriminatorValue(AccountOperation.class, postData.getType());
+        Object aoSubclassObject = getSubclassObjectByDiscriminatorValue(AccountOperation.class, postData.getType());
         AccountOperation accountOperation = null;
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
         OperationCategoryEnum transactionCategory = postData.getTransactionCategory();
@@ -163,6 +154,14 @@ public class AccountOperationApi extends BaseApi {
             accountOperation = writeOff;
         } else {
             throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
+        }
+
+        if(aoSubclassObject instanceof RecordedInvoice) {
+            accountOperation.setAccountingDate(postData.getTransactionDate());
+        }
+
+        if(aoSubclassObject instanceof Payment) {
+            accountOperation.setAccountingDate(postData.getCollectionDate());
         }
 
         accountOperation.setDueDate(postData.getDueDate());
@@ -217,6 +216,9 @@ public class AccountOperationApi extends BaseApi {
             }
             accountOperation.setJournal(journal);
         }
+        accountOperation.setStatus(postData.getStatus());
+        accountOperation.setReason(postData.getReason());
+        accountOperation.setAccountingExportFile(postData.getAccountingExportFile());
 
         // populate customFields
         try {
@@ -345,7 +347,8 @@ public class AccountOperationApi extends BaseApi {
      * @throws UnbalanceAmountException the unbalance amount exception
      * @throws Exception the exception
      */
-    public void matchOperations(MatchOperationRequestDto postData) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+    public void matchOperations(MatchOperationRequestDto postData)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
         if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
@@ -354,7 +357,7 @@ public class AccountOperationApi extends BaseApi {
                 || postData.getAccountOperations().getAccountOperation().isEmpty()) {
             throw new BusinessException("no account operations");
         }
-        List<Long> operationsId = new ArrayList<Long>();
+        List<Long> operationsId = new ArrayList<>();
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
