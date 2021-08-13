@@ -152,11 +152,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
                 reportQueryService.remove(reportQuery);
                 return of(reportQuery);
             } catch (Exception exception) {
-                if(exception.getCause().getCause().getCause() instanceof ConstraintViolationException) {
-                    throw new BusinessException("The query with id "+ id + " is referenced");
-                } else {
-                    throw new BusinessException(exception.getMessage());
+                Throwable throwable = exception.getCause();
+                while (throwable != null) {
+                    if (throwable instanceof ConstraintViolationException) {
+                        throw new BusinessException("The query with id "+ id + " is referenced");
+                    }
+                    throwable = throwable.getCause();
                 }
+                throw new BusinessException(exception.getMessage());
             }
         }
         return empty();
