@@ -4008,5 +4008,25 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA">
+    	<addColumn tableName="accounting_period">
+            <column name="accounting_operation_action" type="varchar(255)" />
+            <column name="regular_user_lock_option" type="varchar(255)" />
+            <column name="custom_lock_number_days" type="int4" />
+            <column name="custom_lock_option" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA">
+    	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
+        <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
+    </changeSet>
 
 </databaseChangeLog>
