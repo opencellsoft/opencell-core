@@ -16256,8 +16256,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" />
     <changeSet id="#INTRD-1090_20210714" author="ZBariki"/>
     <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA" />
-    <changeSet id="#INTRD-1441_20210728" author="TarikFA." />
-    <changeSet id="#INTRD-1174_20210802" author="ZBariki" />
+	<changeSet id="#INTRD-1174_20210802" author="ZBariki" />
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
 	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
     <changeSet id="#INTRD-1275_20210805" author="ZBariki" />
@@ -16265,9 +16264,10 @@ $$ LANGUAGE plpgsql;
    	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD" />
    	<changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA" />
-   	 <changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay"/>
-    <!-- DONT REMOVE THIS CHANGESET -->
-    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+	<changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay"/>
+	<changeSet id="INTRD-1221_20210803" author="TarikFA." />
+	
+	<changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
 
