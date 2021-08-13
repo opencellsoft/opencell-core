@@ -80,7 +80,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 							}).findFirst();
 							return valExist.isPresent();
 						case EXPRESSION_LANGUAGE:
-							String result = attributeService.evaluteElExpressionAttribute(value.toString(), product, null, null, String.class);
+							String result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, String.class);
 							return attributeMapping.getAttributeValue().contentEquals(result);
 						default:
 							return value.toString().contentEquals(attributeMapping.getAttributeValue());

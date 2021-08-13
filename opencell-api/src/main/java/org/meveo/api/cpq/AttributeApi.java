@@ -97,6 +97,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setDefaultValue(postData.getDefaultValue());
 		attribute.setDisabled(postData.isDisabled());
         populateCustomFields(postData.getCustomFields(), attribute, true);
+        attribute.setValidationType(postData.getValidationType());
+        attribute.setValidationPattern(postData.getValidationPattern());
+        attribute.setValidationLabel(postData.getValidationLabel());
 		attributeService.create(attribute);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
