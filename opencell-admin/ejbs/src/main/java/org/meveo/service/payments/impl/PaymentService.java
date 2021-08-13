@@ -53,6 +53,7 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
@@ -110,6 +111,7 @@ public class PaymentService extends PersistenceService<Payment> {
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {
+        accountOperationService.handleAccountingPeriods(entity);
         super.create(entity);
         if (entity.getId() != null && entity.getPaymentMethod().isSimple()) {
             PaymentMethod paymentMethod  = getPaymentMethod(entity);
@@ -652,5 +654,4 @@ public class PaymentService extends PersistenceService<Payment> {
         return listAoThatSupposedPaid;
 
     }
-
 }

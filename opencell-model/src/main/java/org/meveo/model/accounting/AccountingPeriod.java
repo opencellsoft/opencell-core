@@ -8,7 +8,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 
 @Entity
@@ -38,6 +37,21 @@ public class AccountingPeriod extends BaseEntity{
 	
 	@Column(name = "ongoing_sub_accounting_periods")
     private String ongoingSubAccountingPeriods;
+	
+	@Enumerated(value = EnumType.STRING)
+    @Column(name = "accounting_operation_action")
+    private AccountingOperationAction accountingOperationAction;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "regular_user_lock_option")
+    private RegularUserLockOption regularUserLockOption;
+
+    @Column(name = "custom_lock_number_days")
+    private Integer customLockNumberDays;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "custom_lock_option")
+    private CustomLockOption customLockOption;
 	
 
 	public AccountingPeriod() {
@@ -84,4 +98,35 @@ public class AccountingPeriod extends BaseEntity{
 		this.ongoingSubAccountingPeriods = ongoingSubAccountingPeriods;
 	}
 
+    public AccountingOperationAction getAccountingOperationAction() {
+        return accountingOperationAction;
+    }
+
+    public void setAccountingOperationAction(AccountingOperationAction accountingOperationAction) {
+        this.accountingOperationAction = accountingOperationAction;
+    }
+
+    public RegularUserLockOption getRegularUserLockOption() {
+        return regularUserLockOption;
+    }
+
+    public void setRegularUserLockOption(RegularUserLockOption regularUserLockOption) {
+        this.regularUserLockOption = regularUserLockOption;
+    }
+
+    public Integer getCustomLockNumberDays() {
+        return customLockNumberDays;
+    }
+
+    public void setCustomLockNumberDays(Integer customLockNumberDays) {
+        this.customLockNumberDays = customLockNumberDays;
+    }
+
+    public CustomLockOption getCustomLockOption() {
+        return customLockOption;
+    }
+
+    public void setCustomLockOption(CustomLockOption customLockOption) {
+        this.customLockOption = customLockOption;
+    }
 }
