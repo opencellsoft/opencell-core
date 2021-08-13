@@ -215,20 +215,19 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
         if (reportQuery != null) {
 
-            // query name already exist with visibility PUBLIC and belongs to another user
+            // a query with that name already exists and belongs to user (regardless of visibility)
+            if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
+                throw new ConflictException("The query already exists and belong you");
+            }
+            
+            // a public query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PUBLIC && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
                 throw new ConflictException("The query already exists and belongs to another user");
             }
 
-            // the connected user has query_manager role and the query name already exist with visibility PROTECTED or PRIVATE and belongs to another user
-            if (currentUser.hasRole("query_manager") && (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED || reportQuery.getVisibility() == QueryVisibilityEnum.PRIVATE)
-                    && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belong you");
-            }
-
-            // the query name already exist with visibility PROTECTED and belongs to another user
+            // a protected query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new UnprocessableEntityException("The query already exists and belongs to another user");
+                throw new UnprocessableEntityException("The query already exists and belong you");
             }
         }
     }
