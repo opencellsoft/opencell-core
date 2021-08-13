@@ -53,9 +53,9 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.*;
 import org.meveo.service.billing.impl.AccountingCodeService;
-import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -98,7 +98,7 @@ public class AccountOperationApi extends BaseApi {
     private AccountingCodeService accountingCodeService;
     
     @Inject
-    private JournalService journalService;
+    private JournalReportService journalService;
 
     /**
      * Create account operation.
