@@ -213,8 +213,8 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(), input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation());
 	}
 	
-	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
-		return invoiceService.update(invoice, input, invoiceRessource);
+	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+		return invoiceService.update(invoice, input, invoiceResource);
 	}
 
 	/**

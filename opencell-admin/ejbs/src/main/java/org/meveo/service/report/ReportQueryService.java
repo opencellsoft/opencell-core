@@ -68,6 +68,7 @@ import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.util.ApplicationProvider;
+import org.primefaces.model.SortOrder;
 
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
@@ -395,10 +396,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult) {
         if(fields != null && !fields.isEmpty()) {
-            List<Object>response = new ArrayList<>();
+            List<Object> response = new ArrayList<>();
             int size = fields.size();
-            Map<String, Object> item = new HashMap<>();
             for (Object result : executionResult) {
+                Map<String, Object> item = new HashMap<>();
                 for (int index = 0; index < size; index++) {
                     item.put(fields.get(index), ((Object[]) result)[index]);
                 }
@@ -428,11 +429,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         PersistenceService persistenceService = (PersistenceService)
                 getServiceInterface(targetEntity.getSimpleName() + "Service");
         Query result = persistenceService.getEntityManager().createQuery(reportQuery.getGeneratedQuery());
-        FilterConverter converter = new FilterConverter(targetEntity);
-        Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
-        for (Entry<String, Object> entry : filters.entrySet()) {
-            if(!(entry.getValue() instanceof Boolean)) {
-                result.setParameter("a_" + entry.getKey(), entry.getValue());
+        if (reportQuery.getFilters() != null && !reportQuery.getFilters().isEmpty()) {
+            FilterConverter converter = new FilterConverter(targetEntity);
+            Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
+            for (Entry<String, Object> entry : filters.entrySet()) {
+                if(!(entry.getValue() instanceof Boolean)) {
+                    result.setParameter("a_" + entry.getKey(), entry.getValue());
+                }
             }
         }
         return result;
@@ -468,8 +471,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     public ReportQuery create(ReportQuery reportQuery, String creator) {
         try {
-            ReportQuery entity = (ReportQuery) getEntityManager().createNamedQuery("ReportQuery.ReportQueryByCreatorVisibilityCode").setParameter("code", reportQuery.getCode())
-                .setParameter("visibility", reportQuery.getVisibility()).getSingleResult();
+            ReportQuery entity = (ReportQuery) getEntityManager()
+                    .createNamedQuery("ReportQuery.ReportQueryByCreatorVisibilityCode")
+                    .setParameter("code", reportQuery.getCode())
+                    .setParameter("visibility", reportQuery.getVisibility())
+                    .getSingleResult();
             if (entity != null) {
                 if (entity.getAuditable().getCreator().equals(creator)) {
                     throw new BusinessException("Query Already exists and belong to you");
@@ -506,5 +512,19 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             log.debug("No ReportQuery of code {} and visibility {} found", entityClass.getSimpleName(), code, visibility);
             return null;
         }
+    }
+
+    /**
+     * count of report queries allowed for the current user.
+     *
+     * @param userName      : current user
+     * @return number of ReportQueries allowed for the current user
+     */
+    public Long countAllowedQueriesForUser(String userName) {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("SQL", "visibility = 'PRIVATE' OR visibility = 'PUBLIC' OR visibility = 'PROTECTED'");
+        filters.put("auditable.creator", userName);
+        PaginationConfiguration configuration = new PaginationConfiguration(filters);
+        return count(configuration);
     }
 }

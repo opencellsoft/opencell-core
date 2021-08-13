@@ -34,8 +34,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
@@ -50,6 +52,9 @@ public class OccTemplateApi extends BaseApi {
     
     @Inject
     private AccountingCodeService accountingCodeService;
+    
+    @Inject
+    private JournalService journalService;
 
     public void create(OccTemplateDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
@@ -90,6 +95,13 @@ public class OccTemplateApi extends BaseApi {
         }
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
+        if (!StringUtils.isBlank(postData.getJournalCode())) {
+        	Journal journal = journalService.findByCode(postData.getJournalCode());
+            if (journal == null) {
+                throw new EntityDoesNotExistsException(Journal.class, postData.getJournalCode());
+            }
+            occTemplate.setJournal(journal);
+        }
 
         occTemplateService.create(occTemplate);
     }
@@ -133,6 +145,14 @@ public class OccTemplateApi extends BaseApi {
         }
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
+        
+        if (!StringUtils.isBlank(postData.getJournalCode())) {
+        	Journal journal = journalService.findByCode(postData.getJournalCode());
+            if (journal == null) {
+                throw new EntityDoesNotExistsException(Journal.class, postData.getJournalCode());
+            }
+            occTemplate.setJournal(journal);
+        }
 
         occTemplateService.update(occTemplate);
 
