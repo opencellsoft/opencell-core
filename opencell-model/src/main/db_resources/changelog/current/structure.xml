@@ -9653,5 +9653,9 @@ public class OrderAdvancement extends ModuleScript {
     	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
     </changeSet>
+    
+     <changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay">
+        <addDefaultValue  tableName="cpq_quote_price" columnName="price_over_charged" defaultValueNumeric="0" /> 
+    </changeSet>
 
 </databaseChangeLog>

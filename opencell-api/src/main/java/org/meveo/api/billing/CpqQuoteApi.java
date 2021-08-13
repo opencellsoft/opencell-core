@@ -1285,7 +1285,7 @@ public class CpqQuoteApi extends BaseApi {
 
                 Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
-                //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getCode());
                 overrideAmounts(quotePrice, recurrenceDuration);
             } else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum())){
                 UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
@@ -1785,7 +1785,7 @@ public class CpqQuoteApi extends BaseApi {
                         }
                         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitDiscountAmount, unitDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                         discountQuotePrice.setUnitPriceWithoutTax(unitDiscountAmount);
-                        discountQuotePrice.setAmountWithoutTax(quantity.multiply(amounts[0]));
+                        discountQuotePrice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
                         discountQuotePrice.setAmountWithTax(quantity.multiply(amounts[1]));
                         discountQuotePrice.setTaxAmount(quantity.multiply(amounts[2]));
                         discountQuotePrice.setCurrencyCode(quotePrice.getCurrencyCode());
@@ -1796,7 +1796,7 @@ public class CpqQuoteApi extends BaseApi {
                             RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) quotePrice.getChargeTemplate();
                             Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth(), quoteOffer, quoteproduct));
                             discountQuotePrice.setRecurrenceDuration(recurrenceDuration);
-                            //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                            quotePrice.setRecurrencePeriodicity(recurringChargeTemplate.getCalendar().getCode());
                             discountQuotePrice.setAmountWithTax(discountQuotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
                             discountQuotePrice.setAmountWithoutTax(discountQuotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
                             discountQuotePrice.setTaxAmount(discountQuotePrice.getTaxAmount() != null ?
