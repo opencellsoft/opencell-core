@@ -17,6 +17,8 @@
  */
 package org.meveo.service.payments.impl;
 
+import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +43,7 @@ import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationRejectionReason;
 import org.meveo.model.payments.AccountOperationStatus;
@@ -53,6 +56,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -82,6 +86,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
+
+    @Inject
+    private UserService userService;
 
     /**
      * Account operation action Enum
@@ -481,7 +488,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
         }
     }
-    
+
     /**
      * Step 1 : verify if the account operation is on open period.<br>
      * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
@@ -489,7 +496,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @param accountOperation
      */
     public void handleAccountingPeriods(AccountOperation accountOperation) {
-        
+
         Date accountingDate = null;
         // if transaction is of type “invoice” then the control is performed on transaction_date
         if (accountOperation.getType().equals("I")) {
@@ -507,26 +514,38 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             AccountingPeriodStatusEnum accountingPeriodStatus = accountingPeriod.getAccountingPeriodStatus();
             SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
             SubAccountingPeriodStatusEnum subAccountingPeriodStatus = subAccountingPeriod.getRegularUsersSubPeriodStatus();
-            
+
             // if condition is OK
             if (accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN && subAccountingPeriodStatus == SubAccountingPeriodStatusEnum.OPEN) {
                 // account operation is created with status “posted”
                 accountOperation.setStatus(AccountOperationStatus.POSTED);
                 // accounting_date equals Transaction date for “invoice” or Collection date for “payment”
                 accountOperation.setAccountingDate(accountingDate);
-            }
-            else {
+            } else {
                 if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
                     accountOperation.setAccountingDate(accountingDate);
                     accountOperation.setStatus(AccountOperationStatus.POSTED);
                     accountOperation.setReason(AccountOperationRejectionReason.FORCED);
-                }
-                else {
+                } else {
                     accountOperation.setAccountingDate(null);
                     accountOperation.setStatus(AccountOperationStatus.REJECTED);
                     accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
                 }
             }
         }
+    }
+
+    @Override
+    public AccountOperation update(AccountOperation updatedAccountOperation) throws BusinessException {
+        AccountOperation currentAccountOperation = findById(updatedAccountOperation.getId());
+        User lastUser = userService.findByUsername(currentAccountOperation.getAuditable().getLastUser());
+        boolean hasFinanceManagementPermission = lastUser.getRoles()
+                .stream()
+                .anyMatch(role -> role.hasPermission("financeManagement"));
+        if (currentAccountOperation.getStatus().equals(EXPORTED) && hasFinanceManagementPermission
+                && currentAccountOperation.getAccountingDate().compareTo(updatedAccountOperation.getAccountingDate()) != 0) {
+            throw new BusinessException("Can not update accounting date, account operation is EXPORTED by user with financeManagement permission");
+        }
+        return super.update(updatedAccountOperation);
     }
 }

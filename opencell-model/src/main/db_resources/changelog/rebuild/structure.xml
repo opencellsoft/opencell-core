@@ -9406,7 +9406,7 @@
             <column name="tax_amount" type="numeric(23, 12)" />
             <column name="tax_rate" type="numeric(23, 12)" />
 
-            <column name="price_over_charged" type="${type.boolean}" />
+            <column name="price_over_charged" type="${type.boolean}" defaultValueNumeric="0" />
 
 
             <column name="currency_code" type="varchar(25)" />
@@ -16264,9 +16264,10 @@ $$ LANGUAGE plpgsql;
    	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD" />
    	<changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA" />
+	<changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay"/>
 	<changeSet id="INTRD-1221_20210803" author="TarikFA." />
-	<!-- DONT REMOVE THIS CHANGESET -->
-    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+	
+	<changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
 
