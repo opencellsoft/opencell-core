@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class OccTemplateDto.
  *
@@ -58,6 +60,10 @@ public class OccTemplateDto extends BusinessEntityDto {
      */
     @Deprecated
     private String accountCodeClientSide;
+    
+    /** The journal code. */
+    @Schema(description = "The journal code")
+    private String journalCode;
 
     /**
      * Instantiates a new occ template dto.
@@ -157,4 +163,13 @@ public class OccTemplateDto extends BusinessEntityDto {
     public void setAccountCode(String accountCode) {
         this.accountCode = accountCode;
     }
+
+	public String getJournalCode() {
+		return journalCode;
+	}
+
+	public void setJournalCode(String journalCode) {
+		this.journalCode = journalCode;
+	}
+    
 }

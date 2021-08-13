@@ -88,6 +88,7 @@ public class PaymentService extends PersistenceService<Payment> {
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {
+        accountOperationService.handleAccountingPeriods(entity);
         super.create(entity);
     }
    

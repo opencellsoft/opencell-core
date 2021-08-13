@@ -250,6 +250,10 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
      */
     @Schema(description = "A collection date")
     private Date collectionDate;
+    
+    /** The journal code. */
+    @Schema(description = "The journal code")
+    private String journalCode;
 
     /**
      * Instantiates a new account operation dto.
@@ -322,6 +326,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         }
         setCollectionDate(accountOp.getCollectionDate());
         setCustomFields(customFieldsDto);
+        setJournalCode(accountOp.getJournal().getCode());
     }
 
     /**
@@ -1023,4 +1028,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
     }
+
+	public String getJournalCode() {
+		return journalCode;
+	}
+
+	public void setJournalCode(String journalCode) {
+		this.journalCode = journalCode;
+	}
+    
 }
