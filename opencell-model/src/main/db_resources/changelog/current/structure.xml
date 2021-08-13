@@ -9661,7 +9661,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="accounting_date" type="datetime"></column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA">
     	<addColumn tableName="accounting_period">
             <column name="accounting_operation_action" type="varchar(255)" />
@@ -9680,4 +9680,11 @@ public class OrderAdvancement extends ModuleScript {
         <addDefaultValue  tableName="cpq_quote_price" columnName="price_over_charged" defaultValueNumeric="0" /> 
     </changeSet>
 
+    <changeSet id="#INTRD-1396_20210812" author="ZBariki">
+        <addColumn tableName="cpq_attribute">
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
