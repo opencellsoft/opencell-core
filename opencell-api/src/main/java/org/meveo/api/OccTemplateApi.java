@@ -37,7 +37,7 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.billing.impl.AccountingCodeService;
-import org.meveo.service.billing.impl.JournalService;
+import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
@@ -54,7 +54,7 @@ public class OccTemplateApi extends BaseApi {
     private AccountingCodeService accountingCodeService;
     
     @Inject
-    private JournalService journalService;
+    private JournalReportService journalService;
 
     public void create(OccTemplateDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {

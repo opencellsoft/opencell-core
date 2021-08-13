@@ -62,9 +62,9 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.service.billing.impl.AccountingCodeService;
-import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -107,7 +107,7 @@ public class AccountOperationApi extends BaseApi {
     private AccountingCodeService accountingCodeService;
     
     @Inject
-    private JournalService journalService;
+    private JournalReportService journalService;
 
     /**
      * Creates the.
