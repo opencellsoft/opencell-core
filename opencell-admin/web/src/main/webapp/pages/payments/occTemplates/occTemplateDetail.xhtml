@@ -49,6 +49,7 @@
 				popupId="accountingCodePopup" showResetButton="true" required="true" />
 			<hftl:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
 			<hftl:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
+			<hftl:formField label="#{messages['occTemplate.journal']}" field="journal.code" required="true" valueLabelField="code" listBean="#{journalBean}" componentWidth="10"/>
 		</hftl:formPanel>
 	</ui:define>
 
