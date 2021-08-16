@@ -3939,9 +3939,6 @@ Opencell team.
     </changeSet>
    
    <changeSet id="J215_20210708" author="Mohammed_ELAZZOUZI">
-           <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-23, 0, 0, now(), 'org.meveo.service.script.DeleteCustomersScript', 'DeleteCustomersScript', 'JAVA', '
-');]]>
-		</sql>	
    
         <insert tableName="meveo_script_instance">
             <column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -3950,7 +3947,8 @@ Opencell team.
             <column name="src_type" value="JAVA" />
             <column name="description" value="script processor to import service instances]"/>
             <column name="created" valueDate="now()" />
-            <column name="script"><![CDATA[
+            <column name="script"><![CDATA[package org.meveo.service.script;
+            
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -4154,14 +4152,14 @@ public class ServiceImportScript extends Script {
         <insert tableName="meveo_script_instance">
             <column name="id" valueSequenceNext="meveo_script_instance_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="code" value="org.meveo.service.script.ServiceImportScript" />
+            <column name="code" value="org.meveo.service.script.AccessImportScript" />
             <column name="src_type" value="JAVA" />
             <column name="description" value="script processor to import access points"/>
             <column name="created" valueDate="now()"/>
             <column name="script"><![CDATA[package org.meveo.service.script;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -4170,72 +4168,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.medina.impl.AccessService;
 
-public class ServiceImportScript extends Script {
+public class AccessImportScript extends Script {
 
 	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
 	private static final String RECORD_VARIABLE_NAME = "record";
 
-	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
-			"ServiceInstanceService");
+	private AccessService accessService = (AccessService) getServiceInterface("AccessService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
 	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
 			"CustomFieldTemplateService");
+
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
 		try {
 			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
 			if (recordMap != null && !recordMap.isEmpty()) {
 				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
-				if (!"ServiceInstance".equals(OC_ENTITY)) {
+				if (!"AccessPoint".equals(OC_ENTITY)) {
 					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
 				}
 				String OC_ACTION = (String) recordMap.get("OC_ACTION");
-				if (!Stream.of(ServiceInstanceActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+				if (!Stream.of(AccessActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
 					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
 				}
-				ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+				AccessActionEnum action = AccessActionEnum.valueOf(OC_ACTION);
 
-				String OC_Subscription_code = (String) recordMap.get("OC_Subscription_code");
-				String OC_ServiceInstance_code = (String) recordMap.get("OC_ServiceInstance_code");
-				List<ServiceInstance> serviceInstances = serviceInstanceService
-						.findByCodeAndCodeSubscription(OC_ServiceInstance_code, OC_Subscription_code);
-				if (serviceInstances == null || serviceInstances.isEmpty()) {
-					throw new ValidationException("no ServiceInstanceFound for subscriptionCode/serviceInstanceCode: '"
-							+ OC_Subscription_code + "'/'" + OC_ServiceInstance_code + "'");
-				}
-				ServiceInstance serviceInstance = serviceInstances.get(0);
+				Access access = validateAndGetAccess(action, recordMap);
 
-				switch (action) {
-				case INSTANTIATE:
-					serviceInstanceService.serviceInstanciation(serviceInstance);
-					break;
-				case ACTIVATE:
-					serviceInstanceService.serviceActivation(serviceInstance);
-					break;
-				case RESUME:
-					serviceInstanceService.serviceReactivation(serviceInstance, new Date(), true, false);
-					break;
-				case SUSPEND:
-					serviceInstanceService.serviceSuspension(serviceInstance, new Date());
-					break;
-				case TERMINATE:
-					serviceInstanceService.cancelServiceTermination(serviceInstance);
-					break;
-				case UPDATE:
-					updateService(recordMap, serviceInstance);
-					break;
-				default:
-					break;
+				if (AccessActionEnum.DELETE.equals(action)) {
+					accessService.remove(access);
+				} else {
+					setAccessValues(recordMap, access);
+					if (AccessActionEnum.CREATE.equals(action)) {
+				        if (accessService.isDuplicateAndOverlaps(access)) {
+				            throw new BusinessException( "Duplicate subscription/access point: '"+access.getSubscription().getCode()+"'/'"+access.getAccessUserId()+"'");
+				        }
+						accessService.create(access);
+					} else if (AccessActionEnum.UPDATE.equals(action)) {
+						accessService.update(access);
+					}
+
 				}
 			}
 		} catch (Exception exception) {
@@ -4243,29 +4229,44 @@ public class ServiceImportScript extends Script {
 		}
 	}
 
-	private void updateService(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws Exception {
-		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
-		String OC_ServiceInstance_subscriptionDate = (String) recordMap.get("OC_ServiceInstance_subscriptionDate");
-		String OC_ServiceInstance_rateUntilDate = (String) recordMap.get("OC_ServiceInstance_rateUntilDate");
-		String OC_ServiceInstance_endAgreementDate = (String) recordMap.get("OC_ServiceInstance_endAgreementDate");
-
-		Date subscriptionDate = dateFormat.parse(OC_ServiceInstance_subscriptionDate);
-		Date rateUntilDate = dateFormat.parse(OC_ServiceInstance_rateUntilDate);
-		Date endAgreementDate = dateFormat.parse(OC_ServiceInstance_endAgreementDate);
-		String OC_ServiceInstance_description = (String) recordMap.get("OC_ServiceInstance_description");
-		String OC_ServiceInstance_quantity = (String) recordMap.get("OC_ServiceInstance_quantity");
-
-		serviceInstance.setSubscriptionDate(subscriptionDate);
-		serviceInstance.setRateUntilDate(rateUntilDate);
-		serviceInstance.setEndAgreementDate(endAgreementDate);
-		serviceInstance.setQuantity(new BigDecimal(OC_ServiceInstance_quantity));
-		serviceInstance.setDescription(OC_ServiceInstance_description);
-		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
-				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
-		serviceInstanceService.update(serviceInstance);
+	private Access validateAndGetAccess(AccessActionEnum action, Map<String, Object> recordMap) {
+		Access access = null;
+		String OC_subscription_code = (String) recordMap.get("OC_subscription_code");
+		String OC_Access_code = (String) recordMap.get("OC_accessPoint_code");
+		List<Access> accessList = accessService.getActiveAccessByCodeAndCodeSubscription(OC_Access_code, OC_subscription_code);
+		if (!AccessActionEnum.CREATE.equals(action)) {
+			if (accessList == null || accessList.isEmpty()) {
+				throw new ValidationException("no Access found for subscriptionCode/AccessCode: '"
+						+ OC_subscription_code + "'/'" + OC_Access_code + "'");
+			}
+			access = accessList.get(0);
+		} else {
+			access = new Access();
+			Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+			if (subscription == null) {
+				throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+			}
+			access.setSubscription(subscription);
+			access.setAccessUserId(OC_Access_code);
+		}
+		return access;
 	}
-	public enum ServiceInstanceActionEnum {
-		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
+
+	private void setAccessValues(Map<String, Object> recordMap, Access access) throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_accessPoint_startDate = (String) recordMap.get("OC_accessPoint_startDate");
+		String OC_accessPoint_endDate = (String) recordMap.get("OC_accessPoint_endDate");
+		Date startDate = StringUtils.isEmpty(OC_accessPoint_startDate) ? null : dateFormat.parse(OC_accessPoint_startDate);
+		Date endDate = StringUtils.isEmpty(OC_accessPoint_endDate) ? null : dateFormat.parse(OC_accessPoint_endDate);
+		access.setEndDate(endDate);
+		access.setStartDate(startDate);
+
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> access.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+	}
+
+	public enum AccessActionEnum {
+		CREATE, UPDATE, DELETE
 	}
 	
 	public Object parseStringCf(String cftCode, String stringCF) {
