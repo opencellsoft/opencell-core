@@ -3937,5 +3937,831 @@ Opencell team.
             <column name="uuid" value="XML_Invoice_Generation_Job_V2"/>
         </insert>
     </changeSet>
+   
+   <changeSet id="J215_20210708" author="Mohammed_ELAZZOUZI">
+   
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.ServiceImportScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="script processor to import service instances]"/>
+            <column name="created" valueDate="now()" />
+            <column name="script"><![CDATA[package org.meveo.service.script;
+            
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+
+public class ServiceImportScript extends Script {
+
+	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
+	private static final String RECORD_VARIABLE_NAME = "record";
+
+	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
+			"ServiceInstanceService");
+	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
+			"CustomFieldTemplateService");
+	@Override
+	public void execute(Map<String, Object> context) throws BusinessException {
+		try {
+			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+			if (recordMap != null && !recordMap.isEmpty()) {
+				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+				if (!"ServiceInstance".equals(OC_ENTITY)) {
+					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+				}
+				String OC_ACTION = (String) recordMap.get("OC_ACTION");
+				if (!Stream.of(ServiceInstanceActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+				}
+				ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+
+				String OC_Subscription_code = (String) recordMap.get("OC_Subscription_code");
+				String OC_ServiceInstance_code = (String) recordMap.get("OC_ServiceInstance_code");
+				List<ServiceInstance> serviceInstances = serviceInstanceService
+						.findByCodeAndCodeSubscription(OC_ServiceInstance_code, OC_Subscription_code);
+				if (serviceInstances == null || serviceInstances.isEmpty()) {
+					throw new ValidationException("no ServiceInstanceFound for subscriptionCode/serviceInstanceCode: '"
+							+ OC_Subscription_code + "'/'" + OC_ServiceInstance_code + "'");
+				}
+				ServiceInstance serviceInstance = serviceInstances.get(0);
+
+				switch (action) {
+				case INSTANTIATE:
+					serviceInstanceService.serviceInstanciation(serviceInstance);
+					break;
+				case ACTIVATE:
+					serviceInstanceService.serviceActivation(serviceInstance);
+					break;
+				case RESUME:
+					serviceInstanceService.serviceReactivation(serviceInstance, new Date(), true, false);
+					break;
+				case SUSPEND:
+					serviceInstanceService.serviceSuspension(serviceInstance, new Date());
+					break;
+				case TERMINATE:
+					serviceInstanceService.cancelServiceTermination(serviceInstance);
+					break;
+				case UPDATE:
+					updateService(recordMap, serviceInstance);
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (Exception exception) {
+			throw new BusinessException(exception);
+		}
+	}
+
+	private void updateService(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws Exception {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_ServiceInstance_subscriptionDate = (String) recordMap.get("OC_ServiceInstance_subscriptionDate");
+		String OC_ServiceInstance_rateUntilDate = (String) recordMap.get("OC_ServiceInstance_rateUntilDate");
+		String OC_ServiceInstance_endAgreementDate = (String) recordMap.get("OC_ServiceInstance_endAgreementDate");
+
+		Date subscriptionDate = dateFormat.parse(OC_ServiceInstance_subscriptionDate);
+		Date rateUntilDate = dateFormat.parse(OC_ServiceInstance_rateUntilDate);
+		Date endAgreementDate = dateFormat.parse(OC_ServiceInstance_endAgreementDate);
+		String OC_ServiceInstance_description = (String) recordMap.get("OC_ServiceInstance_description");
+		String OC_ServiceInstance_quantity = (String) recordMap.get("OC_ServiceInstance_quantity");
+
+		serviceInstance.setSubscriptionDate(subscriptionDate);
+		serviceInstance.setRateUntilDate(rateUntilDate);
+		serviceInstance.setEndAgreementDate(endAgreementDate);
+		serviceInstance.setQuantity(new BigDecimal(OC_ServiceInstance_quantity));
+		serviceInstance.setDescription(OC_ServiceInstance_description);
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+		serviceInstanceService.update(serviceInstance);
+	}
+	public enum ServiceInstanceActionEnum {
+		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
 		
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+        if (stringCF == null) {
+            return null;
+        }
+
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value + "|" + s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
+	}
+}]]></column>
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.AccessImportScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="script processor to import access points"/>
+            <column name="created" valueDate="now()"/>
+            <column name="script"><![CDATA[package org.meveo.service.script;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.medina.impl.AccessService;
+
+public class AccessImportScript extends Script {
+
+	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
+	private static final String RECORD_VARIABLE_NAME = "record";
+
+	private AccessService accessService = (AccessService) getServiceInterface("AccessService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
+			"CustomFieldTemplateService");
+
+	@Override
+	public void execute(Map<String, Object> context) throws BusinessException {
+		try {
+			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+			if (recordMap != null && !recordMap.isEmpty()) {
+				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+				if (!"AccessPoint".equals(OC_ENTITY)) {
+					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+				}
+				String OC_ACTION = (String) recordMap.get("OC_ACTION");
+				if (!Stream.of(AccessActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+				}
+				AccessActionEnum action = AccessActionEnum.valueOf(OC_ACTION);
+
+				Access access = validateAndGetAccess(action, recordMap);
+
+				if (AccessActionEnum.DELETE.equals(action)) {
+					accessService.remove(access);
+				} else {
+					setAccessValues(recordMap, access);
+					if (AccessActionEnum.CREATE.equals(action)) {
+				        if (accessService.isDuplicateAndOverlaps(access)) {
+				            throw new BusinessException( "Duplicate subscription/access point: '"+access.getSubscription().getCode()+"'/'"+access.getAccessUserId()+"'");
+				        }
+						accessService.create(access);
+					} else if (AccessActionEnum.UPDATE.equals(action)) {
+						accessService.update(access);
+					}
+
+				}
+			}
+		} catch (Exception exception) {
+			throw new BusinessException(exception);
+		}
+	}
+
+	private Access validateAndGetAccess(AccessActionEnum action, Map<String, Object> recordMap) {
+		Access access = null;
+		String OC_subscription_code = (String) recordMap.get("OC_subscription_code");
+		String OC_Access_code = (String) recordMap.get("OC_accessPoint_code");
+		List<Access> accessList = accessService.getActiveAccessByCodeAndCodeSubscription(OC_Access_code, OC_subscription_code);
+		if (!AccessActionEnum.CREATE.equals(action)) {
+			if (accessList == null || accessList.isEmpty()) {
+				throw new ValidationException("no Access found for subscriptionCode/AccessCode: '"
+						+ OC_subscription_code + "'/'" + OC_Access_code + "'");
+			}
+			access = accessList.get(0);
+		} else {
+			access = new Access();
+			Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+			if (subscription == null) {
+				throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+			}
+			access.setSubscription(subscription);
+			access.setAccessUserId(OC_Access_code);
+		}
+		return access;
+	}
+
+	private void setAccessValues(Map<String, Object> recordMap, Access access) throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_accessPoint_startDate = (String) recordMap.get("OC_accessPoint_startDate");
+		String OC_accessPoint_endDate = (String) recordMap.get("OC_accessPoint_endDate");
+		Date startDate = StringUtils.isEmpty(OC_accessPoint_startDate) ? null : dateFormat.parse(OC_accessPoint_startDate);
+		Date endDate = StringUtils.isEmpty(OC_accessPoint_endDate) ? null : dateFormat.parse(OC_accessPoint_endDate);
+		access.setEndDate(endDate);
+		access.setStartDate(startDate);
+
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> access.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+	}
+
+	public enum AccessActionEnum {
+		CREATE, UPDATE, DELETE
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
+		
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+        if (stringCF == null) {
+            return null;
+        }
+
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value + "|" + s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
+	}
+}]]></column>
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.SubscriptionImportScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="script processor to import subscriptions"/>
+            <column name="created" valueDate="now()" />
+            <column name="script"><![CDATA[package org.meveo.service.script;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+
+public class SubscriptionImportScript extends Script {
+
+	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
+	private static final String RECORD_VARIABLE_NAME = "record";
+	private SubscriptionTerminationReasonService reasonService= (SubscriptionTerminationReasonService) getServiceInterface("SubscriptionTerminationReasonService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+	private UserAccountService userAccountService = (UserAccountService) getServiceInterface("UserAccountService");
+	private SellerService sellerService = (SellerService) getServiceInterface("SellerService");
+	private OfferTemplateService offerService = (OfferTemplateService) getServiceInterface("OfferTemplateService");
+	private CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface("CustomFieldTemplateService");
+
+	@Override
+	public void execute(Map<String, Object> context) throws BusinessException {
+		try {
+			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+			if (recordMap != null && !recordMap.isEmpty()) {
+				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+				if (!"SUBSCRIPTION".equals(OC_ENTITY)) {
+					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+				}
+				String OC_ACTION = (String) recordMap.get("OC_ACTION");
+				if (!Stream.of(SubscriptionActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+				}
+				SubscriptionActionEnum action = SubscriptionActionEnum.valueOf(OC_ACTION);
+
+				String OC_subscription_code = (String) recordMap.get("OC_subscription_code");
+				Subscription subscription = subscriptionService
+						.findByCode(OC_subscription_code);
+				if (subscription == null && !SubscriptionActionEnum.CREATE.equals(action)) {
+					throw new ValidationException("no Subscription Found for subscriptionCode: '"
+							+ OC_subscription_code + "'");
+				}
+				if (subscription != null && SubscriptionActionEnum.CREATE.equals(action)) {
+					throw new ValidationException("subscription already exists with code: '"
+							+ OC_subscription_code + "'");
+				}
+
+				switch (action) {
+				case CREATE:
+					subscription = new Subscription();
+					subscription.setCode(OC_subscription_code);
+					mapSubscriptionValues(recordMap, subscription);
+					subscriptionService.create(subscription);
+					break;
+				case ACTIVATE:
+					subscriptionService.activateInstantiatedService(subscription);
+					break;
+				case RESUME:
+					subscriptionService.subscriptionReactivation(subscription, new Date());
+					break;
+				case SUSPEND:
+					subscriptionService.subscriptionSuspension(subscription, new Date());
+					break;
+				case TERMINATE:
+					DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+					Date OC_terminationDate = dateFormat.parse((String) recordMap.get("OC_terminationDate"));
+					String terminationCode = (String)recordMap.get("OC_subscriptionTerminationReason_code");
+					if(terminationCode==null) {
+						throw new ValidationException("OC_subscriptionTerminationReason_code is mandatory to terminate subscription" );
+					}
+					SubscriptionTerminationReason terminationReason = reasonService.findByCodeReason(terminationCode);
+					if(terminationReason==null) {
+						throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminationCode);
+					}
+					subscription.setSubscriptionTerminationReason(terminationReason);
+					subscriptionService.terminateSubscription(subscription, OC_terminationDate, terminationReason, null);
+					break;
+				case UPDATE:
+					mapSubscriptionValues(recordMap, subscription);
+					subscriptionService.update(subscription);
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (Exception exception) {
+			throw new BusinessException(exception);
+		}
+	}
+
+	private void mapSubscriptionValues(Map<String, Object> recordMap, Subscription subscription) throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_seller_code = (String) recordMap.get("OC_seller_code");
+		String OC_offer_code = (String) recordMap.get("OC_offer_code");
+		String OC_userAccount_code = (String) recordMap.get("OC_userAccount_code");
+		Date subscriptionDate = dateFormat.parse((String) recordMap.get("OC_subscriptionDate"));
+		Date endAgreementDate = dateFormat.parse((String) recordMap.get("OC_endAgreementDate"));
+		String OC_subscription_description = (String) recordMap.get("OC_subscription_description");
+
+		Date OC_terminationDate = dateFormat.parse((String) recordMap.get("OC_terminationDate"));
+
+		UserAccount userAccount = userAccountService.findByCode(OC_userAccount_code);
+		if(userAccount==null) {
+			throw new EntityDoesNotExistsException(UserAccount.class, OC_userAccount_code);
+		}
+		Seller seller = sellerService.findByCode(OC_seller_code);
+		if(seller==null) {
+			throw new EntityDoesNotExistsException(Seller.class, OC_seller_code);
+		}
+		OfferTemplate offer = offerService.findByCode(OC_offer_code);
+		if(offer==null) {
+			throw new EntityDoesNotExistsException(OfferTemplate.class, OC_offer_code);
+		}
+		subscription.setUserAccount(userAccount);
+		subscription.setSeller(seller);
+		subscription.setOffer(offer);
+		subscription.setTerminationDate(OC_terminationDate);
+		subscription.setSubscriptionDate(subscriptionDate);
+		subscription.setEndAgreementDate(endAgreementDate);
+		subscription.setDescription(OC_subscription_description);
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> subscription.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+	}
+
+	public enum SubscriptionActionEnum {
+		CREATE, UPDATE, SUSPEND, RESUME, ACTIVATE, TERMINATE
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
+		
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+        if (stringCF == null) {
+            return null;
+        }
+
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value + "|" + s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key + "|" + s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
+	}
+}]]></column>
+        </insert>
+   
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-40" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="importServicesJob" />
+            <column name="description" value="importServicesJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="importServicesJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values">
+	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n          \t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/accessPoints/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/accessPoints/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/services/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ServiceImportScript"}]}]]>
+            </column>
+            <column name="cf_values_accum">
+	             <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n          \t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/accessPoints/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/accessPoints/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/services/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ServiceImportScript"}]}]]>
+            </column>
+            <column name="verbose_report" value="1" />
+          </insert>
+          <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-41" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="importSubscriptionsJob" />
+            <column name="description" value="importSubscriptionsJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="importSubscriptionsJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values">
+	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/output"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_offer_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_seller_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" required=\"false\"/>\r\n\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/subscriptions/archive"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/subscriptions/input"}],
+	            "waitingMillis":[{"long":0}],"FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],"FlatFileProcessingJob_rejectDir":[{"string":"/imports/subscriptions/reject"}],
+	            "nbRuns":[{"long":1}],"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionImportScript"}]}]]>
+            </column>
+            <column name="cf_values_accum">
+	             <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/output"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_offer_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_seller_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" required=\"false\"/>\r\n\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/subscriptions/archive"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/subscriptions/input"}],
+	            "waitingMillis":[{"long":0}],"FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],"FlatFileProcessingJob_rejectDir":[{"string":"/imports/subscriptions/reject"}],
+	            "nbRuns":[{"long":1}],"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionImportScript"}]}]]>
+            </column>
+            <column name="verbose_report" value="1" />
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-42" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="importAccesPointsJob" />
+            <column name="description" value="importAccesPointsJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="importAccesPointsJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values">
+	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_startDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_endDate\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_startDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_accessPoint_endDate\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/accessPoints/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/accessPoints/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/accessPoints/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AccessImportScript"}]}]]>
+            </column>
+            <column name="cf_values_accum">
+	             <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_startDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_endDate\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_startDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_accessPoint_endDate\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/accessPoints/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/accessPoints/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/accessPoints/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AccessImportScript"}]}]]>
+            </column>
+            <column name="verbose_report" value="1" />
+        </insert>
+	</changeSet>
+	
 </databaseChangeLog>
