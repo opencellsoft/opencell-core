@@ -61,7 +61,9 @@ import org.meveo.model.crm.custom.CustomFieldValues;
         @Parameter(name = "sequence_name", value = "medina_access_seq"), })
 @NamedQueries({
         @NamedQuery(name = "Access.getAccessesByUserId", query = "SELECT a from Access a where a.disabled=false and a.accessUserId=:accessUserId", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "Access.getAccessesByCodeSubscriptionAndCode", query = "SELECT a from Access a where a.disabled=false and a.accessUserId=:code and a.subscription.code=:subscriptionCode")
+})
 public class Access extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
