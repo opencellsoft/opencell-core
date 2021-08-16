@@ -20,6 +20,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
 import org.meveo.apiv2.accounts.impl.AccountsManagementResourceImpl;
 import org.meveo.apiv2.article.impl.AccountingArticleResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
@@ -92,7 +93,7 @@ public class GenericOpencellRestful extends Application {
                 OpenApiResource.class, DocumentResourceImpl.class,
 				GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
-				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
+				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, ValidationExceptionMapper.class,
 				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class,
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class )

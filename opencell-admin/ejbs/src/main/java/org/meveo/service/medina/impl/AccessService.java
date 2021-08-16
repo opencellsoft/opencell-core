@@ -138,7 +138,7 @@ public class AccessService extends PersistenceService<Access> {
             return null;
         }
     }
-
+    
     /**
      * Get a count of access points by a parent subscription
      *
@@ -149,4 +149,16 @@ public class AccessService extends PersistenceService<Access> {
 
         return getEntityManager().createNamedQuery("Access.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
     }
+    
+    /**
+     * Get a list of Accesses By subscriptionCode and code
+     * 
+     * @param subscriptionCode
+     * @param code
+     * @return List of Access
+     */
+    public List<Access> getActiveAccessByCodeAndCodeSubscription(String code, String subscriptionCode) {
+        return getEntityManager().createNamedQuery("Access.getAccessesByCodeSubscriptionAndCode", Access.class).setParameter("subscriptionCode", subscriptionCode).setParameter("code", code).getResultList();
+    }
+
 }
