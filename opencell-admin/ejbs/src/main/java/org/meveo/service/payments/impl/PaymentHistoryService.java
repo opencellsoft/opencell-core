@@ -102,6 +102,10 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 				ao.setPaymentHistories(new ArrayList<>());
 			}
 			ao.getPaymentHistories().add(paymentHistory);
+
+			if (paymentHistory.getListAoPaid() == null) {
+				paymentHistory.setListAoPaid(new ArrayList<>());
+			}
 			paymentHistory.getListAoPaid().add(ao);
 		}
 		super.create(paymentHistory);
