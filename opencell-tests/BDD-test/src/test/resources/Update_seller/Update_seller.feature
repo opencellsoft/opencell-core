@@ -1,10 +1,10 @@
-@TestUpdateSeller
    # The objective of this scenario is to verify whether an entity Seller
    # can be updated by API
 Feature: Testing method Update on entity Seller
 
-   Background:  System is configured.
+   Background:  System is configured
 
+   @UpdateSeller
    Scenario Outline: UpdateSeller
 
       Given  Update seller on "<env>"

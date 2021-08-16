@@ -1,10 +1,10 @@
-@TestDeleteSeller
    # The objective of this scenario is to verify whether an entity Seller
    # can be updated by API
 Feature: Testing method Delete on entity Seller
 
-   Background:  System is configured.
+   Background:  System is configured
 
+   @DeleteSeller
    Scenario Outline: DeleteSeller
 
       Given  A seller on "<env>"
