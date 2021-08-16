@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
@@ -14,6 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.model.billing.Subscription;
@@ -69,18 +71,18 @@ public class AccountsManagementApiServiceTest {
         when(subscriptionService.findByCode(eq("TR_SU"), anyList())).thenReturn(terminatedSU);
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test(expected = InvalidParameterException.class)
     public void test_transferSubscription_with_consumerInput_null() {
         accountsManagementApiService.transferSubscription(null, null, OpenTransactionsActionEnum.NONE);
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test(expected = InvalidParameterException.class)
     public void test_transferSubscription_with_consumerInput_empty() {
         ConsumerInput input = builder().build();
         accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test(expected = InvalidParameterException.class)
     public void test_transferSubscription_with_consumerInput_all_filled() {
         ConsumerInput input = builder().consumerId(1L).consumerCode("code").build();
         accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
@@ -94,7 +96,7 @@ public class AccountsManagementApiServiceTest {
 
     @Test
     public void test_transferSubscription_with_a_terminated_sub() {
-        expectedEx.expect(ForbiddenException.class);
+        expectedEx.expect(ClientErrorException.class);
         expectedEx.expectMessage("Cannot move a terminated subscription {id=1, code=TR_SU}");
 
         ConsumerInput input = builder().consumerId(1L).build();

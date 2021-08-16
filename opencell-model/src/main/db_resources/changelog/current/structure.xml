@@ -9537,6 +9537,28 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
     </changeSet>
+    
+    <changeSet id="INTRD-1221_20210803" author="TarikFA.">
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_SUBSCRIPTION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'SUBSCRIPTION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_TERMINATION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'TERMINATION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'OTHER')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  is null</where>
+    	</update>
+    </changeSet>
 
     <changeSet id="#INTRD-1174_20210802" author="ZBariki">
         <addColumn tableName="report_query">
@@ -9639,7 +9661,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="accounting_date" type="datetime"></column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA">
     	<addColumn tableName="accounting_period">
             <column name="accounting_operation_action" type="varchar(255)" />
@@ -9653,5 +9675,16 @@ public class OrderAdvancement extends ModuleScript {
     	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
     </changeSet>
+    
+     <changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay">
+        <addDefaultValue  tableName="cpq_quote_price" columnName="price_over_charged" defaultValueNumeric="0" /> 
+    </changeSet>
 
+    <changeSet id="#INTRD-1396_20210812" author="ZBariki">
+        <addColumn tableName="cpq_attribute">
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
