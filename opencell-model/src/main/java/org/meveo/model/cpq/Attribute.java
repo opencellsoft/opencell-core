@@ -88,7 +88,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
-	private Set<String> allowedValues=new HashSet<String>();
+	private Set<String> allowedValues=new HashSet<>();
 	
 	
 	   /**
@@ -96,7 +96,7 @@ public class Attribute extends EnableBusinessCFEntity{
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
-    private Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
+    private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
     
     /**
      * attribute order in the GUI
@@ -122,7 +122,7 @@ public class Attribute extends EnableBusinessCFEntity{
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
-    private List<Media> medias = new ArrayList<Media>();
+    private List<Media> medias = new ArrayList<>();
     
     
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
