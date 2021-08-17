@@ -182,10 +182,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Override
     public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
-        reportQueryApiService.verifyReportQuery(verifyQueryInput);
-        ActionStatus result = new ActionStatus();
-        result.setStatus(ActionStatusEnum.SUCCESS);
-        result.setMessage("New query");
+    	 ActionStatus result=reportQueryApiService.verifyReportQuery(verifyQueryInput);
         return Response.ok(result).build();
     }
 }

@@ -24,6 +24,8 @@ import javax.ws.rs.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.generic.exception.UnprocessableEntityException;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -199,7 +201,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return result;
     }
 
-    public void verifyReportQuery(VerifyQueryInput verifyQueryInput) {
+    public ActionStatus verifyReportQuery(VerifyQueryInput verifyQueryInput) {
+    	
+    	ActionStatus result = new ActionStatus();
+        result.setStatus(ActionStatusEnum.SUCCESS);
+        result.setMessage("New query");
 
         if (verifyQueryInput == null) {
             throw new ForbiddenException("The queryName and visibility must be non-null");
@@ -217,19 +223,26 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
             // a query with that name already exists and belongs to user (regardless of visibility)
             if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belong you");
+            	result.setStatus(ActionStatusEnum.WARNING);
+                result.setMessage("The query already exists and belong you");
+                return result;
             }
             
             // a public query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PUBLIC && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belongs to another user");
+                result.setStatus(ActionStatusEnum.WARNING);
+                result.setMessage("The query already exists and belongs to another user");
+                return result;
             }
 
             // a protected query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new UnprocessableEntityException("The query already exists and belong you");
+                result.setStatus(ActionStatusEnum.FAIL);
+                result.setMessage("The query already exists and belong your");
+                return result;
             }
         }
+        return result;
     }
 
     public Long countAllowedQueriesForUser() {
