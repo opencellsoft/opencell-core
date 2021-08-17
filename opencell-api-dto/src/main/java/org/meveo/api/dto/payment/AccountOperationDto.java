@@ -32,13 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditTarget;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.PaymentHistory;
+import org.meveo.model.payments.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -243,13 +237,28 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     @XmlElementWrapper(name = "paymentHistories")
     @XmlElement(name = "paymentHistory")
     @Schema(description = "list of the payment history")
-    private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
+    private List<PaymentHistoryDto> paymentHistories = new ArrayList<>();
 
     /**
      * A collection date.
      */
     @Schema(description = "A collection date")
     private Date collectionDate;
+    
+    /** The journal code. */
+    @Schema(description = "The journal code")
+    private String journalCode;
+
+    @Schema(description = "Account operation status", defaultValue = "POSTED",
+            example = "possible value are : POSTED, REJECTED, EXPORTED")
+    private AccountOperationStatus status;
+
+    @Schema(description = "Account operation rejection reason",
+            example = "possible value are : REJECTED, FORCED, CLOSED_PERIOD")
+    private AccountOperationRejectionReason reason;
+
+    @Schema(description = "Accounting export file")
+    private String accountingExportFile;
 
     /**
      * Instantiates a new account operation dto.
@@ -322,6 +331,10 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         }
         setCollectionDate(accountOp.getCollectionDate());
         setCustomFields(customFieldsDto);
+        setJournalCode(accountOp.getJournal().getCode());
+        this.status = accountOp.getStatus();
+        this.reason = accountOp.getReason();
+        this.accountingExportFile = accountOp.getAccountingExportFile();
     }
 
     /**
@@ -1022,5 +1035,37 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
+    }
+
+	public String getJournalCode() {
+		return journalCode;
+	}
+
+	public void setJournalCode(String journalCode) {
+		this.journalCode = journalCode;
+	}
+    
+    public AccountOperationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccountOperationStatus status) {
+        this.status = status;
+    }
+
+    public AccountOperationRejectionReason getReason() {
+        return reason;
+    }
+
+    public void setReason(AccountOperationRejectionReason reason) {
+        this.reason = reason;
+    }
+
+    public String getAccountingExportFile() {
+        return accountingExportFile;
+    }
+
+    public void setAccountingExportFile(String accountingExportFile) {
+        this.accountingExportFile = accountingExportFile;
     }
 }

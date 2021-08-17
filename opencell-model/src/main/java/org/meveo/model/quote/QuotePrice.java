@@ -99,7 +99,7 @@ public class QuotePrice extends AuditableEntity {
 
 	@Type(type = "numeric_boolean")
 	@Column(name = "price_over_charged")
-	private Boolean priceOverCharged;
+	private Boolean priceOverCharged=Boolean.FALSE;
 
 	@Column(name = "currency_code")
 	private String currencyCode;

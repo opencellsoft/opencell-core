@@ -21,6 +21,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.exception.ConflictException;
@@ -55,7 +56,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
-                limit.intValue(), null, filter, fetchFields, orderBy, SortOrder.valueOf(sort));
+                limit.intValue(), null, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
         return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
     }
 
@@ -147,8 +148,19 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     public Optional<ReportQuery> delete(Long id) {
         ReportQuery reportQuery = reportQueryService.findById(id);
         if (reportQuery != null) {
-            reportQueryService.remove(reportQuery);
-            return of(reportQuery);
+            try {
+                reportQueryService.remove(reportQuery);
+                return of(reportQuery);
+            } catch (Exception exception) {
+                Throwable throwable = exception.getCause();
+                while (throwable != null) {
+                    if (throwable instanceof ConstraintViolationException) {
+                        throw new BusinessException("The query with id "+ id + " is referenced");
+                    }
+                    throwable = throwable.getCause();
+                }
+                throw new BusinessException(exception.getMessage());
+            }
         }
         return empty();
     }
@@ -203,20 +215,19 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
         if (reportQuery != null) {
 
-            // query name already exist with visibility PUBLIC and belongs to another user
+            // a query with that name already exists and belongs to user (regardless of visibility)
+            if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
+                throw new ConflictException("The query already exists and belong you");
+            }
+            
+            // a public query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PUBLIC && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
                 throw new ConflictException("The query already exists and belongs to another user");
             }
 
-            // the connected user has query_manager role and the query name already exist with visibility PROTECTED or PRIVATE and belongs to another user
-            if (currentUser.hasRole("query_manager") && (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED || reportQuery.getVisibility() == QueryVisibilityEnum.PRIVATE)
-                    && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belong you");
-            }
-
-            // the query name already exist with visibility PROTECTED and belongs to another user
+            // a protected query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new UnprocessableEntityException("The query already exists and belongs to another user");
+                throw new UnprocessableEntityException("The query already exists and belong you");
             }
         }
     }

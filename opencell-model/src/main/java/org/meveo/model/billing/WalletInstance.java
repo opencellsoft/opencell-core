@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -55,7 +54,9 @@ import org.meveo.model.catalog.WalletTemplate;
         @Parameter(name = "sequence_name", value = "billing_wallet_seq"), })
 @NamedQueries({
         @NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
-        @NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatchIds", query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) ") })
+        @NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatchIds", query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) "),
+        @NamedQuery(name = "WalletInstance.openWalletOperationsByCharge", query = "SELECT op.description ,sum(op.quantity) as QT, sum(op.amountWithoutTax) as MT ,op.inputUnitDescription FROM  WalletOperation op , UsageChargeTemplate ct, ChargeInstance ci  where op.wallet.id = :walletInsanceId and  op.status = 'OPEN'  and op.chargeInstance.id = ci.id and ci.chargeTemplate.id = ct.id group by op.description, op.inputUnitDescription"),
+         })
 public class WalletInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
