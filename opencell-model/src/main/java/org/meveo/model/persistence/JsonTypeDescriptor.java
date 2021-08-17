@@ -18,12 +18,20 @@
 
 package org.meveo.model.persistence;
 
+import java.io.IOException;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
+import org.hibernate.engine.jdbc.CharacterStream;
+import org.hibernate.engine.jdbc.internal.CharacterStreamImpl;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.MutableMutabilityPlan;
 import org.hibernate.usertype.DynamicParameterizedType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implements DynamicParameterizedType {
 
@@ -80,10 +88,15 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
         if (value == null) {
             return null;
         }
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
         if (String.class.isAssignableFrom(type)) {
             return (X) toString(value);
-        }
-        if (Object.class.isAssignableFrom(type)) {
+
+        } else if (CharacterStream.class.isAssignableFrom(type)) {
+            return (X) new CharacterStreamImpl(toString(value));
+
+        } else if (Object.class.isAssignableFrom(type)) {
             return (X) JacksonUtil.toJsonNode(toString(value));
         }
         throw unknownUnwrap(type);
@@ -91,9 +104,24 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 
     @Override
     public <X> Object wrap(X value, WrapperOptions options) {
+
         if (value == null) {
             return null;
+
+        } else if (value instanceof Clob) {
+            String clobString = null;
+            try {
+                clobString = IOUtils.toString(((Clob) value).getCharacterStream());
+
+            } catch (IOException | SQLException e) {
+                throw new RuntimeException("Failed to read clob value", e);
+            }
+            return fromString(clobString);
+
+        } else {
+            // Logger log = LoggerFactory.getLogger(getClass());
+            // log.error("AKKKK value to wrap is " + (value != null ? value.getClass() : null));
+            return fromString(value.toString());
         }
-        return fromString(value.toString());
     }
 }

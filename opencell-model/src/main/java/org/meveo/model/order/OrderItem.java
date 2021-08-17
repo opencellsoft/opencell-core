@@ -30,6 +30,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -111,7 +112,8 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     /**
      * Serialized orderItem dto
      */
-    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "source", nullable = false)
     private String source;
 
     /**
@@ -159,14 +161,15 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "TEXT")
     private CustomFieldValues cfValues;
     
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**

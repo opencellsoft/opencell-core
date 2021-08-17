@@ -19,6 +19,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -110,8 +111,8 @@ public class ProductVersion extends AuditableEntity{
     /**
      * long description
      */
-    @Size(max = 2000)
-    @Column(name = "long_description", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "long_description")
     private String longDescription;
     
     /**

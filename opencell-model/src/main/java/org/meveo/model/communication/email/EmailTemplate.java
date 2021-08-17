@@ -20,6 +20,7 @@ package org.meveo.model.communication.email;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.communication.MessageTemplate;
@@ -33,10 +34,12 @@ public class EmailTemplate extends MessageTemplate {
     @Size(max = 255)
     private String subject;
 
-    @Column(name = "htmlcontent", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "htmlcontent")
     private String htmlContent;
 
-    @Column(name = "textcontent", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "textcontent")
     private String textContent;
 
     public String getSubject() {

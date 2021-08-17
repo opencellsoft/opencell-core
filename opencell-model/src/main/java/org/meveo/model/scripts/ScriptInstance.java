@@ -30,6 +30,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -71,7 +72,8 @@ public class ScriptInstance extends EnableBusinessEntity {
     /**
      * Script contents/source
      */
-    @Column(name = "script", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "script")
     @XStreamConverter(XStreamCDATAConverter.class)
     protected String script;
 

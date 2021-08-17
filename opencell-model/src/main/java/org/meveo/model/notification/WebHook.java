@@ -85,7 +85,7 @@ public class WebHook extends Notification {
     /**
      * Password
      */
-    @Column(name = "password", length = 255)
+    @Column(name = "pswd", length = 255)
     @Size(max = 255)
     private String password;
 
@@ -99,9 +99,10 @@ public class WebHook extends Notification {
     /**
      * A list of expressions to construct request headers
      */
+    @Lob
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notif_webhook_header")
-    @Column(name = "headers", columnDefinition = "TEXT" )
+    @Column(name = "headers" )
     @MapKeyColumn(name="headers_key")
     private Map<String, String> headers = new HashMap<>();
 

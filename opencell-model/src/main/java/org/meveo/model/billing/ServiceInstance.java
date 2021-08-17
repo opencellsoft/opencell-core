@@ -55,6 +55,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -306,7 +307,8 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     /**
      * Initial service renewal configuration
      */
-    @Column(name = "initial_renewal", columnDefinition = "text")
+    @Lob
+    @Column(name = "initial_renewal")
     private String initialServiceRenewal;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)

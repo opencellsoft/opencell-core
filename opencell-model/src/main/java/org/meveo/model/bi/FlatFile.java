@@ -28,6 +28,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -87,7 +88,8 @@ public class FlatFile extends BusinessEntity {
     /**
      * Rejection reason
      */
-    @Column(name = "error_message", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "error_message")
     private String errorMessage;
 
     /**

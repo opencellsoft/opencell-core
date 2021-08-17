@@ -81,7 +81,7 @@ public class OfferComponent extends BaseEntity {
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "sequence", columnDefinition = "int DEFAULT 0")
+    @Column(name = "sequence")
     private Integer sequence = 0;
 
     /*

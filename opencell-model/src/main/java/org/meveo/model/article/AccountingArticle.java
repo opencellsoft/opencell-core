@@ -67,8 +67,8 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Column(name = "analytic_code_3")
     private String analyticCode3;
 
-    @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     public AccountingArticle() {

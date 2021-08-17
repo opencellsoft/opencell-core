@@ -30,6 +30,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -240,7 +241,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "description")
     private String description;
 
     /**
@@ -344,7 +346,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Additional parameter used in rating
      */
-    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "parameter_extra")
     private String parameterExtra;
 
     /**
@@ -524,14 +527,15 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "TEXT")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**

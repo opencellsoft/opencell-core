@@ -19,7 +19,7 @@
 package org.meveo.model.persistence;
 
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.hibernate.type.descriptor.sql.ClobTypeDescriptor;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 public class CustomFieldJsonType extends AbstractSingleColumnStandardBasicType<CustomFieldValues> {
@@ -27,7 +27,7 @@ public class CustomFieldJsonType extends AbstractSingleColumnStandardBasicType<C
     private static final long serialVersionUID = -7393846020207110466L;
 
     public CustomFieldJsonType() {
-        super(VarcharTypeDescriptor.INSTANCE, CustomFieldJsonTypeDescriptor.INSTANCE);
+        super(ClobTypeDescriptor.DEFAULT, CustomFieldJsonTypeDescriptor.INSTANCE);
     }
 
     public String getName() {

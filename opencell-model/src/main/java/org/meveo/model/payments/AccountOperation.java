@@ -36,6 +36,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -46,6 +47,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -232,20 +234,22 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "TEXT")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
      * Bank LOT number
      */
-    @Column(name = "bank_lot", columnDefinition = "text")
+    @Lob
+    @Column(name = "bank_lot")
     private String bankLot;
 
     /**

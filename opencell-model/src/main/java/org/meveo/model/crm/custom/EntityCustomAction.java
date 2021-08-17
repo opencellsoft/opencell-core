@@ -82,8 +82,8 @@ public class EntityCustomAction extends EnableBusinessEntity {
     /**
      * Translated label in JSON format with language code as a key and translated label as a value
      */
-    @Type(type = "json")
-    @Column(name = "label_i18n", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "label_i18n", columnDefinition = "TEXT")
     private Map<String, String> labelI18n;
 
     /**

@@ -51,7 +51,8 @@ public class Payment extends AccountOperation {
     /**
      * Comments Text free if litigation or special conditions
      */
-    @Column(name = "comment", columnDefinition = "LONGTEXT")
+    @Lob
+    @Column(name = "comment")
     private String comment;
 
     /**

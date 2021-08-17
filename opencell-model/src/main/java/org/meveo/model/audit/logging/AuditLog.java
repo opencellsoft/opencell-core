@@ -22,6 +22,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -77,7 +78,8 @@ public class AuditLog extends BaseEntity {
     /**
      * Action parameters
      */
-    @Column(name = "parameters", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "parameters")
     private String parameters;
 
     public Date getCreated() {

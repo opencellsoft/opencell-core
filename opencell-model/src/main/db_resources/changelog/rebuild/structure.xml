@@ -20,6 +20,23 @@
 			   FUNCTION 6  gin_triconsistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal);
 			   </sql>
     </changeSet>
+    
+    <changeSet author="AndriusKarpavicius"  id="rebuild_oracle_functions" dbms="oracle">    
+        <createProcedure>
+           CREATE OR REPLACE FUNCTION now RETURN TIMESTAMP 
+           IS           
+           BEGIN   
+           RETURN (sysdate);
+           END;
+    
+        </createProcedure>
+    </changeSet>
+    
+    <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
+    If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
+    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql">
+        <sql>create extension "uuid-ossp"</sql>
+    </changeSet>
 
     <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
     If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
@@ -1507,7 +1524,7 @@
             <column name="system_currency" type="${type.boolean}" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -1529,7 +1546,7 @@
             <column name="inboundrequest_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="headers" type="text" />
+            <column name="headers" type="${type.text}" />
             <column name="headers_key" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1577,7 +1594,7 @@
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="body" type="text" />
+            <column name="body" type="${type.text}" />
             <column name="resp_status" type="int4" />
         </createTable>
     </changeSet>
@@ -1641,7 +1658,7 @@
             </column>
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -1701,7 +1718,7 @@
             <column name="entity_code" type="varchar(35)" />
             <column name="nb_retry" type="int4" />
             <column name="result" type="varchar(1000)" />
-            <column name="serialized_entity" type="text" />
+            <column name="serialized_entity" type="${type.text}" />
             <column name="status" type="varchar(255)" />
 
             <column name="creator" type="varchar(100)" />
@@ -1751,7 +1768,7 @@
             <column name="webhook_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="headers" type="text" />
+            <column name="headers" type="${type.text}" />
             <column name="headers_key" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1784,7 +1801,7 @@
             <column name="http_protocol" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
-            <column name="password" type="varchar(255)" />
+            <column name="pswd" type="varchar(255)" />
             <column name="http_port" type="int4" />
             <column name="username" type="varchar(255)" />
             <column name="id" type="bigint">
@@ -1822,7 +1839,7 @@
             <column name="counter_instance_id" type="bigint" />
             <column name="counter_template_id" type="bigint" />
             <column name="script_instance_id" type="bigint" />
-            <column defaultValueNumeric="1" name="priority" type="int4" />
+            <column name="priority" type="int4" defaultValueNumeric="1" />
             <column name="run_async" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -1991,7 +2008,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="customer_account_id" type="bigint" />
-            <column name="uuid" type="varchar(60)">
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
             <column name="order_num" type="varchar(500)" />
@@ -2461,7 +2478,7 @@
             <column name="producible_amount_without_tax" type="numeric(23, 12)" />
             <column name="nb_producible_invoice" type="int4" />
             <column name="rejection_reason" type="varchar(255)" />
-            <column name="selected_billing_accounts" type="text" />
+            <column name="selected_billing_accounts" type="${type.text}" />
             <column name="start_date" type="datetime" />
             <column name="status" type="varchar(255)" />
             <column name="status_date" type="datetime" />
@@ -2476,11 +2493,11 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
-            <column name="cf_values" type="text" />
+            <column name="cf_values" type="${type.text}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="reference_date" type="varchar(255)" />
             <column name="collection_date" type="datetime"/>
-            <column name="compute_dates_validation" type="BOOLEAN"/>
+            <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="skip_validation_script" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="suspect_auto_action" type="varchar(255)"/>
             <column name="reject_auto_action" type="varchar(255)"/>
@@ -2488,7 +2505,7 @@
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="filters" type="text" />
+            <column name="filters" type="${type.text}" />
             <column name="invoice_type_id" type="bigint" />
             <column name="run_type" type="varchar(255)" />
         </createTable>
@@ -2685,7 +2702,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
             <column name="collection_date_delay_el" type="varchar(2000)"/>
@@ -3072,7 +3089,7 @@
             <column name="adjusted_rated_tx" type="bigint" />
             <column name="order_number" type="varchar(100)" />
             <column name="rating_unit_description" type="varchar(20)" />
-            <column name="parameter_extra" type="text" />
+            <column name="parameter_extra" type="${type.text}" />
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
             <column name="subscription_id" type="bigint" />
@@ -3281,7 +3298,7 @@
             <column name="reimburse_oneshots" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -3588,7 +3605,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="order_number" type="varchar(100)" />
-            <column name="parameter_extra" type="text" />
+            <column name="parameter_extra" type="${type.text}" />
             <column name="raw_amount_without_tax" type="numeric(23, 12)" />
             <column name="raw_amount_with_tax" type="numeric(23, 12)" />
             <column name="invoice_sub_category_id" type="bigint" />
@@ -3609,7 +3626,7 @@
             <column name="cf_values_accum" type="${type.json}" />
             <column name="accounting_code_id" type="bigint"/>
             <column name="sort_index" type="int4"/>
-            <column name="reject_reason" type="text"/>
+            <column name="reject_reason" type="${type.text}"/>
             <column name="order_id" type="bigint" />
             <column name="accounting_article_id" type="bigint" />
             <column name="order_lot_id" type="bigint" />
@@ -3661,7 +3678,7 @@
             <column name="weekend_end" type="int4" />
             <column name="init_date_el" type="varchar(2000)"/>
             <column name="init_date_el_sp" type="varchar(2000)"/>
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -4033,7 +4050,7 @@
             <column name="business_offer_model_id" type="bigint" />
             <column name="valid_from" type="datetime" />
             <column name="valid_to" type="datetime" />
-            <column name="long_description" type="text" />
+            <column name="long_description" type="${type.text}" />
             <column name="life_cycle_status" type="varchar(60)" />
             <column name="type" type="varchar(20)" defaultValue="OFFER">
                 <constraints nullable="false" />
@@ -4114,10 +4131,9 @@
             <column name="max_subscr_age" type="bigint" />
             <column name="min_quantity" type="numeric(35, 12)" />
             <column name="min_subscr_age" type="bigint" />
-            <column defaultValueNumeric="1" name="priority" type="int4" />
+            <column name="priority" type="int4" defaultValueNumeric="1" />
             <column name="start_rating_date" type="datetime" />
             <column name="start_subscription_date" type="datetime" />
-
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="offer_id" type="bigint" />
@@ -4286,7 +4302,7 @@
             <column name="termination_script_instance_id" type="bigint" />
             <column name="activation_script_instance_id" type="bigint" />
             <column name="business_service_model_id" type="bigint" />
-            <column name="long_description" type="text" />
+            <column name="long_description" type="${type.text}" />
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
@@ -4315,7 +4331,7 @@
             <column name="renewal_term_type" type="varchar(20)" />
             <column name="minimum_invoice_sub_category_id" type="bigint" />
             <column name="minimum_charge_template_id" type="bigint" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
             <column name="offer_template_id" type="bigint" />
@@ -4324,7 +4340,7 @@
             <column name="service_type_id" type="bigint" />
             <column name="mandatory" type="${type.boolean}" />
             <column name="priority" type="int4" defaultValueNumeric="0" />
-            <column name="param" type="text" />
+            <column name="param" type="${type.text}" />
             <column name="material" type="${type.boolean}" />
             <column name="sequence" type="INT4" />
             <column name="display" type="${type.boolean}" />
@@ -4523,9 +4539,9 @@
             <column name="tag_end" type="varchar(255)" />
             <column name="tag_start" type="varchar(255)" />
             <column name="type" type="varchar(255)" />
-            <column name="htmlcontent" type="text" />
+            <column name="htmlcontent" type="${type.text}" />
             <column name="subject" type="varchar(255)" />
-            <column name="textcontent" type="text" />
+            <column name="textcontent" type="${type.text}" />
             <column name="jasper_filename" type="varchar(255)" />
 
             <column name="creator" type="varchar(100)" />
@@ -4802,7 +4818,7 @@
             </column>
             <column name="tax_category_el" type="varchar(2000)" />
             <column name="tax_category_el_sp" type="varchar(2000)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -4975,7 +4991,7 @@
             <column name="current_credit_note_nb" type="bigint" />
             <column name="credit_note_sequence_size" type="int4" />
             <column name="registration_no" type="varchar(100)" />
-            <column name="legal_text" type="text" />
+            <column name="legal_text" type="${type.text}" />
             <column name="legal_type" type="varchar(255)" />
             <column name="general_ledger_id" type="bigint" />
         </createTable>
@@ -5351,7 +5367,7 @@
             <column name="header_edr_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-            <column name="extra_parameter" type="text" />
+            <column name="extra_parameter" type="${type.text}" />
             <column name="times_tried" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
@@ -5442,7 +5458,7 @@
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -5557,7 +5573,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="varchar(255)" />
-            <column name="script" type="text" />
+            <column name="script" type="${type.text}" />
             <column name="script_instance_cat_id" type="bigint" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -5667,14 +5683,14 @@
             <column name="filter_condition_id" type="bigint" />
             <column name="order_condition_id" type="bigint" />
             <column name="primary_selector_id" type="bigint" />
-            <column name="input_xml" type="text" />
+            <column name="input_xml" type="${type.text}" />
             <column name="shared" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
-            <column name="polling_query" type="text"/>
+            <column name="polling_query" type="${type.text}"/>
             <column name="entity_class" type="varchar(255)"/>
         </createTable>
     </changeSet>
@@ -5860,7 +5876,7 @@
             <column name="installed" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="module_source" type="text" />
+            <column name="module_source" type="${type.text}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-302">
@@ -5972,7 +5988,7 @@
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -5983,7 +5999,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_bom" />
             </column>
             <column name="offer_template_id" type="bigint" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6000,7 +6016,7 @@
             <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6219,7 +6235,7 @@
             <column name="entity_class" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="disable" type="boolean" defaultValueNumeric="0">
+            <column name="disable" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -6304,7 +6320,7 @@
             <column name="description" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6315,7 +6331,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_business_product_model" />
             </column>
             <column name="product_template_id" type="BIGINT" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6487,7 +6503,7 @@
             </column>
             <column name="description" type="varchar(255)" />
             <column name="external_id" type="varchar(100)" />
-            <column name="delivery_instructions" type="text" />
+            <column name="delivery_instructions" type="${type.text}" />
             <column name="order_date" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -6542,7 +6558,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="user_account_id" type="bigint" />
-            <column name="source" type="text">
+            <column name="source" type="${type.text}">
                 <constraints nullable="false" />
             </column>
             <column name="status" type="varchar(20)">
@@ -6705,7 +6721,7 @@
             <column name="item_id" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
-            <column name="source" type="text">
+            <column name="source" type="${type.text}">
                 <constraints nullable="false" />
             </column>
             <column name="status" type="varchar(20)">
@@ -6803,7 +6819,7 @@
             <column name="action" type="VARCHAR(200)">
                 <constraints nullable="false" />
             </column>
-            <column name="parameters" type="text" />
+            <column name="parameters" type="${type.text}" />
         </createTable>
     </changeSet>
 
@@ -6824,11 +6840,11 @@
             <column name="card_number" type="VARCHAR(16)" />
             <column name="customer_account_id" type="BIGINT" />
             <column name="user_id" type="varchar(256)" />
-            <column name="info_1" type="text" />
-            <column name="info_2" type="text" />
-            <column name="info_3" type="text" />
-            <column name="info_4" type="text" />
-            <column name="info_5" type="text" />
+            <column name="info_1" type="${type.text}" />
+            <column name="info_2" type="${type.text}" />
+            <column name="info_3" type="${type.text}" />
+            <column name="info_4" type="${type.text}" />
+            <column name="info_5" type="${type.text}" />
             <column name="bank_code" type="varchar(5)" />
             <column name="branch_code" type="varchar(5)" />
             <column name="account_number" type="varchar(11)" />
@@ -7030,7 +7046,7 @@
             <column name="sql_query" type="${type.text}" />
             <column name="script_instance_id" type="bigint" />
             <column name="result_type" type="varchar(10)" />
-            <column name="style" type="text"></column>
+            <column name="style" type="${type.text}"></column>
             <column name="image_path" type="varchar(100)" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
@@ -7209,8 +7225,8 @@
             <column name="file_path" type="varchar(100)" />
             <column name="line_count" type="int" />
             <column name="origin" type="varchar(20)" />
-            <column name="error_message" type="text" />
-            <column name="status" type="boolean" />
+            <column name="error_message" type="${type.text}" />
+            <column name="status" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-370">
@@ -7845,7 +7861,7 @@
 			<column name="entity_class" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-            <column name="disable" type="boolean" defaultValueNumeric="0" >
+            <column name="disable" type="${type.boolean}" defaultValueNumeric="0" >
                 <constraints nullable="false" />
             </column>
 		</createTable>
@@ -7867,7 +7883,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
             <column name="file_name_pattern" type="varchar(255)" />
-            <column name="configuration_template" type="text">
+            <column name="configuration_template" type="${type.text}">
                 <constraints nullable="false" />
             </column>
             <column name="record_name" type="varchar(255)" />
@@ -7899,7 +7915,7 @@
             <column name="status" type="varchar(255)" />
             <column name="file_format_id" type="bigint" />
             <column name="processed" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="error_message" type="text" />
+            <column name="error_message" type="${type.text}" />
             <column name="lines_in_success" type="int4" />
             <column name="lines_in_warning" type="int4" />
             <column name="lines_in_error" type="int4" />
@@ -7982,7 +7998,7 @@
             <column name="description" type="varchar(100)">
                 <constraints nullable="true" />
             </column>
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
             <column name="multiplicator" type="bigint">
@@ -8029,12 +8045,12 @@
 	         <column name="header_edr_id" type="bigint">
 	             <constraints nullable="true" />
 	         </column>
-	         <column name="extra_parameter" type="text" />
+	         <column name="extra_parameter" type="${type.text}" />
 	         <column name="times_tried" type="int4"/>
         	 <column name="type" type="varchar(255)"/>
         	 <column name="line" type="varchar(2000)"/>
         	 <column name="updater" type="varchar(100)"/>
-        	 <column name="source" type="text">
+        	 <column name="source" type="${type.text}">
                 <constraints nullable="true" />
             </column>
     	</createTable>
@@ -8278,7 +8294,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
             <column name="file_type_id" type="bigint">
@@ -8315,7 +8331,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
-            <column name="description_i18n" type="text">
+            <column name="description_i18n" type="${type.text}">
                 <constraints nullable="true" />
             </column>
             <column name="relative_path"  type="varchar(2000)">
@@ -8395,17 +8411,17 @@
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
-            <column name="sql_query" type="text" >
+            <column name="sql_query" type="${type.text}" >
                 <constraints nullable="false" />
             </column>
             <column name="custom_table_code" type="varchar(255)" >
                 <constraints nullable="false" />
             </column>
-            <column name="aliases" type="text" >
+            <column name="aliases" type="${type.text}" >
                 <constraints nullable="false" />
             </column>
             <column name="last_run_date" type="datetime" />
-            <column name="parameters" type="text" />
+            <column name="parameters" type="${type.text}" />
         </createTable>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-425">           
@@ -8463,11 +8479,11 @@
             <column name="code" type="varchar(100)">
                 <constraints unique="true" uniqueConstraintName="meveo_metrics_config_code_unique" nullable="false"/>
             </column>
-            <column name="description" type="text"/>
-            <column name="full_path" type="text"/>
-            <column name="method" type="text"/>
-            <column name="metrics_type" type="text"/>
-            <column name="metrics_unit" type="text"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="full_path" type="varchar(255)"/>
+            <column name="method" type="varchar(255)"/>
+            <column name="metrics_type" type="varchar(255)"/>
+            <column name="metrics_unit" type="varchar(255)"/>
             <column name="version" type="int4"/>
             <column name="updated" type="datetime"/>
             <column name="created" type="datetime">
@@ -8537,7 +8553,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="varchar(255)" />
-            <column name="long_description" type="text" />
+            <column name="long_description" type="${type.text}" />
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -8567,7 +8583,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="short_description" type="varchar(255)" />
-            <column name="long_description" type="text" />
+            <column name="long_description" type="${type.text}" />
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
             <column name="product_id" type="bigint" >
@@ -9238,7 +9254,7 @@
             <column name="mandatory" type="${type.boolean}" >
                 <constraints nullable="false"/>
             </column>
-            <column name="priority" type="int4" />
+            <column name="priority" type="int4" defaultValueNumeric="0"/>
             <column name="sequence" type="int4" />
             <column name="display" type="${type.boolean}" >
                 <constraints nullable="false"/>

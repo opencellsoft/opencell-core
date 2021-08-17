@@ -7,6 +7,7 @@ import org.meveo.model.BusinessEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -27,22 +28,23 @@ import java.util.Map;
 })
 public class DataCollector extends BusinessEntity {
 
-    @Column(name = "sql_query", columnDefinition = "text")
+    @Lob
+    @Column(name = "sql_query")
     private String sqlQuery;
 
     @Column(name = "custom_table_code")
     private String customTableCode;
 
-    @Type(type = "json")
-    @Column(name = "aliases", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "aliases", columnDefinition = "TEXT")
     private Map<String, String> aliases = new HashMap<>();
 
-    @Type(type = "json")
-    @Column(name = "parameters", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "parameters", columnDefinition = "TEXT")
     private Map<String, String> parameters = new HashMap<>();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_run_date", columnDefinition = "text")
+    @Column(name = "last_run_date")
     private Date lastRunDate;
 
     public String getSqlQuery() {

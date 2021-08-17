@@ -27,6 +27,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -99,37 +100,42 @@ public abstract class PaymentMethod extends EnableCFEntity {
     /**
      * User identifier
      */
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     protected String userId;
 
     /**
      * Additional information
      */
-    @Column(name = "INFO_1", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "info_1")
     private String info1;
 
     /**
      * Additional information
      */
-    @Column(name = "INFO_2", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "info_2")
     private String info2;
 
     /**
      * Additional information
      */
-    @Column(name = "INFO_3", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "info_3")
     private String info3;
 
     /**
      * Additional information
      */
-    @Column(name = "INFO_4", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "info_4")
     private String info4;
 
     /**
      * Additional information
      */
-    @Column(name = "INFO_5", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "info_5")
     private String info5;
 
     /**

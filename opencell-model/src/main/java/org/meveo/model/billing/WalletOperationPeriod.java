@@ -32,6 +32,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -84,7 +85,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description")
+    @Size(max = 255)
     private String description;
 
     /**
@@ -236,7 +238,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "parameter_extra")
     private String parameterExtra;
 
     /**
@@ -401,14 +404,15 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "TEXT")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -435,7 +439,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Processing error reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
+    @Lob
+    @Column(name = "reject_reason")
     @Size(max = 255)
     private String rejectReason;
 

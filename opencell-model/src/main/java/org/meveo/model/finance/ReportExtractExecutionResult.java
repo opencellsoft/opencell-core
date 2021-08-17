@@ -26,6 +26,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -33,6 +34,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.NotifiableEntity;
 
@@ -75,9 +77,11 @@ public class ReportExtractExecutionResult extends AuditableEntity {
     @Column(name = "origin")
     private ReportExtractExecutionOrigin origin;
 
-    @Column(name = "error_message", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "error_message")
     private String errorMessage;
 
+    @Type(type = "numeric_boolean")
     @Column(name = "status")
     private boolean status;
 

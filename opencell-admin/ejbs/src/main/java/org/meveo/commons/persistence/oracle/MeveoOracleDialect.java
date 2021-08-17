@@ -16,10 +16,13 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.oracle;
 
-import org.hibernate.dialect.PostgreSQL94Dialect;
+import java.sql.Types;
+
+import org.hibernate.dialect.Oracle12cDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
 
 /**
  * JPA extensions for searching amount Custom field value fields
@@ -33,19 +36,19 @@ import org.hibernate.dialect.function.StandardSQLFunction;
  * <li>booleanFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Boolean type custom field</li>
  * <li>entityFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Entity type custom field. Returns EntityReferenceWrapper.code field value.</li>
  * </ul>
- * 
- * @author M.ELAZZOUZI
  *
+ * @author M.ELAZZOUZI
  */
-public class MeveoSQLDialect extends PostgreSQL94Dialect {
-    public MeveoSQLDialect() {
+public class MeveoOracleDialect extends Oracle12cDialect {
+    public MeveoOracleDialect() {
         super();
         registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
-        registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
-        registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
-        registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
-        registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
-        registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
-        registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
+        registerFunction("numericFromJson", new DoubleOracleJsonSearchFunction());
+        registerFunction("varcharFromJson", new OracleJsonSearchFunction());
+        registerFunction("bigIntFromJson", new LongOracleJsonSearchFunction());
+        registerFunction("timestampFromJson", new DateOracleJsonSearchFunction());
+        registerFunction("booleanFromJson", new BooleanOracleJsonSearchFunction());
+        registerFunction("entityFromJson", new EntityReferenceOracleJsonSearchFunction());
+        registerColumnType(Types.DOUBLE, "float");
     }
 }

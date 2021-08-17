@@ -29,6 +29,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -76,7 +77,8 @@ public class FileFormat extends BusinessEntity {
     /**
      * Configuration template.
      */
-    @Column(name = "configuration_template", columnDefinition = "TEXT", nullable = false)
+    @Lob
+    @Column(name = "configuration_template", nullable = false)
     private String configurationTemplate;
 
     /**

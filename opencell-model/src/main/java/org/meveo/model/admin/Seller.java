@@ -28,6 +28,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -110,8 +111,9 @@ public class Seller extends AccountEntity implements IWFEntity {
     /**
      * A legal text for the seller
      */
+    @Lob
     @Size(max = 2000)
-    @Column(name = "legal_text", columnDefinition = "text")
+    @Column(name = "legal_text")
     private String legalText;
 
     /**

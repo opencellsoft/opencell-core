@@ -84,8 +84,8 @@ public class Tax extends BusinessCFEntity {
     /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
-    @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "description_i18n", columnDefinition = "TEXT")
     private Map<String, String> descriptionI18n;
 
     public Tax() {

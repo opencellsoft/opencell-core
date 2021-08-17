@@ -34,6 +34,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -320,14 +321,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "TEXT")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -431,7 +433,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Invoicing error reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
+    @Column(name = "reject_reason")
     @Size(max = 255)
     private String rejectReason;
 

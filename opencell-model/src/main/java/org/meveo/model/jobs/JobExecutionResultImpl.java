@@ -29,6 +29,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -134,7 +135,8 @@ public class JobExecutionResultImpl extends BaseEntity {
     /**
      * General report displayed in GUI, put here info that do not fit other places
      */
-    @Column(name = "report", columnDefinition = "LONGTEXT")
+    @Lob
+    @Column(name = "report")
     private String report;
 
     /**

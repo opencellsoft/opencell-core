@@ -29,6 +29,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -112,7 +113,8 @@ public class InboundRequest extends BusinessEntity {
     /**
      * Request body
      */
-    @Column(name = "body", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "body")
     private String body;
 
     /**
@@ -139,9 +141,10 @@ public class InboundRequest extends BusinessEntity {
     /**
      * Request headers
      */
+    @Lob
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_inbound_req_headers")
-    @Column(name = "headers", columnDefinition = "TEXT" )
+    @Column(name = "headers")
     @MapKeyColumn(name="headers_key")
     private Map<String, String> headers = new HashMap<String, String>();
 

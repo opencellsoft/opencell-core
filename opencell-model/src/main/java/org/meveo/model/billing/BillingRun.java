@@ -27,6 +27,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -249,7 +250,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Selected billing accounts (identifiers)
      */
-    @Column(name = "selected_billing_accounts", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "selected_billing_accounts")
     private String selectedBillingAccounts;
 
     /**
@@ -274,14 +276,15 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "TEXT")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -312,6 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * To decide whether or not dates should be recomputed at invoice validation.
      */
+    @Type(type = "numeric_boolean")
     @Column(name = "compute_dates_validation")
     private Boolean computeDatesAtValidation;
 
@@ -354,8 +358,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Filtering option used in exceptional billing run.
      */
-    @Type(type = "json")
-    @Column(name = "filters", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "filters", columnDefinition = "TEXT")
     private Map<String, String> filters;
 
     @Transient

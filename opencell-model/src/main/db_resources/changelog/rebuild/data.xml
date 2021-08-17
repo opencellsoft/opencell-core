@@ -7,8 +7,8 @@
             <column name="id" valueNumeric="-30" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="now()" />
-            <column name="updated" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
             <column name="code" value="APIv2PermissionsSyncJob" />
             <column name="description" value="APIv2PermissionsSyncJob" />
             <column name="job_category" value="UTILS" />
@@ -7226,9 +7226,8 @@
             <column name="id" valueNumeric="-8" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="400000000"></column>
             <column name="description" value="Accounts payable"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
@@ -7238,9 +7237,8 @@
             <column name="id" valueNumeric="-9" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="401000000"></column>
             <column name="description" value="General AP"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
@@ -7250,9 +7248,8 @@
             <column name="id" valueNumeric="-10" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="408000000"></column>
             <column name="description" value="Accrued payables"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
@@ -7262,9 +7259,8 @@
             <column name="id" valueNumeric="-11" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="410000000"></column>
             <column name="description" value="Accounts receivable"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7274,9 +7270,8 @@
             <column name="id" valueNumeric="-13" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="416000000"></column>
             <column name="description" value="Doubtful receivables"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7286,9 +7281,8 @@
             <column name="id" valueNumeric="-14" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="418100000"></column>
             <column name="description" value="Accrued receivables"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7298,9 +7292,8 @@
             <column name="id" valueNumeric="-15" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="445510000"></column>
             <column name="description" value="VAT due"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
@@ -7310,9 +7303,8 @@
             <column name="id" valueNumeric="-16" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="445660000"></column>
             <column name="description" value="VAT deductible"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7322,9 +7314,8 @@
             <column name="id" valueNumeric="-17" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="445670000"></column>
             <column name="description" value="VAT credit"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7334,9 +7325,8 @@
             <column name="id" valueNumeric="-18" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="445710000"></column>
             <column name="description" value="VAT collected"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
@@ -7346,9 +7336,8 @@
             <column name="id" valueNumeric="-19" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="487000000"></column>
             <column name="description" value="Deferred revenue"></column>
             <column name="chart_of_account_type" value="LIABILITIES"></column>
@@ -7358,9 +7347,8 @@
             <column name="id" valueNumeric="-20" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="512000000"></column>
             <column name="description" value="Cash"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7370,9 +7358,8 @@
             <column name="id" valueNumeric="-22" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="512020000"></column>
             <column name="description" value="Cash Payment - BNP #345678"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
@@ -7382,9 +7369,8 @@
             <column name="id" valueNumeric="-23" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="622000000"></column>
             <column name="description" value="Reseller commission"></column>
             <column name="chart_of_account_type" value="EXPENSE"></column>
@@ -7394,9 +7380,8 @@
             <column name="id" valueNumeric="-24" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="651100000"></column>
             <column name="description" value="Bad debt"></column>
             <column name="chart_of_account_type" value="EXPENSE"></column>
@@ -7406,9 +7391,8 @@
             <column name="id" valueNumeric="-27" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="701000000"></column>
             <column name="description" value="Revenue"></column>
             <column name="chart_of_account_type" value="REVENUE"></column>
@@ -7418,9 +7402,8 @@
             <column name="id" valueNumeric="-28" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="701010000"></column>
             <column name="description" value="Gross Revenue"></column>
             <column name="chart_of_account_type" value="REVENUE"></column>
@@ -7430,9 +7413,8 @@
             <column name="id" valueNumeric="-29" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="created" valueDate="now()" />
             <column name="code" value="701020000"></column>
             <column name="description" value="Discounts"></column>
             <column name="chart_of_account_type" value="REVENUE"></column>
@@ -7661,7 +7643,7 @@
             <column name="id" valueNumeric="-30" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REF_CRD" />
@@ -7673,7 +7655,7 @@
             <column name="id" valueNumeric="-31" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
             <column name="code" value="TAX_VAT_00" />
@@ -7685,7 +7667,7 @@
             <column name="id" valueNumeric="-32" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
             <column name="code" value="TAX_VAT_05" />
@@ -7697,7 +7679,7 @@
             <column name="id" valueNumeric="-33" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
             <column name="code" value="TAX_VAT_20" />
@@ -7709,7 +7691,7 @@
             <column name="id" valueNumeric="-34" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
             <column name="code" value="TAX_VAT_10" />
@@ -7721,7 +7703,7 @@
             <column name="id" valueNumeric="-35" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_CRD" />
@@ -7733,7 +7715,7 @@
             <column name="id" valueNumeric="-36" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_RCR" />
@@ -7745,7 +7727,7 @@
             <column name="id" valueNumeric="-37" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_RDD" />
@@ -7757,7 +7739,7 @@
             <column name="id" valueNumeric="-38" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="709000000" />
             <column name="code" value="INV_REB" />
@@ -7769,7 +7751,7 @@
             <column name="id" valueNumeric="-39" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="709000000" />
             <column name="code" value="INV_DIS" />
@@ -7781,7 +7763,7 @@
             <column name="id" valueNumeric="-40" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="701000000" />
             <column name="code" value="INV_CRN" />
@@ -7793,7 +7775,7 @@
             <column name="id" valueNumeric="-41" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REF_TIP" />
@@ -7805,7 +7787,7 @@
             <column name="id" valueNumeric="-42" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-7" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="EXP_WRT" />
@@ -7819,7 +7801,7 @@
             <column name="id" valueNumeric="-43" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CRD" />
@@ -7960,8 +7942,8 @@
             <column name="created" valueDate="2018-11-20 07:40:45.183" />
             <column name="code" value="FR_BANKING_CAL_2018" />
             <column name="description" value="France bank calendar 2018" />
-            <column name="start_date" value="2018-01-01"></column>
-            <column name="end_date" value="2018-12-31"></column>
+            <column name="start_date" valueDate="2018-01-01"/>
+            <column name="end_date" valueDate="2018-12-31"/>
             <column name="weekend_begin" value="6" />
             <column name="weekend_end" value="7" />
             <column name="nb_periods" />
@@ -8015,8 +7997,8 @@
             <column name="created" valueDate="2018-12-07 11:07:45.183" />
             <column name="code" value="FR_BANKING_CAL_2019" />
             <column name="description" value="France bank calendar 2019" />
-            <column name="start_date" value="2019-01-01"></column>
-            <column name="end_date" value="2019-12-31"></column>
+            <column name="start_date" valueDate="2019-01-01"/>
+            <column name="end_date" valueDate="2019-12-31"/>
             <column name="weekend_begin" value="6" />
             <column name="weekend_end" value="7" />
             <column name="nb_periods" />
@@ -8888,7 +8870,7 @@
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="INGENICO_OGONE_SEPA" />
             <column name="description" value="Ingenico API Connect OGONE for Sepa payments" />
             <column name="type" value="NATIF" />
@@ -8901,7 +8883,7 @@
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="SLIMPAY_SEPA" />
             <column name="description" value="Slimpay for Sepa payments" />
             <column name="type" value="NATIF" />
@@ -8914,7 +8896,7 @@
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
 
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="code" value="INGENICO_OGONE_CARD" />
             <column name="description" value="Ingenico API Connect OGONE for Card payments" />
             <column name="type" value="NATIF" />

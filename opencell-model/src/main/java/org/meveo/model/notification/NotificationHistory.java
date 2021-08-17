@@ -24,6 +24,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -87,7 +88,8 @@ public class NotificationHistory extends AuditableEntity {
     /**
      * Entity's ID or a serialized entity (toString()) if ID is not available yet
      */
-    @Column(name = "serialized_entity", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "serialized_entity")
     private String serializedEntity;
 
     /**

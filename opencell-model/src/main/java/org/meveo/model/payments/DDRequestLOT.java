@@ -28,6 +28,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -54,7 +55,8 @@ public class DDRequestLOT extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "file_name", columnDefinition = "text")
+    @Lob
+    @Column(name = "file_name")
     private String fileName;
 
     @Column(name = "return_file_name", length = 255)

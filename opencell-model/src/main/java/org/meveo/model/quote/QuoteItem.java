@@ -28,6 +28,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -82,7 +83,8 @@ public class QuoteItem extends BaseEntity {
     /**
      * Serialized quoteItem dto
      */
-    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "source", nullable = false)
     private String source;
 
     /**

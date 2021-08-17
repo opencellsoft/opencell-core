@@ -38,6 +38,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -164,14 +165,15 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 * Custom field values in JSON format
 	 */
 	@Type(type = "cfjson")
-	@Column(name = "cf_values", columnDefinition = "text")
+	@Column(name = "cf_values", columnDefinition = "TEXT")
 	protected CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     protected CustomFieldValues cfAccumulatedValues;
     
     @Column(name = "priorty")

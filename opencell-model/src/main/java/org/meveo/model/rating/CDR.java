@@ -26,6 +26,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -254,7 +255,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * Parameter
 	 */
-	@Column(name = "EXTRA_PARAMETER", columnDefinition = "TEXT")
+    @Lob
+	@Column(name = "EXTRA_PARAMETER")
 	private String extraParam;
 
 	/**
@@ -274,7 +276,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * Rejection reason
 	 */
-	@Column(name = "reject_reason", columnDefinition = "text")
+    @Lob
+	@Column(name = "reject_reason")
 	private String rejectReason;
 	
 	/** The times tried. */
@@ -295,7 +298,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     private String updater;
     
     /** The serialized CDR dto. to be used while re-processing the CDR */
-    @Column(name = "source", nullable = true, columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "source", nullable = true)
     private String source;
     
 

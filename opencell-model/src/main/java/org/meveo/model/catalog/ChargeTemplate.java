@@ -39,6 +39,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -178,14 +179,14 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     /**
      * Expression to calculate input unitOfMeasure
      */
-    @Column(name = "input_unit_el", columnDefinition = "TEXT")
+    @Column(name = "input_unit_el")
     @Size(max = 2000)
     private String inputUnitEL;
 
     /**
      * Expression to calculate input unitOfMeasure
      */
-    @Column(name = "output_unit_el", columnDefinition = "TEXT")
+    @Column(name = "output_unit_el")
     @Size(max = 2000)
     private String outputUnitEL;
 
@@ -218,8 +219,8 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value.
      */
-    @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "description_i18n", columnDefinition = "TEXT")
     protected Map<String, String> descriptionI18n;
 
     /**

@@ -38,6 +38,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -153,22 +154,22 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
     /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
-    @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "description_i18n", columnDefinition = "TEXT")
     private Map<String, String> descriptionI18n;
 
     /**
      * Long description
      */
-    @Size(max = 2000)
-    @Column(name = "long_description", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "long_description")
     private String longDescription;
 
     /**
      * Translated long descriptions in JSON format with langauge code as a key and translated description as a value
      */
-    @Type(type = "json")
-    @Column(name = "long_description_i18n", columnDefinition = "text")
+    @Type(type = "jsonClob")
+    @Column(name = "long_description_i18n", columnDefinition = "TEXT")
     private Map<String, String> longDescriptionI18n;
 
     /**
