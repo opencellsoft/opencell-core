@@ -17,6 +17,7 @@ import java.util.Map;
 public interface ReportQuery extends Resource {
 
     @Schema(description = "Report query code")
+    @Nullable
     String getCode();
 
     @Schema(description = "Report query description")
@@ -24,12 +25,15 @@ public interface ReportQuery extends Resource {
     String getDescription();
 
     @Schema(description = "Report query target entity")
+    @Nullable
     String getTargetEntity();
 
     @Schema(description = "Visibility", example = "Possible value are : PUBLIC, PROTECTED, PRIVATE")
+    @Nullable
     QueryVisibilityEnum getVisibility();
 
     @Schema(description = "Report query fields")
+    @Nullable
     List<String> getFields();
 
     @Schema(description = "Report query filters")

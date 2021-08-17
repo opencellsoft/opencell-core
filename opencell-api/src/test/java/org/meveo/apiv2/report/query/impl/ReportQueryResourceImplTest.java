@@ -130,9 +130,10 @@ public class ReportQueryResourceImplTest {
         reportQuery1.setTargetEntity("BillingAccount");
         List<ReportQuery> customQueries = asList(reportQuery, reportQuery);
         when(request.evaluatePreconditions(new EntityTag(Integer.toString(customQueries.hashCode())))).thenReturn(null);
-        when(reportQueryApiService.list(0L, 10L, null, null, null)).thenReturn(customQueries);
+        when(reportQueryApiService.list(0L, 10L, null, null, null, null))
+                .thenReturn(customQueries);
         Response response = reportQueryResource
-                .getReportQueries(0L, 10L, null, null, null, request);
+                .getReportQueries(0L, 10L, null, null, null, null, null, request);
         assertEquals(200, response.getStatus());
         assertThat(response.getEntity(), instanceOf(ReportQueries.class));
         assertEquals(2, ((ReportQueries) response.getEntity()).getData().size());

@@ -9,10 +9,7 @@ import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +23,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.apiv2.generic.exception.ConflictException;
-import org.meveo.apiv2.generic.exception.UnprocessableEntityException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.QueryBuilder;
@@ -246,6 +241,34 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public Long countAllowedQueriesForUser() {
-        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName());
+        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName(), Collections.EMPTY_MAP);
+    }
+
+    public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
+        Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
+                limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
+        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
+    }
+
+    private Map<String, Object> buildFilters(String query) {
+        Map<String, Object> filters = new HashMap<>();
+        String[] inputFilters = query.split(";");
+        for (String input : inputFilters) {
+            String[] entry = input.split(":");
+            if(entry[0].equals("visibility")) {
+                if(entry[1] != null) {
+                    filters.put("visibility", QueryVisibilityEnum.valueOf(entry[1]));
+                }
+            } else {
+                filters.put(entry[0], entry[1]);
+            }
+        }
+        return filters;
+    }
+
+    public Long countAllowedQueriesForUserWithFilters(String query) {
+        Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
+        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName(), filters);
     }
 }
