@@ -224,7 +224,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             // a query with that name already exists and belongs to user (regardless of visibility)
             if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
             	result.setStatus(ActionStatusEnum.WARNING);
-                result.setMessage("The query already exists and belong you");
+                result.setMessage("The query already exists and belong to you");
                 return result;
             }
             
@@ -238,7 +238,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             // a protected query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
                 result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage("The query already exists and belong your");
+                result.setMessage("The query already exists and belong to you");
                 return result;
             }
         }
