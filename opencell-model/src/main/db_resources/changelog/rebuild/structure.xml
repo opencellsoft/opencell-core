@@ -15167,9 +15167,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="created" type="datetime"/>
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
