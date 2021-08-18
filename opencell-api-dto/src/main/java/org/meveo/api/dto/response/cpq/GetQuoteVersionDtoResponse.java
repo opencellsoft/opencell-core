@@ -13,6 +13,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
@@ -36,7 +37,7 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 	/**
 	 * List of quote prices
 	 */
-	private List<PriceDTO> prices;
+	private List<TaxPricesDto> prices;
 	
 	private ActionStatus actionStatus = new ActionStatus();
   
@@ -90,13 +91,13 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 	/**
 	 * @return the prices
 	 */
-	public List<PriceDTO> getPrices() {
+	public List<TaxPricesDto> getPrices() {
 		return prices;
 	}
 	/**
 	 * @param prices the prices to set
 	 */
-	public void setPrices(List<PriceDTO> prices) {
+	public void setPrices(List<TaxPricesDto> prices) {
 		this.prices = prices;
 	}
 
