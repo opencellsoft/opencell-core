@@ -90,6 +90,7 @@ public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
                 context = new HashMap<String, Object>();
             }
             context.put(Script.CONTEXT_ENTITY, jobExecutionResult.getJobInstance());
+            context.put(Script.JOB_EXECUTION_RESULT, jobExecutionResult);
             context.put(Script.CONTEXT_ACTION, scriptCode);
             context.put(Script.CONTEXT_CURRENT_USER, currentUser);
             context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
