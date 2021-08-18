@@ -1,5 +1,6 @@
 package org.meveo.api.dto.cpq.xml;
 
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxPricesDto {
+public class TaxPricesDto extends BaseEntityDto {
 
     private BigDecimal taxRate;
     private List<PriceDTO> prices;
