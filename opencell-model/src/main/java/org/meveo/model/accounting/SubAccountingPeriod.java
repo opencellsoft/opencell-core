@@ -42,6 +42,12 @@ public class SubAccountingPeriod extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "regular_users_sub_period_status")
     private SubAccountingPeriodStatusEnum regularUsersSubPeriodStatus;
+    
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "all_users_sub_period_status")
+    private SubAccountingPeriodStatusEnum allUsersSubPeriodStatus;
+    
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "regular_users_closed_date")
@@ -114,5 +120,15 @@ public class SubAccountingPeriod extends BaseEntity {
     public void setAccountingPeriod(AccountingPeriod accountingPeriod) {
         this.accountingPeriod = accountingPeriod;
     }
+
+	public SubAccountingPeriodStatusEnum getAllUsersSubPeriodStatus() {
+		return allUsersSubPeriodStatus;
+	}
+
+	public void setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum allUsersSubPeriodStatus) {
+		this.allUsersSubPeriodStatus = allUsersSubPeriodStatus;
+	}
+    
+    
 
 }
