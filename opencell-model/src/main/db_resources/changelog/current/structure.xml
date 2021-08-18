@@ -9683,4 +9683,9 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    <changeSet id="#INTRD-689_20210818" author="RAityaazza">
+        <addColumn tableName="sub_accounting_period">
+            <column name="all_users_sub_period_status" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
