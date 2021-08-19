@@ -49,7 +49,7 @@ public class GenericModule extends SimpleModule {
         addDeserializer(ChargeInstance.class, new ChargeInstanceDeserializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addDeserializer(Calendar.class, new CalendarDeserializer());
-        addSerializer(Date.class, new sqlDateSerializer(Date.class));
+        addSerializer(Date.class, new SqlDateSerializer(Date.class));
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
             @Override
             public Object deserializeKey(String key, DeserializationContext ctxt)

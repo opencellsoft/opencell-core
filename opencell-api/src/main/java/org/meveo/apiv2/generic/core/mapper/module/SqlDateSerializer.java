@@ -8,15 +8,15 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.ZoneOffset;
 
-public class sqlDateSerializer extends StdSerializer<Date> {
+public class SqlDateSerializer extends StdSerializer<Date> {
 
 
-    protected sqlDateSerializer(Class<Date> type) {
+    protected SqlDateSerializer(Class<Date> type) {
         super(type);
     }
 
     @Override
     public void serialize(Date value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeNumber(value.toLocalDate().atStartOfDay().plusHours(6).toEpochSecond(ZoneOffset.UTC));
+        gen.writeNumber(value.toLocalDate().atStartOfDay().plusHours(6).toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 }
