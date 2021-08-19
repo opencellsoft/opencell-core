@@ -33,7 +33,7 @@ import java.util.Set;
 @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion")
 public class PricePlanMatrixLine extends AuditableEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
     @JoinColumn(name = "ppm_version_id")
     private PricePlanMatrixVersion pricePlanMatrixVersion;
 

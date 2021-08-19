@@ -36,12 +36,12 @@ public class PricePlanMatrixValue extends BaseEntity {
 	 */
 	private static final long serialVersionUID = -2339904876547686701L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
     @JoinColumn(name = "ppm_column_id")
     @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
     @JoinColumn(name= "ppml_id")
     @NotNull
     private PricePlanMatrixLine pricePlanMatrixLine;
