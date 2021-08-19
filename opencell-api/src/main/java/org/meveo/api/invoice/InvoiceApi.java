@@ -562,6 +562,21 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
+     *
+     * @param invoiceId invoice id
+     *
+     * @return invoice number.
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws BusinessException business exception
+     */
+    public String validateInvoice(Invoice invoice) throws BusinessException {
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+        Invoice validatedInvoice = serviceSingleton.assignInvoiceNumber(invoice, true);
+        return validatedInvoice.getInvoiceNumber();
+    }
+
+    /**
      * 
      * @param invoiceId invoice id
      * 

@@ -127,7 +127,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     }
 
 	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) throws BusinessException {
-		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()))) {
+		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
 			throw new BusinessException("Can not validate order with status different then DRAFT or FINALIZED, order id: " + order.getId());
 		}
 
