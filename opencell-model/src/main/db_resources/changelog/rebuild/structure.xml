@@ -15171,9 +15171,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="created" type="datetime"/>
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -15196,9 +15194,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" primaryKey="true" primaryKeyName="sub_accounting_period_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="created" type="datetime"/>
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -15209,6 +15205,7 @@ $$ LANGUAGE plpgsql;
             <column name="regular_users_closed_date" type="datetime"/>
             <column name="effective_closed_date" type="datetime"/>
             <column name="accounting_period_id" type="bigint"/>
+            <column name="all_users_sub_period_status" type="varchar(255)"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
@@ -16271,9 +16268,10 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay"/>
 	<changeSet id="INTRD-1221_20210803" author="TarikFA." />
     <changeSet id="#INTRD-1396_20210812" author="ZBariki" />
-    <changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
+	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
+	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
 
-	<changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
 
