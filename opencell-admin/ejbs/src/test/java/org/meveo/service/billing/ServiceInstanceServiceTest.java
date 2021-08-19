@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -27,7 +28,6 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -86,6 +86,6 @@ public class ServiceInstanceServiceTest {
 
 		serviceInstance = serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, null);
 		// Do not apply a rating during the suspend period
-		Mockito.verify(recurringChargeInstanceService, never()).applyRecuringChargeToEndAgreementDate(any(), any());
+		verify(recurringChargeInstanceService, never()).applyRecuringChargeToEndAgreementDate(any(), any());
 	}
 }

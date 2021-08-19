@@ -2490,6 +2490,7 @@
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="filters" type="text" />
             <column name="invoice_type_id" type="bigint" />
+            <column name="run_type" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -16273,9 +16274,10 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay"/>
 	<changeSet id="INTRD-1221_20210803" author="TarikFA." />
     <changeSet id="#INTRD-1396_20210812" author="ZBariki" />
-    <changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
-	
-	<changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
+	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
+
+    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
 

@@ -371,6 +371,14 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
+    /**
+     * Billing run type
+     */
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "run_type")
+    private BillingRunTypeEnum runType;
+
+
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -878,4 +886,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.invoiceType = invoiceType;
 	}
 
+	public BillingRunTypeEnum getRunType() {
+		return runType;
+	}
+
+	public void setRunType(BillingRunTypeEnum runType) {
+		this.runType = runType;
+	}
 }
