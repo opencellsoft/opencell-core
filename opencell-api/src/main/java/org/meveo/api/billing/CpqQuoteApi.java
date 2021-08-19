@@ -56,6 +56,7 @@ import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
 import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
@@ -1149,7 +1150,7 @@ public class CpqQuoteApi extends BaseApi {
 
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
-        List<PriceDTO> pricesDTO =new ArrayList<>();
+        List<TaxPricesDto> pricesPerTaxDTO = new ArrayList<>();
          QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
@@ -1162,23 +1163,34 @@ public class CpqQuoteApi extends BaseApi {
         accountingArticlePrices.addAll(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
         		quoteVersion));
 
-        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingArticlePrices.stream()
-                .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+        Map<BigDecimal, List<QuotePrice>> pricesPerTaux = accountingArticlePrices.stream()
+                .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
+
+        BigDecimal quoteTotalAmount = BigDecimal.ZERO;
+        for (BigDecimal taux: pricesPerTaux.keySet()) {
+
+            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
+                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+            log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
+
+            List<PriceDTO> prices = pricesPerType
+                    .keySet()
+                    .stream()
+                    .map(key -> reducePrices(key, pricesPerType, quoteVersion, null, PriceLevelEnum.QUOTE))
+                    .filter(Optional::isPresent)
+                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+
+            pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
+            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
+
+
 
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
-        log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
 
-        pricesPerType
-        .keySet()
-        .stream()
-        .map(key -> reducePrices(key, pricesPerType, quoteVersion,null,PriceLevelEnum.QUOTE))
-        .filter(Optional::isPresent)
-        .map(price -> {
-            QuotePrice quotePrice = price.get();
-            pricesDTO.add(new PriceDTO(quotePrice));
-            return pricesDTO;
-        }).collect(Collectors.toList());
-        BigDecimal quoteTotalAmount = pricesDTO.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+
+
         CpqQuote quote=quoteVersion.getQuote();
         applyFixedDiscount(quote.getDiscountPlan(), quoteTotalAmount, quote.getSeller(),
         		quote.getBillableAccount(), null, null,null, quoteVersion);
@@ -1187,7 +1199,7 @@ public class CpqQuoteApi extends BaseApi {
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(updatedQuoteVersion, true, true, true,true);
         response.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(updatedQuoteVersion));
-        response.setPrices(pricesDTO);
+        response.setPrices(pricesPerTaxDTO);
         return response;
     }
 
@@ -1221,7 +1233,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-            quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+            quotePrice.setTaxRate(a.getTaxRate());
             if(a.getRecurrenceDuration()!=null) {
             	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
             }
