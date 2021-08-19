@@ -9683,4 +9683,17 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
         </addColumn>
     </changeSet>
+	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM">
+		<addColumn tableName="billing_billing_run">
+			<column name="run_type" type="varchar(255)" />
+		</addColumn>
+		<update tableName="billing_billing_run">
+			<column name="run_type" value="EXCEPTIONAL"/>
+			<where>billing_cycle_id is null</where>
+		</update>
+		<update tableName="billing_billing_run">
+			<column name="run_type" value="CYCLE"/>
+			<where>billing_cycle_id is not null</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
