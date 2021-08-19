@@ -350,7 +350,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
             // Link the recorded invoice to subscription
             recordedInvoice.setSubscription(invoice.getSubscription());
-
+            recordedInvoice.setJournal(occTemplate.getJournal());
             create(recordedInvoice);
 
             for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
