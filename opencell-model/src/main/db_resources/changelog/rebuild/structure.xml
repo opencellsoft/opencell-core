@@ -3371,6 +3371,7 @@
             <column name="commercial_order_id" type="bigint" />
             <column name="prestation" type="varchar(255)" />
             <column name="minimum_article_id" type="bigint" />
+            <column name="order_offer_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -14089,6 +14090,10 @@
     	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_billing_run" constraintName="fk__billing_billing_run__invoice_type" deferrable="false"
             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
     </changeSet>
+      <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1633">
+          <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16260,6 +16265,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
 	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
     <changeSet id="#INTRD-1275_20210805" author="ZBariki" />
+     <changeSet id="INTRD-1310_050821" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD" />
