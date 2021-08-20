@@ -9586,9 +9586,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="accounting_period_year" type="varchar(9)"><constraints nullable="false" unique="true"/></column>
-            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
-            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="accounting_period_year" type="int4" />
             <column name="status" type="varchar(255)"/>
             <column name="sub_accounting_period_type" type="varchar(255)"/>
             <column name="sub_accounting_period_progress" type="varchar(255)"/>
@@ -9676,7 +9674,7 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA">
-    	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="varchar(9)"/>
+    	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
     </changeSet>
     
@@ -9707,6 +9705,15 @@ public class OrderAdvancement extends ModuleScript {
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza">
         <addColumn tableName="sub_accounting_period">
             <column name="all_users_sub_period_status" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI">
+		<dropColumn tableName="accounting_period" columnName="accounting_period_year"></dropColumn>
+		<addColumn tableName="accounting_period">
+            <column name="accounting_period_year" type="varchar(9)"><constraints nullable="false" unique="true"/></column>
+            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>
