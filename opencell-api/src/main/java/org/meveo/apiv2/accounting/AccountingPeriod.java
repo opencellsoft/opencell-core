@@ -20,8 +20,11 @@ public interface AccountingPeriod extends Resource{
 
 
 	@Schema(description = "Indicate the fiscal year")
+	String getFiscalYear();
+	
+	@Schema(description = "Indicate the end date")
 	@Nullable
-	Integer getFiscalYear();
+	String getEndDate();
 
 	@Schema(description = "Indicate if use SubAccountingPeriods")
 	@Nullable

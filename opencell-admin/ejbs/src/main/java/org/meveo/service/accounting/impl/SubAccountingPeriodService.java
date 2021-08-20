@@ -33,7 +33,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
     
 	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type) {
 		List<SubAccountingPeriod> periods = new ArrayList<>();
-		LocalDate startDate = LocalDate.ofYearDay(ap.getAccountingPeriodYear(), 1);
+		LocalDate startDate = LocalDate.now();//ofYearDay(ap.getAccountingPeriodYear(), 1);
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		for (int i = 1; i <= numberOfPeriodsPerYear; i++) {
 			SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
