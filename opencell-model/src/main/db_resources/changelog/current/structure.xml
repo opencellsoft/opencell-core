@@ -9181,8 +9181,6 @@ public class OrderAdvancement extends ModuleScript {
     		<where>charge_template_id  is null</where>
     	</update>
     </changeSet>
-<<<<<<< HEAD
-    
     <changeSet id="INTRD-1310_050821" author="Mbarek-Ay">
      <addColumn tableName="billing_subscription">
             <column name="order_offer_id" type="bigint" />
