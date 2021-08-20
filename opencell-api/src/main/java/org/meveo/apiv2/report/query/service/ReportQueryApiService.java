@@ -30,6 +30,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
+import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
@@ -82,7 +83,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     private String generateQuery(ReportQuery entity, Class<?> targetEntity) {
-        PersistenceService persistenceService = (PersistenceService) getServiceInterface(targetEntity.getSimpleName() + "Service");
+        PersistenceService persistenceService =
+                (PersistenceService) getServiceInterface(targetEntity.getSimpleName() + "Service");
         QueryBuilder queryBuilder;
         if (entity.getFilters() != null) {
             Map<String, Object> filters = new FilterConverter(targetEntity).convertFilters(entity.getFilters());
@@ -96,11 +98,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
-        if(entity.getSortBy() != null && entity.getSortOrder() != null) {
+        if(entity.getSortBy() != null) {
             StringBuilder sortOptions = new StringBuilder(" order by ")
-                    .append(entity.getSortBy())
+                    .append(!entity.getSortBy().isBlank() ? entity.getSortBy() : "id")
                     .append(" ")
-                    .append(entity.getSortOrder().getLabel());
+                    .append(entity.getSortOrder() != null ? entity.getSortOrder().getLabel()
+                            : SortOrderEnum.ASCENDING.getLabel());
             return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ") + sortOptions;
         }
         return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
