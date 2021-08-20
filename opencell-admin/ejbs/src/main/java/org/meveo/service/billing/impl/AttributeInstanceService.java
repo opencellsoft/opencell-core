@@ -13,7 +13,7 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     public void create(AttributeInstance attributeInstance) throws BusinessException {
         if (attributeInstance.getAttribute() != null
                 && attributeInstance.getAttribute().getValidationPattern() != null) {
-            super.validateValue(attributeInstance);
+        	super.validateValue(attributeInstance, null, null, null, attributeInstance.getServiceInstance());
         }
         super.create(attributeInstance);
     }
@@ -22,7 +22,7 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     public AttributeInstance update(AttributeInstance attributeInstance) throws BusinessException {
         if (attributeInstance.getAttribute() != null
                 && attributeInstance.getAttribute().getValidationPattern() != null) {
-            super.validateValue(attributeInstance);
+            super.validateValue(attributeInstance, null, null, null, attributeInstance.getServiceInstance());
         }
         return super.update(attributeInstance);
     }

@@ -18,7 +18,11 @@ import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
+import org.meveo.model.cpq.AttributeValidationType;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -28,8 +32,11 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.cpq.AttributeValueService;
 import org.meveo.service.payments.impl.IngenicoGatewayPayment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -65,13 +72,21 @@ public class MyTest {
 
 	public static void main(String[] args) throws BusinessException, JsonProcessingException {
 		//IngenicoGatewayPayment ingenico=new IngenicoGatewayPayment();
-		BigDecimal taxPercent=new BigDecimal(20);
-		BigDecimal amountWithTax=new BigDecimal(12000);
-		BigDecimal cof=new BigDecimal(1.2);
-		System.out.println(taxPercent.divide(new BigDecimal(100)).multiply(amountWithTax));
-		BigDecimal coef=(new BigDecimal(100).add((taxPercent))).divide(new BigDecimal(100));
-		System.out.println(coef);
-		System.out.println(amountWithTax.divide(coef, 2, RoundingMode.HALF_UP));
+		CpqQuote quote=new CpqQuote();
+		quote.setId(1L);
+		quote.setQuoteDate(new Date());
+		QuoteAttribute quoteAttr=new QuoteAttribute();
+		quoteAttr.setDateValue(DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"));
+		quoteAttr.setId(1L);
+		org.meveo.model.cpq.Attribute attr=new org.meveo.model.cpq.Attribute();
+		attr.setAttributeType(AttributeTypeEnum.DATE);
+		attr.setValidationType(AttributeValidationType.EL);
+		attr.setValidationPattern("#{quoteAttribute.dateValue > quote.quoteDate}");
+		quoteAttr.setAttribute(attr);
+		
+		AttributeValueService.validateValue(quoteAttr, quote, null, null, null);
+		//boolean a=ValueExpressionWrapper.evaluateExpression("#{date < quote.quoteDate}", Boolean.class, DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"),quote);
+		//System.out.println(a);
 		
 		/*********
 		 * 
