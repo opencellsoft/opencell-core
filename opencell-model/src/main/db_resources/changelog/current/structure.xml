@@ -9181,6 +9181,7 @@ public class OrderAdvancement extends ModuleScript {
     		<where>charge_template_id  is null</where>
     	</update>
     </changeSet>
+<<<<<<< HEAD
     
     <changeSet id="INTRD-1310_050821" author="Mbarek-Ay">
      <addColumn tableName="billing_subscription">
@@ -9188,5 +9189,13 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
+
+    <changeSet id="#INTRD-1396_20210812" author="ZBariki">
+        <addColumn tableName="cpq_attribute">
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
