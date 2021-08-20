@@ -9709,9 +9709,8 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
     
     <changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI">
-		<dropColumn tableName="accounting_period" columnName="accounting_period_year"></dropColumn>
+		<sql>alter table ${db.schema.adapted}accounting_period alter column accounting_period_year type character varying(20);</sql>
 		<addColumn tableName="accounting_period">
-            <column name="accounting_period_year" type="varchar(9)"><constraints nullable="false" unique="true"/></column>
             <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
             <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
