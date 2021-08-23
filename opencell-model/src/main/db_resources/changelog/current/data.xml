@@ -4797,4 +4797,5 @@ public class SubscriptionImportScript extends Script {
         </insert>
 	</changeSet>
 	
+	
 </databaseChangeLog>
