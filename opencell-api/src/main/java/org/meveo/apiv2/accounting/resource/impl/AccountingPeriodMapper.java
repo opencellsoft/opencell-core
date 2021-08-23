@@ -40,7 +40,14 @@ public class AccountingPeriodMapper extends ResourceMapper<org.meveo.apiv2.accou
 			org.meveo.apiv2.accounting.AccountingPeriod resource) {
 		try {
 			AccountingPeriod accountingPeriod = Optional.ofNullable(toUpdate).orElse(new AccountingPeriod());
-			Optional.ofNullable(resource.getFiscalYear()).ifPresent(accountingPeriod::setAccountingPeriodYear);
+			if(toUpdate==null) {
+				Optional.ofNullable(resource.getFiscalYear()).ifPresent(accountingPeriod::setAccountingPeriodYear);
+				Optional.ofNullable(resource.getEndDate()).ifPresent(accountingPeriod::setEndDate);
+			}
+			if(toUpdate==null || !toUpdate.isUseSubAccountingCycles()) {
+				accountingPeriod.setUseSubAccountingCycles(resource.getUseSubAccountingPeriods());
+			}
+			
 			Optional.ofNullable(resource.getCustomLockNumberDays()).ifPresent(accountingPeriod::setCustomLockNumberDays);
 			Optional.ofNullable(resource.getCustomLockOption()).ifPresent(s->accountingPeriod.setCustomLockOption(CustomLockOption.valueOf(resource.getCustomLockOption())));
 			Optional.ofNullable(resource.getSubAccountingPeriodType()).ifPresent(s->accountingPeriod.setSubAccountingPeriodType(SubAccountingPeriodTypeEnum.valueOf(resource.getSubAccountingPeriodType())));

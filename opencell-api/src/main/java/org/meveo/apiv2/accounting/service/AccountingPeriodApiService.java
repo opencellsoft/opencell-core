@@ -73,5 +73,35 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 		return accountingPeriodService.create(entity, isUseSubAccountingPeriods);
 	}
 
+	/**
+	 * @param fiscalYear
+	 * @return
+	 */
+	public Optional<AccountingPeriod> findByFiscalYear(String fiscalYear) {
+		return Optional.of(accountingPeriodService.findByAccountingPeriodYear(fiscalYear));
+	}
+
+	/**
+	 * @param entity
+	 */
+	public Optional<AccountingPeriod> update(AccountingPeriod entity) {
+		return Optional.of(accountingPeriodService.update(entity));
+		
+	}
+
+	/**
+	 * @return
+	 */
+	public Optional<AccountingPeriod> findOpenAccountingPeriod() {
+		return Optional.of(accountingPeriodService.findLastAccountingPeriod());
+	}
+
+	/**
+	 * @return
+	 */
+	public Optional<AccountingPeriod> generateNextAP() {
+		return Optional.of(accountingPeriodService.generateNextAP());
+	}
+
 
 }
