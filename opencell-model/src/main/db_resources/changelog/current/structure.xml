@@ -9707,4 +9707,24 @@ public class OrderAdvancement extends ModuleScript {
             <column name="all_users_sub_period_status" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+    
+	<changeSet id="#INTRD-1406_20210823" author="HatimOUDAD">
+    <update tableName="ar_occ_template">
+    		<column name="journal_id" value="-2" />
+    		<where>code in ('PAY_CHK','PAY_TIP','PAY_DDT','REJ_CHK','REJ_DDT','REJ_TIP','PAY_NID','PAY_REC','REF_CHK','REF_DDT','PAY_DEP','REF_CRD','REJ_CRD','REJ_RCR','REJ_RDD','REF_TIP','PAY_CRD','PAY_PAL','PAY_STP')</where>
+    </update>
+    <update tableName="ar_occ_template">
+    		<column name="journal_id" value="-3" />
+    		<where>code in ('EXP_WRT','INV_FEE','RND_INC','RND_EXP')</where>
+    </update>
+    <update tableName="ar_occ_template">
+    		<column name="journal_id" value="-1" />
+    		<where>code in ('INV_STD','INV_REB','INV_DIS','INV_CRN')</where>
+    </update>
+    <update tableName="ar_occ_template">
+    		<column name="journal_id" value="-4" />
+    		<where>code in ('TAX_VAT_00','TAX_VAT_05','TAX_VAT_20','TAX_VAT_10')</where>
+    </update>
+    </changeSet>
+    
 </databaseChangeLog>
