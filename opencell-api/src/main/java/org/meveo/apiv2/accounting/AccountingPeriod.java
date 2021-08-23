@@ -4,6 +4,8 @@
 package org.meveo.apiv2.accounting;
 
 
+import java.util.Date;
+
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
@@ -20,11 +22,12 @@ public interface AccountingPeriod extends Resource{
 
 
 	@Schema(description = "Indicate the fiscal year")
+	@Nullable
 	String getFiscalYear();
 	
 	@Schema(description = "Indicate the end date")
 	@Nullable
-	String getEndDate();
+	Date getEndDate();
 
 	@Schema(description = "Indicate if use SubAccountingPeriods")
 	@Nullable

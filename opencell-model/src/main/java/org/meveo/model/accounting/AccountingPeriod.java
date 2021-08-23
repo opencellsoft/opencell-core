@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,6 +21,9 @@ import org.meveo.model.BaseEntity;
 @Table(name = "accounting_period")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "accounting_period_seq"), })
+@NamedQueries({
+		@NamedQuery(name = "AccountingPeriod.findByFiscalYear", query = "SELECT AP FROM AccountingPeriod AP where AP.accountingPeriodYear=:fiscalYear"),
+		@NamedQuery(name = "AccountingPeriod.findLastAP", query = "SELECT AP FROM AccountingPeriod AP where AP.endDate = (select max(endDate) from AccountingPeriod)") })
 public class AccountingPeriod extends BaseEntity {
 
     /**
