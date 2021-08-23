@@ -1,19 +1,29 @@
 package org.meveo.model.accounting;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "accounting_period")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "accounting_period_seq"), })
+@NamedQueries({
+		@NamedQuery(name = "AccountingPeriod.findByFiscalYear", query = "SELECT AP FROM AccountingPeriod AP where AP.accountingPeriodYear=:fiscalYear"),
+		@NamedQuery(name = "AccountingPeriod.findLastAP", query = "SELECT AP FROM AccountingPeriod AP where AP.endDate = (select max(endDate) from AccountingPeriod)") })
 public class AccountingPeriod extends BaseEntity {
 
     /**
@@ -22,7 +32,15 @@ public class AccountingPeriod extends BaseEntity {
     private static final long serialVersionUID = -5424629380105543225L;
 
     @Column(name = "accounting_period_year", unique = true, nullable = false)
-    private Integer accountingPeriodYear;
+    private String accountingPeriodYear;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date", unique = true, nullable = false)
+    private Date endDate;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_sub_accounting_cycles")
+    private boolean useSubAccountingCycles;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
@@ -55,14 +73,6 @@ public class AccountingPeriod extends BaseEntity {
 
     public AccountingPeriod() {
         super();
-    }
-
-    public Integer getAccountingPeriodYear() {
-        return accountingPeriodYear;
-    }
-
-    public void setAccountingPeriodYear(Integer accountingPeriodYear) {
-        this.accountingPeriodYear = accountingPeriodYear;
     }
 
     public AccountingPeriodStatusEnum getAccountingPeriodStatus() {
@@ -128,4 +138,46 @@ public class AccountingPeriod extends BaseEntity {
     public void setCustomLockOption(CustomLockOption customLockOption) {
         this.customLockOption = customLockOption;
     }
+
+	/**
+	 * @return the accountingPeriodYear
+	 */
+	public String getAccountingPeriodYear() {
+		return accountingPeriodYear;
+	}
+
+	/**
+	 * @param accountingPeriodYear the accountingPeriodYear to set
+	 */
+	public void setAccountingPeriodYear(String accountingPeriodYear) {
+		this.accountingPeriodYear = accountingPeriodYear;
+	}
+
+	/**
+	 * @return the endDate
+	 */
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the useSubAccountingCycles
+	 */
+	public boolean isUseSubAccountingCycles() {
+		return useSubAccountingCycles;
+	}
+
+	/**
+	 * @param useSubAccountingCycles the useSubAccountingCycles to set
+	 */
+	public void setUseSubAccountingCycles(boolean useSubAccountingCycles) {
+		this.useSubAccountingCycles = useSubAccountingCycles;
+	}
 }

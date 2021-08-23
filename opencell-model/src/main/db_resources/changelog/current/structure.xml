@@ -9707,7 +9707,13 @@ public class OrderAdvancement extends ModuleScript {
             <column name="all_users_sub_period_status" type="varchar(255)"/>
         </addColumn>
     </changeSet>
-    
+	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI">
+		<sql>alter table ${db.schema.adapted}accounting_period alter column accounting_period_year type character varying(20);</sql>
+		<addColumn tableName="accounting_period">
+            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 	<changeSet id="#INTRD-1406_20210823" author="HatimOUDAD">
     <update tableName="ar_occ_template">
     		<column name="journal_id" value="-2" />
@@ -9726,5 +9732,5 @@ public class OrderAdvancement extends ModuleScript {
     		<where>code in ('TAX_VAT_00','TAX_VAT_05','TAX_VAT_20','TAX_VAT_10')</where>
     </update>
     </changeSet>
-    
+	
 </databaseChangeLog>

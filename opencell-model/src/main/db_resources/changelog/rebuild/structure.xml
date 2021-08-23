@@ -15180,7 +15180,9 @@ $$ LANGUAGE plpgsql;
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="accounting_period_year" type="int4" />
+            <column name="accounting_period_year" type="varchar(20)" />
+            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="status" type="varchar(255)"/>
             <column name="sub_accounting_period_type" type="varchar(255)"/>
             <column name="sub_accounting_period_progress" type="varchar(255)"/>
@@ -15190,7 +15192,7 @@ $$ LANGUAGE plpgsql;
             <column name="custom_lock_number_days" type="int4" />
             <column name="custom_lock_option" type="varchar(255)" />
         </createTable>
-        <addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
+        <addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="varchar(20)"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
         
         <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />

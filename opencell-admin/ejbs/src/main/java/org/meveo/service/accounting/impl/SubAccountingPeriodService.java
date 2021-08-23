@@ -1,6 +1,7 @@
 package org.meveo.service.accounting.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -30,18 +31,25 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
             return null;
         }
     }
+
     
-	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type) {
+	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type,
+			Date start, boolean regularPeriods) {
 		List<SubAccountingPeriod> periods = new ArrayList<>();
-		LocalDate startDate = LocalDate.ofYearDay(ap.getAccountingPeriodYear(), 1);
+		LocalDateTime startDateTime = start==null? LocalDate.now().withDayOfMonth(1).atStartOfDay(): start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
-		for (int i = 1; i <= numberOfPeriodsPerYear; i++) {
+		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
+		while (endDate.isAfter(startDateTime)) {
 			SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
 			subAccountingPeriod.setAccountingPeriod(ap);
-			subAccountingPeriod.setStartDate(Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			startDate = startDate.plusMonths(12 / numberOfPeriodsPerYear);
-			subAccountingPeriod.setEndDate(Date
-					.from(startDate.atTime(LocalTime.MIN).minusNanos(1).atZone(ZoneId.systemDefault()).toInstant()));
+			subAccountingPeriod.setStartDate(Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+			startDateTime = startDateTime.plusMonths(monthsPerPeriod);
+			if (!endDate.isAfter(startDateTime) && !regularPeriods) {
+				subAccountingPeriod.setEndDate(Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+			} else {
+				subAccountingPeriod.setEndDate(Date.from(startDateTime.minusNanos(1).atZone(ZoneId.systemDefault()).toInstant()));
+			}
 			periods.add(subAccountingPeriod);
 			create(subAccountingPeriod);
 		}
