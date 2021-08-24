@@ -45,7 +45,6 @@ public class RestApiUtils {
     * @return
     */
     public static ValidatableResponse delete(String uri) {
-System.out.println( "uri DELETE DAY NE : " + uri );
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")

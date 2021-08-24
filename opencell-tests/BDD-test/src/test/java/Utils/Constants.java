@@ -2,6 +2,11 @@ package Utils;
 
 public class Constants {
 
+    // Final strings for defining complex scenario
+    public static final String AND_LOGIC = ", ";
+    public static final String BASE_COMMAND = "mvn.cmd test -Dcucumber.filter.tags=@";
+    public static final String AND_CMD = " && ";
+
     // System configuration for Keycloak
     public static final String URL_OC = "opencell.url";
     public static final String KCL_SECRET = "opencell.keycloak.secret";

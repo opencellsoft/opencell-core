@@ -12,21 +12,57 @@
     <properties>
         <cucumber.version>6.10.4</cucumber.version>
         <junit.version>4.13</junit.version>
+        <serenity.version>2.5.6</serenity.version>
+        <serenity.cucumber6.version>2.4.51</serenity.cucumber6.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- setting up Cucumber parameters -->
-        <opencell.keycloak.url>https://tnn.d2.opencell.work/auth</opencell.keycloak.url>
+        <!-- setting up keycloak parameters -->
         <opencell.keycloak.secret>afe07e5a-68cb-4fb0-8b75-5b6053b07dc3</opencell.keycloak.secret>
         <opencell.keycloak.realm>opencell</opencell.keycloak.realm>
         <opencell.keycloak.clientId>opencell-web</opencell.keycloak.clientId>
 
-        <!-- setting up URL and credentials parameters -->
-        <opencell.url>https://tnn.d2.opencell.work</opencell.url>
+        <!-- setting up credentials parameters -->
         <adminUsername>opencell.admin</adminUsername>
         <adminPassword>opencell.admin</adminPassword>
         <superUsername>opencell.superadmin</superUsername>
         <superPassword>opencell.superadmin</superPassword>
     </properties>
+
+    <!-- setting up local and distant test environments -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <restapi.baseurl>http://localhost:8080/opencell/api/rest</restapi.baseurl>
+                <opencell.url>http://localhost:8080</opencell.url>
+                <opencell.keycloak.url>http://localhost:8080/auth</opencell.keycloak.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>tnn</id>
+            <properties>
+                <restapi.baseurl>https://tnn.d2.opencell.work/opencell/api/rest</restapi.baseurl>
+                <opencell.url>https://tnn.d2.opencell.work</opencell.url>
+                <opencell.keycloak.url>https://tnn.d2.opencell.work/auth</opencell.keycloak.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>wda</id>
+            <properties>
+                <restapi.baseurl>https://wda.d2.opencell.work/opencell/api/rest</restapi.baseurl>
+                <opencell.url>https://wda.d2.opencell.work</opencell.url>
+                <opencell.keycloak.url>https://wda.d2.opencell.work/auth</opencell.keycloak.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>baq</id>
+            <properties>
+                <restapi.baseurl>https://baq.d2.opencell.work/opencell/api/rest</restapi.baseurl>
+                <opencell.url>https://baq.d2.opencell.work</opencell.url>
+                <opencell.keycloak.url>https://baq.d2.opencell.work/auth</opencell.keycloak.url>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -41,6 +77,52 @@
             <artifactId>cucumber-junit</artifactId>
             <version>${cucumber.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-core</artifactId>
+            <version>${serenity.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>cucumber-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-screenplay</artifactId>
+            <version>${serenity.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>cucumber-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-cucumber6</artifactId>
+            <version>${serenity.cucumber6.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-screenplay-rest</artifactId>
+            <version>${serenity.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-rest-assured</artifactId>
+            <version>${serenity.version}</version>
         </dependency>
 
         <dependency>
@@ -59,23 +141,23 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>4.0.0</version>
+            <version>4.3.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>xml-path</artifactId>
-            <version>4.0.0</version>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-path</artifactId>
-            <version>4.0.0</version>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-schema-validator</artifactId>
-            <version>4.0.0</version>
+            <version>4.3.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -106,11 +188,6 @@
             <version>1.0.0.Final</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.10.2</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -121,8 +198,8 @@
                 <version>3.8.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
 
@@ -131,7 +208,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
-                    <!--                            <skipTests>false</skipTests>-->
                     <systemPropertyVariables>
                         <buildDirectory>${project.build.directory}</buildDirectory>
                         <opencell.url>${opencell.url}</opencell.url>
@@ -143,6 +219,7 @@
                         <opencell.keycloak.url>${opencell.keycloak.url}</opencell.keycloak.url>
                         <opencell.keycloak.realm>${opencell.keycloak.realm}</opencell.keycloak.realm>
                         <opencell.keycloak.clientId>${opencell.keycloak.clientId}</opencell.keycloak.clientId>
+                        <restapi.baseurl>${restapi.baseurl}</restapi.baseurl>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

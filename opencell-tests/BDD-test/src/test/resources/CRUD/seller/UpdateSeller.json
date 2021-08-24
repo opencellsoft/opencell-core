@@ -1,0 +1,23 @@
+{
+	"description": "ricky.canella",
+	"currencyCode": "EUR",
+	"countryCode": "FR",
+	"languageCode": "FRA",
+	"invoiceTypeSequences": {},
+	"contactInformation": {
+		"email": "billing@opencellsoft.com",
+		"phone": "0123456789",
+		"mobile": "0678912345",
+		"fax": null,
+		"address": null
+	},
+	"address": {
+		"address1": "52 rue Kleber DAY NE",
+		"address2": "",
+		"address3": "",
+		"zipCode": "92300",
+		"city": "Levallois Perret",
+		"country": "FR",
+		"state": null
+	}
+}

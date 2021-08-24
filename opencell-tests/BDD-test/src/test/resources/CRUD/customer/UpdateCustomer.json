@@ -1,0 +1,79 @@
+{
+  "description": "Test description",
+  "externalRef1": "FR 28552046955",
+  "name": {
+    "title": "CIE",
+    "firstName": "Job",
+    "lastName": "Bonvi"
+  },
+  "address": {
+    "address1": "14 rue Crespin du Gast",
+    "address2": null,
+    "address3": null,
+    "zipCode": "75011",
+    "city": "PARIS",
+    "country": "FR",
+    "state": "Paris Area"
+  },
+  "contactInformation": {
+    "email": "job.bonvi@opencellsoft.com",
+    "phone": "123456789",
+    "mobile": "987456123",
+    "fax": "1102-125-623",
+    "address": null
+  },
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "seller": "SELLER_FR",
+  "mandateIdentification": "Test Mandate Id",
+  "mandateDate": "2029-01-15",
+  "customerAccounts": {
+    "customerAccount": [
+      {
+        "id": 23,
+        "code": "job.bonvi",
+        "description": "job.bonvi",
+        "externalRef1": "FR 28552046955",
+        "name": {
+          "title": "CIE",
+          "firstName": "Job",
+          "lastName": "Bonvi"
+        },
+        "address": {
+          "address1": "14 rue Crespin du Gast",
+          "address2": null,
+          "address3": null,
+          "zipCode": "75011",
+          "city": "PARIS",
+          "country": "FR",
+          "state": "Paris Area"
+        },
+        "contactInformation": {
+          "email": "job.bonvi@opencellsoft.com",
+          "phone": null,
+          "mobile": null,
+          "fax": null,
+          "address": null
+        },
+        "customer": "job.bonvi",
+        "currency": "EUR",
+        "language": "FRA",
+        "status": "ACTIVE",
+        "dateStatus": "2021-01-15T15:59:10Z",
+        "dateDunningLevel": "2021-01-15T15:59:10Z",
+        "dunningLevel": "R0",
+        "balance": 0,
+        "totalInvoiceBalance": 0,
+        "accountBalance": 0,
+        "creditBalance": 0,
+        "excludedFromPayment": false,
+        "paymentMethod": "CHECK",
+        "billingAccounts": {
+          "billingAccount": []
+        },
+        "thresholdPerEntity": false
+      }
+    ]
+  },
+  "additionalDetails": {}
+}

@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Utils class for working with strings.
+ * Driver.Utils class for working with strings.
  * 
  * @author Ignas Lelys
  */
