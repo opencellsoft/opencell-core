@@ -1401,7 +1401,7 @@ public class QueryBuilder {
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1 && paginationConfiguration.getOrderings().length != 0) {
             Object[] orderings = paginationConfiguration.getOrderings();
-            Object defaultOrder = SortOrder.valueOf((String) orderings[1]);
+            Object defaultOrder = orderings[1] != null ? SortOrder.valueOf((String) orderings[1]) : orderings[1];
             String[] fields = orderings[0].toString().split(", ");
             for (String field : fields){
             	String currentAlias = alias;

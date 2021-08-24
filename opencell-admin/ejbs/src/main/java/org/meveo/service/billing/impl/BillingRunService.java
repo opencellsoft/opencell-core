@@ -22,7 +22,16 @@ import static java.util.stream.Collectors.joining;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -44,12 +53,30 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.BillingRunList;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.BillingRunTypeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
@@ -167,6 +194,33 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private  InvoiceLineService invoiceLineService;
 
     private static final  int rtPaginationSize = 30000;
+
+	@MeveoAudit
+	@Override
+	public void create(BillingRun billingRun) throws BusinessException {
+		setBillingRunType(billingRun);
+		super.create(billingRun);
+	}
+
+	@MeveoAudit
+	@Override
+	public BillingRun update(BillingRun billingRun) throws BusinessException {
+		setBillingRunType(billingRun);
+		return super.update(billingRun);
+	}
+
+	/**
+	 * Put the BR type to CYCLE if a BC is attached, EXEPTIONAL otherwise
+	 *
+	 * @param billingRun
+	 */
+	public void setBillingRunType(BillingRun billingRun) {
+		if (billingRun.getBillingCycle() == null) {
+			billingRun.setRunType(BillingRunTypeEnum.EXCEPTIONAL);
+		} else {
+			billingRun.setRunType(BillingRunTypeEnum.CYCLE);
+		}
+	}
 
     /**
      * Generate pre invoicing reports.

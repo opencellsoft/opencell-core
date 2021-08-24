@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -87,11 +88,11 @@ public class AccountsManagementApiService {
 
         // Check user account
         if (consumerInput == null || (consumerInput.getConsumerId() == null && StringUtils.isBlank(consumerInput.getConsumerCode()))) {
-            throw new ForbiddenException("At least consumer id or code must be non-null");
+            throw new InvalidParameterException("At least consumer id or code must be non-null");
         }
 
         if (consumerInput.getConsumerId() != null && StringUtils.isNotBlank(consumerInput.getConsumerCode())) {
-            throw new ForbiddenException("Only one of parameters can be provided");
+            throw new InvalidParameterException("Only one of parameters can be provided");
         }
 
         UserAccount newOwner = null;
@@ -118,8 +119,8 @@ public class AccountsManagementApiService {
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-            throw new ForbiddenException(
-                "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode));
+            throw new ClientErrorException(
+                "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode), Response.Status.CONFLICT);
         }
 
         String oldUserAccount = subscription.getUserAccount().getCode();
@@ -136,14 +137,14 @@ public class AccountsManagementApiService {
         if (action == OpenTransactionsActionEnum.FAIL) {
             Long countWO = walletOperationService.countNotBilledWOBySubscription(subscription);
             if (countWO > 0) {
-                throw new ForbiddenException("Cannot move subscription {id=[id], code=[code]} with OPEN wallet operations".replace("[id]", subscription.getId().toString())
-                    .replace("[code]", subscriptionCode));
+                throw new ClientErrorException("Cannot move subscription {id=[id], code=[code]} with OPEN wallet operations".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode), Response.Status.CONFLICT);
             }
 
             Long countRT = ratedTransactionService.countNotBilledRTBySubscription(subscription);
             if (countRT > 0) {
-                throw new ForbiddenException("Cannot move subscription {id=[id], code=[code]} with OPEN rated operations".replace("[id]", subscription.getId().toString())
-                    .replace("[code]", subscriptionCode));
+                throw new ClientErrorException("Cannot move subscription {id=[id], code=[code]} with OPEN rated operations".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode), Response.Status.CONFLICT);
             }
         }
 

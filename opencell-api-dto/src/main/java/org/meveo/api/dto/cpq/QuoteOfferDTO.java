@@ -18,8 +18,12 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,12 +32,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.model.quote.QuoteVersion;
 
 /**
  * DTO to create or update a quoteOffer
@@ -125,7 +133,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 * List of quote prices
 	 */
 	@Schema(description = "total amounts")
-	private List<PriceDTO> prices;
+	private List<TaxPricesDto> prices;
     
     
 
@@ -149,10 +157,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		init(quoteOffer);
-		prices=new ArrayList<PriceDTO>();
-		for(QuotePrice quotePrice:quoteOffer.getQuotePrices()) {
-			prices.add(new PriceDTO(quotePrice));
-		}
+		prices=calculateTotalsPerOffer(quoteOffer);
 		if(loadQuoteProduct) {
 			products=new ArrayList<QuoteProductDTO>();
 				for(QuoteProduct quoteProduct:quoteOffer.getQuoteProduct()) {
@@ -167,6 +172,70 @@ public class QuoteOfferDTO extends BaseEntityDto{
 			}
 	}
 	}
+
+	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer) {
+		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
+		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
+		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
+				.collect(Collectors.groupingBy(QuotePrice::getTaxRate));
+
+
+		for (BigDecimal taxRate : pricesPerTax.keySet() ) {
+
+			Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = quotePrices.stream()
+					.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+
+			List<PriceDTO> taxPrices = pricesPerType
+					.keySet()
+					.stream()
+					.map(key -> reducePrices(key, pricesPerType, null, quoteOffer, PriceLevelEnum.OFFER))
+					.filter(Optional::isPresent)
+					.map(price -> new PriceDTO(price.get()))
+					.collect(Collectors.toList());
+
+			taxPricesDtos.add(new TaxPricesDto(taxRate, taxPrices));
+		}
+		return taxPricesDtos;
+	}
+
+	private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion, QuoteOffer quoteOffer, PriceLevelEnum level) {
+		if(pricesPerType.get(key).size()==1){
+			QuotePrice accountingArticlePrice =pricesPerType.get(key).get(0);
+			QuotePrice quotePrice = new QuotePrice();
+			quotePrice.setPriceTypeEnum(key);
+			quotePrice.setPriceLevelEnum(level);
+			quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
+			quotePrice.setQuoteOffer(quoteOffer);
+			quotePrice.setTaxAmount(accountingArticlePrice.getTaxAmount());
+			quotePrice.setAmountWithTax(accountingArticlePrice.getAmountWithTax());
+			quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
+			quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
+			quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
+			quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
+			quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
+			return Optional.of(quotePrice);
+		}
+		return pricesPerType.get(key).stream().reduce((a, b) -> {
+			QuotePrice quotePrice = new QuotePrice();
+			quotePrice.setPriceTypeEnum(key);
+			quotePrice.setPriceLevelEnum(level);
+			quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
+			quotePrice.setQuoteOffer(quoteOffer);
+			quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
+			quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
+			quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
+			quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
+			quotePrice.setTaxRate(a.getTaxRate());
+			if(a.getRecurrenceDuration()!=null) {
+				quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
+			}
+			if(a.getRecurrencePeriodicity()!=null) {
+				quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
+			}
+			return quotePrice;
+		});
+	}
+
 	/**
 	 * @return the quoteCode
 	 */
@@ -328,10 +397,10 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	public void setOfferId(Long offerId) {
 		this.offerId = offerId;
 	}
-	public List<PriceDTO> getPrices() {
+	public List<TaxPricesDto> getPrices() {
 		return prices;
 	}
-	public void setPrices(List<PriceDTO> prices) {
+	public void setPrices(List<TaxPricesDto> prices) {
 		this.prices = prices;
 	}
 	

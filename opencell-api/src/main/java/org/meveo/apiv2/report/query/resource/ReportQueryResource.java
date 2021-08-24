@@ -74,7 +74,8 @@ public interface ReportQueryResource {
     Response getReportQueries(@DefaultValue("0") @QueryParam("offset") Long offset,
                               @DefaultValue("50") @QueryParam("limit") Long limit,
                               @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy,
-                              @QueryParam("filter") String filter, @Context Request request);
+                              @QueryParam("filter") String filter, @QueryParam("query") String query,
+                              @QueryParam("fields") String fields, @Context Request request);
 
     @POST
     @Operation(summary = "Create a new report query", tags = {"ReportQuery" }, description = "Create a new report query",

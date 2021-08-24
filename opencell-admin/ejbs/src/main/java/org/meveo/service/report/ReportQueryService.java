@@ -10,6 +10,7 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryExecutionModeEnum.BACKGROUND;
 import static org.meveo.model.report.query.QueryExecutionModeEnum.IMMEDIATE;
 import static org.meveo.model.report.query.QueryStatusEnum.SUCCESS;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.BufferedWriter;
@@ -24,14 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -68,7 +63,6 @@ import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.util.ApplicationProvider;
-import org.primefaces.model.SortOrder;
 
 @Stateless
 public class ReportQueryService extends BusinessService<ReportQuery> {
@@ -102,11 +96,21 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return list of ReportQueries
      */
     public List<ReportQuery> reportQueriesAllowedForUser(PaginationConfiguration configuration, String userName) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("SQL", "visibility = 'PRIVATE' OR visibility = 'PUBLIC' OR visibility = 'PROTECTED'");
-        filters.put("auditable.creator", userName);
-        configuration.setFilters(filters);
+        Map<String, Object> filters = ofNullable(configuration.getFilters()).orElse(new HashMap<>());
+        configuration.setFilters(createQueryFilters(userName, filters));
         return list(configuration);
+    }
+
+    private Map<String, Object> createQueryFilters(String userName, Map<String, Object> filters) {
+        if(filters.containsKey("visibility")) {
+            if(filters.get("visibility").equals(PRIVATE)) {
+                filters.put("auditable.creator", userName);
+            }
+        } else {
+            filters.put("SQL", "((a.auditable.creator = '"
+                    + userName + "' AND a.visibility = 'PRIVATE') OR ( a.visibility = 'PUBLIC' OR a.visibility = 'PROTECTED'))");
+        }
+        return filters;
     }
 
     @Transactional
@@ -515,16 +519,14 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     }
 
     /**
-     * count of report queries allowed for the current user.
+     * Report queries count allowed for current user.
      *
      * @param userName      : current user
-     * @return number of ReportQueries allowed for the current user
+     * @param filters       : filters
+     * @return number of ReportQueries
      */
-    public Long countAllowedQueriesForUser(String userName) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("SQL", "visibility = 'PRIVATE' OR visibility = 'PUBLIC' OR visibility = 'PROTECTED'");
-        filters.put("auditable.creator", userName);
-        PaginationConfiguration configuration = new PaginationConfiguration(filters);
+    public Long countAllowedQueriesForUser(String userName, Map<String, Object> filters) {
+        PaginationConfiguration configuration = new PaginationConfiguration(createQueryFilters(userName, filters));
         return count(configuration);
     }
 }
