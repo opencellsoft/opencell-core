@@ -58,6 +58,7 @@ public class ReportQueryResourceImplTest {
         Optional<ReportQuery> optionalCustomQuery = of(reportQuery);
         when(reportQueryApiService.findById(anyLong())).thenReturn(optionalCustomQuery);
         when(reportQueryApiService.create(any())).thenReturn(reportQuery);
+        when(reportQueryApiService.update(anyLong(), any())).thenReturn(Optional.of(reportQuery));
         when(reportQueryApiService.delete(1L)).thenReturn(empty());
         when(reportQueryApiService.delete(2L)).thenReturn(of(reportQuery));
     }
@@ -185,5 +186,21 @@ public class ReportQueryResourceImplTest {
         assertEquals(200, response.getStatus());
         assertEquals("ACCEPTED", successResponse.getStatus());
         assertEquals("Execution request accepted", successResponse.getMessage());
+    }
+
+    @Test
+    public void shouldUpdateReportQuery() {
+        ReportQueryInput input = builder()
+                .queryName("name")
+                .queryDescription("description")
+                .targetEntity("BillingRun")
+                .fields(asList("code", "description"))
+                .visibility(PUBLIC)
+                .build();
+        Response response = reportQueryResource.update(1l, input);
+        assertEquals(200, response.getStatus());
+        assertThat(response.getEntity(), instanceOf(ImmutableReportQuery.class));
+        org.meveo.apiv2.report.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
+        assertEquals(2, reportQuery.getFields().size());
     }
 }

@@ -192,4 +192,15 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     	 ActionStatus result=reportQueryApiService.verifyReportQuery(verifyQueryInput);
         return Response.ok(result).build();
     }
+
+    @Override
+    public Response update(Long id, ReportQueryInput resource) {
+        validateResource(resource);
+        ReportQuery entity = reportQueryApiService.update(id, mapper.toEntity(resource))
+                .orElseThrow(() -> new NotFoundException("The query with id " + id + " does not exists"));
+        return Response
+                .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .entity(mapper.toResource(entity))
+                .build();
+    }
 }
