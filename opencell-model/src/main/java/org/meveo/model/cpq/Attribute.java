@@ -54,7 +54,7 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
         @Parameter(name = "sequence_name", value = "cpq_attribute_seq"), })
 @NamedQueries({
 	@NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id")})
-public class Attribute extends EnableBusinessCFEntity{	
+public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * 
 	 */
