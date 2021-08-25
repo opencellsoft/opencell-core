@@ -1108,7 +1108,7 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatus(status);
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
 
-        if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
+        if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status) && StringUtils.isBlank(cpqQuote.getQuoteNumber())) {
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
         try {
