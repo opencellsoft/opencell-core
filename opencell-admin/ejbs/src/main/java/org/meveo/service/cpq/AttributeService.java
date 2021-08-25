@@ -66,7 +66,7 @@ public class AttributeService extends BusinessService<Attribute>{
 
     @Override
     public void create(Attribute attribute) throws BusinessException {
-        if (attribute.getValidationPattern() != null) {
+        if (attribute.getValidationPattern() != null && attribute.getDefaultValue() != null) {
             if(!validateDefaultValue(attribute)) {
                 throw new BusinessException("Default value does not match the validation pattern");
             }
@@ -77,7 +77,7 @@ public class AttributeService extends BusinessService<Attribute>{
     @Override
     public Attribute update(Attribute attribute) throws BusinessException {
         if (attribute.getValidationPattern() != null) {
-            if(!validateDefaultValue(attribute)) {
+            if(!validateDefaultValue(attribute) && attribute.getDefaultValue() != null) {
                 throw new BusinessException("Default value does not match the validation pattern");
             }
         }
