@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
@@ -135,8 +136,27 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     @Override
-    public Optional<ReportQuery> update(Long id, ReportQuery baseEntity) {
-        return empty();
+    public Optional<ReportQuery> update(Long id, ReportQuery toUpdate) {
+        Optional<ReportQuery> reportQuery = findById(id);
+        if (!reportQuery.isPresent()) {
+            return empty();
+        }
+        ReportQuery entity = reportQuery.get();
+        Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
+        ofNullable(toUpdate.getCode()).ifPresent(code -> entity.setCode(code));
+        ofNullable(toUpdate.getVisibility()).ifPresent(visibility -> entity.setVisibility(visibility));
+        ofNullable(toUpdate.getTargetEntity()).ifPresent(target -> entity.setTargetEntity(target));
+        entity.setDescription(toUpdate.getDescription());
+        entity.setFields(toUpdate.getFields());
+        entity.setFilters(toUpdate.getFilters());
+        entity.setSortBy(toUpdate.getSortBy());
+        entity.setSortOrder(toUpdate.getSortOrder());
+        try {
+            entity.setGeneratedQuery(generateQuery(entity, targetEntity));
+            return of(reportQueryService.update(entity));
+        } catch (Exception exception) {
+            throw new BadRequestException(exception.getMessage(), exception.getCause());
+        }
     }
 
     @Override
