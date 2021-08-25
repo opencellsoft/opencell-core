@@ -52,7 +52,9 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
@@ -504,50 +506,49 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
     
     /**
-     * Step 1 : verify if the account operation is on open period.<br>
-     * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
-     * 
-     * @param accountOperation
-     */
-    public void handleAccountingPeriods(AccountOperation accountOperation) {
-        
-        Date accountingDate = null;
-        // if transaction is of type “invoice” then the control is performed on transaction_date
-        if (accountOperation.getType().equals("I")) {
-            accountingDate = accountOperation.getTransactionDate();
-        }
-        // if transaction is of type “payment” then the control is performed on collection_date
-        else if (accountOperation.getType().equals("P")) {
-            accountingDate = accountOperation.getCollectionDate();
-        }
+	 * Step 1 : verify if the account operation is on open period.<br>
+	 * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
+	 * 
+	 * @param accountOperation
+	 */
+	public void handleAccountingPeriods(AccountOperation accountOperation) {
 
-        if (accountingDate != null) {
-            Integer year = DateUtils.getYearFromDate(accountingDate);
+		Date accountingDate = null;
+		// if transaction is of type “invoice” then the control is performed on transaction_date
+		if (accountOperation instanceof RecordedInvoice) {
+			accountingDate = accountOperation.getTransactionDate();
+		}
+		// if transaction is of type “payment” then the control is performed on collection_date
+		else if (accountOperation instanceof Payment) {
+			accountingDate = accountOperation.getCollectionDate();
+		}
 
-            AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
-            AccountingPeriodStatusEnum accountingPeriodStatus = accountingPeriod.getAccountingPeriodStatus();
-            SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
-            SubAccountingPeriodStatusEnum subAccountingPeriodStatus = subAccountingPeriod.getRegularUsersSubPeriodStatus();
-            
-            // if condition is OK
-            if (accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN && subAccountingPeriodStatus == SubAccountingPeriodStatusEnum.OPEN) {
-                // account operation is created with status “posted”
-                accountOperation.setStatus(AccountOperationStatus.POSTED);
-                // accounting_date equals Transaction date for “invoice” or Collection date for “payment”
-                accountOperation.setAccountingDate(accountingDate);
-            }
-            else {
-                if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
-                    accountOperation.setAccountingDate(accountingDate);
-                    accountOperation.setStatus(AccountOperationStatus.POSTED);
-                    accountOperation.setReason(AccountOperationRejectionReason.FORCED);
-                }
-                else {
-                    accountOperation.setAccountingDate(null);
-                    accountOperation.setStatus(AccountOperationStatus.REJECTED);
-                    accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
-                }
-            }
-        }
-    }
+		if (accountingDate != null) {
+			Integer year = DateUtils.getYearFromDate(accountingDate);
+			AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
+			SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
+
+			if (accountingPeriod != null && subAccountingPeriod != null) {
+				AccountingPeriodStatusEnum accountingPeriodStatus = accountingPeriod.getAccountingPeriodStatus();
+				SubAccountingPeriodStatusEnum subAccountingPeriodStatus = subAccountingPeriod.getRegularUsersSubPeriodStatus();
+				// if condition is OK
+				if (accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN && subAccountingPeriodStatus == SubAccountingPeriodStatusEnum.OPEN) {
+					// account operation is created with status “posted”
+					accountOperation.setStatus(AccountOperationStatus.POSTED);
+					// accounting_date equals Transaction date for “invoice” or Collection date for “payment”
+					accountOperation.setAccountingDate(accountingDate);
+				} else {
+					if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
+						accountOperation.setAccountingDate(accountingDate);
+						accountOperation.setStatus(AccountOperationStatus.POSTED);
+						accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+					} else {
+						accountOperation.setAccountingDate(null);
+						accountOperation.setStatus(AccountOperationStatus.REJECTED);
+						accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
+					}
+				}
+			}
+		}
+	}
 }
