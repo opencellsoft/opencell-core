@@ -7,13 +7,16 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
+import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -55,4 +58,46 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 		return periods;
 	}
+
+
+	public SubAccountingPeriod findByNumber(Integer number) {
+		try {
+			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findByNumber")
+					.setParameter("number", number).getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} of SubAccountingPeriodYear {} found", getEntityClass().getSimpleName(), number);
+			return null;
+		}
+	}
+	
+	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
+			SubAccountingPeriod subAccountingPeriod) {
+		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
+			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
+			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
+			subAccountingPeriod.setEffectiveClosedDate(null);
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
+			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
+			subAccountingPeriod.setEffectiveClosedDate(new Date());
+		}
+	}
+
+	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
+			SubAccountingPeriod subAccountingPeriod) {
+		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
+			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
+			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
+			subAccountingPeriod.setRegularUsersClosedDate(null);
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
+			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
+			subAccountingPeriod.setRegularUsersClosedDate(new Date());
+		}
+	}
+
 }
