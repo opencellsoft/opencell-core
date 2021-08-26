@@ -53,4 +53,7 @@ public interface BillingRun extends Resource {
 
     @Schema(description = "Filters on RT")
     Map<String, String> getFilters();
+    
+    @Nullable
+    String getInvoiceType();
 }

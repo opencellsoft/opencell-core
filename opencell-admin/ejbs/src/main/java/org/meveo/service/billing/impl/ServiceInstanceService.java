@@ -515,6 +515,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
+			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+				recurringChargeInstance.setChargeToDateOnTermination(recurringChargeInstance.getChargedToDate());
+			}
+
             recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
             recurringChargeInstance.setTerminationDate(terminationDate);
 
@@ -974,6 +978,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void cancelServiceTermination(ServiceInstance serviceInstance) throws BusinessException {
+    	if(!InstanceStatusEnum.TERMINATED.equals(serviceInstance.getStatus())) {
+    		throw new BusinessException("Cannot cancelServiceTermination for a service with status "+serviceInstance.getStatus());
+    	}
         SubscriptionRenewal serviceRenewal = null;
         Date subscribedTillDate = null;
 
@@ -1025,4 +1032,22 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         return chargeToDateOnTermination;
     }
+    
+    /**
+     * Find a service instance list by subscription entity, service template code and service instance status list.
+     * 
+     * @param code the service template code
+     * @param subscriptionCode the subscription  code
+     * @return the ServiceInstance list found
+     */
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> findByCodeAndCodeSubscription(String code, String subscriptionCode) {
+        	return getEntityManager().createNamedQuery("ServiceInstance.findByServiceCodeAndSubscriptionCode") //
+            .setParameter("code", code)
+            .setParameter("subscriptionCode", subscriptionCode)
+            .getResultList();
+        
+    }
+    
+    
 }

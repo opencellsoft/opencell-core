@@ -65,6 +65,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     @Inject
     private OCCTemplateService occTemplateService;
+    
+    @Inject
+    private AccountOperationService accountOperationService;
 
     /**
      * @param recordedInvoiceId recored invoice id
@@ -456,5 +459,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     public List<Long> queryInvoiceIdsForPS() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public void create(RecordedInvoice entity) throws BusinessException {
+        accountOperationService.handleAccountingPeriods(entity);
+        super.create(entity);
     }
 }

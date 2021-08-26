@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1530,10 +1531,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter, int rtPageSize) throws BusinessException {
 
-        if (ratedTransactionFilter != null) {
-            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
-
-        } else if (entityToInvoice instanceof Subscription) {
+		if (ratedTransactionFilter != null) {
+			if (ratedTransactionFilter.getPollingQuery() != null) {
+				String queryLC = ratedTransactionFilter.getPollingQuery().toLowerCase();
+				String query = ratedTransactionFilter.getPollingQuery();
+				String condition = extractConditionField(entityToInvoice, query);
+				String entityToInvoiceCondition = condition + entityToInvoice.getId() + " AND ";
+				query = query.substring(0, queryLC.indexOf("where ") + 6) + entityToInvoiceCondition + query.substring(queryLC.indexOf("where ") + 6);
+				ratedTransactionFilter.setPollingQuery(query);
+			}
+			return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
+		} else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
                     .setParameter("subscriptionId", entityToInvoice.getId())
                     .setParameter("firstTransactionDate", firstTransactionDate)
@@ -1562,6 +1570,25 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return new ArrayList<>();
     }
+
+	private String extractConditionField(IBillableEntity entityToInvoice, String query) {
+		final List<String> split = Arrays.asList(query.split(" "));
+		String condition = split.get(split.indexOf(RatedTransaction.class.getName()) + 1);
+		if (condition == null || "where".equals(condition.toLowerCase())) {
+			condition = "";
+		} else {
+			condition = condition + ".";
+		}
+
+		if (entityToInvoice instanceof Subscription) {
+			condition = condition + "subscription.id = ";
+		} else if (entityToInvoice instanceof BillingAccount) {
+			condition = condition + "billingAccount.id = ";
+		} else if (entityToInvoice instanceof Order) {
+			condition = condition + "orderNumber = ";
+		}
+		return condition;
+	}
 
     /**
      * Get a list of invoiceable Rated transactions for a given BllingAccount and a list of ids
@@ -1942,4 +1969,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	public void invalidateRTs(Invoice invoice) {
 		getEntityManager().createNamedQuery("RatedTransaction.invalidateRTByInvoice").setParameter("invoice", invoice).executeUpdate();
 	}
+
+	public Long countNotBilledRTBySubscription(Subscription subscription) {
+
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotBilledRTBySubscription").setParameter("subscription", subscription).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotBilledRTBySubscription", e);
+            return 0L;
+        }
+    }
+
+    public int moveNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("RatedTransaction.moveNotBilledRTToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("newBillingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("subscription", subscription).executeUpdate();
+    }
+
+    public int moveAndRerateNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("RatedTransaction.moveAndRerateNotBilledRTToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("newBillingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("subscription", subscription).executeUpdate();
+    }
 }

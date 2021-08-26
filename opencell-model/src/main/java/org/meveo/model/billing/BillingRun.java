@@ -326,6 +326,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Transient
     private List<Long> exceptionalRTIds;
+    
+    /**
+     * Invoice type
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -784,4 +791,18 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public boolean isExceptionalBR() {
         return (this.filters !=null && !this.filters.isEmpty());
     }
+
+	/**
+	 * @return the invoiceType
+	 */
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	/**
+	 * @param invoiceType the invoiceType to set
+	 */
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
 }

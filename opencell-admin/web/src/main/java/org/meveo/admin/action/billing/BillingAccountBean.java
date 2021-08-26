@@ -47,6 +47,7 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -142,6 +143,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
         }
 
+        if (entity.getCheckThreshold() == null) {
+            entity.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        }
         return entity;
     }
 

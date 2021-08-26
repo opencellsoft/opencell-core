@@ -321,7 +321,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
 
         subscription.setSubscribedTillDate(terminationDate);
-        subscription.setToValidity(terminationDate);
         subscriptionRenewal.setTerminationReason(terminationReason);
         subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
         subscriptionRenewal.setAutoRenew(false);
@@ -361,8 +360,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         }
 
-
-        subscription.setToValidity(terminationDate);
         subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
@@ -861,6 +858,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return getActiveOrLastUpdated(subscriptions);
     }
 
+    public Subscription getLastVersionSubscription(String subCode) {
+        List<Subscription> subscriptions = findListByCode(subCode);
+        Optional<Subscription> subscriptionLastVersion = subscriptions.stream()
+                .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus())
+                        || SubscriptionStatusEnum.CREATED.equals(s.getStatus())
+                        || SubscriptionStatusEnum.SUSPENDED.equals(s.getStatus()))
+                .max(Comparator.comparing(Subscription::getId));
+        return subscriptionLastVersion.orElse(null);
+    }
+
     private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {
         if(subscriptions.isEmpty())
             return null;
@@ -937,5 +944,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
              return null;
          }
 
+    }
+
+    public int updateOwner(Subscription subscription, UserAccount newOwner) {
+        return getEntityManager().createNamedQuery("Subscription.updateOwner")
+                .setParameter("newOwner", newOwner)
+                .setParameter("id", subscription.getId()).executeUpdate();
     }
 }
