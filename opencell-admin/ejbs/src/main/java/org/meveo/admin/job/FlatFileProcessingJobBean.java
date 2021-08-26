@@ -118,6 +118,7 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
         File currentFile = null;
         boolean isCsvFromExcel = false;
         List<String> errors = new ArrayList<>();
+        int lastFileErrorIndex = jobExecutionResult.getErrors().size();
 
         File rejectFile = null;
         PrintWriter rejectFileWriter = null;
@@ -250,7 +251,7 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
 
             boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
-            errors.addAll(jobExecutionResult.getErrors());
+            errors.addAll(jobExecutionResult.getErrors().subList(lastFileErrorIndex, jobExecutionResult.getErrors().size()));
 
             if (jobExecutionResult.getNbItemsProcessed() == 0) {
                 String errorDescription = "\r\n file " + fileName + " is empty";
