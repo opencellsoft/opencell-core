@@ -7439,6 +7439,41 @@
             <column name="chart_of_account_view_type" value="REGULAR"></column>
         </insert>
     </changeSet>
+    
+     <changeSet id="#INTRD-292_20210816" author="HatimOUDAD">
+        <insert tableName="journal">
+            <column name="id" valueNumeric="-1"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
+            <column name="code" value="SAL"/>
+            <column name="description" value="Sales Journal"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+        </insert>
+        <insert tableName="journal">
+            <column name="id" valueNumeric="-2"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
+            <column name="code" value="BAN"/>
+            <column name="description" value="Bank Journal"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+        </insert>
+        <insert tableName="journal">
+            <column name="id" valueNumeric="-3"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
+            <column name="code" value="MSC"/>
+            <column name="description" value="Miscellaneous Journal"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+        </insert>
+        <insert tableName="journal">
+            <column name="id" valueNumeric="-4"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
+            <column name="code" value="TAX"/>
+            <column name="description" value="Tax Journal"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+        </insert>
+    </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-occTemplatesDEMO">
         <insert tableName="ar_occ_template">
@@ -7451,6 +7486,7 @@
             <column name="code" value="PAY_CHK" />
             <column name="description" value="Payment - check" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-2" />
@@ -7462,6 +7498,7 @@
             <column name="code" value="PAY_TIP" />
             <column name="description" value="Payment - TIP" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-3" />
@@ -7473,6 +7510,7 @@
             <column name="code" value="PAY_DDT" />
             <column name="description" value="Payment - direct debit" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-5" />
@@ -7484,6 +7522,7 @@
             <column name="code" value="REJ_CHK" />
             <column name="description" value="Rejected payment - check" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-6" />
@@ -7495,6 +7534,7 @@
             <column name="code" value="REJ_DDT" />
             <column name="description" value="Rejected payment - direct debit" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-7" />
@@ -7506,6 +7546,7 @@
             <column name="code" value="REJ_TIP" />
             <column name="description" value="Rejected payment - TIP" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-8" />
@@ -7517,6 +7558,7 @@
             <column name="code" value="PAY_NID" />
             <column name="description" value="Other - unidentified payment" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-9" />
@@ -7528,6 +7570,7 @@
             <column name="code" value="PAY_REC" />
             <column name="description" value="Other - unidentified payment" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-10" />
@@ -7539,6 +7582,7 @@
             <column name="code" value="REF_CHK" />
             <column name="description" value="Refund - check" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-11" />
@@ -7550,6 +7594,7 @@
             <column name="code" value="REF_DDT" />
             <column name="description" value="Refund - direct debit" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-18" />
@@ -7561,6 +7606,7 @@
             <column name="code" value="RND_EXP" />
             <column name="description" value="Expense - payment rounding" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-3" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-19" />
@@ -7572,6 +7618,7 @@
             <column name="code" value="RND_INC" />
             <column name="description" value="Income - payment rounding" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-3" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-20" />
@@ -7583,6 +7630,7 @@
             <column name="code" value="PAY_DEP" />
             <column name="description" value="Other - deposit" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
 
         <insert tableName="ar_occ_template">
@@ -7595,6 +7643,7 @@
             <column name="code" value="INV_FEE" />
             <column name="description" value="Fee - late payment" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-3" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-25" />
@@ -7606,6 +7655,7 @@
             <column name="code" value="INV_STD" />
             <column name="description" value="Standard invoice sub-item" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-1" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-30" />
@@ -7617,6 +7667,7 @@
             <column name="code" value="REF_CRD" />
             <column name="description" value="Refund - card" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-31" />
@@ -7628,6 +7679,7 @@
             <column name="code" value="TAX_VAT_00" />
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-4" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-32" />
@@ -7639,6 +7691,7 @@
             <column name="code" value="TAX_VAT_05" />
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-4" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-33" />
@@ -7650,6 +7703,7 @@
             <column name="code" value="TAX_VAT_20" />
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-4" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-34" />
@@ -7661,6 +7715,7 @@
             <column name="code" value="TAX_VAT_10" />
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-4" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-35" />
@@ -7672,6 +7727,7 @@
             <column name="code" value="REJ_CRD" />
             <column name="description" value="Rejected payment - card" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-36" />
@@ -7683,6 +7739,7 @@
             <column name="code" value="REJ_RCR" />
             <column name="description" value="Rejected refund - card" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-37" />
@@ -7694,6 +7751,7 @@
             <column name="code" value="REJ_RDD" />
             <column name="description" value="Rejected refund - direct debit" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-38" />
@@ -7705,6 +7763,7 @@
             <column name="code" value="INV_REB" />
             <column name="description" value="Invoice - rebate sub-item" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-1" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-39" />
@@ -7716,6 +7775,7 @@
             <column name="code" value="INV_DIS" />
             <column name="description" value="Invoice - discount sub-item" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-1" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-40" />
@@ -7727,6 +7787,7 @@
             <column name="code" value="INV_CRN" />
             <column name="description" value="Invoice - credit note sub-item" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-1" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-41" />
@@ -7738,6 +7799,7 @@
             <column name="code" value="REF_TIP" />
             <column name="description" value="Refund - TIP" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-42" />
@@ -7749,6 +7811,7 @@
             <column name="code" value="EXP_WRT" />
             <column name="description" value="Expense - bad debt write-off" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-3" />
         </insert>
 
 
@@ -7762,6 +7825,7 @@
             <column name="code" value="PAY_CRD" />
             <column name="description" value="Payment - card" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         
          <insert tableName="ar_occ_template">
@@ -7774,6 +7838,7 @@
             <column name="code" value="PAY_PAL" />
             <column name="description" value="Payment Paypal" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         
        <insert tableName="ar_occ_template">
@@ -7786,6 +7851,7 @@
             <column name="code" value="PAY_STP" />
             <column name="description" value="Payment Stripe" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>        
         
     </changeSet>
@@ -12982,6 +13048,7 @@ public class ValidateBRScript extends Script {
             <column name="code" value="DBT_TRS" />
             <column name="description" value="Debit for credit transfer" />
             <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-45" />
@@ -12993,6 +13060,7 @@ public class ValidateBRScript extends Script {
             <column name="code" value="CRD_TRS" />
             <column name="description" value="Credit for debit transfer" />
             <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
         </insert>
     </changeSet>
     
@@ -13894,59 +13962,6 @@ Opencell team.
             <column name="timerentity_id" valueNumeric="-3"/>
             <column name="uuid" value="XML_Invoice_Generation_Job_V2"/>
         </insert>
-    </changeSet>
-    
-     <changeSet id="#INTRD-292_20210826" author="HatimOUDAD">
-        <insert tableName="journal">
-            <column name="id" valueNumeric="-1"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
-            <column name="code" value="SAL"/>
-            <column name="description" value="Sales Journal"/>
-            <column name="creator" value="OPENCELL.ADMIN"/>
-        </insert>
-        <insert tableName="journal">
-            <column name="id" valueNumeric="-2"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
-            <column name="code" value="BAN"/>
-            <column name="description" value="Bank Journal"/>
-            <column name="creator" value="OPENCELL.ADMIN"/>
-        </insert>
-        <insert tableName="journal">
-            <column name="id" valueNumeric="-3"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
-            <column name="code" value="MSC"/>
-            <column name="description" value="Miscellaneous Journal"/>
-            <column name="creator" value="OPENCELL.ADMIN"/>
-        </insert>
-        <insert tableName="journal">
-            <column name="id" valueNumeric="-4"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="2021-08-16 00:04:19.913"/>
-            <column name="code" value="TAX"/>
-            <column name="description" value="Tax Journal"/>
-            <column name="creator" value="OPENCELL.ADMIN"/>
-        </insert>
-    </changeSet>
-	<changeSet id="#INTRD-1406_20210826" author="HatimOUDAD">
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-2" />
-    		<where>code in ('PAY_CHK','PAY_TIP','PAY_DDT','REJ_CHK','REJ_DDT','REJ_TIP','PAY_NID','PAY_REC','REF_CHK','REF_DDT','PAY_DEP','REF_CRD','REJ_CRD','REJ_RCR','REJ_RDD','REF_TIP','PAY_CRD','PAY_PAL','PAY_STP','DBT_TRS','CRD_TRS')</where>
-    </update>
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-3" />
-    		<where>code in ('EXP_WRT','INV_FEE','RND_INC','RND_EXP')</where>
-    </update>
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-1" />
-    		<where>code in ('INV_STD','INV_REB','INV_DIS','INV_CRN')</where>
-    </update>
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-4" />
-    		<where>code in ('TAX_VAT_00','TAX_VAT_05','TAX_VAT_20','TAX_VAT_10')</where>
-    </update>
     </changeSet>
     
    
