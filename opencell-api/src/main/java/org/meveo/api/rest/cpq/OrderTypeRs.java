@@ -31,20 +31,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 11.0
  * @LastModified 04-01-2021
  */
-@Path("/order-type")
+@Path("/orderManagement/orderType")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface OrderTypeRs {
 
 	@POST
-	@Operation(summary = "Create a order type", tags = { "Order type" }, description = "", responses = {
+	@Operation(summary = "Create a order type", tags = { "Order management" }, description = "", responses = {
 			@ApiResponse(responseCode = "200", description = "The order type is succeffully created", content = @Content(schema = @Schema(implementation = GetOrderTypeDtoResponse.class))),
 			@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 			@ApiResponse(responseCode = "302", description = "The order type already exist", content = @Content(schema = @Schema(implementation = EntityAlreadyExistsException.class))) })
 	public Response create(OrderTypeDto orderTypeDto);
 
 	@PUT
-	@Operation(summary = "update an existing order type", tags = { "Order type" }, description = "", responses = {
+	@Operation(summary = "update an existing order type", tags = { "Order management" }, description = "", responses = {
 			@ApiResponse(responseCode = "200", description = "The order is succeffully updated", content = @Content(schema = @Schema(implementation = GetOrderTypeDtoResponse.class))),
 			@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 			@ApiResponse(responseCode = "404", description = "current code of order type doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))) })
@@ -52,7 +52,7 @@ public interface OrderTypeRs {
 
 	@DELETE
 	@Path("/{orderTypeCode}")
-	@Operation(summary = "delete an existing order", tags = { "Order type" }, description = "", responses = {
+	@Operation(summary = "delete an existing order", tags = { "Order management" }, description = "", responses = {
 			@ApiResponse(responseCode = "200", description = "The order is succeffully deleted", content = @Content(schema = @Schema(implementation = GetOrderTypeDtoResponse.class))),
 			@ApiResponse(responseCode = "412", description = "code of order type is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 			@ApiResponse(responseCode = "404", description = "current code of order type doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))) })
