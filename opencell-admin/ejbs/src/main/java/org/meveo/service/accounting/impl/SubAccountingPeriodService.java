@@ -7,21 +7,27 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
+import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
+	
+	@Inject
+	private AuditLogService auditLogService;
 
     public SubAccountingPeriod findByAccountingPeriod(AccountingPeriod accountingPeriod, Date accountingDate) {
         TypedQuery<SubAccountingPeriod> query = getEntityManager()
@@ -99,5 +105,37 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 			subAccountingPeriod.setRegularUsersClosedDate(new Date());
 		}
 	}
+	
+	@Override
+    public SubAccountingPeriod update(SubAccountingPeriod entity) throws BusinessException {
+		AuditLog auditLog = new AuditLog();
+		SubAccountingPeriod subAccountingPeriod = findById(entity.getId());
+		
+		if (subAccountingPeriod != null && !entity.getAllUsersSubPeriodStatus().equals(subAccountingPeriod.getAllUsersSubPeriodStatus())) {
+			createAuditLog(entity, auditLog, "allUsers");
+		}
+		if (subAccountingPeriod != null && !entity.getRegularUsersSubPeriodStatus().equals(subAccountingPeriod.getRegularUsersSubPeriodStatus())) {
+			createAuditLog(entity, auditLog, "regularUsers");
+		}
+		super.update(entity);
+		if(auditLog.getEntity() != null) {
+			auditLogService.create(auditLog);
+		}
+		return entity;
+	}
+	
+	
+	
+	public void createAuditLog(SubAccountingPeriod entity, AuditLog auditLog, String usersType) {
+        
+        auditLog.setActor(currentUser.getUserName());
+        auditLog.setCreated(new Date());
+        auditLog.setEntity("SubAccountingPeriod");
+        auditLog.setOrigin(entity.getAccountingPeriod().getAccountingPeriodYear());
+        auditLog.setAction("update "+(usersType.equals("allUsers")?"allUsersStatus":"regularUsersStatus"));
+        auditLog.setParameters("user "+currentUser.getUserName()+" "
+        					+(usersType.equals("allUsers")?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus()) 
+        					+" the sub period number "+entity.getNumber()+ (usersType.equals("allUsers")?" for all users":"for regular users"));
+    }
 
 }
