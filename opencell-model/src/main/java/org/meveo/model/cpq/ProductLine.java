@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
@@ -52,7 +53,7 @@ public class ProductLine extends BusinessCFEntity  {
 	/**
 	 * long description
 	 */
-    @Lob
+	@Type(type = "longText")
 	@Column(name = "long_description")
 	private String longDescription;
 	

@@ -34,17 +34,16 @@ import javax.persistence.Version;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.meveo.model.persistence.CustomFieldJsonType;
-import org.meveo.model.persistence.JsonBinaryType;
-import org.meveo.model.persistence.JsonClobType;
-import org.meveo.model.persistence.JsonStringType;
+import org.meveo.model.persistence.JsonType;
+import org.meveo.model.persistence.TextType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Base class for all entity classes.
  */
-@TypeDefs({ @TypeDef(name = "json", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
-        @TypeDef(name = "cfjson", typeClass = CustomFieldJsonType.class), @TypeDef(name = "jsonClob", typeClass = JsonClobType.class) })
+@TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class), @TypeDef(name = "longText", typeClass = TextType.class), @TypeDef(name = "cfjson", typeClass = CustomFieldJsonType.class) })
+//@TypeDef(name = "jsontxt", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class), @TypeDef(name = "jsonClob", typeClass = JsonClobType.class),
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, IEntity, IJPAVersionedEntity {
     private static final long serialVersionUID = 1L;

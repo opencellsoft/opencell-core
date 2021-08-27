@@ -1469,7 +1469,6 @@
             </column>
             <column name="bam_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="job_title" type="varchar(255)" />
             <column name="email" type="varchar(2000)" />
             <column name="fax" type="varchar(50)" />
@@ -1524,7 +1523,7 @@
             <column name="system_currency" type="${type.boolean}" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -1658,7 +1657,7 @@
             </column>
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -1843,7 +1842,6 @@
             <column name="run_async" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="cf_values_accum" type="${type.json}"></column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
             <column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
@@ -1878,7 +1876,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="created" type="datetime" defaultValueComputed="${db.current.time}">
                 <constraints nullable="false" />
             </column>
@@ -1941,7 +1938,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="last_login_date" type="datetime" />
             <column name="crm_address_book_id" type="bigint" />
         </createTable>
@@ -2100,7 +2096,7 @@
             <column name="date_dunning_level" type="datetime" />
             <column name="date_status" type="datetime" />
             <column name="dunning_level" type="varchar(255)" />
-            <column name="password" type="varchar(10)" />
+            <column name="pswd" type="varchar(10)" />
             <column name="status" type="varchar(10)" />
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_customer_account_pkey" />
@@ -2489,12 +2485,11 @@
             <column name="pr_currency_id" type="bigint" />
             <column name="pr_language_id" type="bigint" />
             <column name="invoice_date" type="datetime" />
-            <column name="last_transaction_date" type="datetime"/>
+            <column name="last_transaction_date" type="datetime" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
-            <column name="cf_values" type="${type.text}" />
-            <column name="cf_values_accum" type="${type.json}" />
+            <column name="cf_values" type="${type.json}" />
             <column name="reference_date" type="varchar(255)" />
             <column name="collection_date" type="datetime"/>
             <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -2505,7 +2500,7 @@
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="filters" type="${type.text}" />
+            <column name="filters" type="${type.json}" />
             <column name="invoice_type_id" type="bigint" />
             <column name="run_type" type="varchar(255)" />
         </createTable>
@@ -2582,7 +2577,6 @@
             <column name="counter_id" type="bigint" />
             <column name="rating_unit_description" type="varchar(20)" />
             <column name="priority" type="int4" defaultValueNumeric="1"/>
-            <column name="cf_values_accum" type="${type.json}" />
 			<column name="cf_values" type="${type.json}" />
 			<column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
 			<column name="calendar_id" type="bigint" />
@@ -2684,7 +2678,6 @@
             <column name="due_date_delay_el" type="varchar(2000)" />
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="billing_template_name_el" type="varchar(2000)" />
             <column name="invoice_type_el" type="varchar(2000)" />
             <column name="invoice_type_el_sp" type="varchar(2000)" />
@@ -2702,7 +2695,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
             <column name="collection_date_delay_el" type="varchar(2000)"/>
@@ -2819,7 +2812,6 @@
             <column name="invoice_type_id" type="bigint" />
             <column name="quote_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="pdf_filename" type="varchar(255)" />
             <column name="xml_filename" type="varchar(255)" />
             <column name="payment_method_id" type="bigint" />
@@ -2941,7 +2933,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="occ_template_id" type="bigint" />
             <column name="occ_templ_negative_id" type="bigint" />
@@ -2987,7 +2978,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="tax_script_instance_id" type="bigint" />
             <column name="occ_template_id" type="bigint" />
@@ -3118,7 +3108,6 @@
             <column name="rating_unitofmeasure" type="bigint"/>
             <column name="accounting_code_id" type="bigint"/>
             <column name="sort_index" type="int4"/>
-            <column name="cf_values_accum" type="${type.json}"/>
             <column name="cf_values" type="${type.json}"/>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="type" type="VARCHAR(25)"/>
@@ -3228,7 +3217,6 @@
             </column>
             <column name="order_number" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="rate_until_date" type="datetime" />
             <column name="minimum_amount_el" type="varchar(2000)" />
             <column name="minimum_amount_el_sp" type="varchar(2000)" />
@@ -3259,7 +3247,7 @@
             <column name="calendar_ps_id" type="bigint" />
             <column name="payment_day_in_month_ps" type="int" />
             <column name="auto_renew_date" type="datetime" />
-            <column name="initial_renewal" type="${type.json}" />
+            <column name="initial_renewal" type="${type.text}" />
             <column name="calendar_init_active_id" type="bigint" />
             <column name="calendar_renew_for_id" type="bigint" />
             <column name="renewal_term_type" type="varchar(20)" />
@@ -3298,7 +3286,7 @@
             <column name="reimburse_oneshots" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -3354,7 +3342,6 @@
             <column name="notify_of_renewal_date" type="datetime" />
             <column name="renewal_notified_date" type="datetime" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="minimum_amount_el" type="varchar(2000)" />
             <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
@@ -3375,7 +3362,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="email_template_id" type="bigint" />
-            <column name="initial_renewal" type="${type.json}" />
+            <column name="initial_renewal" type="${type.text}" />
             <column name="calendar_init_active_id" type="bigint" />
             <column name="calendar_renew_for_id" type="bigint" />
             <column name="renewal_term_type" type="varchar(20)" />
@@ -3416,7 +3403,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
         </createTable>
     </changeSet>
@@ -3453,7 +3439,6 @@
             <column name="updated" type="datetime" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
-            <column name="cf_values_accum" type="${type.json}"></column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValue="Trading_Country_US">
                 <constraints nullable="false" />
@@ -3623,7 +3608,6 @@
                 <constraints nullable="true" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="accounting_code_id" type="bigint"/>
             <column name="sort_index" type="int4"/>
             <column name="reject_reason" type="${type.text}"/>
@@ -3678,7 +3662,7 @@
             <column name="weekend_end" type="int4" />
             <column name="init_date_el" type="varchar(2000)"/>
             <column name="init_date_el_sp" type="varchar(2000)"/>
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -3756,7 +3740,6 @@
             <column name="rounding_mode" type="varchar(255)" defaultValue="NEAREST" />
             <column name="revenue_recog_rule_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="charge_type" type="varchar(5)" />
 
@@ -3921,7 +3904,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="start_date" type="date" />
             <column name="end_date" type="date" />
             <column name="default_duration" type="int4" />
@@ -3978,7 +3960,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="allow_to_negate" type="${type.boolean}"/>
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
@@ -4060,7 +4041,6 @@
             <column name="invoicing_calendar_id" type="bigint" />
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -4155,7 +4135,6 @@
             </column>
             <column name="script_instance_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="wo_description_el" type="${type.text}" />
             <column name="wo_description_el_sp" type="${type.text}" />
@@ -4305,7 +4284,6 @@
             <column name="long_description" type="${type.text}" />
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="minimum_amount_el" type="varchar(2000)" />
             <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
@@ -4331,7 +4309,7 @@
             <column name="renewal_term_type" type="varchar(20)" />
             <column name="minimum_invoice_sub_category_id" type="bigint" />
             <column name="minimum_charge_template_id" type="bigint" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
             <column name="offer_template_id" type="bigint" />
@@ -4657,7 +4635,7 @@
             <column name="default_from_email" type="varchar(255)" />
             <column name="default_reply_email" type="varchar(255)" />
             <column name="login" type="varchar(50)" />
-            <column name="password" type="varchar(50)" />
+            <column name="pswd" type="varchar(50)" />
             <column name="use_ssl" type="${type.boolean}" />
 
             <column name="creator" type="varchar(100)" />
@@ -4807,7 +4785,6 @@
             <column name="exoneration_tax_el" type="varchar(2000)" />
             <column name="exoneration_tax_el_sp" type="varchar(2000)" />
             <column name="exoneration_reason" type="varchar(255)" />
-            <column name="cf_values_accum" type="${type.json}"></column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
@@ -4818,7 +4795,7 @@
             </column>
             <column name="tax_category_el" type="varchar(2000)" />
             <column name="tax_category_el_sp" type="varchar(2000)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -4921,7 +4898,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="rating_rounding" type="int4" defaultValueNumeric="2">
                 <constraints nullable="false" />
             </column>
@@ -5278,7 +5254,6 @@
             </column>
             <column name="updated" type="datetime" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-269">
@@ -5458,7 +5433,7 @@
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -5497,7 +5472,6 @@
             <column name="run_on_nodes" type="VARCHAR(100)" />
             <column name="single_node" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
@@ -5689,7 +5663,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="polling_query" type="${type.text}"/>
             <column name="entity_class" type="varchar(255)"/>
         </createTable>
@@ -5845,7 +5818,6 @@
             </column>
             <column name="parent_uuid" type="varchar(60)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-301">
@@ -5987,8 +5959,7 @@
             <column name="level" type="int" />
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -5999,7 +5970,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_bom" />
             </column>
             <column name="offer_template_id" type="bigint" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6016,7 +5987,7 @@
             <column name="duplicate_price_plan" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6177,7 +6148,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="mailing_type" type="varchar(255)" />
             <column name="email_template_id" type="bigint" />
             <column name="invoice_accountable" type="${type.boolean}" defaultValueNumeric="1">
@@ -6320,7 +6290,7 @@
             <column name="description" type="varchar(255)" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -6479,7 +6449,6 @@
             <column name="subscription_id" type="bigint" />
             <column name="order_number" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="seller_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -6527,7 +6496,6 @@
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
             <column name="payment_method_id" type="BIGINT" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="quote_id" type="bigint" />
             <column name="billing_cycle" type="bigint" />
             <column name="billing_run" type="bigint" />
@@ -6579,7 +6547,6 @@
 	            <constraints nullable="false"/>
 	        </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -6704,7 +6671,6 @@
             </column>
             <column name="user_account_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-346">
@@ -6870,7 +6836,6 @@
             </column>
             <column name="document_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
         </createTable>
     </changeSet>
@@ -6910,7 +6875,6 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="country_id" type="bigint" />
             <column name="nb_tries" type="int" />
             <column name="replay_cause" type="varchar(100)" />
@@ -7052,7 +7016,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="output_dir" type="varchar(255)" />
             <column name="file_separator" type="varchar(1)" defaultValue="," />
             <column name="custom_table_code" type="varchar(255)" />
@@ -7340,7 +7303,6 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="payment_level" type="varchar(100)" />
         </createTable>
     </changeSet>
@@ -7395,7 +7357,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="script_instance_id" type="bigint" />
             <column name="amount_el" type="varchar(2000)" />
             <column name="filter_el" type="varchar(2000)" />
@@ -7500,7 +7461,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
@@ -7539,7 +7499,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="subscription_id" type="bigint" />
             <column name="application_count" type="bigint" defaultValueNumeric="0">
                 <constraints nullable="false"/>
@@ -7671,7 +7630,6 @@
             </column>
             <column name="order_num" type="varchar(500)" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}"></column>
             <column name="general_ledger_id" type="bigint" />
             <column name="accounting_code_id" type="bigint"></column>
         </createTable>
@@ -7726,7 +7684,6 @@
             <column name="init_status" type="varchar(255)" />
             <column name="target_cet_code" type="varchar(255)" />
             <column name="filter_id" type="bigint" />
-            <column name="cf_values_accum" type="${type.json}"></column>
 			<column name="cf_values" type="${type.json}"></column>
 			<column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
         </createTable>
@@ -7998,7 +7955,7 @@
             <column name="description" type="varchar(100)">
                 <constraints nullable="true" />
             </column>
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
             <column name="multiplicator" type="bigint">
@@ -8076,7 +8033,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-404">   
@@ -8100,7 +8056,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-405">   
@@ -8294,7 +8249,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
             <column name="file_type_id" type="bigint">
@@ -8312,7 +8267,6 @@
             <column name="document_status" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
-            <column name="cf_values_accum" type="${type.json}"></column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
         </createTable>
@@ -8331,13 +8285,12 @@
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
             <column name="relative_path"  type="varchar(2000)">
                 <constraints nullable="false" />
             </column>
-            <column name="cf_values_accum" type="${type.json}"></column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
         </createTable>
@@ -8417,11 +8370,11 @@
             <column name="custom_table_code" type="varchar(255)" >
                 <constraints nullable="false" />
             </column>
-            <column name="aliases" type="${type.text}" >
+            <column name="aliases" type="${type.json}" >
                 <constraints nullable="false" />
             </column>
             <column name="last_run_date" type="datetime" />
-            <column name="parameters" type="${type.text}" />
+            <column name="parameters" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-425">           
@@ -8532,7 +8485,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="product_version_id" type="bigint" />
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="product_model_id" type="bigint"/>
@@ -8563,7 +8515,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
 
@@ -8691,7 +8642,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="version" type="int4" />
             <column name="media_name" type="varchar(255)" />
             <column name="label" type="varchar(255)" />
@@ -8866,7 +8816,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
 
@@ -8900,7 +8849,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
 
@@ -9028,7 +8976,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="rate_type" type="varchar(255)"/>
         </createTable>
     </changeSet>
@@ -9223,7 +9170,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9249,7 +9195,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="parent_id" type="bigint" />
             <column name="mandatory" type="${type.boolean}" >
                 <constraints nullable="false"/>
@@ -9304,7 +9249,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-459" author="NabilOUACHI">
@@ -9465,7 +9409,6 @@
             <column name="parent_id" type="bigint"/>
             <column name="cpq_quote_offer_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
         </createTable>
     </changeSet>
@@ -9522,7 +9465,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -9549,7 +9491,6 @@
             </column>
             <column name="article_family_ref_id" type="bigint" />
             <column name="cf_values" type="${type.json}"/>
-            <column name="cf_values_accum" type="${type.json}"/>
             <column name="description_i18n" type="${type.json}"></column>
         </createTable>
     </changeSet>
@@ -9715,7 +9656,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
         </createTable>
@@ -9758,7 +9698,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <!-- Auditable End -->
         </createTable>
     </changeSet>
@@ -9812,7 +9751,6 @@
             <column name="double_value" type="${type.float}" />
             <column name="parent_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="cpq_order_offer_id" type="bigint"/>
         </createTable>
@@ -9849,7 +9787,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="quote_product_id" type="bigint"/>
         </createTable>
@@ -9883,7 +9820,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
              <column name="quote_lot_id" type="bigint"/>
         </createTable>
     </changeSet>
@@ -9914,7 +9850,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="quote_offer_id" type="bigint"/>
         </createTable>
@@ -10211,7 +10146,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-489" author="NabilOUACHI">
@@ -10342,7 +10276,6 @@
             <column name="date_value" type="datetime" />
             <column name="parent_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
         </createTable>
     </changeSet>
@@ -16294,6 +16227,9 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-1396_20210812" author="ZBariki" />
 	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
+	<changeSet id="#INTRD-1441_20210728" author="TarikFA." />
+	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI" />
+
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

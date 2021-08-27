@@ -39,6 +39,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 
@@ -272,7 +273,7 @@ public class EDR extends BaseEntity {
     /**
      * Parameter
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "extra_parameter")
     private String extraParameter;
 
@@ -286,7 +287,7 @@ public class EDR extends BaseEntity {
     /**
      * Rejection reason
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "reject_reason")
     private String rejectReason;
 

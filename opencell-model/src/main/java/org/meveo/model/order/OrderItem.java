@@ -112,7 +112,7 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     /**
      * Serialized orderItem dto
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "source", nullable = false)
     private String source;
 
@@ -161,7 +161,7 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
     
     /**

@@ -17,6 +17,7 @@
  */
 package org.meveo.model.payments;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.dunning.DunningDocument;
 
 import java.math.BigDecimal;
@@ -51,7 +52,7 @@ public class Payment extends AccountOperation {
     /**
      * Comments Text free if litigation or special conditions
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "comment")
     private String comment;
 

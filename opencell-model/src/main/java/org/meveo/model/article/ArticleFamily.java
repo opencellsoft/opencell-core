@@ -38,8 +38,8 @@ public class ArticleFamily extends BusinessEntity implements ICustomFieldEntity 
     @JoinColumn(name = "article_family_ref_id")
     private ArticleFamily articleFamily;
 
-    @Type(type = "jsonClob")
-    @Column(name = "description_i18n", columnDefinition = "TEXT")
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
@@ -51,7 +51,7 @@ public class ArticleFamily extends BusinessEntity implements ICustomFieldEntity 
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**

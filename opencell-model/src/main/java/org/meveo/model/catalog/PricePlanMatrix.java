@@ -261,7 +261,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate amount without tax
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "amount_without_tax_el")
     @Size(max = 2000)
     private String amountWithoutTaxEL;
@@ -269,7 +269,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate amount without tax - for Spark
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "amount_without_tax_el_sp")
     @Size(max = 2000)
     private String amountWithoutTaxELSpark;
@@ -277,7 +277,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate amount with tax
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "amount_with_tax_el")
     @Size(max = 2000)
     private String amountWithTaxEL;
@@ -285,7 +285,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate amount with tax - for Spark
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "amount_with_tax_el_sp")
     @Size(max = 2000)
     private String amountWithTaxELSpark;
@@ -340,16 +340,16 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
-    @Type(type = "jsonClob")
-    @Column(name = "description_i18n", columnDefinition = "TEXT")
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
-    @Lob
+    @Type(type = "longText")
     @Column(name = "wo_description_el")
     @Size(max = 2000)
     private String woDescriptionEL;
 
-    @Lob
+    @Type(type = "longText")
     @Column(name = "wo_description_el_sp")
     @Size(max = 2000)
     private String woDescriptionELSpark;
@@ -357,7 +357,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate price with/without tax. It overrides quantity x unitPrice when set.
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "total_amount_el")
     @Size(max = 2000)
     private String totalAmountEL;
@@ -365,7 +365,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark.
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "total_amount_el_sp")
     @Size(max = 2000)
     private String totalAmountELSpark;
@@ -374,7 +374,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	 * Minimum allowed amount for a walletOperation. If this amount is less than the
 	 * walletOperation this amount is save and the old value is save in rawAmount.
 	 */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "minimum_amount_el")
     @Size(max = 2000)
     private String minimumAmountEL;
@@ -383,12 +383,12 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	 * Minimum allowed amount for a walletOperation. If this amount is less than the
 	 * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
 	 */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "minimum_amount_el_sp")
     @Size(max = 2000)
     private String minimumAmountELSpark;
 
-    @Lob
+    @Type(type = "longText")
     @Column(name = "invoice_subcategory_el")
     @Size(max = 2000)
     private String invoiceSubCategoryEL;

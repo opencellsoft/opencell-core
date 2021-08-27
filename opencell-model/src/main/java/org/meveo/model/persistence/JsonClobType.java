@@ -24,6 +24,11 @@ import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.descriptor.sql.ClobTypeDescriptor;
 import org.hibernate.usertype.DynamicParameterizedType;
 
+/**
+ * JSON type field mapping for Oracle's CLOB type field
+ * 
+ * @author Andrius Karpavicius
+ */
 public class JsonClobType extends AbstractSingleColumnStandardBasicType<Object> implements DynamicParameterizedType {
 
     private static final long serialVersionUID = 2098848330584585140L;

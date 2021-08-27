@@ -115,7 +115,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     /**
      * Delivery instructions
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "delivery_instructions")
     private String deliveryInstructions;
 

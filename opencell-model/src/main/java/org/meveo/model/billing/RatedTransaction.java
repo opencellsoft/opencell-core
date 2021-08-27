@@ -241,7 +241,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "description")
     private String description;
 
@@ -346,7 +346,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Additional parameter used in rating
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "parameter_extra")
     private String parameterExtra;
 
@@ -527,7 +527,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**

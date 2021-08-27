@@ -27,7 +27,7 @@ public class CustomFieldJsonType extends AbstractSingleColumnStandardBasicType<C
     private static final long serialVersionUID = -7393846020207110466L;
 
     public CustomFieldJsonType() {
-        super(ClobTypeDescriptor.DEFAULT, CustomFieldJsonTypeDescriptor.INSTANCE);
+        super(JsonType.IS_CLOB ? ClobTypeDescriptor.DEFAULT : JsonBinarySqlTypeDescriptor.INSTANCE, CustomFieldJsonTypeDescriptor.INSTANCE);
     }
 
     public String getName() {

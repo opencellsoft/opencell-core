@@ -21,23 +21,33 @@ package org.meveo.model.persistence;
 import java.util.Properties;
 
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
+import org.hibernate.type.descriptor.sql.ClobTypeDescriptor;
 import org.hibernate.usertype.DynamicParameterizedType;
 
 /**
- * JSON type field mapping for Postgresql JsonB type field
+ * JSON type field mapping that adapts both for Oracle's Clob and Postgresql's JsonB type field based on a system parameter.<br/>
+ * A value of -Dopencell.json.db.type=clob will implement Oracle's Clob and a missing or any other value will assume Postgresql JsonB implementation.
  * 
  * @author Andrius Karpavicius
  */
-public class JsonBinaryType extends AbstractSingleColumnStandardBasicType<Object> implements DynamicParameterizedType {
+public class JsonType extends AbstractSingleColumnStandardBasicType<Object> implements DynamicParameterizedType {
 
     private static final long serialVersionUID = 2098848330584585140L;
 
-    public JsonBinaryType() {
-        super(JsonBinarySqlTypeDescriptor.INSTANCE, new JsonTypeDescriptor());
+    /**
+     * Json field type in DB. To distinquish what Hibernate data type mapper should be used to interpret the value and convert from json to an object. <br/>
+     * Currently supported value is "clob" for oracle implementation. Any other or missing value will use a default value of "jsonb" for postgresql.
+     */
+    private static String JSON_DB_TYPE = "opencell.json.db.type";
+
+    protected static boolean IS_CLOB = "clob".equalsIgnoreCase(System.getProperty(JSON_DB_TYPE));
+
+    public JsonType() {
+        super(IS_CLOB ? ClobTypeDescriptor.DEFAULT : JsonBinarySqlTypeDescriptor.INSTANCE, new JsonTypeDescriptor());
     }
 
     public String getName() {
-        return "jsonb";
+        return "json";
     }
 
     @Override

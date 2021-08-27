@@ -66,7 +66,7 @@ public abstract class AuditableCFEntity extends AuditableEntity implements ICust
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     protected CustomFieldValues cfValues;
 
     /**

@@ -54,7 +54,7 @@ public class SecuredEntity implements Serializable {
     @Size(max = 255)
     private String entityClass;
     
-    @Type(type = "numeric_boolean")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "disable", nullable = false)
 	@NotNull
 	private boolean disabled;

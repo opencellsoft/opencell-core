@@ -234,7 +234,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
@@ -248,7 +248,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Bank LOT number
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "bank_lot")
     private String bankLot;
 

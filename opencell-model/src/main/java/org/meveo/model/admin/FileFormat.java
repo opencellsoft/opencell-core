@@ -17,11 +17,9 @@
  */
 package org.meveo.model.admin;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -29,14 +27,16 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * File format entity
@@ -77,7 +77,7 @@ public class FileFormat extends BusinessEntity {
     /**
      * Configuration template.
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "configuration_template", nullable = false)
     private String configurationTemplate;
 

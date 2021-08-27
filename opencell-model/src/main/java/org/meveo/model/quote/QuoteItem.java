@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -83,7 +84,7 @@ public class QuoteItem extends BaseEntity {
     /**
      * Serialized quoteItem dto
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "source", nullable = false)
     private String source;
 

@@ -307,7 +307,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     /**
      * Initial service renewal configuration
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "initial_renewal")
     private String initialServiceRenewal;
 

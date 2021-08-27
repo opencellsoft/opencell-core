@@ -331,7 +331,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "parameter_extra")
     private String parameterExtra;
 
@@ -505,7 +505,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
@@ -552,7 +552,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Processing error reason
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "reject_reason")
     private String rejectReason;
     

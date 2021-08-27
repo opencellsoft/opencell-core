@@ -250,7 +250,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Selected billing accounts (identifiers)
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "selected_billing_accounts")
     private String selectedBillingAccounts;
 
@@ -358,8 +358,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Filtering option used in exceptional billing run.
      */
-    @Type(type = "jsonClob")
-    @Column(name = "filters", columnDefinition = "TEXT")
+    @Type(type = "json")
+    @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, String> filters;
 
     @Transient

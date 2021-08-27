@@ -840,7 +840,7 @@
         <profile>
             <id>development</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+            	<activeByDefault>true</activeByDefault>
                 <property>
                     <name>env</name>
                     <value>dev</value>
@@ -1004,7 +1004,6 @@
         <profile>
             <id>dev-oracle</id>
             <activation>
-             	<activeByDefault>true</activeByDefault>
                 <property>
                     <name>env</name>
                     <value>dev-oracle</value>

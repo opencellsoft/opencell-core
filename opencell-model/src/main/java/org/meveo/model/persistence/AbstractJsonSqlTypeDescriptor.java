@@ -34,7 +34,7 @@ public abstract class AbstractJsonSqlTypeDescriptor implements SqlTypeDescriptor
 
     @Override
     public int getSqlType() {
-        return Types.CLOB;
+        return Types.OTHER;
     }
 
     @Override

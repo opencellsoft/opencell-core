@@ -9182,7 +9182,6 @@ public class PaymentCallBackScript extends Script {
             <column name="run_on_nodes" value="NULL"/>
             <column name="single_node" valueNumeric="1"/>
             <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Credit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
-            <column name="cf_values_accum" value="NULL"/>
             <column name="exclude_inv_without_amount" valueNumeric="0"/>
         </insert>
         <insert tableName="meveo_job_instance">
@@ -9204,7 +9203,6 @@ public class PaymentCallBackScript extends Script {
             <column name="run_on_nodes" value="NULL"/>
             <column name="single_node" valueNumeric="1"/>
             <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Debit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
-            <column name="cf_values_accum" value="NULL"/>
             <column name="exclude_inv_without_amount" valueNumeric="0"/>
         </insert>
     </changeSet>
@@ -12648,19 +12646,6 @@ public class ValidateBRScript extends Script {
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_invoice_cat_iscat_default" />
         </insert>
-
-        <insert tableName="billing_accounting_article">
-        	<column name="id" value='-1'/>
-        	<column name="version" valueNumeric="0" />
-        	<column name="code" value="ADV-STD"/>
-        	<column name="tax_class_id" value="-1"/>
-            <column name="invoice_sub_category_id" value="-3"/>
-            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
-            <column name="description" value='Advance payment'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_accounting_article-ADV-STD" />
-        </insert>
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-2'/>
         	<column name="version" valueNumeric="0" />
@@ -13029,21 +13014,6 @@ Best regards,
 Opencell team.
                 ]]>
             </column>
-        </insert>
-    </changeSet>
-
-    <changeSet id="#20210607_540_563" author="TarikFA.">
-        <insert tableName="billing_accounting_article">
-        	<column name="id" value='-10'/>
-        	<column name="version" valueNumeric="0" />
-        	<column name="code" value="PROD-STD"/>
-            <column name="tax_class_id" value="-1"/>
-            <column name="invoice_sub_category_id" value="-2"/>
-            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
-            <column name="description" value='Invoice discount'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
         </insert>
     </changeSet>
 

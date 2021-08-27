@@ -32,6 +32,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @DiscriminatorValue(value = "R")
 public class RejectedPayment extends AccountOperation {
@@ -57,7 +59,7 @@ public class RejectedPayment extends AccountOperation {
     /**
      * Bank LOT number
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "bank_lot")
     private String bankLot;
 

@@ -105,7 +105,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     protected CustomFieldValues cfValues;
 
     /**

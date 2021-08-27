@@ -33,11 +33,11 @@ public class ReportQuery extends BusinessEntity {
     @Column(name = "field")
     private List<String> fields;
 
-    @Type(type = "jsonClob")
-    @Column(name = "filters", columnDefinition = "TEXT")
+    @Type(type = "json")
+    @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, String> filters;
 
-    @Lob
+    @Type(type = "longText")
     @Column(name = "generated_query")
     private String generatedQuery;
 

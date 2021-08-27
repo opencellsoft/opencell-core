@@ -41,6 +41,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.NotifiableEntity;
 
@@ -135,7 +136,7 @@ public class JobExecutionResultImpl extends BaseEntity {
     /**
      * General report displayed in GUI, put here info that do not fit other places
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "report")
     private String report;
 

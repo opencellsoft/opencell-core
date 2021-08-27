@@ -38,6 +38,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -255,7 +256,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * Parameter
 	 */
-    @Lob
+    @Type(type = "longText")
 	@Column(name = "EXTRA_PARAMETER")
 	private String extraParam;
 
@@ -276,7 +277,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * Rejection reason
 	 */
-    @Lob
+    @Type(type = "longText")
 	@Column(name = "reject_reason")
 	private String rejectReason;
 	
@@ -298,7 +299,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     private String updater;
     
     /** The serialized CDR dto. to be used while re-processing the CDR */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "source", nullable = true)
     private String source;
     

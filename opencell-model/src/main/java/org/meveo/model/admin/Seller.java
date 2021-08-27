@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -111,8 +112,7 @@ public class Seller extends AccountEntity implements IWFEntity {
     /**
      * A legal text for the seller
      */
-    @Lob
-    @Size(max = 2000)
+    @Type(type = "longText")
     @Column(name = "legal_text")
     private String legalText;
 

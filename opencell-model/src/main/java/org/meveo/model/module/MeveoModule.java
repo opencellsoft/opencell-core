@@ -102,7 +102,7 @@ public class MeveoModule extends EnableBusinessEntity implements Serializable {
     /**
      * Module source in serialized XML fromat
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "module_source", nullable = false)
     private String moduleSource;
 

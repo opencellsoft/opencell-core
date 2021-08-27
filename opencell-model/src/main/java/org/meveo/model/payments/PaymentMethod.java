@@ -106,35 +106,35 @@ public abstract class PaymentMethod extends EnableCFEntity {
     /**
      * Additional information
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "info_1")
     private String info1;
 
     /**
      * Additional information
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "info_2")
     private String info2;
 
     /**
      * Additional information
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "info_3")
     private String info3;
 
     /**
      * Additional information
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "info_4")
     private String info4;
 
     /**
      * Additional information
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "info_5")
     private String info5;
 

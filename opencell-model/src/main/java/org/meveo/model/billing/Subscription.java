@@ -401,7 +401,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Initial subscription renewal configuration
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "initial_renewal")
     private String initialSubscriptionRenewal;
 

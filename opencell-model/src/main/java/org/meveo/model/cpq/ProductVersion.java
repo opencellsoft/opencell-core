@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -111,7 +112,7 @@ public class ProductVersion extends AuditableEntity{
     /**
      * long description
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "long_description")
     private String longDescription;
     

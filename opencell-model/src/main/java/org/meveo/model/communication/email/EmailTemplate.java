@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.communication.MessageTemplate;
 
 @Entity
@@ -34,11 +35,11 @@ public class EmailTemplate extends MessageTemplate {
     @Size(max = 255)
     private String subject;
 
-    @Lob
+    @Type(type = "longText")
     @Column(name = "htmlcontent")
     private String htmlContent;
 
-    @Lob
+    @Type(type = "longText")
     @Column(name = "textcontent")
     private String textContent;
 

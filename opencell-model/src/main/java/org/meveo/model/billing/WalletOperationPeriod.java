@@ -238,7 +238,7 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Additional rating parameter
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "parameter_extra")
     private String parameterExtra;
 
@@ -404,7 +404,7 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
@@ -439,9 +439,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Processing error reason
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "reject_reason")
-    @Size(max = 255)
     private String rejectReason;
 
     /**

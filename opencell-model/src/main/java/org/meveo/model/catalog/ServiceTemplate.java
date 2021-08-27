@@ -104,7 +104,7 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
     /**
      * Long description
      */
-    @Lob
+    @Type(type = "longText")
     @Column(name = "long_description")
     private String longDescription;
 
@@ -192,8 +192,8 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
     /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
-    @Type(type = "jsonClob")
-    @Column(name = "description_i18n", columnDefinition = "TEXT")
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 	
 

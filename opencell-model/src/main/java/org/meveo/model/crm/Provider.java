@@ -45,6 +45,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -81,6 +83,8 @@ import org.meveo.model.shared.InterBankTitle;
 @Entity
 @ObservableEntity
 @Cacheable
+@DynamicInsert
+@DynamicUpdate
 @CustomFieldEntity(cftCodePrefix = "Provider")
 @ExportIdentifier("code")
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
