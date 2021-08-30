@@ -26,6 +26,8 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
 	
+	private String allUsersType = "allUsers";
+	
 	@Inject
 	private AuditLogService auditLogService;
 
@@ -112,7 +114,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		SubAccountingPeriod subAccountingPeriod = findById(entity.getId());
 		
 		if (subAccountingPeriod != null && !entity.getAllUsersSubPeriodStatus().equals(subAccountingPeriod.getAllUsersSubPeriodStatus())) {
-			createAuditLog(entity, auditLog, "allUsers");
+			createAuditLog(entity, auditLog, allUsersType);
 		}
 		if (subAccountingPeriod != null && !entity.getRegularUsersSubPeriodStatus().equals(subAccountingPeriod.getRegularUsersSubPeriodStatus())) {
 			createAuditLog(entity, auditLog, "regularUsers");
@@ -132,10 +134,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         auditLog.setCreated(new Date());
         auditLog.setEntity("SubAccountingPeriod");
         auditLog.setOrigin(entity.getAccountingPeriod().getAccountingPeriodYear());
-        auditLog.setAction("update "+(usersType.equals("allUsers")?"allUsersStatus":"regularUsersStatus"));
+        auditLog.setAction("update "+(usersType.equals(allUsersType)?"allUsersStatus":"regularUsersStatus"));
         auditLog.setParameters("user "+currentUser.getUserName()+" "
-        					+(usersType.equals("allUsers")?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus()) 
-        					+" the sub period number "+entity.getNumber()+ (usersType.equals("allUsers")?" for all users":"for regular users"));
+        					+(usersType.equals(allUsersType)?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus()) 
+        					+" the sub period number "+entity.getNumber()+ (usersType.equals(allUsersType)?" for all users":"for regular users"));
     }
 
 }
