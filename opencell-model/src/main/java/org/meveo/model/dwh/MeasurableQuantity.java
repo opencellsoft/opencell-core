@@ -28,6 +28,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -113,7 +114,8 @@ public class MeasurableQuantity extends EnableBusinessEntity {
     /**
      * Sql clause to to return a list of (Date measureDate, Long value) that will be used to create measuredValue.
      */
-    @Column(name = "sql_query", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "sql_query")
     private String sqlQuery;
 
     /**
@@ -134,7 +136,7 @@ public class MeasurableQuantity extends EnableBusinessEntity {
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     public String getTheme() {

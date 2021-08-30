@@ -143,21 +143,21 @@ public class Contact extends AccountEntity implements ISearchable {
      * Is it VIP contact
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "is_vip", columnDefinition = "tinyint default false")
+    @Column(name = "is_vip")
     private boolean isVip;
 
     /**
      * Is it a prospect
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "is_prospect", columnDefinition = "tinyint default yes")
+    @Column(name = "is_prospect")
     private boolean isProspect;
 
     /**
      * Was user agreement accepted
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "agreed_ua", columnDefinition = "tinyint default false")
+    @Column(name = "agreed_ua")
     private boolean agreedToUA;
 
     /**

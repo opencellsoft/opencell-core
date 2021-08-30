@@ -42,13 +42,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.security.Role;
-
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Custom script
@@ -71,8 +68,9 @@ public class ScriptInstance extends EnableBusinessEntity {
     /**
      * Script contents/source
      */
-    @Column(name = "script", columnDefinition = "TEXT")
-    @XStreamConverter(XStreamCDATAConverter.class)
+    @Type(type = "longText")
+    @Column(name = "script")
+//    @XStreamConverter(XStreamCDATAConverter.class)
     protected String script;
 
     /**

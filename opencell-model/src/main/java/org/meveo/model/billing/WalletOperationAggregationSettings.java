@@ -57,7 +57,7 @@ public class WalletOperationAggregationSettings extends BusinessEntity {
     /**
      * The aggregation amount rounding.
      */
-    @Column(name = "aggregation_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @Column(name = "aggregation_rounding", nullable = false)
     private int aggregationRounding = 2;
 
     /**

@@ -42,7 +42,7 @@ public class EmailSenderConfig extends MessageSenderConfig {
     @Size(max = 50)
     private String login;
 
-    @Column(name = "password", length = 50)
+    @Column(name = "pswd", length = 50)
     @Size(max = 50)
     private String password;
 

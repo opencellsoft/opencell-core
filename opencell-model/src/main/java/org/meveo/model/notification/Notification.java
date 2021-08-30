@@ -131,7 +131,7 @@ public class Notification extends EnableBusinessCFEntity {
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "priority", columnDefinition = "int DEFAULT 1")
+    @Column(name = "priority")
     private int priority = 1;
 
     /**

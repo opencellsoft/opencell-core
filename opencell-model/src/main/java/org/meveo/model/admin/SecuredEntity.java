@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -53,7 +54,7 @@ public class SecuredEntity implements Serializable {
     @Size(max = 255)
     private String entityClass;
     
-
+    @Type(type = "numeric_boolean")
 	@Column(name = "disable", nullable = false)
 	@NotNull
 	private boolean disabled;

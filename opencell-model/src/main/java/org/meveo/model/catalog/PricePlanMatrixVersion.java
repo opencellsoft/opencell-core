@@ -127,7 +127,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "priority", columnDefinition = "int DEFAULT 0")
+    @Column(name = "priority")
     private int priority = 0;
 
     /**

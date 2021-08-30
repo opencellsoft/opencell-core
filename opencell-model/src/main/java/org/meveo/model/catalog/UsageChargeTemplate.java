@@ -92,7 +92,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "priority", columnDefinition = "int default 1")
+    @Column(name = "priority")
     private int priority = 1;
 
     /**
