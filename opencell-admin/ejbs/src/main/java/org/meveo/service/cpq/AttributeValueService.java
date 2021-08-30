@@ -10,6 +10,7 @@ import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 
@@ -18,8 +19,9 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
     public static void validateValue(AttributeValue attributeValue, CpqQuote cpqQuote, QuoteVersion quoteVersion,
                                      CommercialOrder commercialOrder, ServiceInstance serviceInstance) throws BusinessException {
         if (!validate(attributeValue.getAttribute().getValidationType(),
-                attributeValue.getAttribute().getValidationPattern(), attributeValue, cpqQuote, quoteVersion, commercialOrder, serviceInstance)) {
-            throw new BusinessException("attribute value does not match the validation pattern");
+                attributeValue.getAttribute().getValidationPattern(), attributeValue, cpqQuote, quoteVersion,
+                commercialOrder, serviceInstance)) {
+            throw new BusinessException(createErrorMessage(attributeValue));
         }
 
     }
@@ -34,5 +36,26 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
             Object value = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
             return Pattern.compile(validationPattern).matcher(value.toString()).find();
         }
+    }
+
+    private static String createErrorMessage(AttributeValue attributeValue) {
+        AttributeTypeEnum attributeType = attributeValue.getAttribute().getAttributeType();
+        String value;
+        if (AttributeTypeEnum.NUMERIC.equals(attributeType)) {
+            value = attributeValue.getDoubleValue().toString();
+        } else {
+            if (AttributeTypeEnum.DATE.equals(attributeType)) {
+                value = attributeValue.getDateValue().toString();
+            } else {
+                value = attributeValue.getStringValue();
+            }
+        }
+        StringBuilder errorMessage = new StringBuilder("Value ")
+                .append((value.length() > 30 ? (value.substring(0, 27) + "...") : value))
+                .append(" for attribute ")
+                .append(attributeValue.getAttribute().getCode())
+                .append(" does not match validation pattern ")
+                .append(attributeValue.getAttribute().getValidationPattern());
+        return errorMessage.toString();
     }
 }
