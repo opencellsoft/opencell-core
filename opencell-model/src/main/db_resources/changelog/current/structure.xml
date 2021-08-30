@@ -9530,6 +9530,49 @@ public class OrderAdvancement extends ModuleScript {
     	
     </changeSet>
     
+    <changeSet id="#5595_540582_20210528" author="TarikFA">
+    	 <dropColumn tableName="cpq_attribute">
+            <column name="sequence"/>
+        </dropColumn>
+        
+        <addColumn tableName="cpq_attribute_instance">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+        
+        <addColumn tableName="cpq_order_attribute">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+        
+        <addColumn tableName="cpq_quote_attribute">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+        
+        <addColumn tableName="cpq_price_plan_matrix_value">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+    </changeSet>
+   <changeSet id="#5595_540582_20210528_2" author="TarikFA.">
+   		<preConditions onSqlOutput="TEST" onFail="MARK_RAN">
+   			<not>
+   				<columnExists tableName="cpq_product_version_attributes" columnName="sequence"/>
+   			</not>
+   		</preConditions>
+        <createSequence sequenceName=" " startValue="1000"/>
+        <addColumn tableName="cpq_product_version_attributes">
+            <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="mandatory" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="display" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" defaultValue="0" />
+        </addColumn>
+        <sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
+        <sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ALTER COLUMN id TYPE int8 USING id::int8;</sql>
+    </changeSet>
+    
     <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA">
         <addColumn tableName="meveo_job_instance">
             <column name="query_scheduler_id" type="bigint" />

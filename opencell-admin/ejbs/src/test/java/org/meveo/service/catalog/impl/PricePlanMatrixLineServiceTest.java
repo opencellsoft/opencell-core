@@ -10,6 +10,7 @@ import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -130,8 +131,10 @@ public class PricePlanMatrixLineServiceTest {
 
             Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
             Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
+            ProductVersionAttribute pdtVersionAttr1 = new ProductVersionAttribute(productVersion, attrb1, 0);
+            ProductVersionAttribute pdtVersionAttr2 = new ProductVersionAttribute(productVersion, attrb2, 1);
 
-            productVersion.setAttributes(List.of(attrb1, attrb2));
+            productVersion.setAttributes(List.of(pdtVersionAttr1, pdtVersionAttr2));
 
             PricePlanMatrixColumn billingCycleColumn = new PricePlanMatrixColumn();
             billingCycleColumn.setProduct(product);
