@@ -9310,6 +9310,13 @@
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attr_pk"/>
             </column>
+            <column name="mandatory" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="display" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <!--
     	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
@@ -9450,6 +9457,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+        	<column name="boolean_value" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-465" author="NabilOUACHI">
@@ -9798,6 +9806,7 @@
             <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="cpq_order_offer_id" type="bigint"/>
+        	<column name="boolean_value" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-479" author="NabilOUACHI">
@@ -10247,6 +10256,7 @@
 
             <column name="from_double_value" type ="${type.float}"/>
             <column name="to_double_value" type ="${type.float}"/>
+        	<column name="boolean_value" type="${type.boolean}" />
 
         </createTable>
     </changeSet>
@@ -10327,6 +10337,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+        	<column name="boolean_value" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-495" author="NabilOUACHI">
