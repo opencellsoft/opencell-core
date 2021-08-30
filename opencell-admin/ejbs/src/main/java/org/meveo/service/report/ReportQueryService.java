@@ -404,8 +404,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             int size = fields.size();
             for (Object result : executionResult) {
                 Map<String, Object> item = new HashMap<>();
-                for (int index = 0; index < size; index++) {
-                    item.put(fields.get(index), ((Object[]) result)[index]);
+                if(fields.size() == 1) {
+                    item.put(fields.get(0), result);
+                } else {
+                    for (int index = 0; index < size; index++) {
+                        item.put(fields.get(index), ((Object[]) result)[index]);
+                    }
                 }
                 response.add(item);
             }
