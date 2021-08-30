@@ -3,6 +3,8 @@
  */
 package org.meveo.model.cpq;
 
+import static javax.persistence.EnumType.STRING;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -86,7 +88,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
-	private Set<String> allowedValues=new HashSet<String>();
+	private Set<String> allowedValues=new HashSet<>();
 	
 	
 	   /**
@@ -94,7 +96,7 @@ public class Attribute extends EnableBusinessCFEntity{
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
-    private Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
+    private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
     
     
     @Enumerated(EnumType.STRING)
@@ -115,7 +117,7 @@ public class Attribute extends EnableBusinessCFEntity{
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
-    private List<Media> medias = new ArrayList<Media>();
+    private List<Media> medias = new ArrayList<>();
     
     
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -138,14 +140,23 @@ public class Attribute extends EnableBusinessCFEntity{
     @Column(name = "read_only")
     protected Boolean readOnly = Boolean.FALSE;
 	
-	@Column(name = "default_value", length = 255)
+	@Column(name = "default_value")
 	private String defaultValue;
 
 	@ManyToMany(mappedBy = "attributes")
 	private List<GroupedAttributes> groupedAttributes;
 
-    public Attribute(){
+	@Column(name = "validation_type", length = 10)
+	@Enumerated(STRING)
+	private AttributeValidationType validationType;
 
+	@Column(name = "validation_pattern", length = 2000)
+	private String validationPattern;
+
+	@Column(name = "validation_label")
+	private String validationLabel;
+
+    public Attribute(){
 	}
 
 	public Attribute(Long id) {
@@ -356,5 +367,29 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
+	}
+
+	public AttributeValidationType getValidationType() {
+		return validationType;
+	}
+
+	public void setValidationType(AttributeValidationType validationType) {
+		this.validationType = validationType;
+	}
+
+	public String getValidationPattern() {
+		return validationPattern;
+	}
+
+	public void setValidationPattern(String validationPattern) {
+		this.validationPattern = validationPattern;
+	}
+
+	public String getValidationLabel() {
+		return validationLabel;
+	}
+
+	public void setValidationLabel(String validationLabel) {
+		this.validationLabel = validationLabel;
 	}
 }

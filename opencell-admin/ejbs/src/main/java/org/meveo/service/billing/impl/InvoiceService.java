@@ -36,20 +36,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -2603,7 +2591,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft,boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
         InvoiceType invoiceType = null;
-
+        
+        if(billingRun != null && billingRun.getInvoiceType()!=null) {
+			return billingRun.getInvoiceType();
+		}
+        
         if (isPrepaid) {
             invoiceType = invoiceTypeService.getDefaultPrepaid();
 
@@ -3296,9 +3288,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean taxWasRecalculated = false;
         for (RatedTransaction ratedTransaction : ratedTransactions) {
 
-            InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
+            InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory() != null ?
+                    ratedTransaction.getInvoiceSubCategory() : null;
 
-            scaKey = invoiceSubCategory.getId().toString();
+            scaKey = invoiceSubCategory != null ? invoiceSubCategory.getId().toString() : "";
             if (isAggregateByUA) {
                 scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_" + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_"
                         + scaKey;
@@ -3333,14 +3326,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
             SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
             if (scAggregate == null) {
                 scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, isAggregateByUA ? ratedTransaction.getUserAccount() : null, isAggregateByUA ? ratedTransaction.getWallet() : null, invoice,
-                    invoiceSubCategory.getAccountingCode());
+                    invoiceSubCategory != null ? invoiceSubCategory.getAccountingCode() : null);
                 scAggregate.updateAudit(currentUser);
 
-                String translationSCKey = "SC_" + invoiceSubCategory.getId() + "_" + languageCode;
+                String translationSCKey = "SC_" + (invoiceSubCategory != null ? invoiceSubCategory.getId()  : "") + "_" + languageCode;
                 String descTranslated = descriptionMap.get(translationSCKey);
                 if (descTranslated == null) {
-                    descTranslated = invoiceSubCategory.getDescriptionOrCode();
-                    if ((invoiceSubCategory.getDescriptionI18n() != null) && (invoiceSubCategory.getDescriptionI18n().get(languageCode) != null)) {
+                    descTranslated = invoiceSubCategory != null ? invoiceSubCategory.getDescriptionOrCode() : "";
+                    if (invoiceSubCategory != null && (invoiceSubCategory.getDescriptionI18n() != null)
+                            && (invoiceSubCategory.getDescriptionI18n().get(languageCode) != null)) {
                         descTranslated = invoiceSubCategory.getDescriptionI18n().get(languageCode);
                     }
                     descriptionMap.put(translationSCKey, descTranslated);
@@ -3421,20 +3415,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
             InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
 
             // Create category aggregates or update their amounts
-            String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" + invoiceSubCategory.getInvoiceCategory().getId().toString();
+            String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" +
+                    (invoiceSubCategory != null ? invoiceSubCategory.getInvoiceCategory().getId().toString() : "");
 
             CategoryInvoiceAgregate cAggregate = categoryAggregates.get(caKey);
             if (cAggregate == null) {
-                cAggregate = new CategoryInvoiceAgregate(invoiceSubCategory.getInvoiceCategory(), billingAccount, scAggregate.getUserAccount(), invoice);
+                cAggregate = new CategoryInvoiceAgregate(invoiceSubCategory != null ?
+                        invoiceSubCategory.getInvoiceCategory() : null, billingAccount, scAggregate.getUserAccount(), invoice);
                 categoryAggregates.put(caKey, cAggregate);
 
                 cAggregate.updateAudit(currentUser);
 
-                String translationCKey = "C_" + invoiceSubCategory.getInvoiceCategory().getId() + "_" + languageCode;
+                String translationCKey = "C_" + (invoiceSubCategory != null ? invoiceSubCategory.getInvoiceCategory().getId() : "") + "_" + languageCode;
                 String descTranslated = descriptionMap.get(translationCKey);
                 if (descTranslated == null) {
-                    descTranslated = invoiceSubCategory.getInvoiceCategory().getDescriptionOrCode();
-                    if ((invoiceSubCategory.getInvoiceCategory().getDescriptionI18n() != null) && (invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().get(languageCode) != null)) {
+                    descTranslated = invoiceSubCategory != null ? invoiceSubCategory.getInvoiceCategory().getDescriptionOrCode() : "";
+                    if (invoiceSubCategory != null
+                            && (invoiceSubCategory.getInvoiceCategory().getDescriptionI18n() != null)
+                            && (invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().get(languageCode) != null)) {
                         descTranslated = invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().get(languageCode);
                     }
                     descriptionMap.put(translationCKey, descTranslated);
@@ -5659,13 +5657,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     /**
-     * @param toUpdate
+     * @param toUpdate invoice to update
      * @param input
-     * @return
+     * @param invoiceResource invoice resource
+     * @return Updated invoice
      */
-    public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
+    public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+        toUpdate = refreshOrRetrieve(toUpdate);
         final InvoiceStatusEnum status = toUpdate.getStatus();
-        if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status)|| InvoiceStatusEnum.NEW.equals(status))) {
+        if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status)
+                || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
         }
         if(input.getComment()!=null) {
@@ -5680,13 +5681,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(input.getDueDate()!=null) {
             toUpdate.setDueDate(input.getDueDate());
         }
-        if(invoiceRessource.getPaymentMethod()!=null) {
-            final Long pmId = invoiceRessource.getPaymentMethod().getId();
+        if(invoiceResource.getPaymentMethod()!=null) {
+            final Long pmId = invoiceResource.getPaymentMethod().getId();
             PaymentMethod pm = (PaymentMethod)tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
             toUpdate.setPaymentMethod(pm);
         }
-        if(invoiceRessource.getListLinkedInvoices()!=null) {
-            for (Long invoiceId : invoiceRessource.getListLinkedInvoices()) {
+        if(invoiceResource.getListLinkedInvoices() != null) {
+            for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
                     throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
@@ -5698,21 +5699,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         
-        if(invoiceRessource.getOrder()!=null) {
-            final Long orderId = invoiceRessource.getOrder().getId();
+        if(invoiceResource.getOrder()!=null) {
+            final Long orderId = invoiceResource.getOrder().getId();
             Order order = (Order)tryToFindByEntityClassAndId(Order.class, orderId);
             toUpdate.setOrder(order);
         }
         
-        if(invoiceRessource.getDiscountPlan()!=null) {
-            final Long dpId = invoiceRessource.getDiscountPlan().getId();
+        if(invoiceResource.getDiscountPlan()!=null) {
+            final Long dpId = invoiceResource.getDiscountPlan().getId();
             DiscountPlan discountPlan = (DiscountPlan)tryToFindByEntityClassAndId(DiscountPlan.class, dpId);
             toUpdate.setDiscountPlan(discountPlan);
         }
         
-        if(invoiceRessource.getCommercialOrder()!=null) {
-            final Long commercialorderId = invoiceRessource.getCommercialOrder().getId();
-            CommercialOrder commercialOrder = (CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, commercialorderId);
+        if(invoiceResource.getCommercialOrder()!=null) {
+            final Long commercialOrderId = invoiceResource.getCommercialOrder().getId();
+            CommercialOrder commercialOrder =
+                    (CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, commercialOrderId);
             toUpdate.setCommercialOrder(commercialOrder);
         }
         

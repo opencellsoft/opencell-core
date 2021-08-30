@@ -118,11 +118,12 @@
             <column name="uuid" type="varchar(60)" />
         </addColumn>
         <sql>update ${db.schema.adapted}adm_notification set uuid = id</sql>
-        <sql dbms="postgres">update ${db.schema.adapted}adm_notif_email set email_template_id=NEXTVAL('${db.schema.adapted}com_msg_tmpl_seq')</sql>
+        <sql dbms="postgresql">update ${db.schema.adapted}adm_notif_email set email_template_id=NEXTVAL('${db.schema.adapted}com_msg_tmpl_seq')</sql>
+        <sql dbms="oracle" endDelimiter="/">update ${db.schema.adapted}adm_notif_email set email_template_id = com_msg_tmpl_seq.nextval</sql>
         <sql dbms="mysql">update ${db.schema.adapted}adm_notif_email set email_template_id = (select max(next_val) from ${db.schema.adapted}com_msg_tmpl_seq);</sql>
         <sql>
             INSERT INTO ${db.schema.adapted}com_message_template(id, version, created, code, subject, textcontent, htmlcontent, media)   
-            SELECT email_template_id, 0, now(), notif.code, email_subject, email_body, email_html_body, 'EMAIL' as media
+            SELECT email_template_id, 0, ${db.current.time}, notif.code, email_subject, email_body, email_html_body, 'EMAIL' as media
             FROM ${db.schema.adapted}adm_notif_email email
             LEFT JOIN ${db.schema.adapted}adm_notification notif  on notif.id = email.id
         </sql>
@@ -238,9 +239,9 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
         <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
         <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
-        <sql dbms="postgres">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="postgresql">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
         <sql dbms="mysql">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el)</sql>
-        <sql dbms="postgres">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="postgresql">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
         <sql dbms="mysql">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el)</sql>
     </changeSet>
 
@@ -541,7 +542,7 @@
                 execute 'select min(usage_date), max(usage_date) from ' || schema_name || '.billing_rated_transaction ' into _min_date, _max_date;
             ELSE 
                 _min_date := from_date;
-                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+                _max_date := CASE WHEN to_date IS NULL THEN ${db.current.time} ELSE to_date END;
             END IF;
             
 			execute 'select nextval(''' || schema_name || '.billing_rated_transaction_seq'')' into _seq_value;
@@ -746,7 +747,7 @@
     			execute 'select min(operation_date), max(operation_date) from ' || schema_name || '.billing_wallet_operation ' into _min_date, _max_date;
             ELSE 
                 _min_date := from_date;
-                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+                _max_date := CASE WHEN to_date IS NULL THEN ${db.current.time} ELSE to_date END;
             END IF;
 	
     		execute 'select nextval(''' || schema_name || '.billing_wallet_operation_seq'')' into _seq_value;
@@ -957,7 +958,7 @@
 	            execute 'select min(event_date), max(event_date) from ' || schema_name || '.rating_edr ' into _min_date, _max_date;
             ELSE 
                 _min_date := from_date;
-                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+                _max_date := CASE WHEN to_date IS NULL THEN ${db.current.time} ELSE to_date END;
             END IF;
 
 			execute 'select nextval(''' || schema_name || '.rating_edr_seq'')' into _seq_value;
@@ -2011,7 +2012,7 @@
         <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id)
                 (select id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id from ${db.schema.adapted}billing_wallet_operation_tmp)</sql>
         <sql>insert into ${db.schema.adapted}billing_rated_transaction (id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, updated) 
-                (select id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, now() from ${db.schema.adapted}billing_rated_transaction_tmp)</sql>
+                (select id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, ${db.current.time} from ${db.schema.adapted}billing_rated_transaction_tmp)</sql>
     
     </changeSet>
     
@@ -3992,7 +3993,7 @@ END $$;]]>
     <changeSet id="#4427_20201216" author="ZBariki">
         <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type)
             VALUES (nextval('generic_sequence_seq'),
-            NOW(), 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
+            ${db.current.time}, 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
         <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
             SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'subscription_sequence')
             WHERE entity_class = 'Subscription'</sql>
@@ -7348,7 +7349,7 @@ END $$;]]>
 
 
     <changeSet id="#222_20210219" author="Mbarek-Ay">
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, now(), 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, ${db.current.time}, 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
 package org.meveo.api.billing;
 
 import java.util.ArrayList;
@@ -7587,7 +7588,7 @@ public class QuoteValidation extends ModuleScript {
 
 
 
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-27, 0, 0, now(), 'org.meveo.api.billing.OrderAdvancement', 'OrderAdvancement', 'JAVA', '
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-27, 0, 0, ${db.current.time}, 'org.meveo.api.billing.OrderAdvancement', 'OrderAdvancement', 'JAVA', '
   package org.meveo.api.billing;
 
 import java.math.BigDecimal;
@@ -7935,7 +7936,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="uuid" type="varchar(60)" defaultValue="" />
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
-            <column name="created" type="datetime" defaultValueDate="now()">
+            <column name="created" type="datetime" defaultValueDate="${db.current.time}">
                 <constraints nullable="false" />
             </column>
             <column name="creator" type="varchar(100)" />
@@ -8416,7 +8417,7 @@ public class OrderAdvancement extends ModuleScript {
                 <constraints nullable="false"/>
             </column>
         </addColumn>
-        <sql>UPDATE ${db.schema.adapted}cat_discount_plan set status='DRAFT', status_date= now() WHERE status IS NULL</sql>
+        <sql>UPDATE ${db.schema.adapted}cat_discount_plan set status='DRAFT', status_date= ${db.current.time}WHERE status IS NULL</sql>
         <createTable tableName="cat_discount_applicable_entity">
             <column name="disount_plan_id" type="bigint">
                 <constraints nullable="false"/>
@@ -8947,7 +8948,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="updater" type="varchar(100)" />
         </addColumn>
         <sql>
-            update ${db.schema.adapted}cpq_quote_version set created=now() where created is null;
+            update ${db.schema.adapted}cpq_quote_version set created=${db.current.time} where created is null;
             update ${db.schema.adapted}cpq_quote_version set creator='applicationInitializer' where creator is null;
         </sql>
         <addNotNullConstraint tableName="cpq_quote_version" columnName="created"/>
@@ -9054,7 +9055,7 @@ public class OrderAdvancement extends ModuleScript {
     	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
     		<sqlCheck expectedResult="0">select count(*) from ${db.schema.adapted}meveo_script_instance where code = 'org.meveo.service.quote.script.QuoteValidation'</sqlCheck>
     	</preConditions>
-    	<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-32, 0, 0, now(), 'org.meveo.service.quote.script.QuoteValidation', 'quote validation', 'JAVA', '
+    	<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-32, 0, 0, ${db.current.time}, 'org.meveo.service.quote.script.QuoteValidation', 'quote validation', 'JAVA', '
             package org.meveo.service.quote.script;
             public class QuoteValidation extends QuoteValidationScript {}
             ');]]>
@@ -9064,7 +9065,7 @@ public class OrderAdvancement extends ModuleScript {
         	<column name="id" value="-55" />
         	<column name="version" value="0"/>
         	<column name="disabled" value="0"/>
-        	<column name="created" value="now()"/>
+        	<column name="created" value="${db.current.time}"/>
         	<column name="code" value="NOTIF_QUOTE_VALIDATION"/>
         	<column name="class_name_filter" value="org.meveo.model.cpq.CpqQuote"/>
         	<column name="event_expression_filter" value="#{event.status == 'ACCEPTED' }"/>
@@ -9094,7 +9095,7 @@ public class OrderAdvancement extends ModuleScript {
     		<sqlCheck expectedResult="0">select count(*) from ${db.schema.adapted}meveo_script_instance where code = 'org.meveo.service.quote.script.OrderAdvancement'</sqlCheck>
     	</preConditions>
     	
-    		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-33, 0, 0, now(), 'org.meveo.service.quote.script.OrderAdvancement', 'order advancemnt script', 'JAVA', '
+    		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-33, 0, 0, ${db.current.time}, 'org.meveo.service.quote.script.OrderAdvancement', 'order advancemnt script', 'JAVA', '
             package org.meveo.service.quote.script;
             public class OrderAdvancement extends OrderAdvancementScript {}
             ');]]></sql>
@@ -9103,7 +9104,7 @@ public class OrderAdvancement extends ModuleScript {
             	<column name="id" value="-56" />
             	<column name="version" value="0"/>
             	<column name="disabled" value="0"/>
-            	<column name="created" value="now()"/>
+            	<column name="created" value="${db.current.time}"/>
             	<column name="code" value="NOTIF_ORDER_ADVANCEMENT"/>
             	<column name="class_name_filter" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
             	<column name="event_type_filter" value="ADVT_RATE_INCREASED"/>
@@ -9579,6 +9580,28 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
     </changeSet>
+    
+    <changeSet id="INTRD-1221_20210803" author="TarikFA.">
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_SUBSCRIPTION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'SUBSCRIPTION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_TERMINATION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'TERMINATION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'OTHER')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  is null</where>
+    	</update>
+    </changeSet>
 
     <changeSet id="#INTRD-1174_20210802" author="ZBariki">
         <addColumn tableName="report_query">
@@ -9587,4 +9610,153 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
+	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI">
+    	<addColumn tableName="billing_billing_run">
+            <column name="invoice_type_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_billing_run" constraintName="fk__billing_billing_run__invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
+
+	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD">
+    	<createSequence sequenceName="accounting_period_seq" startValue="1" />
+        <createTable tableName="accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="accounting_period_year" type="int4" />
+            <column name="status" type="varchar(255)"/>
+            <column name="sub_accounting_period_type" type="varchar(255)"/>
+            <column name="sub_accounting_period_progress" type="varchar(255)"/>
+            <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
+        </createTable>
+        
+        <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
+        <createTable tableName="sub_accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sub_accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="number" type="int4" />
+            <column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+            <column name="regular_users_sub_period_status" type="varchar(255)"/>
+            <column name="regular_users_closed_date" type="datetime"/>
+            <column name="effective_closed_date" type="datetime"/>
+            <column name="accounting_period_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="accounting_period" />
+	</changeSet>
+
+	<changeSet id="#INTRD-1275_20210805" author="ZBariki">
+        <addColumn tableName="ar_account_operation">
+            <column name="status" type="varchar(20)" />
+            <column name="reason" type="varchar(30)" />
+            <column name="accounting_export_file" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+   <changeSet id="INTRD-1310_050821" author="Mbarek-Ay">
+     <addColumn tableName="billing_subscription">
+            <column name="order_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
+	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD">
+    	<createSequence sequenceName="journal_seq" startValue="1" />
+        <createTable tableName="journal">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="journal_pkey" />
+            </column>
+           	<column name="code" type="varchar(255)"/>
+         	<column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+        </createTable>
+        <addColumn tableName="ar_occ_template">
+            <column name="journal_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="journal_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_occ_template" constraintName="fk_journal_template_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="journal" />
+        <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_account_operation" constraintName="fk_journal_account_operation_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="journal" />
+		</changeSet>
+
+	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA">
+    	<addColumn tableName="ar_account_operation">
+            <column name="accounting_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-1380_11082021" author="AmineBENAICHA">
+    	<addColumn tableName="accounting_period">
+            <column name="accounting_operation_action" type="varchar(255)" />
+            <column name="regular_user_lock_option" type="varchar(255)" />
+            <column name="custom_lock_number_days" type="int4" />
+            <column name="custom_lock_option" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA">
+    	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
+        <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
+    </changeSet>
+    
+     <changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay">
+        <addDefaultValue  tableName="cpq_quote_price" columnName="price_over_charged" defaultValueNumeric="0" /> 
+    </changeSet>
+
+    <changeSet id="#INTRD-1396_20210812" author="ZBariki">
+        <addColumn tableName="cpq_attribute">
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM">
+		<addColumn tableName="billing_billing_run">
+			<column name="run_type" type="varchar(255)" />
+		</addColumn>
+		<update tableName="billing_billing_run">
+			<column name="run_type" value="EXCEPTIONAL"/>
+			<where>billing_cycle_id is null</where>
+		</update>
+		<update tableName="billing_billing_run">
+			<column name="run_type" value="CYCLE"/>
+			<where>billing_cycle_id is not null</where>
+		</update>
+	</changeSet>
+	<changeSet id="#INTRD-689_20210818" author="RAityaazza">
+        <addColumn tableName="sub_accounting_period">
+            <column name="all_users_sub_period_status" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI">
+		<sql>alter table ${db.schema.adapted}accounting_period alter column accounting_period_year type character varying(20);</sql>
+		<addColumn tableName="accounting_period">
+            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+   
+	
 </databaseChangeLog>

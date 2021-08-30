@@ -10,6 +10,7 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryExecutionModeEnum.BACKGROUND;
 import static org.meveo.model.report.query.QueryExecutionModeEnum.IMMEDIATE;
 import static org.meveo.model.report.query.QueryStatusEnum.SUCCESS;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.BufferedWriter;
@@ -24,14 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -101,11 +96,21 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return list of ReportQueries
      */
     public List<ReportQuery> reportQueriesAllowedForUser(PaginationConfiguration configuration, String userName) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("SQL", "visibility = 'PRIVATE' OR visibility = 'PUBLIC' OR visibility = 'PROTECTED'");
-        filters.put("auditable.creator", userName);
-        configuration.setFilters(filters);
+        Map<String, Object> filters = ofNullable(configuration.getFilters()).orElse(new HashMap<>());
+        configuration.setFilters(createQueryFilters(userName, filters));
         return list(configuration);
+    }
+
+    private Map<String, Object> createQueryFilters(String userName, Map<String, Object> filters) {
+        if(filters.containsKey("visibility")) {
+            if(filters.get("visibility").equals(PRIVATE)) {
+                filters.put("auditable.creator", userName);
+            }
+        } else {
+            filters.put("SQL", "((a.auditable.creator = '"
+                    + userName + "' AND a.visibility = 'PRIVATE') OR ( a.visibility = 'PUBLIC' OR a.visibility = 'PROTECTED'))");
+        }
+        return filters;
     }
 
     @Transactional
@@ -399,8 +404,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             int size = fields.size();
             for (Object result : executionResult) {
                 Map<String, Object> item = new HashMap<>();
-                for (int index = 0; index < size; index++) {
-                    item.put(fields.get(index), ((Object[]) result)[index]);
+                if(fields.size() == 1) {
+                    item.put(fields.get(0), result);
+                } else {
+                    for (int index = 0; index < size; index++) {
+                        item.put(fields.get(index), ((Object[]) result)[index]);
+                    }
                 }
                 response.add(item);
             }
@@ -428,11 +437,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         PersistenceService persistenceService = (PersistenceService)
                 getServiceInterface(targetEntity.getSimpleName() + "Service");
         Query result = persistenceService.getEntityManager().createQuery(reportQuery.getGeneratedQuery());
-        FilterConverter converter = new FilterConverter(targetEntity);
-        Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
-        for (Entry<String, Object> entry : filters.entrySet()) {
-            if(!(entry.getValue() instanceof Boolean)) {
-                result.setParameter("a_" + entry.getKey(), entry.getValue());
+        if (reportQuery.getFilters() != null && !reportQuery.getFilters().isEmpty()) {
+            FilterConverter converter = new FilterConverter(targetEntity);
+            Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
+            for (Entry<String, Object> entry : filters.entrySet()) {
+                if(!(entry.getValue() instanceof Boolean)) {
+                    result.setParameter("a_" + entry.getKey(), entry.getValue());
+                }
             }
         }
         return result;
@@ -509,5 +520,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             log.debug("No ReportQuery of code {} and visibility {} found", entityClass.getSimpleName(), code, visibility);
             return null;
         }
+    }
+
+    /**
+     * Report queries count allowed for current user.
+     *
+     * @param userName      : current user
+     * @param filters       : filters
+     * @return number of ReportQueries
+     */
+    public Long countAllowedQueriesForUser(String userName, Map<String, Object> filters) {
+        PaginationConfiguration configuration = new PaginationConfiguration(createQueryFilters(userName, filters));
+        return count(configuration);
     }
 }

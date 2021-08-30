@@ -621,6 +621,7 @@ public class CommercialOrderApi extends BaseApi {
     	if(commercialOrder.getOrderProgress()!=null && commercialOrder.getOrderProgress()>progressValue) {
     		throw new MeveoApiException("new progress value should be greater than orderProgress");
     	} 
+    	commercialOrder.setOrderProgressTmp(commercialOrder.getOrderProgress());
     	commercialOrder.setOrderProgress(progressValue);
     	commercialOrderService.update(commercialOrder);
     	

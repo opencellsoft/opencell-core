@@ -1,10 +1,14 @@
 package org.meveo.apiv2.accounts.service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -14,7 +18,6 @@ import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -72,6 +75,7 @@ public class AccountsManagementApiService {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
      * 
@@ -84,11 +88,11 @@ public class AccountsManagementApiService {
 
         // Check user account
         if (consumerInput == null || (consumerInput.getConsumerId() == null && StringUtils.isBlank(consumerInput.getConsumerCode()))) {
-            throw new ForbiddenException("At least consumer id or code must be non-null");
+            throw new InvalidParameterException("At least consumer id or code must be non-null");
         }
 
         if (consumerInput.getConsumerId() != null && StringUtils.isNotBlank(consumerInput.getConsumerCode())) {
-            throw new ForbiddenException("Only one of parameters can be provided");
+            throw new InvalidParameterException("Only one of parameters can be provided");
         }
 
         UserAccount newOwner = null;
@@ -108,16 +112,18 @@ public class AccountsManagementApiService {
         }
 
         // Check subscription
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode, Arrays.asList("userAccount"));
 
         if (subscription == null) {
             throw new NotFoundException("Subscription {code=[code]} doesn't exist".replace("[code]", subscriptionCode));
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-            throw new ForbiddenException(
-                "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode));
+            throw new ClientErrorException(
+                "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode), Response.Status.CONFLICT);
         }
+
+        String oldUserAccount = subscription.getUserAccount().getCode();
 
         // Check WalletInstance
         WalletInstance newWallet = walletService.findByUserAccount(newOwner);
@@ -131,14 +137,14 @@ public class AccountsManagementApiService {
         if (action == OpenTransactionsActionEnum.FAIL) {
             Long countWO = walletOperationService.countNotBilledWOBySubscription(subscription);
             if (countWO > 0) {
-                throw new ForbiddenException("Cannot move subscription {id=[id], code=[code]} with OPEN wallet operations".replace("[id]", subscription.getId().toString())
-                    .replace("[code]", subscriptionCode));
+                throw new ClientErrorException("Cannot move subscription {id=[id], code=[code]} with OPEN wallet operations".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode), Response.Status.CONFLICT);
             }
 
             Long countRT = ratedTransactionService.countNotBilledRTBySubscription(subscription);
             if (countRT > 0) {
-                throw new ForbiddenException("Cannot move subscription {id=[id], code=[code]} with OPEN rated operations".replace("[id]", subscription.getId().toString())
-                    .replace("[code]", subscriptionCode));
+                throw new ClientErrorException("Cannot move subscription {id=[id], code=[code]} with OPEN rated operations".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode), Response.Status.CONFLICT);
             }
         }
 
@@ -157,6 +163,10 @@ public class AccountsManagementApiService {
         subscription.setUserAccount(newOwner);
         subscriptionService.updateOwner(subscription, newOwner);
 
+        // The change must be logged (audit log + make Subscription.userAccount into auditable field)
+        createAuditLog(Subscription.class.getName());
+        auditableFieldService.createFieldHistory(subscription, "userAccount", AuditChangeTypeEnum.OTHER, oldUserAccount, newOwner.getCode());
+
         return count;
     }
 
@@ -172,13 +182,16 @@ public class AccountsManagementApiService {
         }
 
         CustomerAccount customerAccount = null;
-        try{
-            Long id = Long.parseLong(customerAccountCode);
-            customerAccount = customerAccountService.findById(id, Arrays.asList("paymentMethods"));
+        try {
+            customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
             if (Objects.isNull(customerAccount)) {
-                throw new EntityDoesNotExistsException(CustomerAccount.class, id);
+                Long id = Long.parseLong(customerAccountCode);
+                customerAccount = customerAccountService.findById(id, Arrays.asList("paymentMethods"));
+                if (Objects.isNull(customerAccount)) {
+                    throw new EntityDoesNotExistsException(CustomerAccount.class, id);
+                }
             }
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
         }
         Customer newCustomerParent = parentInput.getParentId() != null ? customerService.findById(parentInput.getParentId(), Arrays.asList("customerAccounts"))
@@ -201,15 +214,15 @@ public class AccountsManagementApiService {
             .forEach(walletOperation -> walletOperationService.update(walletOperation));
 
         auditableFieldService.createFieldHistory(customerAccount, "customer", AuditChangeTypeEnum.OTHER, newCustomerParent.getCode(), oldCustomerParent.getCode());
-        createAuditLog();
+        createAuditLog(CustomerAccount.class.getName());
         log.info("the parent customer for the customer account {}, changed from {} to {}", customerAccount.getCode(), oldCustomerParent.getCode(), newCustomerParent.getCode());
     }
 
-    private void createAuditLog() {
+    private void createAuditLog(String entity) {
         AuditLog auditLog = new AuditLog();
         auditLog.setActor(currentUser.getUserName());
         auditLog.setCreated(new Date());
-        auditLog.setEntity(CustomerAccount.class.getName());
+        auditLog.setEntity(entity);
         auditLog.setOrigin("API");
         auditLog.setAction("update");
         auditLogService.create(auditLog);

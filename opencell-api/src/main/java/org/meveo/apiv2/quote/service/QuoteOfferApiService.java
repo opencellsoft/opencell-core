@@ -43,7 +43,7 @@ public class QuoteOfferApiService {
 		quoteOffer.getQuoteAttributes().size();
 		
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
-		var quoteAttribute = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
+		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
 		
 		var duplicate = new QuoteOffer(quoteOffer);
 		duplicate.setQuoteVersion(quoteVersion);
@@ -57,7 +57,7 @@ public class QuoteOfferApiService {
 		quoteOfferService.create(duplicate);
 		
 		duplicateQuoteProduct(duplicate, quoteProducts);
-		duplicateQuoteAttribute(null, quoteOffer, quoteAttribute);
+		duplicateQuoteAttribute(null, duplicate, quoteAttributes);
 		return duplicate;
 	}
 	
@@ -88,14 +88,13 @@ public class QuoteOfferApiService {
 	
 	private void duplicateQuoteAttribute(QuoteProduct quoteProduct, QuoteOffer quoteOffer,  List<QuoteAttribute> quoteAttributes) {
 		if(quoteAttributes != null) {
-			for (QuoteAttribute quoteAttribute : quoteAttributes) {
+			for (QuoteAttribute quoteAttribute : quoteAttributes) { 
 				var duplicate = new QuoteAttribute(quoteAttribute);
-				quoteAttributeService.detach(quoteAttribute);
+				quoteAttributeService.detach(quoteAttribute); 
 				
 				duplicate.setQuoteOffer(quoteOffer);
 				if(quoteProduct != null)
 					duplicate.setQuoteProduct(quoteProduct);
-				
 				quoteAttributeService.create(duplicate);
 				
 				quoteOffer.getQuoteAttributes().add(duplicate);

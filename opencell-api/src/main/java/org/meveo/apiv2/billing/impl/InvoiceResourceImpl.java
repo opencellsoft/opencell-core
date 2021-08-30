@@ -1,5 +1,10 @@
 package org.meveo.apiv2.billing.impl;
 
+import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
+import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
+import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
+import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -129,7 +134,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	private Invoice findInvoiceEligibleToUpdate(Long id) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		final InvoiceStatusEnum status = invoice.getStatus();
-		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status)|| InvoiceStatusEnum.NEW.equals(status))) {
+		if(!(REJECTED.equals(status) || SUSPECT.equals(status) || DRAFT.equals(status)|| NEW.equals(status))) {
 			throw new ActionForbiddenException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED. current invoice status is :"+status.name()) ;
 		}
 		return invoice;
@@ -199,10 +204,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 	
 	@Override
-	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceRessource) {
+	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceResource) {
 		final Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.update(invoice, invoiceMapper.toEntity(invoiceRessource), invoiceRessource);
-		
+		invoiceApiService.update(invoice, invoiceMapper.toEntity(invoiceResource), invoiceResource);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}

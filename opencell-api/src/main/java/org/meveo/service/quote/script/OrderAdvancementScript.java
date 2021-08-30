@@ -101,7 +101,7 @@ public class OrderAdvancementScript extends ModuleScript {
                 commercialOrderApi.validateOrder(commercialOrder, true);
             } else {
                 List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
-                        .filter(item -> item.getAdvancement() == orderProgress)
+                        .filter(item -> orderProgress.equals(item.getAdvancement()))
                         .collect(Collectors.toList());
 
                 if (itemsToBill.isEmpty()) {

@@ -48,12 +48,12 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	private static final long serialVersionUID = 582541599112934770L;
 
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "cpq_quote_product_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cpq_quote_product_id",referencedColumnName = "id")
 	private QuoteProduct  quoteProduct ;
 	
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name = "cpq_quote_offer_id",referencedColumnName = "id")
 	private QuoteOffer  quoteOffer;
 
