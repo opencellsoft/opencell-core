@@ -6301,7 +6301,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_business_product_model" />
             </column>
             <column name="product_template_id" type="BIGINT" />
-            <column name="description_i18n" type="${type.text}">
+            <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -10366,6 +10366,79 @@
         </createTable>
 
         <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
+    </changeSet>
+    
+     <changeSet id="rebuild-str-tbl-500" author="AndriusKarpavicius" dbms="oracle">
+        <sql>alter table ACCOUNT_ENTITY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table ADM_NOTIFICATION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table ADM_ROLE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table ADM_USER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_ACCOUNT_OPERATION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_DDREQUEST_BUILDER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_OTHER_TRANSACTION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_PAYMENT_GATEWAY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_PAYMENT_SCHEDULE_INST modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_PAYMENT_SCHEDULE_TMPL modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_PAYMENT_TOKEN modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_ACCOUNTING_ARTICLE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_ARTICLE_FAMILY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_BILLING_RUN modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_CHARGE_INSTANCE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_CYCLE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_DISCOUNT_PLAN_INSTANCE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_INVOICE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_INVOICE_CAT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_INVOICE_SUB_CAT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_INVOICE_TYPE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_PRODUCT_INSTANCE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_RATED_TRANSACTION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_SERVICE_INSTANCE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_SUBSCRIPTION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_TAX modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_TAX_CATEGORY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_TAX_CLASS modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_TRADING_COUNTRY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_WALLET_OPERATION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_CHARGE_TEMPLATE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_DISCOUNT_PLAN modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_DISCOUNT_PLAN_ITEM modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_OFFER_TEMPLATE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_OFFER_TEMPLATE_CATEGORY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_PRICE_PLAN_MATRIX modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CAT_SERVICE_TEMPLATE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_ATTRIBUTE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_ATTRIBUTE_INSTANCE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_COMMERCIAL_ORDER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_CONTRACT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_CONTRACT_ITEM modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_GROUPED_ATTRIBUTES modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_INVOICING_PLAN modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_INVOICING_PLAN_ITEM modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_MEDIA modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_ORDER_ATTRIBUTE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_ORDER_LOT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_ORDER_OFFER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_ORDER_PRODUCT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_PRODUCT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_PRODUCT_LINE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_QUOTE_ATTRIBUTE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_QUOTE_LOT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_QUOTE_PRODUCT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CPQ_QUOTE_VERSION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CRM_CUSTOMER_CATEGORY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CRM_PROVIDER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CUST_CEI modify cf_values check (cf_values is json)</sql>
+        <sql>alter table DOCUMENT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table DOCUMENT_CATEGORY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table DWH_REPORT_EXTRACT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table MEDINA_ACCESS modify cf_values check (cf_values is json)</sql>
+        <sql>alter table MEVEO_FILTER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table MEVEO_JOB_INSTANCE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table ORD_ORDER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table ORD_ORDER_ITEM modify cf_values check (cf_values is json)</sql>
+        <sql>alter table ORD_QUOTE modify cf_values check (cf_values is json)</sql>
+        <sql>alter table QUOTE_OFFER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table WF_GENERIC_WORKFLOW modify cf_values check (cf_values is json)</sql>         
     </changeSet>
     <!-- end tables -->
 
@@ -14805,8 +14878,8 @@ $$ LANGUAGE plpgsql;
             <column name="visibility" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="filters" type="text" />
-            <column name="generated_query" type="text" />
+            <column name="filters" type="${type.json}" />
+            <column name="generated_query" type="${type.text}" />
             <column name="sort_by" type="varchar(255)" />
             <column name="sort_order" type="varchar(15)" />
         </createTable>
@@ -16229,6 +16302,10 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
 	<changeSet id="#INTRD-1441_20210728" author="TarikFA." />
 	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI" />
+	
+	<changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
 
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -19,7 +19,7 @@
     
     <properties>
         <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
-        <env>dev-oracle</env>
+        <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ingenico-connect-sdk>5.25.0</version.ingenico-connect-sdk>
         <version.paypal-sdk>LATEST</version.paypal-sdk>
@@ -46,7 +46,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
         <!-- used to switch dialect between postgres and oracle -->
-        <opencell.dialect>oracle.MeveoOracleDialect</opencell.dialect>
+        <opencell.dialect>postgresql.MeveoPostgreSQLDialect</opencell.dialect>
     </properties>
     
     <scm>
@@ -840,7 +840,7 @@
         <profile>
             <id>development</id>
             <activation>
-            	<activeByDefault>true</activeByDefault>
+                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>env</name>
                     <value>dev</value>
@@ -1012,8 +1012,13 @@
             <properties>
                 <!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2 -->
                 <db.driver>oracle.jdbc.OracleDriver</db.driver>
+                <db.url>jdbc:oracle:thin:@//localhost:1521/ORCL</db.url>
+                <db.username>opencell</db.username>
+                <!-- A setup for oracle XE 
                 <db.url>jdbc:oracle:thin:@//localhost:1521/XE</db.url>
                 <db.username>c##opencell</db.username>
+                <db.password>opencell</db.password>
+				-->                
                 <db.password>opencell</db.password>
                 <opencell.dialect>oracle.MeveoOracleDialect</opencell.dialect>
             </properties>

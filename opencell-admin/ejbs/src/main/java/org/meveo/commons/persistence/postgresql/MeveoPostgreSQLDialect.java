@@ -18,6 +18,8 @@
 
 package org.meveo.commons.persistence.postgresql;
 
+import java.sql.Types;
+
 import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 
@@ -47,5 +49,6 @@ public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
         registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
         registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
         registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
+        registerColumnType(Types.BOOLEAN, "int4");
     }
 }

@@ -276,7 +276,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "TEXT")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
