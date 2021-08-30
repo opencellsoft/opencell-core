@@ -26,7 +26,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
 	
-	private String allUsersType = "allUsers";
+	private final String allUsersType = "allUsers";
 	
 	@Inject
 	private AuditLogService auditLogService;
