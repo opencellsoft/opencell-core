@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
@@ -51,8 +53,8 @@ public class ProductLine extends BusinessCFEntity  {
 	/**
 	 * long description
 	 */
-    @Size(max = 2000)
-	@Column(name = "long_description", columnDefinition = "TEXT")
+	@Type(type = "longText")
+	@Column(name = "long_description")
 	private String longDescription;
 	
 	/**

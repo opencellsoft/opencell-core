@@ -33,6 +33,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -114,7 +115,8 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     /**
      * Delivery instructions
      */
-    @Column(name = "delivery_instructions", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "delivery_instructions")
     private String deliveryInstructions;
 
     /**

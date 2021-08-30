@@ -77,7 +77,7 @@ public class CommercialRuleItem extends BaseEntity {
 	 * Expression language
 	 */ 
 	@Size(max = 2000)
-    @Column(name = "rule_item_el", columnDefinition = "TEXT")
+    @Column(name = "rule_item_el")
 	private String ruleItemEl;
 	
 	

@@ -42,7 +42,7 @@
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 
             <!-- Additional query functions for accessing JSON -->
-            <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.${opencell.dialect}" />
         </properties>
     </persistence-unit>
 
@@ -88,7 +88,7 @@
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 
             <!-- Additional query functions for accessing JSON -->
-            <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.${opencell.dialect}" />
         </properties>
     </persistence-unit>
 

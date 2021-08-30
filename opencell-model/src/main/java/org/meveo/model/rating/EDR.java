@@ -26,6 +26,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -38,6 +39,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 
@@ -271,7 +273,8 @@ public class EDR extends BaseEntity {
     /**
      * Parameter
      */
-    @Column(name = "EXTRA_PARAMETER", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "extra_parameter")
     private String extraParameter;
 
     /**
@@ -284,8 +287,8 @@ public class EDR extends BaseEntity {
     /**
      * Rejection reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
-    @Size(max = 255)
+    @Type(type = "longText")
+    @Column(name = "reject_reason")
     private String rejectReason;
 
     /** The times tried. */

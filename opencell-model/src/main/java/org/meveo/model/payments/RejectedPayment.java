@@ -26,10 +26,13 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.Type;
 
 @Entity
 @DiscriminatorValue(value = "R")
@@ -56,7 +59,8 @@ public class RejectedPayment extends AccountOperation {
     /**
      * Bank LOT number
      */
-    @Column(name = "bank_lot", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "bank_lot")
     private String bankLot;
 
     /**

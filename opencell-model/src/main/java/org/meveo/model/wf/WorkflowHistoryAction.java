@@ -21,8 +21,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -51,13 +53,15 @@ public class WorkflowHistoryAction extends BaseEntity {
     /**
      * Action executed
      */
+    @Size(max = 2000)
     @Column(name = "action")
     private String action;
 
     /**
      * Result obtained
      */
-    @Column(name = "result", columnDefinition = "text")
+    @Size(max = 2000)
+    @Column(name = "result")
     private String result;
 
     public WorkflowHistoryAction() {

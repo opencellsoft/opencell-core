@@ -44,6 +44,9 @@
         <sonar.organization>opencellsoft</sonar.organization>
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <!-- used to switch dialect between postgres and oracle -->
+        <opencell.dialect>postgresql.MeveoPostgreSQLDialect</opencell.dialect>
     </properties>
     
     <scm>
@@ -850,6 +853,7 @@
                 <db.schema>public</db.schema>
                 <db.username>meveo</db.username>
                 <db.password>meveo</db.password>
+                <opencell.dialect>postgresql.MeveoPostgreSQLDialect</opencell.dialect>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->
@@ -892,6 +896,7 @@
                 <db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
                 <db.username>root</db.username>
                 <db.password></db.password>
+                <opencell.dialect>mysql.MeveoMysqlSQLDialect</opencell.dialect>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->
@@ -918,6 +923,7 @@
                 <db.schema>public</db.schema>
                 <db.username>integrmeveo</db.username>
                 <db.password>integrmeveo</db.password>
+                <opencell.dialect>postgresql.MeveoPostgreSQLDialect</opencell.dialect>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->
@@ -949,6 +955,7 @@
                 <db.schema>public</db.schema>
                 <db.username>meveo</db.username>
                 <db.password>meveo</db.password>
+                <opencell.dialect>portgresql.MeveoPostgreSQLDialect</opencell.dialect>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->
@@ -1007,7 +1014,13 @@
                 <db.driver>oracle.jdbc.OracleDriver</db.driver>
                 <db.url>jdbc:oracle:thin:@//localhost:1521/ORCL</db.url>
                 <db.username>opencell</db.username>
+                <!-- A setup for oracle XE 
+                <db.url>jdbc:oracle:thin:@//localhost:1521/XE</db.url>
+                <db.username>c##opencell</db.username>
                 <db.password>opencell</db.password>
+				-->                
+                <db.password>opencell</db.password>
+                <opencell.dialect>oracle.MeveoOracleDialect</opencell.dialect>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->

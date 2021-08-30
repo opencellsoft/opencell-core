@@ -28,6 +28,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -36,6 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -110,8 +112,8 @@ public class Seller extends AccountEntity implements IWFEntity {
     /**
      * A legal text for the seller
      */
-    @Size(max = 2000)
-    @Column(name = "legal_text", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "legal_text")
     private String legalText;
 
     /**

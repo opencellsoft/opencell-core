@@ -12,15 +12,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 
 import org.meveo.model.AuditableCFEntity;
 
 @MappedSuperclass
 public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

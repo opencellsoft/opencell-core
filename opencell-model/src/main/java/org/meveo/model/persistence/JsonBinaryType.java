@@ -23,6 +23,11 @@ import java.util.Properties;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.usertype.DynamicParameterizedType;
 
+/**
+ * JSON type field mapping for Postgresql JsonB type field
+ * 
+ * @author Andrius Karpavicius
+ */
 public class JsonBinaryType extends AbstractSingleColumnStandardBasicType<Object> implements DynamicParameterizedType {
 
     private static final long serialVersionUID = 2098848330584585140L;

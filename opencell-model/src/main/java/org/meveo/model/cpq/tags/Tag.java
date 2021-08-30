@@ -81,7 +81,7 @@ public class Tag extends BusinessEntity {
 	 * 
 	 */
 	@Size(max = 2000)
-    @Column(name = "filter_el", columnDefinition = "TEXT") 
+    @Column(name = "filter_el") 
 	private String filterEl;
 	
 	

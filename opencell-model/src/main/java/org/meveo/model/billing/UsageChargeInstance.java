@@ -70,7 +70,7 @@ public class UsageChargeInstance extends ChargeInstance {
     /**
      * The lower number, the higher the priority is. Value is a copy from UsageChargeTemplate.priority field and is synchronized when UsageChargeTemplate.priority value change.
      */
-    @Column(name = "priority", columnDefinition = "int default 1")
+    @Column(name = "priority")
     private int priority = 1;
 
     /**

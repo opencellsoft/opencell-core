@@ -23,6 +23,11 @@ import java.util.Properties;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.usertype.DynamicParameterizedType;
 
+/**
+ * JSON type field mapping for Postgresql TEXT type field
+ * 
+ * @author Andrius Karpavicius
+ */
 public class JsonStringType extends AbstractSingleColumnStandardBasicType<Object> implements DynamicParameterizedType {
 
     private static final long serialVersionUID = -7393846020207110466L;
@@ -32,7 +37,7 @@ public class JsonStringType extends AbstractSingleColumnStandardBasicType<Object
     }
 
     public String getName() {
-        return "json";
+        return "jsontxt";
     }
 
     @Override
