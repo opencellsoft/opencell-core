@@ -51,6 +51,9 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
     @Schema(description = "The to double value")
     private Double toDoubleValue;
 
+    @Schema(description = "The boolean value")
+    private Boolean booleanValue;
+
 	public PricePlanMatrixValueDto() {
 	}
 
@@ -65,6 +68,7 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 		toDateValue = value.getToDateValue();
 		fromDoubleValue = value.getToDoubleValue();
 		toDateValue = value.getToDateValue();
+		booleanValue = value.getBooleanValue();
 	}
 
 	/**
@@ -247,6 +251,20 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 		if(numeric == null && toCompare != null)
 			return false;
 		return numeric.equals(toCompare);
+	}
+
+	/**
+	 * @return the booleanValue
+	 */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * @param booleanValue the booleanValue to set
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
 	}
 	
 	

@@ -1,8 +1,20 @@
 package org.meveo.service.catalog.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -13,21 +25,6 @@ import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.service.base.PersistenceService;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Stateless
 public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatrixLine> {
@@ -136,6 +133,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     pricePlanMatrixValue.setToDoubleValue(value.getToDoubleValue());
                     pricePlanMatrixValue.setToDateValue(value.getToDateValue());
                     pricePlanMatrixValue.setPricePlanMatrixLine(pricePlanMatrixLine);
+                    pricePlanMatrixValue.setBooleanValue(value.getBooleanValue());
                     return pricePlanMatrixValue;
                 }).collect(Collectors.toSet());
     }

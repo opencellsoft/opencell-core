@@ -78,6 +78,9 @@ public class OrderAttributeDto extends BaseEntityDto{
 
 	@Schema(description = "The date value")
 	private Date dateValue;
+
+	@Schema(description = "The boolean value")
+	private Boolean booleanValue;	
  
 	
 	public OrderAttributeDto() {
@@ -96,6 +99,7 @@ public class OrderAttributeDto extends BaseEntityDto{
 		stringValue =orderAttribute.getStringValue();
 		dateValue =orderAttribute.getDateValue();
 		doubleValue =orderAttribute.getDoubleValue();
+		booleanValue = orderAttribute.getBooleanValue();
 	}
 
 
@@ -250,6 +254,20 @@ public class OrderAttributeDto extends BaseEntityDto{
 	 */
 	public void setOrderAttributeId(Long orderAttributeId) {
 		this.orderAttributeId = orderAttributeId;
+	}
+
+	/**
+	 * @return the booleanValue
+	 */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * @param booleanValue the booleanValue to set
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
 	}
 
 	

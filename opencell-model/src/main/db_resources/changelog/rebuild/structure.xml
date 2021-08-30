@@ -9271,6 +9271,13 @@
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attr_pk"/>
             </column>
+            <column name="mandatory" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="display" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <!--
     	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
@@ -9410,6 +9417,7 @@
             <column name="cpq_quote_offer_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+        	<column name="boolean_value" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-465" author="NabilOUACHI">
@@ -9753,6 +9761,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="cpq_order_offer_id" type="bigint"/>
+        	<column name="boolean_value" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-479" author="NabilOUACHI">
@@ -10198,6 +10207,7 @@
 
             <column name="from_double_value" type ="${type.float}"/>
             <column name="to_double_value" type ="${type.float}"/>
+        	<column name="boolean_value" type="${type.boolean}" />
 
         </createTable>
     </changeSet>
@@ -10277,6 +10287,7 @@
             <column name="parent_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+        	<column name="boolean_value" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-495" author="NabilOUACHI">
@@ -16275,6 +16286,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA." />
     <changeSet id="#20210622-INTRD-272" author="TarikFA." />
     <changeSet id="#INTRD-242_20210623" author="ZBariki" />
+    <changeSet id="#5595_540582_20210528_2" author="TarikFA." />
     <changeSet id="#6168_20210624" author="HatimOUDAD" />
     <changeSet id="#INTRD-257_20210706" author="ZBariki" />
     <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA" />
