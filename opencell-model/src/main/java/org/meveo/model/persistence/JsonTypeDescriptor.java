@@ -33,6 +33,8 @@ import org.hibernate.usertype.DynamicParameterizedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implements DynamicParameterizedType {
 
     private static final long serialVersionUID = -5030465106663645694L;
@@ -88,15 +90,15 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
         if (value == null) {
             return null;
         }
-        // Logger log = LoggerFactory.getLogger(getClass());
-        // log.error("AKK value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
+//         Logger log = LoggerFactory.getLogger(getClass());
+//         log.error("AKK value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
         if (String.class.isAssignableFrom(type)) {
             return (X) toString(value);
 
         } else if (CharacterStream.class.isAssignableFrom(type)) {
             return (X) new CharacterStreamImpl(toString(value));
 
-        } else if (Object.class.isAssignableFrom(type)) {
+        } else if (JsonNode.class.isAssignableFrom(type)) {
             return (X) JacksonUtil.toJsonNode(toString(value));
         }
         throw unknownUnwrap(type);

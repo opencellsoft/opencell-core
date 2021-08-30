@@ -38,10 +38,12 @@ import org.meveo.commons.encryption.IEncryptable;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
@@ -98,11 +100,12 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         return new CustomFieldValues(cfValues);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <X> X unwrap(CustomFieldValues value, Class<X> type, WrapperOptions options) {
 
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKK CF value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
+//        Logger log = LoggerFactory.getLogger(getClass());
+//        log.error("AKK CF value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
 
         if (value == null) {
             return null;
@@ -113,15 +116,18 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         } else if (String.class.isAssignableFrom(type)) {
             return (X) toString(value);
 
+        } else if (JsonNode.class.isAssignableFrom(type)) {
+            return (X) JacksonUtil.toJsonNode(toString(value));
         }
+        
         throw unknownUnwrap(type);
     }
 
     @Override
     public <X> CustomFieldValues wrap(X value, WrapperOptions options) {
 
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKKKK CF value to wrap is " + (value != null ? value.getClass() : null));
+//        Logger log = LoggerFactory.getLogger(getClass());
+//        log.error("AKKKK CF value to wrap is " + (value != null ? value.getClass() : null));
 
         if (value == null) {
             return null;
@@ -129,6 +135,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         } else if (String.class.isInstance(value)) {
             return fromString((String) value);
 
+            // Support for Oracle's CLOB type field
         } else if (value instanceof Clob) {
             String clobString = null;
             try {
@@ -138,13 +145,21 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
                 throw new RuntimeException("Failed to read clob value", e);
             }
             return fromString(clobString);
+            
+            // Support for Postgresql JsonB type field
+        } else {
+            // Logger log = LoggerFactory.getLogger(getClass());
+            // log.error("AKKKK value to wrap is " + (value != null ? value.getClass() : null));
+            return fromString(value.toString());
         }
-
-        throw unknownWrap(value.getClass());
     }
 
     @Override
     public boolean areEqual(CustomFieldValues one, CustomFieldValues another) {
+        
+//        Logger log = LoggerFactory.getLogger(getClass());
+//        log.error("AKKKK CF value is equal check");
+
         boolean equals = super.areEqual(one, another);
 
         if (equals && one != null && CollectionUtils.isNotEmpty(one.getDirtyCfValues())) {
