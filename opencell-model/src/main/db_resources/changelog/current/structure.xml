@@ -9495,6 +9495,159 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius">
+        <renameColumn tableName="cat_offer_template_category" oldColumnName="level" newColumnName="order_level"/>
+        <renameColumn tableName="adm_notif_webhooks" oldColumnName="password" newColumnName="pswd"/>
+        <renameColumn tableName="ar_customer_account" oldColumnName="password" newColumnName="pswd"/>
+        <renameColumn tableName="com_sender_config" oldColumnName="password" newColumnName="pswd"/>
+    </changeSet>    
+    
+    <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>alter table account_entity alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table adm_notification alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table adm_role alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table adm_user alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_account_operation alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_ddrequest_builder alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_other_transaction alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_payment_gateway alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_payment_schedule_inst alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_payment_schedule_tmpl alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ar_payment_token alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_accounting_article alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_article_family alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_billing_run alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_charge_instance alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_cycle alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_discount_plan_instance alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_invoice alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_invoice_cat alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_invoice_sub_cat alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_invoice_type alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_product_instance alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_rated_transaction alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_service_instance alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_subscription alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_tax alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_tax_category alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_tax_class alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_trading_country alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table billing_wallet_operation alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_charge_template alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_discount_plan alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_discount_plan_item alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_offer_template alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_offer_template_category alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_price_plan_matrix alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cat_service_template alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_attribute alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_attribute_instance alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_commercial_order alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_contract alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_contract_item alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_grouped_attributes alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_invoicing_plan alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_invoicing_plan_item alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_media alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_order_attribute alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_order_lot alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_order_offer alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_order_product alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_product alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_product_line alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_quote_attribute alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_quote_lot alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_quote_product alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cpq_quote_version alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table crm_customer_category alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table crm_provider alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table cust_cei alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table document alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table document_category alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table dwh_report_extract alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table medina_access alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table meveo_filter alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table meveo_job_instance alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ord_order alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ord_order_item alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table ord_quote alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table quote_offer alter column cf_values type jsonb using cf_values::jsonb</sql>
+        <sql>alter table wf_generic_workflow alter column cf_values type jsonb using cf_values::jsonb</sql>
+    </changeSet> 
+    
+    <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius">
+        <sql>alter table account_entity drop column cf_values_accum</sql>
+        <sql>alter table adm_notification drop column cf_values_accum</sql>
+        <sql>alter table adm_role drop column cf_values_accum</sql>
+        <sql>alter table adm_user drop column cf_values_accum</sql>
+        <sql>alter table ar_account_operation drop column cf_values_accum</sql>
+        <sql>alter table ar_ddrequest_builder drop column cf_values_accum</sql>
+        <sql>alter table ar_other_transaction drop column cf_values_accum</sql>
+        <sql>alter table ar_payment_gateway drop column cf_values_accum</sql>
+        <sql>alter table ar_payment_schedule_inst drop column cf_values_accum</sql>
+        <sql>alter table ar_payment_schedule_tmpl drop column cf_values_accum</sql>
+        <sql>alter table ar_payment_token drop column cf_values_accum</sql>
+        <sql>alter table billing_accounting_article drop column cf_values_accum</sql>
+        <sql>alter table billing_article_family drop column cf_values_accum</sql>
+        <sql>alter table billing_billing_run drop column cf_values_accum</sql>
+        <sql>alter table billing_charge_instance drop column cf_values_accum</sql>
+        <sql>alter table billing_cycle drop column cf_values_accum</sql>
+        <sql>alter table billing_discount_plan_instance drop column cf_values_accum</sql>
+        <sql>alter table billing_invoice drop column cf_values_accum</sql>
+        <sql>alter table billing_invoice_cat drop column cf_values_accum</sql>
+        <sql>alter table billing_invoice_sub_cat drop column cf_values_accum</sql>
+        <sql>alter table billing_invoice_type drop column cf_values_accum</sql>
+        <sql>alter table billing_product_instance drop column cf_values_accum</sql>
+        <sql>alter table billing_rated_transaction drop column cf_values_accum</sql>
+        <sql>alter table billing_service_instance drop column cf_values_accum</sql>
+        <sql>alter table billing_subscription drop column cf_values_accum</sql>
+        <sql>alter table billing_tax drop column cf_values_accum</sql>
+        <sql>alter table billing_tax_category drop column cf_values_accum</sql>
+        <sql>alter table billing_tax_class drop column cf_values_accum</sql>
+        <sql>alter table billing_trading_country drop column cf_values_accum</sql>
+        <sql>alter table billing_wallet_operation drop column cf_values_accum</sql>
+        <sql>alter table cat_charge_template drop column cf_values_accum</sql>
+        <sql>alter table cat_discount_plan drop column cf_values_accum</sql>
+        <sql>alter table cat_discount_plan_item drop column cf_values_accum</sql>
+        <sql>alter table cat_offer_template drop column cf_values_accum</sql>
+        <sql>alter table cat_offer_template_category drop column cf_values_accum</sql>
+        <sql>alter table cat_price_plan_matrix drop column cf_values_accum</sql>
+        <sql>alter table cat_service_template drop column cf_values_accum</sql>
+        <sql>alter table cpq_attribute drop column cf_values_accum</sql>
+        <sql>alter table cpq_attribute_instance drop column cf_values_accum</sql>
+        <sql>alter table cpq_commercial_order drop column cf_values_accum</sql>
+        <sql>alter table cpq_contract drop column cf_values_accum</sql>
+        <sql>alter table cpq_contract_item drop column cf_values_accum</sql>
+        <sql>alter table cpq_grouped_attributes drop column cf_values_accum</sql>
+        <sql>alter table cpq_invoicing_plan drop column cf_values_accum</sql>
+        <sql>alter table cpq_invoicing_plan_item drop column cf_values_accum</sql>
+        <sql>alter table cpq_media drop column cf_values_accum</sql>
+        <sql>alter table cpq_order_attribute drop column cf_values_accum</sql>
+        <sql>alter table cpq_order_lot drop column cf_values_accum</sql>
+        <sql>alter table cpq_order_offer drop column cf_values_accum</sql>
+        <sql>alter table cpq_order_product drop column cf_values_accum</sql>
+        <sql>alter table cpq_product drop column cf_values_accum</sql>
+        <sql>alter table cpq_product_line drop column cf_values_accum</sql>
+        <sql>alter table cpq_quote_attribute drop column cf_values_accum</sql>
+        <sql>alter table cpq_quote_lot drop column cf_values_accum</sql>
+        <sql>alter table cpq_quote_product drop column cf_values_accum</sql>
+        <sql>alter table cpq_quote_version drop column cf_values_accum</sql>
+        <sql>alter table crm_customer_category drop column cf_values_accum</sql>
+        <sql>alter table crm_provider drop column cf_values_accum</sql>
+        <sql>alter table cust_cei drop column cf_values_accum</sql>
+        <sql>alter table document drop column cf_values_accum</sql>
+        <sql>alter table document_category drop column cf_values_accum</sql>
+        <sql>alter table dwh_report_extract drop column cf_values_accum</sql>
+        <sql>alter table medina_access drop column cf_values_accum</sql>
+        <sql>alter table meveo_filter drop column cf_values_accum</sql>
+        <sql>alter table meveo_job_instance drop column cf_values_accum</sql>
+        <sql>alter table ord_order drop column cf_values_accum</sql>
+        <sql>alter table ord_order_item drop column cf_values_accum</sql>
+        <sql>alter table ord_quote drop column cf_values_accum</sql>
+        <sql>alter table quote_offer drop column cf_values_accum</sql>
+        <sql>alter table wf_generic_workflow drop column cf_values_accum</sql>
+    </changeSet>
+    
     <changeSet id="#INTRD-264_20210714" author="HatimOUDAD">
     	<addColumn tableName="query_scheduler">
            <column name="code" type="varchar(255)"/>
