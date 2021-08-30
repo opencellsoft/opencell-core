@@ -26,6 +26,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +61,9 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 
     private CustomFieldsDto customFields;
 
+	@Schema(description = "The boolean value")
+	private Boolean booleanValue;	
+
 	/**
 	 * @return the quoteAttributeCode
 	 */
@@ -77,6 +82,7 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		stringValue =quoteAttribue.getStringValue();
 		dateValue =quoteAttribue.getDateValue();
 		doubleValue =quoteAttribue.getDoubleValue();
+		booleanValue = quoteAttribue.getBooleanValue();
 	}
 
 	/**

@@ -44,6 +44,7 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         stringValue=quoteAttribute.getStringValue();
         dateValue=quoteAttribute.getDateValue();
         doubleValue=quoteAttribute.getDoubleValue();
+        booleanValue = quoteAttribute.getBooleanValue();
         assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
                                         .stream()
                                         .map(AttributeInstance::new)
@@ -55,6 +56,7 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         stringValue=orderAttribute.getStringValue();
         dateValue=orderAttribute.getDateValue();
         doubleValue=orderAttribute.getDoubleValue();
+        booleanValue = orderAttribute.getBooleanValue();
         updateAudit(currentUser);
         if(orderAttribute.getAssignedAttributeValue() != null) {
             assignedAttributeValue = orderAttribute.getAssignedAttributeValue()

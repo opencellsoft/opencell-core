@@ -79,11 +79,6 @@ public class AttributeDTO extends EnableBusinessDto {
     @Schema(description = "The lower number, the higher the priority is")
     protected Integer priority ;
     /**
-     * attribute order in the GUI
-     */
-    @Schema(description = "attribute order in the GUI")
-    protected Integer sequence;
-    /**
      * Mandatory
      */
     @NotNull
@@ -163,7 +158,6 @@ public class AttributeDTO extends EnableBusinessDto {
     public AttributeDTO(Attribute attribute) {
         super(attribute);
         mandatory=attribute.isMandatory();
-        sequence=attribute.getSequence();
         priority=attribute.getPriority();
         allowedValues=attribute.getAllowedValues();
         attributeType=attribute.getAttributeType();
@@ -469,7 +463,6 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
-
 	/**
 	 * @param defaultValue the defaultValue to set
 	 */
@@ -478,22 +471,6 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
-
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
 
 	public List<GroupedAttributeDto> getGroupedAttributes() {
 		return groupedAttributes;

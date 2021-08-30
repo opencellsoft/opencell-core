@@ -38,6 +38,7 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 		this.dateValue = copy.dateValue;
 		this.doubleValue = copy.doubleValue;
 		this.quoteOffer = copy.quoteOffer;
+		this.booleanValue = copy.booleanValue;
 	}
 
 
