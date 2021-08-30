@@ -9,14 +9,12 @@ import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
@@ -24,8 +22,8 @@ import javax.ws.rs.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.apiv2.generic.exception.ConflictException;
-import org.meveo.apiv2.generic.exception.UnprocessableEntityException;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.QueryBuilder;
@@ -33,6 +31,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
+import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
@@ -85,7 +84,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     private String generateQuery(ReportQuery entity, Class<?> targetEntity) {
-        PersistenceService persistenceService = (PersistenceService) getServiceInterface(targetEntity.getSimpleName() + "Service");
+        PersistenceService persistenceService =
+                (PersistenceService) getServiceInterface(targetEntity.getSimpleName() + "Service");
         QueryBuilder queryBuilder;
         if (entity.getFilters() != null) {
             Map<String, Object> filters = new FilterConverter(targetEntity).convertFilters(entity.getFilters());
@@ -99,11 +99,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
-        if(entity.getSortBy() != null && entity.getSortOrder() != null) {
+        if(entity.getSortBy() != null) {
             StringBuilder sortOptions = new StringBuilder(" order by ")
-                    .append(entity.getSortBy())
+                    .append(!entity.getSortBy().isBlank() ? entity.getSortBy() : "id")
                     .append(" ")
-                    .append(entity.getSortOrder().getLabel());
+                    .append(entity.getSortOrder() != null ? entity.getSortOrder().getLabel()
+                            : SortOrderEnum.ASCENDING.getLabel());
             return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ") + sortOptions;
         }
         return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
@@ -135,8 +136,27 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     @Override
-    public Optional<ReportQuery> update(Long id, ReportQuery baseEntity) {
-        return empty();
+    public Optional<ReportQuery> update(Long id, ReportQuery toUpdate) {
+        Optional<ReportQuery> reportQuery = findById(id);
+        if (!reportQuery.isPresent()) {
+            return empty();
+        }
+        ReportQuery entity = reportQuery.get();
+        Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
+        ofNullable(toUpdate.getCode()).ifPresent(code -> entity.setCode(code));
+        ofNullable(toUpdate.getVisibility()).ifPresent(visibility -> entity.setVisibility(visibility));
+        ofNullable(toUpdate.getTargetEntity()).ifPresent(target -> entity.setTargetEntity(target));
+        entity.setDescription(toUpdate.getDescription());
+        entity.setFields(toUpdate.getFields());
+        entity.setFilters(toUpdate.getFilters());
+        entity.setSortBy(toUpdate.getSortBy());
+        entity.setSortOrder(toUpdate.getSortOrder());
+        try {
+            entity.setGeneratedQuery(generateQuery(entity, targetEntity));
+            return of(reportQueryService.update(entity));
+        } catch (Exception exception) {
+            throw new BadRequestException(exception.getMessage(), exception.getCause());
+        }
     }
 
     @Override
@@ -199,7 +219,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return result;
     }
 
-    public void verifyReportQuery(VerifyQueryInput verifyQueryInput) {
+    public ActionStatus verifyReportQuery(VerifyQueryInput verifyQueryInput) {
+    	
+    	ActionStatus result = new ActionStatus();
+        result.setStatus(ActionStatusEnum.SUCCESS);
+        result.setMessage("New query");
 
         if (verifyQueryInput == null) {
             throw new ForbiddenException("The queryName and visibility must be non-null");
@@ -217,22 +241,57 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
             // a query with that name already exists and belongs to user (regardless of visibility)
             if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belong you");
+            	result.setStatus(ActionStatusEnum.WARNING);
+                result.setMessage("The query already exists and belong to you");
+                return result;
             }
             
             // a public query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PUBLIC && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new ConflictException("The query already exists and belongs to another user");
+                result.setStatus(ActionStatusEnum.WARNING);
+                result.setMessage("The query already exists and belongs to another user");
+                return result;
             }
 
             // a protected query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
-                throw new UnprocessableEntityException("The query already exists and belong you");
+                result.setStatus(ActionStatusEnum.FAIL);
+                result.setMessage("The query already exists and belong to you");
+                return result;
             }
         }
+        return result;
     }
 
     public Long countAllowedQueriesForUser() {
-        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName());
+        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName(), Collections.EMPTY_MAP);
+    }
+
+    public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
+        Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
+                limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
+        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
+    }
+
+    private Map<String, Object> buildFilters(String query) {
+        Map<String, Object> filters = new HashMap<>();
+        String[] inputFilters = query.split(";");
+        for (String input : inputFilters) {
+            String[] entry = input.split(":");
+            if(entry[0].equals("visibility")) {
+                if(entry[1] != null) {
+                    filters.put("visibility", QueryVisibilityEnum.valueOf(entry[1]));
+                }
+            } else {
+                filters.put(entry[0], entry[1]);
+            }
+        }
+        return filters;
+    }
+
+    public Long countAllowedQueriesForUserWithFilters(String query) {
+        Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
+        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName(), filters);
     }
 }

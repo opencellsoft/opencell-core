@@ -596,16 +596,18 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param includeParentCFEntities True to include CFs from parent entities
      */
     protected void addCustomFields(ICustomFieldEntity entity, Document doc, Element parent, boolean includeParentCFEntities) {
-        InvoiceConfiguration invoiceConfiguration = appProvider.getInvoiceConfigurationOrDefault();
-        if (invoiceConfiguration.isDisplayCfAsXML()) {
-            Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity, doc, includeParentCFEntities);
-            if (customFieldsTag.hasChildNodes()) {
-                parent.appendChild(customFieldsTag);
-            }
-        } else {
-            String json = customFieldInstanceService.getCFValuesAsJson(entity, includeParentCFEntities);
-            if (json != null && json.length() > 0) {
-                parent.setAttribute("customFields", json);
+        if(entity != null) {
+            InvoiceConfiguration invoiceConfiguration = appProvider.getInvoiceConfigurationOrDefault();
+            if (invoiceConfiguration.isDisplayCfAsXML()) {
+                Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity, doc, includeParentCFEntities);
+                if (customFieldsTag.hasChildNodes()) {
+                    parent.appendChild(customFieldsTag);
+                }
+            } else {
+                String json = customFieldInstanceService.getCFValuesAsJson(entity, includeParentCFEntities);
+                if (json != null && json.length() > 0) {
+                    parent.setAttribute("customFields", json);
+                }
             }
         }
     }
@@ -1059,15 +1061,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregates) {
                 Element tax = doc.createElement("tax");
                 Tax taxData = taxInvoiceAgregate.getTax();
-                tax.setAttribute("id", taxData.getId().toString());
-                tax.setAttribute("code", taxData.getCode());
+                tax.setAttribute("id", taxData != null ? taxData.getId().toString() : "");
+                tax.setAttribute("code", taxData != null ? taxData.getCode() : "");
                 addCustomFields(taxData, doc, tax);
-                String translationKey = "TX_" + taxInvoiceAgregate.getTax().getCode() + "_" + invoiceLanguageCode;
+                String translationKey = "TX_" + (taxData != null ? taxData.getCode() : "") + "_" + invoiceLanguageCode;
                 String descTranslated = descriptionMap.get(translationKey);
                 if (descTranslated == null) {
-                    descTranslated = taxInvoiceAgregate.getTax().getDescriptionOrCode();
-                    if (taxInvoiceAgregate.getTax().getDescriptionI18n() != null && taxInvoiceAgregate.getTax().getDescriptionI18n().get(invoiceLanguageCode) != null) {
-                        descTranslated = taxInvoiceAgregate.getTax().getDescriptionI18n().get(invoiceLanguageCode);
+                    descTranslated = taxData != null ? taxData.getDescriptionOrCode() : "";
+                    if (taxData != null && taxData.getDescriptionI18n() != null && taxData.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+                        descTranslated = taxData.getDescriptionI18n().get(invoiceLanguageCode);
                     }
                     descriptionMap.put(translationKey, descTranslated);
                 }
@@ -2282,8 +2284,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             line.appendChild(article);
         } else {
             line = doc.createElement("line");
-            Date periodStartDate = invoiceLine.getValidity().getFrom();
-            Date periodEndDate = invoiceLine.getValidity().getTo();
+            Date periodStartDate = invoiceLine != null ? invoiceLine.getValidity().getFrom() : null;
+            Date periodEndDate = invoiceLine != null ? invoiceLine.getValidity().getTo() : null;
             line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
             line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
             line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());

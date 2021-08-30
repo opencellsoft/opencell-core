@@ -4,15 +4,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -73,8 +65,9 @@ public interface ReportQueryResource {
                     content = @Content(schema = @Schema(implementation = ApiException.class))) })
     Response getReportQueries(@DefaultValue("0") @QueryParam("offset") Long offset,
                               @DefaultValue("50") @QueryParam("limit") Long limit,
-                              @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy,
-                              @QueryParam("filter") String filter, @Context Request request);
+                              @QueryParam("sortOrder") String sort, @QueryParam("sortBy") String orderBy,
+                              @QueryParam("filter") String filter, @QueryParam("query") String query,
+                              @QueryParam("fields") String fields, @Context Request request);
 
     @POST
     @Operation(summary = "Create a new report query", tags = {"ReportQuery" }, description = "Create a new report query",
@@ -153,4 +146,15 @@ public interface ReportQueryResource {
                             description = "The query already exists and belong to another user") })
     Response verifyReportQuery(
             @Parameter(description = "Verify report query request", required = true) VerifyQueryInput verifyQueryInput);
+
+    @PUT
+    @Path("/{id}")
+    @Operation(summary = "This endpoint allows to update an report query", tags = {
+            "ReportQuery" }, description = "update an existing report query", responses = {
+            @ApiResponse(responseCode = "200",
+                    description = "the report query successfully updated, and the id is returned in the response"),
+            @ApiResponse(responseCode = "404", description = "bad request, report query is not found") })
+    Response update(
+            @Parameter(description = "Report query id", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery);
 }

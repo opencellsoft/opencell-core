@@ -1,18 +1,22 @@
 package org.meveo.service.accounting.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
+import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -30,21 +34,70 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
             return null;
         }
     }
+
     
-	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type) {
+	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type,
+			Date start, boolean regularPeriods) {
 		List<SubAccountingPeriod> periods = new ArrayList<>();
-		LocalDate startDate = LocalDate.ofYearDay(ap.getAccountingPeriodYear(), 1);
+		LocalDateTime startDateTime = start==null? LocalDate.now().withDayOfMonth(1).atStartOfDay(): start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
-		for (int i = 1; i <= numberOfPeriodsPerYear; i++) {
+		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
+		while (endDate.isAfter(startDateTime)) {
 			SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
 			subAccountingPeriod.setAccountingPeriod(ap);
-			subAccountingPeriod.setStartDate(Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			startDate = startDate.plusMonths(12 / numberOfPeriodsPerYear);
-			subAccountingPeriod.setEndDate(Date
-					.from(startDate.atTime(LocalTime.MIN).minusNanos(1).atZone(ZoneId.systemDefault()).toInstant()));
+			subAccountingPeriod.setStartDate(Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+			startDateTime = startDateTime.plusMonths(monthsPerPeriod);
+			if (!endDate.isAfter(startDateTime) && !regularPeriods) {
+				subAccountingPeriod.setEndDate(Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+			} else {
+				subAccountingPeriod.setEndDate(Date.from(startDateTime.minusNanos(1).atZone(ZoneId.systemDefault()).toInstant()));
+			}
 			periods.add(subAccountingPeriod);
 			create(subAccountingPeriod);
 		}
 		return periods;
 	}
+
+
+	public SubAccountingPeriod findByNumber(Integer number) {
+		try {
+			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findByNumber")
+					.setParameter("number", number).getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} of SubAccountingPeriodYear {} found", getEntityClass().getSimpleName(), number);
+			return null;
+		}
+	}
+	
+	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
+			SubAccountingPeriod subAccountingPeriod) {
+		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
+			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
+			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
+			subAccountingPeriod.setEffectiveClosedDate(null);
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
+			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
+			subAccountingPeriod.setEffectiveClosedDate(new Date());
+		}
+	}
+
+	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
+			SubAccountingPeriod subAccountingPeriod) {
+		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
+			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
+			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
+			subAccountingPeriod.setRegularUsersClosedDate(null);
+		}
+		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
+			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
+			subAccountingPeriod.setRegularUsersClosedDate(new Date());
+		}
+	}
+
 }

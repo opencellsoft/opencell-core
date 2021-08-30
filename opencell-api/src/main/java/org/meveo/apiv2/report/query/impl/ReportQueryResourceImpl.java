@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
@@ -63,8 +62,10 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     }
 
     @Override
-    public Response getReportQueries(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-        List<ReportQuery> reportQueryEntities = reportQueryApiService.list(offset, limit, sort, orderBy, filter);
+    public Response getReportQueries(Long offset, Long limit, String sort, String orderBy, String filter,
+                                     String query, String fields, Request request) {
+        List<ReportQuery> reportQueryEntities =
+                reportQueryApiService.list(offset, limit, sort, orderBy, filter, query);
         EntityTag etag = new EntityTag(Integer.toString(reportQueryEntities.hashCode()));
         CacheControl cc = new CacheControl();
         cc.setMaxAge(1000);
@@ -73,19 +74,25 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
             builder.cacheControl(cc);
             return builder.build();
         }
+        Long count = reportQueryApiService.countAllowedQueriesForUserWithFilters(query);
         ImmutableReportQuery[] reportQueriesList = reportQueryEntities
                 .stream()
-                .map(customQuery -> mapper.toResource(customQuery))
+                .map(customQuery -> {
+                    if(fields != null && !fields.isEmpty()) {
+                        return mapper.toResource(customQuery, fields);
+                    } else {
+                        return mapper.toResource(customQuery);
+                    }
+                })
                 .toArray(ImmutableReportQuery[]::new);
-        Long count = reportQueryApiService.countAllowedQueriesForUser();
-        ReportQueries reportQueries = ImmutableReportQueries.builder()
-                .addData(reportQueriesList)
+        ImmutableReportQueries reportQueries = ImmutableReportQueries.builder()
                 .offset(offset)
+                .addData(reportQueriesList)
                 .limit(limit)
                 .total(count)
                 .build()
                 .withLinks(new LinkGenerator.PaginationLinkGenerator(ReportQueryResource.class)
-                        .offset(offset).limit(limit).total(count).build());
+                .offset(offset).limit(limit).total(count).build());
         return Response.ok().cacheControl(cc).tag(etag).entity(reportQueries).build();
     }
 
@@ -182,10 +189,18 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Override
     public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
-        reportQueryApiService.verifyReportQuery(verifyQueryInput);
-        ActionStatus result = new ActionStatus();
-        result.setStatus(ActionStatusEnum.SUCCESS);
-        result.setMessage("New query");
+    	 ActionStatus result=reportQueryApiService.verifyReportQuery(verifyQueryInput);
         return Response.ok(result).build();
+    }
+
+    @Override
+    public Response update(Long id, ReportQueryInput resource) {
+        validateResource(resource);
+        ReportQuery entity = reportQueryApiService.update(id, mapper.toEntity(resource))
+                .orElseThrow(() -> new NotFoundException("The query with id " + id + " does not exists"));
+        return Response
+                .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .entity(mapper.toResource(entity))
+                .build();
     }
 }
