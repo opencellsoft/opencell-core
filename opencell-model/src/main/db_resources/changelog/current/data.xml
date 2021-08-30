@@ -4711,7 +4711,7 @@ public class SubscriptionImportScript extends Script {
         </insert>
 	</changeSet>
 	
-	<changeSet id="#INTRD-292_20210826" author="HatimOUDAD">
+	<changeSet id="#INTRD-292_20210816" author="HatimOUDAD">
         <insert tableName="journal">
             <column name="id" valueNumeric="-1"/>
             <column name="version" valueNumeric="0"/>
