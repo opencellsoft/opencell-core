@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.postgresql;
 
 import java.util.List;
 

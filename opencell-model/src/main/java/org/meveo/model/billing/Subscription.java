@@ -37,6 +37,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -400,7 +401,8 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Initial subscription renewal configuration
      */
-    @Column(name = "initial_renewal", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "initial_renewal")
     private String initialSubscriptionRenewal;
 
     /**

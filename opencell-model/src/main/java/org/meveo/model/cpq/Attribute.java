@@ -78,7 +78,7 @@ public class Attribute extends EnableBusinessCFEntity{
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "priority", columnDefinition = "int DEFAULT 0")
+    @Column(name = "priority")
     private Integer priority = 0;
      
     

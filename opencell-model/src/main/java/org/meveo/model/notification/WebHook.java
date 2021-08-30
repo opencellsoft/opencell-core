@@ -23,12 +23,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
+import org.hibernate.annotations.Type;
 import org.meveo.model.ModuleItem;
 
 /**
@@ -85,7 +95,7 @@ public class WebHook extends Notification {
     /**
      * Password
      */
-    @Column(name = "password", length = 255)
+    @Column(name = "pswd", length = 255)
     @Size(max = 255)
     private String password;
 
@@ -99,9 +109,10 @@ public class WebHook extends Notification {
     /**
      * A list of expressions to construct request headers
      */
+    @Type(type = "longText")
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notif_webhook_header")
-    @Column(name = "headers", columnDefinition = "TEXT" )
+    @Column(name = "headers" )
     @MapKeyColumn(name="headers_key")
     private Map<String, String> headers = new HashMap<>();
 

@@ -1,4 +1,4 @@
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.postgresql;
 
 import java.util.List;
 

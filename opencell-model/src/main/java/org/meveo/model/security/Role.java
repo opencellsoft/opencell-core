@@ -47,6 +47,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -74,8 +75,9 @@ import org.meveo.model.admin.SecuredEntity;
         @Parameter(name = "sequence_name", value = "adm_role_seq"), })
 @NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r LEFT JOIN r.securedEntities Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
-				        @QueryHint(name = "org.hibernate.cacheable", value = "true")})})
+//				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r LEFT JOIN r.securedEntities Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
+    @NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r  Where r.name IN (:currentUserRoles) ", hints = {
+    @QueryHint(name = "org.hibernate.cacheable", value = "true")})})
 public class Role extends AuditableCFEntity implements IReferenceEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
@@ -120,7 +122,7 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
     @CollectionTable(name = "adm_role_secured_entity", joinColumns = { @JoinColumn(name = "role_id") })
     @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
             @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)),
-            @AttributeOverride(name = "disabled", column = @Column(name = "disable", columnDefinition = "boolean") ) })
+            @AttributeOverride(name = "disabled", column = @Column(name = "disable") ) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
     public String getName() {

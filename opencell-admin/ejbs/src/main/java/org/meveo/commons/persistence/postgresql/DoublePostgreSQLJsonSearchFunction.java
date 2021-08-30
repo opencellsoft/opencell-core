@@ -16,30 +16,30 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.postgresql;
 
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.Mapping;
-import org.hibernate.type.BooleanType;
+import org.hibernate.type.DoubleType;
 import org.hibernate.type.Type;
 
 /**
- * A search function for a Custom field of type Boolean
+ * A search function for a Custom field of type Double
  */
-public class BooleanPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
+public class DoublePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
 
     @Override
     public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return BooleanType.INSTANCE;
+        return DoubleType.INSTANCE;
     }
 
     @Override
     public String getCastType() {
-        return "boolean";
+        return "numeric(23,12)";
     }
 
     @Override
     public String getValuePropertyName() {
-        return "boolean";
+        return "double";
     }
 }

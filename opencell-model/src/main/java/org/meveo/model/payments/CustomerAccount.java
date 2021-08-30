@@ -187,7 +187,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	/**
 	 * Password
 	 */
-	@Column(name = "password", length = 10)
+	@Column(name = "pswd", length = 10)
 	@Size(max = 10)
 	private String password;
 

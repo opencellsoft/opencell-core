@@ -28,7 +28,7 @@ public class Document extends BusinessCFEntity {
      * translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
     /**
      * document type - document file type
