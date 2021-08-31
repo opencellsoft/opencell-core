@@ -151,6 +151,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
+
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRPropertiesUtil;
@@ -288,6 +290,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private Map<String, String> descriptionMap = new HashMap<>();
 
     private static int rtPaginationSize = 30000;
+    
+    private static final int MAX_RT_TO_UPDATE = 32767;
 
     @PostConstruct
     private void init() {
@@ -961,8 +965,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     for (Object[] aggregateAndRtIds : rtMassUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-                        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", rtIds).executeUpdate();
+                        for (List<Long> rtPartition : Lists.partition(rtIds, MAX_RT_TO_UPDATE)) {
+                            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                                .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", rtPartition).executeUpdate();
+                        }
                     }
 
                     for (Object[] aggregateAndRts : rtUpdates) {
