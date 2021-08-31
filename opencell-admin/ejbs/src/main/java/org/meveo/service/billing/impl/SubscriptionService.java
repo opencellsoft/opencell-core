@@ -870,7 +870,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription getLastVersionSubscription(String subCode) {
         List<Subscription> subscriptions = findListByCode(subCode);
         return subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() == null)
+                .filter(s -> s.getValidity() == null || s.getValidity().getTo() == null)
                 .findFirst()
                 .orElse(null);
     }
