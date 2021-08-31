@@ -32,7 +32,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                     Boolean.class, attributeValue, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
         } else {
             Object value = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
-            return Pattern.compile(validationPattern).matcher(value.toString()).find();
+            return value != null ? Pattern.compile(validationPattern).matcher(value.toString()).find() : true;
         }
     }
 }
