@@ -4838,9 +4838,9 @@ public class ServiceImportScript extends Script {
 		String OC_ServiceInstance_rateUntilDate = (String) recordMap.get("OC_ServiceInstance_rateUntilDate");
 		String OC_ServiceInstance_endAgreementDate = (String) recordMap.get("OC_ServiceInstance_endAgreementDate");
 
-		Date subscriptionDate = dateFormat.parse(OC_ServiceInstance_subscriptionDate);
-		Date rateUntilDate = dateFormat.parse(OC_ServiceInstance_rateUntilDate);
-		Date endAgreementDate = dateFormat.parse(OC_ServiceInstance_endAgreementDate);
+		Date subscriptionDate = StringUtils.isEmpty(OC_ServiceInstance_subscriptionDate)?null:dateFormat.parse(OC_ServiceInstance_subscriptionDate);
+		Date rateUntilDate = StringUtils.isEmpty(OC_ServiceInstance_rateUntilDate)?null:dateFormat.parse(OC_ServiceInstance_rateUntilDate);
+		Date endAgreementDate = StringUtils.isEmpty(OC_ServiceInstance_endAgreementDate)?null:dateFormat.parse(OC_ServiceInstance_endAgreementDate);
 		String OC_ServiceInstance_description = (String) recordMap.get("OC_ServiceInstance_description");
 		String OC_ServiceInstance_quantity = (String) recordMap.get("OC_ServiceInstance_quantity");
 
@@ -4857,13 +4857,24 @@ public class ServiceImportScript extends Script {
 		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
 	}
 	
+	private Date extractDate(Map<String, Object> recordMap, DateFormat dateFormat, final String key)
+			throws ParseException {
+		final String str = (String) recordMap.get(key);
+		return StringUtils.isEmpty(str)?null:dateFormat.parse(str);
+	}
+
+	
+	
 	public Object parseStringCf(String cftCode, String stringCF) {
 		
-		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
-		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
-        if (stringCF == null) {
-            return null;
+		if (StringUtils.isEmpty(stringCF)) {
+            return stringCF;
         }
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		if (cft == null) {
+            throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
+        }
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
 
 		switch (storageType) {
 		case SINGLE:
@@ -5069,13 +5080,24 @@ public class AccessImportScript extends Script {
 		CREATE, UPDATE, DELETE
 	}
 	
+	private Date extractDate(Map<String, Object> recordMap, DateFormat dateFormat, final String key)
+			throws ParseException {
+		final String str = (String) recordMap.get(key);
+		return StringUtils.isEmpty(str)?null:dateFormat.parse(str);
+	}
+
+	
+	
 	public Object parseStringCf(String cftCode, String stringCF) {
 		
-		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
-		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
-        if (stringCF == null) {
-            return null;
+		if (StringUtils.isEmpty(stringCF)) {
+            return stringCF;
         }
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		if (cft == null) {
+            throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
+        }
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
 
 		switch (storageType) {
 		case SINGLE:
@@ -5180,6 +5202,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -5202,7 +5225,7 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 public class SubscriptionImportScript extends Script {
 
-	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
 	private static final String RECORD_VARIABLE_NAME = "record";
 	private SubscriptionTerminationReasonService reasonService= (SubscriptionTerminationReasonService) getServiceInterface("SubscriptionTerminationReasonService");
 	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
@@ -5256,7 +5279,7 @@ public class SubscriptionImportScript extends Script {
 					break;
 				case TERMINATE:
 					DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
-					Date OC_terminationDate = dateFormat.parse((String) recordMap.get("OC_terminationDate"));
+					Date OC_terminationDate = extractDate(recordMap, dateFormat, "OC_terminationDate");
 					String terminationCode = (String)recordMap.get("OC_subscriptionTerminationReason_code");
 					if(terminationCode==null) {
 						throw new ValidationException("OC_subscriptionTerminationReason_code is mandatory to terminate subscription" );
@@ -5286,11 +5309,13 @@ public class SubscriptionImportScript extends Script {
 		String OC_seller_code = (String) recordMap.get("OC_seller_code");
 		String OC_offer_code = (String) recordMap.get("OC_offer_code");
 		String OC_userAccount_code = (String) recordMap.get("OC_userAccount_code");
-		Date subscriptionDate = dateFormat.parse((String) recordMap.get("OC_subscriptionDate"));
-		Date endAgreementDate = dateFormat.parse((String) recordMap.get("OC_endAgreementDate"));
+		Date subscriptionDate = extractDate(recordMap, dateFormat, "OC_subscriptionDate");
+		Date endAgreementDate = extractDate(recordMap, dateFormat, "OC_endAgreementDate");
+		Date OC_terminationDate = extractDate(recordMap, dateFormat, "OC_terminationDate");
+		
 		String OC_subscription_description = (String) recordMap.get("OC_subscription_description");
 
-		Date OC_terminationDate = dateFormat.parse((String) recordMap.get("OC_terminationDate"));
+		
 
 		UserAccount userAccount = userAccountService.findByCode(OC_userAccount_code);
 		if(userAccount==null) {
@@ -5319,13 +5344,22 @@ public class SubscriptionImportScript extends Script {
 		CREATE, UPDATE, SUSPEND, RESUME, ACTIVATE, TERMINATE
 	}
 	
+	private Date extractDate(Map<String, Object> recordMap, DateFormat dateFormat, final String key)
+			throws ParseException {
+		final String str = (String) recordMap.get(key);
+		return StringUtils.isEmpty(str)?null:dateFormat.parse(str);
+	}
+	
 	public Object parseStringCf(String cftCode, String stringCF) {
-		
-		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
-		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
-        if (stringCF == null) {
-            return null;
+		if (StringUtils.isEmpty(stringCF)) {
+            return stringCF;
         }
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		if (cft == null) {
+            throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
+        }
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+        
 
 		switch (storageType) {
 		case SINGLE:
