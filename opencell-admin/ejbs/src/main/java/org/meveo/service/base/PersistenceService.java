@@ -614,6 +614,29 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+     * List entities limiting by max result, optionally filtering by its enable/disable status
+     *
+     * @param active True to retrieve enabled entities only, False to retrieve disabled entities only. Do not provide any value to retrieve all entities.
+     * @param maxResult Maximum result to retrieve
+     * @return A list of entities
+     */
+    @SuppressWarnings("unchecked")
+    public List<E> list(Boolean active, Integer maxResult) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addBooleanCriterion("disabled", !active);
+        }
+        if (BusinessEntity.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addOrderCriterionAsIs("code", true);
+        } else {
+            queryBuilder.addOrderCriterionAsIs("id", true);
+        }
+        Query query = queryBuilder.getQuery(getEntityManager()).setMaxResults(maxResult);
+        return query.getResultList();
+    }
+
+    /**
      * Find entities by code - wild match.
      *
      * @param wildcode code to match

@@ -61,7 +61,7 @@
         </hftl:entityPopup>
 
         <hftl:entityPopup id="searchOfferPopup" header="#{messages['offerTemplate.search']}" backingBean="#{offerTemplateBean}" dataModel="#{offerTemplateBean.listActive()}"
-            updateField=":searchForm" width="1000" selection="#{ratedTransactionListBean.filters['priceplan.offerTemplate']}" searchField1Label="#{messages['businessEntity.code']}"
+            updateField=":searchForm" width="1000" selection="#{ratedTransactionListBean.filters['offerTemplate']}" searchField1Label="#{messages['businessEntity.code']}"
             searchField1="code" searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}"
             searchField3="validity.from" searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}"
             column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity"
@@ -85,7 +85,7 @@
 
             <hftl:searchField label="#{messages['walletOperation.subscription']}" id="subscriptionId" field="subscription" valueLabelField="code" popup="true"
                 popupId="subscriptionPopup" />
-            <hftl:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId" field="priceplan.offerTemplate" valueLabelField="code" popup="true"
+            <hftl:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId" field="offerTemplate" valueLabelField="code" popup="true"
                 popupId="searchOfferPopup" />
             <hftl:searchField label="#{messages['walletOperation.service']}" id="serviceInstance" field="serviceInstance.serviceTemplate" valueLabelField="code"
                 popup="true" popupId="searchServiceInstancePopup" />
@@ -108,7 +108,7 @@
             <hftl:searchField label="#{messages['ratedTransaction.startDate']}" field="startDate" />
             <hftl:searchField label="#{messages['ratedTransaction.endDate']}" field="endDate" />
             <hftl:searchField label="#{messages['ratedTransaction.status']}" field="status" />
-
+            <hftl:searchField label="#{messages['ratedTransaction.orderId']}" field="orderNumber" />
         </hftl:searchPanel>
         <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false" exportButton="true" exportXlsxButton="false">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
@@ -124,6 +124,7 @@
             <hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
             <hftl:column label="#{messages['ratedTransaction.startDate']}" field="startDate" isDate="true" />
             <hftl:column label="#{messages['ratedTransaction.endDate']}" field="endDate" isDate="true" />
+            <hftl:column label="#{messages['ratedTransaction.orderId']}" field="orderNumber"/>
             <p:column>
                 <f:facet name="header">
                     <h:outputText value="#{messages['invoice.invoiceNumber']}" />

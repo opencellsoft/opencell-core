@@ -133,7 +133,6 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
 
         log.trace("Adding/updating tenant {} to Tenant cache of Provider {}", provider.getCode(), currentUser.getProviderCode());
 
-        log.error("AKK provider update test 11");
         
         if (provider.getCurrency() != null) {
             provider.getCurrency().getCurrencyCode();
@@ -152,43 +151,27 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
         }
         provider.getPaymentMethods().size();
 
-        log.error("AKK provider update test 12");
         provider = PersistenceUtils.initializeAndUnproxy(provider);
 
-
-        log.error("AKK provider update test 13");
         Provider providerCopy = new Provider();
         try {
-
-            log.error("AKK provider update test 14");
             BeanUtils.copyProperties(providerCopy, provider);
 
-            log.error("AKK provider update test 15");
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to update appProvider fields");
         }
 
-        log.error("AKK provider update test 16");
         providerCopy.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
         providerCopy.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
         providerCopy.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         providerCopy.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         providerCopy.setPaymentMethods(provider.getPaymentMethods());
         
-
-        log.error("AKK provider update test 17");
         providerCopy.setCfValues(provider.getCFValuesCopy());
         
-
-        log.error("AKK provider update test 18");
         // detach(provider);
 
-
-        //log.error("AKK provider update test 19 datasetForGui is null {}", providerCopy.getCfValues().getValuesByCode().get("MIGRATION_MATRIX").get(0).getDatasetForGUI() == null);
-        
         tenants.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(currentUser.getProviderCode() == null ? "null" : currentUser.getProviderCode(), providerCopy);
-
-        log.error("AKK provider update test 20");
     }
 
     /**
