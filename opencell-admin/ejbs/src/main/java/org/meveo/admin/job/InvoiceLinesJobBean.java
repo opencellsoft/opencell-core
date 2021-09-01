@@ -189,7 +189,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             try {
-                InvoiceLine invoiceLine = linesFactory.create(record, aggregationConfiguration);
+                InvoiceLine invoiceLine = linesFactory.create(record, aggregationConfiguration, result);
                 invoiceLinesService.create(invoiceLine);
                 invoiceLine = invoiceLinesService.retrieveIfNotManaged(invoiceLine);
                 iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
