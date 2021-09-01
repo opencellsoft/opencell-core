@@ -18,17 +18,26 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
+import org.meveo.model.quote.QuoteVersion;
 
 /**
  * The Class AccountingArticlePrices.
@@ -84,13 +93,62 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
 		accountingArticlePrices=new ArrayList<PriceDTO>();
-		for(QuotePrice quotePrice:quoteArticleline.getQuotePrices()) {
-			accountingArticlePrices.add(new PriceDTO(quotePrice));
-		}
-		
+		Map<BigDecimal, List<QuotePrice>> pricesPerTaux = quoteArticleline.getQuotePrices().stream()
+                .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
+		 BigDecimal quoteTotalAmount = BigDecimal.ZERO;
+	        for (BigDecimal taux: pricesPerTaux.keySet()) {
+
+	            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
+	                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+
+	            List<PriceDTO> prices = pricesPerType
+	                    .keySet()
+	                    .stream()
+	                    .map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), null, PriceLevelEnum.PRODUCT))
+	                    .filter(Optional::isPresent)
+	                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+
+	            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
+	        }
 	}
 	
-	
+	 private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
+	    	if(pricesPerType.get(key).size()==1){
+	    		QuotePrice accountingArticlePrice =pricesPerType.get(key).get(0);
+	    		QuotePrice quotePrice = new QuotePrice();
+	            quotePrice.setPriceTypeEnum(key);
+	            quotePrice.setPriceLevelEnum(level);
+	            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
+	            quotePrice.setQuoteOffer(quoteOffer);
+	            quotePrice.setTaxAmount(accountingArticlePrice.getTaxAmount());
+	            quotePrice.setAmountWithTax(accountingArticlePrice.getAmountWithTax());
+	            quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
+	            quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
+	            quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
+	            quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
+	            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
+	            return Optional.of(quotePrice);
+	    	}
+	    	return pricesPerType.get(key).stream().reduce((a, b) -> {
+	    		QuotePrice quotePrice = new QuotePrice();
+	            quotePrice.setPriceTypeEnum(key);
+	            quotePrice.setPriceLevelEnum(level);
+	            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
+	            quotePrice.setQuoteOffer(quoteOffer);
+	            quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
+	            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
+	            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
+	            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
+	            quotePrice.setTaxRate(a.getTaxRate());
+	            if(a.getRecurrenceDuration()!=null) {
+	            	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
+	            }
+	            if(a.getRecurrencePeriodicity()!=null) {
+	            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
+	            }
+	            return quotePrice;
+	        });
+	    }
 
 	public AccountingArticlePricesDTO() {
 		super();
