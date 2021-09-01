@@ -5956,7 +5956,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="offer_template_category_id" type="bigint" />
-            <column name="level" type="int" />
+            <column name="order_level" type="int" />
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}">
