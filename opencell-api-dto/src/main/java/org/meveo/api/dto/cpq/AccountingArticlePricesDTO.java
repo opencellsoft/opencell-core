@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
+import org.meveo.common.UtilsDto;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
@@ -113,7 +114,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	}
 	
 	 private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
-	    	if(pricesPerType.get(key).size()==1){
+	    	if(pricesPerType.get(key) != null && pricesPerType.get(key).size()==1){
 	    		QuotePrice accountingArticlePrice =pricesPerType.get(key).get(0);
 	    		QuotePrice quotePrice = new QuotePrice();
 	            quotePrice.setPriceTypeEnum(key);
@@ -129,25 +130,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
 	            return Optional.of(quotePrice);
 	    	}
-	    	return pricesPerType.get(key).stream().reduce((a, b) -> {
-	    		QuotePrice quotePrice = new QuotePrice();
-	            quotePrice.setPriceTypeEnum(key);
-	            quotePrice.setPriceLevelEnum(level);
-	            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
-	            quotePrice.setQuoteOffer(quoteOffer);
-	            quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
-	            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
-	            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
-	            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-	            quotePrice.setTaxRate(a.getTaxRate());
-	            if(a.getRecurrenceDuration()!=null) {
-	            	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
-	            }
-	            if(a.getRecurrencePeriodicity()!=null) {
-	            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
-	            }
-	            return quotePrice;
-	        });
+	    	return UtilsDto.reducePrices(key, pricesPerType, PriceLevelEnum.PRODUCT, quoteVersion, quoteOffer);
 	    }
 
 	public AccountingArticlePricesDTO() {
