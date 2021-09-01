@@ -9683,7 +9683,7 @@ public class OrderAdvancement extends ModuleScript {
     	
     </changeSet>
     
-    <changeSet id="#5595_540582_20210528" author="TarikFA">
+    <changeSet id="#5595_540582_20210528" author="TarikFA.">
     	 <dropColumn tableName="cpq_attribute">
             <column name="sequence"/>
         </dropColumn>
