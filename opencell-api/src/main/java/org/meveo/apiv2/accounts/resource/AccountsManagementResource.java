@@ -32,7 +32,7 @@ public interface AccountsManagementResource {
                     @ApiResponse(responseCode = "204", description = "Success, no return data"),
                     @ApiResponse(responseCode = "200", description = "Success (in case of moved WO/RT) Returns the ids of moved WO/RT"),
                     @ApiResponse(responseCode = "404", description = "Either Customer Account or Customer not found"),
-                    @ApiResponse(responseCode = "403", description = "Cannot move subscription") })
+                    @ApiResponse(responseCode = "409", description = "Cannot move subscription") })
     Response transferSubscription(@Parameter(description = "The subscription code", required = true) @PathParam("subscriptionCode") String subscriptionCode,
             @Parameter(description = "Consumer id or code", required = true) ConsumerInput consumerInput,
             @Parameter(description = "Open transactions action ") @DefaultValue("NONE") @QueryParam("openTransactionsAction") OpenTransactionsActionEnum action);
@@ -41,9 +41,7 @@ public interface AccountsManagementResource {
      * Change a payer account's parent using API to attach it to an other account.
      *
      * @param customerAccountCode The customer account's code or id
-     * @param id The parent customer id
-     * @param code The parent customer code
-     * @return counter instances.
+     * @param parentInput The parent customer code or id
      */
     @POST
     @Path("/customerAccounts/{customerAccountCode}/moving")

@@ -143,7 +143,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 * rule El
 	 */
 	@Size(max = 2000)
-    @Column(name = "rule_el", columnDefinition = "TEXT")
+    @Column(name = "rule_el")
 	private String ruleEl;
 	
 	

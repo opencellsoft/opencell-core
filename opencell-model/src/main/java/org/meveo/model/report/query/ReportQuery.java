@@ -34,11 +34,19 @@ public class ReportQuery extends BusinessEntity {
     private List<String> fields;
 
     @Type(type = "json")
-    @Column(name = "filters", columnDefinition = "text")
+    @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, String> filters;
 
-    @Column(name = "generated_query", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "generated_query")
     private String generatedQuery;
+
+    @Column(name = "sort_by")
+    private String sortBy;
+
+    @Enumerated(value = STRING)
+    @Column(name = "sort_order", length = 15)
+    private SortOrderEnum sortOrder;
 
     public String getTargetEntity() {
         return targetEntity;
@@ -78,5 +86,21 @@ public class ReportQuery extends BusinessEntity {
 
     public void setGeneratedQuery(String generatedQuery) {
         this.generatedQuery = generatedQuery;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
+
+    public SortOrderEnum getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(SortOrderEnum sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

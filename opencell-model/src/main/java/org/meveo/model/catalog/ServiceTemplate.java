@@ -24,30 +24,26 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -108,8 +104,8 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
     /**
      * Long description
      */
-    @Size(max = 2000)
-    @Column(name = "long_description", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "long_description")
     private String longDescription;
 
     /**
@@ -197,7 +193,7 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 	
 

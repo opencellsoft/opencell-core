@@ -54,43 +54,43 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
     /**
      * Lifetime of inactive subscription
      */
-    @Column(name = "inactive_subscription_life", columnDefinition = "int default 5")
+    @Column(name = "inactive_subscription_life")
     private int inactiveSubscriptionLife = 5;
 
     /**
      * Lifetime of inactive order
      */
-    @Column(name = "inactive_order_life", columnDefinition = "int default 10")
+    @Column(name = "inactive_order_life")
     private int inactiveOrderLife = 10;
 
     /**
      * Lifetime of invoice
      */
-    @Column(name = "invoice_life", columnDefinition = "int default 10")
+    @Column(name = "invoice_life")
     private int invoiceLife = 10;
 
     /**
      * Lifetime of account operations
      */
-    @Column(name = "accounting_life", columnDefinition = "int default 10")
+    @Column(name = "accounting_life")
     private int accountingLife = 10;
 
     /**
      * Lifetime of customer prospect
      */
-    @Column(name = "customer_profile_life", columnDefinition = "int default 3")
+    @Column(name = "customer_profile_life")
     private int customerProspectLife = 3;
 
     /**
      * Lifetime of communication
      */
-    @Column(name = "mailing_life", columnDefinition = "int default 3")
+    @Column(name = "mailing_life")
     private int mailingLife = 3;
 
     /**
      * Lifetime of unpaid Account operation
      */
-    @Column(name = "ao_check_unpaid_life", columnDefinition = "int default 3")
+    @Column(name = "ao_check_unpaid_life")
     private int aoCheckUnpaidLife = 3;
 
     /**

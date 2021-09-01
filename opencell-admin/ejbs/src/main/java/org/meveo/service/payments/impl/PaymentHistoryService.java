@@ -39,8 +39,8 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     private AccountOperationService accountOperationService;
 	
 
-    @JpaAmpNewTx   
-    public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
+    @JpaAmpNewTx
+    public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
     	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
     	if(aoIdsToPay != null) {
@@ -48,12 +48,12 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         		aoToPay.add(accountOperationService.findById(aoId));
             }
     	}
-    	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
+    	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, externalPaymentId, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
     }
     
 	@JpaAmpNewTx
 	public void addHistoryAOs(CustomerAccount customerAccount, Payment payment, Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage,
-			PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
+			String externalPaymentId, PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
 			throws BusinessException {
 		PaymentHistory paymentHistory = new PaymentHistory();
 		paymentHistory.setCustomerAccountCode(customerAccount.getCode());
@@ -69,7 +69,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		paymentHistory.setErrorCode(errorCode);
 		paymentHistory.setErrorMessage(errorMessage);
 		paymentHistory.setErrorType(errorType);
-		paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
+		paymentHistory.setExternalPaymentId(externalPaymentId);
 		paymentHistory.setOperationCategory(payment != null ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT );
 		paymentHistory.setSyncStatus(status);
 		paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
@@ -98,7 +98,14 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		}
 
 		for (AccountOperation ao : aoToPay) {
+			if (ao.getPaymentHistories() == null) {
+				ao.setPaymentHistories(new ArrayList<>());
+			}
 			ao.getPaymentHistories().add(paymentHistory);
+
+			if (paymentHistory.getListAoPaid() == null) {
+				paymentHistory.setListAoPaid(new ArrayList<>());
+			}
 			paymentHistory.getListAoPaid().add(ao);
 		}
 		super.create(paymentHistory);

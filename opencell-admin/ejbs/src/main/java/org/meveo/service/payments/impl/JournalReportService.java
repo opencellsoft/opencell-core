@@ -16,30 +16,32 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.service.payments.impl;
 
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.type.LongType;
-import org.hibernate.type.Type;
+import java.util.List;
 
-/**
- * A search function for a Custom field of type Long
- */
-public class LongPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
+import javax.ejb.Stateless;
+import javax.persistence.Query;
 
-    @Override
-    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return LongType.INSTANCE;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Country;
+import org.meveo.model.payments.Journal;
+import org.meveo.service.base.BusinessService;
+
+
+@Stateless
+public class JournalReportService extends BusinessService<Journal> {
+	
+	/**
+     * @return list of journals
+     * @see org.meveo.service.base.PersistenceService#list()
+     */
+    @SuppressWarnings("unchecked")
+    public List<Journal> list() {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        queryBuilder.addOrderCriterion("a.description", true);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
     }
 
-    @Override
-    public String getCastType() {
-        return "bigInt";
-    }
-
-    @Override
-    public String getValuePropertyName() {
-        return "long";
-    }
 }

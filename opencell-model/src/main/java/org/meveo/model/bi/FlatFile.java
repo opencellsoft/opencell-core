@@ -19,6 +19,7 @@ package org.meveo.model.bi;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.FileFormat;
 
@@ -28,6 +29,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -87,7 +89,8 @@ public class FlatFile extends BusinessEntity {
     /**
      * Rejection reason
      */
-    @Column(name = "error_message", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "error_message")
     private String errorMessage;
 
     /**

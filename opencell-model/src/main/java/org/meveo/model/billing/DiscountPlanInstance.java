@@ -33,6 +33,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -104,14 +105,15 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     protected CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     protected CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -337,7 +339,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
             this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
             return;
         }
-        if (now.after(start) && now.before(end)) {
+        if (now.after(start) && ( end == null || now.before(end))) {
             this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
             return;
         }

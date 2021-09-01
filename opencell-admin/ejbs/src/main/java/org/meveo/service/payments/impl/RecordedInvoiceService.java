@@ -66,6 +66,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     @Inject
     private OCCTemplateService occTemplateService;
 
+    @Inject
+    private AccountOperationService accountOperationService;
+
     /**
      * @param recordedInvoiceId recored invoice id
      * @throws BusinessException business exception
@@ -347,7 +350,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
             // Link the recorded invoice to subscription
             recordedInvoice.setSubscription(invoice.getSubscription());
-
+            recordedInvoice.setJournal(occTemplate.getJournal());
             create(recordedInvoice);
 
             for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
@@ -358,6 +361,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
+    }
+    
+    @Override
+    public void create(RecordedInvoice entity) throws BusinessException {
+        accountOperationService.handleAccountingPeriods(entity);
+        super.create(entity);
     }
 
     @SuppressWarnings("unchecked")

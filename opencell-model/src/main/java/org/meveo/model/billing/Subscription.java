@@ -37,6 +37,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -81,6 +82,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
@@ -399,7 +401,8 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Initial subscription renewal configuration
      */
-    @Column(name = "initial_renewal", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "initial_renewal")
     private String initialSubscriptionRenewal;
 
     /**
@@ -432,6 +435,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     @Transient
     private List<InvoiceLine> minInvoiceLines;
+    
+    /**
+     * Commercial offer attached to the subscription
+     */ 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_offer_id",referencedColumnName = "id")
+    private OrderOffer orderOffer;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -1166,4 +1177,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 	public void setPrestation(String prestation) {
 		this.prestation = prestation;
 	}
+
+	public OrderOffer getOrderOffer() {
+		return orderOffer;
+	}
+
+	public void setOrderOffer(OrderOffer orderOffer) {
+		this.orderOffer = orderOffer;
+	}
+	
 }

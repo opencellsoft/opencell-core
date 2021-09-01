@@ -16,30 +16,30 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.oracle;
 
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.Mapping;
-import org.hibernate.type.DoubleType;
+import org.hibernate.type.DateType;
 import org.hibernate.type.Type;
 
 /**
- * A search function for a Custom field of type Double
+ * A search function for a Custom field of type Date
  */
-public class DoublePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
+public class DateOracleJsonSearchFunction extends OracleJsonSearchFunction {
 
     @Override
     public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return DoubleType.INSTANCE;
+        return DateType.INSTANCE;
     }
 
     @Override
     public String getCastType() {
-        return "numeric(23,12)";
+        return "timestamp";
     }
 
     @Override
     public String getValuePropertyName() {
-        return "double";
+        return "date";
     }
 }

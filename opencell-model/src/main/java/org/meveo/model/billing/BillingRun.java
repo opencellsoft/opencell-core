@@ -27,6 +27,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -249,7 +250,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Selected billing accounts (identifiers)
      */
-    @Column(name = "selected_billing_accounts", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "selected_billing_accounts")
     private String selectedBillingAccounts;
 
     /**
@@ -274,14 +276,15 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -312,6 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * To decide whether or not dates should be recomputed at invoice validation.
      */
+    @Type(type = "numeric_boolean")
     @Column(name = "compute_dates_validation")
     private Boolean computeDatesAtValidation;
 
@@ -355,7 +359,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Filtering option used in exceptional billing run.
      */
     @Type(type = "json")
-    @Column(name = "filters", columnDefinition = "text")
+    @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, String> filters;
 
     @Transient
@@ -363,6 +367,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Transient
     private List<Long> exceptionalILIds;
+    
+    /**
+     * Invoice type
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
+
+    /**
+     * Billing run type
+     */
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "run_type")
+    private BillingRunTypeEnum runType;
+
 
 
     public BillingRun getNextBillingRun() {
@@ -862,4 +881,20 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setExceptionalILIds(List<Long> exceptionalILIds) {
         this.exceptionalILIds = exceptionalILIds;
     }
+
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	public BillingRunTypeEnum getRunType() {
+		return runType;
+	}
+
+	public void setRunType(BillingRunTypeEnum runType) {
+		this.runType = runType;
+	}
 }

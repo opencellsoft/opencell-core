@@ -31,6 +31,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -260,28 +261,32 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate amount without tax
      */
-    @Column(name = "amount_without_tax_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "amount_without_tax_el")
     @Size(max = 2000)
     private String amountWithoutTaxEL;
 
     /**
      * Expression to calculate amount without tax - for Spark
      */
-    @Column(name = "amount_without_tax_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "amount_without_tax_el_sp")
     @Size(max = 2000)
     private String amountWithoutTaxELSpark;
 
     /**
      * Expression to calculate amount with tax
      */
-    @Column(name = "amount_with_tax_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "amount_with_tax_el")
     @Size(max = 2000)
     private String amountWithTaxEL;
 
     /**
      * Expression to calculate amount with tax - for Spark
      */
-    @Column(name = "amount_with_tax_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "amount_with_tax_el_sp")
     @Size(max = 2000)
     private String amountWithTaxELSpark;
 
@@ -302,7 +307,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "priority", columnDefinition = "int DEFAULT 1")
+    @Column(name = "priority")
     private int priority = 1;
 
     /**
@@ -336,28 +341,32 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
-    @Column(name = "wo_description_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "wo_description_el")
     @Size(max = 2000)
     private String woDescriptionEL;
 
-    @Column(name = "wo_description_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "wo_description_el_sp")
     @Size(max = 2000)
     private String woDescriptionELSpark;
     
     /**
      * Expression to calculate price with/without tax. It overrides quantity x unitPrice when set.
      */
-    @Column(name = "total_amount_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "total_amount_el")
     @Size(max = 2000)
     private String totalAmountEL;
     
     /**
      * Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark.
      */
-    @Column(name = "total_amount_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "total_amount_el_sp")
     @Size(max = 2000)
     private String totalAmountELSpark;
     
@@ -365,7 +374,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	 * Minimum allowed amount for a walletOperation. If this amount is less than the
 	 * walletOperation this amount is save and the old value is save in rawAmount.
 	 */
-    @Column(name = "minimum_amount_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "minimum_amount_el")
     @Size(max = 2000)
     private String minimumAmountEL;
     
@@ -373,11 +383,13 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	 * Minimum allowed amount for a walletOperation. If this amount is less than the
 	 * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
 	 */
-    @Column(name = "minimum_amount_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "minimum_amount_el_sp")
     @Size(max = 2000)
     private String minimumAmountELSpark;
 
-    @Column(name = "invoice_subcategory_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "invoice_subcategory_el")
     @Size(max = 2000)
     private String invoiceSubCategoryEL;
 
@@ -392,21 +404,21 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * An El expression used to override wallet operation's parameter1El.
      */
-    @Column(name = "parameter1_el", columnDefinition = "TEXT")
+    @Column(name = "parameter1_el")
     @Size(max = 2000)
     private String parameter1El;
 
     /**
      * An El expression used to override wallet operation's parameter2El.
      */
-    @Column(name = "parameter2_el", columnDefinition = "TEXT")
+    @Column(name = "parameter2_el")
     @Size(max = 2000)
     private String parameter2El;
 
     /**
      * An El expression used to override wallet operation's parameter3El.
      */
-    @Column(name = "parameter3_el", columnDefinition = "TEXT")
+    @Column(name = "parameter3_el")
     @Size(max = 2000)
     private String parameter3El;
     

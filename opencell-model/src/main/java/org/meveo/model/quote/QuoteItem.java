@@ -28,6 +28,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -37,6 +38,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -82,7 +84,8 @@ public class QuoteItem extends BaseEntity {
     /**
      * Serialized quoteItem dto
      */
-    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "source", nullable = false)
     private String source;
 
     /**

@@ -15,31 +15,43 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.admin.action.payments;
 
-package org.meveo.commons.persistence;
 
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.type.DateType;
-import org.hibernate.type.Type;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-/**
- * A search function for a Custom field of type Date
- */
-public class DatePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
+import org.meveo.admin.action.BaseBean;
+import org.meveo.model.payments.Journal;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.JournalReportService;
 
-    @Override
-    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return DateType.INSTANCE;
-    }
 
-    @Override
-    public String getCastType() {
-        return "timestamp";
-    }
+@Named
+@ViewScoped
+public class JournalBean extends BaseBean<Journal> {
 
-    @Override
-    public String getValuePropertyName() {
-        return "date";
-    }
+	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private JournalReportService journalService;
+
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public JournalBean() {
+		super(Journal.class);
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "description";
+	}
+
+	@Override
+	protected IPersistenceService<Journal> getPersistenceService() {
+		return journalService;
+	}
 }

@@ -196,7 +196,7 @@ public class PaymentApi extends BaseApi {
             paymentHistoryService.addHistory(customerAccount,
             		payment,
     				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
-    				PaymentStatusEnum.ACCEPTED, null, null, null, null,
+    				PaymentStatusEnum.ACCEPTED, null, null, payment.getReference(), null, null,
     				null,null,paymentDto.getListAoIdsForMatching());            
         } else {
             log.info("no matching created ");

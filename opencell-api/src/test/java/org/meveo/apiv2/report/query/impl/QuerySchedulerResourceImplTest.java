@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
@@ -25,6 +26,8 @@ import org.meveo.apiv2.report.query.service.QuerySchedulerApiService;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.ReportQuery;
+import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.report.QuerySchedulerService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -45,6 +48,12 @@ public class QuerySchedulerResourceImplTest {
 
     @Mock
     private Request request;
+
+    @Mock
+    private JobInstanceService jobInstanceService;
+
+    @Mock
+    private QuerySchedulerService querySchedulerService;
 
     @Before
     public void setUp() {

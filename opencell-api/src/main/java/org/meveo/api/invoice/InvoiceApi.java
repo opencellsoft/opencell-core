@@ -71,6 +71,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -542,6 +543,21 @@ public class InvoiceApi extends BaseApi {
         handleMissingParameters();
        Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
         return invoice.getInvoiceNumber();
+    }
+
+    /**
+     *
+     * @param invoiceId invoice id
+     *
+     * @return invoice number.
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws BusinessException business exception
+     */
+    public String validateInvoice(Invoice invoice) throws BusinessException {
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+        Invoice validatedInvoice = serviceSingleton.assignInvoiceNumber(invoice, true);
+        return validatedInvoice.getInvoiceNumber();
     }
 
     /**

@@ -21,7 +21,6 @@ package org.meveo.model.persistence;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import org.hibernate.type.descriptor.ValueExtractor;
 import org.hibernate.type.descriptor.WrapperOptions;
@@ -31,11 +30,6 @@ import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 
 @SuppressWarnings("serial")
 public abstract class AbstractJsonSqlTypeDescriptor implements SqlTypeDescriptor {
-
-    @Override
-    public int getSqlType() {
-        return Types.OTHER;
-    }
 
     @Override
     public boolean canBeRemapped() {

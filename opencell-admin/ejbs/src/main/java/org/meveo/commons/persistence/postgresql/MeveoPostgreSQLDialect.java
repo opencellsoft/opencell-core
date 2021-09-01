@@ -16,7 +16,9 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.postgresql;
+
+import java.sql.Types;
 
 import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
@@ -37,8 +39,8 @@ import org.hibernate.dialect.function.StandardSQLFunction;
  * @author M.ELAZZOUZI
  *
  */
-public class MeveoSQLDialect extends PostgreSQL94Dialect {
-    public MeveoSQLDialect() {
+public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
+    public MeveoPostgreSQLDialect() {
         super();
         registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
         registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
@@ -47,5 +49,6 @@ public class MeveoSQLDialect extends PostgreSQL94Dialect {
         registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
         registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
         registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
+        registerColumnType(Types.BOOLEAN, "int4");
     }
 }

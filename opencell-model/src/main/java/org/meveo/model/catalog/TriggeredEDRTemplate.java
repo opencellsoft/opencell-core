@@ -23,6 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -30,6 +31,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -57,14 +59,16 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine subscription code
      */
-    @Column(name = "subscription_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "subscription_el")
     @Size(max = 2000)
     private String subscriptionEl;
 
     /**
      * Expression to determine subscription code - for Spark
      */
-    @Column(name = "subscription_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "subscription_el_sp")
     @Size(max = 2000)
     private String subscriptionElSpark;
 
@@ -78,84 +82,95 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine if EDR rule applies
      */
-    @Column(name = "condition_el", columnDefinition = "TEXT")
+    @Column(name = "condition_el")
     @Size(max = 2000)
     private String conditionEl;
 
     /**
      * Expression to determine if EDR rule applies - for Spark
      */
-    @Column(name = "condition_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "condition_el_sp")
     @Size(max = 2000)
     private String conditionElSpark;
 
     /**
      * Expression to determine quantity of new EDR
      */
-    @Column(name = "quantity_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "quantity_el")
     @Size(max = 2000)
     private String quantityEl;
 
     /**
      * Expression to determine quantity of new EDR - for Spark
      */
-    @Column(name = "quantity_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "quantity_el_sp")
     @Size(max = 2000)
     private String quantityElSpark;
 
     /**
      * Expression to determine parameter 1 of new EDR
      */
-    @Column(name = "param_1_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_1_el")
     @Size(max = 2000)
     private String param1El;
 
     /**
      * Expression to determine parameter 1 of new EDR - for Spark
      */
-    @Column(name = "param_1_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_1_el_sp")
     @Size(max = 2000)
     private String param1ElSpark;
 
     /**
      * Expression to determine parameter 2 of new EDR
      */
-    @Column(name = "param_2_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_2_el")
     @Size(max = 2000)
     private String param2El;
 
     /**
      * Expression to determine parameter 2 of new EDR - for Spark
      */
-    @Column(name = "param_2_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_2_el_sp")
     @Size(max = 2000)
     private String param2ElSpark;
 
     /**
      * Expression to determine parameter 3 of new EDR
      */
-    @Column(name = "param_3_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_3_el")
     @Size(max = 2000)
     private String param3El;
 
     /**
      * Expression to determine parameter 3 of new EDR - for Spark
      */
-    @Column(name = "param_3_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_3_el_sp")
     @Size(max = 2000)
     private String param3ElSpark;
 
     /**
      * Expression to determine parameter 4 of new EDR
      */
-    @Column(name = "param_4_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_4_el")
     @Size(max = 2000)
     private String param4El;
 
     /**
      * Expression to determine parameter 4 of new EDR - for Spark
      */
-    @Column(name = "param_4_el_sp", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "param_4_el_sp")
     @Size(max = 2000)
     private String param4ElSpark;
     
@@ -163,7 +178,8 @@ public class TriggeredEDRTemplate extends BusinessEntity {
      * Expression to compute the OpencellInstance code so the instance on which the EDR is triggered can be inferred from the Offer or whatever.
      * It overrides the value on meveoInstance.
      */
-    @Column(name = "opencell_instance_el", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "opencell_instance_el")
     @Size(max = 2000)
     private String opencellInstanceEL;
     

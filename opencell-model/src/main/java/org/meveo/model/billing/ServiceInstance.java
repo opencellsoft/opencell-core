@@ -55,6 +55,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -96,6 +97,7 @@ import java.util.stream.Collectors;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionCodeAndValidity", query = "select s from ServiceInstance s where lower(s.code) = :code and lower(s.subscription.code) = :subscriptionCode AND (s.subscription.validity is null or (s.subscription.validity.from <= :subscriptionValidityDate and  (s.subscription.validity.to is null or :subscriptionValidityDate < s.subscription.validity.to)))"),
+        @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionCode", query = "select s from ServiceInstance s where s.code = :code and s.subscription.code = :subscriptionCode"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getMinimumAmountUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
@@ -305,7 +307,8 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     /**
      * Initial service renewal configuration
      */
-    @Column(name = "initial_renewal", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "initial_renewal")
     private String initialServiceRenewal;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)

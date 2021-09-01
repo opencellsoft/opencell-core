@@ -18,7 +18,12 @@
 
 package org.meveo.admin.job;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,7 +42,17 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
@@ -46,6 +61,7 @@ import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -262,7 +278,8 @@ public class InvoicingJobBean extends BaseJobBean {
         if(filters.containsKey("SQL")) {
             queryBuilder = new QueryBuilder(filters.get("SQL"));
         } else {
-            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            FilterConverter converter = new FilterConverter(RatedTransaction.class);
+            PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
             queryBuilder = ratedTransactionService.getQuery(configuration);
         }
         return queryBuilder;

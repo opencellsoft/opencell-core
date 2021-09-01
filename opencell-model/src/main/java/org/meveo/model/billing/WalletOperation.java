@@ -35,6 +35,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -171,7 +172,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
 
     /**
@@ -330,7 +331,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "parameter_extra")
     private String parameterExtra;
 
     /**
@@ -503,14 +505,15 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -549,8 +552,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Processing error reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
-    @Size(max = 255)
+    @Type(type = "longText")
+    @Column(name = "reject_reason")
     private String rejectReason;
     
     @Embedded
