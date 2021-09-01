@@ -2534,7 +2534,7 @@ import org.meveo.service.medina.impl.AccessService;
 
 public class AccessImportScript extends Script {
 
-	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
 	private static final String RECORD_VARIABLE_NAME = "record";
 
 	private AccessService accessService = (AccessService) getServiceInterface("AccessService");
@@ -2581,7 +2581,7 @@ public class AccessImportScript extends Script {
 
 	private Access validateAndGetAccess(AccessActionEnum action, Map<String, Object> recordMap) {
 		Access access = null;
-		String OC_subscription_code = (String) recordMap.get("OC_subscription_code");
+		String OC_subscription_code = (String) recordMap.get("OC_Subscription_code");
 		String OC_Access_code = (String) recordMap.get("OC_accessPoint_code");
 		List<Access> accessList = accessService.getActiveAccessByCodeAndCodeSubscription(OC_Access_code, OC_subscription_code);
 		if (!AccessActionEnum.CREATE.equals(action)) {
@@ -2619,25 +2619,17 @@ public class AccessImportScript extends Script {
 		CREATE, UPDATE, DELETE
 	}
 	
-	private Date extractDate(Map<String, Object> recordMap, DateFormat dateFormat, final String key)
-			throws ParseException {
-		final String str = (String) recordMap.get(key);
-		return StringUtils.isEmpty(str)?null:dateFormat.parse(str);
-	}
-
-	
-	
 	public Object parseStringCf(String cftCode, String stringCF) {
 		
 		if (StringUtils.isEmpty(stringCF)) {
             return stringCF;
         }
-		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Access");
 		if (cft == null) {
-            throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
+            throw new BusinessException("No Custom Field exist on Access with code "+cftCode);
         }
 		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
-
+		
 		switch (storageType) {
 		case SINGLE:
 			return parseSingleValue(cft, stringCF);
