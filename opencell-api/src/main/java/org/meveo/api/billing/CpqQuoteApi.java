@@ -1296,7 +1296,7 @@ public class CpqQuoteApi extends BaseApi {
 
                 Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
-                //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getDescription());
                 overrideAmounts(quotePrice, recurrenceDuration);
             } else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum())){
                 UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
