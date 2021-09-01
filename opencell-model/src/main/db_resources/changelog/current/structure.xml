@@ -9302,7 +9302,7 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="cust_query" />
     </changeSet>  
-    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
+    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" failOnError="false">
         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
         <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_stop_reasons_seq" startValue="1" />
