@@ -9133,7 +9133,7 @@ public class OrderAdvancement extends ModuleScript {
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
 
-    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+    <changeSet id="#INTRD-257_20210625" author="ZBariki" failOnError="false">
         <createSequence sequenceName="cust_query_seq" startValue="1" />
         <createTable tableName="cust_query">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
