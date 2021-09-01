@@ -4748,9 +4748,10 @@ Opencell team.
             <column name="description" value="script processor to import service instances]"/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="script"><![CDATA[package org.meveo.service.script;
-            
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -4759,31 +4760,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+
 
 public class ServiceImportScript extends Script {
 
-	private static final String DATE_FORMAT_PATTERN = "dd/MM/yy";
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
 	private static final String RECORD_VARIABLE_NAME = "record";
 
 	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
 			"ServiceInstanceService");
 	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
 			"CustomFieldTemplateService");
+	private ServiceTemplateService serviceTemplateService = (ServiceTemplateService) getServiceInterface(
+			"ServiceTemplateService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(
+			"SubscriptionService");
+	private SubscriptionTerminationReasonService reasonService = (SubscriptionTerminationReasonService) getServiceInterface(
+			"SubscriptionTerminationReasonService");
 	@Override
 	public void execute(Map<String, Object> context) throws BusinessException {
 		try {
 			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
 			if (recordMap != null && !recordMap.isEmpty()) {
+				DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
 				if (!"ServiceInstance".equals(OC_ENTITY)) {
 					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
@@ -4798,11 +4814,31 @@ public class ServiceImportScript extends Script {
 				String OC_ServiceInstance_code = (String) recordMap.get("OC_ServiceInstance_code");
 				List<ServiceInstance> serviceInstances = serviceInstanceService
 						.findByCodeAndCodeSubscription(OC_ServiceInstance_code, OC_Subscription_code);
-				if (serviceInstances == null || serviceInstances.isEmpty()) {
-					throw new ValidationException("no ServiceInstanceFound for subscriptionCode/serviceInstanceCode: '"
-							+ OC_Subscription_code + "'/'" + OC_ServiceInstance_code + "'");
+				
+				ServiceInstance serviceInstance = null;
+				if (action==ServiceInstanceActionEnum.INSTANTIATE ) {
+					serviceInstance = new ServiceInstance();
+					mapServiceInstanceFields(recordMap, serviceInstance);
+					serviceInstance.setCode(OC_ServiceInstance_code);
+					Subscription subscription = subscriptionService.findByCode(OC_Subscription_code);
+					if(subscription==null) {
+						throw new ValidationException("no Subscription found with subscriptionCode: '" + OC_Subscription_code + "'");
+					}
+					serviceInstance.setSubscription(subscription );
+					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(OC_ServiceInstance_code);
+					if(serviceTemplate==null) {
+						throw new ValidationException("no serviceTemplate found with code: '" + OC_ServiceInstance_code + "'");
+					}
+					serviceInstance.setServiceTemplate(serviceTemplate);
+					serviceInstanceService.create(serviceInstance);
+				} else {
+					if (serviceInstances == null || serviceInstances.isEmpty()) {
+						throw new ValidationException("no ServiceInstanceFound for subscriptionCode/serviceInstanceCode: '"
+										+ OC_Subscription_code + "'/'" + OC_ServiceInstance_code + "'");
+					}
+					serviceInstance = serviceInstances.get(0);
 				}
-				ServiceInstance serviceInstance = serviceInstances.get(0);
+				
 
 				switch (action) {
 				case INSTANTIATE:
@@ -4818,7 +4854,14 @@ public class ServiceImportScript extends Script {
 					serviceInstanceService.serviceSuspension(serviceInstance, new Date());
 					break;
 				case TERMINATE:
-					serviceInstanceService.cancelServiceTermination(serviceInstance);
+					String terminationDate = (String) recordMap.get("OC_terminationDate");
+					Date OC_terminationDate = StringUtils.isEmpty(terminationDate) ? new Date() : dateFormat.parse(terminationDate);
+					String OC_terminationReason = (String) recordMap.get("OC_terminationReason");
+					SubscriptionTerminationReason reason = reasonService.findByCodeReason(OC_terminationReason);
+					if(reason==null) {
+						throw new ValidationException("no TerminationReason found with code: '" + OC_terminationReason + "'");
+					}
+					serviceInstanceService.terminateService(serviceInstance, OC_terminationDate, reason, serviceInstance.getOrderNumber());
 					break;
 				case UPDATE:
 					updateService(recordMap, serviceInstance);
@@ -4833,14 +4876,20 @@ public class ServiceImportScript extends Script {
 	}
 
 	private void updateService(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws Exception {
+		mapServiceInstanceFields(recordMap, serviceInstance);
+		serviceInstanceService.update(serviceInstance);
+	}
+
+	private void mapServiceInstanceFields(Map<String, Object> recordMap, ServiceInstance serviceInstance)
+			throws ParseException {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 		String OC_ServiceInstance_subscriptionDate = (String) recordMap.get("OC_ServiceInstance_subscriptionDate");
 		String OC_ServiceInstance_rateUntilDate = (String) recordMap.get("OC_ServiceInstance_rateUntilDate");
 		String OC_ServiceInstance_endAgreementDate = (String) recordMap.get("OC_ServiceInstance_endAgreementDate");
 
-		Date subscriptionDate = StringUtils.isEmpty(OC_ServiceInstance_subscriptionDate)?null:dateFormat.parse(OC_ServiceInstance_subscriptionDate);
-		Date rateUntilDate = StringUtils.isEmpty(OC_ServiceInstance_rateUntilDate)?null:dateFormat.parse(OC_ServiceInstance_rateUntilDate);
-		Date endAgreementDate = StringUtils.isEmpty(OC_ServiceInstance_endAgreementDate)?null:dateFormat.parse(OC_ServiceInstance_endAgreementDate);
+		Date subscriptionDate = StringUtils.isEmpty(OC_ServiceInstance_subscriptionDate) ? null : dateFormat.parse(OC_ServiceInstance_subscriptionDate);
+		Date rateUntilDate = StringUtils.isEmpty(OC_ServiceInstance_rateUntilDate) ? null : dateFormat.parse(OC_ServiceInstance_rateUntilDate);
+		Date endAgreementDate = StringUtils.isEmpty(OC_ServiceInstance_endAgreementDate) ? null : dateFormat.parse(OC_ServiceInstance_endAgreementDate);
 		String OC_ServiceInstance_description = (String) recordMap.get("OC_ServiceInstance_description");
 		String OC_ServiceInstance_quantity = (String) recordMap.get("OC_ServiceInstance_quantity");
 
@@ -4851,28 +4900,19 @@ public class ServiceImportScript extends Script {
 		serviceInstance.setDescription(OC_ServiceInstance_description);
 		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
 				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
-		serviceInstanceService.update(serviceInstance);
 	}
 	public enum ServiceInstanceActionEnum {
 		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
 	}
-	
-	private Date extractDate(Map<String, Object> recordMap, DateFormat dateFormat, final String key)
-			throws ParseException {
-		final String str = (String) recordMap.get(key);
-		return StringUtils.isEmpty(str)?null:dateFormat.parse(str);
-	}
-
-	
 	
 	public Object parseStringCf(String cftCode, String stringCF) {
 		
 		if (StringUtils.isEmpty(stringCF)) {
             return stringCF;
         }
-		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
 		if (cft == null) {
-            throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
+            throw new BusinessException("No Custom Field exist on ServiceInstance with code "+cftCode);
         }
 		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
 
@@ -5467,7 +5507,23 @@ public class SubscriptionImportScript extends Script {
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
-	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n          \t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" required=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n          \t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationReason\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationReason\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/services/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/services/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/services/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ServiceImportScript"}]}]]>
+            </column>
+            <column name="cf_values_accum">
+	             <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n          \t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationReason\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationReason\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
 	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
 	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
 	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
@@ -5502,15 +5558,28 @@ public class SubscriptionImportScript extends Script {
             <column name="single_node" value="1" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
-	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/output"}],
-	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" required=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" required=\"false\"/>\r\n\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_offer_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_seller_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" required=\"false\"/>\r\n\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
 	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
 	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
 	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
-	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/subscriptions/archive"}],
-	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/subscriptions/input"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/subscriptions/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/subscriptions/inputs"}],
 	            "waitingMillis":[{"long":0}],"FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
-	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],"FlatFileProcessingJob_rejectDir":[{"string":"/imports/subscriptions/reject"}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],"FlatFileProcessingJob_rejectDir":[{"string":"/imports/subscriptions/rejects"}],
+	            "nbRuns":[{"long":1}],"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionImportScript"}]}]]>
+            </column>
+            <column name="cf_values_accum">
+	             <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_offer_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_seller_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" required=\"false\"/>\r\n\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/subscriptions/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/subscriptions/inputs"}],
+	            "waitingMillis":[{"long":0}],"FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],"FlatFileProcessingJob_rejectDir":[{"string":"/imports/subscriptions/rejects"}],
 	            "nbRuns":[{"long":1}],"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionImportScript"}]}]]>
             </column>
             <column name="verbose_report" value="1" />
