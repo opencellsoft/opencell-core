@@ -1942,18 +1942,26 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case COUNT :
 			case NUMERIC :
 			case INTEGER:
+				if(quoteAttribute.get().getDoubleValue()!=null) {
 				return quoteAttribute.get().getDoubleValue(); 
+				}
+				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
 			case EXPRESSION_LANGUAGE :
 			case TEXT:	
-				return quoteAttribute.get().getStringValue(); 							
+				if(!StringUtils.isBlank(quoteAttribute.get().getStringValue())) {
+					return quoteAttribute.get().getStringValue();  
+				}							
 			case DATE:
-				return quoteAttribute.get().getDateValue();
+				if(quoteAttribute.get().getDateValue()!=null) {
+					return quoteAttribute.get().getDateValue();  
+				}
 			default:
 				break;  
 			}
-    	}
+    		}
+    	
     	return null;
     }
     
