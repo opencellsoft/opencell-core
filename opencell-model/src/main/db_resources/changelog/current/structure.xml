@@ -9212,7 +9212,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
-    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD">
+    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" failOnError="false">
     	<createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createTable tableName="query_scheduler">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
