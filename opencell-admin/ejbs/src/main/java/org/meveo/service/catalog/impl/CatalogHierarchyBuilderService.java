@@ -1268,12 +1268,8 @@ public class CatalogHierarchyBuilderService {
     
     private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
     	for (QuoteOffer quoteOffer : offers) {
-    		final var duplicate = new QuoteOffer();
+    		final var duplicate = new QuoteOffer(quoteOffer);
     		quoteOfferService.detach(quoteOffer);
-    		try {
-    			BeanUtils.copyProperties(duplicate, quoteOffer);
-    		} catch (IllegalAccessException | InvocationTargetException e) {
-    		}
     		var quoteProducts = quoteOffer.getQuoteProduct();
     		duplicate.setQuoteVersion(entity);
     		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
@@ -1286,10 +1282,6 @@ public class CatalogHierarchyBuilderService {
     	for (QuoteProduct quoteProduct : products) {
 			final var duplicate = new QuoteProduct(quoteProduct);
 			quoteProductService.detach(quoteProduct);
-			try {
-    			BeanUtils.copyProperties(duplicate, quoteProduct);
-    		} catch (IllegalAccessException | InvocationTargetException e) {
-    		}
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
 			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
 			duplicate.setQuoteOffer(offer);

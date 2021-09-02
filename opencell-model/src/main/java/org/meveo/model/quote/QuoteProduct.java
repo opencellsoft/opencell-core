@@ -105,6 +105,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.discountPlan=copy.getDiscountPlan();
 		this.quoteOffer = copy.quoteOffer;
 		this.quoteAttributes = copy.quoteAttributes;
+		this.cfValues = copy.getCfValues();
 	}
 	
 	public void update(QuoteProduct other) {
@@ -116,6 +117,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.discountPlan=other.getDiscountPlan();
 		this.quoteOffer = other.quoteOffer;
 		this.quoteAttributes = other.quoteAttributes;
+		this.cfValues = other.getCfValues();
     }
 
 	public DiscountPlan getDiscountPlan() {
