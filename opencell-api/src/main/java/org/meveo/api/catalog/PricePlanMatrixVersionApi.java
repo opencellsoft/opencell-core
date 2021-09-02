@@ -80,6 +80,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (StringUtils.isBlank(pricePlanMatrixCode)) {
             missingParameters.add("pricePlanMatrixCode");
         }
+		if (!isMatrix) {
+			if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
+				missingParameters.add("amountWithTax");
+			}
+			if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
+				missingParameters.add("amountWithoutTax");
+			}
+		}
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
 
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
@@ -155,7 +163,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             if (pricePlanMatrixVersion == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
-            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, false));
+            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, false, null));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }

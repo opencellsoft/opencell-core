@@ -99,7 +99,7 @@ public class OfferTemplateCategory extends EnableBusinessCFEntity implements Com
     /**
      * Ordering index
      */
-    @Column(name = "level")
+    @Column(name = "order_level")
     private int orderLevel = 1;
 
     /**

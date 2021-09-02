@@ -9212,7 +9212,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
-    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD">
+    <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" failOnError="false">
     	<createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createTable tableName="query_scheduler">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -9302,7 +9302,7 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="cust_query" />
     </changeSet>  
-    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
+    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" failOnError="false">
         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
         <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_stop_reasons_seq" startValue="1" />
@@ -9502,6 +9502,11 @@ public class OrderAdvancement extends ModuleScript {
         <renameColumn tableName="com_sender_config" oldColumnName="password" newColumnName="pswd"/>
     </changeSet>    
     
+    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (drop) -->
+    <changeSet id="#INTRD-828-drop-view" author="AbdelmounaimAkadid">
+    	<dropView viewName="billing_wallet_operation_period"/>
+    </changeSet>
+    
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius" dbms="postgresql">
         <sql>alter table account_entity alter column cf_values type jsonb using cf_values::jsonb</sql>
         <sql>alter table adm_notification alter column cf_values type jsonb using cf_values::jsonb</sql>
@@ -9575,6 +9580,55 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table wf_generic_workflow alter column cf_values type jsonb using cf_values::jsonb</sql>
     </changeSet> 
     
+    <changeSet id="#INTRD-828_20210902" author="AbdelmounaimAkadid" dbms="postgresql">
+        <sql>alter table report_query alter column filters type jsonb using filters::jsonb</sql>
+        <sql>alter table billing_billing_run alter column filters type jsonb using filters::jsonb</sql>
+       	<sql>alter table bi_data_collector alter column parameters type jsonb using parameters::jsonb</sql>
+       	<sql>alter table bi_data_collector alter column aliases type jsonb using aliases::jsonb</sql>
+       	<sql>alter table cat_offer_template alter column long_description_i18n type jsonb using long_description_i18n::jsonb</sql>
+       	<sql>alter table crm_custom_action alter column label_i18n type jsonb using label_i18n::jsonb</sql>
+       	<sql>alter table adm_currency alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_accounting_article alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_article_family alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_cycle alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table adm_country alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_invoice_cat alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_invoice_sub_cat alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table adm_language alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_subscrip_termin_reason alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_tax alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_business_offer_model alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_business_product_model alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_business_serv_model alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_calendar alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_channel alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_charge_template alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_offer_template_category alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_price_plan_matrix alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_offer_template alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_service_template alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table cat_unit_of_measure alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table crm_customer_category alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table crm_custom_field_tmpl alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table document alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table document_category alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table dwh_measurable_quant alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table ar_credit_category alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table adm_title alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_tax_category alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table billing_tax_class alter column description_i18n type jsonb using description_i18n::jsonb</sql>
+       	<sql>alter table adm_role_secured_entity alter column disable DROP DEFAULT</sql>
+       	<sql>alter table adm_role_secured_entity alter column disable type ${type.boolean} using disable::${type.boolean}</sql>
+       	<sql>alter table adm_role_secured_entity alter column disable SET DEFAULT 0</sql>
+       	<sql>alter table adm_secured_entity alter column disable DROP DEFAULT</sql>
+       	<sql>alter table adm_secured_entity alter column disable type ${type.boolean} using disable::${type.boolean}</sql>
+       	<sql>alter table adm_secured_entity alter column disable SET DEFAULT 0</sql>
+       	<sql>alter table billing_billing_run alter column compute_dates_validation DROP DEFAULT</sql>
+       	<sql>alter table billing_billing_run alter column compute_dates_validation type ${type.boolean} using compute_dates_validation::${type.boolean}</sql>
+       	<sql>alter table billing_billing_run alter column compute_dates_validation SET DEFAULT 0</sql>
+       	<sql>alter table dwh_report_extract_execution alter column status type ${type.boolean} using status::${type.boolean}</sql>
+   	</changeSet>
+    
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius">
         <sql>alter table account_entity drop column cf_values_accum</sql>
         <sql>alter table adm_notification drop column cf_values_accum</sql>
@@ -9647,6 +9701,16 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table quote_offer drop column cf_values_accum</sql>
         <sql>alter table wf_generic_workflow drop column cf_values_accum</sql>
     </changeSet>
+    
+    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
+    <changeSet id="#INTRD-828-create-view" author="AbdelmounaimAkadid">
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+        </createView>
+    </changeSet>
+    
     
     <changeSet id="#INTRD-264_20210714" author="HatimOUDAD">
     	<addColumn tableName="query_scheduler">
@@ -9909,25 +9973,6 @@ public class OrderAdvancement extends ModuleScript {
             <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
             <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
-    </changeSet>
-    
-	<changeSet id="#INTRD-1406_20210823" author="HatimOUDAD">
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-2" />
-    		<where>code in ('PAY_CHK','PAY_TIP','PAY_DDT','REJ_CHK','REJ_DDT','REJ_TIP','PAY_NID','PAY_REC','REF_CHK','REF_DDT','PAY_DEP','REF_CRD','REJ_CRD','REJ_RCR','REJ_RDD','REF_TIP','PAY_CRD','PAY_PAL','PAY_STP')</where>
-    </update>
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-3" />
-    		<where>code in ('EXP_WRT','INV_FEE','RND_INC','RND_EXP')</where>
-    </update>
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-1" />
-    		<where>code in ('INV_STD','INV_REB','INV_DIS','INV_CRN')</where>
-    </update>
-    <update tableName="ar_occ_template">
-    		<column name="journal_id" value="-4" />
-    		<where>code in ('TAX_VAT_00','TAX_VAT_05','TAX_VAT_20','TAX_VAT_10')</where>
-    </update>
     </changeSet>
 	
 </databaseChangeLog>
