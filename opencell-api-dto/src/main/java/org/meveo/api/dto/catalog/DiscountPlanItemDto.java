@@ -98,12 +98,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String expressionEl;
 
     /**
-     * Expression to determine if discount applies - for Spark
-     */
-    @Schema(description = "Expression to determine if discount applies - for Spark")
-    private String expressionElSpark;
-
-    /**
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     @Schema(description = "Is entity disabled. Value is ignored in Update action - use enable/disable API instead")
@@ -126,13 +120,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
     @Schema(description = "The absolute or percentage discount amount EL")
     private String discountValueEL;
-
-    /**
-     * Expression to calculate discount percentage - for Spark
-     */
-    @Schema(description = "Expression to calculate discount percentage - for Spark")
-	private String discountValueElSpark;
-	
 
     /** The accountingArticle */
     @XmlElementWrapper(name = "targetAccountingArticleCodes")
@@ -195,12 +182,10 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
         this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null;
         this.expressionEl = discountPlanItem.getExpressionEl();
-        this.expressionElSpark = discountPlanItem.getExpressionElSpark();
         this.disabled = discountPlanItem.isDisabled();
 		this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
 		this.discountValue = discountPlanItem.getDiscountValue();
 		this.discountValueEL = discountPlanItem.getDiscountValueEL();
-		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
 		this.pricePlanMatrixCode=discountPlanItem.getPricePlanMatrix()!=null?discountPlanItem.getPricePlanMatrix().getCode():null;
 		 this.targetAccountingArticleCodes = discountPlanItem.getTargetAccountingArticle()
                  .stream()
@@ -315,20 +300,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * @return Expression to determine if discount applies - for Spark
-     */
-    public String getExpressionElSpark() {
-        return expressionElSpark;
-    }
-
-    /**
-     * @param expressionElSpark Expression to determine if discount applies - for Spark
-     */
-    public void setExpressionElSpark(String expressionElSpark) {
-        this.expressionElSpark = expressionElSpark;
-    }
-
-    /**
      * Sets whether this entity is disabled or not.
      */
     @Override
@@ -376,29 +347,11 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.discountValue = discountValue;
 	}
 
-	/**
-	 * Gets the discount value el for spark.
-	 * @return
-	 */
-	public String getDiscountValueElSpark() {
-		return discountValueElSpark;
-    }
-
-    /**
-     * Sets the discount value el for spark.
-     *
-     * @param discountValueElSpark the discount value
-     */
-    public void setDiscountValueElSpark(String discountValueElSpark) {
-        this.discountValueElSpark = discountValueElSpark;
-    }
-
     @Override
     public String toString() {
         return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
-                + invoiceSubCategoryCode + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark + ", disabled="
-                + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue=" + discountValue + ", discountValueEL=" + discountValueEL
-                + ", discountValueElSpark=" + discountValueElSpark + "]";
+                + invoiceSubCategoryCode + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + ", disabled="
+                + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue=" + discountValue + ", discountValueEL=" + discountValueEL +"]";
     }
 
     /**

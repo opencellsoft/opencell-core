@@ -189,8 +189,6 @@ public class OrderApi extends BaseApi {
         order.setExternalId(productOrder.getExternalId());
         order.setReceivedFromApp("API");
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
-        order.setDueDateDelayELSpark(productOrder.getDueDateDelayELSpark());
-
 
         if (!StringUtils.isBlank(productOrder.getBillingCycle())) {
             BillingCycle billingCycle = billingCycleService.findByCode(productOrder.getBillingCycle());
@@ -1009,7 +1007,6 @@ public class OrderApi extends BaseApi {
         productOrder.setRequestedStartDate(order.getRequestedStartDate());
         productOrder.setState(order.getStatus().getApiState());
         productOrder.setDueDateDelayEL(order.getDueDateDelayEL());
-        productOrder.setDueDateDelayELSpark(order.getDueDateDelayELSpark());
         if (order.getPaymentMethod() != null) {
             productOrder.setPaymentMethods(new ArrayList<>());
             PaymentMethodDto pmDto = new PaymentMethodDto(order.getPaymentMethod());

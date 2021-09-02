@@ -134,18 +134,6 @@ public class BillingAccountDto extends AccountDto {
     protected String phone;
 
     /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    @Schema(description = "Expression to determine minimum amount value - for Spark")
-    protected String minimumAmountElSpark;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    @Schema(description = "Expression to determine rated transaction description to reach minimum amount value - for Spark")
-    protected String minimumLabelElSpark;
-    
-    /**
      * Minimum Invoice SubCategory
      */
     @Schema(description = "Minimum Invoice SubCategory")
@@ -317,9 +305,7 @@ public class BillingAccountDto extends AccountDto {
         setStatus(e.getStatus());
         setStatusDate(e.getStatusDate());
         setMinimumAmountEl(e.getMinimumAmountEl());
-        setMinimumAmountElSpark(e.getMinimumAmountElSpark());
         setMinimumLabelEl(e.getMinimumLabelEl());
-        setMinimumLabelElSpark(e.getMinimumLabelElSpark());
         if (e.getTerminationReason() != null) {
             setTerminationReason(e.getTerminationReason().getCode());
         }
@@ -721,34 +707,6 @@ public class BillingAccountDto extends AccountDto {
         return "BillingAccountDto [code=" + code + ", description=" + description + "]";
     }
 
-    /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
-    }
-    
     /**
      * Gets the code of discount plans.
      * @return codes of discount plan

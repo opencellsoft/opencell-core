@@ -130,13 +130,6 @@ public class CalendarDto extends BusinessEntityDto {
     @Schema(description = "Calendar initialization date - expression to determine a value for calendar initialization date")
     private String initDateEL;
 
-    /**
-     * Calendar initialization date - expression to determine a value for calendar initialization date for Spark
-     */
-    @Size(max = 2000)
-    @Schema(description = "Calendar initialization date - expression to determine a value for calendar initialization date for Spark")
-    private String initDateELSpark;
-
     @Schema(description = "list of the days of holiday")
     private List<CalendarHolidayDto> holidays;
 
@@ -535,20 +528,6 @@ public class CalendarDto extends BusinessEntityDto {
      */
     public void setInitDateEL(String initDateEL) {
         this.initDateEL = initDateEL;
-    }
-
-    /**
-     * @return Calendar initialization date - expression to determine a value for calendar initialization date for Spark
-     */
-    public String getInitDateELSpark() {
-        return initDateELSpark;
-    }
-
-    /**
-     * @param initDateELSpark Calendar initialization date - expression to determine a value for calendar initialization date for Spark
-     */
-    public void setInitDateELSpark(String initDateELSpark) {
-        this.initDateELSpark = initDateELSpark;
     }
 
     public List<LanguageDescriptionDto> getLanguageDescriptions() {

@@ -224,19 +224,15 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
         pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
         pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
-        pricePlanMatrix.setAmountWithoutTaxELSpark(postData.getAmountWithoutTaxELSpark());
         pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
-        pricePlanMatrix.setAmountWithTaxELSpark(postData.getAmountWithTaxELSpark());
         pricePlanMatrix.setPriority(postData.getPriority());
         pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
         pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-        pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
-        pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
         pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
         
         // backward compatibility 5.2
@@ -246,24 +242,13 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 					!StringUtils.isBlank(postData.getRatingWithoutTaxEL()) ? postData.getRatingWithoutTaxEL()
 							: postData.getRatingWithTaxEL());
 		}
-		if (!StringUtils.isBlank(postData.getRatingWithoutTaxELSpark())
-				|| !StringUtils.isBlank(postData.getRatingWithTaxELSpark())) {
-            postData.setTotalAmountELSpark(
-                    !StringUtils.isBlank(postData.getRatingWithoutTaxELSpark()) ? postData.getRatingWithoutTaxELSpark() : postData.getRatingWithTaxELSpark());
-        }
         if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl()) || !StringUtils.isBlank(postData.getMinimumAmountWithTaxEl())) {
             postData.setMinimumAmountEL(
                     !StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl()) ? postData.getMinimumAmountWithoutTaxEl() : postData.getMinimumAmountWithTaxEl());
         }
-        if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) || !StringUtils.isBlank(postData.getMinimumAmountWithTaxELSpark())) {
-            postData.setMinimumAmountEL(
-                    !StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) ? postData.getMinimumAmountWithoutTaxELSpark() : postData.getMinimumAmountWithTaxELSpark());
-        }
 
         pricePlanMatrix.setTotalAmountEL(postData.getTotalAmountEL());
-        pricePlanMatrix.setTotalAmountELSpark(postData.getTotalAmountELSpark());
         pricePlanMatrix.setMinimumAmountEL(postData.getMinimumAmountEL());
-        pricePlanMatrix.setMinimumAmountELSpark(postData.getMinimumAmountELSpark());
         pricePlanMatrix.setParameter1El(postData.getParameter1El());
         pricePlanMatrix.setParameter2El(postData.getParameter2El());
         pricePlanMatrix.setParameter3El(postData.getParameter3El());
@@ -408,14 +393,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if (postData.getAmountWithoutTaxEL() != null) {
             pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
         }
-        if (postData.getAmountWithoutTaxELSpark() != null) {
-            pricePlanMatrix.setAmountWithoutTaxELSpark(postData.getAmountWithoutTaxELSpark());
-        }
         if (postData.getAmountWithTaxEL() != null) {
             pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
-        }
-        if (postData.getAmountWithTaxELSpark() != null) {
-            pricePlanMatrix.setAmountWithTaxELSpark(postData.getAmountWithTaxELSpark());
         }
         if (postData.getPriority() != null) {
             pricePlanMatrix.setPriority(postData.getPriority());
@@ -435,14 +414,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if (postData.getCriteriaEL() != null) {
             pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
         }
-        if (postData.getCriteriaELSpark() != null) {
-            pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
-        }
         if (postData.getWoDescriptionEL() != null) {
             pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
-        }
-        if (postData.getWoDescriptionELSpark() != null) {
-            pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
         }
         if (postData.getInvoiceSubCategoryEL() != null) {
             pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
@@ -458,34 +431,17 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 					!StringUtils.isBlank(postData.getRatingWithoutTaxEL()) ? postData.getRatingWithoutTaxEL()
 							: postData.getRatingWithTaxEL());
 		}
-		if (!StringUtils.isBlank(postData.getRatingWithoutTaxELSpark())
-				|| !StringUtils.isBlank(postData.getRatingWithTaxELSpark())) {
-			postData.setTotalAmountELSpark(
-					!StringUtils.isBlank(postData.getRatingWithoutTaxELSpark()) ? postData.getRatingWithoutTaxELSpark()
-							: postData.getRatingWithTaxELSpark());
-		}
 		if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl())
 				|| !StringUtils.isBlank(postData.getMinimumAmountWithTaxEl())) {
 			postData.setMinimumAmountEL(!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl())
 					? postData.getMinimumAmountWithoutTaxEl()
 					: postData.getMinimumAmountWithTaxEl());
         }
-        if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) || !StringUtils.isBlank(postData.getMinimumAmountWithTaxELSpark())) {
-            postData.setMinimumAmountEL(
-                    !StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) ? postData.getMinimumAmountWithoutTaxELSpark() : postData.getMinimumAmountWithTaxELSpark());
-        }
-
         if (postData.getTotalAmountEL() != null) {
             pricePlanMatrix.setTotalAmountEL(postData.getTotalAmountEL());
         }
-        if (postData.getTotalAmountELSpark() != null) {
-            pricePlanMatrix.setTotalAmountELSpark(postData.getTotalAmountELSpark());
-        }
         if (postData.getMinimumAmountEL() != null) {
             pricePlanMatrix.setMinimumAmountEL(postData.getMinimumAmountEL());
-        }
-        if (postData.getMinimumAmountELSpark() != null) {
-            pricePlanMatrix.setMinimumAmountELSpark(postData.getMinimumAmountELSpark());
         }
         if (postData.getParameter1El() != null) {
             pricePlanMatrix.setParameter1El(postData.getParameter1El());

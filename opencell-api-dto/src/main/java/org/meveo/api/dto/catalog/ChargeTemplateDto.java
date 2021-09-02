@@ -108,11 +108,6 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     @Schema(description = "The filter expression")
     private String filterExpression = null;
 
-    /** The filter expression. */
-    @Size(max = 2000)
-    @Schema(description = "The filter expression for spark")
-    private String filterExpressionSpark;
-
     /**
      * Charge tax class code
      **/
@@ -124,12 +119,6 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     @Schema(description = "Expression to determine tax class")
     private String taxClassEl;
-
-    /**
-     * Expression to determine tax class - for Spark
-     */
-    @Schema(description = "Expression to determine tax class - for Spark")
-    private String taxClassElSpark;
 
     /**
      * Code of a rating script
@@ -208,10 +197,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
             taxClassCode = chargeTemplate.getTaxClass().getCode();
         }
         taxClassEl = chargeTemplate.getTaxClassEl();
-        taxClassElSpark = chargeTemplate.getTaxClassElSpark();
-
         filterExpression = chargeTemplate.getFilterExpression();
-        filterExpressionSpark = chargeTemplate.getFilterExpressionSpark();
 
         if (chargeTemplate.getRatingScript() != null) {
             ratingScriptCode = chargeTemplate.getRatingScript().getCode();
@@ -428,8 +414,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     public String toString() {
         return "code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + isDisabled() + ", amountEditable=" + amountEditable + ", languageDescriptions="
                 + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal="
-                + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + ", filterExpression=" + filterExpression
-                + ", filterExpressionSpark=" + filterExpressionSpark;
+                + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + ", filterExpression=" + filterExpression;
     }
 
     /**
@@ -517,20 +502,6 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     }
 
     /**
-     * @return Expression to determine tax class - for Spark
-     */
-    public String getTaxClassElSpark() {
-        return taxClassElSpark;
-    }
-
-    /**
-     * @param taxClassElSpark Expression to determine tax class - for Spark
-     */
-    public void setTaxClassElSpark(String taxClassElSpark) {
-        this.taxClassElSpark = taxClassElSpark;
-    }
-
-    /**
      * @return Expression to determine if charge applies
      */
     public String getFilterExpression() {
@@ -542,20 +513,6 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
-    }
-
-    /**
-     * @return Expression to determine if charge applies - for Spark
-     */
-    public String getFilterExpressionSpark() {
-        return filterExpressionSpark;
-    }
-
-    /**
-     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
-     */
-    public void setFilterExpressionSpark(String filterExpressionSpark) {
-        this.filterExpressionSpark = filterExpressionSpark;
     }
 
     /**

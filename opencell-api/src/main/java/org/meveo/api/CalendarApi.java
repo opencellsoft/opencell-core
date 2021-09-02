@@ -163,7 +163,6 @@ public class CalendarApi extends BaseApi {
             calendar.setNbPeriods(postData.getNbPeriods());
             calendar.setPeriodUnit(postData.getPeriodUnit().getUnitValue());
             calendar.setInitDateEL(postData.getInitDateEL());
-            calendar.setInitDateELSpark(postData.getInitDateELSpark());
 
             calendarService.create(calendar);
 
@@ -328,9 +327,6 @@ public class CalendarApi extends BaseApi {
             }
             if (postData.getInitDateEL() != null) {
                 calendar.setInitDateEL(StringUtils.isEmpty(postData.getInitDateEL()) ? null : postData.getInitDateEL());
-            }
-            if (postData.getInitDateELSpark() != null) {
-                calendar.setInitDateELSpark(StringUtils.isEmpty(postData.getInitDateELSpark()) ? null : postData.getInitDateELSpark());
             }
 
         } else if (calendar instanceof CalendarInterval) {
