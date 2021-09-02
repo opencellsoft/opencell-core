@@ -109,6 +109,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
 	            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
+	            accountingArticlePrices.addAll(prices);
 	        }
 	}
 	
