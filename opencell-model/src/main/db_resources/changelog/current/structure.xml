@@ -9502,14 +9502,9 @@ public class OrderAdvancement extends ModuleScript {
         <renameColumn tableName="com_sender_config" oldColumnName="password" newColumnName="pswd"/>
     </changeSet>    
     
-    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
-    <changeSet id="#INTRD-828-recreate-view" author="AbdelmounaimAkadid">
+    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (drop) -->
+    <changeSet id="#INTRD-828-drop-view" author="AbdelmounaimAkadid">
     	<dropView viewName="billing_wallet_operation_period"/>
-        <createView viewName="billing_wallet_operation_period">
-            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
-            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
-            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
-        </createView>
     </changeSet>
     
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius" dbms="postgresql">
@@ -9584,6 +9579,15 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table quote_offer alter column cf_values type jsonb using cf_values::jsonb</sql>
         <sql>alter table wf_generic_workflow alter column cf_values type jsonb using cf_values::jsonb</sql>
     </changeSet> 
+    
+    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
+    <changeSet id="#INTRD-828-create-view" author="AbdelmounaimAkadid">
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+        </createView>
+    </changeSet>
     
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius">
         <sql>alter table account_entity drop column cf_values_accum</sql>
