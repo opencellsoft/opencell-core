@@ -33,7 +33,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -220,13 +219,6 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     @Column(name = "due_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String dueDateDelayEL;
-
-    /**
-     * Expression to calculate Invoice due date delay value - for Spark
-     */
-    @Column(name = "due_date_delay_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String dueDateDelayELSpark;
 
     /**
      * Allowed payment methods
@@ -486,20 +478,6 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
-    }
-
-    /**
-     * @return Expression to calculate Invoice due date delay value - for Spark
-     */
-    public String getDueDateDelayELSpark() {
-        return dueDateDelayELSpark;
-    }
-
-    /**
-     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
-     */
-    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
-        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     public PaymentMethod getPaymentMethod() {

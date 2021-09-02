@@ -20,7 +20,6 @@ package org.meveo.model.communication.email;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
