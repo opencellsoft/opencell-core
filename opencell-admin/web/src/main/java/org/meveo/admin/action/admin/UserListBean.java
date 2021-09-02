@@ -38,29 +38,31 @@ public class UserListBean extends UserBean {
 	private LazyDataModel<User> filteredUsers = null;	
 
 	public LazyDataModel<User> getFilteredLazyDataModel() {
-		if (currentUser.hasRole("marketingManager")) {
-			if (filteredUsers != null) {
-				return filteredUsers;
-			}
-
-			filteredUsers = new LazyDataModelWSize<User>() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
-
-					List<User> entities = null;
-					entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
-					setRowCount(entities.size());
-
-					return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
-				}
-			};
-
+		
+		if (filteredUsers != null) {
 			return filteredUsers;
 		}
 
-		return super.getLazyDataModel();
+		filteredUsers = new LazyDataModelWSize<User>() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+
+				List<User> entities = null;
+				if (currentUser.hasRole("marketingManager")) {
+					entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
+				}else {
+					entities = userService.list();
+				}
+				setRowCount(entities.size());
+
+				return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+			}
+		};
+
+		return filteredUsers;
+		
 	}
 
 }
