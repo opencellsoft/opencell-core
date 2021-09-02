@@ -19,9 +19,7 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -114,23 +112,9 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Size(max = 2000)
     private String minimumLabelEl;
 
-    /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    @Column(name = "minimum_amount_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountElSpark;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_offer_tmpl_discount_plan", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
     private List<DiscountPlan> allowedDiscountPlans = new ArrayList<>();
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    @Column(name = "minimum_label_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelElSpark;
 
     /**
      * Corresponding invoice subcategory
@@ -429,34 +413,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     /**
