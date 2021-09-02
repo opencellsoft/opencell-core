@@ -16,6 +16,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
@@ -132,9 +133,14 @@ public class UserInfoManagement {
             }
             user.setLastLoginDate(new Date());
             user.updateAudit(currentUser);
-            em.persist(user);
-            em.flush();
-            log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+            try {
+                em.persist(user);
+                em.flush();
+                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+
+            } catch (PersistenceException e) {
+                log.debug("Application User {} seems to be already created, no need to recreate it. Or else will be created next time", user.getUserName());
+            }
 
             if (!userAuthTimeProducer.isUnsatisfied()) {
                 userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
