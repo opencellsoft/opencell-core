@@ -9974,5 +9974,12 @@ public class OrderAdvancement extends ModuleScript {
             <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD_1609_20210902" author="TarikFA.">
+    	<addColumn tableName="accounting_period">
+    		<column name="force_option" type="varchar(50)" />
+    		<column name="force_custom_day" type="int4" />
+    	</addColumn>
+    </changeSet>
 	
 </databaseChangeLog>

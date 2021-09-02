@@ -53,5 +53,16 @@ public interface AccountingPeriod extends Resource{
 	@Nullable
 	String getCustomLockOption(); 
 
+	@Schema(description = "Indicate the ForceOption")
+	@Nullable
+	String getForceOption(); 
+
+	@Schema(description = "Indicate the ForceCustomDay")
+	@Nullable
+	Integer getForceCustomDay();
+	
+	
+	
+
 }
 
