@@ -9580,15 +9580,6 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table wf_generic_workflow alter column cf_values type jsonb using cf_values::jsonb</sql>
     </changeSet> 
     
-    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
-    <changeSet id="#INTRD-828-create-view" author="AbdelmounaimAkadid">
-        <createView viewName="billing_wallet_operation_period">
-            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
-            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
-            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
-        </createView>
-    </changeSet>
-    
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius">
         <sql>alter table account_entity drop column cf_values_accum</sql>
         <sql>alter table adm_notification drop column cf_values_accum</sql>
@@ -9661,6 +9652,16 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table quote_offer drop column cf_values_accum</sql>
         <sql>alter table wf_generic_workflow drop column cf_values_accum</sql>
     </changeSet>
+    
+    <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
+    <changeSet id="#INTRD-828-create-view" author="AbdelmounaimAkadid">
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+        </createView>
+    </changeSet>
+    
     
     <changeSet id="#INTRD-264_20210714" author="HatimOUDAD">
     	<addColumn tableName="query_scheduler">
