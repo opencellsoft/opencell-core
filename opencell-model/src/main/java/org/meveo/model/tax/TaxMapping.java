@@ -105,13 +105,6 @@ public class TaxMapping extends AuditableEntity implements Serializable {
     private String filterEL;
 
     /**
-     * Filter expression for Spark
-     **/
-    @Column(name = "filter_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String filterELSpark;
-
-    /**
      * Tax to apply
      **/
     @ManyToOne(fetch = FetchType.LAZY)
@@ -124,13 +117,6 @@ public class TaxMapping extends AuditableEntity implements Serializable {
     @Column(name = "tax_el", length = 2000)
     @Size(max = 2000)
     private String taxEL;
-
-    /**
-     * Tax expression for Spark
-     **/
-    @Column(name = "tax_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String taxELSpark;
 
     /**
      * Script to determine tax
@@ -241,19 +227,6 @@ public class TaxMapping extends AuditableEntity implements Serializable {
         return this.filterEL;
     }
 
-    /**
-     * @param filterELSpark Filter expression for Spark
-     */
-    public void setFilterELSpark(String filterELSpark) {
-        this.filterELSpark = filterELSpark;
-    }
-
-    /**
-     * @return Filter expression for Spark
-     */
-    public String getFilterELSpark() {
-        return this.filterELSpark;
-    }
 
     /**
      * @param tax Tax to apply
@@ -281,20 +254,6 @@ public class TaxMapping extends AuditableEntity implements Serializable {
      */
     public String getTaxEL() {
         return this.taxEL;
-    }
-
-    /**
-     * @param taxELSpark Tax expression for Spark
-     */
-    public void setTaxELSpark(String taxELSpark) {
-        this.taxELSpark = taxELSpark;
-    }
-
-    /**
-     * @return Tax expression for Spark
-     */
-    public String getTaxELSpark() {
-        return this.taxELSpark;
     }
 
     /**

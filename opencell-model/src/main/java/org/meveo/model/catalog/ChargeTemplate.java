@@ -39,7 +39,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -231,13 +230,6 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     protected String filterExpression = null;
 
     /**
-     * Expression to determine if charge matches - for Spark
-     */
-    @Column(name = "filter_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String filterExpressionSpark = null;
-
-    /**
      * Charge tax class
      **/
     @ManyToOne(fetch = FetchType.LAZY)
@@ -250,13 +242,6 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "tax_class_el", length = 2000)
     @Size(max = 2000)
     private String taxClassEl;
-
-    /**
-     * Expression to determine tax class - for Spark
-     */
-    @Column(name = "tax_class_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String taxClassElSpark;
 
     /**
      * Script to handle rating instead of a regular price plan logic
@@ -445,20 +430,6 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.filterExpression = filterExpression;
     }
 
-    /**
-     * @return Expression to determine if charge applies - for Spark
-     */
-    public String getFilterExpressionSpark() {
-        return filterExpressionSpark;
-    }
-
-    /**
-     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
-     */
-    public void setFilterExpressionSpark(String filterExpressionSpark) {
-        this.filterExpressionSpark = filterExpressionSpark;
-    }
-
     private void computeRoundingValues() {
         if (roundingValuesComputed) {
             return;
@@ -544,20 +515,6 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     public void setTaxClassEl(String taxClassEl) {
         this.taxClassEl = taxClassEl;
-    }
-
-    /**
-     * @return Expression to determine tax class - for Spark
-     */
-    public String getTaxClassElSpark() {
-        return taxClassElSpark;
-    }
-
-    /**
-     * @param taxClassElSpark Expression to determine tax class - for Spark
-     */
-    public void setTaxClassElSpark(String taxClassElSpark) {
-        this.taxClassElSpark = taxClassElSpark;
     }
 
     /**

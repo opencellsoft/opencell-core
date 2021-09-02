@@ -37,7 +37,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -275,20 +274,6 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-
-    /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    @Column(name = "minimum_amount_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountElSpark;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    @Column(name = "minimum_label_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelElSpark;
     
     /** Corresponding to minimum invoice subcategory */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -682,34 +667,6 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     @Override

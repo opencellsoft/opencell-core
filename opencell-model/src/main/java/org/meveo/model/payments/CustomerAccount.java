@@ -199,13 +199,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	private String dueDateDelayEL;
 
 	/**
-	 * Expression to calculate Invoice due date delay value - for Spark
-	 */
-	@Column(name = "due_date_delay_el_sp", length = 2000)
-	@Size(max = 2000)
-	private String dueDateDelayELSpark;
-
-	/**
 	 * Default language in invoices. Can be overriten in Billing account.
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -445,21 +438,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 */
 	public void setDueDateDelayEL(String dueDateDelayEL) {
 		this.dueDateDelayEL = dueDateDelayEL;
-	}
-
-	/**
-	 * @return Expression to calculate Invoice due date delay value - for Spark
-	 */
-	public String getDueDateDelayELSpark() {
-		return dueDateDelayELSpark;
-	}
-
-	/**
-	 * @param dueDateDelayELSpark Expression to calculate Invoice due date delay
-	 *                            value - for Spark
-	 */
-	public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
-		this.dueDateDelayELSpark = dueDateDelayELSpark;
 	}
 
 	public List<PaymentMethod> getPaymentMethods() {
