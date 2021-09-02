@@ -133,9 +133,14 @@ public class UserInfoManagement {
             user.setLastLoginDate(new Date());
             user.setEmail(currentUser.getEmail());
             user.updateAudit(currentUser);
-            em.persist(user);
-            em.flush();
-            log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+
+            try {
+                em.persist(user);
+                em.flush();
+                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+            } catch (Exception e) {
+                log.debug("Application uUser {} seems be already created. No need to recreate it.", user.getUserName());
+            }
 
             if (!userAuthTimeProducer.isUnsatisfied()) {
                 userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
