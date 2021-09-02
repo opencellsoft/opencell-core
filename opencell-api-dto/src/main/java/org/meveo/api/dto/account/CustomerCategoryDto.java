@@ -53,10 +53,6 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     @Schema(description = "The exoneration tax el")
     private String exonerationTaxEl;
 
-    /** The exoneration tax el for Spark. */
-    @Schema(description = "The exoneration tax el for Spark")
-    private String exonerationTaxElSpark;
-
     /** The exoneration reason. */
     @Schema(description = "The exoneration reason")
     private String exonerationReason;
@@ -78,12 +74,6 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     @Schema(description = "Expression to determine tax category code")
     private String taxCategoryEl;
 
-    /**
-     * Expression to determine tax category code - for Spark
-     */
-    @Schema(description = "Expression to determine tax category code - for Spark")
-    private String taxCategoryElSpark;
-
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
@@ -103,7 +93,6 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         exoneratedFromTaxes = customerCategory.getExoneratedFromTaxes();
         exonerationReason = customerCategory.getExonerationReason();
         exonerationTaxEl = customerCategory.getExonerationTaxEl();
-        exonerationTaxElSpark = customerCategory.getExonerationTaxElSpark();
         languageDescriptions = convertMultiLanguageFromMapOfValues(customerCategory.getDescriptionI18n());
         if (customerCategory.getAccountingCode() != null) {
             accountingCode = customerCategory.getAccountingCode().getCode();
@@ -112,7 +101,6 @@ public class CustomerCategoryDto extends BusinessEntityDto {
             taxCategoryCode = customerCategory.getTaxCategory().getCode();
         }
         taxCategoryEl = customerCategory.getTaxCategoryEl();
-        taxCategoryElSpark = customerCategory.getTaxCategoryElSpark();
     }
 
     /**
@@ -141,20 +129,6 @@ public class CustomerCategoryDto extends BusinessEntityDto {
      */
     public void setExonerationTaxEl(String exonerationTaxEl) {
         this.exonerationTaxEl = exonerationTaxEl;
-    }
-
-    /**
-     * @return Expression to determine if account is exonerated from taxes - for Spark
-     */
-    public String getExonerationTaxElSpark() {
-        return exonerationTaxElSpark;
-    }
-
-    /**
-     * @param exonerationTaxElSpark Expression to determine if account is exonerated from taxes - for Spark
-     */
-    public void setExonerationTaxElSpark(String exonerationTaxElSpark) {
-        this.exonerationTaxElSpark = exonerationTaxElSpark;
     }
 
     /**
@@ -213,23 +187,9 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         this.taxCategoryEl = taxCategoryEl;
     }
 
-    /**
-     * @return Expression to determine tax category code - for Spark
-     */
-    public String getTaxCategoryElSpark() {
-        return taxCategoryElSpark;
-    }
-
-    /**
-     * @param taxCategorySpark Expression to determine tax category code - for Spark
-     */
-    public void setTaxCategoryElSpark(String taxCategoryElSpark) {
-        this.taxCategoryElSpark = taxCategoryElSpark;
-    }
-
     @Override
     public String toString() {
-        return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationTaxElSpark=" + exonerationTaxElSpark + ", exonerationReason="
+        return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationReason="
                 + exonerationReason + ", accountingCode=" + accountingCode + "]";
     }
 
