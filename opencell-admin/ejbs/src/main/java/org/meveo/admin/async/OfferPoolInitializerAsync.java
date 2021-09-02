@@ -32,7 +32,7 @@ public class OfferPoolInitializerAsync {
             + "from account_entity agency\n"
             + "join billing_user_account ua on agency.id = ua.id\n"
             + "join billing_billing_account ba on ua.billing_account_id = ba.id\n"
-            + "left join \n"
+            + "join \n"
             + "(   select sub.id as sub_id,\n"
             + "    sub.user_account_id as agency_id,\n"
             + "    case\n"
