@@ -97,18 +97,25 @@ OrderAdvancementScript extends ModuleScript {
 
             OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
 
+
+
             if(orderProgress == 100) {
                 if(commercialOrder.getRateInvoiced() < 100) {
+                    if(isOneShot100Payment(commercialOrder.getInvoicingPlan().getInvoicingPlanItems())){
+
+                        createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
+                        List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
+                    }
                     generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
                 }
                 commercialOrderApi.validateOrder(commercialOrder, true);
             } else {
+
                 List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
                         .filter(item -> orderProgress.equals(item.getAdvancement()))
                         .collect(Collectors.toList());
-
                 if (itemsToBill.isEmpty()) {
                     log.info("No invoicing plan item found for the order progress: " + orderProgress + " commercial order id: " + commercialOrder.getId());
                     return;
@@ -145,6 +152,10 @@ OrderAdvancementScript extends ModuleScript {
         }
 
 
+    }
+
+    private boolean isOneShot100Payment(List<InvoicingPlanItem> invoicingPlanItems) {
+        return invoicingPlanItems.size() == 1 && invoicingPlanItems.get(0).getRateToBill().doubleValue() == BigDecimal.valueOf(100).doubleValue();
     }
 
     private void generateGlobalInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct) {
