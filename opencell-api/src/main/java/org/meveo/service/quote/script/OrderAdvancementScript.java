@@ -102,9 +102,7 @@ OrderAdvancementScript extends ModuleScript {
             if(orderProgress == 100) {
                 if(commercialOrder.getRateInvoiced() < 100) {
                     if(isOneShot100Payment(commercialOrder.getInvoicingPlan().getInvoicingPlanItems())){
-
-                        createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
-                        List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
+                        createAccountInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct, true);
                     }
                     generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
                     commercialOrder.setOrderProgressTmp(orderProgress);
@@ -135,15 +133,7 @@ OrderAdvancementScript extends ModuleScript {
                     BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
                     BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
 
-                    createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
-                    List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
-                    invoices.stream()
-                            .forEach(
-                                    invoice -> {
-                                        customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
-                                        invoiceService.update(invoice);
-                                    }
-                            );
+                    createAccountInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, orderProduct, true);
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -152,6 +142,18 @@ OrderAdvancementScript extends ModuleScript {
         }
 
 
+    }
+
+    private void createAccountInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct, boolean isDepositInvoice) {
+        createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
+        List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false, isDepositInvoice);
+        invoices.stream()
+                .forEach(
+                        invoice -> {
+                            customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
+                            invoiceService.update(invoice);
+                        }
+                );
     }
 
     private boolean isOneShot100Payment(List<InvoicingPlanItem> invoicingPlanItems) {
@@ -178,15 +180,7 @@ OrderAdvancementScript extends ModuleScript {
             createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate());
         }
 
-        createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
-        List<Invoice> aggregatesAndInvoiceWithIL = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false, false);
-        aggregatesAndInvoiceWithIL.stream()
-                .forEach(
-                        invoice -> {
-                            customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
-                            invoiceService.update(invoice);
-                        }
-                );
+        createAccountInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, accountingArticle.get(), totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct, false);
 
 
     }
