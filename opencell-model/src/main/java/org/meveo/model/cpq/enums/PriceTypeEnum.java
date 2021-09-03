@@ -6,6 +6,8 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
 public enum PriceTypeEnum {
 
@@ -27,10 +29,15 @@ public enum PriceTypeEnum {
 			return RECURRING;
 		}else if(chargeInstance instanceof OneShotChargeInstance) {
 			if(chargeInstance instanceof SubscriptionChargeInstance) {
-				return ONE_SHOT_SUBSCRIPTION;
+				SubscriptionChargeInstance sci = (SubscriptionChargeInstance) chargeInstance;
+				OneShotChargeTemplate oct = (OneShotChargeTemplate)sci.getChargeTemplate();
+				if(sci.getChargeTemplate() != null && oct.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)
+					return ONE_SHOT_OTHER;
+				else {
+					return ONE_SHOT_SUBSCRIPTION;
+				}
 			}else if(chargeInstance instanceof TerminationChargeInstance)
 				return ONE_SHOT_TERMINATION;
-			return ONE_SHOT_OTHER;
 		}else if(chargeInstance instanceof UsageChargeInstance) {
 			return USAGE;
 		}

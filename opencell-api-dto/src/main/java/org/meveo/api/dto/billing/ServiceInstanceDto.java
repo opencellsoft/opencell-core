@@ -123,19 +123,9 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     private String minimumAmountEl;
 
     /**
-     * Expression to determine minimum amount value - for Spark.
-     */
-    private String minimumAmountElSpark;
-
-    /**
      * Expression to determine rated transaction description to reach minimum amount value.
      */
     private String minimumLabelEl;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark.
-     */
-    private String minimumLabelElSpark;
 
     /**
      * The due date days PS.
@@ -190,9 +180,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         serviceRenewal = new SubscriptionRenewalDto(serviceInstance.getServiceRenewal());
 
         setMinimumAmountEl(serviceInstance.getMinimumAmountEl());
-        setMinimumAmountElSpark(serviceInstance.getMinimumAmountElSpark());
         setMinimumLabelEl(serviceInstance.getMinimumLabelEl());
-        setMinimumLabelElSpark(serviceInstance.getMinimumLabelElSpark());
     }
 
     /**
@@ -547,25 +535,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
-
-    /**
-     * Gets the minimum amount el spark.
-     *
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * Sets the minimum amount el spark.
-     *
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
+    
     /**
      * Gets the minimum label el.
      *
@@ -582,24 +552,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * Gets the minimum label el spark.
-     *
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * Sets the minimum label el spark.
-     *
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     /**

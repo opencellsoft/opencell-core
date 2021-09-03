@@ -30,7 +30,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -124,25 +123,12 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
     private String minimumAmountEl;
 
     /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    @Column(name = "minimum_amount_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountElSpark;
-
-    /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
 
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    @Column(name = "minimum_label_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelElSpark;
 
     /**
      * Corresponding invoice subcategory
@@ -313,20 +299,6 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
     }
 
     /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
      * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
@@ -338,20 +310,6 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
     
     /**

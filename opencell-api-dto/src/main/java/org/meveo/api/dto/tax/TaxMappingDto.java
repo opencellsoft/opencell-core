@@ -82,11 +82,6 @@ public class TaxMappingDto extends AuditableEntityDto implements Serializable, I
     @Size(max = 2000)
     private String filterEL;
     /**
-     * Filter expression for Spark
-     **/
-    @Size(max = 2000)
-    private String filterELSpark;
-    /**
      * Tax to apply
      **/
     private String taxCode;
@@ -95,11 +90,6 @@ public class TaxMappingDto extends AuditableEntityDto implements Serializable, I
      **/
     @Size(max = 2000)
     private String taxEL;
-    /**
-     * Tax expression for Spark
-     **/
-    @Size(max = 2000)
-    private String taxELSpark;
     /**
      * Script to determine tax
      **/
@@ -161,15 +151,11 @@ public class TaxMappingDto extends AuditableEntityDto implements Serializable, I
 
         this.filterEL = entity.getFilterEL();
 
-        this.filterELSpark = entity.getFilterELSpark();
-
         if (entity.getTax() != null) {
             this.taxCode = entity.getTax().getCode();
         }
 
         this.taxEL = entity.getTaxEL();
-
-        this.taxELSpark = entity.getTaxELSpark();
 
         if (entity.getTaxScript() != null) {
             this.taxScriptCode = entity.getTaxScript().getCode();
@@ -286,20 +272,6 @@ public class TaxMappingDto extends AuditableEntityDto implements Serializable, I
     }
 
     /**
-     * @param filterELSpark Filter expression for Spark
-     */
-    public void setFilterELSpark(String filterELSpark) {
-        this.filterELSpark = filterELSpark;
-    }
-
-    /**
-     * @return Filter expression for Spark
-     */
-    public String getFilterELSpark() {
-        return this.filterELSpark;
-    }
-
-    /**
      * @param tax Tax to apply
      */
     public void setTaxCode(String taxCode) {
@@ -325,20 +297,6 @@ public class TaxMappingDto extends AuditableEntityDto implements Serializable, I
      */
     public String getTaxEL() {
         return this.taxEL;
-    }
-
-    /**
-     * @param taxELSpark Tax expression for Spark
-     */
-    public void setTaxELSpark(String taxELSpark) {
-        this.taxELSpark = taxELSpark;
-    }
-
-    /**
-     * @return Tax expression for Spark
-     */
-    public String getTaxELSpark() {
-        return this.taxELSpark;
     }
 
     /**

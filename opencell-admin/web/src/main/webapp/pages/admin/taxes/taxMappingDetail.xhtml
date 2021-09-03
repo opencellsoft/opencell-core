@@ -27,10 +27,8 @@
             <hftl:formField label="#{messages['taxMapping.buyerCountry']}" field="buyerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
             <hftl:formField label="#{messages['taxMapping.priority']}" field="priority" spinner="false" />
             <hftl:formField label="#{messages['taxMapping.filterEL']}" field="filterEL" textArea="true" rows="1" maxlength="2000" newLine="true" />
-            <hftl:formField label="#{messages['taxMapping.filterELSpark']}" field="filterELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{paramBean.sparkEnabled}" />
             <hftl:formField label="#{messages['taxMapping.tax']}" field="tax" valueLabelField="descriptionOrCode" listBean="#{taxBean}" newLine="true" />
             <hftl:formField label="#{messages['taxMapping.taxEL']}" field="taxEL" textArea="true" rows="1" maxlength="2000" newLine="true" />
-            <hftl:formField label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{paramBean.sparkEnabled}" />
             <hftl:formField label="#{messages['taxMapping.taxScript']}" field="taxScript" valueLabelField="descriptionOrCode" listBean="#{scriptInstanceBean}" newLine="true" />
 
             <hftl:formField label="#{messages['taxMapping.source']}" field="source" edit="false" />

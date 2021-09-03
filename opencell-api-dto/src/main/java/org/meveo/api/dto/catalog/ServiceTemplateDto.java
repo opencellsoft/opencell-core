@@ -99,19 +99,9 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     private String minimumAmountEl;
 
     /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    private String minimumAmountElSpark;
-
-    /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
     private String minimumLabelEl;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    private String minimumLabelElSpark;
 
     /**
      * Corresponding to minimum invoice subcategory
@@ -189,9 +179,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
         imagePath = serviceTemplate.getImagePath();
         minimumAmountEl = serviceTemplate.getMinimumAmountEl();
-        minimumAmountElSpark = serviceTemplate.getMinimumAmountElSpark();
         minimumLabelEl = serviceTemplate.getMinimumLabelEl();
-        minimumLabelElSpark = serviceTemplate.getMinimumLabelElSpark();
         languageDescriptions = (LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(serviceTemplate.getDescriptionI18n()));
 
         if(serviceTemplate.getMinimumInvoiceSubCategory() != null) {
@@ -537,20 +525,6 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     }
 
     /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
      * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
@@ -562,20 +536,6 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     public SubscriptionRenewalDto getRenewalRule() {

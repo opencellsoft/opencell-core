@@ -105,9 +105,8 @@ public class DiscountPlanItemApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
-		if (postData.getDiscountValue() == null && postData.getDiscountValueEL() == null
-				&& postData.getDiscountValueElSpark() == null) {
-			missingParameters.add("discountValue, discountValueEL or discountValueELSpark");
+		if (postData.getDiscountValue() == null && postData.getDiscountValueEL() == null) {
+			missingParameters.add("discountValue, discountValueEL");
 		}
 		if (postData.getDiscountPlanItemType() == null) {
 			missingParameters.add("discountPlanItemType");
@@ -342,17 +341,11 @@ public class DiscountPlanItemApi extends BaseApi {
         if (source.getExpressionEl() != null) {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }
-        if (source.getExpressionElSpark() != null) {
-            discountPlanItem.setExpressionElSpark(source.getExpressionElSpark());
-        }
 		if (source.getDiscountValue() != null) {
 			discountPlanItem.setDiscountValue(source.getDiscountValue());
         }
         if (source.getDiscountValueEL() != null) {
             discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
-        }
-        if (source.getDiscountValueElSpark() != null) {
-            discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
         }
         if (source.getDiscountPlanItemType() != null) {
             discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());

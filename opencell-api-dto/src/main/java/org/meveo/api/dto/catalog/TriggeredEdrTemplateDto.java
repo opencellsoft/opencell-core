@@ -42,49 +42,27 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
     /** The subscription el. */
     private String subscriptionEl;
 
-    /** The subscription el. */
-    private String subscriptionElSpark;
-
     /** The meveo instance code. */
     private String meveoInstanceCode;
 
     /** The condition el. */
     private String conditionEl;
 
-    /** The condition el. */
-    private String conditionElSpark;
-
     /** The quantity el. */
     @XmlElement(required = true)
     private String quantityEl;
 
-    /** The quantity el. */
-    @XmlElement()
-    private String quantityElSpark;
-
     /** The param 1 el. */
     private String param1El;
-
-    /** The param 1 el. */
-    private String param1ElSpark;
 
     /** The param 2 el. */
     private String param2El;
 
-    /** The param 2 el. */
-    private String param2ElSpark;
-
     /** The param 3 el. */
     private String param3El;
 
-    /** The param 3 el. */
-    private String param3ElSpark;
-
     /** The param 4 el. */
     private String param4El;
-
-    /** The param 4 el. */
-    private String param4ElSpark;
 
     /**
      * Expression to compute the OpencellInstance code so the instance on which the EDR is triggered can be inferred from the Offer or whatever.
@@ -115,17 +93,11 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
         subscriptionEl = triggeredEDRTemplate.getSubscriptionEl();
         meveoInstanceCode = triggeredEDRTemplate.getMeveoInstance() == null ? null : triggeredEDRTemplate.getMeveoInstance().getCode();
         conditionEl = triggeredEDRTemplate.getConditionEl();
-        conditionElSpark = triggeredEDRTemplate.getConditionElSpark();
         quantityEl = triggeredEDRTemplate.getQuantityEl();
-        quantityElSpark = triggeredEDRTemplate.getQuantityElSpark();
         param1El = triggeredEDRTemplate.getParam1El();
-        param1ElSpark = triggeredEDRTemplate.getParam1ElSpark();
         param2El = triggeredEDRTemplate.getParam2El();
-        param2ElSpark = triggeredEDRTemplate.getParam2ElSpark();
         param3El = triggeredEDRTemplate.getParam3El();
-        param3ElSpark = triggeredEDRTemplate.getParam3ElSpark();
         param4El = triggeredEDRTemplate.getParam4El();
-        param4ElSpark = triggeredEDRTemplate.getParam4ElSpark();
         opencellInstanceEL = triggeredEDRTemplate.getOpencellInstanceEL();
         if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
             triggeredEdrScript = triggeredEDRTemplate.getTriggeredEdrScript().getCode();
@@ -144,20 +116,6 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
      */
     public void setSubscriptionEl(String subscriptionEl) {
         this.subscriptionEl = subscriptionEl;
-    }
-
-    /**
-     * @return Expression to evaluate subscription code - for Spark
-     */
-    public String getSubscriptionElSpark() {
-        return subscriptionElSpark;
-    }
-
-    /**
-     * @param subscriptionElSpark Expression to evaluate subscription code - for Spark
-     */
-    public void setSubscriptionElSpark(String subscriptionElSpark) {
-        this.subscriptionElSpark = subscriptionElSpark;
     }
 
     /**
@@ -189,20 +147,6 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
     }
 
     /**
-     * @return Expression to determine if EDR applies - for Spark
-     */
-    public String getConditionElSpark() {
-        return conditionElSpark;
-    }
-
-    /**
-     * @param conditionElSpark Expression to determine if EDR applies - for Spark
-     */
-    public void setConditionElSpark(String conditionElSpark) {
-        this.conditionElSpark = conditionElSpark;
-    }
-
-    /**
      * @return Expression to determine the quantity
      */
     public String getQuantityEl() {
@@ -214,20 +158,6 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
      */
     public void setQuantityEl(String quantityEl) {
         this.quantityEl = quantityEl;
-    }
-
-    /**
-     * @return Expression to determine the quantity - for Spark
-     */
-    public String getQuantityElSpark() {
-        return quantityElSpark;
-    }
-
-    /**
-     * @param quantityElSpark Expression to determine the quantity - for Spark
-     */
-    public void setQuantityElSpark(String quantityElSpark) {
-        this.quantityElSpark = quantityElSpark;
     }
 
     /**
@@ -243,21 +173,7 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
     public void setParam1El(String param1El) {
         this.param1El = param1El;
     }
-
-    /**
-     * @return Expression to determine parameter 1 value - for Spark
-     */
-    public String getParam1ElSpark() {
-        return param1ElSpark;
-    }
-
-    /**
-     * @param param1ElSpark Expression to determine parameter 1 value - for Sparl
-     */
-    public void setParam1ElSpark(String param1ElSpark) {
-        this.param1ElSpark = param1ElSpark;
-    }
-
+    
     /**
      * @return Expression to determine parameter 2 value
      */
@@ -270,20 +186,6 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
      */
     public void setParam2El(String param2El) {
         this.param2El = param2El;
-    }
-
-    /**
-     * @return Expression to determine parameter 2 value - for Spark
-     */
-    public String getParam2ElSpark() {
-        return param2ElSpark;
-    }
-
-    /**
-     * @param param2ElSpark Expression to determine parameter 2 value - for Sparl
-     */
-    public void setParam2ElSpark(String param2ElSpark) {
-        this.param2ElSpark = param2ElSpark;
     }
 
     /**
@@ -301,20 +203,6 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
     }
 
     /**
-     * @return Expression to determine parameter 3 value - for Spark
-     */
-    public String getParam3ElSpark() {
-        return param3ElSpark;
-    }
-
-    /**
-     * @param param3ElSpark Expression to determine parameter 3 value - for Sparl
-     */
-    public void setParam3ElSpark(String param3ElSpark) {
-        this.param3ElSpark = param3ElSpark;
-    }
-
-    /**
      * @return Expression to determine parameter 4 value
      */
     public String getParam4El() {
@@ -328,26 +216,11 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
         this.param4El = param4El;
     }
 
-    /**
-     * @return Expression to determine parameter 4 value - for Spark
-     */
-    public String getParam4ElSpark() {
-        return param4ElSpark;
-    }
-
-    /**
-     * @param param4ElSpark Expression to determine parameter 4 value - for Sparl
-     */
-    public void setParam4ElSpark(String param4ElSpark) {
-        this.param4ElSpark = param4ElSpark;
-    }
-
     @Override
     public String toString() {
-        return "TriggeredEdrTemplateDto [subscriptionEl=" + subscriptionEl + ", subscriptionElSpark=" + subscriptionElSpark + ", meveoInstanceCode=" + meveoInstanceCode
-                + ", conditionEl=" + conditionEl + ", conditionElSpark=" + conditionElSpark + ", quantityEl=" + quantityEl + ", quantityElSpark=" + quantityElSpark + ", param1El="
-                + param1El + ", param1ElSpark=" + param1ElSpark + ", param2El=" + param2El + ", param2ElSpark=" + param2ElSpark + ", param3El=" + param3El + ", param3ElSpark="
-                + param3ElSpark + ", param4El=" + param4El + ", param4ElSpark=" + param4ElSpark + ", id=" + id + ", code=" + code + ", description=" + description
+        return "TriggeredEdrTemplateDto [subscriptionEl=" + subscriptionEl + ", meveoInstanceCode=" + meveoInstanceCode
+                + ", conditionEl=" + conditionEl + ", quantityEl=" + quantityEl + ", param1El="
+                + param1El + ", param2El=" + param2El + ", param3El=" + param3El + ", param4El=" + param4El + ", id=" + id + ", code=" + code + ", description=" + description
                 + ", updatedCode=" + updatedCode + "]";
     }
 

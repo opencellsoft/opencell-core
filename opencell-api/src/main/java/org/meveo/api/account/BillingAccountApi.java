@@ -491,14 +491,8 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getMinimumAmountEl() != null) {
             billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
-        if (postData.getMinimumAmountElSpark() != null) {
-            billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
         if (postData.getMinimumLabelEl() != null) {
             billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (postData.getStatus() != null) {
         	billingAccount.setStatus(postData.getStatus());

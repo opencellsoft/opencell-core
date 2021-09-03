@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
@@ -95,13 +95,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         }
         String generatedQuery;
         if (entity.getFields() != null && !entity.getFields().isEmpty()) {
-            generatedQuery = addFields(queryBuilder.getSqlString(), entity.getFields());
+            generatedQuery = addFields(queryBuilder.getSqlString(), entity.getFields(), entity.getSortBy());
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
         if(entity.getSortBy() != null) {
             StringBuilder sortOptions = new StringBuilder(" order by ")
-                    .append(!entity.getSortBy().isBlank() ? entity.getSortBy() : "id")
+                    .append(!entity.getSortBy().isBlank() ? ("a." + entity.getSortBy()) : "a.id")
                     .append(" ")
                     .append(entity.getSortOrder() != null ? entity.getSortOrder().getLabel()
                             : SortOrderEnum.ASCENDING.getLabel());
@@ -110,27 +110,35 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
     }
 
-    private String addFields(String query, List<String> fields) {
-        List<String> groupByField = new ArrayList<>();
+    private String addFields(String query, List<String> fields, String sortBy) {
+        Set<String> groupByField = new TreeSet<>();
+        List<String> aggFields = new ArrayList<>();
         StringBuilder queryField = new StringBuilder();
         for (String field : fields) {
             Matcher matcher = pattern.matcher(field);
             if(matcher.find()) {
                 queryField.append(field);
+                aggFields.add(field);
+                if (sortBy != null && sortBy.isBlank()) {
+                    groupByField.add("id");
+                }
             } else {
                 queryField.append("a." + field);
-                groupByField.add(field);
             }
             queryField.append(" ,");
+        }
+        if (!aggFields.isEmpty()) {
+            groupByField.addAll(fields.stream()
+                    .filter(element -> !aggFields.contains(element))
+                    .collect(Collectors.toSet()));
         }
         StringBuilder generatedQuery = new StringBuilder("select ")
                 .append(queryField.deleteCharAt(queryField.length() - 1))
                 .append(" ")
                 .append(query);
-        if(fields.size() != groupByField.size()) {
-            generatedQuery
-                    .append(" group by ")
-                    .append(groupByField.stream().map(field -> "a." + field).collect(joining(", ")));
+        if(!groupByField.isEmpty()) {
+            generatedQuery.append(" group by ");
+            generatedQuery.append(groupByField.stream().map(field -> "a." + field).collect(joining(", ")));
         }
         return generatedQuery.toString();
     }

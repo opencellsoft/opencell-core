@@ -31,12 +31,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -58,7 +56,6 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -104,13 +101,10 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 		this.criteria2Value = copy.criteria2Value;
 		this.criteria3Value = copy.criteria3Value;
 		this.criteriaEL = copy.criteriaEL;
-		this.criteriaELSpark = copy.criteriaELSpark;
 		this.amountWithoutTax = copy.amountWithoutTax;
 		this.amountWithTax = copy.amountWithTax;
 		this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
-		this.amountWithoutTaxELSpark = copy.amountWithoutTaxELSpark;
 		this.amountWithTaxEL = copy.amountWithTaxEL;
-		this.amountWithTaxELSpark = copy.amountWithTaxELSpark;
 		this.tradingCurrency = copy.tradingCurrency;
 		this.tradingCountry = copy.tradingCountry;
 		this.priority = copy.priority;
@@ -120,11 +114,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 		this.scriptInstance = copy.scriptInstance;
 		this.descriptionI18n = copy.descriptionI18n;
 		this.woDescriptionEL = copy.woDescriptionEL;
-		this.woDescriptionELSpark = copy.woDescriptionELSpark;
 		this.totalAmountEL = copy.totalAmountEL;
-		this.totalAmountELSpark = copy.totalAmountELSpark;
 		this.minimumAmountEL = copy.minimumAmountEL;
-		this.minimumAmountELSpark = copy.minimumAmountELSpark;
 		this.invoiceSubCategoryEL = copy.invoiceSubCategoryEL;
 		this.validityFrom = copy.validityFrom;
 		this.validityDate = copy.validityDate;
@@ -238,13 +229,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     private String criteriaEL;
 
     /**
-     * Filtering criteria - expression to calculate criteria value for Spark
-     */
-    @Column(name = "criteria_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String criteriaELSpark;
-
-    /**
      * Amount without tax
      */
     @Column(name = "amount_without_tax", precision = 23, scale = 12)
@@ -267,28 +251,12 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     private String amountWithoutTaxEL;
 
     /**
-     * Expression to calculate amount without tax - for Spark
-     */
-    @Type(type = "longText")
-    @Column(name = "amount_without_tax_el_sp")
-    @Size(max = 2000)
-    private String amountWithoutTaxELSpark;
-
-    /**
      * Expression to calculate amount with tax
      */
     @Type(type = "longText")
     @Column(name = "amount_with_tax_el")
     @Size(max = 2000)
     private String amountWithTaxEL;
-
-    /**
-     * Expression to calculate amount with tax - for Spark
-     */
-    @Type(type = "longText")
-    @Column(name = "amount_with_tax_el_sp")
-    @Size(max = 2000)
-    private String amountWithTaxELSpark;
 
     /**
      * Filtering criteria - currency
@@ -348,11 +316,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "wo_description_el")
     @Size(max = 2000)
     private String woDescriptionEL;
-
-    @Type(type = "longText")
-    @Column(name = "wo_description_el_sp")
-    @Size(max = 2000)
-    private String woDescriptionELSpark;
     
     /**
      * Expression to calculate price with/without tax. It overrides quantity x unitPrice when set.
@@ -361,15 +324,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "total_amount_el")
     @Size(max = 2000)
     private String totalAmountEL;
-    
-    /**
-     * Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark.
-     */
-    @Type(type = "longText")
-    @Column(name = "total_amount_el_sp")
-    @Size(max = 2000)
-    private String totalAmountELSpark;
-    
+        
     /**
 	 * Minimum allowed amount for a walletOperation. If this amount is less than the
 	 * walletOperation this amount is save and the old value is save in rawAmount.
@@ -379,15 +334,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Size(max = 2000)
     private String minimumAmountEL;
     
-    /**
-	 * Minimum allowed amount for a walletOperation. If this amount is less than the
-	 * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
-	 */
-    @Type(type = "longText")
-    @Column(name = "minimum_amount_el_sp")
-    @Size(max = 2000)
-    private String minimumAmountELSpark;
-
     @Type(type = "longText")
     @Column(name = "invoice_subcategory_el")
     @Size(max = 2000)
@@ -546,20 +492,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.criteriaEL = criteriaEL;
     }
 
-    /**
-     * @return Expression to determine if Price plan applies - for Spark
-     */
-    public String getCriteriaELSpark() {
-        return criteriaELSpark;
-    }
-
-    /**
-     * @param criteriaELSpark Expression to determine if Price plan applies - for Spark
-     */
-    public void setCriteriaELSpark(String criteriaELSpark) {
-        this.criteriaELSpark = criteriaELSpark;
-    }
-
     public BigDecimal getAmountWithoutTax() {
         return amountWithoutTax;
     }
@@ -591,20 +523,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     }
 
     /**
-     * @return Expression to calculate the amount without tax - for Spark
-     */
-    public String getAmountWithoutTaxELSpark() {
-        return amountWithoutTaxELSpark;
-    }
-
-    /**
-     * @param amountWithoutTaxELSpark Expression to calculate the amount without tax - for Spark
-     */
-    public void setAmountWithoutTaxELSpark(String amountWithoutTaxELSpark) {
-        this.amountWithoutTaxELSpark = amountWithoutTaxELSpark;
-    }
-
-    /**
      * @return Expression to calculate the amount with tax
      */
     public String getAmountWithTaxEL() {
@@ -616,20 +534,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
      */
     public void setAmountWithTaxEL(String amountWithTaxEL) {
         this.amountWithTaxEL = amountWithTaxEL;
-    }
-
-    /**
-     * @return Expression to calculate the amount with tax - for Spark
-     */
-    public String getAmountWithTaxELSpark() {
-        return amountWithTaxELSpark;
-    }
-
-    /**
-     * @param amountWithTaxELSpark Expression to calculate the amount with tax - for Spark
-     */
-    public void setAmountWithTaxELSpark(String amountWithTaxELSpark) {
-        this.amountWithTaxELSpark = amountWithTaxELSpark;
     }
 
     public TradingCurrency getTradingCurrency() {
@@ -848,20 +752,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     public void setWoDescriptionEL(String woDescriptionEL) {
         this.woDescriptionEL = woDescriptionEL;
     }
-
-    /**
-     * @return Expression to determine Wallet operation description - for Spark
-     */
-    public String getWoDescriptionELSpark() {
-        return woDescriptionELSpark;
-    }
-
-    /**
-     * @param woDescriptionELSpark Expression to determine Wallet operation description - for Spark
-     */
-    public void setWoDescriptionELSpark(String woDescriptionELSpark) {
-        this.woDescriptionELSpark = woDescriptionELSpark;
-    }
    
     public String getInvoiceSubCategoryEL() {
         return invoiceSubCategoryEL;
@@ -887,22 +777,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 		this.totalAmountEL = totalAmountEL;
 	}
 
-	 /**
-     * Expression to get the total amount. Previously called ratingEL - Spark.
-     * @return total amount expression
-     */
-	public String getTotalAmountELSpark() {
-		return totalAmountELSpark;
-	}
-
-	/**
-	 * Expression to get the total amount. Previously called ratingEL.
-	 * @param totalAmountELSpark  EL expression used in Spark case.
-	 */
-	public void setTotalAmountELSpark(String totalAmountELSpark) {
-		this.totalAmountELSpark = totalAmountELSpark;
-	}
-
 	/**
 	 * Expression to set the minimum allowed amount. 
 	 * @return EL expression
@@ -916,21 +790,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	 */
 	public void setMinimumAmountEL(String minimumAmountEL) {
 		this.minimumAmountEL = minimumAmountEL;
-	}
-
-	/**
-	 * Expression to set the minimum allowed amount - for Spark.
-	 * @return EL expression.
-	 */
-	public String getMinimumAmountELSpark() {
-		return minimumAmountELSpark;
-	}
-
-	/**
-	 * @param minimumAmountELSpark Expression to set the minimum allowed amount - for Spark.
-	 */
-	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
-		this.minimumAmountELSpark = minimumAmountELSpark;
 	}
 
     public Date getValidityFrom() {

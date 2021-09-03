@@ -72,7 +72,7 @@
             column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity"
             column3Child="from" column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{subscriptionBean.entity.offer}" width="1000"
             lazy="true" dataModel="#{subscriptionBean.activeOfferTemplateDataModel}"
-            updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerField :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl :subscriptionTab:subscriptionFormId:informationTab:minimumAmountElSpark :subscriptionTab:subscriptionFormId:informationTab:minimumLabelElSpark"
+            updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerField :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl"
             selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="copyInfoFromOffer">
         </hftl:entityPopup>
         <!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
@@ -362,12 +362,6 @@
                                         maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxEl':'offerTemplate.minimumAmountWithTaxEl']}"
                                         field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
-                                    <hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
-                                        rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
-                                    <hftl:formField
-                                        label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}"
-                                        field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"
-                                        rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code"
                                         listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 

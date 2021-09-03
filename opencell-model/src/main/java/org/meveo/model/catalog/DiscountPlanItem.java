@@ -119,13 +119,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	private String expressionEl;
 
 	/**
-	 * Expression to determine if discount applies - for Spark
-	 */
-	@Column(name = "expression_el_sp", length = 2000)
-	@Size(max = 2000)
-	private String expressionElSpark;
-
-	/**
 	 * The absolute or percentage discount amount.
 	 */
 	@Column(name = "discount_value", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -138,13 +131,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "discount_value_el", length = 2000)
 	@Size(max = 2000)
 	private String discountValueEL;
-
-	/**
-	 * Expression to calculate discount percentage - for Spark
-	 */
-	@Column(name = "discount_value_el_sp", length = 2000)
-	@Size(max = 2000)
-	private String discountValueElSpark;
 
 	/**
 	 * Type of discount, default is percent.
@@ -263,21 +249,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		this.expressionEl = expressionEl;
 	}
 
-	/**
-	 * @return Expression to determine if discount applies - for Spark
-	 */
-	public String getExpressionElSpark() {
-		return expressionElSpark;
-	}
-
-	/**
-	 * @param expressionElSpark
-	 *            Expression to determine if discount applies - for Spark
-	 */
-	public void setExpressionElSpark(String expressionElSpark) {
-		this.expressionElSpark = expressionElSpark;
-	}
-
 	@Override
 	public int hashCode() {
 		return 961 + (("DiscountPlanItem" + (code == null ? "" : code)).hashCode());
@@ -322,14 +293,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 
 	public void setDiscountValue(BigDecimal discountValue) {
 		this.discountValue = discountValue;
-	}
-
-	public String getDiscountValueElSpark() {
-		return discountValueElSpark;
-	}
-
-	public void setDiscountValueElSpark(String discountValueElSpark) {
-		this.discountValueElSpark = discountValueElSpark;
 	}
 
 	public void setDiscountValueEL(String discountValueEL) {

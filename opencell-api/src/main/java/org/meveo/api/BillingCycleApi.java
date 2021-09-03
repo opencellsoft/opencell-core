@@ -68,8 +68,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (StringUtils.isBlank(dto.getCalendar())) {
             missingParameters.add("calendar");
         }
-        if (dto.getDueDateDelay() == null && StringUtils.isBlank(dto.getDueDateDelayEL()) && StringUtils.isBlank(dto.getDueDateDelayELSpark())) {
-            missingParameters.add("dueDateDelayEL or dueDateDelayELSpark");
+        if (dto.getDueDateDelay() == null && StringUtils.isBlank(dto.getDueDateDelayEL())) {
+            missingParameters.add("dueDateDelayEL");
         }
 
         handleMissingParametersAndValidate(dto);
@@ -199,14 +199,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDueDateDelayEL() != null) {
             entity.setDueDateDelayEL(StringUtils.isEmpty(dto.getDueDateDelayEL()) ? null : dto.getDueDateDelayEL());
         }
-        if (dto.getDueDateDelayELSpark() != null) {
-            entity.setDueDateDelayELSpark(StringUtils.isEmpty(dto.getDueDateDelayELSpark()) ? null : dto.getDueDateDelayELSpark());
-        }
         if (dto.getInvoiceTypeEl() != null) {
             entity.setInvoiceTypeEl(StringUtils.isEmpty(dto.getInvoiceTypeEl()) ? null : dto.getInvoiceTypeEl());
-        }
-        if (dto.getInvoiceTypeElSpark() != null) {
-            entity.setInvoiceTypeElSpark(StringUtils.isEmpty(dto.getInvoiceTypeElSpark()) ? null : dto.getInvoiceTypeElSpark());
         }
         if (dto.getLastTransactionDateEL() != null) {
             entity.setLastTransactionDateEL(StringUtils.isEmpty(dto.getLastTransactionDateEL()) ? null : dto.getLastTransactionDateEL());

@@ -119,11 +119,6 @@ public class CustomerAccountDto extends AccountDto {
      */
     private String dueDateDelayEL;
 
-    /**
-     * Expression to calculate Invoice due date delay value - for Spark
-     */
-    private String dueDateDelayELSpark;
-
     /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
     @XmlElement(name = "methodOfPayment")
@@ -212,7 +207,6 @@ public class CustomerAccountDto extends AccountDto {
             setContactInformation(new ContactInformationDto(e.getContactInformation()));
         }
         setDueDateDelayEL(e.getDueDateDelayEL());
-        setDueDateDelayELSpark(e.getDueDateDelayELSpark());
         setExcludedFromPayment(e.isExcludedFromPayment());
         setRegistrationNo(e.getRegistrationNo());
         setVatNo(e.getVatNo());
@@ -518,20 +512,6 @@ public class CustomerAccountDto extends AccountDto {
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
-    }
-
-    /**
-     * @return Expression to calculate Invoice due date delay value - for Spark
-     */
-    public String getDueDateDelayELSpark() {
-        return dueDateDelayELSpark;
-    }
-
-    /**
-     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
-     */
-    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
-        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     /**
