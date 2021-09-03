@@ -876,12 +876,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     public Subscription getLastVersionSubscription(String subCode) {
         List<Subscription> subscriptions = findListByCode(subCode);
-        Optional<Subscription> subscriptionLastVersion = subscriptions.stream()
-                .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus())
-                        || SubscriptionStatusEnum.CREATED.equals(s.getStatus())
-                        || SubscriptionStatusEnum.SUSPENDED.equals(s.getStatus()))
-                .max(Comparator.comparing(Subscription::getId));
-        return subscriptionLastVersion.orElse(null);
+        return subscriptions.stream()
+                .filter(s -> s.getValidity() == null || s.getValidity().getTo() == null)
+                .findFirst()
+                .orElse(null);
     }
 
     private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {

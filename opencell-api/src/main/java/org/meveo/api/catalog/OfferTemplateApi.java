@@ -385,8 +385,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
-        offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        offerTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         offerTemplate.setStatusDate(Calendar.getInstance().getTime());
 
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
@@ -750,8 +748,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
        
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
-        dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
-        dto.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
         //dto.setOfferTemplate(new OfferTemplateDto(offerTemplate,entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false));
         
         if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
@@ -868,8 +864,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
-        dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
-        dto.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
         if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<>();
             for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {

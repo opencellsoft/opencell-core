@@ -89,8 +89,8 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
             missingParameters.add("accountTaxCategoryCode");
         }
 
-        if (StringUtils.isBlank(dto.getTaxCode()) && StringUtils.isBlank(dto.getTaxEL()) && StringUtils.isBlank(dto.getTaxELSpark())) {
-            missingParameters.add("taxCode, taxCodeEL or taxCodeELSpark");
+        if (StringUtils.isBlank(dto.getTaxCode()) && StringUtils.isBlank(dto.getTaxEL())) {
+            missingParameters.add("taxCode, taxCodeEL");
         }
 
         handleMissingParametersAndValidate(dto);
@@ -220,10 +220,6 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
             entity.setFilterEL(StringUtils.isEmpty(dto.getFilterEL()) ? null : dto.getFilterEL());
         }
 
-        if (dto.getFilterELSpark() != null) {
-            entity.setFilterELSpark(StringUtils.isEmpty(dto.getFilterELSpark()) ? null : dto.getFilterELSpark());
-        }
-
         if (dto.getTaxCode() != null) {
             if (StringUtils.isBlank(dto.getTaxCode())) {
                 entity.setTax(null);
@@ -239,10 +235,6 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
 
         if (dto.getTaxEL() != null) {
             entity.setTaxEL(StringUtils.isEmpty(dto.getTaxEL()) ? null : dto.getTaxEL());
-        }
-
-        if (dto.getTaxELSpark() != null) {
-            entity.setTaxELSpark(StringUtils.isEmpty(dto.getTaxELSpark()) ? null : dto.getTaxELSpark());
         }
 
         if (dto.getTaxScriptCode() != null) {

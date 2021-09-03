@@ -2,7 +2,9 @@ package org.meveo.service.billing.impl;
 
 import static java.lang.Double.valueOf;
 import static java.lang.Enum.valueOf;
+import static java.util.Optional.ofNullable;
 
+import org.meveo.admin.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +52,8 @@ public class FilterConverter {
             if(fieldName.equalsIgnoreCase("id")) {
                 return Long.valueOf(filterEntry.getValue());
             }
-            Field field = entity.getDeclaredField(fieldName);
+            Field field = ofNullable(from(fieldName, entity))
+                    .orElseThrow(() -> new BusinessException("No such field " + fieldName));
             if (Number.class.isAssignableFrom(field.getType())) {
                 return toNumber(entity, fieldName, filterEntry.getValue());
             }
@@ -69,6 +72,18 @@ public class FilterConverter {
             log.error(exception.getMessage());
         }
         return null;
+    }
+
+    private Field from(String fieldName, Class<?> entity) {
+        Field field = null;
+        while (entity != Object.class && field == null) {
+            try {
+                field = entity.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException exception) {
+                entity = entity.getSuperclass();
+            }
+        }
+        return field;
     }
 
     private Object toNumber(Class<?> entity, String key, String value) throws NoSuchFieldException, NoSuchMethodException,

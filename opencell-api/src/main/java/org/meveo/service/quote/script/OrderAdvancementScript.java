@@ -27,18 +27,22 @@ import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
-public class OrderAdvancementScript extends ModuleScript {
+public class
+OrderAdvancementScript extends ModuleScript {
 
     private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
     private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
@@ -47,6 +51,7 @@ public class OrderAdvancementScript extends ModuleScript {
     private InvoiceLineService invoiceLinesService = (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
     private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
     private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
+    private CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(CustomFieldInstanceService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -125,6 +130,13 @@ public class OrderAdvancementScript extends ModuleScript {
 
                     createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
                     List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
+                    invoices.stream()
+                            .forEach(
+                                    invoice -> {
+                                        customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
+                                        invoiceService.update(invoice);
+                                    }
+                            );
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -156,8 +168,16 @@ public class OrderAdvancementScript extends ModuleScript {
         }
 
         createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
-        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,false);
-      
+        List<Invoice> aggregatesAndInvoiceWithIL = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false, false);
+        aggregatesAndInvoiceWithIL.stream()
+                .forEach(
+                        invoice -> {
+                            customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
+                            invoiceService.update(invoice);
+                        }
+                );
+
+
     }
 
     private AccountingArticle getDefaultAccountingArticle() {

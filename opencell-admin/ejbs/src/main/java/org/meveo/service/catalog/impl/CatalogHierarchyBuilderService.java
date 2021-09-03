@@ -373,7 +373,6 @@ public class CatalogHierarchyBuilderService {
 				duplicate.setId(null);
 				duplicate.setDiscountPlan(entity);
 				duplicate.setExpressionEl(dp.getExpressionEl());
-				duplicate.setExpressionElSpark(dp.getExpressionElSpark());
 				duplicate.setDiscountValue(dp.getDiscountValue());
 				duplicate.setDiscountValueEL(dp.getDiscountValueEL());
 				duplicate.setDiscountPlanItemType(dp.getDiscountPlanItemType());

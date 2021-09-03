@@ -71,13 +71,6 @@ public abstract class Calendar extends BusinessEntity {
     private String initDateEL;
 
     /**
-     * Calendar initialization date - expression to determine a value for calendar initialization date for Spark
-     */
-    @Column(name = "init_date_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String initDateELSpark;
-
-    /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
@@ -174,20 +167,6 @@ public abstract class Calendar extends BusinessEntity {
      */
     public void setInitDateEL(String initDateEL) {
         this.initDateEL = initDateEL;
-    }
-
-    /**
-     * @return Calendar initialization date - expression to determine a value for calendar initialization date for Spark
-     */
-    public String getInitDateELSpark() {
-        return initDateELSpark;
-    }
-
-    /**
-     * @param initDateELSpark Calendar initialization date - expression to determine a value for calendar initialization date for Spark
-     */
-    public void setInitDateELSpark(String initDateELSpark) {
-        this.initDateELSpark = initDateELSpark;
     }
 
     public Map<String, String> getDescriptionI18n() {

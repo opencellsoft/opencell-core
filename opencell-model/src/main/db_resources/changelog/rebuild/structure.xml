@@ -1478,8 +1478,6 @@
             <column name="registration_no" type="varchar(100)" />
             <column name="minimum_amount_el" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
@@ -2110,7 +2108,6 @@
             </column>
             <column name="credit_category_id" type="bigint" />
             <column name="due_date_delay_el" type="varchar(2000)" />
-            <column name="due_date_delay_el_sp" type="varchar(2000)" />
             <column name="excluded_from_payment" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="crm_address_book_id" type="bigint" />
             <column name="minimum_target_account_id" type="bigint"/>
@@ -2676,11 +2673,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="due_date_delay_el" type="varchar(2000)" />
-            <column name="due_date_delay_el_sp" type="varchar(2000)" />
             <column name="cf_values" type="${type.json}" />
             <column name="billing_template_name_el" type="varchar(2000)" />
             <column name="invoice_type_el" type="varchar(2000)" />
-            <column name="invoice_type_el_sp" type="varchar(2000)" />
             <column name="billing_cycle_type" type="varchar(256)">
                 <constraints nullable="false" />
             </column>
@@ -3219,9 +3214,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="rate_until_date" type="datetime" />
             <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
             <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -3343,9 +3336,7 @@
             <column name="renewal_notified_date" type="datetime" />
             <column name="cf_values" type="${type.json}" />
             <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
             <column name="initial_term_type" type="varchar(20)" />
             <column name="billing_cycle" type="bigint" />
             <column name="billing_run" type="bigint" />
@@ -3661,7 +3652,6 @@
             <column name="weekend_begin" type="int4" />
             <column name="weekend_end" type="int4" />
             <column name="init_date_el" type="varchar(2000)"/>
-            <column name="init_date_el_sp" type="varchar(2000)"/>
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
@@ -3748,7 +3738,6 @@
             <column name="filter_param_2" type="varchar(255)" />
             <column name="filter_param_3" type="varchar(255)" />
             <column name="filter_param_4" type="varchar(255)" />
-            <column name="filter_el_sp" type="varchar(2000)" />
             <column  name="priority" type="int4" defaultValueNumeric="1" />
             <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="trigger_next_charge_el" type="varchar(2000)" />
@@ -3774,7 +3763,6 @@
             <column name="output_unit_el" type="varchar(2000)"/>
             <column name="tax_class_id" type="bigint"/>
             <column name="tax_class_el" type="varchar(2000)" />
-            <column name="tax_class_el_sp" type="varchar(2000)" />
             <column name="drop_zero_wo" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="rating_script_id" type="bigint"/>
             <column name="sort_index_el" type="varchar(2000)"/>
@@ -3952,9 +3940,7 @@
             <column name="invoice_category_id" type="bigint" />
             <column name="invoice_sub_category_id" type="bigint" />
             <column name="expression_el" type="varchar(2000)" />
-            <column name="expression_el_sp" type="varchar(2000)" />
             <column name="discount_value_el" type="varchar(2000)" />
-            <column name="discount_value_el_sp" type="varchar(2000)" />
             <column name="discount_plan_item_type" type="varchar(25)" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
@@ -4058,9 +4044,7 @@
             <column name="long_description_i18n" type="${type.json}" />
             <column name="script_instance_id" type="bigint" />
             <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
             <column name="initial_term_type" type="varchar(20)" />
             <column name="auto_end_of_engagement" type="${type.boolean}" />
             <column name="auto_renew_date" type="datetime" />
@@ -4101,7 +4085,6 @@
             <column name="criteria_2" type="varchar(255)" />
             <column name="criteria_3" type="varchar(255)" />
             <column name="criteria_el" type="varchar(2000)" />
-            <column name="criteria_el_sp" type="varchar(2000)" />
             <column name="end_rating_date" type="datetime" />
             <column name="end_subscription_date" type="datetime" />
             <column name="event_code" type="varchar(255)">
@@ -4124,11 +4107,9 @@
             <column name="amount_without_tax_el" type="${type.text}">
                 <constraints nullable="true" />
             </column>
-            <column name="amount_without_tax_el_sp" type="${type.text}" />
             <column name="amount_with_tax_el" type="${type.text}">
                 <constraints nullable="true" />
             </column>
-            <column name="amount_with_tax_el_sp" type="${type.text}" />
             <column name="sequence" type="bigint" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
@@ -4137,12 +4118,9 @@
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="wo_description_el" type="${type.text}" />
-            <column name="wo_description_el_sp" type="${type.text}" />
             <column name="invoice_subcategory_el" type="${type.text}" />
             <column name="total_amount_el" type="${type.text}" />
             <column name="minimum_amount_el" type="${type.text}" />
-            <column name="total_amount_el_sp" type="${type.text}" />
-            <column name="minimum_amount_el_sp" type="${type.text}" />
             <column name="validity_from" type="datetime" />
             <column name="validity_date" type="datetime" />
             <column name="parameter1_el" type="varchar(2000)"/>
@@ -4285,9 +4263,7 @@
             <column name="image_path" type="varchar(100)" />
             <column name="cf_values" type="${type.json}" />
             <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
             <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -4340,21 +4316,14 @@
             <column name="description" type="varchar(255)" />
             <column name="condition_el" type="varchar(2000)" />
             <column name="param_1_el" type="${type.text}" />
-            <column name="param_1_el_sp" type="${type.text}" />
             <column name="param_2_el" type="${type.text}" />
-            <column name="param_2_el_sp" type="${type.text}" />
             <column name="param_3_el" type="${type.text}" />
-            <column name="param_3_el_sp" type="${type.text}" />
             <column name="param_4_el" type="${type.text}" />
-            <column name="param_4_el_sp" type="${type.text}" />
             <column name="quantity_el" type="${type.text}" />
-            <column name="quantity_el_sp" type="${type.text}" />
             <column name="subscription_el" type="${type.text}" />
-            <column name="subscription_el_sp" type="${type.text}" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="meveo_instance_id" type="bigint" />
-            <column name="condition_el_sp" type="${type.text}" />
             <column name="triggered_edr_script_instance_id" type="bigint" />
             <column name="opencell_instance_el" type="${type.text}" />
         </createTable>
@@ -4783,7 +4752,6 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="exoneration_tax_el" type="varchar(2000)" />
-            <column name="exoneration_tax_el_sp" type="varchar(2000)" />
             <column name="exoneration_reason" type="varchar(255)" />
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -4794,7 +4762,6 @@
             	<constraints nullable="false"/>
             </column>
             <column name="tax_category_el" type="varchar(2000)" />
-            <column name="tax_category_el_sp" type="varchar(2000)" />
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
             </column>
@@ -6493,7 +6460,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="due_date_delay_el" type="varchar(2000)" />
-            <column name="due_date_delay_el_sp" type="varchar(2000)" />
             <column name="payment_method_id" type="BIGINT" />
             <column name="cf_values" type="${type.json}" />
             <column name="quote_id" type="bigint" />
@@ -8077,10 +8043,8 @@
             <column name="seller_country_id" type="bigint" />
             <column name="buyer_country_id" type="bigint" />
             <column name="filter_el" type="varchar(2000)" />
-            <column name="filter_el_sp" type="varchar(2000)" />
             <column name="tax_id" type="bigint" />
             <column name="tax_el" type="varchar(2000)" />
-            <column name="tax_el_sp" type="varchar(2000)" />
             <column name="tax_script_id" type="bigint" />
             <column name="priority" type="int4" defaultValueNumeric="0" />
             <column name="source" type="varchar(2000)" />
@@ -16321,6 +16285,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD_1609_20210902" author="TarikFA." />
+    <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius"/>
 
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

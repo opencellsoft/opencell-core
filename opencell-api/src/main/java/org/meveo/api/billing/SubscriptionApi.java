@@ -485,14 +485,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
-        if (postData.getMinimumAmountElSpark() != null) {
-            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
         if (postData.getMinimumLabelEl() != null) {
             subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (postData.getAutoEndOfEngagement() != null) {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
@@ -2719,8 +2713,6 @@ public class SubscriptionApi extends BaseApi {
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
         subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
-        subscription.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
-        subscription.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
         subscription.setMinimumChargeTemplate(offerTemplate.getMinimumChargeTemplate());
 
         if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
@@ -2728,12 +2720,6 @@ public class SubscriptionApi extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
             subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumAmountElSpark())) {
-            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumLabelElSpark())) {
-            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
             OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
@@ -2884,6 +2870,7 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
+        actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);
 
         lastSubscription.setToValidity(null);
