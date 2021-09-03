@@ -9975,6 +9975,13 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD_1609_20210902" author="TarikFA.">
+    	<addColumn tableName="accounting_period">
+    		<column name="force_option" type="varchar(50)" />
+    		<column name="force_custom_day" type="int4" />
+    	</addColumn>
+    </changeSet>
+	
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius">
 	   <dropColumn tableName="billing_cycle" columnName="due_date_delay_el_sp"/>
        <dropColumn tableName="billing_cycle" columnName="invoice_type_el_sp"/>       
@@ -10013,4 +10020,5 @@ public class OrderAdvancement extends ModuleScript {
        <dropColumn tableName="cat_charge_template" columnName="tax_class_el_sp"/>
        <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>        
     </changeSet>
+    
 </databaseChangeLog>
