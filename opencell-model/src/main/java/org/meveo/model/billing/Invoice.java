@@ -67,6 +67,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -676,8 +677,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         setUUIDIfNull();
         
         if(this.getBillingAccount() != null) {
-        	var billingAccount = this.getBillingAccount();
-        	var customerAccount = this.getBillingAccount().getCustomerAccount();
+        	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
         	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
         	this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
         	this.tradingLanguage = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage() : customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
