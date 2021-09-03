@@ -85,12 +85,6 @@ public class BillingCycleDto extends BusinessEntityDto {
     private String dueDateDelayEL;
 
     /**
-     * Expression to calculate Invoice due date delay from the invoicing date - for Spark
-     */
-    @XmlElement()
-    private String dueDateDelayELSpark;
-
-    /**
      * A delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate + BillingCycle.invoiceDateProductionDelay
      */
     @Deprecated
@@ -148,11 +142,6 @@ public class BillingCycleDto extends BusinessEntityDto {
      * Expression to resolve invoice type code
      */
     private String invoiceTypeEl;
-
-    /**
-     * Expression to resolve invoice type code - for Spark
-     */
-    private String invoiceTypeElSpark;
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
@@ -218,10 +207,6 @@ public class BillingCycleDto extends BusinessEntityDto {
 		return thresholdPerEntity;
 	}
 
-	public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
-		this.dueDateDelayELSpark = dueDateDelayELSpark;
-	}
-
     private List<LanguageDescriptionDto> languageDescriptions;
 
     public Boolean isThresholdPerEntity() {
@@ -253,14 +238,12 @@ public class BillingCycleDto extends BusinessEntityDto {
             billingTemplateNameEL = billingCycleEntity.getBillingTemplateNameEL();
             invoiceDateDelayEL = billingCycleEntity.getInvoiceDateDelayEL();
             dueDateDelayEL = billingCycleEntity.getDueDateDelayEL();
-            dueDateDelayELSpark = billingCycleEntity.getDueDateDelayELSpark();
             invoiceDateProductionDelayEL = billingCycleEntity.getInvoiceDateProductionDelayEL();
             lastTransactionDateDelayEL = billingCycleEntity.getLastTransactionDateDelayEL();
             lastTransactionDateEL = billingCycleEntity.getLastTransactionDateEL();
             invoicingThreshold = billingCycleEntity.getInvoicingThreshold();
             type = billingCycleEntity.getType();
             invoiceTypeEl = billingCycleEntity.getInvoiceTypeEl();
-            invoiceTypeElSpark = billingCycleEntity.getInvoiceTypeElSpark();
             referenceDate = billingCycleEntity.getReferenceDate();
             if (billingCycleEntity.getScriptInstance() != null) {
                 scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
@@ -501,20 +484,6 @@ public class BillingCycleDto extends BusinessEntityDto {
     }
 
     /**
-     * @return Expression to resolve invoice type code for Spark
-     */
-    public String getInvoiceTypeElSpark() {
-        return invoiceTypeElSpark;
-    }
-
-    /**
-     * @param invoiceTypeElSpark Expression to resolve invoice type code for Spark
-     */
-    public void setInvoiceTypeElSpark(String invoiceTypeElSpark) {
-        this.invoiceTypeElSpark = invoiceTypeElSpark;
-    }
-
-    /**
      * Gets the custom fields.
      *
      * @return the custom fields
@@ -556,20 +525,6 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
-    }
-
-    /**
-     * @return Expression to calculate Invoice due date delay from the invoicing date - for Spark
-     */
-    public String getDueDateDelayELSpark() {
-        return dueDateDelayELSpark;
-    }
-
-    /**
-     * @param dueDateDelaySpark Expression to calculate Invoice due date delay from the invoicing date - for Spark
-     */
-    public void setDueDateDelaySpark(String dueDateDelaySpark) {
-        this.dueDateDelayELSpark = dueDateDelaySpark;
     }
 
     /**

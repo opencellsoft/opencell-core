@@ -323,8 +323,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         // serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
         // serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
-        serviceInstance.setMinimumAmountElSpark(serviceTemplate.getMinimumAmountElSpark());
-        serviceInstance.setMinimumLabelElSpark(serviceTemplate.getMinimumLabelElSpark());
         // serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
 
         if (!isVirtual) {

@@ -242,12 +242,6 @@ public class AccountEntityApi extends BaseApi {
         if (postData.getMinimumLabelEl() != null) {
             accountEntity.setMinimumLabelEl(StringUtils.isEmpty(postData.getMinimumLabelEl()) ? null : postData.getMinimumLabelEl());
         }
-        if (postData.getMinimumAmountElSpark() != null) {
-            accountEntity.setMinimumAmountElSpark(StringUtils.isEmpty(postData.getMinimumAmountElSpark()) ? null : postData.getMinimumAmountElSpark());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            accountEntity.setMinimumLabelElSpark(StringUtils.isEmpty(postData.getMinimumLabelElSpark()) ? null : postData.getMinimumLabelElSpark());
-        }
 
         if (postData.getMinimumChargeTemplate() != null) {
             if (StringUtils.isBlank(postData.getMinimumChargeTemplate())) {

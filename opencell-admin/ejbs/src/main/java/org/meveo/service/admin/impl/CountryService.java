@@ -51,7 +51,6 @@ public class CountryService extends PersistenceService<Country> {
         qb.startOrClause();
         qb.addCriterion("countryCode", "=", countryCode, false);
         qb.addCriterion("description", "=", countryCode, true);
-        qb.addSql("lower(descriptionI18n) like '%:\"" + countryCode.toLowerCase() + "\"%'");
         qb.endOrClause();
         
         try {

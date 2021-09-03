@@ -387,13 +387,14 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                             .map(Object::toString)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
+            String outputFilePath = "";
             try {
-                createResultFile(data, fileHeader, fileName.toString(), ".csv");
+                outputFilePath = createResultFile(data, fileHeader, fileName.toString(), ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
             Date endDate = new Date();
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, fileName.toString(), data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, outputFilePath, data.size()));
         }
         return new AsyncResult<>(null);
     }
@@ -449,7 +450,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         return result;
     }
 
-    private void createResultFile(List<String> data, String header, String fileName, String extension)
+    private String createResultFile(List<String> data, String header, String fileName, String extension)
             throws IOException {
         File dir = new File(paramBeanFactory.getChrootDir() + File.separator + "reports" + File.separator);
         if (!dir.exists()) {
@@ -460,6 +461,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             data.stream()
                     .forEach(pw::println);
         }
+        return dir.getPath() + File.separator + fileName + extension;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,
