@@ -7,6 +7,7 @@ import org.meveo.apiv2.accounting.ImmutableAccountingPeriod;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.CustomLockOption;
 import org.meveo.model.accounting.RegularUserLockOption;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
@@ -53,6 +54,8 @@ public class AccountingPeriodMapper extends ResourceMapper<org.meveo.apiv2.accou
 			Optional.ofNullable(resource.getSubAccountingPeriodType()).ifPresent(s->accountingPeriod.setSubAccountingPeriodType(SubAccountingPeriodTypeEnum.valueOf(resource.getSubAccountingPeriodType())));
 			Optional.ofNullable(resource.getAccountingOperationAction()).ifPresent(s->accountingPeriod.setAccountingOperationAction(AccountingOperationAction.valueOf(resource.getAccountingOperationAction())));
 			Optional.ofNullable(resource.getRegularUserLockOption()).ifPresent(s->accountingPeriod.setRegularUserLockOption(RegularUserLockOption.valueOf(resource.getRegularUserLockOption())));
+			Optional.ofNullable(resource.getForceOption()).ifPresent(s->accountingPeriod.setForceOption(AccountingPeriodForceEnum.valueOf(resource.getForceOption())));
+			Optional.ofNullable(resource.getForceCustomDay()).ifPresent(accountingPeriod::setForceCustomDay);
 			return accountingPeriod;
 		} catch (Exception e) {
 			throw new BusinessException(e);

@@ -552,10 +552,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
             orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
         }
-
+        Date endAgreementDate=serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate() : serviceInstance.getEndAgreementDate();
+        if(endAgreementDate!=null) {
         PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
         if (paymentScheduleTemplate != null && paymentScheduleTemplateService.matchExpression(paymentScheduleTemplate.getFilterEl(), serviceInstance)) {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate, serviceInstance);
+        }
         }
     }
 

@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -30,6 +31,10 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 		if(entity.getAccountingPeriodYear()==null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(startDate, entity.getEndDate()));
+		}
+		if(entity.getForceOption() != null && entity.getForceOption().equals(AccountingPeriodForceEnum.CUSTOM_DAY)) {
+			if(entity.getForceCustomDay() == null || entity.getForceCustomDay().intValue() == 0)
+				throw new BusinessApiException("When force option is set to CUSTOM_DAY then the force custom day must not be null");
 		}
 		create(entity);
 		if (isUseSubAccountingPeriods) {
@@ -95,6 +100,8 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 				s -> nextAP.setAccountingOperationAction(openAccountingPeriod.getAccountingOperationAction()));
 		Optional.ofNullable(openAccountingPeriod.getRegularUserLockOption())
 				.ifPresent(s -> nextAP.setRegularUserLockOption(openAccountingPeriod.getRegularUserLockOption()));
+		Optional.ofNullable(openAccountingPeriod.getForceCustomDay()).ifPresent(nextAP::setForceCustomDay);
+		Optional.ofNullable(openAccountingPeriod.getForceOption()).ifPresent(nextAP::setForceOption);
 
 		return createAccountingPeriod(nextAP, nextAP.isUseSubAccountingCycles(), startDate);
 	}

@@ -267,7 +267,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     	if (invoice.getInvoiceType().isInvoiceAccountable()) {
     		@SuppressWarnings("unchecked")
             List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
-            List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<RecordedInvoiceCatAgregate>();
+            List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<>();
 
             BigDecimal remainingAmountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
             BigDecimal remainingAmountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
@@ -370,11 +370,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
-            OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
+    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+                                                                BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
+                                                                OCCTemplate occTemplate, boolean isRecordedInvoice)
+            throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
         InvoiceType invoiceType = invoice.getInvoiceType();
-		if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber(), invoiceType)) {
+		if (isRecordedInvoiceExist((isRecordedInvoice ? "" : "IC_") + invoice.getInvoiceNumber(), invoiceType)) {
             throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoiceType.getCode()+ " already exist");
         }
 
@@ -382,11 +384,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         T recordedInvoice = null;
         BillingAccount billingAccount = invoice.getBillingAccount();
 
-        if (isRecordedIvoince) {
+        if (isRecordedInvoice) {
             recordedInvoice = (T) new RecordedInvoice();
             recordedInvoice.setNetToPay(netToPay);
 
-            List<String> orderNums = new ArrayList<String>();
+            List<String> orderNums = new ArrayList<>();
             if (invoice.getOrders() != null) {
                 for (Order order : invoice.getOrders()) {
                     if (order != null) {
@@ -400,7 +402,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         }
 
-        recordedInvoice.setReference((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber());
+        recordedInvoice.setReference((isRecordedInvoice ? "" : "IC_") + invoice.getInvoiceNumber());
         recordedInvoice.setInvoice(invoice);
         try {
             customerAccount = billingAccount.getCustomerAccount();
@@ -455,6 +457,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
 
         recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
+        recordedInvoice.setAccountingDate(invoice.getInvoiceDate());
 
         return recordedInvoice;
     }
