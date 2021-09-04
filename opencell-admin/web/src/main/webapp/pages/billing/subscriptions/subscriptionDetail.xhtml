@@ -585,7 +585,7 @@
                         </hftl:formPanel>
                         <p:outputPanel id="recurringChargeDataPanel">
                             <h:form id="OS_recurring_results_form" prependId="false">
-                                <p:dataTable resizableColumns="true" value="#{subscriptionBean.recurringChargeInstances}" var="entity">
+                                <p:dataTable resizableColumns="true" value="#{subscriptionBean.recurringChargeInstances}" var="entity" paginator="true" rows="10">
                                     <hftl:column label="#{messages['chargeInstance.code']}" field="code" />
                                     <hftl:column label="#{messages['chargeInstance.description']}" field="description" isMessage="false" />
                                     <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="recurringChargeTemplateDetail"
@@ -625,7 +625,7 @@
                                 field="terminationDate" />
                         </hftl:formPanel>
                         <h:form id="OS_usage_results_form" prependId="false">
-                            <p:dataTable value="#{subscriptionBean.usageChargeInstances}" var="entity" resizableColumns="true">
+                            <p:dataTable value="#{subscriptionBean.usageChargeInstances}" var="entity" resizableColumns="true" paginator="true" rows="10">
                                 <hftl:column label="#{messages['chargeInstance.code']}" field="code" />
                                 <hftl:column label="#{messages['businessEntity.description']}" field="description" isMessage="false" />
                                 <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="usageChargeTemplateDetail"

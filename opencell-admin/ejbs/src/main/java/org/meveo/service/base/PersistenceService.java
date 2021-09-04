@@ -59,7 +59,10 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -156,13 +159,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
     
+    /**
+     * Is custom field accumulation being used
+     */
     protected static boolean accumulateCF = true;
     
+    /**
+     * Is generic workflow being used
+     */
+    protected static boolean applyGenericWorkflow = true;
+
     protected static Map<Class, String> jsonTypes = new HashMap<Class, String>();
 
     @PostConstruct
     private void init() {
-        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("customFields.accumulateCF", "false"));
+        applyGenericWorkflow = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("workflow.enabled", "true"));
     }
 
     @Inject
@@ -309,15 +321,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id, boolean refresh) {
-        log.trace("start of find {}/{} by id ..", entityClass.getSimpleName(), id);
+        log.trace("Find {}/{} by id with refresh {}", entityClass.getSimpleName(), id, refresh);
         E e = getEntityManager().find(entityClass, id);
         if (e != null) {
             if (refresh) {
-                log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {}/{} by id. Result found={}.", entityClass.getSimpleName(), id, e != null);
         return e;
 
     }
@@ -335,7 +345,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings("unchecked")
     public E findById(Long id, List<String> fetchFields, boolean refresh) {
-        log.debug("start of find {}/{} by id ..", getEntityClass().getSimpleName(), id);
+        log.trace("Find {}/{} by id with refresh {}", entityClass.getSimpleName(), id, refresh);
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -352,11 +362,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (!results.isEmpty()) {
             e = (E) results.get(0);
             if (refresh) {
-                log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {}/{} by id. Result found={}.", getEntityClass().getSimpleName(), id, e != null);
         return e;
     }
 
@@ -581,7 +589,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
 
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+        if (applyGenericWorkflow && entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
             entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
 
@@ -621,6 +629,29 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             queryBuilder.addOrderCriterionAsIs("id", true);
         }
         Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
+
+    /**
+     * List entities limiting by max result, optionally filtering by its enable/disable status
+     *
+     * @param active True to retrieve enabled entities only, False to retrieve disabled entities only. Do not provide any value to retrieve all entities.
+     * @param maxResult Maximum result to retrieve
+     * @return A list of entities
+     */
+    @SuppressWarnings("unchecked")
+    public List<E> list(Boolean active, Integer maxResult) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addBooleanCriterion("disabled", !active);
+        }
+        if (BusinessEntity.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addOrderCriterionAsIs("code", true);
+        } else {
+            queryBuilder.addOrderCriterionAsIs("id", true);
+        }
+        Query query = queryBuilder.getQuery(getEntityManager()).setMaxResults(maxResult);
         return query.getResultList();
     }
 
@@ -1219,6 +1250,29 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return aliasToValueMapList;
     }
 
+    /**
+     * Get scrollable result from a native select query
+     *
+     * @param query Sql query to execute
+     * @param params Parameters to pass
+     * @return Scrollable results
+     */
+    public ScrollableResults getScrollableResultNativeQuery(String query, Map<String, Object> params) {
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery q = session.createSQLQuery(query);
+
+        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+        q.setFetchSize(10000);
+        q.setReadOnly(true);
+        q.setLockMode("a", LockMode.NONE);
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return q.scroll(ScrollMode.FORWARD_ONLY);
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void remove(Class parentClass, Object parentId) {
@@ -1455,7 +1509,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } catch (NoResultException e) {
             throw new NotFoundException("No entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
         } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use ‚Äúid‚Äù instead");
+        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use ìidî instead");
         }
     }
 	

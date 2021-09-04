@@ -4,22 +4,33 @@ import static java.util.Collections.emptyList;
 import static org.meveo.commons.utils.StringUtils.isBlank;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ExtraMinAmount;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.*;
 
 @Stateless
 public class MinAmountService extends PersistenceService<BusinessEntity> {
@@ -31,16 +42,17 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
      * @param billableEntity The billable entity
      * @param billingAccount The billing account
      * @param lastTransactionDate last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
      * @param extraMinAmounts The extra minimum amounts generated in children levels
      * @param accountClass The account level's class
      * @param invoicingProcessType invoicing process invoiceLine or ratedTransaction
      * @return return invoiceable amount grouped by entity
      */
     public Map<Long, MinAmountData> getInvoiceableAmountDataPerAccount(IBillableEntity billableEntity, BillingAccount billingAccount,
-                                                                       Date lastTransactionDate, List<ExtraMinAmount> extraMinAmounts,
+                                                                       Date lastTransactionDate, Date invoiceUpToDate, List<ExtraMinAmount> extraMinAmounts,
                                                                        Class accountClass, String invoicingProcessType) {
         Map<Long, MinAmountData> accountToMinAmount = new HashMap<>();
-        List<Object[]> amountsList = computeInvoiceableAmountForAccount(billableEntity, new Date(0), lastTransactionDate, accountClass, invoicingProcessType);
+        List<Object[]> amountsList = computeInvoiceableAmountForAccount(billableEntity, new Date(0), lastTransactionDate, invoiceUpToDate, accountClass, invoicingProcessType);
         for (Object[] amounts : amountsList) {
             BigDecimal amountWithoutTax = (BigDecimal) amounts[0];
             BigDecimal amountWithTax = (BigDecimal) amounts[1];
@@ -69,125 +81,207 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return accountToMinAmount;
     }
 
-    private List<Object[]> computeInvoiceableAmountForAccount(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate,
+    /**
+     * Gets the invoiceable amount for an entity in each hierarchy level.
+     *
+     * @param billableEntity the billable entity
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate last Transaction Date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @param accountClass account class
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    private List<Object[]> computeInvoiceableAmountForAccount(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate,
                                                               Class accountClass, String invoicingProcessType) {
         if (accountClass.equals(ServiceInstance.class)) {
-            return computeInvoiceableAmountForServicesWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoicingProcessType);
+            return computeInvoiceableAmountForServicesWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
         if (accountClass.equals(Subscription.class)) {
-            return computeInvoiceableAmountForSubscriptionsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoicingProcessType);
+            return computeInvoiceableAmountForSubscriptionsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
         if (accountClass.equals(UserAccount.class)) {
-            return computeInvoiceableAmountForUserAccountsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoicingProcessType);
+            return computeInvoiceableAmountForUserAccountsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
         if (accountClass.equals(BillingAccount.class)) {
-            return computeInvoiceableAmountForBillingAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoicingProcessType);
+            return computeInvoiceableAmountForBillingAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
         if (accountClass.equals(CustomerAccount.class)) {
-            return computeInvoiceableAmountForCustomerAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoicingProcessType);
+            return computeInvoiceableAmountForCustomerAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
         if (accountClass.equals(Customer.class)) {
-            return computeInvoiceableAmountForCustomerWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoicingProcessType);
+            return computeInvoiceableAmountForCustomerWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
         return null;
     }
-
+    
+    /**
+     * Summed rated transaction amounts applied on services, that have minimum invoiceable amount rule, grouped by invoice subCategory for a given billable entity.
+     * 
+     * @param billableEntity Billable entity
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, serviceInstance
+     */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForServicesWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate,
-                                                                                Date lastTransactionDate, String invoicingProcessType) {
+                                                                                Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         } else if (billableEntity instanceof BillingAccount) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountByBillingAccount")
                     .setParameter("billingAccount", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         }
         return null;
     }
 
+    /**
+     * Summed rated transaction amounts applied on subscriptions, that have minimum invoiceable amount rule for a given subscription.
+     *
+     * @param billableEntity Billable entity
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, subscription
+     */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForSubscriptionsWithMinAmountRule(IBillableEntity billableEntity,
-                                                                                     Date firstTransactionDate, Date lastTransactionDate, String invoicingProcessType) {
+                                                                                     Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         } else if (billableEntity instanceof BillingAccount) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountByBillingAccount")
                     .setParameter("billingAccount", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         }
         return null;
     }
-
+    
+    /**
+     * Summed rated transaction amounts applied on UserAccounts, that have minimum invoiceable amount rule for a given user account.
+     *
+     * @param billableEntity Billable entity
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, subscription
+     */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForUserAccountsWithMinAmountRule(IBillableEntity billableEntity,
-                                                                                    Date firstTransactionDate, Date lastTransactionDate, String invoicingProcessType) {
+                                                                                    Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForUAWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         }
         return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByUA")
                 .setParameter("billingAccount", billableEntity)
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("invoiceUpToDate", invoiceUpToDate).getResultList();
     }
 
+    /**
+     * Summed rated transaction amounts applied on BillingAccounts, that have minimum invoiceable amount rule for a given billing account
+     *
+     * @param billableEntity Billing account
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForBillingAccountWithMinAmountRule(IBillableEntity billableEntity,
-                                                                                      Date firstTransactionDate, Date lastTransactionDate, String invoicingProcessType) {
+                                                                                      Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForBAWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         }
         return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByBillingAccount")
                 .setParameter("billingAccount", billableEntity)
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("invoiceUpToDate", invoiceUpToDate)
                 .getResultList();
     }
 
+    /**
+     * Summed rated transaction amounts applied on CustomerAccounts, that have minimum invoiceable amount rule for a given customer account
+     *
+     * @param billableEntity Customer account
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForCustomerAccountWithMinAmountRule(IBillableEntity billableEntity,
-                                                                                       Date firstTransactionDate, Date lastTransactionDate, String invoicingProcessType) {
+                                                                                       Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForCAWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         }
         return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByCA")
                 .setParameter("customerAccount", ((BillingAccount) billableEntity).getCustomerAccount())
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("invoiceUpToDate", invoiceUpToDate)
                 .getResultList();
     }
-
+    
+    /**
+     * Summed rated transaction amounts applied on Customer, that have minimum invoiceable amount rule for a given customer
+     *
+     * @param billableEntity Customer account
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForCustomerWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate,
-                                                                                Date lastTransactionDate, String invoicingProcessType) {
+                                                                                Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForCustomerWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         }
         return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByCustomer")
                 .setParameter("customer", ((BillingAccount) billableEntity).getCustomerAccount().getCustomer())
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("invoiceUpToDate", invoiceUpToDate)
                 .getResultList();
     }
 
@@ -415,7 +509,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return accountToMinAmount;
     }
 
-    private List<BusinessEntity> getAccountsWithMinAmountElNotNull(IBillableEntity billableEntity, Class<? extends BusinessEntity> accountClass) {
+    private List<? extends BusinessEntity> getAccountsWithMinAmountElNotNull(IBillableEntity billableEntity, Class<? extends BusinessEntity> accountClass) {
         if (accountClass.equals(ServiceInstance.class)) {
             return getServicesWithMinAmount(billableEntity);
         }
@@ -450,13 +544,13 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return emptyList();
     }
 
-    private List<BusinessEntity> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
+    private List<? extends BusinessEntity> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountBySubscription")
+            return getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountBySubscription", Subscription.class)
                     .setParameter("subscription", billableEntity)
                     .getResultList();
         } else if (billableEntity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountByBA")
+            return getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountByBA", Subscription.class)
                     .setParameter("billingAccount", billableEntity)
                     .getResultList();
         }
@@ -502,33 +596,54 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     }
 
     /**
-     * compute total invoiceable amount based on billableEntity
-     * @param billableEntity
-     * @param date
-     * @param lastTransactionDate
+     * Compute total invoiceable amount based on billableEntity
+     * @param billableEntity Billable entity to compute total for
+     * @param firstTransactionDate First transaction date
+     * @param lastTransactionDate  Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
      * @param invoicingProcessType
-     * @return
+     * @return Amounts with and without tax, tax amount
      */
-    public Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date date, Date lastTransactionDate, String invoicingProcessType) {
+    public Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
-            return computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, date, lastTransactionDate, invoicingProcessType);
+            return computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
         }
-        return computeTotalInvoiceableAmountForBillingAccount((BillingAccount) billableEntity, date, lastTransactionDate, invoicingProcessType);
+        return computeTotalInvoiceableAmountForBillingAccount((BillingAccount) billableEntity, firstTransactionDate, lastTransactionDate, invoiceUpToDate, invoicingProcessType);
     }
 
-    private Amounts computeTotalInvoiceableAmountForSubscription(Subscription subscription, Date firstTransactionDate, Date lastTransactionDate, String invoicingProcessType) {
+    /**
+     * Summed rated transaction amounts for a given subscription
+     * 
+     * @param subscription Subscription
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Amounts with and without tax, tax amount
+     */
+    private Amounts computeTotalInvoiceableAmountForSubscription(Subscription subscription, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         return (Amounts) getEntityManager().createNamedQuery(invoicingProcessType + ".sumTotalInvoiceableBySubscription")
                 .setParameter("subscription", subscription)
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("invoiceUpToDate", invoiceUpToDate)
                 .getResultList();
     }
 
-    private Amounts computeTotalInvoiceableAmountForBillingAccount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate, String invoicingProcessType) {
+    /**
+     * Summed rated transaction amounts for a given billing account
+     * 
+     * @param billingAccount Billing account
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
+     * @return Amounts with and without tax, tax amount
+     */
+    private Amounts computeTotalInvoiceableAmountForBillingAccount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         return (Amounts) getEntityManager().createNamedQuery(invoicingProcessType + ".sumTotalInvoiceableByBA")
                 .setParameter("billingAccount", billingAccount)
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("invoiceUpToDate", invoiceUpToDate)
                 .getResultList();
     }
 

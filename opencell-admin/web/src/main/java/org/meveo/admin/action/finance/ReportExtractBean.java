@@ -38,6 +38,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionResult;
 import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -166,9 +167,9 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         return result;
     }
 
-    public StreamedContent getReportFile(ReportExtract entity) {
+    public StreamedContent getReportFile(ReportExtractExecutionResult reportResult) {
         try {
-            String filePath = reportExtractService.getReporFile(entity);
+            String filePath = reportExtractService.getReporFilePath(reportResult);
             File file = new File(filePath);
             
             String mimeType = "text/csv";

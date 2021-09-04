@@ -108,6 +108,18 @@ public class RatedTransactionsJob extends Job {
         customFieldNbWaiting.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
 
+        CustomFieldTemplate batchSize = new CustomFieldTemplate();
+        batchSize.setCode(CF_BATCH_SIZE);
+        batchSize.setAppliesTo("JobInstance_RatedTransactionsJob");
+        batchSize.setActive(true);
+        batchSize.setDescription(resourceMessages.getString("jobExecution.batchSize"));
+        batchSize.setFieldType(CustomFieldTypeEnum.LONG);
+        batchSize.setValueRequired(false);
+        batchSize.setDefaultValue("1");
+        batchSize.setMaxValue(10000L);
+        batchSize.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:2");
+        result.put(batchSize.getCode(), batchSize);
+        
         // aggregations
         CustomFieldTemplate customFieldAggregationMatrix = new CustomFieldTemplate();
         customFieldAggregationMatrix.setCode("woAggregationSettings");

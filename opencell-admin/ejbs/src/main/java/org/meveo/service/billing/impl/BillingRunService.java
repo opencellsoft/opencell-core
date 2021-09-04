@@ -783,7 +783,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             selectedBillingAccounts.append(sep).append(baId);
             sep = ",";
-            if (!isBillable && Boolean.TRUE.equals(ratedTransactionService.isBillingAccountBillable(currentBA, null, lastTransactionDate))) {
+            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, null, lastTransactionDate, invoiceDate)) {
                 isBillable = true;
             }
         }
@@ -811,7 +811,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for(BillingRun billingRun : billingRuns) {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
             for (IBillableEntity be :  billableEntities){
-                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(),
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
                         billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
             }
         }
@@ -1140,7 +1140,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             TypedQuery<AmountsToInvoice> query = getEntityManager().createNamedQuery(sqlName, AmountsToInvoice.class).setParameter("firstTransactionDate", new Date(0))
-                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+            .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle).setParameter("invoiceUpToDate", billingRun.getInvoiceDate());
 
             if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
                 startDate = DateUtils.setDateToEndOfDay(startDate);
@@ -1237,7 +1237,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
             selectedBillingAccounts.append(sep).append(ba.getId());
             sep = ",";
-            if (Boolean.TRUE.equals(ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), null, billingRun.getLastTransactionDate()))) {
+            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), null, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate())) {
                 result = true;
                 break;
             }

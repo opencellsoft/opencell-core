@@ -60,6 +60,7 @@
             <hftl:formField label="#{messages['ratedTransaction.startDate']}" field="startDate" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.endDate']}" field="endDate" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.orderId']}" field="orderNumber" disabled="#{ratedTransactionBean.isBilled()}" />            
             <hftl:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" disabled="#{ratedTransactionBean.isBilled()}" />
 
             <ui:param name="buttons" value="true" />

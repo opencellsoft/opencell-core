@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +67,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::convertWoToRTBatch, this::hasMore, null);
     }
 
     /**
@@ -93,7 +94,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
 
-        List<Long> ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
+        List<Long> ids = walletOperationService.listToRate(PROCESS_NR_IN_JOB_RUN);
 
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
@@ -110,8 +111,22 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         ratedTransactionService.createRatedTransaction(walletOperation, false);
     }
 
+    /**
+     * Convert a multiple Wallet operations to a Rated transactions
+     * 
+     * @param woIds Wallet operation ids to convert
+     * @param jobExecutionResult Job execution result
+     */
+    private void convertWoToRTBatch(List<Long> woIds, JobExecutionResultImpl jobExecutionResult) {
+
+        List<WalletOperation> walletOperations = walletOperationService.findByIds(woIds);
+        for (WalletOperation walletOperation : walletOperations) {
+            ratedTransactionService.createRatedTransaction(walletOperation, false);
+        }
+    }
+
     private boolean hasMore(JobInstance jobInstance) {
-        List<Long> ids = walletOperationService.listToRate(new Date(), 1);
+        List<Long> ids = walletOperationService.listToRate(1);
         return !ids.isEmpty();
     }
 }

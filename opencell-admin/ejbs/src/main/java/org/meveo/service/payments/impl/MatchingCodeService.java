@@ -141,16 +141,18 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             
             if(accountOperation instanceof RecordedInvoice) {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
-                if(withWriteOff) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
-                } else if(withRefund) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
-                } else if(fullMatch) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-                } else if(!fullMatch) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                if (invoice != null) {
+                    if(withWriteOff) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                    } else if(withRefund) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                    } else if(fullMatch) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                    } else if(!fullMatch) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                    }
+                    entityUpdatedEventProducer.fire(invoice);
                 }
-                entityUpdatedEventProducer.fire(invoice);
             }
             
             accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
@@ -201,14 +203,16 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             
             if(accountOperation instanceof RecordedInvoice) {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
-                if(withWriteOff) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
-                } else if(withRefund) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
-                } else if(fullMatch) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-                } else if(!fullMatch) {
-                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                if (invoice != null) {
+                    if(withWriteOff) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                    } else if(withRefund) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                    } else if(fullMatch) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                    } else if(!fullMatch) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                    }
                 }
             }
 
@@ -287,15 +291,19 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-                        entityUpdatedEventProducer.fire(invoice);
+                        if (invoice != null) {
+                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        	entityUpdatedEventProducer.fire(invoice);
+                    	}
                     }
                 } else {
                     operation.setMatchingStatus(MatchingStatusEnum.P);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
-                    }
+                        if (invoice != null) {
+                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                    	}
+                	}
                 }
                 operation.getMatchingAmounts().remove(matchingAmount);
                 accountOperationService.update(operation);
