@@ -184,7 +184,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
             return new ByteArrayContent(byteArrayContent, mimeType, filePath.substring(filePath.lastIndexOf(File.separator) + 1));
 
         } catch (BusinessException | IOException e) {
-            log.error("Failed loading repor file={}", e.getMessage());
+            log.error("Failed loading report file", e);
             return null;
         }
     }

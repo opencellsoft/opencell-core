@@ -18,14 +18,24 @@
 
 package org.meveo.service.finance;
 
-import java.io.*;
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
@@ -50,9 +60,6 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.finance.ReportExtractScript;
-
-import static java.lang.String.format;
-import static java.util.Optional.*;
 
 /**
  * Service for managing ReportExtract entity.
@@ -79,18 +86,18 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void runReport(ReportExtract entity) throws ReportExtractExecutionException, BusinessException {
         runReport(entity, null, ReportExtractExecutionOrigin.GUI);
     }
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void runReport(ReportExtract entity, Map<String, String> mapParams) throws ReportExtractExecutionException, BusinessException {
         runReport(entity, mapParams, ReportExtractExecutionOrigin.GUI);
     }
 
     @SuppressWarnings("rawtypes")
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ReportExtractExecutionResult runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
         int reportSize = 0;
@@ -310,7 +317,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             Iterator ite = firstRow.keySet().iterator();
             StringBuilder header = new StringBuilder();
             while (ite.hasNext()) {
-                line.append(ite.next() + fileSeparator);
+                header.append(ite.next() + fileSeparator);
             }
             header.deleteCharAt(header.length() - 1);
             fileWriter.write(header.toString());
@@ -388,7 +395,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     public String getReporFilePath(ReportExtractExecutionResult reportResult) throws BusinessException {
 
         StringBuilder reportFile = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
-        reportFile.append(reportResult.getReportExtract().getOutputDir()).append(File.separator).append(reportResult.getFilePath());
+        reportFile.append(File.separator).append(StringUtils.isBlank(reportResult.getReportExtract().getOutputDir()) ? ReportExtractScript.REPORTS_DIR : reportResult.getReportExtract().getOutputDir()).append(File.separator)
+            .append(reportResult.getFilePath());
 
         return reportFile.toString();
     }
