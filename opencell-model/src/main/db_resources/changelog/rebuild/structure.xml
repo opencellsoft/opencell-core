@@ -15860,5 +15860,19 @@
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
-
+    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza">
+        <addColumn tableName="billing_subscription">
+            <column name="version_number" type="int" defaultValue="1"/>
+            <column name="next_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="previous_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_next_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="next_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

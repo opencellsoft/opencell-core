@@ -27,29 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -122,7 +100,27 @@ import org.meveo.model.shared.DateUtils;
 public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
-    
+
+    /**
+     * subscription version number
+     */
+    @Column(name = "version_number", columnDefinition = "integer default 1")
+    protected Integer versionNumber;
+
+    /**
+     * reference to next version Subscription
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "next_version")
+    protected Subscription nextVersion;
+
+    /**
+     * reference to previous version Subscription
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previous_version")
+    protected Subscription previousVersion;
+
     /**
      * Offer subscribed to
      */
@@ -443,6 +441,30 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 			cfAccumulatedValues.setEncrypted(true);
 		}
 	}
+
+    public Integer getVersionNumber() {
+        return versionNumber;
+    }
+
+    public void setVersionNumber(Integer versionNumber) {
+        this.versionNumber = versionNumber;
+    }
+
+    public Subscription getNextVersion() {
+        return nextVersion;
+    }
+
+    public void setNextVersion(Subscription nextVersion) {
+        this.nextVersion = nextVersion;
+    }
+
+    public Subscription getPreviousVersion() {
+        return previousVersion;
+    }
+
+    public void setPreviousVersion(Subscription previousVersion) {
+        this.previousVersion = previousVersion;
+    }
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
