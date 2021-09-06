@@ -125,6 +125,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
+    	
+        OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
+        if(offerTemplate.isDisabled()) {
+        	throw new BusinessException("Cannot subscribe to disabled offer");
+        }
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
@@ -134,9 +139,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
         auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
-
+        
         // execute subscription script
-        OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
                 offerModelScriptService.subscribe(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode());
@@ -149,11 +153,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @MeveoAudit
     @Override
     public Subscription update(Subscription subscription) throws BusinessException {
-
+    	Subscription subscriptionOld = this.findById(subscription.getId());
+    	OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
+        if(subscriptionOld.getOffer() != offerTemplate) {
+        	if(offerTemplate.isDisabled()) {
+        		throw new BusinessException("Cannot subscribe to disabled offer");
+        	}
+        }
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
-
-        Subscription subscriptionOld = this.findById(subscription.getId());
+       
         subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
@@ -860,12 +869,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     public Subscription getLastVersionSubscription(String subCode) {
         List<Subscription> subscriptions = findListByCode(subCode);
-        Optional<Subscription> subscriptionLastVersion = subscriptions.stream()
-                .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus())
-                        || SubscriptionStatusEnum.CREATED.equals(s.getStatus())
-                        || SubscriptionStatusEnum.SUSPENDED.equals(s.getStatus()))
-                .max(Comparator.comparing(Subscription::getId));
-        return subscriptionLastVersion.orElse(null);
+        return subscriptions.stream()
+                .filter(s -> s.getValidity() == null || s.getValidity().getTo() == null)
+                .findFirst()
+                .orElse(null);
     }
 
     private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {

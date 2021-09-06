@@ -2680,6 +2680,7 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
+        actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
 
         lastSubscription.setToValidity(null);
