@@ -384,7 +384,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     .map(item -> ((Map<String, Object>) item).entrySet()
                             .stream()
                             .map(Entry::getValue)
-                            .map(Object::toString)
+                            .map(String::valueOf)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
             String outputFilePath = "";
