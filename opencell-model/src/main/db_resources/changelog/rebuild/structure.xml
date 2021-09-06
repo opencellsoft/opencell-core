@@ -14092,6 +14092,14 @@
           <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
     </changeSet>
+      <changeSet author="TarikFA." id="rebuild-str-fk-1635">
+          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+    </changeSet>
+      <changeSet author="TarikFA." id="rebuild-str-fk-1636">
+          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">

@@ -159,7 +159,7 @@ public class InvoiceLinesFactory {
         invoiceLine.setValidity(validity);
         ofNullable(subscription)
                 .ifPresent(id -> invoiceLine.setSubscription(subscription));
-        ofNullable(subscription.getOrder()).ifPresent(order -> invoiceLine.setCommercialOrder(order));
+        ofNullable(subscription).ifPresent(sub -> ofNullable(sub.getOrder()).ifPresent(order -> invoiceLine.setCommercialOrder(order)));
     }
 
     private void withAggregationOption(InvoiceLine invoiceLine, Map<String, Object> record, boolean isEnterprise) {
