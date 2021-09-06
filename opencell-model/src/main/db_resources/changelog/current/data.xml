@@ -2492,7 +2492,7 @@ public class ServiceImportScript extends Script {
 		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
 		    return stringCF;
 		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		    return DateUtils.parseDate(stringCF);
 		} else {
 			throw new ValidationException("NOT YET IMPLEMENTED");
 		}
@@ -2707,7 +2707,7 @@ public class AccessImportScript extends Script {
 		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
 		    return stringCF;
 		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		    return DateUtils.parseDate(stringCF);
 		} else {
 			throw new ValidationException("NOT YET IMPLEMENTED");
 		}
@@ -2969,7 +2969,7 @@ public class SubscriptionImportScript extends Script {
 		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
 		    return stringCF;
 		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		    return DateUtils.parseDate(stringCF);
 		} else {
 			throw new ValidationException("NOT YET IMPLEMENTED");
 		}
