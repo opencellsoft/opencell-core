@@ -9196,4 +9196,83 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    
+	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM">
+		<addColumn tableName="billing_billing_run">
+			<column name="run_type" type="varchar(255)" />
+		</addColumn>
+		<update tableName="billing_billing_run">
+			<column name="run_type" value="EXCEPTIONAL"/>
+			<where>billing_cycle_id is null</where>
+		</update>
+		<update tableName="billing_billing_run">
+			<column name="run_type" value="CYCLE"/>
+			<where>billing_cycle_id is not null</where>
+		</update>
+	</changeSet>
+	<changeSet id="#INTRD-689_20210818" author="RAityaazza">
+        <addColumn tableName="sub_accounting_period">
+            <column name="all_users_sub_period_status" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI">
+		<sql>alter table ${db.schema.adapted}accounting_period alter column accounting_period_year type character varying(20);</sql>
+		<addColumn tableName="accounting_period">
+            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD_1609_20210902" author="TarikFA.">
+    	<addColumn tableName="accounting_period">
+    		<column name="force_option" type="varchar(50)" />
+    		<column name="force_custom_day" type="int4" />
+    	</addColumn>
+    </changeSet>
+	
+    <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius">
+	   <dropColumn tableName="billing_cycle" columnName="due_date_delay_el_sp"/>
+       <dropColumn tableName="billing_cycle" columnName="invoice_type_el_sp"/>       
+       <dropColumn tableName="billing_service_instance" columnName="minimum_amount_el_sp"/>
+       <dropColumn tableName="billing_service_instance" columnName="minimum_label_el_sp"/>
+       <dropColumn tableName="cat_service_template" columnName="minimum_amount_el_sp"/>
+       <dropColumn tableName="cat_service_template" columnName="minimum_label_el_sp"/>
+       <dropColumn tableName="billing_subscription" columnName="minimum_amount_el_sp"/>
+       <dropColumn tableName="billing_subscription" columnName="minimum_label_el_sp"/>
+       <dropColumn tableName="account_entity" columnName="minimum_amount_el_sp"/>
+       <dropColumn tableName="account_entity" columnName="minimum_label_el_sp"/>
+       <dropColumn tableName="cat_offer_template" columnName="minimum_amount_el_sp"/>
+       <dropColumn tableName="cat_offer_template" columnName="minimum_label_el_sp"/>
+       <dropColumn tableName="billing_tax_mapping" columnName="filter_el_sp"/>
+       <dropColumn tableName="billing_tax_mapping" columnName="tax_el_sp"/>
+       <dropColumn tableName="ar_customer_account" columnName="due_date_delay_el_sp"/>
+       <dropColumn tableName="ord_order" columnName="due_date_delay_el_sp"/>
+       <dropColumn tableName="crm_customer_category" columnName="exoneration_tax_el_sp"/>
+       <dropColumn tableName="crm_customer_category" columnName="tax_category_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="subscription_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="condition_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="quantity_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="param_1_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="param_2_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="param_3_el_sp"/>
+       <dropColumn tableName="cat_triggered_edr" columnName="param_4_el_sp"/>
+       <dropColumn tableName="cat_price_plan_matrix" columnName="criteria_el_sp"/>
+       <dropColumn tableName="cat_price_plan_matrix" columnName="amount_without_tax_el_sp"/>
+       <dropColumn tableName="cat_price_plan_matrix" columnName="amount_with_tax_el_sp"/>
+       <dropColumn tableName="cat_price_plan_matrix" columnName="wo_description_el_sp"/>
+       <dropColumn tableName="cat_price_plan_matrix" columnName="total_amount_el_sp"/>
+       <dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_el_sp"/>
+       <dropColumn tableName="cat_discount_plan_item" columnName="expression_el_sp"/>
+       <dropColumn tableName="cat_discount_plan_item" columnName="discount_value_el_sp"/>
+       <dropColumn tableName="cat_charge_template" columnName="filter_el_sp"/>
+       <dropColumn tableName="cat_charge_template" columnName="tax_class_el_sp"/>
+       <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>        
+    </changeSet>
+    
+     <changeSet author="TarikFA." id="INTRD_1687_20210906">
+          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
 </databaseChangeLog>
