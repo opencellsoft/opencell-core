@@ -104,7 +104,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * subscription version number
      */
-    @Column(name = "version_number", columnDefinition = "integer default 1")
+    @Column(name = "version_number")
     protected Integer versionNumber;
 
     /**

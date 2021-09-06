@@ -3369,6 +3369,13 @@
             <column name="prestation" type="varchar(255)" />
             <column name="minimum_article_id" type="bigint" />
             <column name="order_offer_id" type="bigint" />
+            <column name="version_number" type="int" defaultValue="1"/>
+            <column name="next_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="previous_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -10416,7 +10423,7 @@
         <sql>alter table QUOTE_OFFER modify cf_values check (cf_values is json)</sql>
         <sql>alter table WF_GENERIC_WORKFLOW modify cf_values check (cf_values is json)</sql>         
     </changeSet>
-    
+
     <changeSet id="rebuild-str-tbl-429" author="AndriusKarpavicius">
         <createTable tableName="billing_rated_transaction_pending" >
             <column name="id" type="bigint">
@@ -10426,7 +10433,7 @@
             <column name="invoice_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
         </createTable>
-    </changeSet>    
+    </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -14112,6 +14119,13 @@
           <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
+
+    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza">
+        <addForeignKeyConstraint constraintName="fk_billing_next_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="next_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15855,24 +15869,10 @@
     <changeSet author="TarikFA." id="INTRD_1687_20210906" />
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>    
+    <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
-    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza">
-        <addColumn tableName="billing_subscription">
-            <column name="version_number" type="int" defaultValue="1"/>
-            <column name="next_version" type="bigint">
-                <constraints nullable="true" />
-            </column>
-            <column name="previous_version" type="bigint">
-                <constraints nullable="true" />
-            </column>
-        </addColumn>
-        <addForeignKeyConstraint constraintName="fk_billing_next_subscription_id" referencedTableName="billing_subscription"
-                                 baseColumnNames="next_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
-        <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
-                                 baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
-    </changeSet>
+    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza"/>
 </databaseChangeLog>
