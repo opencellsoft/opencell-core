@@ -15210,6 +15210,8 @@ $$ LANGUAGE plpgsql;
             <column name="effective_closed_date" type="datetime"/>
             <column name="accounting_period_id" type="bigint"/>
             <column name="all_users_sub_period_status" type="varchar(255)"/>
+            <column name="regularusers_reopening_reason" type="varchar(2000)" />
+            <column name="allusers_reopening_reason" type="varchar(2000)" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
@@ -16283,6 +16285,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
 
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
