@@ -14104,6 +14104,14 @@
           <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
     </changeSet>
+      <changeSet author="TarikFA." id="rebuild-str-fk-1635">
+          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+    </changeSet>
+      <changeSet author="TarikFA." id="rebuild-str-fk-1636">
+          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15844,6 +15852,7 @@
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD_1609_20210902" author="TarikFA." />
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius"/>
+    <changeSet author="TarikFA." id="INTRD_1687_20210906" />
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>    
