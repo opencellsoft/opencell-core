@@ -15,7 +15,7 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "cpq_product_version_attributes")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_product_version_attributes_id_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_product_version_attribute_seq"), })
 public class ProductVersionAttribute extends BaseEntity {    
 
 	/**
