@@ -14,7 +14,7 @@
 
         <p:outputPanel id="oneShotDataPanel">
             <h:form id="OS_oneShot_results_form" prependId="false">
-                <p:dataTable resizableColumns="true" value="#{subscriptionBean.oneShotChargeInstances}" var="entity">
+                <p:dataTable resizableColumns="true" value="#{subscriptionBean.oneShotChargeInstances}" var="entity" paginator="true" rows="10">
                     <hftl:column label="#{messages['chargeInstance.code']}" field="code" />
                     <hftl:column label="#{messages['chargeInstance.description']}" field="description" />
                     <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="oneShotChargeTemplateDetail"

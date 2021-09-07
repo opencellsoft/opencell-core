@@ -16,6 +16,7 @@
         backingbean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
         entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
         field - a name of a field in an entity
+        sortField - a name of a field in an entity to sort by. Defaults to field parameter if not provided.
         isList - is field value is a collection - supports both List and Set type fields.
         isMap - is field value a map - prints a map's values
         isDate - is entity field or a list value item field is a date
@@ -161,6 +162,10 @@
         <c:set var="valueIdField" value="id" />
     </c:if>
     
+    <c:if test="${empty sortField}">
+        <c:set var="sortField" value="#{field}" />
+    </c:if>
+    
     <c:if test="#{empty showSortLinks}">
          <c:set var="showSortLinks" value="true" />
 	</c:if>
@@ -183,15 +188,21 @@
         <c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
             <c:set var="valueField" value="#{valueField[valueFieldVar]}" />
         </c:forEach>
+        
+        
+        <c:set var="valueSortField" value="#{entity}" />
+        <c:forEach var="valueSortFieldVar" items="#{sortField.split('\\.')}">
+            <c:set var="valueSortField" value="#{valueSortField[valueSortFieldVar]}" />
+        </c:forEach>
 
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
 
-        <c:if test="#{sort and !empty(field)}">
-            <f:attribute name="field" value="#{field}" />
+        <c:if test="#{sort and !empty(sortField)}">
+            <f:attribute name="field" value="#{sortField}" />
             <f:attribute name="sortable" value="#{true}" />
-            <f:attribute name="sortBy" value="#{valueField}" />
+            <f:attribute name="sortBy" value="#{valueSortField}" />
         </c:if>
 
         <c:if test="#{! empty(styleClasss)}">

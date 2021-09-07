@@ -112,6 +112,19 @@ public class PDFInvoiceGenerationJob extends Job {
         customFieldInvToProcess.setListValues(invoicesToProcessValues);
         customFieldInvToProcess.setGuiPosition("tab:Configuration:0;field:2");
         result.put(cfInvToProcessCode, customFieldInvToProcess);
+        
+
+        CustomFieldTemplate batchSize = new CustomFieldTemplate();
+        batchSize.setCode(CF_BATCH_SIZE);
+        batchSize.setAppliesTo(APPLIES_TO);
+        batchSize.setActive(true);
+        batchSize.setDescription(resourceMessages.getString("jobExecution.batchSize"));
+        batchSize.setFieldType(CustomFieldTypeEnum.LONG);
+        batchSize.setValueRequired(false);
+        batchSize.setDefaultValue("1");
+        batchSize.setMaxValue(10000L);
+        batchSize.setGuiPosition("tab:Configuration:0;field:3");
+        result.put(batchSize.getCode(), batchSize);
 
         return result;
     }

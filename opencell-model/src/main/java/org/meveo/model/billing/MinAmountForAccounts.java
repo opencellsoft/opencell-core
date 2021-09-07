@@ -214,14 +214,14 @@ public class MinAmountForAccounts {
     }
 
     /**
-     * check whether Min Amount RT should be included in the first run or not of a billing run.
+     * Adjust Min Amount RT rule based on if first run of a billing run was ran already
      *
-     * @param includeFirstRun is Min RTs are included in the first run of a billing run
+     * @param alreadyInstantiatedMinRTs Min RTs were already instantiated
      * @return a MinAmountForAccounts
      */
-    public MinAmountForAccounts includesFirstRun(boolean includeFirstRun) {
-        MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(includeFirstRun && customerHasMinAmount, includeFirstRun && customerAccountHasMinAmount,
-                includeFirstRun && baHasMinAmount, includeFirstRun && uaHasMinAmount, includeFirstRun && subscriptionHasMinAmount, includeFirstRun && serviceHasMinAmount);
+    public MinAmountForAccounts adjustForFirstRun(boolean alreadyInstantiatedMinRTs) {
+        MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(!alreadyInstantiatedMinRTs && customerHasMinAmount, !alreadyInstantiatedMinRTs && customerAccountHasMinAmount,
+                !alreadyInstantiatedMinRTs && baHasMinAmount, !alreadyInstantiatedMinRTs && uaHasMinAmount, !alreadyInstantiatedMinRTs && subscriptionHasMinAmount, !alreadyInstantiatedMinRTs && serviceHasMinAmount);
         return minAmountForAccounts;
     }
 
