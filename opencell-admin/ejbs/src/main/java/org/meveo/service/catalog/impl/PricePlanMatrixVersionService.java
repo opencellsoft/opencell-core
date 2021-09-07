@@ -106,7 +106,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             duplicate.setCurrentVersion(lastVersion + 1);
         }else {
         	 duplicate.setCurrentVersion(1);
-        	 duplicate.getPricePlanMatrix().setCode(pricePlanMatrixNewCode);
         }
         try {
             this.create(duplicate);
