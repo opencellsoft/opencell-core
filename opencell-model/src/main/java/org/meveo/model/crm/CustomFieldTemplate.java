@@ -596,6 +596,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
                 return defaultValue;
             } else if (fieldType == CustomFieldTypeEnum.DATE) {
                 return DateUtils.parseDateWithPattern(defaultValue, DateUtils.DATE_TIME_PATTERN);
+            } else if (fieldType == CustomFieldTypeEnum.BOOLEAN){
+                return Boolean.parseBoolean(defaultValue);
             }
         } catch (Exception e) {
             return null;
