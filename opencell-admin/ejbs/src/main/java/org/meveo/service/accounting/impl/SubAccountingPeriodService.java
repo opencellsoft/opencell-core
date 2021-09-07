@@ -79,13 +79,14 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	}
 	
 	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
-			SubAccountingPeriod subAccountingPeriod) {
+			SubAccountingPeriod subAccountingPeriod, String reason) {
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
 			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
 		}
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
 			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
 			subAccountingPeriod.setEffectiveClosedDate(null);
+			subAccountingPeriod.setAllUsersReopeningReason(reason);
 		}
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
 			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
@@ -94,13 +95,14 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	}
 
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
-			SubAccountingPeriod subAccountingPeriod) {
+			SubAccountingPeriod subAccountingPeriod, String reason) {
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
 			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
 		}
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
 			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
 			subAccountingPeriod.setRegularUsersClosedDate(null);
+			subAccountingPeriod.setRegularUsersReopeningReason(reason);
 		}
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
 			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
@@ -113,10 +115,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		AuditLog auditLog = new AuditLog();
 		SubAccountingPeriod subAccountingPeriod = findById(entity.getId());
 		
-		if (subAccountingPeriod != null && !entity.getAllUsersSubPeriodStatus().equals(subAccountingPeriod.getAllUsersSubPeriodStatus())) {
+		if (subAccountingPeriod != null && entity.getAllUsersSubPeriodStatus() != null && !entity.getAllUsersSubPeriodStatus().equals(subAccountingPeriod.getAllUsersSubPeriodStatus())) {
 			createAuditLog(entity, auditLog, allUsersType);
 		}
-		if (subAccountingPeriod != null && !entity.getRegularUsersSubPeriodStatus().equals(subAccountingPeriod.getRegularUsersSubPeriodStatus())) {
+		if (subAccountingPeriod != null && entity.getRegularUsersSubPeriodStatus() != null && !entity.getRegularUsersSubPeriodStatus().equals(subAccountingPeriod.getRegularUsersSubPeriodStatus())) {
 			createAuditLog(entity, auditLog, "regularUsers");
 		}
 		super.update(entity);

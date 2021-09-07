@@ -10028,4 +10028,11 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
     
+	<changeSet id="#INTRD-1651_03092021" author="HatimOUDAD">
+    	<addColumn tableName="sub_accounting_period">
+            <column name="regularusers_reopening_reason" type="varchar(2000)" />
+            <column name="allusers_reopening_reason" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
