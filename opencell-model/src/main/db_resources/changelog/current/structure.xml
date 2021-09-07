@@ -9294,6 +9294,14 @@ public class OrderAdvancement extends ModuleScript {
        <dropColumn tableName="cat_charge_template" columnName="tax_class_el_sp"/>
        <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>        
     </changeSet>
+    
+     <changeSet author="TarikFA." id="INTRD_1687_20210906">
+          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
+    
 	<changeSet id="#INTRD-1651_03092021" author="HatimOUDAD">
     	<addColumn tableName="sub_accounting_period">
             <column name="regularusers_reopening_reason" type="varchar(2000)" />
