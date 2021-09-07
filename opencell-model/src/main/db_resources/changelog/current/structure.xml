@@ -10020,5 +10020,11 @@ public class OrderAdvancement extends ModuleScript {
        <dropColumn tableName="cat_charge_template" columnName="tax_class_el_sp"/>
        <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>        
     </changeSet>
-    
+	<changeSet id="#INTRD-1651_03092021" author="HatimOUDAD">
+    	<addColumn tableName="sub_accounting_period">
+            <column name="regularusers_reopening_reason" type="varchar(2000)" />
+            <column name="allusers_reopening_reason" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
