@@ -70,6 +70,15 @@ public class AccountingPeriod extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "custom_lock_option")
     private CustomLockOption customLockOption;
+    
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "force_option")
+    private AccountingPeriodForceEnum forceOption;
+
+    @Column(name = "force_custom_day")
+    private Integer forceCustomDay;
+    
 
     public AccountingPeriod() {
         super();
@@ -179,5 +188,33 @@ public class AccountingPeriod extends BaseEntity {
 	 */
 	public void setUseSubAccountingCycles(boolean useSubAccountingCycles) {
 		this.useSubAccountingCycles = useSubAccountingCycles;
+	}
+
+	/**
+	 * @return the forceOption
+	 */
+	public AccountingPeriodForceEnum getForceOption() {
+		return forceOption;
+	}
+
+	/**
+	 * @param forceOption the forceOption to set
+	 */
+	public void setForceOption(AccountingPeriodForceEnum forceOption) {
+		this.forceOption = forceOption;
+	}
+
+	/**
+	 * @return the forceCustomDay
+	 */
+	public Integer getForceCustomDay() {
+		return forceCustomDay;
+	}
+
+	/**
+	 * @param forceCustomDay the forceCustomDay to set
+	 */
+	public void setForceCustomDay(Integer forceCustomDay) {
+		this.forceCustomDay = forceCustomDay;
 	}
 }

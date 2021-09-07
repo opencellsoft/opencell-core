@@ -197,9 +197,8 @@ public class CustomerAccountDto extends AccountDto {
 
         setStatus(e.getStatus());
         setDateStatus(e.getDateStatus());
-        try {
+        if(e.getCreditCategory() != null) {
             setCreditCategory(e.getCreditCategory().getCode());
-        } catch (NullPointerException ex) {
         }
         setDunningLevel(e.getDunningLevel());
         setDateStatus(e.getDateStatus());

@@ -15188,6 +15188,8 @@ $$ LANGUAGE plpgsql;
             <column name="regular_user_lock_option" type="varchar(255)" />
             <column name="custom_lock_number_days" type="int4" />
             <column name="custom_lock_option" type="varchar(255)" />
+    		<column name="force_option" type="varchar(50)" />
+    		<column name="force_custom_day" type="int4" />
         </createTable>
         <addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="varchar(20)"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
@@ -16284,6 +16286,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD_1609_20210902" author="TarikFA." />
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
 

@@ -133,78 +133,75 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
 
-        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
-            throw new BusinessException("only DRAFT discount plans can be updated");
-        }
-        if (!(postData.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) || postData.getStatus().equals(DiscountPlanStatusEnum.DRAFT))) {
-            throw new BusinessException("only ACTIVE status can be accepted to update a discount plan");
-        }
+        if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
 
-        final String description = postData.getDescription();
-        if (description != null) {
-            discountPlan.setDescription(description);
+	        final String description = postData.getDescription();
+	        if (description != null) {
+	            discountPlan.setDescription(description);
+	        }
+	
+	        discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+	
+	        if(!StringUtils.isBlank(postData.getExpressionEl())){
+	        	discountPlan.setExpressionEl(postData.getExpressionEl());
+	        }
+	
+			if (postData.getStartDate() != null) {
+				discountPlan.setStartDate(postData.getStartDate());
+			} 
+			if (postData.getDefaultDuration() != null) {
+				discountPlan.setDefaultDuration(postData.getDefaultDuration());
+			} 
+			if (postData.getDurationUnit() != null) {
+			    if (StringUtils.isBlank(postData.getDurationUnit())) {
+			        discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);  
+	            } else {
+	                discountPlan.setDurationUnit(postData.getDurationUnit());
+	            }
+	        }
+	        if (postData.getStatus() != null) {
+	            discountPlan.setStatus(postData.getStatus());
+	            discountPlan.setStatusDate(new Date());
+	        }
+	        if (postData.getDiscountPlanType() != null) {
+	            discountPlan.setDiscountPlanType(postData.getDiscountPlanType());
+	        }
+	        if (postData.getInitialQuantity() != null) {
+	            discountPlan.setInitialQuantity(postData.getInitialQuantity());
+	        }
+	        List<DiscountPlan> discountPlans = getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans());
+	        if (discountPlans != null && !discountPlans.isEmpty()) {
+	            discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
+	        }
+	        List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
+	        if (applicableEntities != null && !applicableEntities.isEmpty()) {
+	            discountPlan.setDiscountPlanaApplicableEntities(applicableEntities);
+	        }
+	        
+	
+	        // populate customFields
+	        try {
+	            populateCustomFields(postData.getCustomFields(), discountPlan, false);
+	        } catch (MissingParameterException | InvalidParameterException e) {
+	            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+	            throw e;
+	        } catch (Exception e) {
+	            log.error("Failed to associate custom field instance to an entity", e);
+	            throw e;
+	        }
         }
+        
+    	if(postData.getEndDate() != null)
+    		discountPlan.setEndDate(postData.getEndDate());
 
-        discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-
-        if(!StringUtils.isBlank(postData.getExpressionEl())){
-        	discountPlan.setExpressionEl(postData.getExpressionEl());
-        }
-
-		if (postData.getStartDate() != null) {
-			discountPlan.setStartDate(postData.getStartDate());
-		} 
-		if (postData.getEndDate() != null) {
-			discountPlan.setEndDate(postData.getEndDate());
-		} 
-		if (postData.getDefaultDuration() != null) {
-			discountPlan.setDefaultDuration(postData.getDefaultDuration());
-		} 
-		if (postData.getDurationUnit() != null) {
-		    if (StringUtils.isBlank(postData.getDurationUnit())) {
-		        discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);  
-            } else {
-                discountPlan.setDurationUnit(postData.getDurationUnit());
-            }
-        }
-        if (postData.getStatus() != null) {
-            discountPlan.setStatus(postData.getStatus());
-            discountPlan.setStatusDate(new Date());
-        }
-        if (postData.getDiscountPlanType() != null) {
-            discountPlan.setDiscountPlanType(postData.getDiscountPlanType());
-        }
-        if (postData.getInitialQuantity() != null) {
-            discountPlan.setInitialQuantity(postData.getInitialQuantity());
-        }
-        if (postData.getApplicationLimit() != null) {
-            discountPlan.setApplicationLimit(postData.getApplicationLimit());
-        }
         if (postData.getApplicationFilterEL() != null) {
             discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
         }
-        List<DiscountPlan> discountPlans = getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans());
-        if (discountPlans != null && !discountPlans.isEmpty()) {
-            discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
-        }
-        List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
-        if (applicableEntities != null && !applicableEntities.isEmpty()) {
-            discountPlan.setDiscountPlanaApplicableEntities(applicableEntities);
-        }
-        if(postData.getUsedQuantity() != null)
-        	discountPlan.setUsedQuantity(postData.getUsedQuantity());
 
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), discountPlan, false);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
+        if (postData.getApplicationLimit() != null) {
+            discountPlan.setApplicationLimit(postData.getApplicationLimit());
         }
-
+        
         discountPlan = discountPlanService.update(discountPlan);
         return discountPlan;
     }
