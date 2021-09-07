@@ -13229,10 +13229,10 @@ public class ServiceImportScript extends Script {
 					String key = "";
 					String value = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					for (String s : list.subList(keySize, list.size())) {
-						value = value + "|" + s;
+						value = value != "" ? value + "|" + s : s;
 					}
 					matrix.put(key, value);
 				}
@@ -13246,7 +13246,7 @@ public class ServiceImportScript extends Script {
 					}
 					String key = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
 				}
@@ -13287,7 +13287,7 @@ public class ServiceImportScript extends Script {
 		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
 		    return stringCF;
 		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		    return DateUtils.parseDate(stringCF);
 		} else {
 			throw new ValidationException("NOT YET IMPLEMENTED");
 		}
@@ -13444,10 +13444,10 @@ public class AccessImportScript extends Script {
 					String key = "";
 					String value = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					for (String s : list.subList(keySize, list.size())) {
-						value = value + "|" + s;
+						value = value != "" ? value + "|" + s : s;
 					}
 					matrix.put(key, value);
 				}
@@ -13461,7 +13461,7 @@ public class AccessImportScript extends Script {
 					}
 					String key = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
 				}
@@ -13502,7 +13502,7 @@ public class AccessImportScript extends Script {
 		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
 		    return stringCF;
 		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		    return DateUtils.parseDate(stringCF);
 		} else {
 			throw new ValidationException("NOT YET IMPLEMENTED");
 		}
@@ -13706,10 +13706,10 @@ public class SubscriptionImportScript extends Script {
 					String key = "";
 					String value = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					for (String s : list.subList(keySize, list.size())) {
-						value = value + "|" + s;
+						value = value != "" ? value + "|" + s : s;
 					}
 					matrix.put(key, value);
 				}
@@ -13723,7 +13723,7 @@ public class SubscriptionImportScript extends Script {
 					}
 					String key = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
 				}
@@ -13764,7 +13764,7 @@ public class SubscriptionImportScript extends Script {
 		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
 		    return stringCF;
 		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-		    return DateUtils.parseDateWithPattern(stringCF, DateUtils.DATE_TIME_PATTERN);
+		    return DateUtils.parseDate(stringCF);
 		} else {
 			throw new ValidationException("NOT YET IMPLEMENTED");
 		}
