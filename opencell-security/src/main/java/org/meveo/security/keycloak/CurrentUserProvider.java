@@ -146,8 +146,8 @@ public class CurrentUserProvider {
 
             // log.trace("Current provider is {}", providerCode);
 
-        } else {
-            log.trace("Current provider is not set");
+            // } else {
+            // log.trace("Current provider is not set");
         }
 
         return providerCode;
@@ -181,7 +181,9 @@ public class CurrentUserProvider {
             userInfoManagement.createUserInApp(user, em, forcedUserUsername.get());
         }
 
-        log.trace("Current user is {}", user.toStringLong());
+        if (log.isTraceEnabled()) {
+            log.trace("Current user is {}", user.toStringLong());
+        }
         return user;
     }
 
