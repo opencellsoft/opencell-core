@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
+import org.meveo.model.rating.EDR;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -49,6 +51,22 @@ public class CDRService extends PersistenceService<CDR> {
 		cdr.setUpdated(new Date());
 		return super.update(cdr);
 	}
+	
+    /**
+     * Find CDR from an EDR
+     * @param edr EDR
+     * @return corresponding CDR
+     */
+    public CDR findByEdr(EDR edr) {
+        try {
+            return (CDR) getEntityManager()
+                    .createNamedQuery("CDR.findByEdr")
+                    .setParameter("edr",edr)
+                    .getSingleResult();
+        } catch(NoResultException nre) {
+            return null;
+        }
+    }
 
     public void reprocess(List<Long> ids) throws BusinessException {
         if (!currentUser.hasRole("cdrRateManager")) {

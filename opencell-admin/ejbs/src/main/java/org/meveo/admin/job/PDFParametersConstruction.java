@@ -85,9 +85,8 @@ public class PDFParametersConstruction {
             if (resource != null) {
                 ClassLoader cl = new URLClassLoader(new URL[] { resource });
                 parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
-            } else {
-                log.debug("The reports/fonts.jar not found. PDF might be generated without fonts!");
             }
+            
             currencyFormat.setMinimumFractionDigits(2);
 
             BillingAccount billingAccount = invoice.getBillingAccount();

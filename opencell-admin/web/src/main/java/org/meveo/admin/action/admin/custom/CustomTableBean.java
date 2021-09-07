@@ -395,7 +395,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         try {
             Class entityClass = Class.forName(field.getEntityClazz());
             PersistenceService<BaseEntity> persistenceService = getPersistenceServiceByClass(entityClass);
-            return persistenceService.list().stream()
+            return persistenceService.list(false, 100).stream()
                     .filter(Objects::nonNull)
                     .map(this::mapToMap)
                     .map(x-> new CustomTableRecordDto(x,field.tableName()))

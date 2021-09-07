@@ -395,11 +395,11 @@ public class InvoicingJobBean extends BaseJobBean {
                 !instantiateMinRts ? "" : "Minimum invoicing amount is used for serviceInstance " + minAmountForAccounts.isServiceHasMinAmount() +
                     ", subscription " + minAmountForAccounts.isSubscriptionHasMinAmount() + ", billingAccount " + minAmountForAccounts.isBaHasMinAmount());
 
-        MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!alreadyInstantiatedMinRTs);
+        final MinAmountForAccounts minAmountForAccountsAdjusted = minAmountForAccounts.adjustForFirstRun(alreadyInstantiatedMinRTs);
 
         Function<IBillableEntity, List<Invoice>> task = (entityToInvoice) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice,
                 billingRun, billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null,
-                null, null, null, minAmountForAccounts, false, !billingRun.isSkipValidationScript());
+                null, null, null, minAmountForAccountsAdjusted, false, !billingRun.isSkipValidationScript());
 
         List<List<Invoice>> invoices = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult,
                 new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, nbRuns,

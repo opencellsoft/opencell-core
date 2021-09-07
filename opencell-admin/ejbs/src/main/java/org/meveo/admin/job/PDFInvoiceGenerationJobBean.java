@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +49,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, this::convertToPdfBatch, null, null);
     }
 
     /**
@@ -87,8 +88,22 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
      */
     private void convertToPdf(Long invoiceId, JobExecutionResultImpl jobExecutionResult) {
 
-        Invoice invoice = invoiceService.findById(invoiceId);
+        Invoice invoice = invoiceService.findById(invoiceId, Arrays.asList("billingAccount"));
         invoiceService.produceInvoicePdf(invoice, null);
+    }
+
+    /**
+     * Generate PDF files
+     * 
+     * @param invoiceIds Invoice ids to create PDF for
+     * @param jobExecutionResult Job execution result
+     */
+    private void convertToPdfBatch(List<Long> invoiceIds, JobExecutionResultImpl jobExecutionResult) {
+
+        List<Invoice> invoices = invoiceService.findByIds(invoiceIds, Arrays.asList("billingAccount"));
+        for (Invoice invoice : invoices) {
+            invoiceService.produceInvoicePdf(invoice, null);
+        }
     }
 
     private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
