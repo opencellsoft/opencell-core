@@ -14768,6 +14768,8 @@
             <column name="effective_closed_date" type="datetime"/>
             <column name="accounting_period_id" type="bigint"/>
             <column name="all_users_sub_period_status" type="varchar(255)"/>
+            <column name="regularusers_reopening_reason" type="varchar(2000)" />
+            <column name="allusers_reopening_reason" type="varchar(2000)" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
@@ -15844,6 +15846,7 @@
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius"/>
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>    
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

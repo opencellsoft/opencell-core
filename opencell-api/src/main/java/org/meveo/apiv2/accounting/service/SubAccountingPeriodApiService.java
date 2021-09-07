@@ -79,13 +79,13 @@ public class SubAccountingPeriodApiService  implements ApiService<SubAccountingP
 	}
 
 	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
-			SubAccountingPeriod subAccountingPeriod) {
-		subAccountingPeriodService.updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod);
+			SubAccountingPeriod subAccountingPeriod, String reason) {
+		subAccountingPeriodService.updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 	}
 	
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
-			SubAccountingPeriod subAccountingPeriod) {
-		subAccountingPeriodService.updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod);
+			SubAccountingPeriod subAccountingPeriod, String reason) {
+		subAccountingPeriodService.updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 	}
 
 
