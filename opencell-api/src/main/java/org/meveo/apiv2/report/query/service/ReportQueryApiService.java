@@ -150,6 +150,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
+    	if(!currentUser.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
+    			currentUser.getRoles().contains("query_user") && 
+    			toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED) {
+    		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
+    	}
         Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
         ofNullable(toUpdate.getCode()).ifPresent(code -> entity.setCode(code));
         ofNullable(toUpdate.getVisibility()).ifPresent(visibility -> entity.setVisibility(visibility));
@@ -264,7 +269,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             // a protected query with that name already exists and belongs to another user
             if (reportQuery.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
                 result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage("The query already exists and belong to you");
+                result.setMessage("The query already exists and belongs to another user");
                 return result;
             }
         }
