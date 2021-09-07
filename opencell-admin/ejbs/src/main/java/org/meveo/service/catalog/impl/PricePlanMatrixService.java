@@ -782,6 +782,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	duplicate.setVersions(new ArrayList<>());
     	create(duplicate);
     	var duplicateVersion = pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, !Strings.isEmpty(pricePlanMatrixNewCode), pricePlanMatrixNewCode );
+    	duplicateVersion.setPricePlanMatrix(duplicate);
     	duplicate.getVersions().add(duplicateVersion);
     	return duplicate;
     }
