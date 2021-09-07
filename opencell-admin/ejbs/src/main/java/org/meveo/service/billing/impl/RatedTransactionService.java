@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -45,10 +46,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.commons.utils.NumberUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.commons.utils.*;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -88,6 +86,8 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
+
+    private static final String APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION = "apply.minima.even.on.zero.transaction";
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -133,6 +133,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private WalletService walletService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -576,7 +579,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (calculateAndUpdateTotalAmounts) {
                 totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
             }
-        } else {
+        } else if(shouldApplyMinimEvenWhenZeroAmount(totalInvoiceableAmounts = computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate),
+                paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))){
             // Create Min Amount RTs for hierarchy
 
             BillingAccount billingAccount = (billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
@@ -599,6 +603,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             totalInvoiceableAmounts.addAmounts(totalAmounts);
 
+        } else {
+            // get totalInvoicable for the billableEntity
+            totalInvoiceableAmounts = computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate);
         }
 
         billableEntity.setMinRatedTransactions(minAmountTransactions);
@@ -610,6 +617,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billableEntity.setTotalInvoicingAmountWithTax(totalInvoiceableAmounts.getAmountWithTax());
             billableEntity.setTotalInvoicingAmountTax(totalInvoiceableAmounts.getAmountTax());
         }
+    }
+
+    private boolean shouldApplyMinimEvenWhenZeroAmount(Amounts amounts, boolean shouldApplyMinimEvenOnZeroTransaction) {
+        return !amounts.getAmountWithoutTax().equals(BigDecimal.ZERO)|| shouldApplyMinimEvenOnZeroTransaction;
     }
 
     private Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date date, Date lastTransactionDate) {
