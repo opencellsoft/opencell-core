@@ -367,7 +367,7 @@
         <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_id" columnDataType="bigInt"/>
         <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_percent" columnDataType="numeric(23, 12)"/>    
     </changeSet>
-    
+
     <changeSet author="mohamed.el.youssoufi" id="#4301_23052019 - empty tax amount">
     	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax), pdf_filename = null, xml_filename = null where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
     </changeSet>
@@ -9294,14 +9294,14 @@ public class OrderAdvancement extends ModuleScript {
        <dropColumn tableName="cat_charge_template" columnName="tax_class_el_sp"/>
        <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>        
     </changeSet>
-    
+
      <changeSet author="TarikFA." id="INTRD_1687_20210906">
           <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
           <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
-    
+
 	<changeSet id="#INTRD-1651_03092021" author="HatimOUDAD">
     	<addColumn tableName="sub_accounting_period">
             <column name="regularusers_reopening_reason" type="varchar(2000)" />
@@ -9315,8 +9315,8 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <sql>update ${db.schema.adapted}billing_rated_transaction set invoicing_date = wo.invoicing_date from ${db.schema.adapted}billing_wallet_operation wo where wo.rated_transaction_id=billing_rated_transaction.id and wo.invoicing_date is not null </sql>
     </changeSet>
-    
-    
+
+
     <changeSet id="#6117_20210608" author="AndriusKarpavicius">
         <createTable tableName="billing_rated_transaction_pending" >
             <column name="id" type="bigint">
@@ -9326,5 +9326,21 @@ public class OrderAdvancement extends ModuleScript {
             <column name="invoice_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
         </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza">
+        <addColumn tableName="billing_subscription">
+            <column name="version_number" type="int" defaultValue="1"/>
+            <column name="next_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="previous_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_next_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="next_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
