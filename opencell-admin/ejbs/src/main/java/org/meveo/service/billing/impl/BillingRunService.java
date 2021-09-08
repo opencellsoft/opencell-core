@@ -257,7 +257,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                                             .setParameter("ids", billingRun.getExceptionalRTIds())
                                             .getResultList();
             } else {
-                String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+                String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0]:billingRun.getSelectedBillingAccounts().split(",");
                 for (String id : baIds) {
                     Long baId = Long.valueOf(id);
                     billingAccounts.add(billingAccountService.findById(baId));
@@ -711,7 +711,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         .getResultList();
             }
             List<BillingAccount> result = new ArrayList<>();
-            String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+            String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0]:billingRun.getSelectedBillingAccounts().split(",");
 
             for (String id : baIds) {
                 result.add(billingAccountService.findById(Long.valueOf(id)));
