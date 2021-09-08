@@ -532,7 +532,7 @@ public class SubscriptionApi extends BaseApi {
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
         	updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
         }
-
+        updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
@@ -2571,7 +2571,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
-
+        updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -2698,6 +2698,23 @@ public class SubscriptionApi extends BaseApi {
             });
         }
         return subscription;
+    }
+
+    private void updateSubscriptionVersions(Long nextSubscription, Long previousSubscription, Subscription subscriptionToUpdate) {
+        if(Objects.nonNull(nextSubscription)){
+            Subscription nextVersion = subscriptionService.findById(nextSubscription);
+            if(Objects.isNull(nextVersion)){
+                throw new EntityNotFoundException("next subscription with id "+nextSubscription+" not found!");
+            }
+            subscriptionToUpdate.setNextVersion(nextVersion);
+        }
+        if(Objects.nonNull(previousSubscription)){
+            Subscription previousVersion = subscriptionService.findById(previousSubscription);
+            if(Objects.isNull(previousVersion)){
+                throw new EntityNotFoundException("previous subscription with id "+previousSubscription+" not found!");
+            }
+            subscriptionToUpdate.setNextVersion(previousVersion);
+        }
     }
 
    /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
