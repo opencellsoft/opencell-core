@@ -11,7 +11,6 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 public class UnhandledExceptionMapper implements ExceptionMapper<Exception> {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final ExceptionSerializer exceptionSerializer = new ExceptionSerializer(Response.Status.INTERNAL_SERVER_ERROR);
 
     @Override
     public Response toResponse(Exception exception) {
