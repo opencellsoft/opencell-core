@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.report.*;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
+import org.meveo.model.Auditable;
 import org.meveo.model.report.query.ReportQuery;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +29,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +56,10 @@ public class ReportQueryResourceImplTest {
         reportQuery.setCode("code");
         reportQuery.setFields(asList("code", "description"));
         reportQuery.setTargetEntity("BillingRun");
+        Auditable auditable = new Auditable();
+        auditable.setCreator("opencell.admin");
+        auditable.setCreated(new Date());
+        reportQuery.setAuditable(auditable);
 
         Optional<ReportQuery> optionalCustomQuery = of(reportQuery);
         when(reportQueryApiService.findById(anyLong())).thenReturn(optionalCustomQuery);
@@ -114,6 +120,9 @@ public class ReportQueryResourceImplTest {
 
     @Test
     public void shouldReturnCustomQueryList() {
+        Auditable auditable = new Auditable();
+        auditable.setCreator("opencell.admin");
+        auditable.setCreated(new Date());
         ReportQuery reportQuery = new ReportQuery();
         reportQuery.setId(1L);
         reportQuery.setVisibility(PUBLIC);
@@ -121,6 +130,7 @@ public class ReportQueryResourceImplTest {
         reportQuery.setCode("code");
         reportQuery.setFields(asList("code", "description"));
         reportQuery.setTargetEntity("BillingRun");
+        reportQuery.setAuditable(auditable);
 
         ReportQuery reportQuery1 = new ReportQuery();
         reportQuery1.setId(2L);
@@ -129,6 +139,7 @@ public class ReportQueryResourceImplTest {
         reportQuery1.setCode("code");
         reportQuery1.setFields(asList("code", "description"));
         reportQuery1.setTargetEntity("BillingAccount");
+        reportQuery1.setAuditable(auditable);
         List<ReportQuery> customQueries = asList(reportQuery, reportQuery);
         when(request.evaluatePreconditions(new EntityTag(Integer.toString(customQueries.hashCode())))).thenReturn(null);
         when(reportQueryApiService.list(0L, 10L, null, null, null, null))
