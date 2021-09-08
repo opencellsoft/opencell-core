@@ -14120,7 +14120,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
 
-    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza">
+    <changeSet id="#INTRD-1581_FK_20210902" author="AbdelkaderBouazza">
         <addForeignKeyConstraint constraintName="fk_billing_next_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="next_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
