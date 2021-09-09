@@ -31,7 +31,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
+import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -171,9 +171,9 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
             log.debug("Export module dto {}", moduleDto);
             if (meveoInstance.getAuthenticationType().equals(AuthenticationTypeEnum.OAUTH2)) {
-            	OAuthAccessTokenResponse oAuthAccessTokenResponse = meveoInstanceService.publishDtoOAuth2MeveoInstance(url, meveoInstance, moduleDto);
-            	if(oAuthAccessTokenResponse.getResponseCode() != 200) {
-            		throw new BusinessException("Code " + oAuthAccessTokenResponse.getResponseCode() + ", info " + oAuthAccessTokenResponse.getBody());
+            	OAuthResourceResponse oAuthResourceResponse = meveoInstanceService.publishDtoOAuth2MeveoInstance(url, meveoInstance, moduleDto);
+            	if(oAuthResourceResponse.getResponseCode() != 200) {
+            		throw new BusinessException("Code " + oAuthResourceResponse.getResponseCode() + ", info " + oAuthResourceResponse.getBody());
             } 
             }else{
 	            Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
