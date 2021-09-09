@@ -155,11 +155,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription update(Subscription subscription) throws BusinessException {
     	Subscription subscriptionOld = this.findById(subscription.getId());
     	OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
-        if(subscriptionOld.getOffer() != offerTemplate) {
-        	if(offerTemplate.isDisabled()) {
-        		throw new BusinessException("Cannot subscribe to disabled offer");
-        	}
-        }
+    	if(offerTemplate.isDisabled()) {
+    		throw new BusinessException("Cannot subscribe to disabled offer");
+    	}
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
        
