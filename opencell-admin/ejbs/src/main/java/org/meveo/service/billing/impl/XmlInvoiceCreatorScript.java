@@ -2284,8 +2284,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             line.appendChild(article);
         } else {
             line = doc.createElement("line");
-            Date periodStartDate = invoiceLine != null ? invoiceLine.getValidity().getFrom() : null;
-            Date periodEndDate = invoiceLine != null ? invoiceLine.getValidity().getTo() : null;
+            Date periodStartDate = invoiceLine != null
+                    && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getFrom() : null;
+            Date periodEndDate = invoiceLine != null
+                    && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getTo() : null;
             line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
             line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
             line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());

@@ -1067,8 +1067,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     preparedStatement.setLong(1, rtId);
                                     preparedStatement.setLong(2, subCategoryAggregate.getId());
                                     preparedStatement.setLong(3, invoice.getId());
-                                    preparedStatement.setLong(4, billingRun.getId());
-
+                                    if(billingRun != null) {
+                                        preparedStatement.setLong(4, billingRun.getId());
+                                    } else {
+                                        preparedStatement.setObject(4, null);
+                                    }
                                     preparedStatement.addBatch();
 
 //                                    if (i > 0 && i % 500 == 0) {
