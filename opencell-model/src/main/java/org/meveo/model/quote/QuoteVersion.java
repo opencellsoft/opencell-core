@@ -15,6 +15,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -40,8 +42,11 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -126,6 +131,42 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
     @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteArticleLine> quoteArticleLines=new ArrayList<QuoteArticleLine>();
+    
+    /**
+	 * discountPlan attached to this quote version
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
+    
+    
+    /**
+ 	  * XML file name
+ 	  */
+ 	 @Column(name = "xml_filename", length = 255)
+ 	 @Size(max = 255)
+ 	 private String xmlFilename;
+ 	 
+ 	 
+ 	 /**
+	  * PDF file name
+	  */
+	@Column(name = "pdf_filename", length = 255)
+	@Size(max = 255)
+	private String pdfFilename;
+	
+	
+	/**
+	 * contract
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "contract_id")
+	private Contract contract;
+	
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "cpq_quote_version_media", joinColumns = @JoinColumn(name = "cpq_quote_version_id"), inverseJoinColumns = @JoinColumn(name = "cpq_media_id"))
+	private List<Media> medias = new ArrayList<Media>();
     
 	/**
 	 * @return the quoteVersion
@@ -295,6 +336,48 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	public void setQuoteArticleLines(List<QuoteArticleLine> quoteArticleLines) {
 		this.quoteArticleLines = quoteArticleLines;
 	}
+
+	public String getXmlFilename() {
+		return xmlFilename;
+	}
+
+	public void setXmlFilename(String xmlFilename) {
+		this.xmlFilename = xmlFilename;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
+	public String getPdfFilename() {
+		return pdfFilename;
+	}
+
+	public void setPdfFilename(String pdfFilename) {
+		this.pdfFilename = pdfFilename;
+	}
+
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+	
+	
 	
 	
 	

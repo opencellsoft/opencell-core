@@ -66,9 +66,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     
     @Schema(description = "The code of the billing account of the billable")
 	private String billableAccountCode;
-
-    @Schema(description = "The code of the contract")
-	private String contractCode;
     
 	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The begin of date of quote lot ")
@@ -96,9 +93,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The status date")
 	private Date statusDate;
-	
-	private Set<String> mediaCodes = new HashSet<String>();
-
 	/**
 	 * @return the quoteDate
 	 */
@@ -179,21 +173,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.billableAccountCode = billableAccountCode;
 	}
 
-
-	/**
-	 * @return the contractCode
-	 */
-	public String getContractCode() {
-		return contractCode;
-	}
-
-
-	/**
-	 * @param contractCode the contractCode to set
-	 */
-	public void setContractCode(String contractCode) {
-		this.contractCode = contractCode;
-	}
 
 	/**
 	 * @return the opportunityRef
@@ -320,22 +299,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	public void setStatusDate(Date statusDate) {
 		this.statusDate = statusDate;
 	}
-
-
-	/**
-	 * @return the mediaCodes
-	 */
-	public Set<String> getMediaCodes() {
-		return mediaCodes;
-	}
-
-
-	/**
-	 * @param mediaCodes the mediaCodes to set
-	 */
-	public void setMediaCodes(Set<String> mediaCodes) {
-		this.mediaCodes = mediaCodes;
-	}
+ 
 
 
 

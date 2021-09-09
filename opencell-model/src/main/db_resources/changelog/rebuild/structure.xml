@@ -8922,6 +8922,10 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
             	<constraints unique="true" uniqueConstraintName="cpq_quote_version_uuid_unique"/>
             </column>
+            <column name="pdf_filename" type="varchar(255)" />
+            <column name="xml_filename" type="varchar(255)" />
+            <column name="discount_plan_id" type="bigint"></column>
+            <column name="contract_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -9350,7 +9354,6 @@
             <!-- Auditable End -->
 
             <column name="seller_id" type="bigint" />
-            <column name="contract_id" type="bigint" />
             <column name="status_version" type="int4" />
             <column name="status" type="varchar(20)">
                 <constraints nullable="false" />
@@ -9377,9 +9380,7 @@
             <column name="valid_to" type="datetime" />
             <column name="quote_number" type="varchar(50)" />
             <column name="invoice_type_id" type="bigint" />
-            <column name="pdf_filename" type="varchar(255)" />
-            <column name="xml_filename" type="varchar(255)" />
-            <column name="discount_plan_id" type="bigint"></column>
+         
         </createTable>
     </changeSet>
 
@@ -13109,7 +13110,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1423">
-        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_contract_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_contract_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1424">
@@ -13282,7 +13283,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1455">
-        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote" constraintName="fk__ord_quote__cat_discount_plan" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_discount_plan" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1456">
@@ -15152,21 +15153,21 @@ $$ LANGUAGE plpgsql;
     </changeSet>
 
     <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
-    	<createTable tableName="cpq_quote_media">
-    		<column name="quote_id" type="bigint" />
-    		<column name="media_id" type="bigint" />
-    	</createTable>
-    	
-    	<addPrimaryKey columnNames="quote_id, media_id" tableName="cpq_quote_media"/>
-        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_media"
-                                 constraintName="fk_cpq_quote_media_quote_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="cpq_quote"/>  
-        <addForeignKeyConstraint baseColumnNames="media_id" baseTableName="cpq_quote_media"
-                                 constraintName="fk_cpq_quote_media_media_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="cpq_media"/>  
-    	
+   
+    <createTable tableName="cpq_quote_version_media">
+	<column name="cpq_quote_version_id" type="bigint" />
+	<column name="cpq_media_id" type="bigint" />
+	</createTable>
+	
+	<addPrimaryKey columnNames="cpq_quote_version_id, cpq_media_id" tableName="cpq_quote_version_media"/>
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_version_media"
+	                                 constraintName="fk_cpq_quote_version_media_id" deferrable="false"
+	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+	                                 referencedColumnNames="id" referencedTableName="cpq_quote_version"/>  
+	        <addForeignKeyConstraint baseColumnNames="cpq_media_id" baseTableName="cpq_quote_version_media"
+	                                 constraintName="fk_cpq_media_quote_version_id" deferrable="false"
+	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+	                                 referencedColumnNames="id" referencedTableName="cpq_media"/>
     </changeSet>
     
     <changeSet id="#INTRD-1291_20210804-rebuild" author="HatimOUDAD">
@@ -16278,6 +16279,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-1396_20210812" author="ZBariki" />
 	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
+	<changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay"/>
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
