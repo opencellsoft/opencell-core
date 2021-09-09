@@ -2382,7 +2382,7 @@ public class ServiceImportScript extends GenericImportScript {
 		serviceInstance.setQuantity(new BigDecimal(OC_ServiceInstance_quantity));
 		serviceInstance.setDescription(OC_ServiceInstance_description);
 		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
-				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key), "ServiceInstance")));
 	}
 	public enum ServiceInstanceActionEnum {
 		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
@@ -2489,7 +2489,7 @@ public class AccessImportScript extends GenericImportScript {
 		access.setStartDate(startDate);
 
 		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
-				.forEach(key -> access.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+				.forEach(key -> access.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key), "Access")));
 	}
 
 	public enum AccessActionEnum {
@@ -2648,7 +2648,7 @@ public class SubscriptionImportScript extends GenericImportScript {
 		subscription.setEndAgreementDate(endAgreementDate);
 		subscription.setDescription(OC_subscription_description);
 		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
-				.forEach(key -> subscription.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+				.forEach(key -> subscription.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key), "Subscription")));
 	}
 
 	public enum SubscriptionActionEnum {
