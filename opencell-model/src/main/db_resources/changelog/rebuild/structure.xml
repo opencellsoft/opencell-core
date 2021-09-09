@@ -15825,6 +15825,21 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-1441_20210728" author="Mbarek-Ay" />
     <changeSet id="#INTRD-1310_050821" author="Mbarek-Ay" />
     <changeSet id="#INTRD-1396_20210812" author="ZBariki" />
+	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
+	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
+	<changeSet id="#INTRD-1441_20210728" author="TarikFA." />
+	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI" />
+	
+	<changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD_1609_20210902" author="TarikFA." />
+    <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius"/>
+    <changeSet author="TarikFA." id="INTRD_1687_20210906" />
+    <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
+    <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
+    <changeSet id="INTRD_1696_20210909" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

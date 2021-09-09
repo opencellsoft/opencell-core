@@ -9159,6 +9159,56 @@ public class OrderAdvancement extends ModuleScript {
     	
     </changeSet>
     
+    <changeSet id="#5595_540582_20210528" author="TarikFA.">
+    	 <dropColumn tableName="cpq_attribute">
+            <column name="sequence"/>
+        </dropColumn>
+        
+        <addColumn tableName="cpq_attribute_instance">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+        
+        <addColumn tableName="cpq_order_attribute">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+        
+        <addColumn tableName="cpq_quote_attribute">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+        
+        <addColumn tableName="cpq_price_plan_matrix_value">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
+    </changeSet>
+   <changeSet id="#5595_540582_20210528_2" author="TarikFA.">
+   		<preConditions onSqlOutput="TEST" onFail="MARK_RAN">
+   			<not>
+   				<columnExists tableName="cpq_product_version_attributes" columnName="sequence"/>
+   			</not>
+   		</preConditions>
+        <createSequence sequenceName="cpq_product_version_attributes_id_seq" startValue="200"/>
+        <addColumn tableName="cpq_product_version_attributes">
+            <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="mandatory" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="display" type="${type.boolean}" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" defaultValue="0" />
+        </addColumn>
+        <sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
+        <sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ALTER COLUMN id TYPE int8 USING id::int8;</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA">
+        <addColumn tableName="meveo_job_instance">
+            <column name="query_scheduler_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
+    </changeSet>
     
     <changeSet id="INTRD-1221_20210803" author="TarikFA.">
     	<update tableName="cpq_quote_price">
@@ -9275,4 +9325,52 @@ public class OrderAdvancement extends ModuleScript {
           <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
+
+	<changeSet id="#INTRD-1651_03092021" author="HatimOUDAD">
+    	<addColumn tableName="sub_accounting_period">
+            <column name="regularusers_reopening_reason" type="varchar(2000)" />
+            <column name="allusers_reopening_reason" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#6149_20210531" author="AndriusKarpavicius">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="invoicing_date" type="datetime" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set invoicing_date = wo.invoicing_date from ${db.schema.adapted}billing_wallet_operation wo where wo.rated_transaction_id=billing_rated_transaction.id and wo.invoicing_date is not null </sql>
+    </changeSet>
+
+
+    <changeSet id="#6117_20210608" author="AndriusKarpavicius">
+        <createTable tableName="billing_rated_transaction_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rt_pending_pk"/>
+            </column>
+            <column name="aggregate_id_f" type="bigint" />
+            <column name="invoice_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza">
+        <addColumn tableName="billing_subscription">
+            <column name="version_number" type="int" defaultValue="1"/>
+            <column name="next_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="previous_version" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_next_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="next_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="INTRD_1696_20210909" author="TarikFA.">
+    	<dropSequence sequenceName="cpq_product_version_attribute_seq"/>
+    	<createSequence sequenceName="cpq_product_version_attribute_seq"  startValue="200"/>
+    </changeSet>
+    
 </databaseChangeLog>
