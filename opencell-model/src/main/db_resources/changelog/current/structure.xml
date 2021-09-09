@@ -9048,7 +9048,7 @@ public class OrderAdvancement extends ModuleScript {
    				<columnExists tableName="cpq_product_version_attributes" columnName="sequence"/>
    			</not>
    		</preConditions>
-        <createSequence sequenceName="cpq_product_version_attributes_id_seq" startValue="200"/>
+        <createSequence sequenceName="cpq_product_version_attributes_seq" startValue="200"/>
         <addColumn tableName="cpq_product_version_attributes">
             <column name="sequence" type="INT4" defaultValue="0" />
             <column name="mandatory" type="${type.boolean}" >
