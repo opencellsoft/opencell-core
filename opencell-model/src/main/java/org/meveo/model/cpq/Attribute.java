@@ -78,7 +78,7 @@ public class Attribute extends EnableBusinessCFEntity{
     /**
      * The lower number, the higher the priority is
      */
-    @Column(name = "priority", columnDefinition = "int DEFAULT 0")
+    @Column(name = "priority")
     private Integer priority = 0;
      
     
@@ -98,11 +98,6 @@ public class Attribute extends EnableBusinessCFEntity{
     @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
     private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
     
-    /**
-     * attribute order in the GUI
-     */
-    @Column(name = "sequence")
-    protected Integer sequence;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "attribute_type")
@@ -364,20 +359,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
-	}
-
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
 	}
 
 	public List<GroupedAttributes> getGroupedAttributes() {

@@ -269,9 +269,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (postData.getDueDateDelayEL() != null) {
             customerAccount.setDueDateDelayEL(StringUtils.isBlank(postData.getDueDateDelayEL()) ? null : postData.getDueDateDelayEL());
         }
-        if (postData.getDueDateDelayELSpark() != null) {
-            customerAccount.setDueDateDelayELSpark(StringUtils.isBlank(postData.getDueDateDelayELSpark()) ? null : postData.getDueDateDelayELSpark());
-        }
 
         if (postData.isExcludedFromPayment() != null) {
             customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());

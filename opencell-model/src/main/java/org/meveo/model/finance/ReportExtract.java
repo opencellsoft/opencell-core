@@ -90,7 +90,8 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    @Column(name = "sql_query", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "sql_query")
     private String sqlQuery;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -101,7 +102,8 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "result_type", length = 10)
     private ReportExtractResultTypeEnum reportExtractResultType = ReportExtractResultTypeEnum.CSV;
 
-    @Column(name = "style", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "style")
     private String style;
 
     @ImageType

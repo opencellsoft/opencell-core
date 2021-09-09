@@ -19,6 +19,7 @@ package org.meveo.model.bi;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.FileFormat;
 
@@ -87,7 +88,8 @@ public class FlatFile extends BusinessEntity {
     /**
      * Rejection reason
      */
-    @Column(name = "error_message", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "error_message")
     private String errorMessage;
 
     /**

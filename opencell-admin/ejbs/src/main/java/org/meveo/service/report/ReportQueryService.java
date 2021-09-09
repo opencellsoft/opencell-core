@@ -13,6 +13,8 @@ import static org.meveo.model.report.query.QueryStatusEnum.SUCCESS;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,20 +34,17 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.transaction.Transactional;
-import javax.persistence.TypedQuery;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.collection.internal.PersistentBag;
+import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -296,9 +296,9 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         Date endDate = new Date();
         if(saveQueryResult)
         	saveQueryResult(reportQuery, startDate, endDate, IMMEDIATE, null, reportResult.size());
-        return toExecutionResult(reportQuery.getFields(), reportResult);
+        return toExecutionResult(reportQuery.getFields(), reportResult, targetEntity);
     }
-    
+
     /**
      * Asynchronous execution for a specific report query
      *
@@ -369,7 +369,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                                                                              Class<?> targetEntity, Date startDate) {
         List<Object> reportResult = toExecutionResult((reportQuery.getFields() != null && !reportQuery.getFields().isEmpty())
                         ? reportQuery.getFields() : joinEntityFields(targetEntity),
-                prepareQueryToExecute(reportQuery, targetEntity).getResultList());
+                prepareQueryToExecute(reportQuery, targetEntity).getResultList(), targetEntity);
         if (!reportResult.isEmpty()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(REPORT_EXECUTION_FILE_SUFFIX);
             StringBuilder fileName = new StringBuilder(dateFormat.format(startDate))
@@ -384,34 +384,75 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     .map(item -> ((Map<String, Object>) item).entrySet()
                             .stream()
                             .map(Entry::getValue)
-                            .map(Object::toString)
+                            .map(String::valueOf)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
+            String outputFilePath = "";
             try {
-                createResultFile(data, fileHeader, fileName.toString(), ".csv");
+                outputFilePath = createResultFile(data, fileHeader, fileName.toString(), ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
             Date endDate = new Date();
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, fileName.toString(), data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, outputFilePath, data.size()));
         }
         return new AsyncResult<>(null);
     }
 
-    public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult) {
+    public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity) {
         if(fields != null && !fields.isEmpty()) {
             List<Object> response = new ArrayList<>();
             int size = fields.size();
             for (Object result : executionResult) {
                 Map<String, Object> item = new HashMap<>();
-                for (int index = 0; index < size; index++) {
-                    item.put(fields.get(index), ((Object[]) result)[index]);
+                if(fields.size() == 1) {
+                    item.put(fields.get(0), result);
+                } else {
+                    for (int index = 0; index < size; index++) {
+                        item.put(fields.get(index), ((Object[]) result)[index]);
+                    }
                 }
                 response.add(item);
             }
+            for (Object item : response) {
+                for (Map.Entry<String, Object> entry : ((Map<String, Object>)item).entrySet()) {
+                    List<Field> field = getFields(entry.getValue().getClass());
+                    initLazyLoadedValues(field, entry.getValue());
+                }
+            }
             return response;
         } else {
+            List<Field> field = getFields(targetEntity);
+            for (Object item : executionResult) {
+                getEntityManager().detach(item);
+                initLazyLoadedValues(field, item);
+            }
             return executionResult;
+        }
+    }
+
+    private List<Field> getFields(Class<?> targetEntity) {
+        return Arrays.stream(targetEntity.getDeclaredFields())
+                .filter(f -> !Modifier.isStatic(f.getModifiers()) && !Modifier.isFinal(f.getModifiers()))
+                .collect(Collectors.toList());
+    }
+
+    private void initLazyLoadedValues(List<Field> fields, Object item) {
+        for (Field field : fields) {
+            try {
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), item.getClass());
+                if(propertyDescriptor.getReadMethod().invoke(item) instanceof PersistentSet) {
+                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
+                }
+                if(propertyDescriptor.getReadMethod().invoke(item) instanceof PersistentBag) {
+                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
+                }
+                if (propertyDescriptor.getReadMethod().invoke(item) instanceof HibernateProxy) {
+                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
+                }
+            } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -445,7 +486,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         return result;
     }
 
-    private void createResultFile(List<String> data, String header, String fileName, String extension)
+    private String createResultFile(List<String> data, String header, String fileName, String extension)
             throws IOException {
         File dir = new File(paramBeanFactory.getChrootDir() + File.separator + "reports" + File.separator);
         if (!dir.exists()) {
@@ -456,6 +497,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             data.stream()
                     .forEach(pw::println);
         }
+        return dir.getPath() + File.separator + fileName + extension;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,

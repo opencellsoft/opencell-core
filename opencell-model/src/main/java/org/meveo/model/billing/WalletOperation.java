@@ -84,13 +84,13 @@ import org.meveo.model.tax.TaxClass;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
-@NamedQueries({ @NamedQuery(name = "WalletOperation.listByIds", query = "SELECT o FROM WalletOperation o where o.id IN :idList"),
+@NamedQueries({
         @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT o.id FROM WalletOperation o join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND o.id IN :walletIdList"),
         @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.id=:ratedTransactionId"),
 
         @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId"),
 
-        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
+        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN'"),
         @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.listToRateBySubscription", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
         @NamedQuery(name = "WalletOperation.listToRateByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
@@ -171,7 +171,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
 
     /**
@@ -210,7 +210,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private Date operationDate;
 
     /**
-     * Invoicing date if invoice date should be in a future and does not match the billing cycle invoicing dates
+     * Date past which a charge can be included in the invoice. Allows to exclude charges from the current billing cycle by specifying a future date.
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "invoicing_date")
@@ -330,7 +330,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "parameter_extra")
     private String parameterExtra;
 
     /**
@@ -503,14 +504,15 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -549,8 +551,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Processing error reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
-    @Size(max = 255)
+    @Type(type = "longText")
+    @Column(name = "reject_reason")
     private String rejectReason;
     
     @Embedded
@@ -806,10 +808,16 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.operationDate = operationDate;
     }
 
+    /**
+     * @return Date past which a charge can be included in the invoice. Allows to exclude charges from the current billing cycle by specifying a future date.
+     */
     public Date getInvoicingDate() {
         return invoicingDate;
     }
 
+    /**
+     * @param invoicingDate Date past which a charge can be included in the invoice. Allows to exclude charges from the current billing cycle by specifying a future date.
+     */
     public void setInvoicingDate(Date invoicingDate) {
         this.invoicingDate = invoicingDate;
     }

@@ -64,6 +64,12 @@ public class SubAccountingPeriod extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "accounting_period_id")
     private AccountingPeriod accountingPeriod;
+    
+    @Column(name = "regularUsers_reopening_reason")
+    private String regularUsersReopeningReason;
+    
+    @Column(name = "allUsers_reopening_reason")
+    private String allUsersReopeningReason;
 
     public SubAccountingPeriod() {
         super();
@@ -132,7 +138,21 @@ public class SubAccountingPeriod extends BaseEntity {
 	public void setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum allUsersSubPeriodStatus) {
 		this.allUsersSubPeriodStatus = allUsersSubPeriodStatus;
 	}
-    
-    
 
+	public String getRegularUsersReopeningReason() {
+		return regularUsersReopeningReason;
+	}
+
+	public void setRegularUsersReopeningReason(String regularUsersReopeningReason) {
+		this.regularUsersReopeningReason = regularUsersReopeningReason;
+	}
+
+	public String getAllUsersReopeningReason() {
+		return allUsersReopeningReason;
+	}
+
+	public void setAllUsersReopeningReason(String allUsersReopeningReason) {
+		this.allUsersReopeningReason = allUsersReopeningReason;
+	}
+	
 }

@@ -140,32 +140,41 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
      */
     private void createFieldsHistory(Set<BaseEntity> changedEntities) throws BusinessException {
 
-        if (changedEntities != null && !changedEntities.isEmpty()) {
-            for (BaseEntity baseEntity : changedEntities) {
-                AuditableEntity entity = (AuditableEntity) baseEntity;
-                Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
-                if (!entity.isHistorized() && auditableFields != null && !auditableFields.isEmpty()) {
-                    for (AuditableFieldHistory field : auditableFields) {
-                        if (field.isHistorable() && !field.isHistorized()) {
-                            try {
-                                String previousState = String.valueOf(field.getPreviousState());
-                                String currentState = String.valueOf(field.getCurrentState());
-                                if (field.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
-                                    previousState = "";
-                                    currentState = AuditChangeTypeEnum.RENEWAL.toString();
-                                }
-                                createFieldHistory(entity, field.getFieldName(), field.getAuditType(), previousState, currentState);
-                                field.setHistorized(true);
-                            } catch (BusinessException e) {
-                                field.setHistorized(false);
-                                log.error("Failed to create field history");
-                                throw e;
+        if (changedEntities == null || changedEntities.isEmpty()) {
+            return;
+        }
+        boolean forceFlush = false;
+        for (BaseEntity baseEntity : changedEntities) {
+            AuditableEntity entity = (AuditableEntity) baseEntity;
+            Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
+            if (!entity.isHistorized() && auditableFields != null && !auditableFields.isEmpty()) {
+                for (AuditableFieldHistory field : auditableFields) {
+                    if (field.isHistorable() && !field.isHistorized()) {
+                        try {
+                            String previousState = String.valueOf(field.getPreviousState());
+                            String currentState = String.valueOf(field.getCurrentState());
+                            if (field.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
+                                previousState = "";
+                                currentState = AuditChangeTypeEnum.RENEWAL.toString();
                             }
+                            createFieldHistory(entity, field.getFieldName(), field.getAuditType(), previousState, currentState);
+                            field.setHistorized(true);
+                            forceFlush = true;
+
+                        } catch (BusinessException e) {
+                            field.setHistorized(false);
+                            log.error("Failed to create field history");
+                            throw e;
                         }
                     }
-                    entity.setHistorized(true);
                 }
+                entity.setHistorized(true);
             }
+        }
+
+        // This is needed to flush audit field history to DB, as this logic occurs already inside a transaction commit and hibernate dirty checking wont be aware to persist these changes
+        if (forceFlush) {
+            getEntityManager().flush();
         }
     }
 
@@ -302,7 +311,5 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         auditableField.setPreviousState(previousState);
         auditableField.setCurrentState(currentState);
         create(auditableField);
-        getEntityManager().flush();
     }
-
 }

@@ -1325,7 +1325,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     	java.util.ResourceBundle bundle = facesContext.getApplication().getResourceBundle(facesContext, "messages");
                     	String message = bundle.getString("customFieldTemplate.matrix.key.valuesNotSpecified");
                         //facesContext.validationFailed();
-                    	throw new BusinessException(MessageFormat.format(message, new Object [] {mapItem.get(cft.getMatrixColumnByIndex(0).getLabel())}));
+                    	throw new BusinessException(MessageFormat.format(message, new Object [] {mapItem.get(cft.getMatrixColumnByIndex(0).getLabel()), cft.getCode()}));
                     }
 
                 } else {

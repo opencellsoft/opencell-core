@@ -95,7 +95,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		attribute.setReadOnly(postData.isReadOnly());
 		attribute.setDefaultValue(postData.getDefaultValue());
-		attribute.setDisabled(postData.isDisabled());
+		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
         populateCustomFields(postData.getCustomFields(), attribute, true);
         attribute.setValidationType(postData.getValidationType());
         attribute.setValidationPattern(postData.getValidationPattern());
@@ -182,7 +182,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 		attribute.setReadOnly(postData.isReadOnly());
 		attribute.setDefaultValue(postData.getDefaultValue());
-		attribute.setDisabled(postData.isDisabled());
+		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		}
@@ -272,9 +272,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				.stream()
 				.forEach(
 						att -> {
-							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
+							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getAttributeDto().getCode(), productCode);
 							if (sourceRules != null && !sourceRules.isEmpty()) {
-								att.setRuled(true);
+								att.getAttributeDto().setRuled(true);
 							}
 						}
 				);

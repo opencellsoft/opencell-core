@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.commons.persistence;
+package org.meveo.commons.persistence.oracle;
 
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.Mapping;
@@ -26,7 +26,7 @@ import org.hibernate.type.Type;
 /**
  * A search function for a Custom field of type Double
  */
-public class DoublePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
+public class DoubleOracleJsonSearchFunction extends OracleJsonSearchFunction {
 
     @Override
     public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
@@ -35,7 +35,7 @@ public class DoublePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunc
 
     @Override
     public String getCastType() {
-        return "numeric(23,12)";
+        return "number(23,12)";
     }
 
     @Override

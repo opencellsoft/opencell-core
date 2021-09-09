@@ -51,4 +51,8 @@ public interface ReportQuery extends Resource {
     @Nullable
     @Schema(description = "Sort order", example = "Possible value are : DESCENDING, ASCENDING")
     SortOrderEnum getSortOrder();
+
+    @Nullable
+    @Schema(description = "Report query Owner name")
+    String getOwnerName();
 }

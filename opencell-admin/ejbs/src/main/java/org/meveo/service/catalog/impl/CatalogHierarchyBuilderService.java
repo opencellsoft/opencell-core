@@ -67,12 +67,12 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
@@ -204,17 +204,17 @@ public class CatalogHierarchyBuilderService {
     @Inject private GroupedAttributeService groupedAttributeService;
 
 
-    public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
+    public void duplicateProductVersion(ProductVersion entity, List<ProductVersionAttribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
     
         if(attributes != null) {
-        	entity.setAttributes(new ArrayList<Attribute>());
-        	for (Attribute productAttribute : attributes) {
-        		for(Media media : productAttribute.getMedias()) {
+            entity.setAttributes(new ArrayList<ProductVersionAttribute>());
+        	for (ProductVersionAttribute  productAttribute : attributes) {
+        		for(Media media : productAttribute.getAttribute().getMedias()) {
         			Media newMedia = new Media(media);
         			newMedia.setCode(media.getCode() + "_" + entity.getId());
         			mediaService.create(newMedia);
         		}
-				entity.getAttributes().add(productAttribute);
+                entity.getAttributes().add(productAttribute);
 			}
         }
         
@@ -250,8 +250,8 @@ public class CatalogHierarchyBuilderService {
     		tmpProductVersion.getTags().size();
     		tmpProductVersion.getAttributes().size();
     		tmpProductVersion.getAttributes().forEach(att -> {
-    			att.getMedias().size();
-    			att.getAssignedAttributes().size();
+    			att.getAttribute().getMedias().size();
+    			att.getAttribute().getAssignedAttributes().size();
     		});
 
     		tmpProductVersion.getGroupedAttributes().forEach(ga -> {
@@ -373,7 +373,6 @@ public class CatalogHierarchyBuilderService {
 				duplicate.setId(null);
 				duplicate.setDiscountPlan(entity);
 				duplicate.setExpressionEl(dp.getExpressionEl());
-				duplicate.setExpressionElSpark(dp.getExpressionElSpark());
 				duplicate.setDiscountValue(dp.getDiscountValue());
 				duplicate.setDiscountValueEL(dp.getDiscountValueEL());
 				duplicate.setDiscountPlanItemType(dp.getDiscountPlanItemType());

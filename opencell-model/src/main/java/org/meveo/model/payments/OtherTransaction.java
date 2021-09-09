@@ -189,20 +189,22 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
      * Bank LOT number
      */
-    @Column(name = "bank_lot", columnDefinition = "text")
+    @Column(name = "bank_lot")
+    @Size(max = 255)
     private String bankLot;
 
     /**

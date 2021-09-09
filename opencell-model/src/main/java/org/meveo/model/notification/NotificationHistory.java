@@ -34,6 +34,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -87,7 +88,8 @@ public class NotificationHistory extends AuditableEntity {
     /**
      * Entity's ID or a serialized entity (toString()) if ID is not available yet
      */
-    @Column(name = "serialized_entity", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "serialized_entity")
     private String serializedEntity;
 
     /**

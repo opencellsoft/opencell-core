@@ -41,6 +41,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -112,7 +113,8 @@ public class InboundRequest extends BusinessEntity {
     /**
      * Request body
      */
-    @Column(name = "body", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "body")
     private String body;
 
     /**
@@ -139,9 +141,10 @@ public class InboundRequest extends BusinessEntity {
     /**
      * Request headers
      */
+    @Type(type = "longText")
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_inbound_req_headers")
-    @Column(name = "headers", columnDefinition = "TEXT" )
+    @Column(name = "headers")
     @MapKeyColumn(name="headers_key")
     private Map<String, String> headers = new HashMap<String, String>();
 

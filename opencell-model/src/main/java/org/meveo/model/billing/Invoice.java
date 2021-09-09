@@ -67,6 +67,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -320,14 +321,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -431,7 +433,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Invoicing error reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
+    @Column(name = "reject_reason")
     @Size(max = 255)
     private String rejectReason;
 
@@ -673,6 +675,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();
+        
+        if(this.getBillingAccount() != null) {
+        	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
+        	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
+        	this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+        	if(billingAccount.getTradingLanguage() != null)
+        		this.tradingLanguage = billingAccount.getTradingLanguage();
+        	if(this.tradingLanguage == null)
+        		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
+        }
+		
     }
 
     public String getInvoiceNumber() {

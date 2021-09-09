@@ -485,14 +485,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
-        if (postData.getMinimumAmountElSpark() != null) {
-            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
         if (postData.getMinimumLabelEl() != null) {
             subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (postData.getAutoEndOfEngagement() != null) {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
@@ -538,7 +532,7 @@ public class SubscriptionApi extends BaseApi {
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
         	updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
         }
-
+        updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
@@ -2577,7 +2571,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
-
+        updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -2706,6 +2700,23 @@ public class SubscriptionApi extends BaseApi {
         return subscription;
     }
 
+    private void updateSubscriptionVersions(Long nextSubscription, Long previousSubscription, Subscription subscriptionToUpdate) {
+        if(Objects.nonNull(nextSubscription)){
+            Subscription nextVersion = subscriptionService.findById(nextSubscription);
+            if(Objects.isNull(nextVersion)){
+                throw new EntityNotFoundException("next subscription with id "+nextSubscription+" not found!");
+            }
+            subscriptionToUpdate.setNextVersion(nextVersion);
+        }
+        if(Objects.nonNull(previousSubscription)){
+            Subscription previousVersion = subscriptionService.findById(previousSubscription);
+            if(Objects.isNull(previousVersion)){
+                throw new EntityNotFoundException("previous subscription with id "+previousSubscription+" not found!");
+            }
+            subscriptionToUpdate.setNextVersion(previousVersion);
+        }
+    }
+
    /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
     	List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
     	for(Subscription sub: subscriptions) {
@@ -2719,8 +2730,6 @@ public class SubscriptionApi extends BaseApi {
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
         subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
-        subscription.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
-        subscription.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
         subscription.setMinimumChargeTemplate(offerTemplate.getMinimumChargeTemplate());
 
         if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
@@ -2728,12 +2737,6 @@ public class SubscriptionApi extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
             subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumAmountElSpark())) {
-            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumLabelElSpark())) {
-            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
             OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
@@ -2884,6 +2887,7 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
+        actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);
 
         lastSubscription.setToValidity(null);

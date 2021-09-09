@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 11.0
  * @LastModified 04-01-2021
  */
-@Path("/orderManagement/orderType")
+@Path("/orderManagement/orderTypes")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface OrderTypeRs {

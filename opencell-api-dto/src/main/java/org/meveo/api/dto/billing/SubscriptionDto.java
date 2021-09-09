@@ -52,6 +52,13 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6021918810749866648L;
 
+    @XmlElement(required = true)
+    private Integer versionNumber;
+
+    private Long nextVersion;
+
+    private Long previousVersion;
+
     /** The user account. */
     @XmlElement(required = true)
     private String userAccount;
@@ -116,19 +123,9 @@ public class SubscriptionDto extends BusinessEntityDto {
     private String minimumAmountEl;
 
     /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    private String minimumAmountElSpark;
-
-    /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
     private String minimumLabelEl;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    private String minimumLabelElSpark;
 
     /**
      * Corresponding to minimum invoice subcategory
@@ -268,9 +265,7 @@ public class SubscriptionDto extends BusinessEntityDto {
         setRenewalNotifiedDate(e.getRenewalNotifiedDate());
         setRenewalRule(new SubscriptionRenewalDto(e.getSubscriptionRenewal()));
         setMinimumAmountEl(e.getMinimumAmountEl());
-        setMinimumAmountElSpark(e.getMinimumAmountElSpark());
         setMinimumLabelEl(e.getMinimumLabelEl());
-        setMinimumLabelElSpark(e.getMinimumLabelElSpark());
         if (e.getSeller() != null) {
         	setSeller(e.getSeller().getCode());
         }
@@ -280,12 +275,43 @@ public class SubscriptionDto extends BusinessEntityDto {
         setCcedEmails(e.getCcedEmails());
         setEmail(e.getEmail());
         setElectronicBilling(e.getElectronicBilling());
+        setVersionNumber(e.getVersionNumber());
+        if(e.getNextVersion() != null){
+            setNextVersion(e.getNextVersion().getId());
+        }
+        if(e.getPreviousVersion() != null){
+            setPreviousVersion(e.getPreviousVersion().getId());
+        }
         if (e.getMinimumChargeTemplate() != null) {
             setMinimumChargeTemplate(e.getMinimumChargeTemplate().getCode());
         }
         if (Objects.nonNull(e.getPaymentMethod())) {
             setPaymentMethod(new PaymentMethodDto(e.getPaymentMethod()));
         }
+    }
+
+    public Integer getVersionNumber() {
+        return versionNumber;
+    }
+
+    public void setVersionNumber(Integer versionNumber) {
+        this.versionNumber = versionNumber;
+    }
+
+    public Long getNextVersion() {
+        return nextVersion;
+    }
+
+    public void setNextVersion(Long nextVersion) {
+        this.nextVersion = nextVersion;
+    }
+
+    public Long getPreviousVersion() {
+        return previousVersion;
+    }
+
+    public void setPreviousVersion(Long previousVersion) {
+        this.previousVersion = previousVersion;
     }
 
     /**
@@ -625,21 +651,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
-
-    /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
+    
     /**
      * @return Expression to determine rated transaction description to reach minimum amount value
      */
@@ -652,20 +664,6 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     /**

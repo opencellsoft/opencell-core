@@ -184,7 +184,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 * See DiscountPlanInstance below for more details.
 	 * This has no real meaning for discounts applied to invoices or invoice lines.
 	 */
-	@Column(name = "application_limit", columnDefinition = "bigint default 0", nullable = false)
+	@Column(name = "application_limit", nullable = false)
 	private Long applicationLimit = 0L;
 
 	/**

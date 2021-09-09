@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.ws.rs.ClientErrorException;
+import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
+import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
@@ -88,11 +87,11 @@ public class AccountsManagementApiService {
 
         // Check user account
         if (consumerInput == null || (consumerInput.getConsumerId() == null && StringUtils.isBlank(consumerInput.getConsumerCode()))) {
-            throw new InvalidParameterException("At least consumer id or code must be non-null");
+            throw new ValidationException("At least consumer id or code must be non-null");
         }
 
         if (consumerInput.getConsumerId() != null && StringUtils.isNotBlank(consumerInput.getConsumerCode())) {
-            throw new InvalidParameterException("Only one of parameters can be provided");
+            throw new ValidationException("Only one of parameters can be provided");
         }
 
         UserAccount newOwner = null;
@@ -119,8 +118,8 @@ public class AccountsManagementApiService {
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-            throw new ClientErrorException(
-                "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode), Response.Status.CONFLICT);
+            throw new ConflictException(
+                "Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode));
         }
 
         String oldUserAccount = subscription.getUserAccount().getCode();
@@ -137,14 +136,14 @@ public class AccountsManagementApiService {
         if (action == OpenTransactionsActionEnum.FAIL) {
             Long countWO = walletOperationService.countNotBilledWOBySubscription(subscription);
             if (countWO > 0) {
-                throw new ClientErrorException("Cannot move subscription {id=[id], code=[code]} with OPEN wallet operations".replace("[id]", subscription.getId().toString())
-                    .replace("[code]", subscriptionCode), Response.Status.CONFLICT);
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with OPEN wallet operations".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
             }
 
             Long countRT = ratedTransactionService.countNotBilledRTBySubscription(subscription);
             if (countRT > 0) {
-                throw new ClientErrorException("Cannot move subscription {id=[id], code=[code]} with OPEN rated operations".replace("[id]", subscription.getId().toString())
-                    .replace("[code]", subscriptionCode), Response.Status.CONFLICT);
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with OPEN rated operations".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
             }
         }
 
@@ -178,7 +177,7 @@ public class AccountsManagementApiService {
      */
     public void changeCustomerAccountParentAccount(String customerAccountCode, ParentInput parentInput) {
         if (parentInput == null || (parentInput.getParentId() == null && Strings.isBlank(parentInput.getParentCode()))) {
-            throw new InvalidParameterException("parent account id or code are required for this operation.");
+            throw new ValidationException("parent account id or code are required for this operation.");
         }
 
         CustomerAccount customerAccount = null;

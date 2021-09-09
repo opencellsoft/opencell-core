@@ -55,6 +55,7 @@ public class AttributeInstanceDto extends BaseEntityDto {
 	private Date dateValue;
 	private Double doubleValue;
     private CustomFieldsDto customFieldDto;
+    private Boolean booleanValue;
     
     public AttributeInstanceDto() {
     	
@@ -71,6 +72,7 @@ public class AttributeInstanceDto extends BaseEntityDto {
     	this.stringValue = attribute.getStringValue();
     	this.dateValue = attribute.getDateValue();
     	this.doubleValue = attribute.getDoubleValue();
+    	this.booleanValue = attribute.getBooleanValue();
     }
 	/**
 	 * @return the attributeCode
@@ -177,5 +179,19 @@ public class AttributeInstanceDto extends BaseEntityDto {
 				&& Objects.equals(doubleValue, other.doubleValue)
 				&& Objects.equals(parentAttributeValueId, other.parentAttributeValueId)
 				&& Objects.equals(stringValue, other.stringValue);
+	}
+
+	/**
+	 * @return the booleanValue
+	 */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * @param booleanValue the booleanValue to set
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
 	}
 }

@@ -101,7 +101,8 @@ public class MeveoModule extends EnableBusinessEntity implements Serializable {
     /**
      * Module source in serialized XML fromat
      */
-    @Column(name = "module_source", nullable = false, columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "module_source", nullable = false)
     private String moduleSource;
 
     /**

@@ -135,10 +135,11 @@ public class ProviderService extends PersistenceService<Provider> {
     public Provider update(Provider provider) throws BusinessException {
 
         provider = super.update(provider);
-
+        
+        
         // Refresh appProvider request scope variable if applicable
-        if (appProvider.getId().equals(provider.getId())) {
-            refreshAppProvider(provider);
+        if (appProvider.getId().equals(provider.getId())) {            
+            refreshAppProvider(provider);            
         }
 
         return provider;
@@ -165,9 +166,9 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     private void refreshAppProvider(Provider provider) {
 
-        try {
+        try {            
             BeanUtils.copyProperties(appProvider, provider);
-
+            
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to update appProvider fields");
         }
@@ -178,8 +179,9 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setCfValues(provider.getCFValuesCopy());
-
+        
         tenantCacheContainerProvider.addUpdateTenant(provider);
+        
     }
 
     /**
@@ -212,13 +214,15 @@ public class ProviderService extends PersistenceService<Provider> {
      * @throws BusinessException Failed to create a user
      */
     private void createProviderUserInKC(Provider provider) throws BusinessException {
-        KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
-        log.info("> addTenant > getTokenString : " + session.getTokenString());
 
+        String name = (provider.getCode() + "." + "superadmin").toLowerCase();
+        
+        KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+        
+        log.info("Add provider user in {} KC with token: {}", name, session.getTokenString());
+        
         // Create user
         UserDto userDto = new UserDto();
-        String name = (provider.getCode() + "." + "superadmin").toLowerCase();
-        log.info("> addTenant > name " + name);
         userDto.setUsername(name);
         userDto.setPassword(name);
         if (!StringUtils.isBlank(provider.getEmail())) {

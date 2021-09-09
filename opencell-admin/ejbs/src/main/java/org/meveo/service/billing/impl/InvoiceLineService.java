@@ -189,7 +189,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         create(invoiceLine);
     }
 
-    public void calculateAmountsAndCreateMinAmountLines(IBillableEntity billableEntity, Date lastTransactionDate,
+    public void calculateAmountsAndCreateMinAmountLines(IBillableEntity billableEntity, Date lastTransactionDate, Date invoiceUpToDate,
                                                         boolean calculateAndUpdateTotalAmounts, MinAmountForAccounts minAmountForAccounts) throws BusinessException {
         Amounts totalInvoiceableAmounts;
         List<InvoiceLine> minAmountLines = new ArrayList<>();
@@ -208,13 +208,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             for (Class accountClass : accountClasses) {
                 if (minAmountForAccounts.isMinAmountForAccountsActivated(accountClass, billableEntity)) {
                     MinAmountsResult minAmountsResults = createMinILForAccount(billableEntity, billingAccount,
-                            lastTransactionDate, minRatingDate, extraMinAmounts, accountClass);
+                            lastTransactionDate, invoiceUpToDate, minRatingDate, extraMinAmounts, accountClass);
                     extraMinAmounts = minAmountsResults.getExtraMinAmounts();
                     minAmountLines.addAll(minAmountsResults.getMinAmountInvoiceLines());
                 }
             }
             totalInvoiceableAmounts =
-                    minAmountService.computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate, INVOICING_PROCESS_TYPE);
+                    minAmountService.computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate, invoiceUpToDate, INVOICING_PROCESS_TYPE);
             final Amounts totalAmounts = new Amounts();
             extraMinAmounts.forEach(extraMinAmount -> {
                 extraMinAmount.getCreatedAmount().values().forEach(amounts -> {
@@ -235,11 +235,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     private MinAmountsResult createMinILForAccount(IBillableEntity billableEntity, BillingAccount billingAccount,
-                                                   Date lastTransactionDate, Date minRatingDate, List<ExtraMinAmount> extraMinAmounts,
+                                                   Date lastTransactionDate, Date invoiceUpToDate, Date minRatingDate, List<ExtraMinAmount> extraMinAmounts,
                                                    Class accountClass) throws BusinessException {
         MinAmountsResult minAmountsResult = new MinAmountsResult();
         Map<Long, MinAmountData> accountToMinAmount =
-                minAmountService.getInvoiceableAmountDataPerAccount(billableEntity, billingAccount, lastTransactionDate, extraMinAmounts, accountClass, INVOICING_PROCESS_TYPE);
+                minAmountService.getInvoiceableAmountDataPerAccount(billableEntity, billingAccount, lastTransactionDate, invoiceUpToDate, extraMinAmounts, accountClass, INVOICING_PROCESS_TYPE);
         accountToMinAmount = minAmountService.prepareAccountsWithMinAmount(billableEntity, billingAccount, extraMinAmounts, accountClass, accountToMinAmount);
 
         for (Map.Entry<Long, MinAmountData> accountAmounts : accountToMinAmount.entrySet()) {
