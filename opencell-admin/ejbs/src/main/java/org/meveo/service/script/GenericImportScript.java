@@ -20,11 +20,11 @@ public class GenericImportScript extends Script {
 
 	private CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface("CustomFieldTemplateService");
 
-	public Object parseStringCf(String cftCode, String stringCF) {
+	public Object parseStringCf(String cftCode, String stringCF, String appliesTo) {
 		if (StringUtils.isEmpty(stringCF)) {
             return stringCF;
         }
-		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, appliesTo);
 		if (cft == null) {
             throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
         }
