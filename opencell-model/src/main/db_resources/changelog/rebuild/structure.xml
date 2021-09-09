@@ -15839,7 +15839,6 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
-    <changeSet id="INTRD_1696_20210909" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
