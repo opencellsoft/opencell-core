@@ -7,10 +7,12 @@ import static org.meveo.apiv2.report.ImmutableReportQueryInput.builder;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.model.Auditable;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 
 import java.util.Arrays;
+import java.util.Date;
 
 public class ReportQueryMapperTest {
 
@@ -44,7 +46,11 @@ public class ReportQueryMapperTest {
         entity.setVisibility(QueryVisibilityEnum.PRIVATE);
         entity.setTargetEntity("org.meveo.model.billing.BillingAccount");
         entity.setFields(Arrays.asList("code", "description"));
-
+        Auditable auditable = new Auditable();
+        auditable.setCreator("opencell.admin");
+        auditable.setCreated(new Date());
+        entity.setAuditable(auditable);
+        
         org.meveo.apiv2.report.ReportQuery resource = mapper.toResource(entity);
         assertThat(resource, instanceOf(org.meveo.apiv2.report.ReportQuery.class));
         assertEquals(resource.getCode(), entity.getCode());
