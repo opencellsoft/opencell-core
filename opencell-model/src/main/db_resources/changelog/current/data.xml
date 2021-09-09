@@ -2593,7 +2593,7 @@ public class SubscriptionImportScript extends GenericImportScript {
 				case TERMINATE:
 					Date OC_terminationDate = DateUtils.validateParseDate((String) recordMap.get("OC_terminationDate"));
 					String terminationCode = (String)recordMap.get("OC_subscriptionTerminationReason_code");
-					if(terminationCode==null) {
+					if(StringUtils.isBlank(terminationCode)) {
 						throw new ValidationException("OC_subscriptionTerminationReason_code is mandatory to terminate subscription" );
 					}
 					SubscriptionTerminationReason terminationReason = reasonService.findByCodeReason(terminationCode);
