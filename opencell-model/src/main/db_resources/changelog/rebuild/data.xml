@@ -12411,7 +12411,6 @@ public class ValidateBRScript extends Script {
             <column name="inh_as_def_value" value="0"/>
             <column name="cf_protectable" value="0"/>
         </insert>
-
     </changeSet>
     
      <changeSet id="#5592-2021-02-02_41" author="ZBariki">

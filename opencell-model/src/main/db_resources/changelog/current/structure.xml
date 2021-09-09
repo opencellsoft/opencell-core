@@ -9048,7 +9048,7 @@ public class OrderAdvancement extends ModuleScript {
    				<columnExists tableName="cpq_product_version_attributes" columnName="sequence"/>
    			</not>
    		</preConditions>
-        <createSequence sequenceName=" " startValue="1000"/>
+        <createSequence sequenceName="cpq_product_version_attribute_seq" />
         <addColumn tableName="cpq_product_version_attributes">
             <column name="sequence" type="INT4" defaultValue="0" />
             <column name="mandatory" type="${type.boolean}" >
@@ -9406,4 +9406,6 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
+    
+    
 </databaseChangeLog>
