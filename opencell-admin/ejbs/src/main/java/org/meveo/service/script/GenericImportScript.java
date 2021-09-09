@@ -50,10 +50,10 @@ public class GenericImportScript extends Script {
 					String key = "";
 					String value = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					for (String s : list.subList(keySize, list.size())) {
-						value = value + "|" + s;
+						value = value != "" ? value + "|" + s : s;
 					}
 					matrix.put(key, value);
 				}
@@ -67,7 +67,7 @@ public class GenericImportScript extends Script {
 					}
 					String key = "";
 					for (String s : list.subList(0, keySize)) {
-						key = key + "|" + s;
+						key = key != "" ? key + "|" + s : s;
 					}
 					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
 				}
