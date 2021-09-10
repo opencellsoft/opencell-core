@@ -351,10 +351,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
-    	} catch (ApiException ev) {
-    		throw new BusinessException(ev.getResponseBody());
-
-    	} catch (Exception e) {
+    	}catch (ApiException ev) { 
+    		throw new MeveoApiException("Connection to ingenico is not allowed");
+    	}catch (Exception e) {
     		throw new BusinessException(e.getMessage());
     	}
 
