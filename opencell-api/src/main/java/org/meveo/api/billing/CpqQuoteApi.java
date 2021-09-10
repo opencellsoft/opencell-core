@@ -1359,9 +1359,8 @@ public class CpqQuoteApi extends BaseApi {
         Integer durationTermInMonth = null;
         if (durationOrQuantityAttribute != null &&
                 (durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.NUMERIC ||
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_TEXT ||
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INFO ||
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.TEXT)) {
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_NUMERIC ||
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INTEGER)) {
             Optional<QuoteAttribute> offerQuoteAttribute = quoteOffer.getQuoteAttributes()
                     .stream()
                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
