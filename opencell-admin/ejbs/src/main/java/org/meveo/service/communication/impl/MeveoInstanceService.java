@@ -29,9 +29,11 @@ import javax.ws.rs.core.Response;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
+import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
+import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
+import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
@@ -45,8 +47,8 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.export.RemoteAuthenticationException;
-import org.meveo.model.billing.AuthenticationTypeEnum;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.service.base.BusinessService;
 
 import com.slimpay.hapiclient.exception.HttpException;
@@ -126,22 +128,31 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      * @throws OAuthSystemException 
      * @throws OAuthProblemException 
      */
-    public OAuthAccessTokenResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException {
+    public OAuthResourceResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException {
         
-
+    	String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
     	// We are creating a request that's already formatted following the Oauth specs
     	OAuthClientRequest lRequest = OAuthClientRequest
-    	        .tokenLocation(meveoInstance.getUrl())
+    	        .tokenLocation(meveoInstance.getUrl().split("/opencell")[0]+"/auth/realms/opencell/protocol/openid-connect/token")
     	        .setGrantType(GrantType.CLIENT_CREDENTIALS)
     	        .setClientId(meveoInstance.getClientId())
     	        .setClientSecret(meveoInstance.getClientSecret())
+    	        .setScope("openid")
     	        .buildBodyMessage();
+    	
 
-    	OAuthClient oac = new OAuthClient(new URLConnectionClient());
-        OAuthAccessTokenResponse response = oac.accessToken(lRequest);
+    	OAuthClient client = new OAuthClient(new URLConnectionClient());
+    	OAuthAccessTokenResponse response = client.accessToken(lRequest);
+    	lRequest= new OAuthBearerClientRequest(baseurl + url).
+                setAccessToken(response.getAccessToken()).buildQueryMessage();
+    	lRequest.setBody(JacksonUtil.toString(dto));
+    	lRequest.setHeader(OAuth.HeaderType.CONTENT_TYPE, OAuth.ContentType.JSON);
+    	
+        OAuthResourceResponse resourceResponse= client.resource(lRequest, OAuth.HttpMethod.POST, OAuthResourceResponse.class);
+    	
              
         
-        return response;
+        return resourceResponse;
     }
 
     /**
