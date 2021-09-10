@@ -18,12 +18,12 @@
 
 package org.meveo.api.payment;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.ReflectionUtils.getSubclassObjectByDiscriminatorValue;
+import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -49,9 +49,13 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.*;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -99,6 +103,13 @@ public class AccountOperationApi extends BaseApi {
     
     @Inject
     private JournalReportService journalService;
+
+    @Inject
+    private UserService userService;
+
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
 
     /**
      * Create account operation.
@@ -573,5 +584,39 @@ public class AccountOperationApi extends BaseApi {
         handleMissingParameters();
 
         accountOperationService.transferAccountOperation(transferAccountOperationDto);
+    }
+
+    /**
+     * Update accounting date of an existing account operation
+     *
+     * @param aoID : accounting operation identifier
+     * @param accountingDate : accounting operation date
+     * @return updated account operation
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    public AccountOperation updateAccountingDate(Long aoID, Date accountingDate) throws MeveoApiException, BusinessException {
+        AccountOperation accountOperation = ofNullable(accountOperationService.findById(aoID))
+                .orElseThrow(() -> new EntityDoesNotExistsException(AccountOperation.class, aoID));
+        if (accountOperation.getStatus().equals(EXPORTED)) {
+            throw new BusinessException("Can not update accounting date, account operation is EXPORTED");
+        }
+        if(!hasPermission(currentUser.getUserName())) {
+            throw new BusinessException("Operation not allowed for "
+                    + currentUser.getUserName() + ", user does not have financeManagement permission");
+        }
+        accountOperation.setAccountingDate(accountingDate);
+        return accountOperationService.update(accountOperation);
+    }
+
+    private boolean hasPermission(String userName) {
+        User user = ofNullable(userService.findByUsername(userName))
+                .orElseThrow(() -> new BusinessException(userName + "not found"));
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            return false;
+        }
+        return user.getRoles()
+                .stream()
+                .anyMatch(role -> role.getPermissions() != null && role.hasPermission("financeManagement"));
     }
 }
