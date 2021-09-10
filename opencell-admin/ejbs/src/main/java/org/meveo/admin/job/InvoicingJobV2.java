@@ -62,7 +62,7 @@ public class InvoicingJobV2 extends Job {
         result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
 
         CustomFieldTemplate customFieldBR = new CustomFieldTemplate();
-        customFieldBR.setCode("billingRuns");
+        customFieldBR.setCode("InvoicingJobV2_billingRun");
         customFieldBR.setAppliesTo("JobInstance_InvoicingJobV2");
         customFieldBR.setActive(true);
         customFieldBR.setDescription(resourceMessages.getString("jobExecution.billingRuns"));
