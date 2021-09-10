@@ -58,10 +58,6 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return ColumnTypeEnum.Double;
 		}
-		@Override
-		public Object getValue(AttributeValue attributeValue) {
-			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
-		}
 	}, // "; ; "
 	
 	/** Text value: Entering a text **/
@@ -90,10 +86,6 @@ public enum AttributeTypeEnum {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
-		}
-		@Override
-		public Object getValue(AttributeValue attributeValue) {
-			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
 		}
 	},
 	
