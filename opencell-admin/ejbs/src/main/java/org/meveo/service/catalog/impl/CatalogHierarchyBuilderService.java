@@ -1259,6 +1259,13 @@ public class CatalogHierarchyBuilderService {
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setQuoteVersion(1);
     	duplicate.setUuid(UUID.randomUUID().toString());
+    	var medias = new ArrayList<>(quoteVersion.getMedias());
+		 duplicate.setMedias(new ArrayList<Media>());
+		 if(quoteVersion.getMedias() != null) {
+			 for (Media media : medias) {
+				 duplicate.getMedias().add(mediaService.findById(media.getId()));
+			}
+		 }
     	
     	quoteVersionService.create(duplicate);
     	duplicateQuoteOffer(quoteOffer, duplicate);

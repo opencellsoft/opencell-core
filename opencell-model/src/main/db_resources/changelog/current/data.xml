@@ -2967,9 +2967,7 @@ public class ValidateBRScript extends Script {
             <column name="inh_as_def_value" value="0"/>
             <column name="cf_protectable" value="0"/>
         </insert>
-
     </changeSet>
-
     <changeSet id="#5632_20201207_RT_TYPE_DATA" author="NabilOUACHI">
         <update tableName="billing_rated_transaction">
             <column name="type" value="MINIMUM"/>
@@ -5094,7 +5092,7 @@ public class SubscriptionImportScript extends GenericImportScript {
 				case TERMINATE:
 					Date OC_terminationDate = DateUtils.validateParseDate((String) recordMap.get("OC_terminationDate"));
 					String terminationCode = (String)recordMap.get("OC_subscriptionTerminationReason_code");
-					if(StringUtils.isBlank(terminationCode)) {
+					if(terminationCode==null) {
 						throw new ValidationException("OC_subscriptionTerminationReason_code is mandatory to terminate subscription" );
 					}
 					SubscriptionTerminationReason terminationReason = reasonService.findByCodeReason(terminationCode);
