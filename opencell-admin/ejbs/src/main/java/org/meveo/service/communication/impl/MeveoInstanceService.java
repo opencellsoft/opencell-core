@@ -17,6 +17,7 @@
  */
 package org.meveo.service.communication.impl;
 
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 
 import javax.ejb.Stateless;
@@ -26,6 +27,9 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -43,6 +47,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
@@ -127,11 +132,12 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      * @throws RelNotFoundException 
      * @throws OAuthSystemException 
      * @throws OAuthProblemException 
+     * @throws JAXBException 
      */
-    public OAuthResourceResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException {
+    public OAuthResourceResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException, JAXBException {
         
     	String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
-    	// We are creating a request that's already formatted following the Oauth specs
+    	
     	OAuthClientRequest lRequest = OAuthClientRequest
     	        .tokenLocation(meveoInstance.getUrl().split("/opencell")[0]+"/auth/realms/opencell/protocol/openid-connect/token")
     	        .setGrantType(GrantType.CLIENT_CREDENTIALS)
@@ -145,12 +151,19 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
     	OAuthAccessTokenResponse response = client.accessToken(lRequest);
     	lRequest= new OAuthBearerClientRequest(baseurl + url).
                 setAccessToken(response.getAccessToken()).buildQueryMessage();
-    	lRequest.setBody(JacksonUtil.toString(dto));
-    	lRequest.setHeader(OAuth.HeaderType.CONTENT_TYPE, OAuth.ContentType.JSON);
+    	
+    	JAXBContext jaxbContext = JAXBContext.newInstance(MeveoModuleDto.class);
+    	Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+    	StringWriter sw = new StringWriter();
+    	jaxbMarshaller.marshal(dto, sw);
+    	String xmlString = sw.toString();
+    	lRequest.setBody(xmlString);
+    	
+    	lRequest.setHeader(OAuth.HeaderType.CONTENT_TYPE, "application/xml");
     	
         OAuthResourceResponse resourceResponse= client.resource(lRequest, OAuth.HttpMethod.POST, OAuthResourceResponse.class);
     	
-             
+        log.debug("Publication response {}",resourceResponse.getResponseCode());     
         
         return resourceResponse;
     }
