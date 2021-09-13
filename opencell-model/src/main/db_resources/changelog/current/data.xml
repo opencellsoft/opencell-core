@@ -2255,6 +2255,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.billing.ServiceInstance;
@@ -2344,6 +2345,9 @@ public class ServiceImportScript extends GenericImportScript {
 				case TERMINATE:
 					Date OC_terminationDate = DateUtils.validateParseDate((String) recordMap.get("OC_terminationDate"));
 					String OC_terminationReason = (String) recordMap.get("OC_terminationReason");
+					if(StringUtils.isBlank(OC_terminationReason)) {
+						throw new ValidationException("OC_terminationReason is mandatory to terminate subscription" );
+					}
 					SubscriptionTerminationReason reason = reasonService.findByCodeReason(OC_terminationReason);
 					if(reason==null) {
 						throw new ValidationException("no TerminationReason found with code: '" + OC_terminationReason + "'");
