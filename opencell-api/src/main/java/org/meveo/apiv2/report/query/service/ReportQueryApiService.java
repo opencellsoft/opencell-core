@@ -7,6 +7,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 
 import java.io.IOException;
 import java.util.*;
@@ -56,7 +57,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
-        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
+        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser);
     }
 
     @Override
@@ -180,6 +181,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Override
     public Optional<ReportQuery> delete(Long id) {
         ReportQuery reportQuery = reportQueryService.findById(id);
+        if(!reportQuery.getAuditable().getCreator().equals(currentUser.getUserName())
+                && reportQuery.getVisibility() == PRIVATE
+                && !currentUser.getRoles().contains("query_manager")) {
+            throw new BadRequestException("You don't have permission to delete query that belongs to another user.");
+        }
         if (reportQuery != null) {
             try {
                 reportQueryService.remove(reportQuery);
@@ -221,6 +227,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     public Optional<Object> execute(Long queryId, boolean async) {
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
+        if(!query.getAuditable().getCreator().equals(currentUser.getUserName()) && query.getVisibility() == PRIVATE
+                && !currentUser.getRoles().contains("query_manager")) {
+            throw new BadRequestException("You don't have permission to execute query that belongs to another user.");
+        }
+
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
@@ -277,14 +288,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public Long countAllowedQueriesForUser() {
-        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName(), Collections.EMPTY_MAP);
+        return reportQueryService.countAllowedQueriesForUser(currentUser, Collections.EMPTY_MAP);
     }
 
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
         Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
-        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
+        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser);
     }
 
     private Map<String, Object> buildFilters(String query) {
@@ -304,7 +315,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public Long countAllowedQueriesForUserWithFilters(String query) {
-        Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
-        return reportQueryService.countAllowedQueriesForUser(currentUser.getUserName(), filters);
+        Map<String, Object> filters = (!currentUser.getRoles().contains("query_manager") && query != null) ?
+                buildFilters(query) : new HashMap<>();
+        return reportQueryService.countAllowedQueriesForUser(currentUser, filters);
     }
 }
