@@ -224,7 +224,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         queryResult.setEndDate(new Date());
         queryResult.setExecutionDuration(queryResult.getEndDate().getTime() - queryResult.getStartDate().getTime());
         queryResult.setLineCount(selectResult.size());
-        queryResult.setFilePath(outputFile.getAbsolutePath());
+        queryResult.setFilePath(outputFile.getParentFile().getName() +  File.separator + outputFile.getName());
     }
 
     private void writeOutputFile(File file, QueryExecutionResultFormatEnum format, Set<String> columnnHeader, List<String> selectResult) throws IOException {
@@ -497,7 +497,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             data.stream()
                     .forEach(pw::println);
         }
-        return dir.getPath() + File.separator + fileName + extension;
+        return "reports" + File.separator + fileName + extension;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,
