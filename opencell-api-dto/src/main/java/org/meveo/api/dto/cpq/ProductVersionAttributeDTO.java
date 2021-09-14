@@ -18,6 +18,11 @@ public class ProductVersionAttributeDTO {
     private AttributeDTO attributeDto;
     @Schema(description = "attribute order in the GUI")
     private Integer sequence = 0;
+
+    @Schema(description = "Indicate if the attribute has a mandatory EL")
+    private String mandatoryWithEl;
+    
+    
     public ProductVersionAttributeDTO() {
         super();
     }
@@ -25,6 +30,7 @@ public class ProductVersionAttributeDTO {
         this.productVersionId = pva.getProductVersion().getId();
         this.attributeDto = new AttributeDTO(pva.getAttribute());
         this.sequence = pva.getSequence();
+        this.mandatoryWithEl = pva.getMandatoryWithEl();
     }
     /**
      * @return the productVersionId
@@ -78,4 +84,16 @@ public class ProductVersionAttributeDTO {
     public void setAttributeDto(AttributeDTO attributeDto) {
         this.attributeDto = attributeDto;
     }
+	/**
+	 * @return the mandatoryWithEl
+	 */
+	public String getMandatoryWithEl() {
+		return mandatoryWithEl;
+	}
+	/**
+	 * @param mandatoryWithEl the mandatoryWithEl to set
+	 */
+	public void setMandatoryWithEl(String mandatoryWithEl) {
+		this.mandatoryWithEl = mandatoryWithEl;
+	}
 }

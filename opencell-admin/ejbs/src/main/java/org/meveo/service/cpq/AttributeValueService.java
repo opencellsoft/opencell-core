@@ -11,6 +11,7 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 
@@ -57,5 +58,11 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                 .append(" does not match validation pattern ")
                 .append(attributeValue.getAttribute().getValidationPattern());
         return errorMessage.toString();
+    }
+    
+    public static boolean evaluateMandatoryEl(String mandatoryEl, CpqQuote cpqQuote, QuoteVersion quoteVersion,
+                                     CommercialOrder commercialOrder, ServiceInstance serviceInstance) {
+    	 return evaluateExpression(mandatoryEl,
+                 Boolean.class, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
     }
 }

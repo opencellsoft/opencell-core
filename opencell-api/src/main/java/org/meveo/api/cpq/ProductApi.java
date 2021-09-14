@@ -784,7 +784,7 @@ public class ProductApi extends BaseApi {
 				if(attribute == null) { 
                     throw new EntityDoesNotExistsException(Attribute.class, attr.getAttributeDto().getCode());
 				}
-				ProductVersionAttribute productAttribute = new ProductVersionAttribute(productVersion, attribute, currentSequence);
+				ProductVersionAttribute productAttribute = new ProductVersionAttribute(productVersion, attribute, currentSequence, attr.getMandatoryWithEl());
                 attributes.add(productAttribute);
 			}
             productVersion.getAttributes().addAll(attributes);

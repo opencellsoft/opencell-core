@@ -9254,6 +9254,7 @@
             <column name="display" type="${type.boolean}" >
                 <constraints nullable="false"/>
             </column>
+    		<column name="mandatorwith_el" type="varchar(255)"/>
         </createTable>
         <!--
     	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
