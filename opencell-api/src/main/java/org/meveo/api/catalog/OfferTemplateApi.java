@@ -176,6 +176,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @Inject
     private MediaService mediaService;
     
+    @Inject 
+    private CommercialRuleHeaderService commercialRuleHeaderService;
+    
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -498,12 +501,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			offerTemplate.setMedias(medias);
 		}
 	}
-
-    @Inject private CommercialRuleHeaderService commercialRuleHeaderService;
     
     private void processCommercialRule(OfferTemplateDto postData, OfferTemplate offerTemplate) {
 		Set<String> commercialRuleCodes = new HashSet<String>(postData.getCommercialRuleCodes());
-		offerTemplate.getCommercialRules().clear();
 		if(commercialRuleCodes!= null && !commercialRuleCodes.isEmpty()) {
 			for (String commercialCode : commercialRuleCodes) {
 				CommercialRuleHeader commercialRuleHeader = loadEntityByCode(commercialRuleHeaderService, commercialCode, CommercialRuleHeader.class);
