@@ -1,0 +1,2 @@
+assert (address[0].city, "Paris")
+assert (contactInformation.email, "billing@.com")

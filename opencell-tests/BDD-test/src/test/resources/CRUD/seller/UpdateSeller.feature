@@ -1,22 +1,20 @@
    # The objective of this scenario is to verify whether an entity Seller
    # can be updated by API
-Feature: Testing method Update on entity Seller
+   @Seller
+   Feature: Testing method Update on entity Seller
 
-   Background:  System is configured
+      @UpdateSeller
+      Scenario Outline: UpdateSeller
 
-   @UpdateSeller
-   Scenario Outline: UpdateSeller
+         Given  url "<url>"
+         When   method "<method>"
+         And    body request "<jsonObject>"
+         Then   status is "<status>"
+         And    assertions "<assertions>"
 
-      Given  Actor wants to test update operation
-      When   API version "<apiVer>"
-      And    Business domain "<businessDomainPath>"
-      And    Entity "<entity>" with code or id "<codeOrId>"
-      And    Body request given by "<jsonFile>"
-      Then   The test is "<status>"
-
-      Examples:
-         | apiVer | businessDomainPath | entity | codeOrId          | jsonFile          | status |
-         | v1     | accountManagement  | seller | ben.ohara.seller1 | UpdateSeller.json | pass   |
+         Examples:
+            | url                                                                            | method | jsonObject                                   | status | assertions                                                                   |
+            | http://localhost:8080/opencell/api/rest/v1/accountManagement/sellers/ben.ohara | put    | data(Seller, UpdateSeller, JsonUpdateSeller) | pass   | data(Seller, UpdateSeller, UpdateSeller)/(assert (address[0].city, "Paris")) |
 
 
 
