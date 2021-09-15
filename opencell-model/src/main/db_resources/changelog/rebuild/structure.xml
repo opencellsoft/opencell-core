@@ -2010,7 +2010,6 @@
             <column name="payment_fees" type="numeric(23, 12)" />
             <column name="comment" type="${type.longtext}" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="recorded_invoice_id" type="bigint" />
             <column name="cat_inv_agregate_id" type="bigint" />
             <column name="ddrequest_item_id" type="bigint" />
@@ -8856,7 +8855,6 @@
             <column name="short_description" type="varchar(255)"/>
             <column name="invoicing_plan_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
             	<constraints unique="true" uniqueConstraintName="cpq_quote_version_uuid_unique"/>
             </column>
@@ -8916,7 +8914,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
 
