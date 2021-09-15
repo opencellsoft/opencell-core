@@ -2897,8 +2897,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Update unpaid invoices status
      */
-    public void updateUnpaidInvoicesStatus() {
-        getEntityManager().createNamedQuery("Invoice.updateUnpaidInvoicesStatus").executeUpdate();
+    public List<Long> listUnpaidInvoicesIds() {
+        return getEntityManager()
+                .createNamedQuery("Invoice.listUnpaidInvoicesIds", Long.class)
+                .getResultList();
     }
 
     /**
