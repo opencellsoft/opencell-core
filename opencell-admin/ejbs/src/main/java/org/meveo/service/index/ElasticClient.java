@@ -953,8 +953,24 @@ public class ElasticClient {
         return esConfiguration.getEntityClassesManaged();
     }
 
+    /**
+     * Is Elastic Search integration turned on.
+     * 
+     * @return true if enabled
+     */
     public boolean isEnabled() {
         return esConnection.isEnabled();
+    }
+    
+    /**
+     * Is Elastic Search integration turned on for a given entity type
+     * 
+     * @param Entity type to check for
+     * 
+     * @return true if integration is turned on and indexing is of interest for a given entity type
+     */
+    public boolean isEnabled(ISearchable entity) {
+        return esConnection.isEnabled() && esPopulationService.getIndexAndType(entity) != null;
     }
 
     /**

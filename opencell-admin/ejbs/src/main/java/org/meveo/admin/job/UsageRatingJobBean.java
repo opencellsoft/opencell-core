@@ -44,7 +44,6 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
      */
     private static final int PROCESS_NR_IN_JOB_RUN = 2000000;
 
-
     @Inject
     private EdrService edrService;
 
@@ -53,13 +52,13 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
 
     private Date rateUntilDate = null;
     private String ratingGroup = null;
+    private boolean hasMore = false;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        
-        
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::rateEDRBatch,  this::hasMore, null);
+
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::rateEDRBatch, this::hasMore, null);
 
         rateUntilDate = null;
         ratingGroup = null;
@@ -85,6 +84,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
         }
 
         List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
+        hasMore = ids.size() == PROCESS_NR_IN_JOB_RUN;
 
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
@@ -110,8 +110,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     }
 
     private boolean hasMore(JobInstance jobInstance) {
-        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
-        return !ids.isEmpty();
+        return hasMore;
     }
 
     @Override

@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,6 +43,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
@@ -81,6 +84,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -241,6 +245,88 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, WalletOperationAggregationSettings aggregatedSettings, Date invoicingDate) throws BusinessException {
         return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
+    }
+
+
+    /**
+     * Create Rated transaction from wallet operation.
+     * 
+     * @param walletOperation Wallet operation
+     * @return Rated transaction
+     * @throws BusinessException business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createRatedTransactionsInBatch(List<WalletOperation> walletOperations) throws BusinessException {
+
+        EntityManager em = getEntityManager();
+        boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
+        boolean isESEnabled = elasticClient.isEnabled(new RatedTransaction());
+
+        // Convert WO to RT and persist RT
+        Long[][] woRtIds = new Long[walletOperations.size()][2];
+        int i = 0;
+        for (WalletOperation walletOperation : walletOperations) {
+            if (i > 0 && i % 2000 == 0) {
+                em.flush();
+                em.clear();
+            }
+            RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+
+            customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
+
+            em.persist(ratedTransaction);
+
+            // Add entity to Elastic Search
+            if (isESEnabled) {
+                elasticClient.createOrFullUpdate(ratedTransaction);
+            }
+
+            // Fire notifications
+            if (eventsEnabled) {
+                entityCreatedEventProducer.fire((BaseEntity) ratedTransaction);
+            }
+
+            woRtIds[i][0] = walletOperation.getId();
+            woRtIds[i][1] = ratedTransaction.getId();
+            i++;
+        }
+
+        // Update WOs with Rated transaction information
+
+        // Mass update WO status
+
+        Session hibernateSession = em.unwrap(Session.class);
+        hibernateSession.doWork(connection -> {
+            try (PreparedStatement preparedStatement = connection.prepareStatement("insert into billing_wallet_operation_pending (id, rated_transaction_id) values (?,?)")) {
+
+//                int i = 0;                
+                for (Long[] woRtId : woRtIds) {
+                    preparedStatement.setLong(1, woRtId[0]);
+                    preparedStatement.setLong(2, woRtId[1]);
+
+                    preparedStatement.addBatch();
+
+//                        if (i > 0 && i % 500 == 0) {
+//                            preparedStatement.executeBatch();
+//                        }
+//                        i++;
+                }
+
+                preparedStatement.executeBatch();
+
+            } catch (SQLException e) {
+                log.error("Failed to insert into billing_rated_transaction_pending", e);
+                throw e;
+            }
+        });
+
+        // Need to flush, so WOs can be updated in mass
+        em.flush(); 
+
+        // Mass update WOs with status and RT info
+        em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable").executeUpdate();
+        em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
     }
 
     /**

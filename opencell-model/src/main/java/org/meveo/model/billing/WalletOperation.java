@@ -35,6 +35,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -87,8 +89,10 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId"),
 
-        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN'"),
-        @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.getConvertToRTsSummary", query = "SELECT count(*), max(o.id) FROM WalletOperation o WHERE o.status='OPEN'"),
+        @NamedQuery(name = "WalletOperation.listConvertToRTs", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.id<=:maxId"),
+        
+        @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.listToRateBySubscription", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
         @NamedQuery(name = "WalletOperation.listToRateByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
 
@@ -116,7 +120,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
 
-        @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
+        @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.userAccount=:userAccount and o.code=:code"),
 
         @NamedQuery(name = "WalletOperation.findInvoicedByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o left join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
         @NamedQuery(name = "WalletOperation.findNotInvoicedByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o left join o.ratedTransaction rt WHERE (o.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
@@ -124,9 +128,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringChargesIncludingInvoiced", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE (o.status='CANCELED' and o.id in (:notInvoicedIds)) or (o.status='TREATED' and o.id in (:invoicedIds))"),
         @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringChargesJustInvoiced", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE o.status='TREATED' and o.id in (:invoicedIds)"),
 
-        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select o.status, count(o.id) from WalletOperation o group by o.status"),
         
@@ -149,6 +153,11 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByChargeInstance", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance=:chargeInstance group by wo.chargeInstance.id"),
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id"),
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id") })
+
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTable", query = "update billing_wallet_operation wo set status='TREATED', updated=now(), rated_transaction_id=pending.rated_transaction_id from billing_wallet_operation_pending pending where status='OPEN' and wo.id=pending.id"),
+        @NamedNativeQuery(name = "WalletOperation.deletePendingTable", query = "delete from billing_wallet_operation_pending") })
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -458,10 +467,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private ServiceInstance serviceInstance;
 
     /**
-     * Billing account
+     * Billing account associated to wallet operation
      */
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id", nullable = false)
+    @NotNull
     private BillingAccount billingAccount;
+
+    /**
+     * User account associated to wallet operation
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
     /**
      * Offer template
@@ -614,15 +632,15 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
         this.quantity = quantityInChargeUnits;
 
-        UserAccount userAccount = chargeInstance.getUserAccount();
+        this.userAccount = chargeInstance.getUserAccount();
         this.invoicingDate = invoicingDate;
         this.seller = chargeInstance.getSeller();
         this.serviceInstance = chargeInstance.getServiceInstance();
         this.subscription = chargeInstance.getSubscription();
         this.currency = chargeInstance.getCurrency().getCurrency();
 
-        if (this.seller == null && userAccount != null) {
-            this.seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        if (this.seller == null) {
+            this.seller = this.userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
 
         if (tax != null) {
@@ -689,11 +707,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @param invoiceSubCategory Invoice sub category
      * @param accountingCode Accounting code
      * @param status Status
+     * @param userAccount userAccount
      */
     public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax, BigDecimal unitAmountWithoutTax,
             BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, String parameter1, String parameter2,
             String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate, OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription,
-            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, AccountingCode accountingCode, WalletOperationStatusEnum status) {
+            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, AccountingCode accountingCode, WalletOperationStatusEnum status, UserAccount userAccount) {
         super();
         this.code = code;
         this.description = description;
@@ -739,6 +758,11 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         if (offerTemplate != null) {
             this.offerCode = offerTemplate.getCode();
         }
+        if (userAccount != null) {
+            this.userAccount = userAccount;
+            this.billingAccount = this.userAccount.getBillingAccount();
+        }
+
         this.status = status != null ? status : WalletOperationStatusEnum.OPEN;
         this.created = new Date();
         this.updated = new Date();
@@ -1097,6 +1121,20 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.billingAccount = billingAccount;
     }
 
+    /**
+     * @return User account associated to rated transaction
+     */
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    /**
+     * @param userAccount User account associated to rated transaction
+     */
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
     public InvoiceSubCategory getInvoiceSubCategory() {
         return invoiceSubCategory;
     }
@@ -1400,8 +1438,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     }
 
     /**
-     * Was this operation applied in advance - that is operation date start dates match. In case that operation date does not match neither start nor end dates, consider as apply
-     * in advance
+     * Was this operation applied in advance - that is operation date start dates match. In case that operation date does not match neither start nor end dates, consider as apply in advance
      *
      * @return True if it was applied in advance.
      */

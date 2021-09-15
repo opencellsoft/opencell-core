@@ -4266,4 +4266,30 @@ END $$;]]>
             <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="user_account_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set user_account_id = wi.user_account_id from ${db.schema.adapted}billing_wallet wi where wallet_id=wi.id and wallet_id is not null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set billing_account_id = ua.billing_account_id from ${db.schema.adapted}billing_user_account ua where user_account_id=ua.id and user_account_id is not null</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius">
+        <createTable tableName="billing_wallet_operation_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wo_pending_pk"/>
+            </column>
+            <column name="rated_transaction_id" type="bigint" />
+        </createTable>
+    </changeSet>
+        
+    <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius">
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="500"/>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code='batchSize'</sql>
+    </changeSet>
 </databaseChangeLog>

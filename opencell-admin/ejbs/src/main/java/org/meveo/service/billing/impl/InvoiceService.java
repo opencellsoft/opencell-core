@@ -1081,8 +1081,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             
             // Mass update RTs with status and invoice info
-            em.createNamedQuery("massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
-            em.createNamedQuery("deletePendingTable").executeUpdate();
+            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
+            em.createNamedQuery("RatedTransaction.deletePendingTable").executeUpdate();
         }
 
         // Finalize invoices

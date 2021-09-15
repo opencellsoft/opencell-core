@@ -804,17 +804,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return new ArrayList<>();
     }
 
-    /**
-     * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
-     * 
-     * @param invoicingDate Invoicing date
-     * @param nbToRetrieve Number of items to retrieve for processing
-     * @return A list of Wallet operation ids
-     */
-    public List<Long> listToRate(int nbToRetrieve) {
-        return getEntityManager().createNamedQuery("WalletOperation.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
-    }
-
     public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {
 
         try {
@@ -1346,7 +1335,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
                 wo = new WalletOperation(dto.getCode(), "description", wallet, dto.getOperationDate(), null, dto.getType(), currency, tax, dto.getUnitAmountWithoutTax(), dto.getUnitAmountWithTax(),
                     dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
-                    dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus());
+                    dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus(),
+                    wallet != null ? wallet.getUserAccount() : null);
             }
             Integer sortIndex = RatingService.getSortIndex(wo);
             wo.setSortIndex(sortIndex);

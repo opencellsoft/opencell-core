@@ -27,7 +27,7 @@
             <property name="hibernate.ejb.event.post-delete" value="org.meveo.jpa.event.DeleteEventListener" />
 
             <!-- Group multiple inserts and updates in a single transaction into a single insert or update. https://vladmihalcea.com/how-to-batch-insert-and-update-statements-with-hibernate -->
-            <property name="hibernate.jdbc.batch_size" value="50" />
+            <property name="hibernate.jdbc.batch_size" value="500" />
             <property name="hibernate.order_inserts" value="true" />
             <property name="hibernate.order_updates" value="true" />
             <property name="hibernate.jdbc.batch_versioned_data" value="true" />
@@ -73,7 +73,7 @@
 
 
             <!-- Group multiple inserts and updates in a single transaction into a single insert or update. https://vladmihalcea.com/how-to-batch-insert-and-update-statements-with-hibernate -->
-            <property name="hibernate.jdbc.batch_size" value="50" />
+            <property name="hibernate.jdbc.batch_size" value="500" />
             <property name="hibernate.order_inserts" value="true" />
             <property name="hibernate.order_updates" value="true" />
             <property name="hibernate.jdbc.batch_versioned_data" value="true" />

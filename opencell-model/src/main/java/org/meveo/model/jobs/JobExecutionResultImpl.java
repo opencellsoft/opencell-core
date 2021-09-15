@@ -168,7 +168,17 @@ public class JobExecutionResultImpl extends BaseEntity {
      * @return A total number of processed items, successful or failed
      */
     public synchronized long registerSucces() {
-        nbItemsCorrectlyProcessed++;
+        return registerSucces(1);
+    }
+
+    /**
+     * Increment a count of successfully processed items
+     * 
+     * @param nrToAdd Number of items successfully processed
+     * @return A total number of processed items, successful or failed
+     */
+    public synchronized long registerSucces(int nrToAdd) {
+        nbItemsCorrectlyProcessed = nbItemsCorrectlyProcessed + nrToAdd;
         return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
 

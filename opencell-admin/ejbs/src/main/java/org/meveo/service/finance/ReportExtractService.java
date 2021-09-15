@@ -129,7 +129,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
             ScrollableResults results = null;
             try {
-                results = scriptInstanceService.getScrollableResultNativeQuery(entity.getSqlQuery(), context);
+                results = getScrollableResultNativeQuery(entity.getSqlQuery(), context);
             } catch (Exception e) {
                 if (e.getCause() != null && e.getCause().getCause() != null) {
                     reportExtractExecutionResult.setErrorMessage(e.getCause().getCause().getMessage());

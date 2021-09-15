@@ -77,7 +77,7 @@ import org.meveo.model.tax.TaxClass;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "RatedTransaction")
 @Table(name = "billing_rated_transaction")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), @Parameter(name = "increment_size", value = "500") })
 @NamedQueries({ @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r left join fetch r.wallet where r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate)  order by r.billingAccount.id "),
@@ -138,7 +138,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
 
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.userAccount=:userAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now, r.invoice=null where r.id IN :rtIds "),
@@ -168,8 +168,8 @@ import org.meveo.model.tax.TaxClass;
         })
 
 @NamedNativeQueries({
-        @NamedNativeQuery(name = "massUpdateWithInvoiceInfoFromPendingTable", query = "update billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
-        @NamedNativeQuery(name = "deletePendingTable", query = "delete from billing_rated_transaction_pending") })
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from billing_rated_transaction_pending") })
 
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 
@@ -452,7 +452,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Raw rating amount without tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
-    @Deprecated
     @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithoutTax;
@@ -460,7 +459,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
-    @Deprecated
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
@@ -655,8 +653,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         this.amountTax = walletOperation.getAmountTax();
         this.wallet = walletOperation.getWallet();
-        this.userAccount = walletOperation.getWallet().getUserAccount();
-        this.billingAccount = userAccount.getBillingAccount();
+        this.userAccount = walletOperation.getUserAccount();
+        this.billingAccount = walletOperation.getBillingAccount();
         this.seller = walletOperation.getSeller();
         this.invoiceSubCategory = walletOperation.getInvoiceSubCategory();
         this.parameter1 = walletOperation.getParameter1();
@@ -680,15 +678,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.ratingUnitOfMeasure = walletOperation.getRatingUnitOfMeasure();
         this.accountingCode = walletOperation.getAccountingCode();
         this.invoicingDate = walletOperation.getInvoicingDate();
-
         this.unityDescription = walletOperation.getInputUnitDescription();
-        if (this.unityDescription == null) {
-            this.unityDescription = walletOperation.getChargeInstance().getChargeTemplate().getInputUnitDescription();
-        }
         this.ratingUnitDescription = walletOperation.getRatingUnitDescription();
-        if (ratingUnitDescription == null) {
-            this.ratingUnitDescription = walletOperation.getChargeInstance().getChargeTemplate().getRatingUnitDescription();
-        }
         this.sortIndex = walletOperation.getSortIndex();
     }
 
@@ -1099,8 +1090,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     }
 
     /**
-     * @return Was tax explicitly overridden during rating instead of calculated by a lookup in tax mapping table based on account and charge attributes. An absence of tax class
-     *         with a presence of tax means tax was overridden.
+     * @return Was tax explicitly overridden during rating instead of calculated by a lookup in tax mapping table based on account and charge attributes. An absence of tax class with a presence of tax means tax was
+     *         overridden.
      */
     public boolean isTaxOverriden() {
         return taxClass == null;
@@ -1299,6 +1290,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
     }
+
     public RatedTransactionTypeEnum getType() {
         return type;
     }
