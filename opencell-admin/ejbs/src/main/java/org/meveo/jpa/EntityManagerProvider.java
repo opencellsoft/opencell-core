@@ -78,12 +78,14 @@ public class EntityManagerProvider {
 
         if (providerCode == null || !isMultiTenancyEnabled) {
 
-            // Create an container managed persistence context main provider, for API and JOBs
+            // Create an container managed persistence context main provider for API and JOBs
             if (FacesContext.getCurrentInstance() == null) {
+                // log.error("AKK will get EM wrapper");
                 return new EntityManagerWrapper(emfForJobs, false);
 
-                // Create an application managed persistence context main provider, for GUI
+                // Create an application managed persistence context main provider for GUI
             } else {
+                // log.error("AKK will get Factory wrapper");
                 final EntityManager em = emf.createEntityManager();
                 EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
                     em.joinTransaction();
@@ -93,12 +95,13 @@ public class EntityManagerProvider {
             }
         }
 
-        // Create an application managed persistence context for provider
+        // log.error("AKK will get a Factory wrapper for tenant");
+        // Create an application managed persistence context for a secondary tenant
         final EntityManager em = createEntityManager(providerCode);
         EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-        	if(em.getTransaction() != null && em.getTransaction().isActive()) {
-        		em.joinTransaction();
-        	}
+            if (em.getTransaction() != null && em.getTransaction().isActive()) {
+                em.joinTransaction();
+            }
             return method.invoke(em, args);
         });
         return new EntityManagerWrapper(emProxy, true);
@@ -122,14 +125,14 @@ public class EntityManagerProvider {
      */
     public EntityManager getEntityManager(String providerCode) {
 
-        log.trace("Get EM for provider {}", providerCode);
-
         boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
         if (providerCode == null || !isMultiTenancyEnabled) {
+            // log.error("Get EM by provider code = main for current user", providerCode);
             return emfForJobs;
         }
 
+        // log.error("Get factory by secondary tenant {} for current user", providerCode);
         EntityManager currentEntityManager = createEntityManager(providerCode);
 
         final EntityManager currentEntityManagerFinal = currentEntityManager;
@@ -140,15 +143,14 @@ public class EntityManagerProvider {
     }
 
     /**
-     * Get entity manager for use in Bean managed transactions. Entity manager produced from a entity manager factory will NOT join a transaction. Will consider a tenant that
-     * currently connected user belongs to.
+     * Get entity manager for use in Bean managed transactions. Entity manager produced from a entity manager factory will NOT join a transaction. Will consider a tenant that currently connected user belongs to.
      * 
      * @return Get entity manager for a given provider. Entity manager produced from a entity manager factory will join a transaction
      */
     public EntityManager getEntityManagerWoutJoinedTransactions() {
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
 
-        log.trace("Produce EM for provider {}", providerCode);
+        // log.error("Produce EM for provider Without TX {}", providerCode);
 
         if (providerCode == null || !isMultiTenancyEnabled) {
 
@@ -168,7 +170,7 @@ public class EntityManagerProvider {
     }
 
     private EntityManager createEntityManager(String providerCode) {
-        // log.trace("Create EM for provider {}", providerCode);
+        // log.error("Create EM for provider {}", providerCode);
         try {
             return entityManagerFactories.get(providerCode).createEntityManager();
         } catch (NullPointerException e) {
@@ -183,7 +185,7 @@ public class EntityManagerProvider {
      * @param providerCode Provider/tenant code
      */
     public void registerEntityManagerFactory(String providerCode) {
-        log.trace("Create EMF for provider {}", providerCode);
+        // log.error("Register Factory for provider {}", providerCode);
 
         if (entityManagerFactories.containsKey(providerCode)) {
             return;
@@ -196,7 +198,7 @@ public class EntityManagerProvider {
 
         entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(providerCode, emf);
 
-        log.debug("Created EMF for provider {}", providerCode);
+        // log.debug("Created EMF for provider {}", providerCode);
     }
 
     /**
@@ -206,11 +208,11 @@ public class EntityManagerProvider {
      */
     public void unregisterEntityManagerFactory(String providerCode) {
 
-        log.trace("Remove EMF for provider {}", providerCode);
+        // log.error("Remove EMF for provider {}", providerCode);
 
         entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(providerCode);
 
-        log.debug("Removed EMF for provider {}", providerCode);
+        // log.debug("Removed EMF for provider {}", providerCode);
     }
 
     /**

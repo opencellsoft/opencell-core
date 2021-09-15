@@ -179,7 +179,7 @@ public class ApplicationInitializer {
             esPopulationService.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         }
 
-        cfValueAcumulator.loadCfAccumulationRules();
+        // cfValueAcumulator.loadCfAccumulationRules();
 
         log.info("Initialized application for provider {}", provider.getCode());
 

@@ -20,12 +20,12 @@ public enum JobSpeedEnum {
     /**
      * Fast. Job status check and update every 100 records
      */
-    FAST(100, 100),
+    FAST(1000, 1000),
 
     /**
      * Very fast. Job status check and update every 500 records
      */
-    VERY_FAST(500, 500);
+    VERY_FAST(5000, 5000);
 
     int checkNb;
 

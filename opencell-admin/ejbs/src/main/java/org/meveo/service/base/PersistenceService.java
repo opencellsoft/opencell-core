@@ -64,6 +64,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
@@ -90,6 +91,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -99,6 +101,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.notification.Notification;
+import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.local.IPersistenceService;
@@ -106,6 +110,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -223,6 +228,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     protected CustomFieldTemplateService customFieldTemplateService;
 
+    @Inject
+    private GenericNotificationService genericNotificationService;
+    
     /**
      * Constructor.
      */
@@ -540,10 +548,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
-        if (dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
-            // CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
-            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, dirtyCfValues, dirtyCfPeriods);
-        }
+        // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
+        // if (dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
+        // // CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
+        // cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, dirtyCfValues, dirtyCfPeriods);
+        // }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 
@@ -593,9 +602,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
 
-        if (accumulateCF && entity instanceof ICustomFieldEntity) {
-            cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
-        }
+        // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
+        // if (accumulateCF && entity instanceof ICustomFieldEntity) {
+        // cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
+        // }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
@@ -1257,10 +1267,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @param params Parameters to pass
      * @return Scrollable results
      */
+    @SuppressWarnings("rawtypes")
     public ScrollableResults getScrollableResultNativeQuery(String query, Map<String, Object> params) {
         Session session = getEntityManager().unwrap(Session.class);
-        SQLQuery q = session.createSQLQuery(query);
-
+        NativeQuery q = session.createNativeQuery(query);
+        
         q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         q.setFetchSize(10000);
         q.setReadOnly(true);
@@ -1509,7 +1520,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } catch (NoResultException e) {
             throw new NotFoundException("No entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
         } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use “id” instead");
+        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use ï¿½idï¿½ instead");
         }
     }
 	
@@ -1590,5 +1601,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } catch (NonUniqueResultException e) {
         	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+"with "+where+" found");
         }
+    }
+
+    /**
+     * Check if event of a given type is enabled for a given entity
+     * 
+     * @param eventType Event type
+     * @return True if events of such event type exist for an entity class that persistence service corresponds to
+     */
+    public boolean areEventsEnabled(NotificationEventTypeEnum eventType) {
+        List<Notification> notifications = genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.CREATED, ReflectionUtils.createObject(entityClass.getName()));
+        return notifications != null && !notifications.isEmpty();
     }
 }

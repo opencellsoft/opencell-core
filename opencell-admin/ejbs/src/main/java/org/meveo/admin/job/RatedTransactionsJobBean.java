@@ -18,8 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +27,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -38,6 +42,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.job.Job;
 
 /**
  * A job implementation to convert Open Wallet operations to Rated transactions
@@ -46,7 +51,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
+public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperation> {
 
     private static final long serialVersionUID = -2740290205290535899L;
 
@@ -64,10 +69,18 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+
+    private boolean hasMore = false;
+    private StatelessSession statelessSession;
+    private ScrollableResults scrollableResults;
+
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::convertWoToRTBatch, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset);
     }
 
     /**
@@ -76,7 +89,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
-    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+    private Optional<Iterator<WalletOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
@@ -94,21 +107,29 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
 
-        List<Long> ids = walletOperationService.listToRate(PROCESS_NR_IN_JOB_RUN);
+        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 1L);
+        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
+        if (nbThreads == -1) {
+            nbThreads = (long) Runtime.getRuntime().availableProcessors();
+        }
+        int fetchSize = batchSize.intValue() * nbThreads.intValue();
 
-        return Optional.of(new SynchronizedIterator<Long>(ids));
-    }
+        Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
 
-    /**
-     * Convert a single Wallet operation to a Rated transaction
-     * 
-     * @param woId Wallet operation id to convert
-     * @param jobExecutionResult Job execution result
-     */
-    private void convertWoToRT(Long woId, JobExecutionResultImpl jobExecutionResult) {
+        Long nrOfRecords = (Long) convertSummary[0];
+        Long maxId = (Long) convertSummary[1];
 
-        WalletOperation walletOperation = walletOperationService.findById(woId);
-        ratedTransactionService.createRatedTransaction(walletOperation, false);
+        if (nrOfRecords.intValue() == 0) {
+            return Optional.empty();
+        }
+
+        statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
+        scrollableResults = statelessSession.createNamedQuery("WalletOperation.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(PROCESS_NR_IN_JOB_RUN)
+            .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
+
+        hasMore = nrOfRecords >= PROCESS_NR_IN_JOB_RUN;
+
+        return Optional.of(new SynchronizedIterator<WalletOperation>(scrollableResults, nrOfRecords.intValue()));
     }
 
     /**
@@ -117,16 +138,22 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      * @param woIds Wallet operation ids to convert
      * @param jobExecutionResult Job execution result
      */
-    private void convertWoToRTBatch(List<Long> woIds, JobExecutionResultImpl jobExecutionResult) {
+    private void convertWoToRTBatch(List<WalletOperation> walletOperations, JobExecutionResultImpl jobExecutionResult) {
 
-        List<WalletOperation> walletOperations = walletOperationService.findByIds(woIds);
-        for (WalletOperation walletOperation : walletOperations) {
-            ratedTransactionService.createRatedTransaction(walletOperation, false);
-        }
+        ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
     }
 
     private boolean hasMore(JobInstance jobInstance) {
-        List<Long> ids = walletOperationService.listToRate(1);
-        return !ids.isEmpty();
+        return hasMore;
+    }
+
+    private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
+        scrollableResults.close();
+        statelessSession.close();
+    }
+
+    @Override
+    protected boolean isProcessItemInNewTx() {
+        return false;
     }
 }

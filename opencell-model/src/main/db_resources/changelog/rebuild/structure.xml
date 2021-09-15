@@ -3616,6 +3616,8 @@
             <column name="product_version_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
             <column name="old_wallet_id" type="bigint" />
+            <column name="user_account_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -10435,6 +10437,16 @@
             <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="rebuild-str-tbl-430" author="AndriusKarpavicius">  
+        <createTable tableName="billing_wallet_operation_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wo_pending_pk"/>
+            </column>
+            <column name="rated_transaction_id" type="bigint" />
+        </createTable>
+    </changeSet>
+    
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -15872,6 +15884,10 @@
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
+    <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql"/>
+    <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius"/>
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

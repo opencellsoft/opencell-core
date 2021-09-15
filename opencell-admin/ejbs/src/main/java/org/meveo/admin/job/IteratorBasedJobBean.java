@@ -142,10 +142,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 T itemToProcess = iterator.next();
                 mainLoop: while (itemToProcess != null) {
 
-                    if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                        break;
-                    }
-
                     if (useMultipleItemProcessing) {
 
                         final List<T> itemsToProcess = new ArrayList<T>();
@@ -175,24 +171,27 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                                 processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult);
                             }
 
-                            for (int l = 0; l < nrOfItemsInBatch; l++) {
-                                globalI = jobExecutionResult.registerSucces();
-                            }
+                            globalI = jobExecutionResult.registerSucces(nrOfItemsInBatch);
 
                             // Batch processing has failed, so process item one by one
                         } catch (Exception e) {
 
-                            // reset counter to previous value, so job continuity check would still be valid
-                            i = i - itemsToProcess.size();
+                            if (processSingleItemFunction != null) {
+                                // reset counter to previous value, so job continuity check would still be valid
+                                i = i - itemsToProcess.size();
 
-                            for (T itemToProcessFromFailedBatch : itemsToProcess) {
-                                globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
-                                i++;
+                                for (T itemToProcessFromFailedBatch : itemsToProcess) {
+                                    globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
+                                    i++;
+                                }
                             }
                         }
 
                     } else {
 
+                        if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                            break;
+                        }
                         // Process each item
                         globalI = processItem(itemToProcess, isNewTx, processSingleItemFunction, jobExecutionResult);
                     }

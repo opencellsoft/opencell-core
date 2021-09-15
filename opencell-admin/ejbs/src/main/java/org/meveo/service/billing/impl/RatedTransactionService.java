@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -40,6 +42,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -83,6 +86,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -237,6 +241,87 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
+     * Create Rated transaction from wallet operation.
+     * 
+     * @param walletOperation Wallet operation
+     * @return Rated transaction
+     * @throws BusinessException business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createRatedTransactionsInBatch(List<WalletOperation> walletOperations) throws BusinessException {
+
+        EntityManager em = getEntityManager();
+        boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
+        boolean isESEnabled = elasticClient.isEnabled(new RatedTransaction());
+
+        // Convert WO to RT and persist RT
+        Long[][] woRtIds = new Long[walletOperations.size()][2];
+        int i = 0;
+        for (WalletOperation walletOperation : walletOperations) {
+            if (i > 0 && i % 2000 == 0) {
+                em.flush();
+                em.clear();
+            }
+            RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+
+            customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
+
+            em.persist(ratedTransaction);
+
+            // Add entity to Elastic Search
+            if (isESEnabled) {
+                elasticClient.createOrFullUpdate(ratedTransaction);
+            }
+
+            // Fire notifications
+            if (eventsEnabled) {
+                entityCreatedEventProducer.fire((BaseEntity) ratedTransaction);
+            }
+
+            woRtIds[i][0] = walletOperation.getId();
+            woRtIds[i][1] = ratedTransaction.getId();
+            i++;
+        }
+
+        // Update WOs with Rated transaction information
+
+        // Mass update WO status
+
+        Session hibernateSession = em.unwrap(Session.class);
+        hibernateSession.doWork(connection -> {
+            try (PreparedStatement preparedStatement = connection.prepareStatement("insert into billing_wallet_operation_pending (id, rated_transaction_id) values (?,?)")) {
+
+//                int i = 0;                
+                for (Long[] woRtId : woRtIds) {
+                    preparedStatement.setLong(1, woRtId[0]);
+                    preparedStatement.setLong(2, woRtId[1]);
+
+                    preparedStatement.addBatch();
+
+//                        if (i > 0 && i % 500 == 0) {
+//                            preparedStatement.executeBatch();
+//                        }
+//                        i++;
+                }
+
+                preparedStatement.executeBatch();
+
+            } catch (SQLException e) {
+                log.error("Failed to insert into billing_rated_transaction_pending", e);
+                throw e;
+            }
+        });
+
+        // Need to flush, so WOs can be updated in mass
+        em.flush(); 
+
+        // Mass update WOs with status and RT info
+        em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable").executeUpdate();
+        em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
+    }
+
+    /**
      * Create a {@link RatedTransaction} from a group of wallet operations.
      *
      * @param aggregatedWo aggregated wallet operations
@@ -273,7 +358,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Calendar cal = Calendar.getInstance();
         if (aggregatedWo.getYear() != null && aggregatedWo.getMonth() != null && aggregatedWo.getDay() != null) {
-            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth()-1, aggregatedWo.getDay(), 0, 0, 0);
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth() - 1, aggregatedWo.getDay(), 0, 0, 0);
             ratedTransaction.setUsageDate(cal.getTime());
         } else {
             ratedTransaction.setUsageDate(aggregatedWo.getOperationDate());
@@ -362,7 +447,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
         // batch update
         SubListCreator subList = new SubListCreator(30000, woIds);
-        while(subList.isHasNext()) {
+        while (subList.isHasNext()) {
             String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated" + " WHERE o.id in (:woIds) ";
             Query query = getEntityManager().createQuery(strQuery);
             query.setParameter("woIds", subList.getNextWorkSet());
@@ -403,7 +488,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
-    
+
     public Long countNotInvoicedRTByBA(BillingAccount billingAccount) {
         try {
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
@@ -545,27 +630,27 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         IBillableEntity entity = null;
 
-        if(billingRun.isExceptionalBR()) {
+        if (billingRun.isExceptionalBR()) {
             entity = billingAccountService.findById(entityId);
         } else {
             switch (billingRun.getBillingCycle().getType()) {
-                case BILLINGACCOUNT:
-                    entity = billingAccountService.findById(entityId);
-                    // billingAccount = (BillingAccount) entity;
-                    break;
+            case BILLINGACCOUNT:
+                entity = billingAccountService.findById(entityId);
+                // billingAccount = (BillingAccount) entity;
+                break;
 
-                case SUBSCRIPTION:
-                    entity = subscriptionService.findById(entityId);
-                    // billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
-                    break;
+            case SUBSCRIPTION:
+                entity = subscriptionService.findById(entityId);
+                // billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
+                break;
 
-                case ORDER:
-                    entity = orderService.findById(entityId);
-                    // if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                    // billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order)
-                    // entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
-                    // }
-                    break;
+            case ORDER:
+                entity = orderService.findById(entityId);
+                // if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
+                // billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order)
+                // entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+                // }
+                break;
             }
         }
         entity.setTotalInvoicingAmountWithoutTax(totalAmounts.getAmountWithoutTax());
@@ -651,8 +736,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Create Rated transactions to reach minimum invoiced amount per subscription level. Only those subscriptions that have minimum invoice amount rule are considered. Updates
-     * minAmountTransactions parameter.
+     * Create Rated transactions to reach minimum invoiced amount per subscription level. Only those subscriptions that have minimum invoice amount rule are considered. Updates minAmountTransactions parameter.
      *
      * @param billableEntity Entity to bill - entity for which minimum rated transactions should be created
      * @param billingAccount Billing account to associate new minimum amount Rated transactions with
@@ -790,7 +874,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         RatedTransaction rt = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount,
             null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null, code, minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass, null, RatedTransactionTypeEnum.MINIMUM, null, null);
-       
+
         if (entity instanceof ServiceInstance) {
             rt.setServiceInstance((ServiceInstance) entity);
         }
@@ -1202,7 +1286,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void detachRTsFromSubscription(Subscription subscription) {
         getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
-    
+
     /**
      * Detach RTs From invoice.
      *
@@ -1237,66 +1321,66 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
-	/**
-	 * invalidate RTs related to an invoice
-	 * @param invoice
-	 */
-	public void invalidateRTs(Invoice invoice) {
-		getEntityManager().createNamedQuery("RatedTransaction.invalidateRTByInvoice").setParameter("invoice", invoice).executeUpdate();
-	}
+    /**
+     * invalidate RTs related to an invoice
+     * @param invoice
+     */
+    public void invalidateRTs(Invoice invoice) {
+        getEntityManager().createNamedQuery("RatedTransaction.invalidateRTByInvoice").setParameter("invoice", invoice).executeUpdate();
+    }
 
-	/**
-	 * @param billingAccountCode
-	 * @param userAccountCode
-	 * @param subscriptionCode
-	 * @param serviceInstanceCode
-	 * @param chargeInstanceCode
-	 * @param unitAmountWithoutTax
-	 * @param quantity
-	 * @return
-	 */
+    /**
+     * @param billingAccountCode
+     * @param userAccountCode
+     * @param subscriptionCode
+     * @param serviceInstanceCode
+     * @param chargeInstanceCode
+     * @param unitAmountWithoutTax
+     * @param quantity
+     * @return
+     */
 	public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
 			String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
-			BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
+            BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
 
-		String errors = "";
-		if (billingAccountCode == null) {
-			errors = errors + " billingAccountCode,";
-		}
-		if (subscriptionCode == null) {
-			errors = errors + " subscriptionCode,";
-		}
-		if (serviceInstanceCode == null) {
-			errors = errors + " sericeInstanceCode,";
-		}
-		if (chargeInstanceCode == null) {
-			errors = errors + " chargeInstanceCode,";
-		}
-		if (!errors.isBlank()) {
-			throw new ValidationException("Missing fields to create RatedTransaction : " + errors);
-		}
-		usageDate = usageDate == null? new Date() : usageDate;
-		
+        String errors = "";
+        if (billingAccountCode == null) {
+            errors = errors + " billingAccountCode,";
+        }
+        if (subscriptionCode == null) {
+            errors = errors + " subscriptionCode,";
+        }
+        if (serviceInstanceCode == null) {
+            errors = errors + " sericeInstanceCode,";
+        }
+        if (chargeInstanceCode == null) {
+            errors = errors + " chargeInstanceCode,";
+        }
+        if (!errors.isBlank()) {
+            throw new ValidationException("Missing fields to create RatedTransaction : " + errors);
+        }
+        usageDate = usageDate == null ? new Date() : usageDate;
+
 		BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class,
 				billingAccountCode);
-		
-		UserAccount userAccount = userAccountCode!=null? (UserAccount) tryToFindByEntityClassAndCode(UserAccount.class, userAccountCode) : billingAccount.getUsersAccounts().get(0);
-		
-		Map<String, Object> subscriptionCriterions = ImmutableMap.of("code", subscriptionCode, "userAccount", userAccount, "status", SubscriptionStatusEnum.ACTIVE);
-		Subscription subscription = (Subscription) tryToFindByEntityClassAndMap(Subscription.class, subscriptionCriterions);
-		
-		Map<String, Object> serviceInstanceCriterions = ImmutableMap.of("code", serviceInstanceCode, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
-		ServiceInstance serviceInstance = (ServiceInstance) tryToFindByEntityClassAndMap(ServiceInstance.class, serviceInstanceCriterions );
-		Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
-		ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
 
-		TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date());
-		TaxClass taxClass = taxInfo.taxClass;
+        UserAccount userAccount = userAccountCode != null ? (UserAccount) tryToFindByEntityClassAndCode(UserAccount.class, userAccountCode) : billingAccount.getUsersAccounts().get(0);
 
-		final BigDecimal taxPercent = taxInfo.tax.getPercent();
+        Map<String, Object> subscriptionCriterions = ImmutableMap.of("code", subscriptionCode, "userAccount", userAccount, "status", SubscriptionStatusEnum.ACTIVE);
+        Subscription subscription = (Subscription) tryToFindByEntityClassAndMap(Subscription.class, subscriptionCriterions);
+
+        Map<String, Object> serviceInstanceCriterions = ImmutableMap.of("code", serviceInstanceCode, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
+        ServiceInstance serviceInstance = (ServiceInstance) tryToFindByEntityClassAndMap(ServiceInstance.class, serviceInstanceCriterions);
+        Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
+        ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
+
+        TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date());
+        TaxClass taxClass = taxInfo.taxClass;
+
+        final BigDecimal taxPercent = taxInfo.tax.getPercent();
 		BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
 				taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-		BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
+        BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
 		BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
 				appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 		RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
@@ -1304,21 +1388,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
 				serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
 				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
-		create(rt);
-		return rt;
-	}
+        create(rt);
+        return rt;
+    }
 
-	/**
-	 * @param ratedTransaction
-	 * @param unitAmountWithoutTax
-	 * @param quantity
-	 * @return
-	 */
+    /**
+     * @param ratedTransaction
+     * @param unitAmountWithoutTax
+     * @param quantity
+     * @return
+     */
 	public void updateRatedTransaction(RatedTransaction ratedTransaction, BigDecimal unitAmountWithoutTax,
 			BigDecimal quantity) {
 		BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
 				ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-		BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
+        BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
 		BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, ratedTransaction.getTaxPercent(),
 				appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         ratedTransaction.setUnitAmountWithoutTax(unitAmounts[0]);
@@ -1328,10 +1412,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(amounts[0]);
         ratedTransaction.setAmountWithTax(amounts[1]);
         ratedTransaction.setAmountTax(amounts[2]);
-        
+
         update(ratedTransaction);
-		
-	}
+
+    }
 
     /**
      * Find Rated transaction by code
