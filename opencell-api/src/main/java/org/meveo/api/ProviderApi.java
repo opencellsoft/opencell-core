@@ -19,12 +19,9 @@
 package org.meveo.api;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -75,7 +72,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -92,7 +88,6 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -103,9 +98,6 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CreditCategoryService;
-import org.meveo.service.script.PerformanceTest;
-import org.meveo.service.script.PerformanceTestBeanTX;
-import org.meveo.service.script.PerformanceTestChild;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -167,21 +159,9 @@ public class ProviderApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
-
+    
     @Inject
     private AccountingArticleService accountingArticleService;
-
-    @Inject
-    PerformanceTest performanceTest;
-
-    @Inject
-    PerformanceTestBeanTX performanceTestBeanTX;
-
-    @Inject
-    WalletOperationService walletOperationService;
-
-    @Inject
-    PerformanceTestChild performanceTestChild;
 
     public ProviderDto find() throws MeveoApiException {
 
@@ -193,123 +173,29 @@ public class ProviderApi extends BaseApi {
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void update(ProviderDto postData) throws MeveoApiException, BusinessException {
 
-        int nrToProcess = 2000000;
-        long start = 0;
+        // search for provider
+        Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
 
-        WalletOperation wo = walletOperationService.findById(1L);
-        walletOperationService.detach(wo);
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+            throw new ActionForbiddenException("User has no permission to manage provider " + provider.getCode());
+        }
 
-//        try {
-//            Thread.sleep(6000);
-//        } catch (InterruptedException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+        provider = fromDto(postData, provider);
 
-        start = new Date().getTime();
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), provider, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
-//        performanceTest.loadWosNative(nrToProcess, 10000);
-//        log.error("Loading {} WOs native took {}", nrToProcess, new Date().getTime() - start);
-
-//        performanceTest.loadWoNoTX(nrToProcess, 10000);
-//        log.error("Loading {} WO DTOs entity took {}", nrToProcess, new Date().getTime() - start);
-
-//        performanceTest.loadWosInTX(nrToProcess, 5000);
-//        log.error("Loading {} WOs entity took x5000 {}", nrToProcess, new Date().getTime() - start);
-//
-//        performanceTest.loadWosInTX(nrToProcess, 10000);
-//        log.error("Loading {} WOs entity took x10000 {}", nrToProcess, new Date().getTime() - start);
-
-//        performanceTest.loadWosInTX(nrToProcess, 20000);
-//        log.error("Loading {} WOs entity took x20000 {}", nrToProcess, new Date().getTime() - start);
-
-        performanceTest.processViaServiceFromScroll(nrToProcess, 10000);
-        log.error("Process WO to RT via service {} took x10000 {}", nrToProcess, new Date().getTime() - start);
-
-//        for (int i = 0; i < nrToProcess; i = i + txSize) {
-//            performanceTestChild.process(wo, txSize, 500);
-//        }
-//
-//        long tookEM = new Date().getTime() - start;
-//        log.error("Saving via EM in multiple TX x500-f500 took {}", tookEM);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInMultipleTX(nrToProcess, 500, 500);
-//        log.error("Saving via EM in multi TX x500-f500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInMultipleTX(nrToProcess, 2000, 500);
-//        log.error("Saving via EM in multi TX x2000-f500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInMultipleTX(nrToProcess, 2000, 1000);
-//        log.error("Saving via EM in multi TX x2000-f1000 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInMultipleTX(nrToProcess, 10000, 500);
-//        log.error("Saving via EM in multi TX x10000-f500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInMultipleTX(nrToProcess, 10000, 2000);
-//        log.error("Saving via EM in multi TX x10000-f2000 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInOneTX(nrToProcess, 500);
-//        log.error("Saving via EM in one TX f500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaEMInOneTX(nrToProcess, 2000);
-//        log.error("Saving via EM in one TX f500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaServiceInOneTX(nrToProcess, 500);
-//        log.error("Saving via service in one TX f500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTest.processViaServiceInOneTX(nrToProcess, 2000);
-//        log.error("Saving via service in one TX f2000 took {}", new Date().getTime() - start);
-
-//        start = new Date().getTime();
-//        performanceTest.processViaServiceInMultiTX(nrToProcess, 10000);
-//        log.error("Saving via service in multi TX x10000-f2000 took {}", new Date().getTime() - start);
-
-//
-//        start = new Date().getTime();
-//        performanceTestBeanTX.processViaManualTransaction(nrToProcess, 500);
-//        log.error("Saving via manual TX x500 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTestBeanTX.processViaManualTransaction(nrToProcess, 2000);
-//        log.error("Saving via manual TX x2000 took {}", new Date().getTime() - start);
-//
-//        start = new Date().getTime();
-//        performanceTestBeanTX.processViaManualTransaction(nrToProcess, 10000);
-//        log.error("Saving via manual TX x10000 took {}", new Date().getTime() - start);
-
-//        // search for provider
-//        Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-//
-//        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-//            throw new ActionForbiddenException("User has no permission to manage provider " + provider.getCode());
-//        }
-//
-//        provider = fromDto(postData, provider);
-//
-//        // populate customFields
-//        try {
-//            populateCustomFields(postData.getCustomFields(), provider, false);
-//        } catch (MissingParameterException | InvalidParameterException e) {
-//            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-//            throw e;
-//        } catch (Exception e) {
-//            log.error("Failed to associate custom field instance to an entity", e);
-//            throw e;
-//        }
-//
-//        provider = providerService.update(provider);
+        provider = providerService.update(provider);
     }
 
     /**
@@ -665,38 +551,38 @@ public class ProviderApi extends BaseApi {
                 invoiceConfiguration.setDisplayWalletOperations(invoiceConfigurationDto.getDisplayWalletOperations());
             }
             if (invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode() != null) {
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode());
-                if (invoiceSubCategory == null) {
+            	InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode());
+            	if (invoiceSubCategory == null) {
                     throw new EntityDoesNotExistsException(InvoiceSubCategory.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceSubcategoryCode());
                 }
                 invoiceConfiguration.setDefaultInvoiceSubCategory(invoiceSubCategory);
             }
             if (invoiceConfigurationDto.getDefaultGenericArticleCode() != null) {
-                AccountingArticle genericArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultGenericArticleCode());
-                if (genericArticle == null) {
-                    throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getDefaultGenericArticleCode());
-                }
+            	AccountingArticle genericArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultGenericArticleCode());
+            	if(genericArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getDefaultGenericArticleCode());
+            	}
                 invoiceConfiguration.setDefaultGenericAccountingArticle(genericArticle);
             }
             if (invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode() != null) {
-                AccountingArticle advancedPaymentArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode());
-                if (advancedPaymentArticle == null) {
-                    throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultAdvancedPaymentArticleCode());
-                }
+            	AccountingArticle advancedPaymentArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode());
+            	if(advancedPaymentArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultAdvancedPaymentArticleCode());
+            	}
                 invoiceConfiguration.setDefaultAdvancedPaymentAccountingArticle(advancedPaymentArticle);
             }
             if (invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode() != null) {
-                AccountingArticle invoiceMinimumArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode());
-                if (invoiceMinimumArticle == null) {
-                    throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceMinimumArticleCode());
-                }
+            	AccountingArticle invoiceMinimumArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode());
+            	if(invoiceMinimumArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceMinimumArticleCode());
+            	}
                 invoiceConfiguration.setDefaultInvoiceMinimumAccountingArticle(invoiceMinimumArticle);
             }
             if (invoiceConfigurationDto.getDefaultDiscountArticleCode() != null) {
-                AccountingArticle discountArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultDiscountArticleCode());
-                if (discountArticle == null) {
-                    throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultDiscountArticleCode());
-                }
+            	AccountingArticle discountArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultDiscountArticleCode());
+            	if(discountArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultDiscountArticleCode());
+            	}
                 invoiceConfiguration.setDefaultDiscountAccountingArticle(discountArticle);
             }
         }

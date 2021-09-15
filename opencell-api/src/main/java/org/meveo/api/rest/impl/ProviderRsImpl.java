@@ -18,8 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -76,7 +74,6 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
     }
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public ActionStatus update(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -146,7 +143,6 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
     }
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public ActionStatus createOrUpdate(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
