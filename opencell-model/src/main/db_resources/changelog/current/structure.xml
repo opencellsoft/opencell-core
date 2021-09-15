@@ -9434,4 +9434,16 @@ public class OrderAdvancement extends ModuleScript {
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="500"/>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code='batchSize'</sql>
     </changeSet>
+    
+    
+    <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql">
+        <dropForeignKeyConstraint baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id"/>
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
+        <dropForeignKeyConstraint baseTableName="query_scheduler_users" constraintName="fk_query_scheduler_id"/>        
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_usr_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />        
+        
+    </changeSet>
+    
 </databaseChangeLog>

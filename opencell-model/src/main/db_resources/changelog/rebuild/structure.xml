@@ -14498,7 +14498,7 @@
             referencedColumnNames="id" referencedTableName="report_query" />
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="query_scheduler" constraintName="fk_job_instance_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="meveo_job_instance" />
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
         	referencedColumnNames="id" referencedTableName="query_scheduler" />
         
         <createTable tableName="query_scheduler_users">
@@ -14510,7 +14510,7 @@
             </column>
 		</createTable>
 		<addPrimaryKey columnNames="query_scheduler_id, user_id" constraintName="adm_query_scheduler_user_pkey" tableName="query_scheduler_users" />
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_usr_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="query_scheduler_users" constraintName="fk_user_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
         						onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
