@@ -11,6 +11,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.model.report.query.QueryStatusEnum;
 import org.meveo.security.CurrentUser;
@@ -30,6 +31,8 @@ public class QueryExecutionResultApiService implements ApiService<QueryExecution
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
 	@Override
 	public List<QueryExecutionResult> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -75,7 +78,7 @@ public class QueryExecutionResultApiService implements ApiService<QueryExecution
 		if(queryExecutionResult.getQueryStatus() == QueryStatusEnum.SUCCESS) {
 			if(Strings.isEmpty(queryExecutionResult.getFilePath()))
 				throw new BadRequestException("Missing file path");
-			var filePath = new File(queryExecutionResult.getFilePath());
+			var filePath = new File(paramBeanFactory.getDefaultChrootDir() + File.separator + queryExecutionResult.getFilePath());
 			if(!filePath.exists()) 
 				throw new BadRequestException("File Path not exist");
 			if(!queryExecutionResult.getFilePath().toLowerCase().endsWith("csv")) 
