@@ -20,7 +20,8 @@ package org.meveo.model.rating;
 
 public enum EDRStatusEnum {
 
-	OPEN(1, "edrStatus.open"), RATED(2, "edrStatus.rated"), REJECTED(3, "edrStatus.rejected"), MEDIATING(4, "edrStatus.mediating"), AGGREGATED(5, "edrStatus.aggregated"), DUPLICATED(6, "edrStatus.duplicated");;
+	OPEN(1, "edrStatus.open"), RATED(2, "edrStatus.rated"), REJECTED(3, "edrStatus.rejected"), MEDIATING(4, "edrStatus.mediating"), 
+	AGGREGATED(5, "edrStatus.aggregated"), DUPLICATED(6, "edrStatus.duplicated"),CANCELLED(7, "edrStatus.cancelled");
 
     private Integer id;
     private String label;

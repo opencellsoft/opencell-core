@@ -33,6 +33,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.NotifiableEntity;
 
@@ -75,9 +76,11 @@ public class ReportExtractExecutionResult extends AuditableEntity {
     @Column(name = "origin")
     private ReportExtractExecutionOrigin origin;
 
-    @Column(name = "error_message", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "error_message")
     private String errorMessage;
 
+    @Type(type = "numeric_boolean")
     @Column(name = "status")
     private boolean status;
 

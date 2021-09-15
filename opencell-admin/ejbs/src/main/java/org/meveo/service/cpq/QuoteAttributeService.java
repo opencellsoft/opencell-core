@@ -2,7 +2,9 @@ package org.meveo.service.cpq;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.quote.QuoteVersion;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -30,7 +32,9 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     public void create(QuoteAttribute quoteAttribute) throws BusinessException {
         if(quoteAttribute.getAttribute() != null
                 && quoteAttribute.getAttribute().getValidationPattern() != null) {
-            super.validateValue(quoteAttribute);
+        	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
+        			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
+            super.validateValue(quoteAttribute, quoteVersion.getQuote(), quoteVersion, null, null);
         }
         super.create(quoteAttribute);
     }
@@ -39,7 +43,9 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     public QuoteAttribute update(QuoteAttribute quoteAttribute) throws BusinessException {
         if(quoteAttribute.getAttribute() != null
                 && quoteAttribute.getAttribute().getValidationPattern() != null) {
-            super.validateValue(quoteAttribute);
+        	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
+        			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
+        			super.validateValue(quoteAttribute, quoteVersion.getQuote(), quoteVersion, null, null);
         }
         return super.update(quoteAttribute);
     }

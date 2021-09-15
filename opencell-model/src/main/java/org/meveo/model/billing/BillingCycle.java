@@ -18,8 +18,6 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
@@ -30,7 +28,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -127,25 +124,11 @@ public class BillingCycle extends BusinessCFEntity {
     private String dueDateDelayEL;
 
     /**
-     * Expression to calculate Invoice due date delay from the invoicing date value - for Spark
-     */
-    @Column(name = "due_date_delay_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String dueDateDelayELSpark;
-
-    /**
      * Expression to resolve invoice type code
      */
     @Column(name = "invoice_type_el", length = 2000)
     @Size(max = 2000)
     private String invoiceTypeEl;
-
-    /**
-     * Expression to resolve invoice type code - for Spark
-     */
-    @Column(name = "invoice_type_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String invoiceTypeElSpark;
 
     /**
      * Entity type to bill
@@ -186,7 +169,7 @@ public class BillingCycle extends BusinessCFEntity {
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     public boolean isThresholdPerEntity() {
@@ -341,20 +324,6 @@ public class BillingCycle extends BusinessCFEntity {
         this.dueDateDelayEL = dueDateDelayEL;
     }
 
-    /**
-     * @return Expression to calculate Invoice due date delay from the invoicing date value - for Spark
-     */
-    public String getDueDateDelayELSpark() {
-        return dueDateDelayELSpark;
-    }
-
-    /**
-     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay from the invoicing date value - for Spark
-     */
-    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
-        this.dueDateDelayELSpark = dueDateDelayELSpark;
-    }
-
     public String getBillingTemplateNameEL() {
         return billingTemplateNameEL;
     }
@@ -375,20 +344,6 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setInvoiceTypeEl(String invoiceTypeEl) {
         this.invoiceTypeEl = invoiceTypeEl;
-    }
-
-    /**
-     * @return Expression to resolve invoice type code for Spark
-     */
-    public String getInvoiceTypeElSpark() {
-        return invoiceTypeElSpark;
-    }
-
-    /**
-     * @param invoiceTypeElSpark Expression to resolve invoice type code for Spark
-     */
-    public void setInvoiceTypeElSpark(String invoiceTypeElSpark) {
-        this.invoiceTypeElSpark = invoiceTypeElSpark;
     }
 
     public BillingEntityTypeEnum getType() {

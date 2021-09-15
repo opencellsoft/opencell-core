@@ -485,14 +485,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
-        if (postData.getMinimumAmountElSpark() != null) {
-            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
         if (postData.getMinimumLabelEl() != null) {
             subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (postData.getAutoEndOfEngagement() != null) {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
@@ -538,7 +532,7 @@ public class SubscriptionApi extends BaseApi {
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
         	updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
         }
-
+        updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
@@ -2577,7 +2571,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
-
+        updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -2706,6 +2700,23 @@ public class SubscriptionApi extends BaseApi {
         return subscription;
     }
 
+    private void updateSubscriptionVersions(Long nextSubscription, Long previousSubscription, Subscription subscriptionToUpdate) {
+        if(Objects.nonNull(nextSubscription)){
+            Subscription nextVersion = subscriptionService.findById(nextSubscription);
+            if(Objects.isNull(nextVersion)){
+                throw new EntityNotFoundException("next subscription with id "+nextSubscription+" not found!");
+            }
+            subscriptionToUpdate.setNextVersion(nextVersion);
+        }
+        if(Objects.nonNull(previousSubscription)){
+            Subscription previousVersion = subscriptionService.findById(previousSubscription);
+            if(Objects.isNull(previousVersion)){
+                throw new EntityNotFoundException("previous subscription with id "+previousSubscription+" not found!");
+            }
+            subscriptionToUpdate.setNextVersion(previousVersion);
+        }
+    }
+
    /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
     	List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
     	for(Subscription sub: subscriptions) {
@@ -2719,8 +2730,6 @@ public class SubscriptionApi extends BaseApi {
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
         subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
-        subscription.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
-        subscription.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
         subscription.setMinimumChargeTemplate(offerTemplate.getMinimumChargeTemplate());
 
         if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
@@ -2728,12 +2737,6 @@ public class SubscriptionApi extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
             subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumAmountElSpark())) {
-            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumLabelElSpark())) {
-            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
             OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
@@ -2752,24 +2755,23 @@ public class SubscriptionApi extends BaseApi {
         }
         handleMissingParameters();
 
-        SubscriptionDto existingSubscriptionDto = findSubscription(code, null);
-        Subscription existingSubscription = subscriptionService.findByCode(code);
+        Subscription lastVersionSubscription = subscriptionService.getLastVersionSubscription(code);
 
-        if (existingSubscription == null) {
+        if (lastVersionSubscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, code);
         }
-        if (existingSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED
-                || existingSubscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+        if (lastVersionSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+                || lastVersionSubscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new BusinessApiException("Couldn't patch a subscription with status RESILIATED or CANCELED");
         }
 
-        Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date(): subscriptionPatchDto.getEffectiveDate();
+        Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date() : subscriptionPatchDto.getEffectiveDate();
 
-        if (existingSubscription.getValidity() != null &&
-                (isEffectiveDateBeforeValidTo(subscriptionPatchDto, existingSubscription) || isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(subscriptionPatchDto, existingSubscription))
+        if (lastVersionSubscription.getValidity() != null &&
+                (isEffectiveDateBeforeValidTo(subscriptionPatchDto, lastVersionSubscription) || isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(subscriptionPatchDto, lastVersionSubscription))
         ) {
-            String from = existingSubscription.getValidity().getFrom() == null ? "-" : existingSubscription.getValidity().getFrom().toString();
-            String to = existingSubscription.getValidity().getTo() == null ? "-" : existingSubscription.getValidity().getTo().toString();
+            String from = lastVersionSubscription.getValidity().getFrom() == null ? "-" : lastVersionSubscription.getValidity().getFrom().toString();
+            String to = lastVersionSubscription.getValidity().getTo() == null ? "-" : lastVersionSubscription.getValidity().getTo().toString();
             throw new InvalidParameterException("A version already exists for effectiveDate=" + formatter.format(effectiveDate) + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
@@ -2778,20 +2780,20 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
         }
 
-        if (isNotBlank(subscriptionPatchDto.getOfferTemplate()) && !subscriptionPatchDto.getOfferTemplate().toLowerCase().equals(existingSubscription.getOffer().getCode().toLowerCase())) {
-            if((existingSubscription.getOffer().getOfferChangeRestricted() != null && existingSubscription.getOffer().getOfferChangeRestricted())
-                    || existingSubscription.getOffer().getAllowedOffersChange().stream().noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))
+        if (isNotBlank(subscriptionPatchDto.getOfferTemplate()) && !subscriptionPatchDto.getOfferTemplate().toLowerCase().equals(lastVersionSubscription.getOffer().getCode().toLowerCase())) {
+            if((lastVersionSubscription.getOffer().getOfferChangeRestricted() != null && lastVersionSubscription.getOffer().getOfferChangeRestricted())
+                    || lastVersionSubscription.getOffer().getAllowedOffersChange().stream().noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))
 
             ){
-                throw new InvalidParameterException(String.format("Offer change from %s to %s is not allowed", existingSubscription.getOffer().getCode(), subscriptionPatchDto.getOfferTemplate()));
+                throw new InvalidParameterException(String.format("Offer change from %s to %s is not allowed", lastVersionSubscription.getOffer().getCode(), subscriptionPatchDto.getOfferTemplate()));
             }
-            existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
+        SubscriptionDto existingSubscriptionDto =  subscriptionToDto(lastVersionSubscription, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
 
-        existingSubscription.setToValidity(effectiveDate);
-        Subscription terminateSubscription = subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        lastVersionSubscription.setToValidity(effectiveDate);
+        Subscription terminateSubscription = subscriptionService.terminateSubscription(lastVersionSubscription, effectiveDate, subscriptionTerminationReason, lastVersionSubscription.getOrderNumber());
         boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
-        // fin terminaison
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
@@ -2806,6 +2808,18 @@ public class SubscriptionApi extends BaseApi {
         }
 
         Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy());
+
+        //if should not reengage customer then the end agreement date of new version should take the one of the old version,
+        // else recalculate end agreement date of new version based on new offer auto end of engagement config
+        if (subscriptionPatchDto.getReengageCustomer() == Boolean.FALSE) {
+            newSubscription.setAutoEndOfEngagement(Boolean.FALSE);
+            newSubscription.setEndAgreementDate(lastVersionSubscription.getEndAgreementDate());
+        } else {
+            newSubscription.setEndAgreementDate(null);
+            newSubscription.setAutoEndOfEngagement(newSubscription.getOffer().getAutoEndOfEngagement());
+            newSubscription.autoUpdateEndOfEngagementDate();
+        }
+        subscriptionService.update(newSubscription);
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
@@ -2873,6 +2887,7 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
+        actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);
 
         lastSubscription.setToValidity(null);

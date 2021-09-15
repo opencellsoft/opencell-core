@@ -307,9 +307,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
-        serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
-        serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
         if(postData.getLanguageDescriptions() != null) {
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
@@ -399,14 +397,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (postData.getMinimumAmountEl() != null) {
             serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
-        if (postData.getMinimumAmountElSpark() != null) {
-            serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
         if (postData.getMinimumLabelEl() != null) {
             serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if(postData.getLanguageDescriptions() != null) {
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));

@@ -128,9 +128,6 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         if (postData.getFilterExpression() != null) {
             chargeTemplate.setFilterExpression(StringUtils.getDefaultIfEmpty(postData.getFilterExpression(), null));
         }
-        if (postData.getFilterExpressionSpark() != null) {
-            chargeTemplate.setFilterExpressionSpark(postData.getFilterExpressionSpark());
-        }
 
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
@@ -160,9 +157,6 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         }
         if (postData.getTaxClassEl() != null) {
             chargeTemplate.setTaxClassEl(StringUtils.getDefaultIfEmpty(postData.getTaxClassEl(), null));
-        }
-        if (postData.getTaxClassElSpark() != null) {
-            chargeTemplate.setTaxClassElSpark(StringUtils.getDefaultIfEmpty(postData.getTaxClassElSpark(), null));
         }
 
         if (postData.getTriggeredEdrs() != null) {

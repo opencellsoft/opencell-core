@@ -21,6 +21,7 @@ package org.meveo.model.persistence;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import org.hibernate.type.descriptor.ValueBinder;
 import org.hibernate.type.descriptor.WrapperOptions;
@@ -34,6 +35,11 @@ public class JsonBinarySqlTypeDescriptor extends AbstractJsonSqlTypeDescriptor {
     private static final long serialVersionUID = 1501788205699761204L;
 
     public static final JsonBinarySqlTypeDescriptor INSTANCE = new JsonBinarySqlTypeDescriptor();
+
+    @Override
+    public int getSqlType() {
+        return Types.OTHER;
+    }
 
     @Override
     public <X> ValueBinder<X> getBinder(final JavaTypeDescriptor<X> javaTypeDescriptor) {

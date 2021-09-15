@@ -80,6 +80,10 @@ public class JacksonUtil {
             throw new IllegalArgumentException(e);
         }
     }
+    
+    public static JsonNode toJsonNode(Object value) {
+            return OBJECT_MAPPER.valueToTree(value);
+    }
 
     @SuppressWarnings("unchecked")
     public static <T> T clone(T value) {

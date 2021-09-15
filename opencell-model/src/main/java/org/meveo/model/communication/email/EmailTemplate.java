@@ -22,6 +22,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.communication.MessageTemplate;
 
 @Entity
@@ -33,10 +34,12 @@ public class EmailTemplate extends MessageTemplate {
     @Size(max = 255)
     private String subject;
 
-    @Column(name = "htmlcontent", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "htmlcontent")
     private String htmlContent;
 
-    @Column(name = "textcontent", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "textcontent")
     private String textContent;
 
     public String getSubject() {

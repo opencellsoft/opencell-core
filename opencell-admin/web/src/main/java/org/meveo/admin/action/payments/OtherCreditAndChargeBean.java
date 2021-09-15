@@ -152,6 +152,9 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         entity.setUnMatchingAmount(entity.getAmount());
+        //set journal
+        OCCTemplate occ = occTemplateService.findByCode(entity.getCode());
+        entity.setJournal(occ.getJournal());
         // lazyloading fix
         CustomerAccount customerAccount = customerAccountService.retrieveIfNotManaged(entity.getCustomerAccount());
         entity.setCustomerAccount(customerAccount);

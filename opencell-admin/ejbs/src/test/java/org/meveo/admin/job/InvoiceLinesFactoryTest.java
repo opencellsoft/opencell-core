@@ -17,10 +17,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -126,7 +123,6 @@ public class InvoiceLinesFactoryTest {
         when(subscriptionService.findById(any())).thenReturn(subscription);
         when(billingAccountService.findById(any())).thenReturn(billingAccount);
         when(billingRunService.findById(any())).thenReturn(billingRun);
-        when(accountingArticleService.findById(any())).thenReturn(accountingArticle);
         when(offerTemplateService.findById(any())).thenReturn(offerTemplate);
         when(orderLotService.findById(any())).thenReturn(orderLot);
         when(instanceService.findById(any())).thenReturn(serviceInstance);
@@ -139,7 +135,7 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(false, NO_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -152,11 +148,11 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(false, DATE);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
-        Assert.assertEquals(invoiceLine.getLabel(), accountingArticle.getDescription());
+        Assert.assertEquals("labe", invoiceLine.getLabel());
         Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(11));
     }
 
@@ -165,7 +161,7 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(true, NO_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");

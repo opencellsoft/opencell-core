@@ -77,11 +77,11 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
         Long count = reportQueryApiService.countAllowedQueriesForUserWithFilters(query);
         ImmutableReportQuery[] reportQueriesList = reportQueryEntities
                 .stream()
-                .map(customQuery -> {
+                .map(reportQuery -> {
                     if(fields != null && !fields.isEmpty()) {
-                        return mapper.toResource(customQuery, fields);
+                        return mapper.toResource(reportQuery, fields);
                     } else {
-                        return mapper.toResource(customQuery);
+                        return mapper.toResource(reportQuery);
                     }
                 })
                 .toArray(ImmutableReportQuery[]::new);
@@ -191,5 +191,16 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     public Response verifyReportQuery(VerifyQueryInput verifyQueryInput) {
     	 ActionStatus result=reportQueryApiService.verifyReportQuery(verifyQueryInput);
         return Response.ok(result).build();
+    }
+
+    @Override
+    public Response update(Long id, ReportQueryInput resource) {
+        validateResource(resource);
+        ReportQuery entity = reportQueryApiService.update(id, mapper.toEntity(resource))
+                .orElseThrow(() -> new NotFoundException("The query with id " + id + " does not exists"));
+        return Response
+                .ok(LinkGenerator.getUriBuilderFromResource(ReportQueryResource.class, entity.getId()).build())
+                .entity(mapper.toResource(entity))
+                .build();
     }
 }

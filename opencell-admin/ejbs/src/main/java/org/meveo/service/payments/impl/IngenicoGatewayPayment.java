@@ -29,6 +29,7 @@ import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -51,7 +52,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ingenico.connect.gateway.sdk.java.ApiException;
 import com.ingenico.connect.gateway.sdk.java.Client;
 import com.ingenico.connect.gateway.sdk.java.CommunicatorConfiguration;
-import com.ingenico.connect.gateway.sdk.java.DeclinedPaymentException;
 import com.ingenico.connect.gateway.sdk.java.Factory;
 import com.ingenico.connect.gateway.sdk.java.Marshaller;
 import com.ingenico.connect.gateway.sdk.java.defaultimpl.DefaultMarshaller;
@@ -351,10 +351,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
-    	} catch (ApiException ev) {
-    		throw new BusinessException(ev.getResponseBody());
-
-    	} catch (Exception e) {
+    	}catch (ApiException ev) { 
+    		throw new MeveoApiException("Connection to ingenico is not allowed");
+    	}catch (Exception e) {
     		throw new BusinessException(e.getMessage());
     	}
 

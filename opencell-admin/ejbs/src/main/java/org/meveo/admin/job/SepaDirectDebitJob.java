@@ -95,7 +95,7 @@ public class SepaDirectDebitJob extends Job {
         payentGatewayCF.setCode("SepaJob_ddRequestBuilder");
         payentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
         payentGatewayCF.setActive(true);
-        payentGatewayCF.setDescription("DDRequest builder");
+        payentGatewayCF.setDescription("SEPARequest builder");
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
         payentGatewayCF.setValueRequired(true);

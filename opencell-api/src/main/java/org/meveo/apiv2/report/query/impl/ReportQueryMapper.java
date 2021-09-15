@@ -28,7 +28,8 @@ public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.report.Rep
                     .visibility(entity.getVisibility())
                     .generatedQuery(entity.getGeneratedQuery())
                     .sortOrder(entity.getSortOrder())
-                    .sortBy(entity.getSortBy());
+                    .sortBy(entity.getSortBy())
+                    .ownerName(entity.getAuditable().getCreator());
             ofNullable(entity.getFields()).ifPresent(fields -> builder.fields(fields));
             ofNullable(entity.getFilters()).ifPresent(filters -> builder.filters(filters));
             return builder()

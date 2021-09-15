@@ -28,6 +28,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
 /**
@@ -77,7 +78,8 @@ public class AuditLog extends BaseEntity {
     /**
      * Action parameters
      */
-    @Column(name = "parameters", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "parameters")
     private String parameters;
 
     public Date getCreated() {

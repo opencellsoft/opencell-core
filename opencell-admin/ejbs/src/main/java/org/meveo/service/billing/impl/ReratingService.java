@@ -31,34 +31,63 @@ import org.slf4j.Logger;
  * 
  * <pre>
  *
- *One shot or usage charge:
- * Select Wallet operations with operation date>="rerate from date".
- * Mark Wallet operations to rerate:
- *  For each BILLED wallet operation:
- *    - create an identical and negative wallet operation with status OPEN
- *    - create an identical wallet operation with status TO_RERATE (no relationship is preserved with an original WO)
- *  For each NOT billed wallet operation:
- *    - change related Rated transaction (unbilled) status to CANCELED
- *    - change wallet operation status to TO_RERATE
- * Rerate wallet operations with status "TO_RERATE" (same as running a rerating job)
- *  Cancel Rated transaction if not canceled yet
- *    - if Wallet operation has a BILLED rated transaction, wallet operation status will be changed to TREATED (as if rerating was not possible - definatelly some anomoly)
- *    - if Wallet operation has a rated transaction with status OPEN (and REJECTED - dont know why??) - change rated transaction status to RERATED
- *  Create an identical Wallet operation with status OPEN and calculate its amount with a usual rating logic
- *  Change the status of the wallet operation from TO_RERATE to RERATED and add a link to a new wallet operation (field reratedWalletOperation)
 
- * NOTE: I see an issue here: for the billed wallet operations a new TO_RERATE wallet operation was created, but they wont be processed further - its a bug
- *
- *
- *
- *Recurring:
- * Determine unique charge instances and min(startDate) (will be refered to as fromDate) and max(endDate) for the wallet operations with end date>="rerate from date"
- * For each chargeInstance
- *  - Change NOT billed wallet operation status to CANCELED for wallet operations with startDate>= fromDate
- *  - Refund already BILLED wallet operations with startDate>= fromDate by creating an identical wallet operation with a negated amount and status OPEN
- *     - reset chargedToDate to a fromDate
- *     - rate charge up to toDate as usual rating
- * 
+One shot or usage charge:
+Select Wallet operations with operation date>="rerate from date".
+ Mark Wallet operations to rerate:
+  For each BILLED wallet operation:
+    - create a refund - an identical and negative wallet operation with status OPEN. A field refundsWalletOperation points to an original Wallet operation.
+    - change wallet operation status TO_RERATE
+  For each NOT billed wallet operation:
+    - change related Rated transaction (unbilled) status to CANCELED
+    - change wallet operation status to TO_RERATE
+ Rerate wallet operations with status "TO_RERATE" (same as running a rerating job)
+  Cancel Rated transaction if not canceled yet
+    - if Wallet operation has a BILLED rated transaction, wallet operation status will be changed to TREATED (as if rerating was not possible - definatelly some anomoly)
+    - if Wallet operation has a rated transaction with status OPEN (and REJECTED - dont know why??) - change rated transaction status to CANCELED
+  Create an identical Wallet operation with status OPEN and calculate its amount with a usual rating logic
+  Change the status of the wallet operation from TO_RERATE to RERATED and add a link to a new wallet operation (field reratedWalletOperation)
+
+
+A final outcome for One shot and Usage charges:
+For invoiced Wallet Operations:
+    Invoiced original WO:
+       status=RERATED, reratedWO = newWO
+    Refunded WO:
+       status=OPEN, refundsWO =originalWO, negative amount
+    New/rerated WO
+       status=OPEN
+For not-invoiced Wallet Operations:
+    Not-Invoiced original WO:
+       status=RERATED, reratedWO = newWO. Rated transactions are set to status CANCELED
+    New/rerated WO
+       status=OPEN
+
+
+
+Recurring:
+Determine unique charge instances and min(startDate) (will be refered to as fromDate) and max(endDate) (will be refered to as toDate) for the wallet operations with end date>="rerate from date"
+ For each chargeInstance
+   - Change NOT billed wallet operation status to CANCELED for wallet operations with startDate>= fromDate
+   - Refund already BILLED wallet operations with startDate>= fromDate by creating an identical wallet operation with a negated amount and status OPEN
+   - reset chargedToDate to a fromDate
+   - rate charge up to toDate as usual rating
+
+Final outcome for recurring charges:
+For invoiced Wallet Operations:
+    Invoiced original WO:
+      no changes
+    Refunded WO:
+       status=OPEN, refundsWO =originalWO, negative amount
+    New/rerated WOs
+       status=OPEN, no relation to original WO.
+For not-invoiced Wallet Operations:
+    Not-Invoiced original WO:
+       status=CANCELED. Rated transactions are set to status CANCELED
+    New/rerated WOs
+       status=OPEN, no relation to original WO.
+</pre>
+
  * </pre>
  * 
  * 

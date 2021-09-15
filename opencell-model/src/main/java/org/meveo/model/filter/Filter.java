@@ -74,14 +74,16 @@ public class Filter extends EnableBusinessCFEntity {
     @JoinColumn(name = "filter_id")
     private List<FilterSelector> secondarySelectors = new ArrayList<FilterSelector>();
 
-    @Column(name = "input_xml", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "input_xml")
     private String inputXml;
 
     @Type(type = "numeric_boolean")
     @Column(name = "shared")
     private boolean shared = true;
 
-    @Column(name = "polling_query", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "polling_query")
     private String pollingQuery;
 
     /**

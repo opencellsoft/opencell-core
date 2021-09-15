@@ -194,7 +194,7 @@ public class StringUtils {
      * @param nbChar number of char
      * @return Long as string
      */
-    public static String getLongAsNChar(Long value, Long nbChar) {
+    public static String getLongAsNChar(Long value, Long nbChar) { // nbChar 8  value 03333333 length 4
         String firstChar = "0";
         if (value < 0) {
             firstChar = "-";
@@ -204,8 +204,9 @@ public class StringUtils {
         while (buildString.length() < nbChar) {
             buildString = buildString.insert(0, "0");
         }
-        buildString = buildString.replace(0, 1, firstChar);
-
+        if (firstChar.equals("-")) {
+            buildString = buildString.replace(0, 1, firstChar);
+        }
         return buildString.toString();
     }
 

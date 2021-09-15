@@ -32,7 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationRejectionReason;
+import org.meveo.model.payments.AccountOperationStatus;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -260,6 +265,9 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     @Schema(description = "Accounting export file")
     private String accountingExportFile;
 
+    @Schema(description = "Accounting date")
+    private Date accountingDate;
+
     /**
      * Instantiates a new account operation dto.
      */
@@ -331,10 +339,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         }
         setCollectionDate(accountOp.getCollectionDate());
         setCustomFields(customFieldsDto);
-        setJournalCode(accountOp.getJournal().getCode());
+		if (accountOp.getJournal() != null) {
+			setJournalCode(accountOp.getJournal().getCode());
+		}
         this.status = accountOp.getStatus();
         this.reason = accountOp.getReason();
         this.accountingExportFile = accountOp.getAccountingExportFile();
+        this.accountingDate = accountOp.getAccountingDate();
     }
 
     /**
@@ -1067,5 +1078,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     public void setAccountingExportFile(String accountingExportFile) {
         this.accountingExportFile = accountingExportFile;
+    }
+
+    public Date getAccountingDate() {
+        return accountingDate;
+    }
+
+    public void setAccountingDate(Date accountingDate) {
+        this.accountingDate = accountingDate;
     }
 }

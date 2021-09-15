@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -56,6 +57,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 		@Parameter(name = "sequence_name", value = "rating_cdr_seq") })
 @NamedQueries({
     @NamedQuery(name = "CDR.checkFileNameExists", query = "SELECT originBatch FROM CDR where originBatch=:fileName"),
+    @NamedQuery(name = "CDR.findByEdr", query = "from CDR where headerEDR = :edr"), 
     @NamedQuery(name = "CDR.checkRTBilledExists", query = "from RatedTransaction rt where status = 'BILLED' and rt.edr.originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction rt where status <> 'BILLED' and rt.edr in (select e from EDR e where e.originBatch=:fileName)"),
     @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation wo where wo.edr in (select e from EDR e where e.originBatch=:fileName)"),
@@ -254,7 +256,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * Parameter
 	 */
-	@Column(name = "EXTRA_PARAMETER", columnDefinition = "TEXT")
+    @Type(type = "longText")
+	@Column(name = "EXTRA_PARAMETER")
 	private String extraParam;
 
 	/**
@@ -274,7 +277,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * Rejection reason
 	 */
-	@Column(name = "reject_reason", columnDefinition = "text")
+    @Type(type = "longText")
+	@Column(name = "reject_reason")
 	private String rejectReason;
 	
 	/** The times tried. */
@@ -295,7 +299,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     private String updater;
     
     /** The serialized CDR dto. to be used while re-processing the CDR */
-    @Column(name = "source", nullable = true, columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "source", nullable = true)
     private String source;
     
 

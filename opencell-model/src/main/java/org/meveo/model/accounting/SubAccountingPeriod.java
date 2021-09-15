@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,6 +23,8 @@ import org.meveo.model.BaseEntity;
 @Table(name = "sub_accounting_period")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "sub_accounting_period_seq"), })
+@NamedQueries({
+	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number") })
 public class SubAccountingPeriod extends BaseEntity {
 
     /**
@@ -57,9 +61,15 @@ public class SubAccountingPeriod extends BaseEntity {
     @Column(name = "effective_closed_date")
     private Date effectiveClosedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "accounting_period_id")
     private AccountingPeriod accountingPeriod;
+    
+    @Column(name = "regularUsers_reopening_reason")
+    private String regularUsersReopeningReason;
+    
+    @Column(name = "allUsers_reopening_reason")
+    private String allUsersReopeningReason;
 
     public SubAccountingPeriod() {
         super();
@@ -128,7 +138,21 @@ public class SubAccountingPeriod extends BaseEntity {
 	public void setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum allUsersSubPeriodStatus) {
 		this.allUsersSubPeriodStatus = allUsersSubPeriodStatus;
 	}
-    
-    
 
+	public String getRegularUsersReopeningReason() {
+		return regularUsersReopeningReason;
+	}
+
+	public void setRegularUsersReopeningReason(String regularUsersReopeningReason) {
+		this.regularUsersReopeningReason = regularUsersReopeningReason;
+	}
+
+	public String getAllUsersReopeningReason() {
+		return allUsersReopeningReason;
+	}
+
+	public void setAllUsersReopeningReason(String allUsersReopeningReason) {
+		this.allUsersReopeningReason = allUsersReopeningReason;
+	}
+	
 }

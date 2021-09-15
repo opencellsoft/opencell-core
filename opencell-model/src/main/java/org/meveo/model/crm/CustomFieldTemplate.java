@@ -338,7 +338,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     /**
@@ -597,6 +597,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
                 return defaultValue;
             } else if (fieldType == CustomFieldTypeEnum.DATE) {
                 return DateUtils.parseDateWithPattern(defaultValue, DateUtils.DATE_TIME_PATTERN);
+            } else if (fieldType == CustomFieldTypeEnum.BOOLEAN){
+                return Boolean.parseBoolean(defaultValue);
             }
         } catch (Exception e) {
             return null;

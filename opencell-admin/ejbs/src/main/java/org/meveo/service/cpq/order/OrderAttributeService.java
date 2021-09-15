@@ -1,7 +1,9 @@
 package org.meveo.service.cpq.order;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.cpq.AttributeValueService;
 
 import javax.ejb.Stateless;
@@ -18,7 +20,7 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     public void create(OrderAttribute orderAttribute) throws BusinessException {
         if (orderAttribute.getAttribute() != null
                 && orderAttribute.getAttribute().getValidationPattern() != null) {
-            super.validateValue(orderAttribute);
+        	super.validateValue(orderAttribute, orderAttribute.getCommercialOrder().getQuote(), orderAttribute.getCommercialOrder().getQuoteVersion(), orderAttribute.getCommercialOrder(), null);
         }
         super.create(orderAttribute);
     }
@@ -27,7 +29,7 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     public OrderAttribute update(OrderAttribute orderAttribute) throws BusinessException {
         if (orderAttribute.getAttribute() != null
                 && orderAttribute.getAttribute().getValidationPattern() != null) {
-            super.validateValue(orderAttribute);
+        	super.validateValue(orderAttribute, orderAttribute.getCommercialOrder().getQuote(), orderAttribute.getCommercialOrder().getQuoteVersion(), orderAttribute.getCommercialOrder(), null);
         }
         return super.update(orderAttribute);
     }

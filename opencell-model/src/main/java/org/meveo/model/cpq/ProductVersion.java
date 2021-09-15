@@ -34,6 +34,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -110,8 +111,8 @@ public class ProductVersion extends AuditableEntity{
     /**
      * long description
      */
-    @Size(max = 2000)
-    @Column(name = "long_description", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "long_description")
     private String longDescription;
     
     /**
@@ -132,13 +133,8 @@ public class ProductVersion extends AuditableEntity{
 
 	
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-				name = "cpq_product_version_attributes",
-				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
-			)
-    private List<Attribute> attributes = new ArrayList<Attribute>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
+    private List<ProductVersionAttribute> attributes = new ArrayList<ProductVersionAttribute>();
 	
 	
 
@@ -298,14 +294,14 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * @return the productAttributes
 	 */
-	public List<Attribute> getAttributes() {
+	public List<ProductVersionAttribute> getAttributes() {
 		return attributes;
 	}
 
 	/**
 	 * @param productAttributes the productAttributes to set
 	 */
-	public void setAttributes(List<Attribute> productAttributes) {
+	public void setAttributes(List<ProductVersionAttribute> productAttributes) {
 		this.attributes = productAttributes;
 	}
 

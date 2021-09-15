@@ -514,7 +514,6 @@ public class CustomerApi extends AccountEntityApi {
             customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
         }
         customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
-        customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
         if (!StringUtils.isBlank(postData.getAccountingCode())) {
@@ -533,7 +532,6 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
-        customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
 
         customerCategoryService.create(customerCategory);
     }
@@ -568,10 +566,6 @@ public class CustomerApi extends AccountEntityApi {
             customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
             toUpdate = true;
         }
-        if (postData.getExonerationTaxElSpark() != null && StringUtils.compare(postData.getExonerationTaxElSpark(), customerCategory.getExonerationTaxElSpark()) != 0) {
-            customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
-            toUpdate = true;
-        }
         if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
             customerCategory.setExonerationReason(postData.getExonerationReason());
             toUpdate = true;
@@ -600,11 +594,6 @@ public class CustomerApi extends AccountEntityApi {
 
         if (postData.getTaxCategoryEl() != null && StringUtils.compare(postData.getTaxCategoryEl(), customerCategory.getTaxCategoryEl()) != 0) {
             customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
-            toUpdate = true;
-        }
-
-        if (postData.getTaxCategoryElSpark() != null && StringUtils.compare(postData.getTaxCategoryElSpark(), customerCategory.getTaxCategoryElSpark()) != 0) {
-            customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
             toUpdate = true;
         }
         if (postData.getLanguageDescriptions() != null) {

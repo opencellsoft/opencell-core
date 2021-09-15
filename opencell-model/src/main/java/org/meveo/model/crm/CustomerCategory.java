@@ -70,13 +70,6 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     private String exonerationTaxEl;
 
     /**
-     * Expression to determine if account is exonerated from taxes - for Spark
-     */
-    @Column(name = "exoneration_tax_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String exonerationTaxElSpark;
-
-    /**
      * Exoneration reason
      */
     @Column(name = "exoneration_reason")
@@ -106,17 +99,10 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     private String taxCategoryEl;
 
     /**
-     * Expression to determine tax category - for Spark
-     */
-    @Column(name = "tax_category_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String taxCategoryElSpark;
-
-    /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     /**
@@ -147,19 +133,6 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
         this.exonerationTaxEl = exonerationTaxEl;
     }
 
-    /**
-     * @return Expression to determine if account is exonerated from taxes - for Spark
-     */
-    public String getExonerationTaxElSpark() {
-        return exonerationTaxElSpark;
-    }
-
-    /**
-     * @param exonerationTaxElSpark Expression to determine if account is exonerated from taxes - for Spark
-     */
-    public void setExonerationTaxElSpark(String exonerationTaxElSpark) {
-        this.exonerationTaxElSpark = exonerationTaxElSpark;
-    }
 
     /**
      * @return the exonerationReason
@@ -215,20 +188,6 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
      */
     public void setTaxCategoryEl(String taxCategoryEl) {
         this.taxCategoryEl = taxCategoryEl;
-    }
-
-    /**
-     * @return Expression to determine tax category - for Spark
-     */
-    public String getTaxCategoryElSpark() {
-        return taxCategoryElSpark;
-    }
-
-    /**
-     * @param taxCategorySpark Expression to determine tax category - for Spark
-     */
-    public void setTaxCategoryElSpark(String taxCategoryElSpark) {
-        this.taxCategoryElSpark = taxCategoryElSpark;
     }
 
     public Map<String, String> getDescriptionI18n() {

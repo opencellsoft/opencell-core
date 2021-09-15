@@ -17,6 +17,7 @@
  */
 package org.meveo.service.communication.impl;
 
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 
 import javax.ejb.Stateless;
@@ -26,12 +27,17 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
+import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
+import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
+import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
@@ -41,12 +47,13 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
+import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.export.RemoteAuthenticationException;
-import org.meveo.model.billing.AuthenticationTypeEnum;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.service.base.BusinessService;
 
 import com.slimpay.hapiclient.exception.HttpException;
@@ -125,23 +132,40 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      * @throws RelNotFoundException 
      * @throws OAuthSystemException 
      * @throws OAuthProblemException 
+     * @throws JAXBException 
      */
-    public OAuthAccessTokenResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException {
+    public OAuthResourceResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException, JAXBException {
         
-
-    	// We are creating a request that's already formatted following the Oauth specs
+    	String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
+    	
     	OAuthClientRequest lRequest = OAuthClientRequest
-    	        .tokenLocation(meveoInstance.getUrl())
+    	        .tokenLocation(meveoInstance.getUrl().split("/opencell")[0]+"/auth/realms/opencell/protocol/openid-connect/token")
     	        .setGrantType(GrantType.CLIENT_CREDENTIALS)
     	        .setClientId(meveoInstance.getClientId())
     	        .setClientSecret(meveoInstance.getClientSecret())
+    	        .setScope("openid")
     	        .buildBodyMessage();
+    	
 
-    	OAuthClient oac = new OAuthClient(new URLConnectionClient());
-        OAuthAccessTokenResponse response = oac.accessToken(lRequest);
-             
+    	OAuthClient client = new OAuthClient(new URLConnectionClient());
+    	OAuthAccessTokenResponse response = client.accessToken(lRequest);
+    	lRequest= new OAuthBearerClientRequest(baseurl + url).
+                setAccessToken(response.getAccessToken()).buildQueryMessage();
+    	
+    	JAXBContext jaxbContext = JAXBContext.newInstance(MeveoModuleDto.class);
+    	Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+    	StringWriter sw = new StringWriter();
+    	jaxbMarshaller.marshal(dto, sw);
+    	String xmlString = sw.toString();
+    	lRequest.setBody(xmlString);
+    	
+    	lRequest.setHeader(OAuth.HeaderType.CONTENT_TYPE, "application/xml");
+    	
+        OAuthResourceResponse resourceResponse= client.resource(lRequest, OAuth.HttpMethod.POST, OAuthResourceResponse.class);
+    	
+        log.debug("Publication response {}",resourceResponse.getResponseCode());     
         
-        return response;
+        return resourceResponse;
     }
 
     /**

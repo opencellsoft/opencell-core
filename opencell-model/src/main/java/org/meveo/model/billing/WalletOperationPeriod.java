@@ -84,7 +84,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description")
+    @Size(max = 255)
     private String description;
 
     /**
@@ -236,7 +237,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    @Type(type = "longText")
+    @Column(name = "parameter_extra")
     private String parameterExtra;
 
     /**
@@ -401,14 +403,15 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+//    @Type(type = "cfjson")
+//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
+    @Transient
     private CustomFieldValues cfAccumulatedValues;
 
     /**
@@ -435,8 +438,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Processing error reason
      */
-    @Column(name = "reject_reason", columnDefinition = "text")
-    @Size(max = 255)
+    @Type(type = "longText")
+    @Column(name = "reject_reason")
     private String rejectReason;
 
     /**

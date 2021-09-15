@@ -27,22 +27,23 @@ import java.util.Map;
 })
 public class DataCollector extends BusinessEntity {
 
-    @Column(name = "sql_query", columnDefinition = "text")
+    @Type(type = "longText")
+    @Column(name = "sql_query")
     private String sqlQuery;
 
     @Column(name = "custom_table_code")
     private String customTableCode;
 
     @Type(type = "json")
-    @Column(name = "aliases", columnDefinition = "text")
+    @Column(name = "aliases", columnDefinition = "jsonb")
     private Map<String, String> aliases = new HashMap<>();
 
     @Type(type = "json")
-    @Column(name = "parameters", columnDefinition = "text")
+    @Column(name = "parameters", columnDefinition = "jsonb")
     private Map<String, String> parameters = new HashMap<>();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_run_date", columnDefinition = "text")
+    @Column(name = "last_run_date")
     private Date lastRunDate;
 
     public String getSqlQuery() {

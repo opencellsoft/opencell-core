@@ -27,6 +27,7 @@ import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteLine;
 import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
 import org.meveo.api.dto.cpq.xml.SubCategory;
+import org.meveo.common.UtilsDto;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -60,7 +61,7 @@ public class QuoteMapper {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        org.meveo.model.cpq.contract.Contract contract = quote.getContract();
+        org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
         Contract ctr=null;
         if(contract!=null) {
          ctr = new Contract(contract,entityToDtoConverter.getCustomFieldsDTO(contract));
@@ -210,23 +211,10 @@ public class QuoteMapper {
         return pricesPerType
                 .keySet()
                 .stream()
-                .map(key -> reducePrices(key, pricesPerType))
+                .map(key -> UtilsDto.reducePrices(key, pricesPerType, PriceLevelEnum.QUOTE, null, null))
                 .filter(Optional::isPresent)
                 .map(price -> new PriceDTO(price.get()))
                 .collect(Collectors.toList());
     }
 
-    private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType) {
-        return pricesPerType.get(key).stream().reduce((a, b) -> {
-            QuotePrice quotePrice = new QuotePrice();
-            quotePrice.setPriceTypeEnum(key);
-            quotePrice.setPriceLevelEnum(PriceLevelEnum.QUOTE);
-            quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
-            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
-            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
-            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-            quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
-            return quotePrice;
-        });
-    }
 }

@@ -66,20 +66,18 @@ public class AttributeService extends BusinessService<Attribute>{
 
     @Override
     public void create(Attribute attribute) throws BusinessException {
-        if (attribute.getValidationPattern() != null) {
-            if(!validateDefaultValue(attribute)) {
-                throw new BusinessException("Default value does not match the validation pattern");
-            }
+        if (attribute.getValidationPattern() != null
+                && attribute.getDefaultValue() != null && !validateDefaultValue(attribute)) {
+            throw new BusinessException(createErrorMessage(attribute));
         }
         super.create(attribute);
     }
 
     @Override
     public Attribute update(Attribute attribute) throws BusinessException {
-        if (attribute.getValidationPattern() != null) {
-            if(!validateDefaultValue(attribute)) {
-                throw new BusinessException("Default value does not match the validation pattern");
-            }
+        if (attribute.getValidationPattern() != null
+                && attribute.getDefaultValue() != null && !validateDefaultValue(attribute)) {
+            throw new BusinessException(createErrorMessage(attribute));
         }
         return super.updateNoCheck(attribute);
     }
@@ -90,5 +88,17 @@ public class AttributeService extends BusinessService<Attribute>{
         } else {
             return Pattern.compile(attribute.getValidationPattern()).matcher(attribute.getDefaultValue()).find();
         }
+    }
+
+    private String createErrorMessage(Attribute attribute) {
+        String value = attribute.getDefaultValue().length() <= 30
+                ? attribute.getDefaultValue() : attribute.getDefaultValue().substring(0, 27) + "...";
+        StringBuilder errorMessage = new StringBuilder("Value ")
+                .append(value)
+                .append(" for attribute ")
+                .append(attribute.getCode())
+                .append(" does not match validation pattern ")
+                .append(attribute.getValidationPattern());
+        return errorMessage.toString();
     }
 }

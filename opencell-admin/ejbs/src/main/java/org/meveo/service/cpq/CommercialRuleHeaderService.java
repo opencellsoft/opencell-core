@@ -171,9 +171,28 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return commercialRules;
     }
 
+    
+    private boolean checkOperator(OperatorEnum operator, boolean isOnlyOneLine, boolean isLastLine, boolean isElementExists) {
+        if (isOnlyOneLine) {
+            return false;
+        }
+        if (!isElementExists && OperatorEnum.AND.equals(operator)) {
+            return false;
+        }
+        if (OperatorEnum.OR.equals(operator)) {
+            if(!isElementExists  && isLastLine ){
+        		return false;
+        	}
+        	if(!isElementExists  && !isLastLine ){
+        		return true;
+        	}	
+        } 
+        return true;
+    }
+    
     public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,
                                        List<ProductContextDTO> selectedProducts) {
-        Boolean isSelectable = Boolean.TRUE;
+        Boolean isSelectable = Boolean.FALSE;
         commercialRules = commercialRules.stream().filter(rule -> !RuleTypeEnum.REPLACEMENT.equals(rule.getRuleType())).collect(Collectors.toList());
         List<CommercialRuleItem> items = null;
         boolean continueProcess = false;
@@ -185,7 +204,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 Iterator<CommercialRuleLine> lineIterator = item.getCommercialRuleLines().iterator();
                 while (lineIterator.hasNext()) {
                     CommercialRuleLine line = lineIterator.next();
-                    continueProcess = checkOperator(item.getOperator(), linesCount == 1, !lineIterator.hasNext(), isPreRequisite, isSelectable, true);
+                    continueProcess = checkOperator(item.getOperator(), linesCount == 1, !lineIterator.hasNext(), true);
                     if ((isPreRequisite && line.getSourceOfferTemplate() != null
                             && !line.getSourceOfferTemplate().getCode().equals(offerCode))
                             || (!isPreRequisite && line.getSourceOfferTemplate() != null
@@ -203,13 +222,17 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                 .filter(pdtCtx -> sourceProductCode.equals(pdtCtx.getProductCode())).findAny()
                                 .orElse(null);
 
-                        if ((isPreRequisite && productContext == null)
+                        if ((isPreRequisite && productContext == null && !isSelectable)
                                 || (!isPreRequisite && productContext != null && line.getSourceAttribute() == null)) {
-                            if (checkOperator(item.getOperator(), linesCount == 1, !lineIterator.hasNext(), isPreRequisite, isSelectable, productContext != null)) {
+                            if (checkOperator(item.getOperator(), linesCount == 1, !lineIterator.hasNext(), productContext != null)) {
                                 continue;
                             } else {
                                 return false;
                             }
+                        }
+                        if (isPreRequisite && productContext != null && OperatorEnum.OR.equals(item.getOperator())){
+                        	isSelectable=true;
+                        	
                         }
                         if (line.getSourceAttribute() != null && productContext != null && productContext.getSelectedAttributes() != null) {
 
@@ -500,23 +523,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         quoteQuery.executeUpdate();
     }
 
-    private boolean checkOperator(OperatorEnum operator, boolean isOnlyOneLine, boolean isLastLine, boolean isPreRequisite, Boolean isSelectable, boolean isElementExists) {
-        if (isOnlyOneLine) {
-            return false;
-        }
-        if (isElementExists && OperatorEnum.OR.equals(operator)) {
-            return false;
-        } else {
-            if (isLastLine && !isSelectable) {
-                return false;
-            } else {
-                isSelectable = false;
-                return true;
-            }
-        }
-
-
-    }
+    
 
 
 }

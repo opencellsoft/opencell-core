@@ -156,22 +156,22 @@ public class FlatFileProcessingJob extends Job {
             mappingConf = (String) flatFileMappingConfig;
         }
         String inputDir = paramBeanFactory.getChrootDir() + File.separator
-                + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR, fileFormat != null ? fileFormat.getInputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                + (fileFormat != null && StringUtils.isNotEmpty(fileFormat.getInputDirectory()) ? fileFormat.getInputDirectory() : (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR, null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
 
         if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null) != null) {
             outputDir = paramBeanFactory.getChrootDir() + File.separator
-                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                    + (fileFormat != null && StringUtils.isNotEmpty(fileFormat.getOutputDirectory()) ? fileFormat.getOutputDirectory() : (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
         }
         if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null) != null) {
             rejectDir = paramBeanFactory.getChrootDir() + File.separator
-                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                    + (fileFormat != null && StringUtils.isNotEmpty(fileFormat.getRejectDirectory()) ? fileFormat.getRejectDirectory() : (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
         }
         if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null) != null) {
             archiveDir = paramBeanFactory.getChrootDir() + File.separator
-                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                    + (fileFormat != null && StringUtils.isNotEmpty(fileFormat.getArchiveDirectory()) ? fileFormat.getArchiveDirectory() : (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
         }
         if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null) != null) {
-            fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null));
+            fileNameFilter = (fileFormat != null && StringUtils.isNotEmpty(fileFormat.getFileNamePattern()) ? fileFormat.getFileNamePattern() : (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, null));
             fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
         }
 

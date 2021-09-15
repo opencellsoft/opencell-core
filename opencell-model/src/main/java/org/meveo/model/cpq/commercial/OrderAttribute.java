@@ -1,6 +1,5 @@
 package org.meveo.model.cpq.commercial;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -13,18 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.security.MeveoUser;
 
 /** 
@@ -78,6 +72,7 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 		stringValue=quoteAttribute.getStringValue();
 		dateValue=quoteAttribute.getDateValue();
 		doubleValue=quoteAttribute.getDoubleValue();
+		booleanValue=quoteAttribute.getBooleanValue();
 		updateAudit(currentUser);
 		assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
 				.stream()
@@ -104,6 +99,7 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 		this.orderProduct = other.orderProduct;  
 		this.version = other.version;
 		this.id=other.id;
+		this.booleanValue = other.booleanValue;
 		
 	} 
 	

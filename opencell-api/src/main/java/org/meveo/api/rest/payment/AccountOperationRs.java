@@ -24,14 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
@@ -321,4 +314,28 @@ public interface AccountOperationRs extends IBaseRs {
 				)}
 	)
     AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
+
+	/**
+	 * update account operation's accountingDate
+	 * @param id account operation identifier
+	 * @param newAccountingDate account operation accountingDate
+	 *
+	 * @return Request processing status
+	 */
+	@PUT
+	@Path("/{id}/updateAccountingDate/{newAccountingDate}")
+	@Operation(
+			summary=" Update accounting date of an account operation  ",
+			description=" Update accounting date of an account operation  ",
+			operationId="    PUT_AccountOperation_update",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content = @Content(
+									schema = @Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus updateAccountingDate(@PathParam("id") Long id, @PathParam("newAccountingDate") String newAccountingDate);
 }

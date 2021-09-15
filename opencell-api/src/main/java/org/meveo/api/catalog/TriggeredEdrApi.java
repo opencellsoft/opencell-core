@@ -75,7 +75,6 @@ public class TriggeredEdrApi extends BaseApi {
         edrTemplate.setCode(postData.getCode());
         edrTemplate.setDescription(postData.getDescription());
         edrTemplate.setSubscriptionEl(postData.getSubscriptionEl());
-        edrTemplate.setSubscriptionElSpark(postData.getSubscriptionElSpark());
         if (postData.getMeveoInstanceCode() != null) {
             MeveoInstance meveoInstance = meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
             if (meveoInstance == null) {
@@ -84,17 +83,11 @@ public class TriggeredEdrApi extends BaseApi {
             edrTemplate.setMeveoInstance(meveoInstance);
         }
         edrTemplate.setConditionEl(postData.getConditionEl());
-        edrTemplate.setConditionElSpark(postData.getConditionElSpark());
         edrTemplate.setQuantityEl(postData.getQuantityEl());
-        edrTemplate.setQuantityElSpark(postData.getQuantityElSpark());
         edrTemplate.setParam1El(postData.getParam1El());
-        edrTemplate.setParam1ElSpark(postData.getParam1ElSpark());
         edrTemplate.setParam2El(postData.getParam2El());
-        edrTemplate.setParam2ElSpark(postData.getParam2ElSpark());
         edrTemplate.setParam3El(postData.getParam3El());
-        edrTemplate.setParam3ElSpark(postData.getParam3ElSpark());
         edrTemplate.setParam4El(postData.getParam4El());
-        edrTemplate.setParam4ElSpark(postData.getParam4ElSpark());
         edrTemplate.setOpencellInstanceEL(postData.getOpencellInstanceEL());
         if (!StringUtils.isBlank(postData.getTriggeredEdrScript())) {
             ScriptInstance si = scriptInstanceService.findByCode(postData.getTriggeredEdrScript());
@@ -129,9 +122,6 @@ public class TriggeredEdrApi extends BaseApi {
         if (postData.getSubscriptionEl() != null) {
             edrTemplate.setSubscriptionEl(postData.getSubscriptionEl());
         }
-        if (postData.getSubscriptionElSpark() != null) {
-            edrTemplate.setSubscriptionElSpark(postData.getSubscriptionElSpark());
-        }
         if (postData.getMeveoInstanceCode() != null) {
             MeveoInstance meveoInstance = meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
             if (meveoInstance == null) {
@@ -143,38 +133,20 @@ public class TriggeredEdrApi extends BaseApi {
         if (postData.getConditionEl() != null) {
             edrTemplate.setConditionEl(postData.getConditionEl());
         }
-        if (postData.getConditionElSpark() != null) {
-            edrTemplate.setConditionElSpark(postData.getConditionElSpark());
-        }
         if (postData.getQuantityEl() != null) {
             edrTemplate.setQuantityEl(postData.getQuantityEl());
-        }
-        if (postData.getQuantityElSpark() != null) {
-            edrTemplate.setQuantityElSpark(postData.getQuantityElSpark());
         }
         if (postData.getParam1El() != null) {
             edrTemplate.setParam1El(postData.getParam1El());
         }
-        if (postData.getParam1ElSpark() != null) {
-            edrTemplate.setParam1ElSpark(postData.getParam1ElSpark());
-        }
         if (postData.getParam2El() != null) {
             edrTemplate.setParam2El(postData.getParam2El());
-        }
-        if (postData.getParam2ElSpark() != null) {
-            edrTemplate.setParam2ElSpark(postData.getParam2ElSpark());
         }
         if (postData.getParam3El() != null) {
             edrTemplate.setParam3El(postData.getParam3El());
         }
-        if (postData.getParam3ElSpark() != null) {
-            edrTemplate.setParam3ElSpark(postData.getParam3ElSpark());
-        }
         if (postData.getParam4El() != null) {
             edrTemplate.setParam4El(postData.getParam4El());
-        }
-        if (postData.getParam4ElSpark() != null) {
-            edrTemplate.setParam4ElSpark(postData.getParam4ElSpark());
         }
         if(postData.getOpencellInstanceEL() != null) {
             edrTemplate.setOpencellInstanceEL(postData.getOpencellInstanceEL());

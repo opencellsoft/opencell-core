@@ -52,7 +52,7 @@ public class CreditCategory extends BusinessEntity implements ISearchable {
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
-    @Column(name = "description_i18n", columnDefinition = "text")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
     public Map<String, String> getDescriptionI18n() {

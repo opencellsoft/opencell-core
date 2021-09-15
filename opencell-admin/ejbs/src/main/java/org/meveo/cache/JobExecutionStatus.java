@@ -209,7 +209,7 @@ public class JobExecutionStatus implements Serializable {
             nodeInfo = nodeInfo + (nodeInfo.length() > 0 ? ", " : "") + nodeThreadInfo.getKey() + "(" + nodeThreadInfo.getValue().toString() + ")";
         }
 
-        return jobId + "/" + jobCode + ", started on " + DateUtils.formatAsTime(startedOn) + (requestedToStop ? ", stopping" : "") + (lockForNode != null ? ", locked for " + lockForNode : "")
+        return jobId + "/" + jobCode + (startedOn != null ? ", started on " + DateUtils.formatAsTime(startedOn) : "") + (requestedToStop ? ", stopping" : "") + (lockForNode != null ? ", locked for " + lockForNode : "")
                 + (!nodesAndThreads.isEmpty() ? ", running on " + nodeInfo : "");
     }
 
