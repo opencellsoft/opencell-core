@@ -1,5 +1,8 @@
 package org.meveo.apiv2.query.execution;
 
+import static org.meveo.model.report.query.QueryExecutionModeEnum.IMMEDIATE;
+import static org.meveo.model.report.query.QueryStatusEnum.SUCCESS;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -9,10 +12,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
-import org.elasticsearch.common.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.report.query.QueryExecutionResult;
-import org.meveo.model.report.query.QueryStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.report.QueryExecutionResultService;
@@ -71,17 +72,27 @@ public class QueryExecutionResultApiService implements ApiService<QueryExecution
         throw new BadRequestException("Doesnt have code, please try with id");
 	}
 
-	public String convertQueryExectionResultToJson(QueryExecutionResult queryExecutionResult) {
-		if(queryExecutionResult.getQueryStatus() == QueryStatusEnum.SUCCESS) {
-			if(Strings.isEmpty(queryExecutionResult.getFilePath()))
-				throw new BadRequestException("Missing file path");
-			var filePath = new File(queryExecutionResult.getFilePath());
-			if(!filePath.exists()) 
-				throw new BadRequestException("File Path not exist");
-			if(!queryExecutionResult.getFilePath().toLowerCase().endsWith("csv")) 
-				throw new BadRequestException("Only File CSV format is accepted");
-			var result = convertCsvReportToJson(filePath, ";", true);
-			return result;
+	public String convertQueryExecutionResultToJson(QueryExecutionResult queryExecutionResult) {
+		if (queryExecutionResult.getQueryExecutionMode() == IMMEDIATE) {
+			throw new BadRequestException("Result file generation not supported for execution mode IMMEDIATE");
+		}
+		if(queryExecutionResult.getQueryStatus() == SUCCESS) {
+			if (queryExecutionResult.getFilePath() != null && !queryExecutionResult.getFilePath().isEmpty()) {
+				var filePath = new File(queryExecutionResult.getFilePath());
+				if(!filePath.exists())
+					throw new BadRequestException("File Path not exist");
+				if(!queryExecutionResult.getFilePath().toLowerCase().endsWith("csv"))
+					throw new BadRequestException("Only File CSV format is accepted");
+				var result = convertCsvReportToJson(filePath, ";", true);
+				return result;
+			} else {
+				if(queryExecutionResult.getLineCount() == 0) {
+					throw new BadRequestException("Execution result is available but no file was generated records count = 0");
+				}
+				if(queryExecutionResult.getLineCount() != 0) {
+					throw new BadRequestException("Missing file path");
+				}
+			}
 		}
 		return null;
 	}
