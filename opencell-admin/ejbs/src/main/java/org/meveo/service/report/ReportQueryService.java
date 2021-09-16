@@ -396,10 +396,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            Date endDate = new Date();
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, outputFilePath, data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, outputFilePath, data.size()));
+        } else {
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
-        return new AsyncResult<>(null);
     }
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity) {
