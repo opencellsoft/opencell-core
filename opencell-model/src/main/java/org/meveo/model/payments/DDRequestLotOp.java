@@ -108,7 +108,7 @@ public class DDRequestLotOp extends AuditableEntity {
     /** The Payment Or Refund Enum. */
     @Column(name = "payment_or_refund")
     @Enumerated(EnumType.STRING)
-    PaymentOrRefundEnum paymentOrRefundEnum;
+    private PaymentOrRefundEnum paymentOrRefundEnum;
     
     /** The Seller. */
     @ManyToOne(fetch = FetchType.LAZY)

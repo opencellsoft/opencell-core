@@ -28,23 +28,30 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.service.filter.FilterService;
 
 /**
- *  An abstract class to centralize some common methods such as getting the list of AOs to pay.
- *  @author Said Ramli
- *  @author anasseh
- *  @lastModifiedVersion 10.0
+ * An abstract class to centralize some common methods such as getting the list of AOs to pay.
+ * 
+ * @author Said Ramli
+ * @author anasseh
+ * @lastModifiedVersion 10.0
  */
 public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterface {
-    
+
     protected Object getServiceInterface(String serviceInterfaceName) {
         return EjbUtils.getServiceInterface(serviceInterfaceName);
     }
 
     @Override
     public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
-        
+        return findListAoToPay(ddrequestLotOp, null);
+    }
+
+    @Override
+    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp, PaymentOrRefundEnum paymentOrRefundEnum) throws BusinessException {
+
         FilterService filterService = (FilterService) getServiceInterface(FilterService.class.getSimpleName());
         AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
 
@@ -63,11 +70,17 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
-            listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
+
+            if (paymentOrRefundEnum != null) {
+                listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,
+                    paymentOrRefundEnum.getOperationCategoryToProcess(), ddrequestLotOp.getSeller());
+            } else {
+                listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,
+                    ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(), ddrequestLotOp.getSeller());
+            }
         } else {
             listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filterService.refreshOrRetrieve(filter), null);
         }
         return listAoToPay;
     }
-    
 }

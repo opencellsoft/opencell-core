@@ -112,6 +112,7 @@ import org.meveo.service.script.ScriptInterface;
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {
 
+
     /**
      * The wallet operation service.
      */
