@@ -495,12 +495,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        try(PrintWriter pw = new PrintWriter(dir + File.separator + fileName + extension)) {
+        String filePath = dir + File.separator + fileName + extension;
+        try(PrintWriter pw = new PrintWriter(filePath)) {
             pw.println(header);
             data.stream()
                     .forEach(pw::println);
         }
-        return "reports" + File.separator + fileName + extension;
+        return filePath;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,
