@@ -1,5 +1,6 @@
 package org.meveo.model.dunning;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class CollectionPlanStatus extends AuditableEntity {
 	
 	@Type(type = "json")
 	@Column(name = "language", columnDefinition = "jsonb")
-	private Map<String, String> language = new Hashtable<String, String>();
+	private Map<String, String> language = new HashMap<String, String>();
 	
 	@Column(name = "status", length = 255)
 	private String status;

@@ -1,5 +1,6 @@
 package org.meveo.apiv2.dunning.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,13 +21,13 @@ public class CollectionPlanStatusApiService implements ApiService<CollectionPlan
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 
-	private static String NO_DUNNING_FOUND = "No Dunning found for %s : %s";
-	private static String NO_COLLECTION_PLAN_STATUS_FOUND = "No Collection Plan Status found for id : ";
-	private static String NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING = "No Collection Plan Status found for code : %s, and status : %s";
+	private static final String NO_DUNNING_FOUND = "No Dunning found for %s : %s";
+	private static final String NO_COLLECTION_PLAN_STATUS_FOUND = "No Collection Plan Status found for id : ";
+	private static final String NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING = "No Collection Plan Status found for code : %s, and status : %s";
 	
 	@Override
 	public List<CollectionPlanStatus> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return null;
+		return Collections.emptyList();
 	}
 	
 	@Override
@@ -74,7 +75,7 @@ public class CollectionPlanStatusApiService implements ApiService<CollectionPlan
 	}
 	@Override
 	public Optional<CollectionPlanStatus> patch(Long id, CollectionPlanStatus baseEntity) {
-		return null;
+		return Optional.empty();
 	}
 	@Override
 	public Optional<CollectionPlanStatus> delete(Long id) {
@@ -94,7 +95,7 @@ public class CollectionPlanStatusApiService implements ApiService<CollectionPlan
 	}
 	@Override
 	public Optional<CollectionPlanStatus> findByCode(String code) {
-		return null;
+		return Optional.empty();
 	}
 	
 }
