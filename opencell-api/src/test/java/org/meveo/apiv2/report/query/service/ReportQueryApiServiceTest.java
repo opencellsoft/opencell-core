@@ -7,13 +7,17 @@ import static org.meveo.model.report.query.QueryVisibilityEnum.PUBLIC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.model.Auditable;
 import org.meveo.model.report.query.ReportQuery;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.report.ReportQueryService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +34,10 @@ public class ReportQueryApiServiceTest {
     @Mock
     private ReportQueryService reportQueryService;
 
+    @Mock
+    private MeveoUser currentUser;
+
+
     @Before
     public void setup() {
         ReportQuery reportQuery = new ReportQuery();
@@ -39,8 +47,15 @@ public class ReportQueryApiServiceTest {
         reportQuery.setCode("code");
         reportQuery.setGeneratedQuery("select name, code, description from Product");
         reportQuery.setFields(List.of("description", "name", "code"));
+        Auditable auditable = new Auditable();
+        auditable.setCreator("opencell.admin");
+        reportQuery.setAuditable(auditable);
+        Set<String> roles = new HashSet<>();
+        roles.add("query_manager");
 
         when(reportQueryService.findById(any(), any())).thenReturn(reportQuery);
+        when(currentUser.getUserName()).thenReturn("opencell.admin");
+        when(reportQueryService.findById(any())).thenReturn(reportQuery);
     }
 
     @Test

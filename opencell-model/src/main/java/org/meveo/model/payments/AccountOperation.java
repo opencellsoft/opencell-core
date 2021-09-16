@@ -138,6 +138,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     private OperationCategoryEnum transactionCategory;
 
     /**
+     * Operation category toRefund/None
+     */
+    @Column(name = "operation_action")
+    @Enumerated(STRING)
+    private OperationActionEnum operationAction;
+
+    /**
      * Reference
      */
     @Column(name = "reference")
@@ -429,6 +436,14 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setTransactionCategory(OperationCategoryEnum transactionCategory) {
         this.transactionCategory = transactionCategory;
+    }
+
+    public OperationActionEnum getOperationAction() {
+        return operationAction;
+    }
+
+    public void setOperationAction(OperationActionEnum operationAction) {
+        this.operationAction = operationAction;
     }
 
     public String getReference() {

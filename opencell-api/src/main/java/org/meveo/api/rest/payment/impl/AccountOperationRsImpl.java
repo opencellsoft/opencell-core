@@ -38,6 +38,7 @@ import org.meveo.api.rest.payment.AccountOperationRs;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.text.SimpleDateFormat;
 
 /**
  * @author Edward P. Legaspi
@@ -191,6 +192,18 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
             processException(e, result.getActionStatus());
         }
 
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateAccountingDate(Long id, String newAccountingDate) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            accountOperationApi.updateAccountingDate(id, formatter.parse(newAccountingDate));
+        } catch (Exception exception) {
+            processException(exception, result);
+        }
         return result;
     }
 }

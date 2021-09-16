@@ -954,6 +954,14 @@ public class SubscriptionApi extends BaseApi {
             serviceInstance.setServiceTemplate(serviceToInstantiateDto.getServiceTemplate());
         } else {
             serviceInstance.setProductVersion(serviceToInstantiateDto.getProductVersion());
+            for (AttributeInstanceDto attributeInstanceDto : serviceToInstantiateDto.getAttributeInstanceDtoList()) {
+                AttributeInstance attributeInstance = new AttributeInstance();
+                attributeInstance.setAttribute(loadEntityByCode(attributeService,
+                        attributeInstanceDto.getAttributeCode(), Attribute.class));
+                attributeInstance.setServiceInstance(serviceInstance);
+                attributeInstance.setSubscription(subscription);
+                serviceInstance.addAttributeInstance(attributeInstance);
+            }
         }
         serviceInstance.setSubscription(subscription);
         serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());

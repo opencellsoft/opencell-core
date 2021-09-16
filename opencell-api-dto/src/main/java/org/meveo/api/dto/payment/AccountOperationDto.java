@@ -265,6 +265,9 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     @Schema(description = "Accounting export file")
     private String accountingExportFile;
 
+    @Schema(description = "Accounting date")
+    private Date accountingDate;
+
     /**
      * Instantiates a new account operation dto.
      */
@@ -342,6 +345,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         this.status = accountOp.getStatus();
         this.reason = accountOp.getReason();
         this.accountingExportFile = accountOp.getAccountingExportFile();
+        this.accountingDate = accountOp.getAccountingDate();
     }
 
     /**
@@ -1074,5 +1078,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     public void setAccountingExportFile(String accountingExportFile) {
         this.accountingExportFile = accountingExportFile;
+    }
+
+    public Date getAccountingDate() {
+        return accountingDate;
+    }
+
+    public void setAccountingDate(Date accountingDate) {
+        this.accountingDate = accountingDate;
     }
 }
