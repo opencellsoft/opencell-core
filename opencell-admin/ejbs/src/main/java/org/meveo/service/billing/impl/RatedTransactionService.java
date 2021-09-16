@@ -46,6 +46,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
@@ -113,6 +114,9 @@ import com.google.common.collect.ImmutableMap;
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
+    private static final String APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION = "apply.minima.even.on.zero.transaction";
+
+
     private static final String INVOICING_PROCESS_TYPE = "RatedTransaction";
 
     @Inject
@@ -162,6 +166,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private MinAmountService minAmountService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -403,7 +410,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
-    
+
     public Long countNotInvoicedRTByBA(BillingAccount billingAccount) {
         try {
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
@@ -695,7 +702,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String mapKeyPrefix = seller.getId().toString() + "_";
 
             BigDecimal diff = minAmount.subtract(totalInvoiceableAmount);
-            if (diff.compareTo(BigDecimal.ZERO) <= 0) {
+            if (diff.compareTo(BigDecimal.ZERO) <= 0 || (BigDecimal.ZERO.equals(totalInvoiceableAmount) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {
                 continue;
             }
 
@@ -790,7 +797,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         RatedTransaction rt = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount,
             null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null, code, minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass, null, RatedTransactionTypeEnum.MINIMUM, null, null);
-       
+
         if (entity instanceof ServiceInstance) {
             rt.setServiceInstance((ServiceInstance) entity);
         }
@@ -1202,7 +1209,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void detachRTsFromSubscription(Subscription subscription) {
         getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
-    
+
     /**
      * Detach RTs From invoice.
      *
@@ -1276,15 +1283,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			throw new ValidationException("Missing fields to create RatedTransaction : " + errors);
 		}
 		usageDate = usageDate == null? new Date() : usageDate;
-		
+
 		BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class,
 				billingAccountCode);
-		
+
 		UserAccount userAccount = userAccountCode!=null? (UserAccount) tryToFindByEntityClassAndCode(UserAccount.class, userAccountCode) : billingAccount.getUsersAccounts().get(0);
-		
+
 		Map<String, Object> subscriptionCriterions = ImmutableMap.of("code", subscriptionCode, "userAccount", userAccount, "status", SubscriptionStatusEnum.ACTIVE);
 		Subscription subscription = (Subscription) tryToFindByEntityClassAndMap(Subscription.class, subscriptionCriterions);
-		
+
 		Map<String, Object> serviceInstanceCriterions = ImmutableMap.of("code", serviceInstanceCode, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
 		ServiceInstance serviceInstance = (ServiceInstance) tryToFindByEntityClassAndMap(ServiceInstance.class, serviceInstanceCriterions );
 		Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
@@ -1328,9 +1335,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(amounts[0]);
         ratedTransaction.setAmountWithTax(amounts[1]);
         ratedTransaction.setAmountTax(amounts[2]);
-        
+
         update(ratedTransaction);
-		
+
 	}
 
     /**
