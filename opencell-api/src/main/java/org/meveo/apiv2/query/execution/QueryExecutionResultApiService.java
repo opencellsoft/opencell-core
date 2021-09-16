@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -31,6 +32,8 @@ public class QueryExecutionResultApiService implements ApiService<QueryExecution
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
 	@Override
 	public List<QueryExecutionResult> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -78,7 +81,7 @@ public class QueryExecutionResultApiService implements ApiService<QueryExecution
 		}
 		if(queryExecutionResult.getQueryStatus() == SUCCESS) {
 			if (queryExecutionResult.getFilePath() != null && !queryExecutionResult.getFilePath().isEmpty()) {
-				var filePath = new File(queryExecutionResult.getFilePath());
+				var filePath = new File(paramBeanFactory.getDefaultChrootDir() + File.separator + queryExecutionResult.getFilePath());
 				if(!filePath.exists())
 					throw new BadRequestException("File Path not exist");
 				if(!queryExecutionResult.getFilePath().toLowerCase().endsWith("csv"))

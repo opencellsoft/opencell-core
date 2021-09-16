@@ -15873,7 +15873,36 @@
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
+    <changeSet id="INTRD_1629_20210914" author="TarikFA." />
+    
+    <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
+	    <createSequence sequenceName="collection_plan_status_seq"/>
+	    	<createTable tableName="collection_plan_status">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collection_plan_status" />
+	            </column>
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="version" type="int4" />
+	            <column name="dunning_settings_id" type="bigint" />
+	            <column name="language" type="${type.json}" />
+	            <column name="status" type="varchar(255)"  >
+	            	<constraints unique="true"/>
+	            </column>
+	            <column name="context" type="varchar(255)" />
+	    	</createTable>
+	    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id" 
+	    							 referencedTableName="dunning_settings" 
+	    							 baseColumnNames="dunning_settings_id" 
+	    							 baseTableName="collection_plan_status" 
+	    							 referencedColumnNames="id"/>
+    </changeSet>
     <changeSet id="#INTRD-1707_20210914" author="AbdelkaderBouazza"/>
+
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
