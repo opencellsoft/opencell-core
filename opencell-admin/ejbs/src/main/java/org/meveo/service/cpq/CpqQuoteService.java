@@ -90,7 +90,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	
 	@Inject
     @PDFGenerated
-    private Event<QuoteVersion> pdfGeneratedEventProducer;
+    private Event<CpqQuote> pdfGeneratedEventProducer;
 	
 	  /** map used to store temporary jasper report. */
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
@@ -109,6 +109,14 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	   	   	duplicate.setCode(code);
 	   	 }
 
+		 var medias = new ArrayList<>(quote.getMedias());
+		 duplicate.setMedias(new ArrayList<Media>());
+		 if(quote.getMedias() != null) {
+			 for (Media media : medias) {
+				 duplicate.getMedias().add(mediaService.findById(media.getId()));
+			}
+		 }
+		 
 		 try {
 		   	 	super.create(duplicate);
 	   	 }catch(BusinessException e) {
@@ -133,11 +141,11 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	     * @param createDirs Should missing directories be created
 	     * @return Absolute path to an XML file
 	     */
-	    public String getFullXmlFilePath(QuoteVersion quoteVersion, boolean createDirs) {
+	    public String getFullXmlFilePath(CpqQuote quote, boolean createDirs) {
 
 	        String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
 
-	        String xmlFilename = meveoDir + "quotes" + File.separator + "xml" + File.separator + quoteVersion.getXmlFilename()+".xml";
+	        String xmlFilename = meveoDir + "quotes" + File.separator + "xml" + File.separator + quote.getXmlFilename()+".xml";
 
 	        if (createDirs) {
 	            int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
@@ -148,18 +156,17 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        return xmlFilename;
 	    }
 	    
-	    public String generateFileName(QuoteVersion quoteVersion) {
-	    	if (quoteVersion.getXmlFilename()!= null) {
-	            return quoteVersion.getXmlFilename();
+	    public String generateFileName(CpqQuote quote) {
+	    	if (quote.getXmlFilename()!= null) {
+	            return quote.getXmlFilename();
 	        }
-	    	CpqQuote quote=quoteVersion.getQuote();
 	    	 InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
 	    	// Generate a name for xml file from EL expression
 	         String xmlFileName = null;
 	         String expression = quoteType.getXmlFilenameEL();
 	         if (!StringUtils.isBlank(expression)) {
 	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
-	             contextMap.put("quote",quote);
+	             contextMap.put("quote", quote);
 	             try {
 	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
 	                 if (value != null) {
@@ -185,13 +192,12 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	     * Return a pdf filename that was assigned to quote
 	     *
 	     *
-	     * @param QuoteVersion quoteVersion
+	     * @param CpqQuote CpqQuote
 	     * @return Pdf file name
 	     */
-	    public String getOrGeneratePdfFilename(QuoteVersion quoteVersion) {
-	    	CpqQuote quote =quoteVersion.getQuote();
-	        if (quoteVersion.getPdfFilename() != null) {
-	            return quoteVersion.getPdfFilename();
+	    public String getOrGeneratePdfFilename(CpqQuote quote) {
+	        if (quote.getPdfFilename() != null) {
+	            return quote.getPdfFilename();
 	        } 
 	        String pdfFileName = null; 
 	        InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
@@ -225,11 +231,11 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        return pdfFileName;
 	    }
 	    
-	    public String getFullPdfFilePath(QuoteVersion quoteVersion, boolean createDirs) {
+	    public String getFullPdfFilePath(CpqQuote quote, boolean createDirs) {
 
 	        String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
 
-	        String pdfFilename = meveoDir + "quotes" + File.separator + "pdf" + File.separator + getOrGeneratePdfFilename(quoteVersion);
+	        String pdfFilename = meveoDir + "quotes" + File.separator + "pdf" + File.separator + getOrGeneratePdfFilename(quote);
 
 	        if (createDirs) {
 	            int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
@@ -254,21 +260,20 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        }
 	    }
 	    
-	    public void generateQuotePdf(QuoteVersion quoteVersion) throws BusinessException {
-	    	CpqQuote quote =quoteVersion.getQuote();
-	        log.debug("Creating pdf for quote number={} code={} quoteVersion={}",quote.getQuoteNumber(), quote.getCode(),quoteVersion.getQuoteVersion());
+	    public void generateQuotePdf(CpqQuote quote) throws BusinessException {
+	        log.debug("Creating pdf for quote number={} code={}", quote.getQuoteNumber(), quote.getCode());
 	        ParamBean paramBean = paramBeanFactory.getInstance();
 	        String quoteDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
-	        String quoteXmlFileName = getFullXmlFilePath(quoteVersion, false); 
+	        String quoteXmlFileName = getFullXmlFilePath(quote, false); 
 	        String QUOTE_TAG_NAME = "quote"; 
 	        File quoteXmlFile = new File(quoteXmlFileName);
 	        if (!quoteXmlFile.exists()) {
 	            //createXmlQuote(quote);
 	        }    
 	        String resDir = quoteDir + "quotes"  + File.separator + "jasper";
-	        String pdfFilename = getOrGeneratePdfFilename(quoteVersion);
-	        quoteVersion.setPdfFilename(pdfFilename);
-	        String pdfFullFilename = getFullPdfFilePath(quoteVersion, true);
+	        String pdfFilename = getOrGeneratePdfFilename(quote);
+	        quote.setPdfFilename(pdfFilename);
+	        String pdfFullFilename = getFullPdfFilePath(quote, true);
 	        InputStream reportTemplate = null;
 	        try {
 	            File destDir = new File(resDir);
@@ -343,24 +348,27 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	    }
 	    
 	   
-	    public QuoteVersion produceQuotePdf(QuoteVersion quoteVersion) throws BusinessException {
-	    	generateQuotePdf(quoteVersion);
-	    	pdfGeneratedEventProducer.fire(quoteVersion); 
-	    	return quoteVersion;
+	    public CpqQuote produceQuotePdf(CpqQuote quote) throws BusinessException {
+	    	generateQuotePdf(quote);
+	    	quote.setStatusDate(new Date()); 
+	    	pdfGeneratedEventProducer.fire(quote);
+	    	quote = updateNoCheck(quote);
+	    	entityUpdatedEventProducer.fire(quote);
+	    	return quote;
 	    }
 	    
-	    public boolean isCpqQuotePdfExist(QuoteVersion quoteVersion) {
-	        String pdfFileName = getFullPdfFilePath(quoteVersion, false);
+	    public boolean isCpqQuotePdfExist(CpqQuote quote) {
+	        String pdfFileName = getFullPdfFilePath(quote, false);
 	        File pdfFile = new File(pdfFileName);
 	        return pdfFile.exists();
 	    }
 	    
-	    public byte[] getQuotePdf(QuoteVersion quoteVersion) throws BusinessException {
+	    public byte[] getQuotePdf(CpqQuote quote) throws BusinessException {
 
-	        String pdfFileName = getFullPdfFilePath(quoteVersion, false);
+	        String pdfFileName = getFullPdfFilePath(quote, false);
 	        File pdfFile = new File(pdfFileName);
 	        if (!pdfFile.exists()) {
-	            throw new BusinessException("quote PDF was not produced yet for quote {} and quoteVersion {} " +quoteVersion.getQuote().getQuoteNumber());
+	            throw new BusinessException("quote PDF was not produced yet for quote " + quote.getQuoteNumber());
 	        }
 
 	        FileInputStream fileInputStream = null;
@@ -431,13 +439,12 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        }
 	    }*/
 
-	    public boolean sendByEmail(QuoteVersion quoteVersion, String overrideEmail, EmailTemplate overrideEmailTemplate) throws BusinessException {
-	    	CpqQuote quote=quoteVersion.getQuote();
+	    public boolean sendByEmail(CpqQuote quote, String overrideEmail, EmailTemplate overrideEmailTemplate) throws BusinessException {
 			if (quote == null) {
 				log.error("The quote to be sent by Email is null!!");
 				return false;
 			}
-			if (quoteVersion.getPdfFilename() == null) {
+			if (quote.getPdfFilename() == null) {
 				log.warn("The Pdf for the quote is not generated!!");
 				return false;
 			}
@@ -445,7 +452,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 			List<String> cc = new ArrayList<>();
 			List<File> files = new ArrayList<>();
 
-			String fullPdfFilePath = getFullPdfFilePath(quoteVersion, false);
+			String fullPdfFilePath = getFullPdfFilePath(quote, false);
 			File file = new File(fullPdfFilePath);
 
 			if (!file.exists()) {

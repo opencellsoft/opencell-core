@@ -2,9 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -62,17 +60,7 @@ public class QuoteVersionDto extends BaseEntityDto {
 	/** billing code */
     @Schema(description = "The code of the billing plan")
 	private String billingPlanCode;
-    
-	/** Discount plan code */
-    @Schema(description = "The code of the discount plan")
-	private String discountPlanCode;
 
-    @Schema(description = "The code of the contract")
-   	private String contractCode;
-    
-    private Set<String> mediaCodes = new HashSet<String>();
-
-    
 	@Schema(description = "The custom fields")
     protected CustomFieldsDto customFields;
 
@@ -96,7 +84,6 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.billingPlanCode = q.getInvoicingPlan()!=null?q.getInvoicingPlan().getCode():null;
 		this.startDate = q.getStartDate();
 		this.statusDate = q.getStatusDate();
-		this.discountPlanCode=q.getDiscountPlan()!=null?q.getDiscountPlan().getCode():null;
 	}
 
 	/**
@@ -218,35 +205,6 @@ public class QuoteVersionDto extends BaseEntityDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
-
-	public String getDiscountPlanCode() {
-		return discountPlanCode;
-	}
-
-	public void setDiscountPlanCode(String discountPlanCode) {
-		this.discountPlanCode = discountPlanCode;
-	}
-
-	public String getContractCode() {
-		return contractCode;
-	}
-
-	public void setContractCode(String contractCode) {
-		this.contractCode = contractCode;
-	}
-
-	public Set<String> getMediaCodes() {
-		return mediaCodes;
-	}
-
-	public void setMediaCodes(Set<String> mediaCodes) {
-		this.mediaCodes = mediaCodes;
-	}
-	
-	
-	
-	
-	
 
 
 	

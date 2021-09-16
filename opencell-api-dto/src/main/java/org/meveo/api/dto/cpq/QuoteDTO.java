@@ -44,6 +44,11 @@ public class QuoteDTO extends BaseQuoteDTO{
 
     @Schema(description = "The name of the pdf file")
     private String pdfFilename;
+
+	
+	/** Discount plan code */
+    @Schema(description = "The code of the discount plan")
+	private String discountPlanCode;
 	/**
 	 * @return the quoteVersion
 	 */
@@ -58,7 +63,38 @@ public class QuoteDTO extends BaseQuoteDTO{
 	public void setQuoteVersion(QuoteVersionDto quoteVersion) {
 		this.quoteVersion = quoteVersion;
 	}
-  
+
+
+	/**
+	 * @return the discountPlanCode
+	 */
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+
+	/**
+	 * @param discountPlanCode the discountPlanCode to set
+	 */
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+
+
+	/**
+	 * @return the pdfFilename
+	 */
+	public String getPdfFilename() {
+		return pdfFilename;
+	}
+
+
+	/**
+	 * @param pdfFilename the pdfFilename to set
+	 */
+	public void setPdfFilename(String pdfFilename) {
+		this.pdfFilename = pdfFilename;
+	}
 	
 	
 

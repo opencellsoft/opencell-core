@@ -60,7 +60,7 @@ public class QuoteMapper {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
+        org.meveo.model.cpq.contract.Contract contract = quote.getContract();
         Contract ctr=null;
         if(contract!=null) {
          ctr = new Contract(contract,entityToDtoConverter.getCustomFieldsDTO(contract));

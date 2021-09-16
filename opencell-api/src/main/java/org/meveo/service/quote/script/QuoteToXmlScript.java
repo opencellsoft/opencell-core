@@ -72,6 +72,7 @@ public class QuoteToXmlScript extends ModuleScript {
             throw new BusinessException("No quote version is found");
         }
         byte[] xmlContent = null;
+        CpqQuote cpqQuote = quoteVersion.getQuote();
 
         String quoteXml = null;
         try {
@@ -87,8 +88,8 @@ public class QuoteToXmlScript extends ModuleScript {
             quoteXmlDir.mkdirs();
         }
         xmlContent = quoteXml.getBytes();
-        String fileName = cpqQuoteService.generateFileName(quoteVersion);
-        quoteVersion.setXmlFilename(fileName);
+        String fileName = cpqQuoteService.generateFileName(cpqQuote);
+        cpqQuote.setXmlFilename(fileName);
         String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
         try {
             Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
@@ -109,7 +110,7 @@ public class QuoteToXmlScript extends ModuleScript {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
+        org.meveo.model.cpq.contract.Contract contract = quote.getContract();
         Contract ctr=null;
         if(contract!=null) {
          ctr = new Contract(contract,entityToDtoConverter.getCustomFieldsDTO(contract));
