@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -579,8 +578,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (calculateAndUpdateTotalAmounts) {
                 totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
             }
-        } else if(shouldApplyMinimEvenWhenZeroAmount(totalInvoiceableAmounts = computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate),
-                paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))){
+        } else  {
             // Create Min Amount RTs for hierarchy
 
             BillingAccount billingAccount = (billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
@@ -603,9 +601,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             totalInvoiceableAmounts.addAmounts(totalAmounts);
 
-        } else {
-            // get totalInvoicable for the billableEntity
-            totalInvoiceableAmounts = computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate);
         }
 
         billableEntity.setMinRatedTransactions(minAmountTransactions);
@@ -618,11 +613,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billableEntity.setTotalInvoicingAmountTax(totalInvoiceableAmounts.getAmountTax());
         }
     }
-
-    private boolean shouldApplyMinimEvenWhenZeroAmount(Amounts amounts, boolean shouldApplyMinimEvenOnZeroTransaction) {
-        return !amounts.getAmountWithoutTax().equals(BigDecimal.ZERO)|| shouldApplyMinimEvenOnZeroTransaction;
-    }
-
     private Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date date, Date lastTransactionDate) {
         if (billableEntity instanceof Subscription) {
             return computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, date, lastTransactionDate);
@@ -669,7 +659,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String mapKeyPrefix = seller.getId().toString() + "_";
 
             BigDecimal diff = minAmount.subtract(totalInvoiceableAmount);
-            if (diff.compareTo(BigDecimal.ZERO) <= 0) continue;
+            if (diff.compareTo(BigDecimal.ZERO) <= 0 || (BigDecimal.ZERO.equals(totalInvoiceableAmount) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {// (diff.equals(BigDecimal.ZERO) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {
+                continue;
+            }
 
             OneShotChargeTemplate oneShotChargeTemplate = getMinimumChargeTemplate(entity);
             if (oneShotChargeTemplate == null) {
