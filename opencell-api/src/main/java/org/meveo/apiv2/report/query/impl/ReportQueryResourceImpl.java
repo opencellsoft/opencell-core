@@ -119,10 +119,10 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
     }
 
 	@Override
-	public Response findQueryResult(Long queryexecutionResultId) {
-		var queryExecutionResult = queryExecutionResultApiService.findById(queryexecutionResultId)
-															.orElseThrow(() -> new NotFoundException("The query execution result with {" + queryexecutionResultId + "} does not exists"));
-		var result = queryExecutionResultApiService.convertQueryExectionResultToJson(queryExecutionResult);
+	public Response findQueryResult(Long queryExecutionResultId) {
+		var queryExecutionResult = queryExecutionResultApiService.findById(queryExecutionResultId)
+															.orElseThrow(() -> new NotFoundException("The query execution result with {" + queryExecutionResultId + "} does not exists"));
+		var result = queryExecutionResultApiService.convertQueryExecutionResultToJson(queryExecutionResult);
 		return Response.ok(result != null ? result : "").build();
 	}
 
