@@ -45,8 +45,8 @@ public class DunningCollectionManagement extends AuditableEntity  {
 		this.includeCollectionAgency = includeCollectionAgency;
 		EmailCollectionAgency = emailCollectionAgency;
 		this.agentFirstNameItem = agentFirstNameItem;
-		AgentLastNameItem = agentLastNameItem;
-		AgentEmailItem = agentEmailItem;
+		this.agentLastNameItem = agentLastNameItem;
+		this.agentEmailItem = agentEmailItem;
 		this.dunningSettings = dunningSettings;
 	}
 
@@ -80,7 +80,7 @@ public class DunningCollectionManagement extends AuditableEntity  {
 	 */
 	@Column(name = "agent_last_name_item", length = 100)
 	@Size(max = 100)
-	private String AgentLastNameItem;
+	private String agentLastNameItem;
 	
 	
 	/**
@@ -88,7 +88,7 @@ public class DunningCollectionManagement extends AuditableEntity  {
 	 */
 	@Column(name = "agent_email_item", length = 100)
 	@Size(max = 100)
-	private String AgentEmailItem;
+	private String agentEmailItem;
 	
 	/**
 	 * dunning settings associated to the entity
@@ -142,22 +142,22 @@ public class DunningCollectionManagement extends AuditableEntity  {
 
 
 	public String getAgentLastNameItem() {
-		return AgentLastNameItem;
+		return agentLastNameItem;
 	}
 
 
 	public void setAgentLastNameItem(String agentLastNameItem) {
-		AgentLastNameItem = agentLastNameItem;
+		this.agentLastNameItem = agentLastNameItem;
 	}
 
 
 	public String getAgentEmailItem() {
-		return AgentEmailItem;
+		return agentEmailItem;
 	}
 
 
 	public void setAgentEmailItem(String agentEmailItem) {
-		AgentEmailItem = agentEmailItem;
+		this.agentEmailItem = agentEmailItem;
 	}
 	
 	
