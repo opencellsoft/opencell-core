@@ -21,7 +21,9 @@ public class DunningCollectionManagementApiService implements ApiService<Dunning
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
-	private DunningCollectionManagementService DunningCollectionManagementService;
+	private DunningCollectionManagementService dunningCollectionManagementService;
+
+	private static final String  NO_DUNNING_COLLECTION_FOUND = "Dunning Collection doesn't exist with code : %s and agent email : %s";
 
 	@Override
 	public List<DunningCollectionManagement> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -49,12 +51,12 @@ public class DunningCollectionManagementApiService implements ApiService<Dunning
 			if(dunningSetting == null)
 				throw new BadRequestException("No Dunning found for Dunning collection management");
 			
-			var existingDunningCollection = DunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(baseEntity.getDunningSettings().getCode(), baseEntity.getAgentEmailItem());
+			var existingDunningCollection = dunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(baseEntity.getDunningSettings().getCode(), baseEntity.getAgentEmailItem());
 			if(existingDunningCollection != null)
 				throw new BadRequestException("Dunning Collection already exist with code : " + baseEntity.getDunningSettings().getCode() + " and agent email : " + baseEntity.getAgentEmailItem());
 			baseEntity.setDunningSettings(dunningSetting);
 		}	
-		DunningCollectionManagementService.create(baseEntity);
+		dunningCollectionManagementService.create(baseEntity);
 		return baseEntity;
 	}
 
@@ -79,9 +81,9 @@ public class DunningCollectionManagementApiService implements ApiService<Dunning
 	}
 
 	public DunningCollectionManagement update(String dunningCode, String agentEmailItem, DunningCollectionManagement baseEntity) {
-		var existingDunningCollection = DunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
+		var existingDunningCollection = dunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
 		if(existingDunningCollection == null)
-			throw new BadRequestException("Dunning Collection doesn't exist with code : " + dunningCode + " and agent email : " + agentEmailItem);
+			throw new BadRequestException(String.format(NO_DUNNING_COLLECTION_FOUND, dunningCode, agentEmailItem));
 		if(!Strings.isEmpty(baseEntity.getEmailCollectionAgency()))
 			existingDunningCollection.setEmailCollectionAgency(baseEntity.getEmailCollectionAgency());
 		if(!Strings.isEmpty(baseEntity.getAgentFirstNameItem()))
@@ -90,16 +92,16 @@ public class DunningCollectionManagementApiService implements ApiService<Dunning
 			existingDunningCollection.setAgentLastNameItem(baseEntity.getAgentLastNameItem());
 		
 		existingDunningCollection.setIncludeCollectionAgency(baseEntity.isIncludeCollectionAgency());
-		DunningCollectionManagementService.update(existingDunningCollection);
+		dunningCollectionManagementService.update(existingDunningCollection);
 		return existingDunningCollection;
 		
 	}
 
 	public DunningCollectionManagement delete(String dunningCode, String agentEmailItem) {
-		var deletedgDunningCollection = DunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
+		var deletedgDunningCollection = dunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
 		if(deletedgDunningCollection == null)
-			throw new BadRequestException("Dunning Collection doesn't exist with code : " + dunningCode + " and agent email : " + agentEmailItem);
-		DunningCollectionManagementService.remove(deletedgDunningCollection);
+			throw new BadRequestException(String.format(NO_DUNNING_COLLECTION_FOUND, dunningCode, agentEmailItem));
+		dunningCollectionManagementService.remove(deletedgDunningCollection);
 		return deletedgDunningCollection;
 	}
 }
