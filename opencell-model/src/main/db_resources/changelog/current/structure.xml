@@ -9406,6 +9406,7 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
+
     
     <changeSet id="INTRD_1629_20210914" author="TarikFA.">
     
@@ -9440,5 +9441,10 @@ public class OrderAdvancement extends ModuleScript {
 	    							 referencedColumnNames="id"/>
     </changeSet>
     
+    <changeSet id="#INTRD-1707_20210914" author="AbdelkaderBouazza">
+        <addColumn tableName="billing_subscription">
+            <column name="operation_action" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>

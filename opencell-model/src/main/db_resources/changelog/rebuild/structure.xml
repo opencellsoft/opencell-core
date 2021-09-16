@@ -2027,6 +2027,7 @@
             <column name="reason" type="varchar(30)"/>
             <column name="accounting_export_file" type="varchar(255)"/>
             <column name="accounting_date" type="datetime"></column>
+            <column name="operation_action" type="varchar(255)"/>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -15900,6 +15901,7 @@
 	    							 baseTableName="collection_plan_status" 
 	    							 referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="#INTRD-1707_20210914" author="AbdelkaderBouazza"/>
 
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
