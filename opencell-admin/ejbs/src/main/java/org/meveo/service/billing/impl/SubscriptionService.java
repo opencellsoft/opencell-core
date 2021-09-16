@@ -135,7 +135,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         subscription.createAutoRenewDate();
-        subscription.setVersion(1);
+        subscription.setVersionNumber(1);
         super.create(subscription);
 
         // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
