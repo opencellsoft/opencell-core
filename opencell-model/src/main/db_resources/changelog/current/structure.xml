@@ -9446,5 +9446,11 @@ public class OrderAdvancement extends ModuleScript {
             <column name="operation_action" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+	
+    <changeSet id="INTRD_1782_20210913" author="TarikFA.">
+    	<addColumn tableName="cpq_product_version_attributes">
+    		<column name="mandatorwith_el" type="varchar(255)"/>
+    	</addColumn>
+    </changeSet>
     
 </databaseChangeLog>
