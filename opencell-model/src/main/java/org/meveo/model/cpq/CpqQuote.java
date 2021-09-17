@@ -58,8 +58,7 @@ public class CpqQuote extends BusinessEntity  {
 		super.code = copy.code;
 		super.description = copy.description;
 		this.seller = copy.seller;
-		this.applicantAccount = copy.applicantAccount;
-		this.contract = copy.contract;
+		this.applicantAccount = copy.applicantAccount; 
 		//to move to quote version
 		this.sendDate = copy.sendDate;
 		this.quoteLotDateBegin = copy.quoteLotDateBegin;
@@ -74,8 +73,6 @@ public class CpqQuote extends BusinessEntity  {
 		//to move to quote version
 		this.validity = copy.validity;
 		this.orderInvoiceType = copy.orderInvoiceType;
-		//to move to quote version
-		this.discountPlan=copy.discountPlan;
 	}
 	/**
 	 * seller
@@ -92,12 +89,7 @@ public class CpqQuote extends BusinessEntity  {
 	@NotNull
 	private BillingAccount applicantAccount;
 	
-	/**
-	 * contract
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "contract_id")
-	private Contract contract;
+	
 	
 
     /**
@@ -198,12 +190,7 @@ public class CpqQuote extends BusinessEntity  {
     @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
     
-	/**
-	 * discountPlan attached to this quote
-	 */
-    @ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
-	private DiscountPlan discountPlan;
+	
     
     @Column(name = "quote_number", length = 50)
     private String quoteNumber;
@@ -213,24 +200,7 @@ public class CpqQuote extends BusinessEntity  {
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
-	
-	   /**
-	  * XML file name
-	  */
-	 @Column(name = "xml_filename", length = 255)
-	 @Size(max = 255)
-	 private String xmlFilename;
 	 
-	 /**
-	  * PDF file name
-	  */
-	@Column(name = "pdf_filename", length = 255)
-	@Size(max = 255)
-	private String pdfFilename;
-	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "cpq_quote_media", joinColumns = @JoinColumn(name = "quote_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
-	private List<Media> medias = new ArrayList<Media>();
 	    
 	/**
 	 * @return the seller
@@ -255,19 +225,7 @@ public class CpqQuote extends BusinessEntity  {
 	 */
 	public void setApplicantAccount(BillingAccount applicantAccount) {
 		this.applicantAccount = applicantAccount;
-	}
-	/**
-	 * @return the contract
-	 */
-	public Contract getContract() {
-		return contract;
-	}
-	/**
-	 * @param contract the contract to set
-	 */
-	public void setContract(Contract contract) {
-		this.contract = contract;
-	}
+	} 
 	/**
 	 * @return the statusDate
 	 */
@@ -425,19 +383,7 @@ public class CpqQuote extends BusinessEntity  {
 		if(!status.equals(this.status))
 			this.previousStatus = this.status;
 		this.status = status;
-	}
-	/**
-	 * @return the discountPlan
-	 */
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
-	/**
-	 * @param discountPlan the discountPlan to set
-	 */
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+	} 
 
 	/**
 	 * @return the quoteNumber
@@ -473,34 +419,7 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setQuoteDate(Date quoteDate) {
 		this.quoteDate = quoteDate;
-	}
-/**
-	 * @return the xmlFilename
-	 */
-	public String getXmlFilename() {
-		return xmlFilename;
-	}
-
-	/**
-	 * @param xmlFilename the xmlFilename to set
-	 */
-	public void setXmlFilename(String xmlFilename) {
-		this.xmlFilename = xmlFilename;
-	}
-
-	/**
-	 * @return the pdfFilename
-	 */
-	public String getPdfFilename() {
-		return pdfFilename;
-	}
-
-	/**
-	 * @param pdfFilename the pdfFilename to set
-	 */
-	public void setPdfFilename(String pdfFilename) {
-		this.pdfFilename = pdfFilename;
-	}
+	} 
 
 	public String getPreviousStatus() {
 		return previousStatus;
@@ -508,20 +427,6 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setPreviousStatus(String previousStatus) {
 		this.previousStatus = previousStatus;
-	}
-
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
-
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
 	}
 
 	

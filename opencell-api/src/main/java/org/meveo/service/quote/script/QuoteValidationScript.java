@@ -123,7 +123,7 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setSeller(cpqQuote.getSeller()!=null?cpqQuote.getSeller():account.getCustomerAccount().getCustomer().getSeller());
 		order.setBillingAccount(account);
 		order.setQuote(cpqQuote);
-		order.setContract(cpqQuote.getContract());
+		order.setContract(quoteVersion.getContract());
 		order.setCustomerServiceBegin(quoteVersion.getStartDate());
 		order.setStatus(CommercialOrderEnum.DRAFT.toString());
 		Date now = Calendar.getInstance().getTime();
@@ -138,7 +138,7 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setProgressDate(Calendar.getInstance().getTime());
 		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
 		order.setQuoteVersion(quoteVersion);
-		order.setDiscountPlan(cpqQuote.getDiscountPlan());
+		order.setDiscountPlan(quoteVersion.getDiscountPlan());
 		//order.setCfValues(quoteVersion.getCfValues());
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
