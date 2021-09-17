@@ -1228,6 +1228,7 @@ public class CatalogHierarchyBuilderService {
     }
     
     private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
+    	quoteVersion.getMedias().size();
     	quoteVersion.getQuoteOffers().size();
     	quoteVersion.getQuoteOffers().forEach(qo -> {
     		qo.getQuoteProduct().size();
