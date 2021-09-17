@@ -1509,7 +1509,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } catch (NoResultException e) {
             throw new NotFoundException("No entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
         } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use “id” instead");
+        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use id instead");
         }
     }
 	

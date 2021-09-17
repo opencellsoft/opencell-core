@@ -59,10 +59,8 @@ public class UpdateUnpaidInvoiceStatusAsync {
     public Future<String> launchAndForget(List<Long> unpaidInvoicesIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        int i = 0;
         for (Long unpaidInvoiceId : unpaidInvoicesIds) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             unitUpdateUnpaidInvoiceStatusJobBean.execute(result, unpaidInvoiceId);
