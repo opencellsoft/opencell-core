@@ -9453,4 +9453,15 @@ public class OrderAdvancement extends ModuleScript {
     	</addColumn>
     </changeSet>
     
+    <changeSet id="INTRD_1794_20210917" author="TarikFA.">
+    	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
+    			<columnExists tableName="cpq_product_version_attributes" columnName="mandatory"/>
+    	</preConditions>
+    	<dropColumn tableName="cpq_product_version_attributes">
+    		<column name="mandatory" />
+    		<column name="priority" />
+    		<column name="display" />
+    	</dropColumn>
+    </changeSet>
+    
 </databaseChangeLog>
