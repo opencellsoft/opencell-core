@@ -21,10 +21,7 @@ package org.meveo.admin.job;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -62,7 +59,8 @@ public class UnitUpdateUnpaidInvoiceStatusJobBean {
         log.debug("update Invoice[id={}] status to unpaid", unpaidInvoiceId);
         try {
             Invoice invoice = invoiceService.findById(unpaidInvoiceId);
-            invoice.setStatus(InvoiceStatusEnum.UNPAID);
+            invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+            invoice.setPaymentStatusDate(new Date());
             invoice = invoiceService.updateNoCheck(invoice);
             entityUpdatedEventProducer.fire(invoice);
 
