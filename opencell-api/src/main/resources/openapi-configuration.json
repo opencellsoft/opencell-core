@@ -41,6 +41,7 @@
   "org.meveo.apiv2.dunning.resource.DunningSettingResource",
   "org.meveo.apiv2.report.query.resource.ReportQueryResource",
   "org.meveo.apiv2.quote.resource.QuoteOfferResource",
+  "org.meveo.apiv2.dunning.resource.DunningCollectionManagementResource",
   "org.meveo.apiv2.dunning.resource.CollectionPlanStatusResource"],
   "resourcePackages": [],
   "prettyPrint" : true,
