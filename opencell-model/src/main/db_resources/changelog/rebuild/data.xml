@@ -13927,6 +13927,303 @@ public class SubscriptionImportScript extends Script {
         </insert>
 	</changeSet>
 
+    <changeSet id="#INTRD-1589_2021_14_09" author="ZBariki">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2021-09-14 00:04:19.913" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="code" value="ProcessCustomerPaymentsFileJob" />
+            <column name="description" value="Process customer payments file job"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="job_speed" value="NORMAL" />
+            <column name="single_node" valueNumeric="1" />
+            <column name="verbose_report" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="oneFilePerJob"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Process files separately"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:2"/>
+
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_outputDir"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Output directory"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="default_value" value="imports/payment/output"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:4"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_mappingConf"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Record descriptor"/>
+            <column name="field_type" value="TEXT_AREA"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Record configuration:2;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_recordVariableName"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Record variable name"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="record"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="50"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Data processing configuration:3;field:2"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_originFilename"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Filename variable name"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="origin_filename"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Data processing configuration:3;field:3"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_archiveDir"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Archive directory"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="imports/payment/archive"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:2"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_inputDir"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Input directory"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="imports/payment/input"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_variables"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Init and finalize variables"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="MAP"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="mapkey_type" value="STRING"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Dataprocessing configuration:3;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_errorAction"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Error action"/>
+            <column name="field_type" value="LIST"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="CONTINUE"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Data processing configuration:3;field:5"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_fileFormat"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="File format"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="entity_clazz" value="org.meveo.model.admin.FileFormat"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_fileNameFilter"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="File name filter"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:5"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_fileNameExtension"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Extension"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="csv"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:6"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_formatTransfo"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Format transformation"/>
+            <column name="field_type" value="LIST"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" value="None"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Data processing configuration:3;field:4"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_rejectDir"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Reject directory"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:3"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_scriptsFlow"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Script flow"/>
+            <column name="field_type" value="STRING"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="max_value" valueNumeric="256"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Data processing configuration:3;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FlatFileProcessingJob_nbLinesToProcess"/>
+            <column name="applies_to" value="JobInstance_ProcessCustomerPaymentsFileJob"/>
+            <column name="description" value="Nb of lines to process"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:7"/>
+        </insert>
+    </changeSet>
+
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

@@ -90,14 +90,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     /**
      * List of report queries allowed for the current user.
      * return all PUBLIC/ PROTECTED and only PRIVATE created by the user queries
+     * If the current user has query_manager all report queries are returned
      *
      * @param configuration : filtering & pagination configuration used by the query
-     * @param userName      : current user
+     * @param currentUser      : current user
      * @return list of ReportQueries
      */
-    public List<ReportQuery> reportQueriesAllowedForUser(PaginationConfiguration configuration, String userName) {
+    public List<ReportQuery> reportQueriesAllowedForUser(PaginationConfiguration configuration, MeveoUser currentUser) {
         Map<String, Object> filters = ofNullable(configuration.getFilters()).orElse(new HashMap<>());
-        configuration.setFilters(createQueryFilters(userName, filters));
+        if(!currentUser.getRoles().contains("query_manager")) {
+            configuration.setFilters(createQueryFilters(currentUser.getUserName(), filters));
+        }
         return list(configuration);
     }
 
@@ -393,10 +396,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            Date endDate = new Date();
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, outputFilePath, data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, outputFilePath, data.size()));
+        } else {
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
-        return new AsyncResult<>(null);
     }
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity) {
@@ -492,12 +495,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        try(PrintWriter pw = new PrintWriter(dir + File.separator + fileName + extension)) {
+        String filePath = dir + File.separator + fileName + extension;
+        try(PrintWriter pw = new PrintWriter(filePath)) {
             pw.println(header);
             data.stream()
                     .forEach(pw::println);
         }
-        return "reports" + File.separator + fileName + extension;
+        return filePath;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,
@@ -563,12 +567,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     /**
      * Report queries count allowed for current user.
      *
-     * @param userName      : current user
+     * @param currentUser   : current user
      * @param filters       : filters
      * @return number of ReportQueries
      */
-    public Long countAllowedQueriesForUser(String userName, Map<String, Object> filters) {
-        PaginationConfiguration configuration = new PaginationConfiguration(createQueryFilters(userName, filters));
-        return count(configuration);
+    public Long countAllowedQueriesForUser(MeveoUser currentUser, Map<String, Object> filters) {
+        return currentUser.getRoles().contains("query_manager") ? count()
+                : count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
     }
 }

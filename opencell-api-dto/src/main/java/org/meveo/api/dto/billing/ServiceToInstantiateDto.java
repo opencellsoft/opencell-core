@@ -20,14 +20,11 @@ package org.meveo.api.dto.billing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -83,6 +80,11 @@ public class ServiceToInstantiateDto implements Serializable {
     @XmlTransient
     @JsonIgnore
     private ProductVersion productVersion;
+
+    /** Attribute instances */
+    @XmlElementWrapper(name = "attributeInstances")
+    @XmlElement(name = "attributeInstances")
+    private List<AttributeInstanceDto> attributeInstanceDtoList;
 
     /** The rate until date. */
     private Date rateUntilDate;
@@ -315,5 +317,13 @@ public class ServiceToInstantiateDto implements Serializable {
 
     public ServiceCharge getServiceCharge() {
         return serviceTemplate != null ? serviceTemplate : productVersion.getProduct();
+    }
+
+    public List<AttributeInstanceDto> getAttributeInstanceDtoList() {
+        return attributeInstanceDtoList;
+    }
+
+    public void setAttributeInstanceDtoList(List<AttributeInstanceDto> attributeInstanceDtoList) {
+        this.attributeInstanceDtoList = attributeInstanceDtoList;
     }
 }

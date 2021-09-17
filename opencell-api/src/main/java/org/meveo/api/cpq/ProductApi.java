@@ -159,6 +159,9 @@ public class ProductApi extends BaseApi {
 		if(Strings.isEmpty(productDto.getCode())) {
 			missingParameters.add("code");
 		}
+		if(Strings.isEmpty(productDto.getLabel())){
+			missingParameters.add("label");
+		}
 		handleMissingParameters();
 		try {
 			Product product=populateProduct(productDto, true);
@@ -200,6 +203,9 @@ public class ProductApi extends BaseApi {
 			missingParameters.add("productCode");
 		}
 
+		if(Strings.isEmpty(productDto.getLabel())){
+			missingParameters.add("label");
+		}
 		handleMissingParameters();
 		try {
 			Product product = productService.findByCode(productCode);
