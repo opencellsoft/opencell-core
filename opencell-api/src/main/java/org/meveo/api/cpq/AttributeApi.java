@@ -272,9 +272,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				.stream()
 				.forEach(
 						att -> {
-							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getAttributeDto().getCode(), productCode);
+							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
 							if (sourceRules != null && !sourceRules.isEmpty()) {
-								att.getAttributeDto().setRuled(true);
+								att.setRuled(true);
 							}
 						}
 				);
