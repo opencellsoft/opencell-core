@@ -929,7 +929,7 @@ public class ProductApi extends BaseApi {
                         commercialRuleDtoList.add(commercialRuleDto);
                     }
                     offerProduct.setCommercialRules(commercialRuleDtoList);
-                    boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
+                    boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
                     //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), null);
                     offerProduct.setSelectable(isSelectable);
                 }
@@ -949,7 +949,7 @@ public class ProductApi extends BaseApi {
                             commercialRuleCodes.add(rule.getCode());
                         }
                         attributeDto.setCommercialRuleCodes(commercialRuleCodes);
-                        boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts());
+                        boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
                         //processReplacementRules(attributeCommercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                         attributeDto.setSelectable(isSelectable);
                     }
@@ -968,7 +968,7 @@ public class ProductApi extends BaseApi {
                             commercialRuleCodes.add(rule.getCode());
                         }
                         groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
-                        boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts());
+                        boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
                         //processReplacementRules(groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(), null);
                         groupedAttributeDTO.setSelectable(isSelectable);
                     }
@@ -989,7 +989,7 @@ public class ProductApi extends BaseApi {
                 }
                 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                 attributeDto.setRuled(true);
-                boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
+                boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
                 //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                 attributeDto.setSelectable(isSelectable);
             }

@@ -19,10 +19,12 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -60,7 +62,13 @@ public class OfferContextDTO extends BaseEntityDto {
      * The selected products in the quote
      */
     @Schema(description = "The selected products in the quote")
-    private List<ProductContextDTO> selectedProducts=new ArrayList<ProductContextDTO>();;
+    private List<ProductContextDTO> selectedProducts=new ArrayList<ProductContextDTO>();
+    
+    
+    
+    @XmlElement
+    @Schema(description = "The selected services in the quote with their values, DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write")
+    private LinkedHashMap<String, Object> selectedOfferAttributes;
     
    
     
@@ -100,6 +108,12 @@ public class OfferContextDTO extends BaseEntityDto {
 	 */
 	public void setOfferCode(String offerCode) {
 		this.offerCode = offerCode;
+	}
+	public LinkedHashMap<String, Object> getSelectedOfferAttributes() {
+		return selectedOfferAttributes;
+	}
+	public void setSelectedOfferAttributes(LinkedHashMap<String, Object> selectedOfferAttributes) {
+		this.selectedOfferAttributes = selectedOfferAttributes;
 	}
  
 
