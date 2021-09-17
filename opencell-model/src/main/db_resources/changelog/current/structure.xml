@@ -9441,8 +9441,8 @@ public class OrderAdvancement extends ModuleScript {
 	    							 referencedColumnNames="id"/>
     </changeSet>
     
-    <changeSet id="#INTRD-1707_20210914" author="AbdelkaderBouazza">
-        <addColumn tableName="billing_subscription">
+    <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_account_operation">
             <column name="operation_action" type="varchar(255)"/>
         </addColumn>
     </changeSet>
