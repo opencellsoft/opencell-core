@@ -52,7 +52,7 @@ public class ProductToInstantiateDto extends BaseEntityDto implements Serializab
     @XmlElement(required = true)
     private BigDecimal quantity = BigDecimal.ONE;
 
-    private List<OrderAttributeDto> attributeInstances = new ArrayList<>();
+    private List<OrderAttributeDto> attributeInstances = new ArrayList<OrderAttributeDto>();
 
      
 
