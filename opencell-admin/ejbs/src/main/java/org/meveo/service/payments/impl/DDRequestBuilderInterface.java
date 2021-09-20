@@ -27,7 +27,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
-import org.meveo.model.payments.PaymentOrRefundEnum;
 
 /**
  * @author anasseh
@@ -45,16 +44,6 @@ public interface DDRequestBuilderInterface {
      * @throws BusinessException the business exception
      */
     List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
-    
-    /**
-     * Find list of Account operations to pay or refund according the current ddrequestLotOp.
-     *
-     * @param ddrequestLotOp the ddrequest lot op
-     * @param paymentOrRefundEnum if the parameter is filled it will replace the attribute ddrequestLotOp.paymentOrRefundEnum
-     * @return the list of account operation
-     * @throws BusinessException the business exception
-     */
-    List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp, PaymentOrRefundEnum paymentOrRefundEnum) throws BusinessException;
          
    /**
     * Generate the  sdd or sct request file for a given DDRequestLot.
@@ -90,5 +79,5 @@ public interface DDRequestBuilderInterface {
      * @throws BusinessException the BusinessException.
      */
     DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException;
-          
+
 }
