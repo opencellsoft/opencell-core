@@ -62,6 +62,8 @@ import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
+import static org.meveo.commons.utils.StringUtils.isBlank;
+
 /**
  * @author Edward P. Legaspi
  */
@@ -476,8 +478,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         }
 
         String code = (String) values.get(0);
-        Date from = (Date) values.get(1);
-        Date to = (Date) values.get(2);
+        Date from = !isBlank(values.get(1)) ? (Date) values.get(1) : null;
+        Date to = !isBlank(values.get(2)) ? (Date) values.get(2) : null;
 
         List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
