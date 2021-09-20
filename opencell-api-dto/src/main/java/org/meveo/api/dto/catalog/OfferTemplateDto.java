@@ -34,6 +34,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -87,9 +88,13 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 
     /** The  attribute */
+    @XmlElementWrapper(name = "offerAttributes")
+    @XmlElement(name = "offerAttributes")
+    @Schema(description = "list of attributes")
+    protected List<OfferTemplateAttributeDTO> offerAttributes=new ArrayList<OfferTemplateAttributeDTO>();
+    
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    @Schema(description = "list of attributes")
     protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
  
     @XmlElementWrapper(name = "commercialRuleCodes")
@@ -421,19 +426,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.offerProducts = offerProducts;
 	}
 
-	/**
-	 * @return the attributes
-	 */
-	public List<AttributeDTO> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<AttributeDTO> attributes) {
-		this.attributes = attributes;
-	}
  
 	/**
 	 * @return the statusDate
@@ -513,6 +505,34 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	 */
 	public void setOfferModelCode(String offerModelCode) {
 		this.offerModelCode = offerModelCode;
+	}
+
+	/**
+	 * @return the offerAttributes
+	 */
+	public List<OfferTemplateAttributeDTO> getOfferAttributes() {
+		return offerAttributes;
+	}
+
+	/**
+	 * @param offerAttributes the offerAttributes to set
+	 */
+	public void setOfferAttributes(List<OfferTemplateAttributeDTO> offerAttributes) {
+		this.offerAttributes = offerAttributes;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
 	}
 	
 	

@@ -35,7 +35,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.cpq.AttributeApi;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
@@ -46,9 +45,9 @@ import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -88,6 +87,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -460,12 +460,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private void processAttributes(OfferTemplateDto postData, OfferTemplate offerTemplate) {
-        List<AttributeDTO> attributes = postData.getAttributes();
-        offerTemplate.getAttributes().clear();
-        if(attributes != null && !attributes.isEmpty()){
-            offerTemplate.setAttributes(attributes
+        List<OfferTemplateAttributeDTO> offerAttributes = postData.getOfferAttributes();
+        offerTemplate.getOfferAttributes().clear();
+        if(offerAttributes != null && !offerAttributes.isEmpty()){
+            offerTemplate.getOfferAttributes().addAll(offerAttributes
                     .stream()
-                    .map(attributeDTO -> attributeService.findByCode(attributeDTO.getCode()))
+                    .map(offerAttributeDto -> {
+                    	var attribute = attributeService.findByCode(offerAttributeDto.getAttributeCode());
+                    	if(attribute == null)
+                    		throw new EntityDoesNotExistsException(Attribute.class, offerAttributeDto.getAttributeCode());
+                    	return new OfferTemplateAttribute(offerTemplate, attribute, offerAttributeDto.getMandatoryWithEl(), offerAttributeDto.getSequence());
+                    })
                     .collect(Collectors.toList()));
         }
     }
@@ -847,14 +852,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         } 
         if(loadAttributes) {
-            List<Attribute> attributes = offerTemplate.getAttributes();
-            if (attributes != null && !attributes.isEmpty()) {
-                List<AttributeDTO> attributesDto = new ArrayList<>();
-                for (Attribute attribute : attributes) {
-                    attributesDto.add(new AttributeDTO(attribute, entityToDtoConverter.getCustomFieldsDTO(attribute)));
-                }
-                dto.setAttributes(attributesDto);
-            }
+        	dto.setOfferAttributes(offerTemplate.getOfferAttributes().stream().map(OfferTemplateAttributeDTO::new).collect(Collectors.toList()));
         } 
         return dto;
     }

@@ -53,6 +53,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
@@ -157,16 +158,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     private List<Tag> tags = new ArrayList<Tag>();
 
 
-	/**
-	 * list of attributes attached to this offer
-	 */
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-				name = "cpq_offer_attributes",
-				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")
-			)
-    private List<Attribute> attributes = new ArrayList<Attribute>();
 
 
 	/**
@@ -213,6 +204,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_model_id")
     private OfferTemplate offerModel;
+    
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "offerTemplate", orphanRemoval = true)
+    private List<OfferTemplateAttribute> offerAttributes = new ArrayList<OfferTemplateAttribute>();
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -509,22 +504,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.offerComponents = offerComponents;
 	}
 
-
-	/**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
- 
-
 	/**
 	 * @return the medias
 	 */
@@ -618,6 +597,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	 */
 	public void setOfferModel(OfferTemplate offerModel) {
 		this.offerModel = offerModel;
+	}
+
+	/**
+	 * @return the offerAttributes
+	 */
+	public List<OfferTemplateAttribute> getOfferAttributes() {
+		return offerAttributes;
+	}
+
+	/**
+	 * @param offerAttributes the offerAttributes to set
+	 */
+	public void setOfferAttributes(List<OfferTemplateAttribute> offerAttributes) {
+		this.offerAttributes = offerAttributes;
 	}
     
     
