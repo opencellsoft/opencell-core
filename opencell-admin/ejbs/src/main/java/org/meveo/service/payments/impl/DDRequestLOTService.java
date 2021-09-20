@@ -85,10 +85,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	private DDRequestBuilderFactory ddRequestBuilderFactory;
 
 	@Inject
-	private AccountOperationService accountOperationService;
-	
-	
-	@Inject
 	private PaymentGatewayService paymentGatewayService;
 
 	@Inject
@@ -224,7 +220,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider) {
+	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider) throws Exception {
 		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
 	}
 
@@ -238,7 +234,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Boolean isToMatching, PaymentStatusEnum paymentStatus, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
