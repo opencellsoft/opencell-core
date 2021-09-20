@@ -23,12 +23,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
@@ -168,6 +170,8 @@ public class SubscriptionDto extends BusinessEntityDto {
     /**
      * The seller.
      */
+    @XmlElement(required = true)
+    @Schema(description = "Seller code")
     private String seller;
 
     /**

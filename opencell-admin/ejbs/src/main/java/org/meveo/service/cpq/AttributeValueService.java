@@ -4,6 +4,7 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.cpq.AttributeValidationType;
@@ -11,6 +12,7 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 
@@ -57,5 +59,16 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                 .append(" does not match validation pattern ")
                 .append(attributeValue.getAttribute().getValidationPattern());
         return errorMessage.toString();
+       
+    }
+    
+    public static void evaluateMandatoryEl(AttributeValue attributeValue, String mandatoryEl, CpqQuote cpqQuote, QuoteVersion quoteVersion,
+                                     CommercialOrder commercialOrder, ServiceInstance serviceInstance) {
+    	 Object value = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
+    	 var isMandatory = evaluateExpression(mandatoryEl,
+                 Boolean.class, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
+    	 if(isMandatory && value == null ) {
+         	 throw new BusinessException("Attribute code : " +  attributeValue.getAttribute().getCode() + " is mandatory");
+         }
     }
 }

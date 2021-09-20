@@ -812,7 +812,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                                                     .stream()
                                                     .map(ProductVersionAttributeDTO::new)
                                                     .collect(Collectors.toSet());  
-		    									getProductVersionResponse.setAttributes(attributes);
+		    									getProductVersionResponse.setProductAttributes(attributes);
         									}
         								productDTO.setCurrentProductVersion(getProductVersionResponse);
         								}
