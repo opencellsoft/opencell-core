@@ -2930,14 +2930,17 @@ public class SubscriptionApi extends BaseApi {
 
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
-                    OrderAttribute orderAttribute = new OrderAttribute();
+                	OrderAttribute orderAttribute = new OrderAttribute(); 
+                	if(ai.getOrderAttributeCode()!=null) {
                     Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
                     orderAttribute.setAttribute(attribute);
                     orderAttribute.setStringValue(ai.getStringValue());
                     orderAttribute.setDoubleValue(ai.getDoubleValue());
                     orderAttribute.setDateValue(ai.getDateValue());
+                	}
                     return orderAttribute;
-                })
+                	
+                	})
                 .collect(Collectors.toList());
 
         commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes);

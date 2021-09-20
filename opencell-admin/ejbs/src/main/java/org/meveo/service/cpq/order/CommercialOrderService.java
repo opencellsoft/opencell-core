@@ -197,10 +197,12 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setSubscription(subscription);
 
 		for (OrderAttribute orderAttribute : orderAttributes) {
+			if(orderAttribute.getAttribute()!=null) {
 			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 			attributeInstance.setServiceInstance(serviceInstance);
 			attributeInstance.setSubscription(subscription);
 			serviceInstance.addAttributeInstance(attributeInstance);
+			}
 		}
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
