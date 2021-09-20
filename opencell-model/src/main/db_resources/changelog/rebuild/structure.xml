@@ -104,7 +104,7 @@
         <createSequence sequenceName="billing_invoice_seq" />
         <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3" />
         <createSequence sequenceName="billing_invoice_template_seq" />
-        <createSequence sequenceName="billing_rated_transaction_seq" />
+        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="500" />
         <createSequence sequenceName="billing_rejected_ba_seq" />
         <createSequence sequenceName="billing_reservation_seq" />
         <createSequence sequenceName="billing_service_instance_seq" />

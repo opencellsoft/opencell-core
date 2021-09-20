@@ -521,9 +521,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Custom field values in JSON format
      */
-    @Transient
-//    @Type(type = "cfjson")
-//    @Column(name = "cf_values", columnDefinition = "jsonb")
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
