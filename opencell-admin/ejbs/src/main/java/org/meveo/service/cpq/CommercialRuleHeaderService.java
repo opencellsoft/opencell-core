@@ -215,7 +215,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         }
 
                     }
-                    if(selectedOfferAttributes!=null) {
+                    if(line.getSourceProduct() == null && line.getSourceOfferTemplate()!=null) {
                     return isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode);
                     }
                     if (line.getSourceProduct() != null) {
@@ -270,12 +270,17 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, boolean continueProcess, boolean isPreRequisite,String offerCode) {
+    	boolean isSelected=false;
+    	if(line.getSourceAttribute()==null) {
+    		return true;
+    	}
     	if(selectedAttributes!=null) {
     		for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
     			String attributeCode = entry.getKey();
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
     			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
+    				isSelected=true;
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
@@ -312,8 +317,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				}
     			}
     		}
+    	}else if(isPreRequisite && line.getSourceAttribute()!=null) {
+    		return false;
     	}
-    	return true;
+    	return isSelected;
     }
 
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
