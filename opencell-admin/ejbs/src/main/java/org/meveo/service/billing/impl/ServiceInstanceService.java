@@ -563,7 +563,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (applyTerminationCharges) {
             for (TerminationChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
                 if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
-                    log.debug("Applying the termination charge {}", oneShotChargeInstance.getId());
+                    log.info("Applying the termination charge {}", oneShotChargeInstance.getId());
 
                     // #3174 Setting termination informations which will be also reachable from within the "rating scripts"
                     oneShotChargeInstance.setChargeDate(terminationDate);
@@ -597,6 +597,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         // Apply one-shot refunds
         if (terminationReason.isReimburseOneshots()) {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
+                log.info("Reimbursing the subscription charge {}", oneShotChargeInstance.getId());
+
                 // oneShotChargeInstanceService.oneShotChargeApplication(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), null,
                 // terminationDate, oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstance.getQuantity().negate(),
                 // oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(),
