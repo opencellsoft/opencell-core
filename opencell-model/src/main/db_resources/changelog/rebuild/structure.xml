@@ -81,7 +81,7 @@
         <createSequence sequenceName="billing_invoice_seq" />
         <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3" />
         <createSequence sequenceName="billing_invoice_template_seq" />
-        <createSequence sequenceName="billing_rated_transaction_seq" />
+        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="500" />
         <createSequence sequenceName="billing_rejected_ba_seq" />
         <createSequence sequenceName="billing_reservation_seq" />
         <createSequence sequenceName="billing_service_instance_seq" />
@@ -3465,6 +3465,8 @@
             <column name="sort_index" type="int4"/>
             <column name="reject_reason" type="text"/>
             <column name="refunds_wo_id" type="bigint"/>
+            <column name="user_account_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-203">
@@ -8210,7 +8212,17 @@
             <column name="invoice_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
         </createTable>
-    </changeSet>    
+    </changeSet>   
+        
+    <changeSet id="rebuild-str-tbl-430" author="AndriusKarpavicius">  
+        <createTable tableName="billing_wallet_operation_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wo_pending_pk"/>
+            </column>
+            <column name="rated_transaction_id" type="bigint" />
+        </createTable>
+    </changeSet>
+    
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1" dbms="postgresql">
