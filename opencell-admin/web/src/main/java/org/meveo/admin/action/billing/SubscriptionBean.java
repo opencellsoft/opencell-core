@@ -76,6 +76,8 @@ import java.util.Calendar;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.meveo.commons.utils.StringUtils.isBlank;
+
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
@@ -1313,8 +1315,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
 
         String code = (String) values.get(0);
-        Date from = (Date) values.get(1);
-        Date to = (Date) values.get(2);
+        Date from = !isBlank(values.get(1)) ? (Date) values.get(1) : null;
+        Date to = !isBlank(values.get(1)) ? (Date) values.get(2) : null;
 
         List<Subscription> matchedVersions = subscriptionService.getMatchingVersions(code, from, to, entity.getId());
 
