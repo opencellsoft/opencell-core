@@ -198,14 +198,6 @@ public class ProductApi extends BaseApi {
 		if(Strings.isEmpty(productCode)){
 			missingParameters.add("productCode");
 		}
-
-		if(Strings.isEmpty(productDto.getCode())){
-			missingParameters.add("productCode");
-		}
-
-		if(Strings.isEmpty(productDto.getLabel())){
-			missingParameters.add("label");
-		}
 		handleMissingParameters();
 		try {
 			Product product = productService.findByCode(productCode);
@@ -218,8 +210,12 @@ public class ProductApi extends BaseApi {
 
 			//set current product version
 			var versions = productVersionService.findLastVersionByCode(productCode);
-			product.setCode(productDto.getCode());
-			product.setDescription(productDto.getLabel());
+			if(!Strings.isEmpty(productDto.getCode())){
+				product.setCode(productDto.getCode());
+			}
+			if(!Strings.isEmpty(productDto.getLabel())){
+				product.setDescription(productDto.getLabel());
+			}
 			if(!StringUtils.isBlank(productDto.getProductLineCode())) {
 				ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
 				if (productLine == null) {
@@ -273,12 +269,24 @@ public class ProductApi extends BaseApi {
 	    		product.getDiscountList().addAll(discountList);
 			}
 
-			product.setReference(productDto.getReference());
-			product.setModel(productDto.getModel());
-			product.setModelChildren(productDto.getModelChildren());
-			product.setDiscountFlag(productDto.isDiscountFlag());
-			product.setPackageFlag(productDto.isPackageFlag());
-			createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
+	    	if(productDto.getReference() != null){
+				product.setReference(productDto.getReference());
+			}
+	    	if(productDto.getModel() != null){
+				product.setModel(productDto.getModel());
+			}
+	    	if(productDto.getModelChildren() != null){
+				product.setModelChildren(productDto.getModelChildren());
+			}
+			if(productDto.isDiscountFlag() != null){
+				product.setDiscountFlag(productDto.isDiscountFlag());
+			}
+			if(productDto.isPackageFlag() != null){
+				product.setPackageFlag(productDto.isPackageFlag());
+			}
+			if(productDto.getProductChargeTemplateMappingDto() != null){
+				createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
+			}
 
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
@@ -286,10 +294,11 @@ public class ProductApi extends BaseApi {
 			if(publishedVersion.size() >= 1 ) {
 				product.setCurrentVersion(publishedVersion.get(0));
 			}else {
-				var noPublishedVersion = versions.stream()
+				versions.stream()
 						.filter(pv -> pv.getStatus().equals(VersionStatusEnum.DRAFT))
-							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
-				product.setCurrentVersion(noPublishedVersion.get(0));
+						.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable()))
+						.findFirst()
+						.ifPresent(productVersion -> product.setCurrentVersion(productVersion));
 			}
 
 			Boolean isModel = productDto.getIsModel();
@@ -303,12 +312,14 @@ public class ProductApi extends BaseApi {
 			if(!StringUtils.isBlank(productDto.getProductModelCode())) {
 	    		product.setProductModel(loadEntityByCode(productService, productDto.getProductModelCode(), Product.class));
 	    	}
-			var commercialRuleheaderAdded = new ArrayList<CommercialRuleHeader>();
-			for (String commercialRuleCode : productDto.getCommercialRuleCodes()) {
-				commercialRuleheaderAdded.add(loadEntityByCode(commercialRuleHeaderService, commercialRuleCode, CommercialRuleHeader.class));
+			if(productDto.getCommercialRuleCodes() != null){
+				var commercialRuleheaderAdded = new ArrayList<CommercialRuleHeader>();
+				for (String commercialRuleCode : productDto.getCommercialRuleCodes()) {
+					commercialRuleheaderAdded.add(loadEntityByCode(commercialRuleHeaderService, commercialRuleCode, CommercialRuleHeader.class));
+				}
+				product.getCommercialRuleHeader().clear();
+				product.getCommercialRuleHeader().addAll(commercialRuleheaderAdded);
 			}
-			product.getCommercialRuleHeader().clear();
-			product.getCommercialRuleHeader().addAll(commercialRuleheaderAdded);
 			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
