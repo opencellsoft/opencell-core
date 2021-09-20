@@ -712,7 +712,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax, BigDecimal unitAmountWithoutTax,
             BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, String parameter1, String parameter2,
             String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate, OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription,
-            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, AccountingCode accountingCode, WalletOperationStatusEnum status, UserAccount userAccount) {
+            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, AccountingCode accountingCode, WalletOperationStatusEnum status, UserAccount userAccount, BillingAccount billingAccount) {
         super();
         this.code = code;
         this.description = description;
@@ -758,10 +758,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         if (offerTemplate != null) {
             this.offerCode = offerTemplate.getCode();
         }
-        if (userAccount != null) {
-            this.userAccount = userAccount;
-            this.billingAccount = this.userAccount.getBillingAccount();
-        }
+        this.userAccount = userAccount;
+        this.billingAccount = billingAccount;
 
         this.status = status != null ? status : WalletOperationStatusEnum.OPEN;
         this.created = new Date();
@@ -1064,6 +1062,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     protected WalletOperation fillUnratedClone(WalletOperation result) {
         result.setBillingAccount(billingAccount);
+        result.setUserAccount(userAccount);
         result.setChargeInstance(chargeInstance);
         result.setCode(code);
         result.setCounter(counter);
