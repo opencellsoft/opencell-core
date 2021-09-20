@@ -780,15 +780,15 @@ public class ProductApi extends BaseApi {
 		}
 	}
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
-		Set<ProductVersionAttributeDTO> attributeCodes = postData.getAttributes(); 
+		Set<ProductVersionAttributeDTO> attributeCodes = postData.getProductAttributes(); 
 		productVersion.getAttributes().clear();
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
             List<ProductVersionAttribute> attributes=new ArrayList<ProductVersionAttribute>();
 			for(ProductVersionAttributeDTO attr:attributeCodes) {
                 var currentSequence = attr.getSequence();
-				Attribute attribute=attributeService.findByCode(attr.getAttributeDto().getCode());
+				Attribute attribute=attributeService.findByCode(attr.getAttributeCode());
 				if(attribute == null) { 
-                    throw new EntityDoesNotExistsException(Attribute.class, attr.getAttributeDto().getCode());
+                    throw new EntityDoesNotExistsException(Attribute.class, attr.getAttributeCode());
 				}
 				ProductVersionAttribute productAttribute = new ProductVersionAttribute(productVersion, attribute, currentSequence, attr.getMandatoryWithEl());
                 attributes.add(productAttribute);
@@ -951,8 +951,7 @@ public class ProductApi extends BaseApi {
 				 
 				 
 				 GetProductVersionResponse productVersionResponse =(GetProductVersionResponse)offerProduct.getProduct().getCurrentProductVersion();
-				 for(ProductVersionAttributeDTO  attr:productVersionResponse.getAttributes()) {
-					 var attributeDto = attr.getAttributeDto();
+				 for(AttributeDTO  attributeDto:productVersionResponse.getAttributes()) {
 					 List<CommercialRuleHeader> attributeCommercialRules=commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
 					 if(attributeCommercialRules!=null && !attributeCommercialRules.isEmpty()) {
 						 List<String> commercialRuleCodes= new ArrayList<String>();
