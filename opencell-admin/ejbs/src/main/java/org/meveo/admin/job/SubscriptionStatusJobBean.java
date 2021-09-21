@@ -93,6 +93,12 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
                                 subscription);
                             calendarDate = calendarRenew.nextCalendarDate(subscription.getSubscribedTillDate());
 						} else {
+							if (subscription.getSubscriptionRenewal().getRenewForUnit() == null ||
+									subscription.getSubscriptionRenewal().getRenewFor() == null) {
+								log.error("Subscription is autoRenew with RenewalTermType equal to RECURRING, " +
+										"but has fields RenewForUnit and/or RenewFor set to NULL!");
+								throw new BusinessException("Subscription fields RenewForUnit and RenewFor shouldn't be set to NULL");
+							}
 							calendar.setTime(subscription.getSubscribedTillDate());
 							calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());
 							calendarDate = calendar.getTime();
