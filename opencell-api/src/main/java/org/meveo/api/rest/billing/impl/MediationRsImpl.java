@@ -22,9 +22,12 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.CdrErrorDto;
+import org.meveo.api.dto.billing.CdrErrorListDto;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
@@ -34,6 +37,8 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
+
+import java.util.List;
 
 /**
  * Mediation related API REST implementation
@@ -57,7 +62,10 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
         try {
             String ip = StringUtils.isBlank(httpServletRequest.getHeader("x-forwarded-for")) ? httpServletRequest.getRemoteAddr() : httpServletRequest.getHeader("x-forwarded-for");
             postData.setIpAddress(ip);
-            mediationApi.registerCdrList(postData);
+            List<CdrErrorDto> cdrErrorDtos = mediationApi.registerCdrList(postData);
+            if(!cdrErrorDtos.isEmpty())
+                return new CdrErrorListDto(ActionStatusEnum.FAIL, "error while creating CDRs", cdrErrorDtos);
+
         } catch (Exception e) {
             processException(e, result);
         }
