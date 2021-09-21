@@ -577,7 +577,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return number of ReportQueries
      */
     public Long countAllowedQueriesForUser(MeveoUser currentUser, Map<String, Object> filters) {
-        return currentUser.getRoles().contains("query_manager") ? count()
-                : count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
+        if(currentUser.getRoles().contains("query_manager")) {
+                return count(new PaginationConfiguration(filters));
+        } else {
+            return count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
+        }
+
     }
 }
