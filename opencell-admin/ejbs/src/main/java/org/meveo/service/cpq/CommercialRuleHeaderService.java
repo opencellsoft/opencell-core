@@ -190,8 +190,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return true;
     }
     
-    public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,
-                                       List<ProductContextDTO> selectedProducts) {
+    public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,List<ProductContextDTO> selectedProducts,LinkedHashMap<String, Object> selectedOfferAttributes) {
         Boolean isSelectable = Boolean.FALSE;
         commercialRules = commercialRules.stream().filter(rule -> !RuleTypeEnum.REPLACEMENT.equals(rule.getRuleType())).collect(Collectors.toList());
         List<CommercialRuleItem> items = null;
@@ -216,6 +215,9 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         }
 
                     }
+                    if(line.getSourceProduct() == null && line.getSourceOfferTemplate()!=null) {
+                    return isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode);
+                    }
                     if (line.getSourceProduct() != null) {
                         String sourceProductCode = line.getSourceProduct().getCode();
                         ProductContextDTO productContext = selectedProducts.stream()
@@ -234,51 +236,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         	isSelectable=true;
                         	
                         }
-                        if (line.getSourceAttribute() != null && productContext != null && productContext.getSelectedAttributes() != null) {
-
-                            LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
-                            for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
-                                String attributeCode = entry.getKey();
-                                Object attributeValue = entry.getValue();
-                                String convertedValue = String.valueOf(attributeValue);
-                                if (attributeCode.equals(line.getSourceAttribute().getCode())) {
-                                    switch (line.getSourceAttribute().getAttributeType()) {
-                                        case LIST_MULTIPLE_TEXT:
-                                        case LIST_MULTIPLE_NUMERIC:
-                                            List<String> values = Arrays.asList(convertedValue.split(";"));
-                                            if (!values.contains(line.getSourceAttributeValue())) {
-                                                if (continueProcess) {
-                                                    continue;
-                                                } else {
-                                                    return false;
-                                                }
-                                            }
-                                        case EXPRESSION_LANGUAGE:
-                                            OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
-                                            String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
-                                            convertedValue = result;
-                                            if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
-                                                    || !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
-                                                if (continueProcess) {
-                                                    continue;
-                                                } else {
-                                                    return false;
-                                                }
-                                            }
-                                        default:
-                                            if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
-                                                    || !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
-                                                if (continueProcess) {
-                                                    continue;
-                                                } else {
-                                                    return false;
-                                                }
-                                            }
-
-                                    }
-                                }
-                            }
-                        }
+                        if (line.getSourceAttribute() != null && productContext!=null){ 
+                        		return isSelectedAttribute(productContext.getSelectedAttributes(),line,continueProcess, isPreRequisite,offerCode) ;
+                        }   
+                        
                         if (line.getSourceGroupedAttributes() != null && productContext != null && productContext.getSelectedGroupedAttributes() != null) {
                             LinkedHashMap<String, Object> selectedGroupedAttributes = productContext.getSelectedGroupedAttributes();
                             for (Entry<String, Object> entry : selectedGroupedAttributes.entrySet()) {
@@ -305,6 +266,61 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
         }
         return true;
+    }
+    
+    
+    private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, boolean continueProcess, boolean isPreRequisite,String offerCode) {
+    	boolean isSelected=false;
+    	if(line.getSourceAttribute()==null) {
+    		return true;
+    	}
+    	if(selectedAttributes!=null) {
+    		for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
+    			String attributeCode = entry.getKey();
+    			Object attributeValue = entry.getValue();
+    			String convertedValue = String.valueOf(attributeValue);
+    			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
+    				isSelected=true;
+    				switch (line.getSourceAttribute().getAttributeType()) {
+    				case LIST_MULTIPLE_TEXT:
+    				case LIST_MULTIPLE_NUMERIC:
+    					List<String> values = Arrays.asList(convertedValue.split(";"));
+    					if (!values.contains(line.getSourceAttributeValue())) {
+    						if (continueProcess) {
+    							continue;
+    						} else {
+    							return false;
+    						}
+    					}
+    				case EXPRESSION_LANGUAGE:
+    					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
+    					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
+    					convertedValue = result;
+    					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
+    							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
+    						if (continueProcess) {
+    							continue;
+    						} else {
+    							return false;
+    						}
+    					}
+    				default:
+    					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
+    							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
+    						if (continueProcess) {
+    							continue;
+    						} else {
+    							return false;
+    						}
+    					}
+
+    				}
+    			}
+    		}
+    	}else if(isPreRequisite && line.getSourceAttribute()!=null) {
+    		return false;
+    	}
+    	return isSelected;
     }
 
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
