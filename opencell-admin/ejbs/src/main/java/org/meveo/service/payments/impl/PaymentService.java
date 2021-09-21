@@ -251,7 +251,6 @@ public class PaymentService extends PersistenceService<Payment> {
     	
     	
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
-        doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         
@@ -287,8 +286,7 @@ public class PaymentService extends PersistenceService<Payment> {
             
             Long aoPaymentId = null;
             PaymentErrorTypeEnum errorType = null;
-            PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus();
-            if (PaymentStatusEnum.ACCEPTED == status || PaymentStatusEnum.PENDING == status) {
+            PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus(); 
                 if (isNewCard) {
                     preferredMethod = addCardFromPayment(doPaymentResponseDto.getTokenId(), customerAccount, cardNumber, cardType, ownerName, cvv, expiryDate);
                 }
@@ -316,11 +314,7 @@ public class PaymentService extends PersistenceService<Payment> {
                             log.warn("Cant create matching :", e);
                         }
                     }
-                }
-            } else {
-                errorType = PaymentErrorTypeEnum.REJECT;
-                log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
-            }
+                } 
            
             if (PaymentMethodEnum.CARD == paymentMethodType) {
                 if (!(preferredMethod instanceof CardPaymentMethod)) {
