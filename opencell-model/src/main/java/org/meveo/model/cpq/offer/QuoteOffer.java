@@ -56,6 +56,7 @@ public class QuoteOffer extends AuditableCFEntity {
 		this.contractCode = copy.contractCode;
 		this.position = copy.position;
 		this.cfValues = copy.getCfValues();
+		this.sequence=copy.sequence;
 	}
 
 
