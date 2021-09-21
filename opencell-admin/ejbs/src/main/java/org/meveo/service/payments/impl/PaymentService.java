@@ -248,10 +248,14 @@ public class PaymentService extends PersistenceService<Payment> {
     public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
             String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+    	
+    	
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
         doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
+        
+        
         try {
             boolean isNewCard = !StringUtils.isBlank(cardNumber);
             AccountOperation aoToPayRefund = accountOperationService.findById(aoIdsToPay.get(0));
@@ -279,49 +283,8 @@ public class PaymentService extends PersistenceService<Payment> {
                 paymentGateway = matchedPaymentGatewayForTheCA;
             }
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-            if (PaymentMethodEnum.CARD == paymentMethodType) {
-                if (!(preferredMethod instanceof CardPaymentMethod)) {
-                    throw new PaymentException(PaymentErrorEnum.PAY_CARD_CANNOT_BE_PREFERED, "Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
-                }
-                // If card payment method is currently not valid, find a valid
-                // one and mark it as preferred or throw an exception
-                if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
-                    preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
-                    if (preferredMethod != null) {
-                        customerAccount = customerAccountService.update(customerAccount);
-                    } else {
-                        throw new PaymentException(PaymentErrorEnum.PAY_CB_INVALID, "There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
-                    }
-                }
-                if (isPayment) {
-                    if (isNewCard) {
-                        doPaymentResponseDto = gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, null, null);
-                    } else {
-                        doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(((CardPaymentMethod) preferredMethod), ctsAmount, null);
-                    }
-                } else {
-                    if (isNewCard) {
-                        doPaymentResponseDto = gatewayPaymentInterface.doRefundCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, null, null);
-                    } else {
-                        doPaymentResponseDto = gatewayPaymentInterface.doRefundToken(((CardPaymentMethod) preferredMethod), ctsAmount, null);
-                    }
-                }
-
-            }
-            if (PaymentMethodEnum.DIRECTDEBIT == paymentMethodType) {
-                if (!(preferredMethod instanceof DDPaymentMethod)) {
-                    throw new PaymentException(PaymentErrorEnum.PAY_METHOD_IS_NOT_DD, "Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
-                }
-                if (StringUtils.isBlank(((DDPaymentMethod) preferredMethod).getMandateIdentification())) {
-                    throw new PaymentException(PaymentErrorEnum.PAY_SEPA_MANDATE_BLANK, "Can not process payment sepa as Mandate is blank");
-                }
-                if (isPayment) {
-                    doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
-                } else {
-                    doPaymentResponseDto = gatewayPaymentInterface.doRefundSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
-                }
-            }
-
+            
+            
             Long aoPaymentId = null;
             PaymentErrorTypeEnum errorType = null;
             PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus();
@@ -358,7 +321,58 @@ public class PaymentService extends PersistenceService<Payment> {
                 errorType = PaymentErrorTypeEnum.REJECT;
                 log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
             }
+           
+            if (PaymentMethodEnum.CARD == paymentMethodType) {
+                if (!(preferredMethod instanceof CardPaymentMethod)) {
+                    throw new PaymentException(PaymentErrorEnum.PAY_CARD_CANNOT_BE_PREFERED, "Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
+                }
+                // If card payment method is currently not valid, find a valid
+                // one and mark it as preferred or throw an exception
+                if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
+                    preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
+                    if (preferredMethod != null) {
+                        customerAccount = customerAccountService.update(customerAccount);
+                    } else {
+                        throw new PaymentException(PaymentErrorEnum.PAY_CB_INVALID, "There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
+                    }
+                }
+                
+                if (isPayment) {
+                    if (isNewCard) {
+                        doPaymentResponseDto = gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, null, null);
+                    } else {
+                        doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(((CardPaymentMethod) preferredMethod), ctsAmount, null);
+                    }
+                } else {
+                    if (isNewCard) {
+                        doPaymentResponseDto = gatewayPaymentInterface.doRefundCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, null, null);
+                    } else {
+                        doPaymentResponseDto = gatewayPaymentInterface.doRefundToken(((CardPaymentMethod) preferredMethod), ctsAmount, null);
+                    }
+                }
 
+            }
+            if (PaymentMethodEnum.DIRECTDEBIT == paymentMethodType) {
+                if (!(preferredMethod instanceof DDPaymentMethod)) {
+                    throw new PaymentException(PaymentErrorEnum.PAY_METHOD_IS_NOT_DD, "Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
+                }
+                if (StringUtils.isBlank(((DDPaymentMethod) preferredMethod).getMandateIdentification())) {
+                    throw new PaymentException(PaymentErrorEnum.PAY_SEPA_MANDATE_BLANK, "Can not process payment sepa as Mandate is blank");
+                }
+                if (isPayment) {
+                    doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
+                } else {
+                    doPaymentResponseDto = gatewayPaymentInterface.doRefundSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
+                }
+            }
+            
+            if(PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
+            	paymentCallback(doPaymentResponseDto.getPaymentID(), PaymentStatusEnum.REJECTED, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage());
+            }
+            if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus()){
+            	throw new BusinessException("The payment is not processed!");
+            }
+             
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
 
