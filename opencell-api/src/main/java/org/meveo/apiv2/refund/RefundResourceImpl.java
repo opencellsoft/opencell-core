@@ -6,6 +6,7 @@ import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.payment.RefundApi;
 import org.meveo.model.payments.*;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 import javax.inject.Inject;
@@ -22,6 +23,8 @@ public class RefundResourceImpl implements RefundResource{
     private RefundApi refundApi;
     @Inject
     private CustomerAccountService customerAccountService;
+    @Inject
+    private AccountOperationService accountOperationService;
 
 
     @Override
@@ -46,10 +49,13 @@ public class RefundResourceImpl implements RefundResource{
         }
         if(PaymentMethodEnum.DIRECTDEBIT.equals(CAByCode.getPreferredPaymentMethodType()) && (sctRefund.getAoToRefund() != null && !sctRefund.getAoToRefund().isEmpty())){
             HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());
-            CAByCode.getAccountOperations().stream()
+            customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"))
+                    .getAccountOperations().stream()
                     .filter(accountOperation -> aoIds.contains(accountOperation.getId()))
-                    .forEach(accountOperation -> accountOperation.setOperationAction(OperationActionEnum.TO_REFUND));
-
+                    .forEach(accountOperation -> {
+                        accountOperation.setOperationAction(OperationActionEnum.TO_REFUND);
+                        accountOperationService.update(accountOperation);
+                    });
         }
         return Response.ok().build();
     }
