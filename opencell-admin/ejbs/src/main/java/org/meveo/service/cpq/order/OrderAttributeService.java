@@ -40,21 +40,31 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     
     private void checkOrderAttributeMandatoryEl(OrderAttribute orderAttribute) {
     	if(!orderAttribute.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var mandatoryEl = orderAttribute.getAttribute().getProductVersionAttributes()
-        									.stream()
-        									.filter(pva -> 
-        										pva.getAttribute().getCode().equalsIgnoreCase(orderAttribute.getAttribute().getCode()) &&
-        													pva.getProductVersion().getId() == orderAttribute.getOrderProduct().getProductVersion().getId()
-        									)
-        									.findFirst();
-        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(orderAttribute, 
-        									mandatoryEl.get().getMandatoryWithEl(), 
-        									orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
-        									null, 
-        									orderAttribute.getCommercialOrder(), 
-        									null);
-        	}
+    		if(orderAttribute.getOrderProduct() != null 
+    				&& orderAttribute.getOrderProduct().getProductVersion() != null) {
+	        	var mandatoryEl = findMandatoryByProductVersion(orderAttribute, orderAttribute.getOrderProduct().getProductVersion());
+	        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(orderAttribute, 
+	        									mandatoryEl.get().getMandatoryWithEl(), 
+	        									orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
+	        									null, 
+	        									orderAttribute.getCommercialOrder(), 
+	        									null);
+	        	}
+    		}
+    		if(orderAttribute.getOrderOffer() != null 
+    				&&  orderAttribute.getOrderOffer().getOfferTemplate() != null ) {
+	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(orderAttribute, orderAttribute.getOrderOffer().getOfferTemplate());
+				if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
+					super.evaluateMandatoryEl(orderAttribute, 
+							offerTemplatMandatoryEl.get().getMandatoryWithEl(), 
+							orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
+							null, 
+							orderAttribute.getCommercialOrder(), 
+						
+							null);
+		    		}
+    		}
         }
     }
     

@@ -160,6 +160,11 @@ public class Attribute extends EnableBusinessCFEntity{
     @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id")
     private List<ProductVersionAttribute> productVersionAttributes = new ArrayList<>();
+    
+
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OrderBy("id")
+    private List<OfferTemplateAttribute> offerTemplateAttribute = new ArrayList<>();
 
     public Attribute(){
 	}
@@ -410,5 +415,19 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setProductVersionAttributes(List<ProductVersionAttribute> productVersionAttributes) {
 		this.productVersionAttributes = productVersionAttributes;
+	}
+
+	/**
+	 * @return the offerTemplateAttribute
+	 */
+	public List<OfferTemplateAttribute> getOfferTemplateAttribute() {
+		return offerTemplateAttribute;
+	}
+
+	/**
+	 * @param offerTemplateAttribute the offerTemplateAttribute to set
+	 */
+	public void setOfferTemplateAttribute(List<OfferTemplateAttribute> offerTemplateAttribute) {
+		this.offerTemplateAttribute = offerTemplateAttribute;
 	}
 }

@@ -1,12 +1,11 @@
 package org.meveo.service.billing.impl;
 
+import javax.ejb.Stateless;
+
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.service.cpq.AttributeValueService;
-
-import javax.ejb.Stateless;
 
 @Stateless
 public class AttributeInstanceService extends AttributeValueService<AttributeInstance> {
@@ -34,21 +33,26 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
 
     private void checkOrderAttributeMandatoryEl(AttributeInstance attributeInstance) {
     	if(!attributeInstance.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var mandatoryEl = attributeInstance.getAttribute().getProductVersionAttributes()
-        									.stream()
-        									.filter(pva -> 
-        										pva.getAttribute().getCode().equalsIgnoreCase(attributeInstance.getAttribute().getCode()) &&
-        													pva.getProductVersion().getId() == attributeInstance.getServiceInstance().getProductVersion().getId()
-        									)
-        									.findFirst();
-        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(	attributeInstance, 
-        									mandatoryEl.get().getMandatoryWithEl(), 
-        									null, 
-        									null, 
-        									attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
-        									attributeInstance.getServiceInstance());
-        	}
+    		if(attributeInstance.getServiceInstance() != null 
+    				&& attributeInstance.getServiceInstance().getProductVersion() != null) {
+	        	var mandatoryEl = findMandatoryByProductVersion(attributeInstance, attributeInstance.getServiceInstance().getProductVersion());
+	        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(	attributeInstance, 
+	        									mandatoryEl.get().getMandatoryWithEl(), null, null, 
+	        									attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
+	        									attributeInstance.getServiceInstance());
+	        	}
+    		}
+    		if(attributeInstance.getSubscription() != null 
+    				&& attributeInstance.getSubscription().getOffer() != null) {
+	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(attributeInstance, attributeInstance.getSubscription().getOffer());
+			if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
+				super.evaluateMandatoryEl(	attributeInstance, 
+						offerTemplatMandatoryEl.get().getMandatoryWithEl(), null, null, 
+						attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
+						attributeInstance.getServiceInstance());
+	    		}
+    		}
         }
     }
 }

@@ -9464,4 +9464,32 @@ public class OrderAdvancement extends ModuleScript {
     	</dropColumn>
     </changeSet>
     
+    <changeSet id="INTRD-1901_20210920" author="TarikFA.">
+    	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
+    			<tableExists tableName="offer_template_attribute_seq"/>
+    	</preConditions>
+    	<createSequence sequenceName="offer_template_attribute_seq"/>
+    	<createTable tableName="offer_template_attribute">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_offer_template_attribute_pk"/>
+            </column>
+            <column name="version" type="int4" defaultValue="0" />
+    		<column name="mandatorwith_el" type="varchar(255)"/>
+            <column name="offer_template_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="sequence" type="INT4" defaultValue="0" />
+    	</createTable>
+    	
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_offer_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+                                 
+    </changeSet>
+    
 </databaseChangeLog>

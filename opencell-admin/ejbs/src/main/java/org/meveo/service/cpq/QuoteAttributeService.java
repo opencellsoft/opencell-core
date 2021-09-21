@@ -4,9 +4,12 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteVersion;
+
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -58,16 +61,21 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
 
 	private void checkMandatoryEl(QuoteAttribute quoteAttribute, QuoteVersion quoteVersion) {
     	if(!quoteAttribute.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var mandatoryEl = quoteAttribute.getAttribute().getProductVersionAttributes()
-        									.stream()
-        									.filter(pva -> 
-        										pva.getAttribute().getCode().equalsIgnoreCase(quoteAttribute.getAttribute().getCode()) &&
-        													pva.getProductVersion().getId() == quoteAttribute.getQuoteProduct().getProductVersion().getId()
-        									)
-        									.findFirst();
-        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(quoteAttribute, mandatoryEl.get().getMandatoryWithEl(), quoteVersion.getQuote(), quoteVersion, null, null);
-        	}
+    		if(quoteAttribute.getQuoteProduct() != null
+    				&& quoteAttribute.getQuoteProduct().getProductVersion() != null) {
+	        	var mandatoryEl = findMandatoryByProductVersion(quoteAttribute, quoteAttribute.getQuoteProduct().getProductVersion());
+	        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(quoteAttribute, mandatoryEl.get().getMandatoryWithEl(), quoteVersion.getQuote(), quoteVersion, null, null);
+	        	}	
+    		}
+    		
+    		if(quoteAttribute.getQuoteOffer() != null 
+    				&& quoteAttribute.getQuoteOffer().getOfferTemplate() != null) {
+	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(quoteAttribute, quoteAttribute.getQuoteOffer().getOfferTemplate());
+				if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(quoteAttribute, offerTemplatMandatoryEl.get().getMandatoryWithEl(), quoteVersion.getQuote(), quoteVersion, null, null);
+	        	}
+    		}
         }
     }
 }
