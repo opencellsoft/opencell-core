@@ -42,7 +42,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 				throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
 		}
 		create(entity);
-		if (isUseSubAccountingPeriods) {
+		if (Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
 			if (entity.getSubAccountingPeriodType() == null) {
 				throw new BusinessApiException("subAccountingPeriodType cannot be null to use subAccountingPeriods");
 			}

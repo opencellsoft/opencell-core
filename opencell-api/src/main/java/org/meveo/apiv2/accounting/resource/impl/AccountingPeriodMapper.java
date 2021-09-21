@@ -18,8 +18,8 @@ public class AccountingPeriodMapper extends ResourceMapper<org.meveo.apiv2.accou
 	public org.meveo.apiv2.accounting.AccountingPeriod toResource(AccountingPeriod entity) {
 		try {
 			ImmutableAccountingPeriod resource = (ImmutableAccountingPeriod) initResource(ImmutableAccountingPeriod.class, entity);
-			return ImmutableAccountingPeriod.builder().from(resource).id(entity.getId()).fiscalYear(entity.getAccountingPeriodYear()).subAccountingPeriodType(entity.getSubAccountingPeriodType().toString())
-					.build();
+			return ImmutableAccountingPeriod.builder().from(resource).id(entity.getId()).fiscalYear(entity.getAccountingPeriodYear())
+					.subAccountingPeriodType(String.valueOf(entity.getSubAccountingPeriodType())).build();
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
