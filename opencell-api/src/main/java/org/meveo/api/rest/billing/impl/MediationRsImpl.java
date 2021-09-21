@@ -35,7 +35,6 @@ import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
-import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
 
@@ -65,7 +64,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
             postData.setIpAddress(ip);
             List<CdrErrorDto> cdrErrorDtos = mediationApi.registerCdrList(postData);
             if(!cdrErrorDtos.isEmpty())
-                throw  new BadRequestException(new CdrErrorListDto(ActionStatusEnum.FAIL, "error while creating CDRs", cdrErrorDtos));
+                return new CdrErrorListDto(ActionStatusEnum.FAIL, "error while creating CDRs", cdrErrorDtos);
 
         } catch (Exception e) {
             processException(e, result);
