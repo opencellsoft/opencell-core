@@ -13,6 +13,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
+import org.meveo.model.accounting.RegularUserLockOption;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -33,11 +34,15 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(startDate, entity.getEndDate()));
 		}
 		if(entity.getForceOption() != null && entity.getForceOption().equals(AccountingPeriodForceEnum.CUSTOM_DAY)) {
-			if(entity.getForceCustomDay() == null || entity.getForceCustomDay().intValue() == 0)
+			if (entity.getForceCustomDay() == null || entity.getForceCustomDay().intValue() == 0)
 				throw new BusinessApiException("When force option is set to CUSTOM_DAY then the force custom day must not be null");
 		}
+		if (RegularUserLockOption.CUSTOM.equals(entity.getRegularUserLockOption())) {
+			if (entity.getCustomLockNumberDays() == null || entity.getCustomLockOption() == null)
+				throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
+		}
 		create(entity);
-		if (isUseSubAccountingPeriods) {
+		if (Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
 			if (entity.getSubAccountingPeriodType() == null) {
 				throw new BusinessApiException("subAccountingPeriodType cannot be null to use subAccountingPeriods");
 			}

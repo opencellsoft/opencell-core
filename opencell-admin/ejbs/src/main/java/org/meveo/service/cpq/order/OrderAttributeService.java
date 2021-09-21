@@ -4,10 +4,7 @@ import javax.ejb.Stateless;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.cpq.AttributeValueService;
 
 /**
@@ -32,23 +29,33 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     
     private void checkOrderAttributeMandatoryEl(OrderAttribute orderAttribute) {
     	if(!orderAttribute.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var productVersionAttributeOptional = orderAttribute.getAttribute().getProductVersionAttributes()
-        									.stream()
-        									.filter(pva -> 
-        										pva.getAttribute().getCode().equalsIgnoreCase(orderAttribute.getAttribute().getCode()) &&
-        													pva.getProductVersion().getId() == orderAttribute.getOrderProduct().getProductVersion().getId()
-        									)
-        									.findFirst();
-        	var productVersionAttribute = productVersionAttributeOptional.get();
-        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),
-        									orderAttribute, 
-        									productVersionAttribute.getMandatoryWithEl(), 
-        									orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
-        									null, 
-        									orderAttribute.getCommercialOrder(), 
-        									null);
-        	}
+    		if(orderAttribute.getOrderProduct() != null 
+    				&& orderAttribute.getOrderProduct().getProductVersion() != null) {
+	        	var productVersionAttributeOptional = findMandatoryByProductVersion(orderAttribute, orderAttribute.getOrderProduct().getProductVersion());
+	        	var productVersionAttribute = productVersionAttributeOptional.get();
+	        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),
+							orderAttribute, 
+							productVersionAttribute.getMandatoryWithEl(), 
+							orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
+							null, 
+							orderAttribute.getCommercialOrder(), 
+							null);
+	        	}
+    		}
+    		if(orderAttribute.getOrderOffer() != null 
+    				&&  orderAttribute.getOrderOffer().getOfferTemplate() != null ) {
+	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(orderAttribute, orderAttribute.getOrderOffer().getOfferTemplate());
+				if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
+					super.evaluateMandatoryEl(null, null, orderAttribute, 
+							offerTemplatMandatoryEl.get().getMandatoryWithEl(), 
+							orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
+							null, 
+							orderAttribute.getCommercialOrder(), 
+						
+							null);
+		    		}
+    		}
         }
     }
     

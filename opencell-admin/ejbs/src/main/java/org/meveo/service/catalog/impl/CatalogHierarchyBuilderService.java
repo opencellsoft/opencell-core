@@ -1231,6 +1231,7 @@ public class CatalogHierarchyBuilderService {
     	quoteVersion.getQuoteOffers().size();
     	quoteVersion.getQuoteOffers().forEach(qo -> {
     		qo.getQuoteProduct().size();
+    		qo.getQuoteAttributes().size();
     		qo.getQuoteProduct().forEach(qp -> {
     			qp.getQuoteAttributes().size();
     			qp.getQuoteArticleLines().size();
@@ -1282,6 +1283,8 @@ public class CatalogHierarchyBuilderService {
     		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
     		quoteOfferService.create(duplicate);
     		duplicateQuoteProduct(quoteProducts, duplicate);
+
+			duplicateQuoteAttribute(quoteOffer.getQuoteAttributes(), null, duplicate);
 		}
     }
     
@@ -1297,7 +1300,7 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
 			quoteProductService.create(duplicate);
 			
-			duplicateQuoteAttribute(quoteAttributes, duplicate);
+			duplicateQuoteAttribute(quoteAttributes, duplicate, null);
 			duplicateArticleLine(quoteArticleLines, duplicate);
 			
 		}
@@ -1314,11 +1317,14 @@ public class CatalogHierarchyBuilderService {
     }
     
     
-    private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct) {
+    private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct, QuoteOffer offer) {
     	for (QuoteAttribute quoteAttribute : attributes) {
 			final var duplicate = new QuoteAttribute(quoteAttribute);
 			quoteAttributeService.detach(quoteAttribute);
-			duplicate.setQuoteProduct(quoteProduct);
+			if(quoteProduct != null)
+				duplicate.setQuoteProduct(quoteProduct);
+			if(offer != null)
+				duplicate.setQuoteOffer(offer);
 			quoteAttributeService.create(duplicate);
 		}
     }

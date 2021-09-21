@@ -25,26 +25,27 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
 
     private void checkOrderAttributeMandatoryEl(AttributeInstance attributeInstance) {
     	if(!attributeInstance.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var productVersionAttributeOptional = attributeInstance.getAttribute().getProductVersionAttributes()
-        									.stream()
-        									.filter(pva -> 
-        										pva.getAttribute().getCode().equalsIgnoreCase(attributeInstance.getAttribute().getCode()) &&
-        													pva.getProductVersion().getId() == attributeInstance.getServiceInstance().getProductVersion().getId()
-        									)
-        									.findFirst();
-        	var productVersionAttribute = productVersionAttributeOptional.get();
-        	
-        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), 
-        									productVersionAttribute.getValidationPattern(),
-        									attributeInstance, 
-        									productVersionAttribute.getMandatoryWithEl(), 
-        									null, 
-        									null, 
-        									attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
-        									attributeInstance.getServiceInstance());
-        	
-        	}
-    	}
+    		if(attributeInstance.getServiceInstance() != null 
+    				&& attributeInstance.getServiceInstance().getProductVersion() != null) {
+	        	var productVersionAttributeOptional = findMandatoryByProductVersion(attributeInstance, attributeInstance.getServiceInstance().getProductVersion());
+	        	var productVersionAttribute = productVersionAttributeOptional.get();
+	        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(), attributeInstance, 
+	        				productVersionAttribute.getMandatoryWithEl(), null, null, 
+	        									attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
+	        									attributeInstance.getServiceInstance());
+	        	}
+    		}
+    		if(attributeInstance.getSubscription() != null 
+    				&& attributeInstance.getSubscription().getOffer() != null) {
+	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(attributeInstance, attributeInstance.getSubscription().getOffer());
+			if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
+				super.evaluateMandatoryEl(	null, null,attributeInstance,  
+						offerTemplatMandatoryEl.get().getMandatoryWithEl(), null, null, 
+						attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
+						attributeInstance.getServiceInstance());
+	    		}
+    		}
+        }
     }
 }

@@ -482,7 +482,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
             for (Entry<String, Object> entry : filters.entrySet()) {
                 if(!(entry.getValue() instanceof Boolean)) {
-                    result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    if(entry.getKey().length()>1 && entry.getKey().contains(" ")){
+                        String[] compareExpression = entry.getKey().split(" ");
+                        result.setParameter("a_" + compareExpression[compareExpression.length-1], entry.getValue());
+                    }else{
+                        result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    }
                 }
             }
         }
@@ -572,7 +577,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return number of ReportQueries
      */
     public Long countAllowedQueriesForUser(MeveoUser currentUser, Map<String, Object> filters) {
-        return currentUser.getRoles().contains("query_manager") ? count()
-                : count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
+        if(currentUser.getRoles().contains("query_manager")) {
+                return count(new PaginationConfiguration(filters));
+        } else {
+            return count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
+        }
+
     }
 }

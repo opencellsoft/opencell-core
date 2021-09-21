@@ -289,7 +289,10 @@
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
 
-
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

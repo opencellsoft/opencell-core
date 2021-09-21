@@ -8,7 +8,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteVersion;
-
 /**
  * @author Khairi
  * @version 10.0
@@ -48,21 +47,26 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
 
 	private void checkMandatoryEl(QuoteAttribute quoteAttribute, QuoteVersion quoteVersion) {
     	if(!quoteAttribute.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var mandatoryEl = quoteAttribute.getAttribute().getProductVersionAttributes()
-        									.stream()
-        									.filter(pva -> 
-        										pva.getAttribute().getCode().equalsIgnoreCase(quoteAttribute.getAttribute().getCode()) &&
-        													pva.getProductVersion().getId() == quoteAttribute.getQuoteProduct().getProductVersion().getId()
-        									)
-        									.findFirst();
-        	var productVersionAttribute = mandatoryEl.get();
-        	if(mandatoryEl.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), 
-        									productVersionAttribute.getValidationPattern(), 
-        									quoteAttribute, 
-        									productVersionAttribute.getMandatoryWithEl(), 
-        									quoteVersion.getQuote(), quoteVersion, null, null);
-        	}
+    		if(quoteAttribute.getQuoteProduct() != null
+    				&& quoteAttribute.getQuoteProduct().getProductVersion() != null) {
+	        	var mandatoryEl = findMandatoryByProductVersion(quoteAttribute, quoteAttribute.getQuoteProduct().getProductVersion());
+	        	var productVersionAttribute = mandatoryEl.get();
+	        	if(mandatoryEl.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), 
+							productVersionAttribute.getValidationPattern(), 
+							quoteAttribute, 
+							productVersionAttribute.getMandatoryWithEl(), 
+							quoteVersion.getQuote(), quoteVersion, null, null);
+	        	}	
+    		}
+    		
+    		if(quoteAttribute.getQuoteOffer() != null 
+    				&& quoteAttribute.getQuoteOffer().getOfferTemplate() != null) {
+	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(quoteAttribute, quoteAttribute.getQuoteOffer().getOfferTemplate());
+				if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
+	        		super.evaluateMandatoryEl(null, null, quoteAttribute, offerTemplatMandatoryEl.get().getMandatoryWithEl(), quoteVersion.getQuote(), quoteVersion, null, null);
+	        	}
+    		}
         }
     }
 }

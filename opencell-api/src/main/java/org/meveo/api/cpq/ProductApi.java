@@ -942,95 +942,98 @@ public class ProductApi extends BaseApi {
 		 }
 		 return result;
 	 }
-	 
-	 
-	 public GetCpqOfferResponseDto listPost(OfferContextDTO  offerContextDTO ) {
-		 GetCpqOfferResponseDto result=new GetCpqOfferResponseDto();
-		 List<String> requestedTagTypes=offerContextDTO.getCustomerContextDTO().getRequestedTagTypes();
-		 String offerCode=offerContextDTO.getOfferCode();
-		 if(Strings.isEmpty(offerCode)) {
-			 missingParameters.add("offerCode");
-		 }
-		 OfferTemplate offerTemplate=offerTemplateService.findByCode(offerCode);
-		 if (offerTemplate == null) {
-			 throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode,"offerCode");
-		 }   
-		 log.info("OfferTemplateApi requestedTagTypes={}",requestedTagTypes);   
-		 GetOfferTemplateResponseDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
-		 for(OfferProductsDto offerProduct:offertemplateDTO.getOfferProducts()) {
-			 if(offerProduct.getProduct()!=null && offerProduct.getProduct().getCurrentProductVersion()!=null ) {
-				 List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion()); 
-				 if(commercialRules!=null && !commercialRules.isEmpty()) {
-					 List<CommercialRuleHeaderDTO >commercialRuleDtoList=new ArrayList<CommercialRuleHeaderDTO>();
-					 for(CommercialRuleHeader rule:commercialRules) {
-						 CommercialRuleHeaderDTO commercialRuleDto=new CommercialRuleHeaderDTO(rule);
-						 commercialRuleDtoList.add(commercialRuleDto);
-					 }	
-					 offerProduct.setCommercialRules(commercialRuleDtoList);
-					 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
-					 offerProduct.setSelectable(isSelectable);
-				 }
-				 
-				 List<Long> sourceProductRules=commercialRuleLineService.getSourceProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion()); 
-				 if(sourceProductRules!=null && !sourceProductRules.isEmpty()) {
-					 offerProduct.setRuled(true); 
-				 }
-				 
-				 
-				 GetProductVersionResponse productVersionResponse =(GetProductVersionResponse)offerProduct.getProduct().getCurrentProductVersion();
-				 for(AttributeDTO  attributeDto:productVersionResponse.getAttributes()) {
-					 List<CommercialRuleHeader> attributeCommercialRules=commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
-					 if(attributeCommercialRules!=null && !attributeCommercialRules.isEmpty()) {
-						 List<String> commercialRuleCodes= new ArrayList<String>();
-						 for(CommercialRuleHeader rule:attributeCommercialRules) { 
-							 commercialRuleCodes.add(rule.getCode());
-						 } 
-						 attributeDto.setCommercialRuleCodes(commercialRuleCodes); 
-						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts());
-						 attributeDto.setSelectable(isSelectable);
-					 }
-					 List<Long> sourceRules=commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
-					 if(sourceRules!=null && !sourceRules.isEmpty()) {
-						 attributeDto.setRuled(true); 
-					 } 
-				 }   
-				
-				 
-					 for(GroupedAttributeDto groupedAttributeDTO:productVersionResponse.getGroupedAttributes()) { 
-					 List<CommercialRuleHeader> groupedAttributeCommercialRules=commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
-					 if(groupedAttributeCommercialRules!=null && !groupedAttributeCommercialRules.isEmpty()) {
-						 List<String> commercialRuleCodes= new ArrayList<String>();
-						 for(CommercialRuleHeader rule:groupedAttributeCommercialRules) { 
-							 commercialRuleCodes.add(rule.getCode());
-						 } 
-						 groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
-						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts());
-						 groupedAttributeDTO.setSelectable(isSelectable);
-					 }
-					 List<Long> sourceGroupedAttributeRules=commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
-					 if(sourceGroupedAttributeRules!=null && !sourceGroupedAttributeRules.isEmpty()) {
-						 groupedAttributeDTO.setRuled(true); 
-					 }
-				 }  
-				   offerProduct.getProduct().setCurrentProductVersion(productVersionResponse);
-			 }
-		 } 
-		 for(AttributeDTO attributeDto:offertemplateDTO.getAttributes()) {
-			 List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
-			 if(commercialRules!=null && !commercialRules.isEmpty()) {
-				 List<String> commercialRuleCodes= new ArrayList<String>();
-				 for(CommercialRuleHeader rule:commercialRules) { 
-					 commercialRuleCodes.add(rule.getCode());
-				 } 
-				 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
-				 attributeDto.setRuled(true);
-				 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
-				 attributeDto.setSelectable(isSelectable);
-			 }
-		 }
-		 
-		 result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
-		 return result;
-	 }
+	  
+    public GetCpqOfferResponseDto listPost(OfferContextDTO offerContextDTO) {
+        GetCpqOfferResponseDto result = new GetCpqOfferResponseDto();
+        List<String> requestedTagTypes = offerContextDTO.getCustomerContextDTO().getRequestedTagTypes();
+        String offerCode = offerContextDTO.getOfferCode();
+        if (Strings.isEmpty(offerCode)) {
+            missingParameters.add("offerCode");
+        }
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
+        if (offerTemplate == null) {
+            throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode, "offerCode");
+        }
+        log.info("OfferTemplateApi requestedTagTypes={}", requestedTagTypes);
+        GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes);
+        for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
+            if (offerProduct.getProduct() != null && offerProduct.getProduct().getCurrentProductVersion() != null) {
+                List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
+                if (commercialRules != null && !commercialRules.isEmpty()) {
+                    List<CommercialRuleHeaderDTO> commercialRuleDtoList = new ArrayList<CommercialRuleHeaderDTO>();
+                    for (CommercialRuleHeader rule : commercialRules) {
+                        CommercialRuleHeaderDTO commercialRuleDto = new CommercialRuleHeaderDTO(rule);
+                        commercialRuleDtoList.add(commercialRuleDto);
+                    }
+                    offerProduct.setCommercialRules(commercialRuleDtoList);
+                    boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
+                    //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), null);
+                    offerProduct.setSelectable(isSelectable);
+                }
+
+                List<Long> sourceProductRules = commercialRuleLineService.getSourceProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
+                if (sourceProductRules != null && !sourceProductRules.isEmpty()) {
+                    offerProduct.setRuled(true);
+                }
+
+
+                GetProductVersionResponse productVersionResponse = (GetProductVersionResponse) offerProduct.getProduct().getCurrentProductVersion();
+                for (AttributeDTO attributeDto : productVersionResponse.getAttributes()) {
+                    List<CommercialRuleHeader> attributeCommercialRules = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+                    if (attributeCommercialRules != null && !attributeCommercialRules.isEmpty()) {
+                        List<String> commercialRuleCodes = new ArrayList<String>();
+                        for (CommercialRuleHeader rule : attributeCommercialRules) {
+                            commercialRuleCodes.add(rule.getCode());
+                        }
+                        attributeDto.setCommercialRuleCodes(commercialRuleCodes);
+                        boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
+                        //processReplacementRules(attributeCommercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
+                        attributeDto.setSelectable(isSelectable);
+                    }
+                    List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+                    if (sourceRules != null && !sourceRules.isEmpty()) {
+                        attributeDto.setRuled(true);
+                    }
+                }
+
+
+                for (GroupedAttributeDto groupedAttributeDTO : productVersionResponse.getGroupedAttributes()) {
+                    List<CommercialRuleHeader> groupedAttributeCommercialRules = commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+                    if (groupedAttributeCommercialRules != null && !groupedAttributeCommercialRules.isEmpty()) {
+                        List<String> commercialRuleCodes = new ArrayList<String>();
+                        for (CommercialRuleHeader rule : groupedAttributeCommercialRules) {
+                            commercialRuleCodes.add(rule.getCode());
+                        }
+                        groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
+                        boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
+                        //processReplacementRules(groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(), null);
+                        groupedAttributeDTO.setSelectable(isSelectable);
+                    }
+                    List<Long> sourceGroupedAttributeRules = commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+                    if (sourceGroupedAttributeRules != null && !sourceGroupedAttributeRules.isEmpty()) {
+                        groupedAttributeDTO.setRuled(true);
+                    }
+                }
+                offerProduct.getProduct().setCurrentProductVersion(productVersionResponse);
+            }
+        }
+        for (AttributeDTO attributeDto : offertemplateDTO.getAttributes()) {
+            List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
+            if (commercialRules != null && !commercialRules.isEmpty()) {
+                List<String> commercialRuleCodes = new ArrayList<String>();
+                for (CommercialRuleHeader rule : commercialRules) {
+                    commercialRuleCodes.add(rule.getCode());
+                }
+                attributeDto.setCommercialRuleCodes(commercialRuleCodes);
+                attributeDto.setRuled(true);
+                boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes());
+                //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
+                attributeDto.setSelectable(isSelectable);
+            }
+        }
+
+        result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
+        return result;
+    }
 
 }
