@@ -20,36 +20,30 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
 
     @Override
     public void create(OrderAttribute orderAttribute) throws BusinessException {
-        if (orderAttribute.getAttribute() != null
-                && orderAttribute.getAttribute().getValidationPattern() != null) {
-        	super.validateValue(orderAttribute, orderAttribute.getCommercialOrder().getQuote(), orderAttribute.getCommercialOrder().getQuoteVersion(), orderAttribute.getCommercialOrder(), null);
-        	checkOrderAttributeMandatoryEl(orderAttribute);
-        }
+        checkOrderAttributeMandatoryEl(orderAttribute);
         super.create(orderAttribute);
     }
 
     @Override
     public OrderAttribute update(OrderAttribute orderAttribute) throws BusinessException {
-        if (orderAttribute.getAttribute() != null
-                && orderAttribute.getAttribute().getValidationPattern() != null) {
-        	super.validateValue(orderAttribute, orderAttribute.getCommercialOrder().getQuote(), orderAttribute.getCommercialOrder().getQuoteVersion(), orderAttribute.getCommercialOrder(), null);
-        	checkOrderAttributeMandatoryEl(orderAttribute);
-        }
+        checkOrderAttributeMandatoryEl(orderAttribute);
         return super.update(orderAttribute);
     }
     
     private void checkOrderAttributeMandatoryEl(OrderAttribute orderAttribute) {
     	if(!orderAttribute.getAttribute().getProductVersionAttributes().isEmpty()) {
-        	var mandatoryEl = orderAttribute.getAttribute().getProductVersionAttributes()
+        	var productVersionAttributeOptional = orderAttribute.getAttribute().getProductVersionAttributes()
         									.stream()
         									.filter(pva -> 
         										pva.getAttribute().getCode().equalsIgnoreCase(orderAttribute.getAttribute().getCode()) &&
         													pva.getProductVersion().getId() == orderAttribute.getOrderProduct().getProductVersion().getId()
         									)
         									.findFirst();
-        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(orderAttribute, 
-        									mandatoryEl.get().getMandatoryWithEl(), 
+        	var productVersionAttribute = productVersionAttributeOptional.get();
+        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),
+        									orderAttribute, 
+        									productVersionAttribute.getMandatoryWithEl(), 
         									orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
         									null, 
         									orderAttribute.getCommercialOrder(), 

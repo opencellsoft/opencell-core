@@ -1,15 +1,13 @@
 package org.meveo.service.cpq;
 
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteVersion;
-
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
 
 /**
  * @author Khairi
@@ -33,25 +31,17 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
 
     @Override
     public void create(QuoteAttribute quoteAttribute) throws BusinessException {
-        if(quoteAttribute.getAttribute() != null
-                && quoteAttribute.getAttribute().getValidationPattern() != null) {
-        	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
-        			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
-            super.validateValue(quoteAttribute, quoteVersion.getQuote(), quoteVersion, null, null);
-            checkMandatoryEl(quoteAttribute, quoteVersion);
-        }
+    	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
+    			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
+        checkMandatoryEl(quoteAttribute, quoteVersion);
         super.create(quoteAttribute);
     }
 
     @Override
     public QuoteAttribute update(QuoteAttribute quoteAttribute) throws BusinessException {
-        if(quoteAttribute.getAttribute() != null
-                && quoteAttribute.getAttribute().getValidationPattern() != null) {
-        	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
-        			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
-        			super.validateValue(quoteAttribute, quoteVersion.getQuote(), quoteVersion, null, null);
-        			checkMandatoryEl(quoteAttribute, quoteVersion);
-        }
+    	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
+    			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
+		checkMandatoryEl(quoteAttribute, quoteVersion);
         return super.update(quoteAttribute);
     }
     
@@ -65,8 +55,13 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
         													pva.getProductVersion().getId() == quoteAttribute.getQuoteProduct().getProductVersion().getId()
         									)
         									.findFirst();
-        	if(mandatoryEl.isPresent() && !Strings.isEmpty(mandatoryEl.get().getMandatoryWithEl())) {
-        		super.evaluateMandatoryEl(quoteAttribute, mandatoryEl.get().getMandatoryWithEl(), quoteVersion.getQuote(), quoteVersion, null, null);
+        	var productVersionAttribute = mandatoryEl.get();
+        	if(mandatoryEl.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), 
+        									productVersionAttribute.getValidationPattern(), 
+        									quoteAttribute, 
+        									productVersionAttribute.getMandatoryWithEl(), 
+        									quoteVersion.getQuote(), quoteVersion, null, null);
         	}
         }
     }

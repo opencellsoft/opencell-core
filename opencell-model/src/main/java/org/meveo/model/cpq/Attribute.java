@@ -3,8 +3,6 @@
  */
 package org.meveo.model.cpq;
 
-import static javax.persistence.EnumType.STRING;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,11 +27,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
@@ -66,13 +62,6 @@ public class Attribute extends EnableBusinessCFEntity{
     private Attribute parentAttribute;
 	 
 	
-	  /**
-     * Mandatory
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "mandatory")
-    @NotNull
-    protected boolean mandatory=Boolean.FALSE;
     
     
     /**
@@ -103,13 +92,6 @@ public class Attribute extends EnableBusinessCFEntity{
     @Column(name = "attribute_type")
     protected AttributeTypeEnum attributeType;
 
-	  /**
-     * Display
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "display")
-    @NotNull
-    protected boolean display;
     
     
     /**
@@ -136,25 +118,8 @@ public class Attribute extends EnableBusinessCFEntity{
     protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
 
 
-	@Type(type = "numeric_boolean")
-    @Column(name = "read_only")
-    protected Boolean readOnly = Boolean.FALSE;
-	
-	@Column(name = "default_value")
-	private String defaultValue;
-
 	@ManyToMany(mappedBy = "attributes")
 	private List<GroupedAttributes> groupedAttributes;
-
-	@Column(name = "validation_type", length = 10)
-	@Enumerated(STRING)
-	private AttributeValidationType validationType;
-
-	@Column(name = "validation_pattern", length = 2000)
-	private String validationPattern;
-
-	@Column(name = "validation_label")
-	private String validationLabel;
 	
 
     @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
@@ -168,19 +133,6 @@ public class Attribute extends EnableBusinessCFEntity{
 		this.id = id;
 	}
 
-	/**
-	 * @return the mandatory
-	 */
-	public boolean isMandatory() {
-		return mandatory;
-	}
-
-	/**
-	 * @param mandatory the mandatory to set
-	 */
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
 
 	/**
 	 * @return the priority
@@ -209,20 +161,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setAllowedValues(Set<String> allowedValues) {
 		this.allowedValues = allowedValues;
-	}
-
-	/**
-	 * @return the display
-	 */
-	public boolean isDisplay() {
-		return display;
-	}
-
-	/**
-	 * @param display the display to set
-	 */
-	public void setDisplay(boolean display) {
-		this.display = display;
 	}
 
 	/**
@@ -338,33 +276,6 @@ public class Attribute extends EnableBusinessCFEntity{
 		this.medias = medias;
 	}
 
-	/**
-	 * @return the readOnly
-	 */
-	public Boolean getReadOnly() {
-		return readOnly;
-	}
-
-	/**
-	 * @param readOnly the readOnly to set
-	 */
-	public void setReadOnly(Boolean readOnly) {
-		this.readOnly = readOnly;
-	}
-
-	/**
-	 * @return the defaultValue
-	 */
-	public String getDefaultValue() {
-		return defaultValue;
-	}
-
-	/**
-	 * @param defaultValue the defaultValue to set
-	 */
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
 
 	public List<GroupedAttributes> getGroupedAttributes() {
 		return groupedAttributes;
@@ -372,30 +283,6 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
-	}
-
-	public AttributeValidationType getValidationType() {
-		return validationType;
-	}
-
-	public void setValidationType(AttributeValidationType validationType) {
-		this.validationType = validationType;
-	}
-
-	public String getValidationPattern() {
-		return validationPattern;
-	}
-
-	public void setValidationPattern(String validationPattern) {
-		this.validationPattern = validationPattern;
-	}
-
-	public String getValidationLabel() {
-		return validationLabel;
-	}
-
-	public void setValidationLabel(String validationLabel) {
-		this.validationLabel = validationLabel;
 	}
 
 	/**

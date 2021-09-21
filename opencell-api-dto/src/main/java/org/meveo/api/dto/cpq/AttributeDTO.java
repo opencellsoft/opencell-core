@@ -67,23 +67,12 @@ public class AttributeDTO extends EnableBusinessDto {
      */
     @Schema(description = "Corresponding to predefined allowed values")
     protected Set<String> allowedValues;
-	  /**
-     * Display
-     */
-    @Schema(description = "diplay the attribute")
-    protected boolean display;
     
     /**
      * The lower number, the higher the priority is
      */
     @Schema(description = "The lower number, the higher the priority is")
     protected Integer priority ;
-    /**
-     * Mandatory
-     */
-    @NotNull
-    @Schema(description = "indicate if the attribute is mandatory")
-    protected boolean mandatory=Boolean.FALSE;
 
     @Schema(description = "indicate if the attribute is selectable")
    protected boolean selectable=Boolean.TRUE;
@@ -122,28 +111,16 @@ public class AttributeDTO extends EnableBusinessDto {
     @Schema(description = "number of decimal for attribute if the type of attribute is a NUMBER")
     private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
 
-    @Schema(description = "indicate if the attribute is read only")
-    protected boolean readOnly = Boolean.FALSE;
     
 
     @Schema(description = "list of custom field associated to attribute")
     protected CustomFieldsDto customFields;
 
-    @Schema(description = "default value for attribute")
-    protected String defaultValue;
 
 	@XmlElementWrapper(name = "groupedAttributes")
 	@XmlElement(name ="groupedAttributes")
 	private List<GroupedAttributeDto> groupedAttributes;
 
-	@Schema(description = "Validation type", example = "Possible value are: EL, REGEX")
-	protected AttributeValidationType validationType;
-
-	@Schema(description = "Validation pattern")
-	protected String validationPattern;
-
-	@Schema(description = "Validation label")
-	protected String validationLabel;
     
     public AttributeDTO() {
     }
@@ -157,14 +134,10 @@ public class AttributeDTO extends EnableBusinessDto {
      */
     public AttributeDTO(Attribute attribute) {
         super(attribute);
-        mandatory=attribute.isMandatory();
         priority=attribute.getPriority();
         allowedValues=attribute.getAllowedValues();
         attributeType=attribute.getAttributeType();
-        display=attribute.isDisplay();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
-        readOnly = attribute.getReadOnly();
-        defaultValue = attribute.getDefaultValue();
         this.setDisabled(attribute.isDisabled());
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
@@ -214,25 +187,6 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.allowedValues = allowedValues;
 	}
 
-
-
-	/**
-	 * @return the display
-	 */
-	public boolean isDisplay() {
-		return display;
-	}
-
-
-
-	/**
-	 * @param display the display to set
-	 */
-	public void setDisplay(boolean display) {
-		this.display = display;
-	}
-
-
 	/**
 	 * @return the priority
 	 */
@@ -250,32 +204,12 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
-
-	/**
-	 * @return the mandatory
-	 */
-	public boolean isMandatory() {
-		return mandatory;
-	}
-
-
-
-	/**
-	 * @param mandatory the mandatory to set
-	 */
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
-
-
 	/**
 	 * @return the commercialRuleCodes
 	 */
 	public List<String> getCommercialRuleCodes() {
 		return commercialRuleCodes;
 	}
-
-
 
 	/**
 	 * @param commercialRuleCodes the commercialRuleCodes to set
@@ -417,34 +351,12 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.unitNbDecimal = unitNbDecimal;
 	}
 
-
-
-	/**
-	 * @return the readOnly
-	 */
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-
-
-	/**
-	 * @param readOnly the readOnly to set
-	 */
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
-
-
-
 	/**
 	 * @return the customFields
 	 */
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
-
-
 
 	/**
 	 * @param customFields the customFields to set
@@ -453,54 +365,11 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.customFields = customFields;
 	}
 
-
-
-	/**
-	 * @return the defaultValue
-	 */
-	public String getDefaultValue() {
-		return defaultValue;
-	}
-
-
-	/**
-	 * @param defaultValue the defaultValue to set
-	 */
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-
-
-
 	public List<GroupedAttributeDto> getGroupedAttributes() {
 		return groupedAttributes;
 	}
 
 	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
-	}
-
-	public AttributeValidationType getValidationType() {
-		return validationType;
-	}
-
-	public void setValidationType(AttributeValidationType validationType) {
-		this.validationType = validationType;
-	}
-
-	public String getValidationPattern() {
-		return validationPattern;
-	}
-
-	public void setValidationPattern(String validationPattern) {
-		this.validationPattern = validationPattern;
-	}
-
-	public String getValidationLabel() {
-		return validationLabel;
-	}
-
-	public void setValidationLabel(String validationLabel) {
-		this.validationLabel = validationLabel;
 	}
 }
