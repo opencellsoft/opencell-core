@@ -39,6 +39,7 @@ import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.billing.CdrErrorDto;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
@@ -106,40 +107,47 @@ public class MediationApi extends BaseApi {
      * @param postData String of CDRs. This CDR is parsed and created as EDR. CDR is same format use in mediation job
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
+     * @return
      */
-    public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
+    public List<CdrErrorDto> registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
         List<String> cdrLines = postData.getCdr();
         if (cdrLines == null || cdrLines.size() == 0) {
             missingParameters.add("cdr");
         }
 
         handleMissingParameters();
+        List<CdrErrorDto> errors = new ArrayList<>();
         ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
-        CDR cdr = null;        
-        try {
-            ListIterator<String> cdrIterator = cdrLines.listIterator();
-            while (cdrIterator.hasNext()) {
-                cdr = cdrParser.parseByApi(cdrIterator.next(), currentUser.getUserName(), postData.getIpAddress());
-                if(cdr.getRejectReason() != null) {
+        CDR cdr = null;
+        String cdrLine = null;
+        ListIterator<String> cdrIterator = cdrLines.listIterator();
+        while (cdrIterator.hasNext()) {
+            try {
+                cdrLine = cdrIterator.next();
+                cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), postData.getIpAddress());
+                if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, cdr.getRejectReason());
                     cdr.setStatus(CDRStatusEnum.ERROR);
                     createOrUpdateCdr(cdr);
+                    errors.add(new CdrErrorDto(cdrLine, cdr.getRejectReason()));
                 } else {
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
-                    cdrParsingService.createEdrs(edrs,cdr);
-                }                
+                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
+                    cdrParsingService.createEdrs(edrs, cdr);
+                }
+            } catch (Exception e) {
+                String errorReason = e.getMessage();
+                if (e instanceof CDRParsingException) {
+                    log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason);
+                } else {
+                    log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
+                }
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                createOrUpdateCdr(cdr);
+                errors.add(new CdrErrorDto(cdrLine,errorReason));
             }
-        } catch (Exception e) {
-            String errorReason = e.getMessage();
-            if (e instanceof CDRParsingException) {
-                log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason);
-            } else {
-                log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
-            }
-            cdr.setStatus(CDRStatusEnum.ERROR);
-            createOrUpdateCdr(cdr);
         }
+        return errors;
     }
 
     /**
