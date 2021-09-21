@@ -49,6 +49,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
@@ -117,6 +118,9 @@ import com.google.common.collect.ImmutableMap;
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
+    private static final String APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION = "apply.minima.even.on.zero.transaction";
+
+
     private static final String INVOICING_PROCESS_TYPE = "RatedTransaction";
 
     @Inject
@@ -166,6 +170,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private MinAmountService minAmountService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -779,7 +786,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String mapKeyPrefix = seller.getId().toString() + "_";
 
             BigDecimal diff = minAmount.subtract(totalInvoiceableAmount);
-            if (diff.compareTo(BigDecimal.ZERO) <= 0) {
+            if (diff.compareTo(BigDecimal.ZERO) <= 0 || (BigDecimal.ZERO.equals(totalInvoiceableAmount) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {
                 continue;
             }
 

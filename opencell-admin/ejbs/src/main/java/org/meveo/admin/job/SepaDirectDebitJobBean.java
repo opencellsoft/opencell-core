@@ -19,10 +19,14 @@ package org.meveo.admin.job;
 
 import static java.lang.Boolean.TRUE;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -47,6 +51,7 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.OperationActionEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -54,6 +59,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestBuilderFactory;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestBuilderService;
@@ -75,6 +81,8 @@ import org.slf4j.Logger;
  */
 @Stateless
 public class SepaDirectDebitJobBean extends BaseJobBean {
+
+    private static final long serialVersionUID = -8373708606864696832L;
 
     /** The log. */
     @Inject
@@ -104,6 +112,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     @Inject
     private SellerService sellerService;
 
+	@Inject
+	private AccountOperationService accountOperationService;
+
     /** The app provider. */
     @Inject
     @ApplicationProvider
@@ -113,9 +124,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    
     @Inject
     private  ParamBeanFactory paramBeanFactory;
+
     /**
      * Execute.
      *
@@ -189,19 +200,38 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
+
+						if (paymentOrRefundEnum == PaymentOrRefundEnum.REFUND) {
+						    listAoToPay = Stream.ofNullable(this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp))
+	                                .flatMap(Collection::stream)
+	                                .filter(accountOperation -> OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction()))
+	                                .collect(Collectors.toList());
+                        }
+
 						if (listAoToPay == null || listAoToPay.isEmpty()) {
 							throw new BusinessEntityException("no invoices!");
 						}
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
-							result.addReport(ddRequestLOT.getRejectedCause());
-							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-                                dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");							
+
+							// Sepa file generation
+                            dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
+                            result.addReport(ddRequestLOT.getRejectedCause());
+
+                            if (StringUtils.isBlank(ddRequestLOT.getRejectedCause())) {
+                                // Creation of payment account transaction
+                                if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
+                                    dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
+                                    log.info("end createPaymentsOrRefundsForDDRequestLot");
+                                }
+                            }
 						}
-					}
+
+						// Update operationAction of each Account operation to "NONE"
+						accountOperationService.updateAOOperationActionToNone(listAoToPay.stream()
+								.map(accountOperation -> accountOperation.getId())
+								.collect(Collectors.toList()));
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
                         if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {					    
@@ -370,5 +400,4 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
         }
         return null;
     }
-
 }

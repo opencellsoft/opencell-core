@@ -39,6 +39,12 @@ public class ProductVersionAttribute extends BaseEntity {
    @JoinColumn(name = "attribute_id", nullable = false)
    @NotNull
    private Attribute attribute;
+   
+   
+   @Column(name = "mandatorwith_el",length = 255)
+   private String mandatoryWithEl;
+   
+   
    public ProductVersionAttribute(){
    }
    public ProductVersionAttribute(ProductVersion productVersion, Attribute attribute, Integer sequence) {
@@ -46,6 +52,11 @@ public class ProductVersionAttribute extends BaseEntity {
        this.productVersion = productVersion;
        this.attribute = attribute;
        this.sequence = sequence;
+   }
+
+   public ProductVersionAttribute(ProductVersion productVersion, Attribute attribute, Integer sequence, String mandatoryWithEl) {
+      this(productVersion, attribute, sequence);
+      this.mandatoryWithEl = mandatoryWithEl;
    }
    /**
     * @return the productVersion
@@ -83,5 +94,17 @@ public class ProductVersionAttribute extends BaseEntity {
    public void setAttribute(Attribute attribute) {
        this.attribute = attribute;
    }
+/**
+ * @return the mandatoryWithEl
+ */
+public String getMandatoryWithEl() {
+	return mandatoryWithEl;
+}
+/**
+ * @param mandatoryWithEl the mandatoryWithEl to set
+ */
+public void setMandatoryWithEl(String mandatoryWithEl) {
+	this.mandatoryWithEl = mandatoryWithEl;
+}
 
 }

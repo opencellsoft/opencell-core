@@ -37,14 +37,13 @@ import org.meveo.model.payments.DDRequestLotOp;
 public interface DDRequestBuilderInterface {
     
     /**
-     * Find list of Account operations to pay or refund according the current ddrequestLotOp .
+     * Find list of Account operations to pay or refund according the current ddrequestLotOp.
      *
      * @param ddrequestLotOp the ddrequest lot op
      * @return the list of account operation
      * @throws BusinessException the business exception
      */
     List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
-    
          
    /**
     * Generate the  sdd or sct request file for a given DDRequestLot.
@@ -80,5 +79,5 @@ public interface DDRequestBuilderInterface {
      * @throws BusinessException the BusinessException.
      */
     DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException;
-          
+
 }

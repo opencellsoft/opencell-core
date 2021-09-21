@@ -116,8 +116,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.moveToBR", query = "update Invoice inv set inv.billingRun=:nextBR where inv.billingRun.id=:billingRunId and inv.status in(:statusList)"),
         @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.paymentStatus = org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID"
-                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
+        @NamedQuery(name = "Invoice.listUnpaidInvoicesIds", query = "SELECT inv.id FROM Invoice inv "
+                                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
         @NamedQuery(name = "Invoice.detachAOFromInvoice", query = "UPDATE Invoice set recordedInvoice = null where recordedInvoice = :ri"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
         "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
@@ -584,25 +584,25 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "has_discounts")
     private boolean hasDiscounts;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "has_minimum")
     private boolean hasMinimum;
-    
+
     /**
 	 * discountPlan attached to the invoice
 	 */
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
-    
+
     /**
 	 * invoiceLines attached to the invoice
 	 */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<InvoiceLine>  invoiceLines;
-    
-    
+
+
     /**
      * Commercial order attached to the invoice
      */
@@ -617,7 +617,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public Invoice() {
 	}
 
-    
+
     public Invoice(Invoice copy) {
 		this.billingAccount = copy.billingAccount;
 		this.paymentMethodType = copy.paymentMethodType;
@@ -656,7 +656,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.xmlFilename = null;
 		this.pdfFilename = null;
 		this.rejectReason = null;
-		
+
 		this.xmlDate = null;
 		this.pdfDate = null;
 		this.emailSentDate = null;
@@ -675,7 +675,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();
-        
+
         if(this.getBillingAccount() != null) {
         	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
         	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
@@ -685,7 +685,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         	if(this.tradingLanguage == null)
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         }
-		
+
     }
 
     public String getInvoiceNumber() {
@@ -937,7 +937,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public InvoiceStatusEnum getStatus() {
         return status;
     }
-    
+
     public InvoicePaymentStatusEnum getRealTimeStatus() {
     	if(dueDate!=null && dueDate.before( new Date()) && (status==InvoiceStatusEnum.VALIDATED)) {
     		return InvoicePaymentStatusEnum.UNPAID;

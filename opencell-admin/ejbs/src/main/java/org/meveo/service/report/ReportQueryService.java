@@ -396,10 +396,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            Date endDate = new Date();
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, outputFilePath, data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, outputFilePath, data.size()));
+        } else {
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
-        return new AsyncResult<>(null);
     }
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity) {
@@ -482,7 +482,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
             for (Entry<String, Object> entry : filters.entrySet()) {
                 if(!(entry.getValue() instanceof Boolean)) {
-                    result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    if(entry.getKey().length()>1 && entry.getKey().contains(" ")){
+                        String[] compareExpression = entry.getKey().split(" ");
+                        result.setParameter("a_" + compareExpression[compareExpression.length-1], entry.getValue());
+                    }else{
+                        result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    }
                 }
             }
         }
@@ -495,12 +500,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        try(PrintWriter pw = new PrintWriter(dir + File.separator + fileName + extension)) {
+        String filePath = dir + File.separator + fileName + extension;
+        try(PrintWriter pw = new PrintWriter(filePath)) {
             pw.println(header);
             data.stream()
                     .forEach(pw::println);
         }
-        return "reports" + File.separator + fileName + extension;
+        return filePath;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,

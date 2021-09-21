@@ -155,6 +155,11 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	@Column(name = "validation_label")
 	private String validationLabel;
+	
+
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OrderBy("id")
+    private List<ProductVersionAttribute> productVersionAttributes = new ArrayList<>();
 
     public Attribute(){
 	}
@@ -391,5 +396,19 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	public void setValidationLabel(String validationLabel) {
 		this.validationLabel = validationLabel;
+	}
+
+	/**
+	 * @return the productVersionAttributes
+	 */
+	public List<ProductVersionAttribute> getProductVersionAttributes() {
+		return productVersionAttributes;
+	}
+
+	/**
+	 * @param productVersionAttributes the productVersionAttributes to set
+	 */
+	public void setProductVersionAttributes(List<ProductVersionAttribute> productVersionAttributes) {
+		this.productVersionAttributes = productVersionAttributes;
 	}
 }

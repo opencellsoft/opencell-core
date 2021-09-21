@@ -530,4 +530,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			}
 		}
 	}
+    public int updateAOOperationActionToNone(List<Long> AOIds) throws BusinessException {
+        String strQuery = "UPDATE AccountOperation o SET o.operationAction=org.meveo.model.payments.OperationActionEnum.NONE " + " WHERE o.id in (:AOIds) ";
+        Query query = getEntityManager().createQuery(strQuery);
+        query.setParameter("AOIds", AOIds);
+        int affectedRecords = query.executeUpdate();
+        log.debug("updated record AO to operation action equal to None count={}", affectedRecords);
+        return affectedRecords;
+    }
 }

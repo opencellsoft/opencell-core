@@ -2026,6 +2026,7 @@
             <column name="reason" type="varchar(30)"/>
             <column name="accounting_export_file" type="varchar(255)"/>
             <column name="accounting_date" type="datetime"></column>
+            <column name="operation_action" type="varchar(255)"/>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -9253,6 +9254,7 @@
             <column name="display" type="${type.boolean}" >
                 <constraints nullable="false"/>
             </column>
+    		<column name="mandatorwith_el" type="varchar(255)"/>
         </createTable>
         <!--
     	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
@@ -14830,6 +14832,33 @@
             referencedColumnNames="id" referencedTableName="journal" /> 
     </changeSet>
 
+    <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
+	    <createSequence sequenceName="collection_plan_status_seq"/>
+    	<createTable tableName="collection_plan_status">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collection_plan_status" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="dunning_settings_id" type="bigint" />
+            <column name="language" type="${type.json}" />
+            <column name="status" type="varchar(255)"  >
+            	<constraints unique="true"/>
+            </column>
+            <column name="context" type="varchar(255)" />
+    	</createTable>
+    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id" 
+    							 referencedTableName="dunning_settings" 
+    							 baseColumnNames="dunning_settings_id" 
+    							 baseTableName="collection_plan_status" 
+    							 referencedColumnNames="id"/>
+    </changeSet>
+
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
@@ -15881,13 +15910,17 @@
     <changeSet id="#6149_20210531" author="AndriusKarpavicius"/>
     <changeSet id="#6117_20210608" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1651_03092021" author="HatimOUDAD"/>
+    <changeSet id="INTRD_1629_20210914" author="TarikFA." />
+    <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza"/>
+    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql"/>
     <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius"/>
 
+    
+	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
-    <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza"/>
 </databaseChangeLog>
