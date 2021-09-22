@@ -146,7 +146,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
     }
 
     private Date findMaxSubAccountingPeriod() {
-        TypedQuery<Date> query = getEntityManager().createQuery("select max(s.endDate) from " + entityClass.getSimpleName() + " s ", Date.class);
+        TypedQuery<Date> query = getEntityManager().createQuery("select max(s.endDate) from SubAccountingPeriod s ", Date.class);
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
