@@ -131,8 +131,14 @@ public class PricePlanMatrixLineServiceTest {
 
             Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
             Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
-            ProductVersionAttribute pdtVersionAttr1 = new ProductVersionAttribute(productVersion, attrb1, 0);
-            ProductVersionAttribute pdtVersionAttr2 = new ProductVersionAttribute(productVersion, attrb2, 1);
+            ProductVersionAttribute pdtVersionAttr1 = new ProductVersionAttribute();
+            pdtVersionAttr1.setProductVersion(productVersion);
+            pdtVersionAttr1.setAttribute(attrb1);
+            pdtVersionAttr1.setSequence(0);
+            ProductVersionAttribute pdtVersionAttr2 = new ProductVersionAttribute();
+            pdtVersionAttr2.setProductVersion(productVersion);
+            pdtVersionAttr2.setAttribute(attrb2);
+            pdtVersionAttr2.setSequence(1);
 
             productVersion.setAttributes(List.of(pdtVersionAttr1, pdtVersionAttr2));
 
