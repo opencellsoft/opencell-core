@@ -2827,7 +2827,11 @@ public class SubscriptionApi extends BaseApi {
             newSubscription.setAutoEndOfEngagement(newSubscription.getOffer().getAutoEndOfEngagement());
             newSubscription.autoUpdateEndOfEngagementDate();
         }
+        newSubscription.setVersionNumber(lastVersionSubscription.getVersionNumber()+1);
+        newSubscription.setPreviousVersion(lastVersionSubscription);
+        lastVersionSubscription.setNextVersion(newSubscription);
         subscriptionService.update(newSubscription);
+        subscriptionService.update(lastVersionSubscription);
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
@@ -2895,6 +2899,9 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
+        lastSubscription.setNextVersion(null);
+        lastSubscription.setPreviousVersion(actualSubscription);
+        actualSubscription.setNextVersion(lastSubscription);
         actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);
 

@@ -9465,9 +9465,6 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
     
     <changeSet id="INTRD-1901_20210920" author="TarikFA.">
-    	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
-    			<tableExists tableName="offer_template_attribute_seq"/>
-    	</preConditions>
     	<createSequence sequenceName="offer_template_attribute_seq"/>
     	<createTable tableName="offer_template_attribute">
             <column name="id" type="bigint">
