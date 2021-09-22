@@ -44,11 +44,14 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
     }
 
     
-	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type,
-			Date start, boolean regularPeriods) {
+	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type, boolean regularPeriods) {
 		List<SubAccountingPeriod> periods = new ArrayList<>();
-		LocalDateTime startDateTime = start==null? LocalDate.now().withDayOfMonth(1).atStartOfDay(): start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
+        Date maxDate = findMaxSubAccountingPeriod();
+
+        LocalDateTime startDateTime = maxDate == null ? LocalDate.now().withDayOfMonth(1).atStartOfDay() : maxDate.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate().plusDays(1).atStartOfDay();
+        LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
 		while (endDate.isAfter(startDateTime)) {
@@ -142,4 +145,15 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         					+" the sub period number "+entity.getNumber()+ (usersType.equals(allUsersType)?" for all users":"for regular users"));
     }
 
+    private Date findMaxSubAccountingPeriod() {
+        TypedQuery<Date> query = getEntityManager().createQuery("select max(s.endDate) from " + entityClass.getSimpleName() + " s ", Date.class);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            log.error("Cannot find the max date in sub accounting period");
+            return null;
+        }
+    }
 }
