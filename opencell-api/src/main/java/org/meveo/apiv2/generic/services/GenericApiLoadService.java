@@ -59,6 +59,17 @@ public class GenericApiLoadService {
         }
     }
 
+	public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
+		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
+				.addPaginationConfiguration(searchConfig, "a").find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(Collectors.toList());
+		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(Collectors.toList());
+	}
+
+	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {
+		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
+				.find(nativePersistenceService.getEntityManager()).size();
+	}
+
     private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
         return line.stream()
                 .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
@@ -79,7 +90,7 @@ public class GenericApiLoadService {
 
     private boolean isAggregationField(String field) {
         return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
-                || field.startsWith("MAX(") || field.startsWith("MIN(");
+                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(");
     }
 
     private boolean isAggregationQueries(Set<String> genericFields) {
