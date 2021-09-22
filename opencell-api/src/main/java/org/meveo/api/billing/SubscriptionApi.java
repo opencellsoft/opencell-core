@@ -2827,7 +2827,11 @@ public class SubscriptionApi extends BaseApi {
             newSubscription.setAutoEndOfEngagement(newSubscription.getOffer().getAutoEndOfEngagement());
             newSubscription.autoUpdateEndOfEngagementDate();
         }
+        newSubscription.setVersionNumber(lastVersionSubscription.getVersionNumber()+1);
+        newSubscription.setPreviousVersion(lastVersionSubscription);
+        lastVersionSubscription.setNextVersion(newSubscription);
         subscriptionService.update(newSubscription);
+        subscriptionService.update(lastVersionSubscription);
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
