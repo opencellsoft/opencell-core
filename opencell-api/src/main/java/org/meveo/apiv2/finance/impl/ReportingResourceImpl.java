@@ -2,7 +2,7 @@ package org.meveo.apiv2.finance.impl;
 
 import java.util.Date;
 import java.util.List;
-import org.meveo.model.shared.DateUtils;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -13,8 +13,8 @@ import org.meveo.apiv2.finance.TrialBalance;
 import org.meveo.apiv2.finance.TrialBalancesResult;
 import org.meveo.apiv2.finance.resource.ReportingResource;
 import org.meveo.apiv2.finance.service.ReportingApiService;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.report.query.SortOrderEnum;
+import org.meveo.model.shared.DateUtils;
 
 public class ReportingResourceImpl implements ReportingResource {
 
@@ -22,8 +22,6 @@ public class ReportingResourceImpl implements ReportingResource {
 	@Inject
 	private ReportingApiService reportingApiService;
 
-//	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
-	
 	@Override
 	public Response getTrialBalances(ReportingPeriodEnum period, Date startDate, Date endDate, String sortBy, SortOrderEnum sortOrder, Long offset, Long limit, Request request) {
 		int balancesCount = reportingApiService.count(period, startDate, endDate);
@@ -36,7 +34,7 @@ public class ReportingResourceImpl implements ReportingResource {
 	}
 	
 	private Response buildTrialBlancesResponse(List<TrialBalance> trialBalances, ReportingPeriodEnum period, Date startDate, Date endDate, long offset, long limit, long total) {
-		TrialBalancesResult TrialBalancesResult = ImmutableTrialBalancesResult.builder()
+		TrialBalancesResult trialBalancesResult = ImmutableTrialBalancesResult.builder()
 				.balances(trialBalances)
 				.period((startDate == null || endDate == null) ? period.name() : DateUtils.formatAsDate(startDate) + " => " + DateUtils.formatAsDate(endDate))
 				.offset(offset)
@@ -44,7 +42,7 @@ public class ReportingResourceImpl implements ReportingResource {
 				.total(total)
 				.build();
 
-		return Response.ok().entity(TrialBalancesResult).build();
+		return Response.ok().entity(trialBalancesResult).build();
 	}
 	
 

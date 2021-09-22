@@ -5,16 +5,17 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
-import org.meveo.apiv2.finance.ImmutableTrialBalance;
+
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.finance.ReportingPeriodEnum;
 import org.meveo.apiv2.finance.TrialBalance;
@@ -47,18 +48,18 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 		List<Map<String, Object>> res = loadService.findAggregatedPaginatedRecords(AccountOperation.class, paginationConfiguration, fetchFieldsAliasSet);
 		ReportingMapper mapper = new ReportingMapper();
 		List<TrialBalance> trialBalances = new ArrayList<>();
-		for (Map<String, Object> record : res) {
-			String accountingCode = (String) record.getOrDefault("accountingCode", "");
-			String accountingLabel = (String) record.getOrDefault("accountingLabel", "");
-			BigDecimal initialBalanceDebit = (BigDecimal) record.getOrDefault("initialBalanceDebit", 0);
-			BigDecimal initialBalanceCredit = (BigDecimal) record.getOrDefault("initialBalanceCredit", 0);
-			BigDecimal currentDebitBalance = (BigDecimal) record.getOrDefault("currentDebitBalance", 0);
-			BigDecimal currentCreditBalance = (BigDecimal) record.getOrDefault("currentCreditBalance", 0);
+		for (Map<String, Object> balance : res) {
+			String accountingCode = (String) balance.getOrDefault("accountingCode", "");
+			String accountingLabel = (String) balance.getOrDefault("accountingLabel", "");
+			BigDecimal initialBalanceDebit = (BigDecimal) balance.getOrDefault("initialBalanceDebit", 0);
+			BigDecimal initialBalanceCredit = (BigDecimal) balance.getOrDefault("initialBalanceCredit", 0);
+			BigDecimal currentDebitBalance = (BigDecimal) balance.getOrDefault("currentDebitBalance", 0);
+			BigDecimal currentCreditBalance = (BigDecimal) balance.getOrDefault("currentCreditBalance", 0);
 			
 			BigDecimal initialBalance = initialBalanceDebit.subtract(initialBalanceCredit);
 			BigDecimal closingBalance = currentDebitBalance.subtract(currentCreditBalance).add(initialBalance);
 			
-			trialBalances.add(mapper.toTrialBalance(null, accountingCode, accountingLabel, initialBalance, currentCreditBalance, currentDebitBalance, closingBalance));
+			trialBalances.add(mapper.toTrialBalance(accountingCode, accountingLabel, initialBalance, currentCreditBalance, currentDebitBalance, closingBalance));
 		}
 		return trialBalances;
 	}
@@ -142,50 +143,42 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 	
 	@Override
 	public List<AccountOperation> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Long getCount(String filter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Optional<AccountOperation> findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public AccountOperation create(AccountOperation baseEntity) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Optional<AccountOperation> update(Long id, AccountOperation baseEntity) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public Optional<AccountOperation> patch(Long id, AccountOperation baseEntity) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public Optional<AccountOperation> delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public Optional<AccountOperation> findByCode(String code) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 }
