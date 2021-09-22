@@ -419,8 +419,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             }
             for (Object item : response) {
                 for (Map.Entry<String, Object> entry : ((Map<String, Object>)item).entrySet()) {
-                    List<Field> field = getFields(entry.getValue().getClass());
-                    initLazyLoadedValues(field, entry.getValue());
+                    if(entry.getValue() != null) {
+                        List<Field> field = getFields(entry.getValue().getClass());
+                        initLazyLoadedValues(field, entry.getValue());
+                    }
                 }
             }
             return response;
