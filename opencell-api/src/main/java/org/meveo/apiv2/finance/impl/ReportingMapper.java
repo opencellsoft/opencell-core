@@ -1,7 +1,6 @@
 package org.meveo.apiv2.finance.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.meveo.apiv2.finance.ImmutableTrialBalance;
 import org.meveo.apiv2.finance.TrialBalance;
