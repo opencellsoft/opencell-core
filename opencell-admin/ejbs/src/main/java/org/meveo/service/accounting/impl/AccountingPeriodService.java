@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.RegularUserLockOption;
@@ -28,14 +29,13 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Date startDate) {
-		if (entity.getEndDate() == null) {
-			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
-		}
-		if (entity.getEndDate().before(new Date())) {
-			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(entity.getEndDate()) + " is incorrect ");
-		}
+		validateEndDate(entity.getEndDate());
 		if(entity.getAccountingPeriodYear()==null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(startDate, entity.getEndDate()));
+		}
+		if(AccountingOperationAction.FORCE.equals(entity.getAccountingOperationAction())) {
+			if (entity.getForceOption() == null || entity.getForceCustomDay() == null)
+				throw new BusinessApiException("When accountingOperationAction is set to FORCE then the forceOption & forceCustomDay is mandatory");
 		}
 		if(AccountingPeriodForceEnum.CUSTOM_DAY.equals(entity.getForceOption())) {
 			if (entity.getForceCustomDay() < 1 || entity.getForceCustomDay() > 31)
@@ -46,16 +46,29 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 				throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
 		}
 		create(entity);
+		generateSubAccountingPeriods(entity, isUseSubAccountingPeriods);
+		return entity;
+	}
+
+	private void generateSubAccountingPeriods(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		if (Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
 			if (entity.getSubAccountingPeriodType() == null) {
 				throw new BusinessApiException("subAccountingPeriodType cannot be null to use subAccountingPeriods");
 			}
 			subAccountingPeriodService.createSubAccountingPeriods(entity, entity.getSubAccountingPeriodType(), false);
 		}
-		return entity;
 	}
-	
-    public AccountingPeriod findByAccountingPeriodYear(Integer year) {
+
+	private void validateEndDate(Date endDate) {
+		if (endDate == null) {
+			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
+		}
+		if (endDate.before(new Date())) {
+			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(endDate) + " is incorrect ");
+		}
+	}
+
+	public AccountingPeriod findByAccountingPeriodYear(Integer year) {
         TypedQuery<AccountingPeriod> query = getEntityManager().createQuery("select ap from " + entityClass.getSimpleName() + " ap where accountingPeriodYear=:year", entityClass)
             .setParameter("year", year);
         try {
