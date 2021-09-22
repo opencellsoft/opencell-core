@@ -50,7 +50,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			if (entity.getSubAccountingPeriodType() == null) {
 				throw new BusinessApiException("subAccountingPeriodType cannot be null to use subAccountingPeriods");
 			}
-			subAccountingPeriodService.createSubAccountingPeriods(entity, entity.getSubAccountingPeriodType(), startDate, false);
+			subAccountingPeriodService.createSubAccountingPeriods(entity, entity.getSubAccountingPeriodType(), false);
 		}
 		return entity;
 	}
