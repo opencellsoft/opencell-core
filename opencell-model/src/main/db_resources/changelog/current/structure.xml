@@ -9492,4 +9492,18 @@ public class OrderAdvancement extends ModuleScript {
                                  
     </changeSet>
     
+    <changeSet id="INTRD-1924_20210922" author="TarikFA.">
+    	<addColumn tableName="cpq_product_version_attributes">
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
