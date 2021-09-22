@@ -344,7 +344,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             seller = ua.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
         seller=sellerService.refreshOrRetrieve(seller);
-        TaxInfo taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, entity.getInvoiceDate());
+        TaxInfo taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, usageDate);
 
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
