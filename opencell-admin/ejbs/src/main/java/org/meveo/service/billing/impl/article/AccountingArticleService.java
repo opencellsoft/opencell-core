@@ -1,11 +1,6 @@
 package org.meveo.service.billing.impl.article;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -28,6 +23,8 @@ import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
 
+import static java.util.stream.Collectors.toList;
+
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 	
@@ -45,12 +42,12 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}else {
 			productCharges.addAll(product.getProductCharges().stream()
 					.map(pc -> pc.getChargeTemplate())
-					.collect(Collectors.toList()));
+					.collect(toList()));
 		}
 		List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductCode(product)
 				.stream()
 				.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
-				.collect(Collectors.toList());
+				.collect(toList());
 		
 
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
@@ -87,7 +84,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					}
 				}
 				return false;
-			}).collect(Collectors.toList());
+			}).collect(toList());
 
 			//fullMatch
 			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
@@ -125,8 +122,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			return null;
 		}
 		ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
-		   Map<String, Object> attributes = new HashMap<String, Object>();
-		  List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
+		   Map<String, Object> attributes = new HashMap<>();
+		  List<AttributeValue> attributeValues = serviceInstance != null ?
+				  serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(toList())
+				  : new ArrayList<>();
 	       for (AttributeValue attributeValue : attributeValues) {
                Attribute attribute = attributeValue.getAttribute();
                Object value = attribute.getAttributeType().getValue(attributeValue);
@@ -136,7 +135,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
            }
            Optional<AccountingArticle> accountingArticle = Optional.empty();
            try {
-        	   accountingArticle = getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargeInstance.getChargeTemplate(),attributes);
+           	if(serviceInstance != null) {
+				accountingArticle = getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargeInstance.getChargeTemplate(),attributes);
+			}
            }catch(BusinessException e) {
            	throw new MeveoApiException(e.getMessage());
            }
