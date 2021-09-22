@@ -49,7 +49,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 			baseEntity.setDunningMode(DunningModeEnum.CUSTOMER_LEVEL);
 		if(baseEntity.getMaxDunningLevels() == null)
 			baseEntity.setMaxDunningLevels(15);
-		if(baseEntity.getAccountingArticle() != null) {
+		if(baseEntity.getAccountingArticle() != null && baseEntity.getAccountingArticle().getId() != null) {
 			var accountingArticle = accountingArticleService.findById(baseEntity.getAccountingArticle().getId());
 			if(accountingArticle == null)
 				throw new BadRequestException(NO_ACCOUNTING_ARTICLE_FOUND + baseEntity.getAccountingArticle().getId());

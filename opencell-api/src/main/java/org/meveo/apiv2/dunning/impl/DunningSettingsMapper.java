@@ -21,28 +21,32 @@ public class DunningSettingsMapper extends ResourceMapper<org.meveo.apiv2.dunnin
 				.maxDaysOutstanding(entity.getMaxDaysOutstanding())
 				.maxDunningLevels(entity.getMaxDunningLevels())
 				.build();
-		
-	}
+    }
 
-	@Override
-	protected DunningSettings toEntity(org.meveo.apiv2.dunning.DunningSettings resource) {
-		var entity = new DunningSettings();
-		if(resource.getAccountingArticle() != null) {
-			var accountingArticle = new AccountingArticle();
-			accountingArticle.setId(resource.getAccountingArticle().getId());
-			accountingArticle.setCode(resource.getAccountingArticle().getCode());
-			entity.setAccountingArticle(accountingArticle);
-		}
-		entity.setCode(resource.getCode());
-		entity.setAllowInterestForDelay(resource.isAllowInterestForDelay());
-		entity.setAllowDunningCharges(resource.isAllowDunningCharges());
-		entity.setApplyDunningChargeFxExchangeRate(resource.isApplyDunningChargeFxExchangeRate());
-		entity.setDunningMode(resource.getDunningMode());
-		entity.setId(resource.getId());
-		entity.setInterestForDelayRate(resource.getInterestForDelayRate());
-		entity.setMaxDaysOutstanding(resource.getMaxDaysOutstanding());
-		entity.setMaxDunningLevels(resource.getMaxDunningLevels());
-		return entity;
-	}
-
+    @Override
+    protected DunningSettings toEntity(org.meveo.apiv2.dunning.DunningSettings resource) {
+        var entity = new DunningSettings();
+        if (resource.getAccountingArticle() != null) {
+            var accountingArticle = new AccountingArticle();
+            accountingArticle.setId(resource.getAccountingArticle().getId());
+            accountingArticle.setCode(resource.getAccountingArticle().getCode());
+            entity.setAccountingArticle(accountingArticle);
+        }
+        entity.setCode(resource.getCode());
+        if (resource.isAllowInterestForDelay() != null) {
+            entity.setAllowInterestForDelay(resource.isAllowInterestForDelay());
+        }
+        if (resource.isAllowDunningCharges() != null) {
+            entity.setAllowDunningCharges(resource.isAllowDunningCharges());
+        }
+        if (resource.isApplyDunningChargeFxExchangeRate() != null) {
+            entity.setApplyDunningChargeFxExchangeRate(resource.isApplyDunningChargeFxExchangeRate());
+        }
+        entity.setDunningMode(resource.getDunningMode());
+        entity.setId(resource.getId());
+        entity.setInterestForDelayRate(resource.getInterestForDelayRate());
+        entity.setMaxDaysOutstanding(resource.getMaxDaysOutstanding());
+        entity.setMaxDunningLevels(resource.getMaxDunningLevels());
+        return entity;
+    }
 }
