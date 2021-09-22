@@ -14,6 +14,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.RegularUserLockOption;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -27,8 +28,11 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Date startDate) {
-		if(entity.getEndDate()==null) {
+		if (entity.getEndDate() == null) {
 			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
+		}
+		if (entity.getEndDate().before(new Date())) {
+			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(entity.getEndDate()) + " is incorrect ");
 		}
 		if(entity.getAccountingPeriodYear()==null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(startDate, entity.getEndDate()));
