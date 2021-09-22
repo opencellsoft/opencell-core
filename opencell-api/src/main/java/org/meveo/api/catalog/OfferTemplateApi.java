@@ -413,7 +413,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
-        processAttributes(postData, offerTemplate);
+        processTemplateAttribute(postData, offerTemplate);
         processMedias(postData, offerTemplate);
         processCommercialRule(postData, offerTemplate);
         try {
@@ -459,7 +459,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
     }
     
-    private void processAttributes(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+    private void processTemplateAttribute(OfferTemplateDto postData, OfferTemplate offerTemplate) {
         List<OfferTemplateAttributeDTO> offerAttributes = postData.getOfferAttributes();
         offerTemplate.getOfferAttributes().clear();
         if(offerAttributes != null && !offerAttributes.isEmpty()){
@@ -469,7 +469,18 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     	var attribute = attributeService.findByCode(offerAttributeDto.getAttributeCode());
                     	if(attribute == null)
                     		throw new EntityDoesNotExistsException(Attribute.class, offerAttributeDto.getAttributeCode());
-                    	return new OfferTemplateAttribute(offerTemplate, attribute, offerAttributeDto.getMandatoryWithEl(), offerAttributeDto.getSequence());
+                    	var templateAttribute =  new OfferTemplateAttribute();
+                    	templateAttribute.setOfferTemplate(offerTemplate);
+                    	templateAttribute.setAttribute(attribute);
+                    	templateAttribute.setMandatoryWithEl(offerAttributeDto.getMandatoryWithEl());
+                    	templateAttribute.setSequence(offerAttributeDto.getSequence());
+                    	templateAttribute.setReadOnly(offerAttributeDto.isReadOnly());
+                    	templateAttribute.setMandatory(offerAttributeDto.isMandatory());
+                    	templateAttribute.setDefaultValue(offerAttributeDto.getDefaultValue());
+                    	templateAttribute.setValidationLabel(offerAttributeDto.getValidationLabel());
+                    	templateAttribute.setValidationPattern(offerAttributeDto.getValidationPattern());
+                    	templateAttribute.setValidationType(offerAttributeDto.getValidationType());
+                    	return templateAttribute;
                     })
                     .collect(Collectors.toList()));
         }

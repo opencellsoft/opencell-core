@@ -51,7 +51,7 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     				&& quoteAttribute.getQuoteProduct().getProductVersion() != null) {
 	        	var mandatoryEl = findMandatoryByProductVersion(quoteAttribute, quoteAttribute.getQuoteProduct().getProductVersion());
 	        	var productVersionAttribute = mandatoryEl.get();
-	        	if(mandatoryEl.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+	        	if(mandatoryEl.isPresent()) {
 	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), 
 							productVersionAttribute.getValidationPattern(), 
 							quoteAttribute, 
@@ -63,8 +63,14 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     		if(quoteAttribute.getQuoteOffer() != null 
     				&& quoteAttribute.getQuoteOffer().getOfferTemplate() != null) {
 	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(quoteAttribute, quoteAttribute.getQuoteOffer().getOfferTemplate());
-				if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
-	        		super.evaluateMandatoryEl(null, null, quoteAttribute, offerTemplatMandatoryEl.get().getMandatoryWithEl(), quoteVersion.getQuote(), quoteVersion, null, null);
+	    		var offerTempalteAttribute = offerTemplatMandatoryEl.get();
+				if(offerTemplatMandatoryEl.isPresent()) {
+	        		super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), 
+	        									offerTempalteAttribute.getValidationPattern(), 
+	        									quoteAttribute, 
+	        									offerTempalteAttribute.getMandatoryWithEl(), 
+	        									quoteVersion.getQuote(), 
+	        									quoteVersion, null, null);
 	        	}
     		}
         }

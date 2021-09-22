@@ -2,7 +2,6 @@ package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
 
-import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.service.cpq.AttributeValueService;
@@ -29,7 +28,7 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     				&& attributeInstance.getServiceInstance().getProductVersion() != null) {
 	        	var productVersionAttributeOptional = findMandatoryByProductVersion(attributeInstance, attributeInstance.getServiceInstance().getProductVersion());
 	        	var productVersionAttribute = productVersionAttributeOptional.get();
-	        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+	        	if(productVersionAttributeOptional.isPresent()) {
 	        		super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(), attributeInstance, 
 	        				productVersionAttribute.getMandatoryWithEl(), null, null, 
 	        									attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
@@ -39,8 +38,9 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     		if(attributeInstance.getSubscription() != null 
     				&& attributeInstance.getSubscription().getOffer() != null) {
 	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(attributeInstance, attributeInstance.getSubscription().getOffer());
-			if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
-				super.evaluateMandatoryEl(	null, null,attributeInstance,  
+	        	var productVersionAttribute = offerTemplatMandatoryEl.get();
+			if(offerTemplatMandatoryEl.isPresent()) {
+				super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),attributeInstance,  
 						offerTemplatMandatoryEl.get().getMandatoryWithEl(), null, null, 
 						attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
 						attributeInstance.getServiceInstance());
