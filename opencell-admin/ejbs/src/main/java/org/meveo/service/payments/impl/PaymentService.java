@@ -22,6 +22,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -251,6 +252,7 @@ public class PaymentService extends PersistenceService<Payment> {
     	
     	
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        //doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         
@@ -286,7 +288,7 @@ public class PaymentService extends PersistenceService<Payment> {
             
             Long aoPaymentId = null;
             PaymentErrorTypeEnum errorType = null;
-            PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus(); 
+            
                 if (isNewCard) {
                     preferredMethod = addCardFromPayment(doPaymentResponseDto.getTokenId(), customerAccount, cardNumber, cardType, ownerName, cvv, expiryDate);
                 }
@@ -364,21 +366,27 @@ public class PaymentService extends PersistenceService<Payment> {
             	paymentCallback(doPaymentResponseDto.getPaymentID(), PaymentStatusEnum.REJECTED, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage());
             }
             if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus()){
-            	throw new BusinessException("The payment is not processed!");
+            	throw new BusinessException(doPaymentResponseDto.getErrorCode());
             }
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
-
-			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
+			
+			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
                     doPaymentResponseDto.getPaymentID(), errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
         } catch (PaymentException e) {
             log.error("PaymentException during payment AO:", e);
             doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage(),aoIdsToPay);
+            throw new BusinessException(e.getMessage());
+        }catch (BusinessException e) {
+            log.error("Payment not persisted: ", e);
+            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat,null, e.getMessage(),aoIdsToPay);
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
             doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage(),aoIdsToPay);
+            throw new BusinessException(e.getMessage());
         }
         return doPaymentResponseDto;
     }
@@ -455,8 +463,8 @@ public class PaymentService extends PersistenceService<Payment> {
         StringBuffer orderNumsSB = new StringBuffer();
         for (Long aoId : aoIdsToPay) {
             AccountOperation ao = accountOperationService.findById(aoId);
-            sumTax = sumTax.add(ao.getTaxAmount());
-            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
+            sumTax = sumTax.add(ao.getTaxAmount()!=null?ao.getTaxAmount():BigDecimal.ZERO);
+            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax()!=null?ao.getAmountWithoutTax():BigDecimal.ZERO);
             if (!StringUtils.isBlank(ao.getOrderNumber())) {
 //                orderNums = orderNums + ao.getOrderNumber() + "|";
                 orderNumsSB.append(ao.getOrderNumber() + "|");
