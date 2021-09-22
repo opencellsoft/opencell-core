@@ -37,9 +37,9 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		if(entity.getAccountingPeriodYear()==null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(startDate, entity.getEndDate()));
 		}
-		if(entity.getForceOption() != null && entity.getForceOption().equals(AccountingPeriodForceEnum.CUSTOM_DAY)) {
-			if (entity.getForceCustomDay() == null || entity.getForceCustomDay().intValue() == 0)
-				throw new BusinessApiException("When force option is set to CUSTOM_DAY then the force custom day must not be null");
+		if(AccountingPeriodForceEnum.CUSTOM_DAY.equals(entity.getForceOption())) {
+			if (entity.getForceCustomDay() < 1 || entity.getForceCustomDay() > 31)
+				throw new BusinessApiException("When force option is set to CUSTOM_DAY then the allowed options are integers from 1 (included) to 31 (included).");
 		}
 		if (RegularUserLockOption.CUSTOM.equals(entity.getRegularUserLockOption())) {
 			if (entity.getCustomLockNumberDays() == null || entity.getCustomLockOption() == null)
