@@ -1,20 +1,25 @@
 package org.meveo.apiv2.refund;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+
+import javax.inject.Inject;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
+
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.payment.RefundApi;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationActionEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.inject.Inject;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 
 public class RefundResourceImpl implements RefundResource{
 
@@ -22,6 +27,8 @@ public class RefundResourceImpl implements RefundResource{
     private RefundApi refundApi;
     @Inject
     private CustomerAccountService customerAccountService;
+    @Inject
+    private AccountOperationService accountOperationService;
 
 
     @Override
@@ -46,10 +53,14 @@ public class RefundResourceImpl implements RefundResource{
         }
         if(PaymentMethodEnum.DIRECTDEBIT.equals(CAByCode.getPreferredPaymentMethodType()) && (sctRefund.getAoToRefund() != null && !sctRefund.getAoToRefund().isEmpty())){
             HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());
-            CAByCode.getAccountOperations().stream()
-                    .filter(accountOperation -> aoIds.contains(accountOperation.getId()))
-                    .forEach(accountOperation -> accountOperation.setOperationAction(OperationActionEnum.TO_REFUND));
-
+            customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"))
+                    .getAccountOperations().stream()
+                    .filter(accountOperation -> aoIds.contains(accountOperation.getId()) 
+                    		&& OperationCategoryEnum.CREDIT.equals(accountOperation.getTransactionCategory()))
+                    .forEach(accountOperation -> {
+                        accountOperation.setOperationAction(OperationActionEnum.TO_REFUND);
+                        accountOperationService.update(accountOperation);
+                    });
         }
         return Response.ok().build();
     }

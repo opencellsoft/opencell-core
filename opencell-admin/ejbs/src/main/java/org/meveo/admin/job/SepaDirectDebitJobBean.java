@@ -46,6 +46,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -230,6 +231,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 
 						// Update operationAction of each Account operation to "NONE"
 						accountOperationService.updateAOOperationActionToNone(listAoToPay.stream()
+						        .filter(a -> a.getStatus() != AccountOperationStatus.REJECTED && StringUtils.isBlank(a.getReason()))
 								.map(accountOperation -> accountOperation.getId())
 								.collect(Collectors.toList()));
 					}

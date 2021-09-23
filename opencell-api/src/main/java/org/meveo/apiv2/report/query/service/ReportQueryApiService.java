@@ -315,7 +315,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public Long countAllowedQueriesForUserWithFilters(String query) {
-        Map<String, Object> filters = (!currentUser.getRoles().contains("query_manager") && query != null) ?
+        Map<String, Object> filters = (query != null && !query.isBlank()) ?
                 buildFilters(query) : new HashMap<>();
         return reportQueryService.countAllowedQueriesForUser(currentUser, filters);
     }
