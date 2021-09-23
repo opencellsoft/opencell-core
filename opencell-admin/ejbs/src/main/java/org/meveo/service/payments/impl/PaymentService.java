@@ -22,6 +22,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -248,10 +249,13 @@ public class PaymentService extends PersistenceService<Payment> {
     public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
             String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+    	
+    	
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
-        doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
+        
+        
         try {
             boolean isNewCard = !StringUtils.isBlank(cardNumber);
             AccountOperation aoToPayRefund = accountOperationService.findById(aoIdsToPay.get(0));
@@ -279,6 +283,40 @@ public class PaymentService extends PersistenceService<Payment> {
                 paymentGateway = matchedPaymentGatewayForTheCA;
             }
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+            
+            
+            Long aoPaymentId = null;
+            PaymentErrorTypeEnum errorType = null;
+            
+                if (isNewCard) {
+                    preferredMethod = addCardFromPayment(doPaymentResponseDto.getTokenId(), customerAccount, cardNumber, cardType, ownerName, cvv, expiryDate);
+                }
+                preferredMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
+                preferredMethod = paymentMethodService.update(preferredMethod);
+
+                if (createAO) {
+                    try {
+                        if (isPayment) {
+                            aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
+                        } else {
+                            aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
+                        }
+                        doPaymentResponseDto.setAoCreated(true);
+                    } catch (Exception e) {
+                        log.warn("Cant create Account operation payment :", e);
+                    }
+                    if (matchingAO) {
+                        try {
+                            List<Long> aoIdsToMatch = aoIdsToPay;
+                            aoIdsToMatch.add(aoPaymentId);
+                            matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
+                            doPaymentResponseDto.setMatchingCreated(true);
+                        } catch (Exception e) {
+                            log.warn("Cant create matching :", e);
+                        }
+                    }
+                } 
+           
             if (PaymentMethodEnum.CARD == paymentMethodType) {
                 if (!(preferredMethod instanceof CardPaymentMethod)) {
                     throw new PaymentException(PaymentErrorEnum.PAY_CARD_CANNOT_BE_PREFERED, "Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
@@ -293,6 +331,7 @@ public class PaymentService extends PersistenceService<Payment> {
                         throw new PaymentException(PaymentErrorEnum.PAY_CB_INVALID, "There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
                     }
                 }
+                
                 if (isPayment) {
                     if (isNewCard) {
                         doPaymentResponseDto = gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, null, null);
@@ -321,56 +360,32 @@ public class PaymentService extends PersistenceService<Payment> {
                     doPaymentResponseDto = gatewayPaymentInterface.doRefundSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
                 }
             }
-
-            Long aoPaymentId = null;
-            PaymentErrorTypeEnum errorType = null;
-            PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus();
-            if (PaymentStatusEnum.ACCEPTED == status || PaymentStatusEnum.PENDING == status) {
-                if (isNewCard) {
-                    preferredMethod = addCardFromPayment(doPaymentResponseDto.getTokenId(), customerAccount, cardNumber, cardType, ownerName, cvv, expiryDate);
-                }
-                preferredMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
-                preferredMethod = paymentMethodService.update(preferredMethod);
-
-                if (createAO) {
-                    try {
-                        if (isPayment) {
-                            aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
-                        } else {
-                            aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
-                        }
-                        doPaymentResponseDto.setAoCreated(true);
-                    } catch (Exception e) {
-                        log.warn("Cant create Account operation payment :", e);
-                    }
-                    if (matchingAO) {
-                        try {
-                            List<Long> aoIdsToMatch = aoIdsToPay;
-                            aoIdsToMatch.add(aoPaymentId);
-                            matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
-                            doPaymentResponseDto.setMatchingCreated(true);
-                        } catch (Exception e) {
-                            log.warn("Cant create matching :", e);
-                        }
-                    }
-                }
-            } else {
-                errorType = PaymentErrorTypeEnum.REJECT;
-                log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
+            
+            if(PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
+            	paymentCallback(doPaymentResponseDto.getPaymentID(), PaymentStatusEnum.REJECTED, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage());
             }
-
+            if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus()){
+            	throw new BusinessException(doPaymentResponseDto.getErrorCode());
+            }
+             
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
-
-			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
+			
+			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
                     doPaymentResponseDto.getPaymentID(), errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
         } catch (PaymentException e) {
             log.error("PaymentException during payment AO:", e);
             doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage(),aoIdsToPay);
+            throw new BusinessException(e.getMessage());
+        }catch (BusinessException e) {
+            log.error("Payment not persisted: ", e);
+            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat,null, e.getMessage(),aoIdsToPay);
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
             doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage(),aoIdsToPay);
+            throw new BusinessException(e.getMessage());
         }
         return doPaymentResponseDto;
     }
@@ -447,8 +462,8 @@ public class PaymentService extends PersistenceService<Payment> {
         StringBuffer orderNumsSB = new StringBuffer();
         for (Long aoId : aoIdsToPay) {
             AccountOperation ao = accountOperationService.findById(aoId);
-            sumTax = sumTax.add(ao.getTaxAmount());
-            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
+            sumTax = sumTax.add(ao.getTaxAmount()!=null?ao.getTaxAmount():BigDecimal.ZERO);
+            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax()!=null?ao.getAmountWithoutTax():BigDecimal.ZERO);
             if (!StringUtils.isBlank(ao.getOrderNumber())) {
 //                orderNums = orderNums + ao.getOrderNumber() + "|";
                 orderNumsSB.append(ao.getOrderNumber() + "|");
