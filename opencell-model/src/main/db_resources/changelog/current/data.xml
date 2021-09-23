@@ -3642,4 +3642,20 @@ public class ServiceTemplateToProductScript extends Script {
 				</column>
 	       	</insert>
 	</changeSet>
+	<changeSet id="INTRD_1985_20210923_data" author="TarikFA.">
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" valueNumeric="QuoteOffer" />
+			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" valueNumeric="OrderOffer" />
+			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>
