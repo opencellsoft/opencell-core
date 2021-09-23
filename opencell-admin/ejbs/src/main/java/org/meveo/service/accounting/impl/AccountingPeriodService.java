@@ -11,9 +11,12 @@ import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
+import org.meveo.model.accounting.CustomLockOption;
 import org.meveo.model.accounting.RegularUserLockOption;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -27,31 +30,48 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Date startDate) {
-		if(entity.getEndDate()==null) {
-			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
-		}
+		validateEndDate(entity.getEndDate());
 		if(entity.getAccountingPeriodYear()==null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(startDate, entity.getEndDate()));
 		}
-		if(entity.getForceOption() != null && entity.getForceOption().equals(AccountingPeriodForceEnum.CUSTOM_DAY)) {
-			if (entity.getForceCustomDay() == null || entity.getForceCustomDay().intValue() == 0)
-				throw new BusinessApiException("When force option is set to CUSTOM_DAY then the force custom day must not be null");
+		if(AccountingOperationAction.FORCE.equals(entity.getAccountingOperationAction())) {
+			validateForceOptionAndForceCustDay(entity.getForceOption(), entity.getForceCustomDay());
+		}
+		if (entity.getCustomLockNumberDays() != null && entity.getCustomLockNumberDays() < 0)
+			throw new BusinessApiException("customLockNumberDays must be positive");
+		if (entity.getForceCustomDay() != null && entity.getForceCustomDay() < 0)
+			throw new BusinessApiException("forceCustomDay must be positive");
+
+		if(AccountingPeriodForceEnum.CUSTOM_DAY.equals(entity.getForceOption())) {
+			validateForceCustomDay(entity.getForceCustomDay());
 		}
 		if (RegularUserLockOption.CUSTOM.equals(entity.getRegularUserLockOption())) {
-			if (entity.getCustomLockNumberDays() == null || entity.getCustomLockOption() == null)
-				throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
+			validateCustLockNumDaysAndCustLockOpt(entity.getCustomLockNumberDays(), entity.getCustomLockOption());
 		}
 		create(entity);
+		generateSubAccountingPeriods(entity, isUseSubAccountingPeriods);
+		return entity;
+	}
+
+	private void generateSubAccountingPeriods(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 		if (Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
 			if (entity.getSubAccountingPeriodType() == null) {
 				throw new BusinessApiException("subAccountingPeriodType cannot be null to use subAccountingPeriods");
 			}
-			subAccountingPeriodService.createSubAccountingPeriods(entity, entity.getSubAccountingPeriodType(), startDate, false);
+			subAccountingPeriodService.createSubAccountingPeriods(entity, entity.getSubAccountingPeriodType(), false);
 		}
-		return entity;
 	}
-	
-    public AccountingPeriod findByAccountingPeriodYear(Integer year) {
+
+	private void validateEndDate(Date endDate) {
+		if (endDate == null) {
+			throw new ValidationException("endDate is mandatory to create AccountingPeriod");
+		}
+		if (endDate.before(new Date())) {
+			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(endDate) + " is incorrect ");
+		}
+	}
+
+	public AccountingPeriod findByAccountingPeriodYear(Integer year) {
         TypedQuery<AccountingPeriod> query = getEntityManager().createQuery("select ap from " + entityClass.getSimpleName() + " ap where accountingPeriodYear=:year", entityClass)
             .setParameter("year", year);
         try {
@@ -121,5 +141,20 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		final int startYear = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
 		final int endYear = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
 		return (startYear == endYear) ? "" + endYear : "" + startYear + "-" + endYear;
+	}
+
+	private void validateCustLockNumDaysAndCustLockOpt(Integer customLockNumberDays, CustomLockOption customLockOption) {
+		if (customLockNumberDays == null || customLockOption == null)
+			throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
+	}
+
+	private void validateForceCustomDay(Integer forceCustomDay) {
+		if (forceCustomDay < 1 || forceCustomDay > 31)
+			throw new BusinessApiException("When force option is set to CUSTOM_DAY then the allowed options are integers from 1 (included) to 31 (included).");
+	}
+
+	private void validateForceOptionAndForceCustDay(AccountingPeriodForceEnum forceOption, Integer forceCustomDay) {
+		if (forceOption == null || forceCustomDay == null)
+			throw new BusinessApiException("When accountingOperationAction is set to FORCE then the forceOption & forceCustomDay is mandatory");
 	}
 }

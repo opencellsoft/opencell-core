@@ -32,7 +32,8 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     public void create(QuoteAttribute quoteAttribute) throws BusinessException {
     	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
     			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
-        checkMandatoryEl(quoteAttribute, quoteVersion);
+    	if(quoteVersion!= null)
+    		checkMandatoryEl(quoteAttribute, quoteVersion);
         super.create(quoteAttribute);
     }
 
@@ -40,7 +41,8 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     public QuoteAttribute update(QuoteAttribute quoteAttribute) throws BusinessException {
     	QuoteVersion quoteVersion=quoteAttribute.getQuoteProduct()!=null?
     			quoteAttribute.getQuoteProduct().getQuoteVersion():quoteAttribute.getQuoteOffer()!=null?quoteAttribute.getQuoteOffer().getQuoteVersion():null;
-		checkMandatoryEl(quoteAttribute, quoteVersion);
+    	if(quoteVersion!= null)
+    		checkMandatoryEl(quoteAttribute, quoteVersion);
         return super.update(quoteAttribute);
     }
     
