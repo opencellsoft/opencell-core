@@ -81,6 +81,7 @@ import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -148,6 +149,9 @@ public class ProductApi extends BaseApi {
 
 	 @Inject
 	 private CounterTemplateService counterTemplateService;
+
+	@Inject
+	private ProductVersionAttributeService productVersionAttributeService;
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -399,7 +403,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setValidity(postData.getValidity());
 		productVersion.setStatus(VersionStatusEnum.DRAFT);
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
-		processAttributes(postData,productVersion);
+		processProductVersionAttributes(postData,productVersion);
 		processTags(postData, productVersion);
 		processGroupedAttribute(postData, productVersion);
 	}
@@ -467,7 +471,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setValidity(postData.getValidity());
 		productVersion.setStatus(postData.getStatus() == null ? VersionStatusEnum.DRAFT : postData.getStatus());
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
-		processAttributes(postData,productVersion);
+		processProductVersionAttributes(postData,productVersion);
 		processTags(postData, productVersion);
 		processGroupedAttribute(postData, productVersion);
 		try {
@@ -790,7 +794,7 @@ public class ProductApi extends BaseApi {
 			productVersion.setGroupedAttributes(null);
 		}
 	}
-	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
+	private void processProductVersionAttributes(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<ProductVersionAttributeDTO> attributeCodes = postData.getProductAttributes(); 
 		productVersion.getAttributes().clear();
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
@@ -801,7 +805,19 @@ public class ProductApi extends BaseApi {
 				if(attribute == null) { 
                     throw new EntityDoesNotExistsException(Attribute.class, attr.getAttributeCode());
 				}
-				ProductVersionAttribute productAttribute = new ProductVersionAttribute(productVersion, attribute, currentSequence, attr.getMandatoryWithEl());
+				ProductVersionAttribute productAttribute = new ProductVersionAttribute();
+				productAttribute.setProductVersion(productVersion);
+				productAttribute.setAttribute(attribute);
+				productAttribute.setSequence(currentSequence);
+				productAttribute.setMandatoryWithEl(attr.getMandatoryWithEl());
+				productAttribute.setDefaultValue(attr.getDefaultValue());
+				productAttribute.setDisplay(attr.isDisplay());
+				productAttribute.setMandatory(attr.isMandatory());
+				productAttribute.setReadOnly(attr.isReadOnly());
+				productAttribute.setValidationLabel(attr.getValidationLabel());
+				productAttribute.setValidationPattern(attr.getValidationPattern());
+				productAttribute.setValidationType(attr.getValidationType());
+				//productVersionAttributeService.checkValidationPattern(productAttribute);
                 attributes.add(productAttribute);
 			}
             productVersion.getAttributes().addAll(attributes);
@@ -1018,23 +1034,6 @@ public class ProductApi extends BaseApi {
 
         result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
         return result;
-    }
-
-    private void processReplacementRules(List<CommercialRuleHeader> commercialRules, List<ProductContextDTO> selectedProducts, AttributeDTO attributeDto) {
-        List<Map<String, Object>> overriddenAttributes = commercialRules.stream()
-                .filter(r -> RuleTypeEnum.REPLACEMENT.equals(r.getRuleType()))
-                .map(
-                        rule -> commercialRuleHeaderService.replacementProcess(rule, selectedProducts)
-                )
-                .collect(Collectors.toList());
-        if(attributeDto != null) {
-            Optional<Map<String, Object>> overriddenAttribute = overriddenAttributes.stream()
-                    .filter(
-                            attributeValue -> attributeValue.get(attributeDto.getCode()) != null
-                    )
-                    .findAny();
-            overriddenAttribute.ifPresent(stringObjectMap -> attributeDto.setDefaultValue(stringObjectMap.get(attributeDto.getCode()) + ""));
-        }
     }
 
 }
