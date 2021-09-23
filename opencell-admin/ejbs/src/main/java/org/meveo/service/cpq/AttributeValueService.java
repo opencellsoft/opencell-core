@@ -63,12 +63,14 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
     
 	public static void evaluateMandatoryEl(AttributeValidationType validationType, String validationPattern, AttributeValue attributeValue, String mandatoryEl, CpqQuote cpqQuote, QuoteVersion quoteVersion,
                                      CommercialOrder commercialOrder, ServiceInstance serviceInstance) {
-    	 Object value = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
-    	 var isMandatory = evaluateExpression(mandatoryEl,
-                 Boolean.class, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
-    	 if(isMandatory && value == null ) {
-         	 throw new BusinessException("Attribute code : " +  attributeValue.getAttribute().getCode() + " is mandatory");
-         }
+		if(!Strings.isEmpty(mandatoryEl)){
+	    	 Object value = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
+	    	 var isMandatory = evaluateExpression(mandatoryEl,
+	                 Boolean.class, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
+	    	 if(isMandatory && value == null ) {
+	         	 throw new BusinessException("Attribute code : " +  attributeValue.getAttribute().getCode() + " is mandatory");
+	         }
+		}
     	 if(!Strings.isEmpty(validationPattern) && validationType != null) {
     		 validate(validationType, validationPattern, attributeValue, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
     	 }
