@@ -252,7 +252,6 @@ public class PaymentService extends PersistenceService<Payment> {
     	
     	
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
-        //doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         
