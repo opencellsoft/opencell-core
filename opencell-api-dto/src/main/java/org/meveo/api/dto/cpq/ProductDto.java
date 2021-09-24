@@ -39,7 +39,7 @@ public class ProductDto extends BaseEntityDto{
     @NotNull
 	@Schema(description = "Code of the product", required = true)
     protected String code;
-	@Schema(description = "Description of the product")
+	@Schema(description = "Description of the product", required = true)
     protected String label;
 	@Schema(description = "Status of the product")
 	protected ProductStatusEnum status;

@@ -87,19 +87,12 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setCode(postData.getCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setPriority(postData.getPriority());
-		attribute.setDisplay(postData.isDisplay());
-		attribute.setMandatory(postData.isMandatory());
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
-		attribute.setReadOnly(postData.isReadOnly());
-		attribute.setDefaultValue(postData.getDefaultValue());
 		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
         populateCustomFields(postData.getCustomFields(), attribute, true);
-        attribute.setValidationType(postData.getValidationType());
-        attribute.setValidationPattern(postData.getValidationPattern());
-        attribute.setValidationLabel(postData.getValidationLabel());
 		attributeService.create(attribute);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
@@ -175,13 +168,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setPriority(postData.getPriority());
-		attribute.setDisplay(postData.isDisplay());
-		attribute.setMandatory(postData.isMandatory());
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-		attribute.setReadOnly(postData.isReadOnly());
-		attribute.setDefaultValue(postData.getDefaultValue());
 		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());

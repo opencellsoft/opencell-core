@@ -9173,21 +9173,9 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="parent_id" type="bigint" />
-            <column name="mandatory" type="${type.boolean}" >
-                <constraints nullable="false"/>
-            </column>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
-            <column name="sequence" type="int4" />
-            <column name="display" type="${type.boolean}" >
-                <constraints nullable="false"/>
-            </column>
             <column name="attribute_type" type="varchar(100)" />
             <column name="unit_nb_decimal" type="int4" />
-            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="default_value" type="varchar(255)"></column>
-            <column name="validation_type" type="varchar(10)" />
-            <column name="validation_pattern" type="varchar(2000)" />
-            <column name="validation_label" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-458" author="NabilOUACHI">
@@ -9252,10 +9240,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="priority" type="int4" />
-            <column name="display" type="${type.boolean}" >
-                <constraints nullable="false"/>
-            </column>
     		<column name="mandatorwith_el" type="varchar(255)"/>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
         </createTable>
         <!--
     	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
@@ -14865,6 +14856,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
     	</createTable>
     	
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"

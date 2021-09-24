@@ -5,21 +5,20 @@ package org.meveo.service.cpq;
 
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -64,41 +63,4 @@ public class AttributeService extends BusinessService<Attribute>{
         }
 	}
 
-    @Override
-    public void create(Attribute attribute) throws BusinessException {
-        if (attribute.getValidationPattern() != null
-                && attribute.getDefaultValue() != null && !validateDefaultValue(attribute)) {
-            throw new BusinessException(createErrorMessage(attribute));
-        }
-        super.create(attribute);
-    }
-
-    @Override
-    public Attribute update(Attribute attribute) throws BusinessException {
-        if (attribute.getValidationPattern() != null
-                && attribute.getDefaultValue() != null && !validateDefaultValue(attribute)) {
-            throw new BusinessException(createErrorMessage(attribute));
-        }
-        return super.updateNoCheck(attribute);
-    }
-
-    public boolean validateDefaultValue(Attribute attribute) {
-        if (attribute.getValidationType().equals(AttributeValidationType.EL)) {
-            return evaluateExpression(attribute.getValidationPattern(), Boolean.class, attribute.getDefaultValue());
-        } else {
-            return Pattern.compile(attribute.getValidationPattern()).matcher(attribute.getDefaultValue()).find();
-        }
-    }
-
-    private String createErrorMessage(Attribute attribute) {
-        String value = attribute.getDefaultValue().length() <= 30
-                ? attribute.getDefaultValue() : attribute.getDefaultValue().substring(0, 27) + "...";
-        StringBuilder errorMessage = new StringBuilder("Value ")
-                .append(value)
-                .append(" for attribute ")
-                .append(attribute.getCode())
-                .append(" does not match validation pattern ")
-                .append(attribute.getValidationPattern());
-        return errorMessage.toString();
-    }
 }
