@@ -307,7 +307,8 @@ public class PaymentService extends PersistenceService<Payment> {
                     }
                     if (matchingAO) {
                         try {
-                            List<Long> aoIdsToMatch = aoIdsToPay;
+                            List<Long> aoIdsToMatch = new ArrayList<Long>();
+                            aoIdsToMatch.addAll(aoIdsToPay);
                             aoIdsToMatch.add(aoPaymentId);
                             matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
                             doPaymentResponseDto.setMatchingCreated(true);
