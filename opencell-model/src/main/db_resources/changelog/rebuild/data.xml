@@ -11854,7 +11854,7 @@ public class DeleteCustomersScript extends Script {
        		<column name="duration_unit"  value="DAY"/>
        		<column name="discount_plan_type"  value="PRODUCT"/>
        		<column name="status"  value="ACTIVE"/>
-       		<column name="status_date"  value="${db.current.time}"/>
+       		<column name="status_date" valueDate="${db.current.time}"/>
        	</insert> 
 	</changeSet>
 
