@@ -31,8 +31,8 @@ import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
-import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -56,6 +56,7 @@ import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
 import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
+import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 
@@ -99,7 +100,7 @@ public class GenericOpencellRestful extends Application {
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
 				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class,
-				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class )
+				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class, StandardReportResourceImpl.class )
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
