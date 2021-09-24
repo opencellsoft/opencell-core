@@ -15930,9 +15930,7 @@
     <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-1901_20210920" author="TarikFA." />
-    
-    
-    
+    <changeSet id="INTRD_1782_20210913" author="TarikFA." />
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
