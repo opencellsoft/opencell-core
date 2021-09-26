@@ -64,7 +64,7 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	@Override
 	public Optional<RecordedInvoice> findById(Long id) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 
@@ -78,27 +78,27 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	@Override
 	public Optional<RecordedInvoice> update(Long id, RecordedInvoice baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 
 	@Override
 	public Optional<RecordedInvoice> patch(Long id, RecordedInvoice baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 
 	@Override
 	public Optional<RecordedInvoice> delete(Long id) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 
 	@Override
 	public Optional<RecordedInvoice> findByCode(String code) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 }
