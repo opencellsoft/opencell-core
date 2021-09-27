@@ -18,6 +18,8 @@
 
 package org.meveo.api.ws.impl;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -52,6 +54,7 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
     private MediationApi mediationApi;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public ActionStatus registerCdrList(CdrListDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

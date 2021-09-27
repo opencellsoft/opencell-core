@@ -9565,4 +9565,9 @@ public class OrderAdvancement extends ModuleScript {
         
     </changeSet>
     
+    <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius">
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="500"/>
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
+    </changeSet>
+    
 </databaseChangeLog>

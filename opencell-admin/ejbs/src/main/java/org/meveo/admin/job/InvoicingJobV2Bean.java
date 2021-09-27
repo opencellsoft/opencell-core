@@ -7,6 +7,16 @@ import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
@@ -15,37 +25,35 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
-import org.meveo.service.billing.impl.*;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoicesToNumberInfo;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
 
+    private static final long serialVersionUID = -2523209868278837776L;
+    
     @Inject
     private Logger log;
     @Inject
     private BillingRunService billingRunService;
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
-    /** The service singleton. */
-    @Inject
-    private InvoicingJobBean invoicingJobBean;
     
     @Inject
     private InvoiceService invoiceService;
@@ -178,22 +186,22 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             }
 
             // Assign invoice numbers
-            Consumer<Long> task = (invoiceId) -> {
+            BiConsumer<Long, JobExecutionResultImpl> task = (invoiceId, jobResult) -> {
                 invoiceService.recalculateDates(invoiceId);
                 invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
                 invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) invoiceIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
             // Increment next invoice date of a billing account
-            task = (baId) -> {
+            task = (baId, jobResult) -> {
                 invoiceService.incrementBAInvoiceDate(billingRun, baId);
             };
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) baIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
         }
     }
 

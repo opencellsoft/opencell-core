@@ -21,16 +21,20 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -41,7 +45,10 @@ import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.event.qualifier.RejectedCDR;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
@@ -72,13 +79,20 @@ public class MediationJobBean extends BaseJobBean {
 
     /** The cdr parser. */
     @Inject
-    private CDRParsingService cdrParserService;
+    private CDRParsingService cdrParsingService;
 
     @Inject
     private FlatFileProcessing flatFileProcessing;
 
     @Inject
     private CDRService cdrService;
+
+    @Inject
+    @RejectedCDR
+    private Event<Serializable> rejectededCdrEventProducer;
+
+    @EJB
+    private MediationJobBean thisNewTX;
 
     /** The cdr file name. */
     String cdrFileName;
@@ -103,6 +117,15 @@ public class MediationJobBean extends BaseJobBean {
 
     /** The report. */
     String report;
+
+    boolean persistCDR;
+
+    @PostConstruct
+    private void init() {
+        ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+
+        persistCDR = "true".equals(paramBean.getProperty("mediation.persistCDR", "false"));
+    }
 
     /**
      * Process a single file.
@@ -142,6 +165,8 @@ public class MediationJobBean extends BaseJobBean {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
+        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 1000L);
+
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads == -1) {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
@@ -164,8 +189,8 @@ public class MediationJobBean extends BaseJobBean {
                 return;
             }
 
-            cdrReader = cdrParserService.getCDRReaderByCode(currentFile, readerCode);
-            cdrParser = cdrParserService.getCDRParser(parserCode);
+            cdrReader = cdrParsingService.getCDRReaderByCode(currentFile, readerCode);
+            cdrParser = cdrParsingService.getCDRParser(parserCode);
 
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             boolean updateTotalCount = totalNummberOfRecords == null;
@@ -194,6 +219,7 @@ public class MediationJobBean extends BaseJobBean {
             PrintWriter rejectFileWriterFinal = rejectFileWriter;
 
             List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
+            boolean isDuplicateCheckOn = cdrParserFinal.isDuplicateCheckOn();
 
             for (int k = 0; k < nbThreads; k++) {
 
@@ -205,93 +231,54 @@ public class MediationJobBean extends BaseJobBean {
                     currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
                     int i = 0;
-                    long globalI = 0;
-                    CDR cdr = null;
 
-                    while (true) {
+                    mainLoop: while (true) {
 
-                        if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                            break;
-                        }
+                        final List<CDR> cdrs = new ArrayList<CDR>();
+                        int nrOfItemsInBatch = 0;
 
-                        try {
-                            cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
-                            if (cdr == null) {
-                                break;
-                            }
+                        while (nrOfItemsInBatch < batchSize) {
 
-                            if (StringUtils.isBlank(cdr.getRejectReason())) {
-                                List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
-                                List<EDR> edrs = cdrParserFinal.convertCdrToEdr(cdr, accessPoints);
-                                if (log.isTraceEnabled()) {
-                                    log.trace("Processing record line content:{} from file {}", cdr.getLine(), fileName);
+                            try {
+                                CDR cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
+                                if (cdr == null) {
+                                    break mainLoop;
                                 }
 
-                                cdrParserService.createEdrs(edrs, cdr);
-
-                                synchronized (outputFileWriterFinal) {
-                                    outputFileWriterFinal.println(cdr.getLine());
+                                if (!StringUtils.isBlank(cdr.getRejectReason())) {
+                                    cdr.setStatus(CDRStatusEnum.ERROR);
                                 }
-                                globalI = jobExecutionResult.registerSucces();
 
-                            } else {
-                                globalI = jobExecutionResult.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+                                cdrs.add(cdr);
 
-                                cdr.setStatus(CDRStatusEnum.ERROR);
-                                createOrUpdateCdr(cdr);
-                            }
-
-                        } catch (IOException e) {
-                            log.error("Failed to read a CDR line from file {}", fileName, e);
-                            jobExecutionResult.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
-                            cdr.setStatus(CDRStatusEnum.ERROR);
-                            cdr.setRejectReason(e.getMessage());
-                            createOrUpdateCdr(cdr);
-                            break;
-
-                        } catch (Exception e) {
-                            String errorReason = e.getMessage();
-                            final Throwable rootCause = getRootCause(e);
-                            if (e instanceof EJBTransactionRolledbackException && rootCause instanceof ConstraintViolationException) {
-                                StringBuilder builder = new StringBuilder();
-                                builder.append("Invalid values passed: ");
-                                for (ConstraintViolation<?> violation : ((ConstraintViolationException) rootCause).getConstraintViolations()) {
-                                    builder.append(String.format(" %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(),
-                                        violation.getMessage()));
+                                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                                    break mainLoop;
                                 }
-                                errorReason = builder.toString();
-                                log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
-                            } else if (e instanceof CDRParsingException) {
-                                log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
-                            } else {
-                                log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason, e);
-                            }
+                                i++;
+                                nrOfItemsInBatch++;
 
-                            synchronized (rejectFileWriterFinal) {
-                                rejectFileWriterFinal.println((cdr != null ? cdr.getLine() : "") + "\t" + errorReason);
+                            } catch (IOException e) {
+                                log.error("Failed to read a CDR line from file {}", fileName, e);
+                                jobExecutionResult.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
+                                break mainLoop;
                             }
-                            globalI = jobExecutionResult.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
-                            cdr.setStatus(CDRStatusEnum.ERROR);
-                            cdr.setRejectReason(e.getMessage());
-                            createOrUpdateCdr(cdr);
                         }
 
-                        // It is not known in advance of a number of records in a file, so total count is being updated with each record
-                        if (updateTotalCount) {
-                            jobExecutionResult.addNbItemsToProcess(1L);
-                        }
+                        thisNewTX.processCDRs(cdrs, jobExecutionResult, cdrParserFinal, outputFileWriterFinal, rejectFileWriterFinal, fileName, isDuplicateCheckOn, updateTotalCount, checkJobStatusEveryNr);
 
                         try {
                             // Record progress
-                            if (globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
-                                jobExecutionResultService.persistResult(jobExecutionResult);
-                            }
+                            jobExecutionResultService.persistResult(jobExecutionResult);
+
                         } catch (EJBTransactionRolledbackException e) {
                             // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
                         } catch (Exception e) {
                             log.error("Failed to update job progress", e);
                         }
-                        i++;
+
+                        if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                            return;
+                        }
                     }
                 });
             }
@@ -350,7 +337,7 @@ public class MediationJobBean extends BaseJobBean {
             if (wasCanceled) {
                 log.info("Canceled processing mediation file {}", fileName);
                 jobExecutionResult.addReport("Processed file partially: " + fileName);
-                
+
             } else {
                 log.info("Finished processing mediation file {}", fileName);
                 jobExecutionResult.addReport("Processed file: " + fileName);
@@ -427,12 +414,79 @@ public class MediationJobBean extends BaseJobBean {
      * @param cdr the cdr
      */
     private void createOrUpdateCdr(CDR cdr) {
-        boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
+
         if (cdr != null && persistCDR) {
             if (cdr.getId() == null) {
                 cdrService.create(cdr);
             } else {
                 cdrService.update(cdr);
+            }
+        }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void processCDRs(List<CDR> cdrs, JobExecutionResultImpl jobExecutionResult, ICdrParser cdrParserFinal, PrintWriter outputFileWriter, PrintWriter rejectFileWriter, String fileName, boolean isDuplicateCheckOn,
+            boolean updateTotalCount, int checkJobStatusEveryNr) {
+
+        for (CDR cdr : cdrs) {
+
+            try {
+
+                if (!StringUtils.isBlank(cdr.getRejectReason())) {
+                    log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, cdr.getRejectReason());
+                    rejectFileWriter.println(cdr.getLine() + "\t" + cdr.getRejectReason());
+                    jobExecutionResult.registerError("file=" + fileName + ", line=" + cdr.getLine() + ": " + cdr.getRejectReason());
+                    cdr.setStatus(CDRStatusEnum.ERROR);
+                    rejectededCdrEventProducer.fire(cdr);
+                    createOrUpdateCdr(cdr);
+                    
+                } else {
+
+                    if (isDuplicateCheckOn) {
+                        cdrParserFinal.deduplicate(cdr);
+                    }
+                    List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
+                    List<EDR> edrs = cdrParserFinal.convertCdrToEdr(cdr, accessPoints);
+
+                    cdrParsingService.createEdrs(edrs, cdr);
+
+                    outputFileWriter.println(cdr.getLine());
+
+                    jobExecutionResult.registerSucces();
+                }
+                
+            } catch (Exception e) {
+                String errorReason = e.getMessage();
+                final Throwable rootCause = getRootCause(e);
+                if (e instanceof EJBTransactionRolledbackException && rootCause instanceof ConstraintViolationException) {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("Invalid values passed: ");
+                    for (ConstraintViolation<?> violation : ((ConstraintViolationException) rootCause).getConstraintViolations()) {
+                        builder
+                            .append(String.format(" %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
+                    }
+                    errorReason = builder.toString();
+                    log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, errorReason);
+                } else if (e instanceof CDRParsingException) {
+                    log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, errorReason);
+                } else {
+                    log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, errorReason, e);
+                }
+
+                rejectFileWriter.println(cdr.getLine() + "\t" + errorReason);
+
+                jobExecutionResult.registerError("file=" + fileName + ", line=" + cdr.getLine() + ": " + errorReason);
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                cdr.setRejectReason(e.getMessage());
+
+                rejectededCdrEventProducer.fire(cdr);
+                createOrUpdateCdr(cdr);
+            }
+
+            // It is not known in advance of a number of records in a file, so total count is being updated with each record
+            if (updateTotalCount) {
+                jobExecutionResult.addNbItemsToProcess(1L);
             }
         }
     }

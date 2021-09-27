@@ -58,7 +58,7 @@ import org.meveo.service.medina.impl.ICdrReader;
 public class MediationReprocessingJobBean extends BaseJobBean {
 
     private static final long serialVersionUID = -8981175215897218406L;
-    
+
     @Inject
     private CDRParsingService cdrParserService;
 
@@ -117,7 +117,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 long globalI = 0;
                 CDR cdr = null;
 
-                while (true) {
+                mainLoop: while (true) {
 
                     if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                         break;
@@ -126,35 +126,35 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                     try {
                         cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
                         if (cdr == null) {
-                            break;
+                            break mainLoop;
                         }
 
                         if (StringUtils.isBlank(cdr.getRejectReason())) {
                             List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
                             List<EDR> edrs = cdrParserFinal.convertCdrToEdr(cdr, accessPoints);
-                            log.debug("Processing cdr id:{}", cdr.getId());
 
                             cdrParserService.createEdrs(edrs, cdr);
 
                             globalI = jobExecutionResult.registerSucces();
+
                         } else {
-                            globalI = jobExecutionResult.registerError("cdr =" + (cdr != null ? cdr.getId() : "") + ": " + cdr.getRejectReason());
+                            globalI = jobExecutionResult.registerError("cdr =" + cdr.getId() + ": " + cdr.getRejectReason());
                             cdr.setStatus(CDRStatusEnum.ERROR);
-                            cdrService.updateReprocessedCdr(cdr);
+                            cdrService.update(cdr);
                         }
 
                     } catch (Exception e) {
 
                         String errorReason = e.getMessage();
                         if (e instanceof CDRParsingException) {
-                            log.error("Failed to process CDR id: {} error {}", cdr != null ? cdr.getId() : null, errorReason);
+                            log.error("Failed to process CDR id: {} error {}", cdr.getId(), errorReason);
                         } else {
-                            log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
+                            log.error("Failed to process CDR id: {}  error {}", cdr.getId(), errorReason, e);
                         }
-                        globalI = jobExecutionResult.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
+                        globalI = jobExecutionResult.registerError("cdr id=" + cdr.getId() + ": " + errorReason);
                         cdr.setStatus(CDRStatusEnum.ERROR);
                         cdr.setRejectReason(e.getMessage());
-                        cdrService.updateReprocessedCdr(cdr);
+                        cdrService.update(cdr);
                     }
 
                     try {

@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.billing.impl;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -55,6 +57,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
     private MediationApi mediationApi;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public ActionStatus registerCdrList(CdrListDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
