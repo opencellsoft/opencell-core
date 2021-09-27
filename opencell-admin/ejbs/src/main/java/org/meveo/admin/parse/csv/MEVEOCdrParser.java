@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -53,7 +53,7 @@ import org.meveo.service.medina.impl.InvalidFormatException;
  * @author Andrius Karpavicius
  * @author h.znibar
  */
-@Named
+@Stateless
 public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
@@ -253,7 +253,7 @@ public class MEVEOCdrParser implements ICdrParser {
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-        if (accesses == null || accesses.size() == 0) {
+        if (accesses == null || accesses.isEmpty()) {
             throw new InvalidAccessException("No matching access point " + cdr.getAccessCode() + " was found");
         }
         return accesses;
@@ -262,23 +262,23 @@ public class MEVEOCdrParser implements ICdrParser {
     @Override
     public List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException {
 
-            List<EDR> edrs = new ArrayList<EDR>();
-            boolean foundMatchingAccess = false;
+        List<EDR> edrs = new ArrayList<EDR>();
+        boolean foundMatchingAccess = false;
 
-            for (Access accessPoint : accessPoints) {
-                if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
-                        && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
-                    foundMatchingAccess = true;
+        for (Access accessPoint : accessPoints) {
+            if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
+                    && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
+                foundMatchingAccess = true;
                 EDR edr = cdrToEdr(cdr, accessPoint, accessPoint.getSubscription());
-                    edrs.add(edr);
-                }
+                edrs.add(edr);
             }
-
-            if (!foundMatchingAccess) {
-                throw new InvalidAccessException(cdr);
-            }
-            return edrs;
         }
+
+        if (!foundMatchingAccess) {
+            throw new InvalidAccessException(cdr);
+        }
+        return edrs;
+    }
 
     /**
      * Convert CDR to EDR

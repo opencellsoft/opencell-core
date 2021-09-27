@@ -31,10 +31,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.parse.csv.MEVEOCdrParser;
-import org.meveo.admin.parse.csv.MEVEOCdrReader;
 import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
@@ -63,13 +60,6 @@ public class MediationReprocessingJobBean extends BaseJobBean {
     private static final long serialVersionUID = -8981175215897218406L;
 
     @Inject
-    private MEVEOCdrReader meveoCdrReader;
-
-    @Inject
-    private MEVEOCdrParser meveoCdrParser;
-
-    /** The cdr parser. */
-    @Inject
     private CDRParsingService cdrParserService;
 
     @Inject
@@ -93,10 +83,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
         ICdrReader cdrReader = null;
 
         try {
-            cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
-            if (cdrReader == null) {
-                cdrReader = meveoCdrReader;
-            }
+            cdrReader = cdrParserService.getReader(readerCode);
             cdrReader.init("DB");
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             if (totalNummberOfRecords != null) {
@@ -104,10 +91,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 jobExecutionResultService.persistResult(jobExecutionResult);
             }
 
-            ICdrParser cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
-            if (cdrParser == null) {
-                cdrParser = meveoCdrParser;
-            }
+            ICdrParser cdrParser = cdrParserService.getParser(parserCode);
 
             Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
             if (nbRuns == -1) {

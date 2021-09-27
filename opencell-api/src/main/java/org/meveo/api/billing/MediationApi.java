@@ -240,7 +240,7 @@ public class MediationApi extends BaseApi {
         try {
             Reservation reservation = reservationService.findById((Long) objs[0]);
             if(!ReservationStatus.CONFIRMED.equals(reservation.getStatus())) {
-            	reservationService.cancelPrepaidReservationInNewTransaction(reservation);
+                reservationService.cancelPrepaidReservationInNewTransaction(reservation);
             }
 
         } catch (BusinessException e) {
