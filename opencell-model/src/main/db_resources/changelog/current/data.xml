@@ -5642,7 +5642,7 @@ public class SubscriptionImportScript extends GenericImportScript {
 		
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="generic_sequence_seq" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="code" value="quote_offer_sequence" />
@@ -5657,14 +5657,14 @@ public class SubscriptionImportScript extends GenericImportScript {
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
 			<column name="entity_class" value="QuoteOffer" />
 			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
         
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="generic_sequence_seq"/>
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="code" value="order_offer_sequence" />
@@ -5679,7 +5679,7 @@ public class SubscriptionImportScript extends GenericImportScript {
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
 			<column name="entity_class" value="OrderOffer" />
 			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
