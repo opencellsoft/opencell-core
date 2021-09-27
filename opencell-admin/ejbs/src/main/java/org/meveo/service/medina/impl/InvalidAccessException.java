@@ -26,6 +26,14 @@ public class InvalidAccessException extends CDRParsingException {
 
     private static final long serialVersionUID = 7574354192096751354L;
 
+    public InvalidAccessException(String message) {
+        super(message);
+    }
+
+    public InvalidAccessException(CDRRejectionCauseEnum cause, String message) {
+        super(cause, message);
+    }
+
     public InvalidAccessException(Serializable cdr) {
         super(cdr, CDRRejectionCauseEnum.INVALID_ACCESS, "");
     }
@@ -33,7 +41,7 @@ public class InvalidAccessException extends CDRParsingException {
     public InvalidAccessException(Serializable cdr, String message) {
         super(cdr, CDRRejectionCauseEnum.INVALID_ACCESS, message);
     }
-    
+
     public InvalidAccessException(Serializable cdr, CDRRejectionCauseEnum cause) {
         super(cdr, cause, "");
     }

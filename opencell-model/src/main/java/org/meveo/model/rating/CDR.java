@@ -52,21 +52,16 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Entity
 @Table(name = "rating_cdr")
 @CustomFieldEntity(cftCodePrefix = "CDR")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "rating_cdr_seq") })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_cdr_seq"),
+        @Parameter(name = "increment_size", value = "500") })
 @NamedQueries({
     @NamedQuery(name = "CDR.checkFileNameExists", query = "SELECT originBatch FROM CDR where originBatch=:fileName"),
     @NamedQuery(name = "CDR.findByEdr", query = "from CDR where headerEDR = :edr"), 
     @NamedQuery(name = "CDR.checkRTBilledExists", query = "from RatedTransaction rt where status = 'BILLED' and rt.edr.originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction rt where status <> 'BILLED' and rt.edr in (select e from EDR e where e.originBatch=:fileName)"),
     @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation wo where wo.edr in (select e from EDR e where e.originBatch=:fileName)"),
-    @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"),
-    @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),
-    @NamedQuery(name="CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'"),
-    @NamedQuery(name="CDR.cleanReprocessedCDR", query = "delete from CDR where Status = 'TO_REPROCESS' and originRecord =:originRecord"),
-    @NamedQuery(name="CDR.updateReprocessedCDR", query = "update CDR set timesTried=:timesTried, status=:status where Status = 'TO_REPROCESS' and originRecord =:originRecord")
-
-    
+        @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"), @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),
+        @NamedQuery(name = "CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'")
 })
 public class CDR extends BaseEntity implements ICustomFieldEntity {
 
@@ -299,7 +294,6 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "source", nullable = true, columnDefinition = "TEXT")
     private String source;
     
-
 	@Transient
 	private Exception rejectReasonException = null;
 
@@ -334,7 +328,11 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 
 	public void setRejectReasonException(Exception rejectReasonException) {
 		this.rejectReasonException = rejectReasonException;
+        if (rejectReasonException != null) {
+            this.rejectReason = rejectReasonException.getMessage();
+            this.status = CDRStatusEnum.ERROR;
 	}
+    }
 
 	public String getOriginBatch() {
 		return originBatch;
@@ -576,11 +574,10 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 
 	@Override
 	public String toString() {
-		return "CDR [id=" + id + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", timestamp=" + eventDate + ", quantity=" + quantity + ", access="
-				+ accessCode + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5
-				+ ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8=" + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2="
-				+ dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2="
-				+ dateParam2 + ", decimalParam3=" + decimalParam3 + ", dateParam4=" + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParam=" + extraParam
+        return "CDR [id=" + id + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", timestamp=" + eventDate + ", quantity=" + quantity + ", access=" + accessCode + ", parameter1=" + parameter1
+                + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5 + ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8="
+                + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5
+                + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3 + ", dateParam4=" + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParam=" + extraParam
 				+ ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate=" + updated + "]";
 	}
 
@@ -659,8 +656,6 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
         this.type = type;
     }
        
-    
-
     /**
      * Gets the source.
      *
@@ -685,11 +680,10 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	 * @return CSV-line line string
 	 */
 	public String toCsv() {
-		return getCsvValue(eventDate) + ";" + getCsvValue(quantity) + ";" + getCsvValue(accessCode) + ";" + getCsvValue(parameter1) + ";" + getCsvValue(parameter2) + ";"
-				+ getCsvValue(parameter3) + ";" + getCsvValue(parameter4) + ";" + getCsvValue(parameter5) + ";" + getCsvValue(parameter6) + ";" + getCsvValue(parameter7) + ";" + getCsvValue(parameter8)
-				+ ";" + getCsvValue(parameter9) + ";" + getCsvValue(dateParam1) + ";" + getCsvValue(dateParam2) + ";" + getCsvValue(dateParam3) + ";" + getCsvValue(dateParam4) + ";"
-				+ getCsvValue(dateParam5) + ";" + getCsvValue(decimalParam1) + ";" + getCsvValue(decimalParam2) + ";" + getCsvValue(decimalParam3) + ";"
-				+ getCsvValue(decimalParam4) + ";" + getCsvValue(decimalParam5) + ";" + getCsvValue(extraParam);
+        return getCsvValue(eventDate) + ";" + getCsvValue(quantity) + ";" + getCsvValue(accessCode) + ";" + getCsvValue(parameter1) + ";" + getCsvValue(parameter2) + ";" + getCsvValue(parameter3) + ";"
+                + getCsvValue(parameter4) + ";" + getCsvValue(parameter5) + ";" + getCsvValue(parameter6) + ";" + getCsvValue(parameter7) + ";" + getCsvValue(parameter8) + ";" + getCsvValue(parameter9) + ";"
+                + getCsvValue(dateParam1) + ";" + getCsvValue(dateParam2) + ";" + getCsvValue(dateParam3) + ";" + getCsvValue(dateParam4) + ";" + getCsvValue(dateParam5) + ";" + getCsvValue(decimalParam1) + ";"
+                + getCsvValue(decimalParam2) + ";" + getCsvValue(decimalParam3) + ";" + getCsvValue(decimalParam4) + ";" + getCsvValue(decimalParam5) + ";" + getCsvValue(extraParam);
 	}
 
 	private String getCsvValue(Object o) {
@@ -737,5 +731,36 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     @Override
     public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
         this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    /**
+     * Copy parsed values from another CDR 
+     * @param otherCDR OtherCDR to copy values from
+     */
+    public void fillFrom(CDR otherCDR) {
+        this.accessCode = otherCDR.getAccessCode();
+        this.cfValues = otherCDR.getCfValues();
+        this.dateParam1 = otherCDR.getDateParam1();
+        this.dateParam2 = otherCDR.getDateParam2();
+        this.dateParam3 = otherCDR.getDateParam3();
+        this.dateParam4 = otherCDR.getDateParam4();
+        this.dateParam5 = otherCDR.getDateParam5();
+        this.decimalParam1 = otherCDR.getDecimalParam1();
+        this.decimalParam2 = otherCDR.getDecimalParam2();
+        this.decimalParam3 = otherCDR.getDecimalParam3();
+        this.decimalParam4 = otherCDR.getDecimalParam4();
+        this.decimalParam5 = otherCDR.getDecimalParam5();
+        this.eventDate = otherCDR.getEventDate();
+        this.extraParam = otherCDR.getExtraParam();
+        this.parameter1 = otherCDR.getParameter1();
+        this.parameter2 = otherCDR.getParameter2();
+        this.parameter3 = otherCDR.getParameter3();
+        this.parameter4 = otherCDR.getParameter4();
+        this.parameter5 = otherCDR.getParameter5();
+        this.parameter6 = otherCDR.getParameter6();
+        this.parameter7 = otherCDR.getParameter7();
+        this.parameter8 = otherCDR.getParameter8();
+        this.parameter9 = otherCDR.getParameter9();
+        this.quantity = otherCDR.getQuantity();
     }
 }
