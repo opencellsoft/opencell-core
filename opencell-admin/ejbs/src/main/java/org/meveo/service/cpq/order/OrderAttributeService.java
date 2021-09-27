@@ -33,7 +33,7 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     				&& orderAttribute.getOrderProduct().getProductVersion() != null) {
 	        	var productVersionAttributeOptional = findMandatoryByProductVersion(orderAttribute, orderAttribute.getOrderProduct().getProductVersion());
 	        	var productVersionAttribute = productVersionAttributeOptional.get();
-	        	if(productVersionAttributeOptional.isPresent() && !Strings.isEmpty(productVersionAttribute.getMandatoryWithEl())) {
+	        	if(productVersionAttributeOptional.isPresent()) {
 	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),
 							orderAttribute, 
 							productVersionAttribute.getMandatoryWithEl(), 
@@ -46,13 +46,14 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     		if(orderAttribute.getOrderOffer() != null 
     				&&  orderAttribute.getOrderOffer().getOfferTemplate() != null ) {
 	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(orderAttribute, orderAttribute.getOrderOffer().getOfferTemplate());
-				if(offerTemplatMandatoryEl.isPresent() && !Strings.isEmpty(offerTemplatMandatoryEl.get().getMandatoryWithEl())) {
-					super.evaluateMandatoryEl(null, null, orderAttribute, 
+	    		var offerTempalteAttribute = offerTemplatMandatoryEl.get();
+				if(offerTemplatMandatoryEl.isPresent()) {
+					super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), offerTempalteAttribute.getValidationPattern(), 
+							orderAttribute, 
 							offerTemplatMandatoryEl.get().getMandatoryWithEl(), 
 							orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
 							null, 
 							orderAttribute.getCommercialOrder(), 
-						
 							null);
 		    		}
     		}

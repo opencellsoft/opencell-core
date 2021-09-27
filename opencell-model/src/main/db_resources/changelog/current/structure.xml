@@ -9503,6 +9503,30 @@ public class OrderAdvancement extends ModuleScript {
     	</addColumn>
     </changeSet>
     
+    <changeSet id="INTRD-1925_20210922" author="TarikFA.">
+    	<addColumn tableName="offer_template_attribute">
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+    	</addColumn>
+		
+		<dropColumn tableName="cpq_attribute">
+			<column name="mandatory"/>
+			<column name="read_only"/>
+			<column name="display"/>
+			<column name="default_value"/>
+			<column name="validation_pattern"/>
+			<column name="validation_label"/>
+		</dropColumn>
+		    	
+    </changeSet>
+    
     
     <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius">
         <addColumn tableName="billing_wallet_operation">

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 
@@ -45,7 +46,7 @@ public class RefundResourceImpl implements RefundResource{
     @Override
     public Response refundBySCT(SCTRefund sctRefund) {
         if(Objects.isNull(sctRefund.getCustomerAccountCode()) || sctRefund.getCustomerAccountCode().isBlank()){
-            throw new ClientErrorException("Customer account code is required!", Response.Status.BAD_REQUEST);
+            throw new BadRequestException("Customer account code is required!");
         }
         CustomerAccount CAByCode = customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("paymentMethods"));
         if(Objects.isNull(CAByCode)){
@@ -73,7 +74,7 @@ public class RefundResourceImpl implements RefundResource{
         payByCardDto.setCustomerAccountCode(cardRefund.getCustomerAccountCode());
         payByCardDto.setOwnerName(cardRefund.getOwnerName());
         payByCardDto.setCvv(cardRefund.getCvv());
-        payByCardDto.setExpiryDate(cardRefund.getExpiryDate().getTime()+"");
+        payByCardDto.setExpiryDate(cardRefund.getExpiryDate() == null? null :cardRefund.getExpiryDate().getTime()+"");
         if(Objects.nonNull(cardRefund.getCardType())){
             payByCardDto.setCardType(CreditCardTypeEnum.valueOf(cardRefund.getCardType()));
         }

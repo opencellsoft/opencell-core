@@ -14865,6 +14865,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
     	</createTable>
     	
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
@@ -15930,14 +15939,12 @@
     <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-1901_20210920" author="TarikFA." />
+    <changeSet id="INTRD_1782_20210913" author="TarikFA." />
     <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql"/>
     <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius"/>
 
-    
-    
-    
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
