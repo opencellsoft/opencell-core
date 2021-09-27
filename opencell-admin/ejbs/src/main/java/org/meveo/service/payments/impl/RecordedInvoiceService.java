@@ -477,12 +477,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     @SuppressWarnings("unchecked")
     public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, PaginationConfiguration paginationConfiguration) {
         
+    	String datePattern = "yyyy-MM-dd";
         
-        QueryBuilder qb = new QueryBuilder("Select ao.customerAccount.code ,sum (case when ao.dueDate > '"+DateUtils.formatDateWithPattern(startDate, "yyyy-MM-dd")+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), "yyyy-MM-dd")+"' then  ao.amount else 0 end ) as notYetDue,  "
-        		+ "sum (case when ao.dueDate <= '"+DateUtils.formatDateWithPattern(startDate, "yyyy-MM-dd")+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), "yyyy-MM-dd")+"' then  ao.amount else 0 end ) as sum_1_30, "
-        		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), "yyyy-MM-dd")+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), "yyyy-MM-dd")+"' then  ao.amount else 0 end ) as sum_31_60, "
-        		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), "yyyy-MM-dd")+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), "yyyy-MM-dd")+"' then  ao.amount else 0 end ) as sum_61_90, "
-        		+ " (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), "yyyy-MM-dd")+"'  then  ao.amount else 0 end ) as sum_90_up "
+        QueryBuilder qb = new QueryBuilder("Select ao.customerAccount.code ,sum (case when ao.dueDate > '"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amount else 0 end ) as notYetDue,  "
+        		+ "sum (case when ao.dueDate <= '"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amount else 0 end ) as sum_1_30, "
+        		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.amount else 0 end ) as sum_31_60, "
+        		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.amount else 0 end ) as sum_61_90, "
+        		+ " (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amount else 0 end ) as sum_90_up "
         		+ "from " + RecordedInvoice.class.getSimpleName()+" as ao"); 
         if(customerAccount != null) {
         	qb.addCriterionEntity("customerAccount", customerAccount);
