@@ -25,10 +25,6 @@ public class ReportingResourceImpl implements ReportingResource {
 	@Override
 	public Response getTrialBalances(ReportingPeriodEnum period, Date startDate, Date endDate, String sortBy, SortOrderEnum sortOrder, Long offset, Long limit, Request request) {
 		int balancesCount = reportingApiService.count(period, startDate, endDate);
-		if (balancesCount == 0) {
-			return Response.noContent().build();
-		}
-		
 		List<TrialBalance> trialBalances = reportingApiService.list(period, startDate, endDate, sortBy, sortOrder, offset, limit);
 		return buildTrialBlancesResponse(trialBalances, period, startDate, endDate, offset, limit, balancesCount);
 	}
