@@ -92,6 +92,8 @@ public class AddressDto implements Serializable {
             address1 = address.getAddress1();
             address2 = address.getAddress2();
             address3 = address.getAddress3();
+            address4 = address.getAddress4();
+            address5 = address.getAddress5();
             zipCode = address.getZipCode();
             city = address.getCity();
             country = address.getCountry() == null ? null : address.getCountry().getCountryCode();
