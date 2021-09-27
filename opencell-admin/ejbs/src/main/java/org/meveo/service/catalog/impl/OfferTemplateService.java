@@ -49,6 +49,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
@@ -212,6 +213,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getMedias().size();
         offerToDuplicate.getCommercialRules().size();
         offerToDuplicate.getOfferComponents().size();
+        offerToDuplicate.getOfferAttributes().size();
         offerToDuplicate.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
@@ -263,6 +265,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         List<Seller> sellers = offer.getSellers();
         offer.setSellers(new ArrayList<>());
+        
+        List<OfferTemplateAttribute> offerAttributes = offer.getOfferAttributes();
+        offer.setOfferAttributes(new ArrayList<>());
 
         List<CustomerCategory> customerCategories = offer.getCustomerCategories();
         offer.setCustomerCategories(new ArrayList<CustomerCategory>());
@@ -300,6 +305,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         if (sellers != null) {
             for (Seller seller : sellers) {
                 offer.getSellers().add(seller);
+            }
+        }
+        
+        if (offerAttributes != null) {
+            for (OfferTemplateAttribute offerAttribute : offerAttributes) {
+                offer.getOfferAttributes().add(offerAttribute);
             }
         }
 
