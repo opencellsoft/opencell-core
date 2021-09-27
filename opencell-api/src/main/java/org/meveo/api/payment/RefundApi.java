@@ -235,14 +235,14 @@ public class RefundApi extends BaseApi {
             if (StringUtils.isBlank(cardPaymentRequestDto.getCardType())) {
                 missingParameters.add("cardType");
             }
+        } else {
+        	missingParameters.add("cardNumber");
         }
         if (cardPaymentRequestDto.isToMatch()) {
             if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
                 missingParameters.add("aoToPay");
             }
         }
-
-        handleMissingParameters();
 
         CustomerAccount customerAccount = customerAccountService.findByCode(cardPaymentRequestDto.getCustomerAccountCode());
         if (customerAccount == null) {
@@ -253,6 +253,8 @@ public class RefundApi extends BaseApi {
         if (preferedMethod != null && PaymentMethodEnum.CARD != preferedMethod) {
             throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
         }
+        
+        handleMissingParameters();
 
         PaymentResponseDto doPaymentResponseDto = null;
         if (useCard) {

@@ -3,6 +3,8 @@ package org.meveo.apiv2.refund;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -11,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.payment.RefundApi;
@@ -53,6 +56,7 @@ public class RefundResourceImpl implements RefundResource{
             throw new EntityDoesNotExistsException(CustomerAccount.class, sctRefund.getCustomerAccountCode());
         }
         if(PaymentMethodEnum.DIRECTDEBIT.equals(CAByCode.getPreferredPaymentMethodType()) && (sctRefund.getAoToRefund() != null && !sctRefund.getAoToRefund().isEmpty())){
+        	validateIban(sctRefund.getIBAN());
             HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());
             customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"))
                     .getAccountOperations().stream()
@@ -66,8 +70,20 @@ public class RefundResourceImpl implements RefundResource{
         return Response.ok().build();
     }
 
+	private void validateIban(String iban) {
+		if(iban==null) {
+			return;
+		}
+		String IBAN_PATTERN = "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}";
+		Pattern pattern = Pattern.compile(IBAN_PATTERN);
+		Matcher matcher = pattern.matcher(iban);
+		if(!matcher.matches()) {
+			throw new ValidationException("wrong IBAN value : " + iban);
+		}
+		
+	}
 
-    private PayByCardDto toPayByCardDto(CardRefund cardRefund) {
+	private PayByCardDto toPayByCardDto(CardRefund cardRefund) {
         PayByCardDto payByCardDto = new PayByCardDto();
         payByCardDto.setCtsAmount(cardRefund.getCtsAmount());
         payByCardDto.setCardNumber(cardRefund.getCardNumber());
