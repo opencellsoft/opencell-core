@@ -26,7 +26,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
 
-	private static final String allUsersType = "allUsers";
+	private static final String ALL_USERS_TYPE = "allUsers";
 	
 	@Inject
 	private AuditLogService auditLogService;
@@ -137,7 +137,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		SubAccountingPeriod subAccountingPeriod = findById(entity.getId());
 		
 		if (subAccountingPeriod != null && entity.getAllUsersSubPeriodStatus() != null && !entity.getAllUsersSubPeriodStatus().equals(subAccountingPeriod.getAllUsersSubPeriodStatus())) {
-			createAuditLog(entity, auditLog, allUsersType);
+			createAuditLog(entity, auditLog, ALL_USERS_TYPE);
 		}
 		if (subAccountingPeriod != null && entity.getRegularUsersSubPeriodStatus() != null && !entity.getRegularUsersSubPeriodStatus().equals(subAccountingPeriod.getRegularUsersSubPeriodStatus())) {
 			createAuditLog(entity, auditLog, "regularUsers");
@@ -157,10 +157,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         auditLog.setCreated(new Date());
         auditLog.setEntity("SubAccountingPeriod");
         auditLog.setOrigin(entity.getAccountingPeriod().getAccountingPeriodYear());
-        auditLog.setAction("update "+(usersType.equals(allUsersType)?"allUsersStatus":"regularUsersStatus"));
+        auditLog.setAction("update "+(usersType.equals(ALL_USERS_TYPE)?"allUsersStatus":"regularUsersStatus"));
         auditLog.setParameters("user "+currentUser.getUserName()+" "
-        					+(usersType.equals(allUsersType)?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus()) 
-        					+" the sub period number "+entity.getNumber()+ (usersType.equals(allUsersType)?" for all users":"for regular users"));
+        					+(usersType.equals(ALL_USERS_TYPE)?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus())
+        					+" the sub period number "+entity.getNumber()+ (usersType.equals(ALL_USERS_TYPE)?" for all users":"for regular users"));
     }
 
     private Date findMaxSubAccountingPeriod() {
