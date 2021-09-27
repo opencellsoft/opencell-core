@@ -1,8 +1,6 @@
 
 package org.meveo.apiv2.accounting.service;
 
-import static java.util.Optional.ofNullable;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +9,8 @@ import javax.inject.Inject;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
+
+import static java.util.Optional.ofNullable;
 
 public class AccountingPeriodApiService  implements ApiService<AccountingPeriod> {
 	
@@ -78,14 +78,15 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 	 * @return
 	 */
 	public Optional<AccountingPeriod> findByFiscalYear(String fiscalYear) {
-		return Optional.of(accountingPeriodService.findByAccountingPeriodYear(fiscalYear));
+		return Optional.ofNullable(accountingPeriodService.findByAccountingPeriodYear(fiscalYear));
 	}
 
 	/**
-	 * @param entity
+	 * @param entity old accounting period
+	 * @param apDto the new accounting period
 	 */
-	public Optional<AccountingPeriod> update(AccountingPeriod entity) {
-		return Optional.of(accountingPeriodService.update(entity));
+	public Optional<AccountingPeriod> update(AccountingPeriod entity, org.meveo.apiv2.accounting.AccountingPeriod apDto) {
+		return Optional.of(accountingPeriodService.update(entity, apDto.getEndDate(), apDto.getUseSubAccountingPeriods(), apDto.getSubAccountingPeriodType()));
 		
 	}
 

@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
-import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,15 +25,15 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
-	
-	private final String allUsersType = "allUsers";
+
+	private static final String ALL_USERS_TYPE = "allUsers";
 	
 	@Inject
 	private AuditLogService auditLogService;
 
     public SubAccountingPeriod findByAccountingPeriod(AccountingPeriod accountingPeriod, Date accountingDate) {
         TypedQuery<SubAccountingPeriod> query = getEntityManager()
-            .createQuery("select s from " + entityClass.getSimpleName() + " s where accountingPeriod=:accountingPeriod and (:accountingDate >= startDate and :accountingDate <= endDate)",
+            .createQuery("select s from " + entityClass.getSimpleName() + " s where s.accountingPeriod=:accountingPeriod and (:accountingDate >= s.startDate and :accountingDate <= s.endDate)",
                 entityClass)
             .setParameter("accountingPeriod", accountingPeriod).setParameter("accountingDate", accountingDate);
         try {
@@ -43,33 +43,51 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         }
     }
 
-    
-	public List<SubAccountingPeriod> createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type, boolean regularPeriods) {
-		List<SubAccountingPeriod> periods = new ArrayList<>();
+	public void createSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type) {
         Date maxDate = findMaxSubAccountingPeriod();
 
-        LocalDateTime startDateTime = maxDate == null ? LocalDate.now().withDayOfMonth(1).atStartOfDay() : maxDate.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate().plusDays(1).atStartOfDay();
+        LocalDateTime startDateTime = maxDate == null ? LocalDateTime.now() : maxDate.toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
-		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
-		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
-		while (endDate.isAfter(startDateTime)) {
-			SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
-			subAccountingPeriod.setAccountingPeriod(ap);
-			subAccountingPeriod.setStartDate(Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()));
-			startDateTime = startDateTime.plusMonths(monthsPerPeriod);
-			if (!endDate.isAfter(startDateTime) && !regularPeriods) {
-				subAccountingPeriod.setEndDate(Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
-			} else {
-				subAccountingPeriod.setEndDate(Date.from(startDateTime.minusNanos(1).atZone(ZoneId.systemDefault()).toInstant()));
-			}
-			periods.add(subAccountingPeriod);
-			create(subAccountingPeriod);
-		}
-		return periods;
+		createSubAccountingPeriodsByType(ap, type, startDateTime, endDate);
 	}
 
+	public void updateSubAccountingPeriods(AccountingPeriod ap, SubAccountingPeriodTypeEnum type) {
+		Date[] minMaxDates = getMinMaxDatesFromSubAccountingPeriod(ap);
+		Date startDate = Optional.ofNullable(minMaxDates[0]).orElse(ap.getAuditable().getCreated());
+		Date endDate = Optional.ofNullable(minMaxDates[1]).orElse(ap.getEndDate());
+
+		deleteOldSubAccountingPeriods(ap.getId());
+
+		LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
+		createSubAccountingPeriodsByType(ap, type, startDateTime, endDateTime);
+	}
+
+	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type, LocalDateTime startDateTime, LocalDateTime endDate) {
+		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
+		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
+		LocalDate now = startDateTime == null ? LocalDate.now() : startDateTime.toLocalDate();
+		int currentYear = now.getYear();
+		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
+		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+		while (!endDatePeriod.isAfter(endDate)) {
+			if (endDatePeriod.toLocalDate().isAfter(now)) {
+				createSubAccPeriod(ap, startDatePeriod, endDatePeriod);
+			}
+			//next period
+			startDatePeriod = endDatePeriod.plusDays(1).toLocalDate().atStartOfDay();
+			endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+		}
+	}
+
+	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate) {
+		SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
+		subAccountingPeriod.setAccountingPeriod(ap);
+		subAccountingPeriod.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
+		subAccountingPeriod.setEndDate(Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+		create(subAccountingPeriod);
+	}
 
 	public SubAccountingPeriod findByNumber(Integer number) {
 		try {
@@ -119,7 +137,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		SubAccountingPeriod subAccountingPeriod = findById(entity.getId());
 		
 		if (subAccountingPeriod != null && entity.getAllUsersSubPeriodStatus() != null && !entity.getAllUsersSubPeriodStatus().equals(subAccountingPeriod.getAllUsersSubPeriodStatus())) {
-			createAuditLog(entity, auditLog, allUsersType);
+			createAuditLog(entity, auditLog, ALL_USERS_TYPE);
 		}
 		if (subAccountingPeriod != null && entity.getRegularUsersSubPeriodStatus() != null && !entity.getRegularUsersSubPeriodStatus().equals(subAccountingPeriod.getRegularUsersSubPeriodStatus())) {
 			createAuditLog(entity, auditLog, "regularUsers");
@@ -139,10 +157,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         auditLog.setCreated(new Date());
         auditLog.setEntity("SubAccountingPeriod");
         auditLog.setOrigin(entity.getAccountingPeriod().getAccountingPeriodYear());
-        auditLog.setAction("update "+(usersType.equals(allUsersType)?"allUsersStatus":"regularUsersStatus"));
+        auditLog.setAction("update "+(usersType.equals(ALL_USERS_TYPE)?"allUsersStatus":"regularUsersStatus"));
         auditLog.setParameters("user "+currentUser.getUserName()+" "
-        					+(usersType.equals(allUsersType)?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus()) 
-        					+" the sub period number "+entity.getNumber()+ (usersType.equals(allUsersType)?" for all users":"for regular users"));
+        					+(usersType.equals(ALL_USERS_TYPE)?entity.getAllUsersSubPeriodStatus():entity.getRegularUsersSubPeriodStatus())
+        					+" the sub period number "+entity.getNumber()+ (usersType.equals(ALL_USERS_TYPE)?" for all users":"for regular users"));
     }
 
     private Date findMaxSubAccountingPeriod() {
@@ -156,4 +174,28 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
             return null;
         }
     }
+	public Date[] getMinMaxDatesFromSubAccountingPeriod(AccountingPeriod entity) {
+		Date[] minMaxDates = new Date[2];
+		try {
+			Object[] result = (Object[]) getEntityManager().createQuery("select min(sap.startDate), max(sap.endDate) from SubAccountingPeriod sap "
+							+ " where sap.accountingPeriod.id = :ap")
+					.setParameter("ap", entity.getId())
+					.getSingleResult();
+			minMaxDates[0] = (Date) result[0];
+			minMaxDates[1] = (Date) result[1];
+		} catch (NoResultException e) {
+			//ignore
+		}
+		return minMaxDates;
+	}
+
+	private void deleteOldSubAccountingPeriods(Long sapId) {
+		try {
+			getEntityManager().createQuery("delete from SubAccountingPeriod sap where sap.accountingPeriod.id = :sapId")
+					.setParameter("sapId", sapId)
+					.executeUpdate();
+		} catch (Exception e) {
+			log.error("Unable to delete sub accounting period for the accounting period id {}", sapId);
+		}
+	}
 }
