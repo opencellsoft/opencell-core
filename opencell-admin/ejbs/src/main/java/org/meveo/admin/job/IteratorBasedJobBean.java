@@ -127,7 +127,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         // Multiple item processing will happen only of batch size is greater than one,
         Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 0L);
-        boolean useMultipleItemProcessing = batchSize > 1 && processMultipleItemFunction != null;
+        boolean useMultipleItemProcessing = (processMultipleItemFunction != null && batchSize != null && batchSize > 1) || processSingleItemFunction == null;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
 

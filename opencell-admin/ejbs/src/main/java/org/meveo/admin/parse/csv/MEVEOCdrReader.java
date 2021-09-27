@@ -27,16 +27,16 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.inject.Inject;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
+import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author H.ZNIBAR
  */
 @Named
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrReader implements ICdrCsvReader {
 
     static MessageDigest messageDigest = null;
@@ -66,10 +67,7 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     private String batchName;
     private String username;
     private CDR_ORIGIN_ENUM origin;
-    private BufferedReader cdrReader = null;
-
-    @Inject
-    MEVEOCdrParser meveoCdrParser;
+    private BufferedReader fileReader = null;
 
     private Integer totalNumberOfRecords;
 
@@ -82,7 +80,7 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             totalNumberOfRecords = FileUtils.countLines(cdrFile);
         } catch (IOException e) {
         }
-        cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
+        fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
     }
 
     @Override
@@ -105,24 +103,35 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     }
 
     @Override
-    public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
-        if (cdrReader == null) {
+    public CDR getNextRecord(ICdrParser cdrParser) throws IOException {
+        if (fileReader == null) {
             return null;
         }
-        String line = cdrReader.readLine();
-        CDR cdr = cdrParser.parse(line);
-        if (cdr == null) {
+        String line = fileReader.readLine();
+        if (line == null) {
             return null;
         }
+        CDR cdr = null;
+        try {
+            cdr = cdrParser.parse(line);
+        } catch (CDRParsingException e) {
+            cdr = new CDR();
+            cdr.setRejectReasonException(e);
+
+        } finally {
+            cdr.setSource(line);
+            cdr.setLine(line);
         cdr.setOriginBatch(batchName);
         cdr.setOriginRecord(getOriginRecord(line));
+        }
         return cdr;
+
     }
 
     @Override
     public void close() throws IOException {
-        if (cdrReader != null) {
-            cdrReader.close();
+        if (fileReader != null) {
+            fileReader.close();
         }
     }
 
@@ -159,18 +168,6 @@ public class MEVEOCdrReader implements ICdrCsvReader {
         }
 
         return null;
-    }
-
-    @Override
-    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
-        List<CDR> cdrs = new ArrayList<CDR>();
-        for (String line : cdrLines) {
-            CDR cdr = cdrParser.parse(line);
-            cdr.setOriginBatch(batchName);
-            cdr.setOriginRecord(getOriginRecord(line));
-            cdrs.add(cdr);
-        }
-        return cdrs;
     }
 
     @Override

@@ -18,34 +18,28 @@
 
 package org.meveo.admin.parse.csv;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.event.Event;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
-import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
-import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -63,23 +57,14 @@ import org.meveo.service.medina.impl.InvalidFormatException;
 public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
-    CDRParsingService cdrParsingService;
-
-    @Inject
     private EdrService edrService;
 
     @Inject
     private AccessService accessService;
 
-    @Inject
-    @RejectedCDR
-    private Event<Serializable> rejectededCdrEventProducer;
-
-    @Inject
-    private SubscriptionService subscriptionService;
-
     @Override
-    public CDR parse(Object line) {
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public CDR parse(Object line) throws CDRParsingException {
 
         if (line == null) {
             return null;
@@ -257,7 +242,8 @@ public class MEVEOCdrParser implements ICdrParser {
     }
 
     @Override
-    public CDR parseByApi(String line, String userName, String ipAddress) {
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public CDR parseByApi(String line, String userName, String ipAddress) throws CDRParsingException {
         CDR cdr = parse(line);
         cdr.setOriginBatch("API_" + ipAddress);
         cdr.setOriginRecord(userName + "_" + new Date().getTime());
@@ -268,30 +254,22 @@ public class MEVEOCdrParser implements ICdrParser {
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
         if (accesses == null || accesses.size() == 0) {
-            rejectededCdrEventProducer.fire(cdr);
-            throw new InvalidAccessException(cdr);
+            throw new InvalidAccessException("No matching access point " + cdr.getAccessCode() + " was found");
         }
         return accesses;
     }
 
     @Override
     public List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException {
-        try {
-            if (cdr.getRejectReason() != null) {
-                throw (CDRParsingException) cdr.getRejectReasonException();
-            }
 
-            deduplicate(cdr);
             List<EDR> edrs = new ArrayList<EDR>();
             boolean foundMatchingAccess = false;
 
-            Subscription subscription;
             for (Access accessPoint : accessPoints) {
                 if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
                         && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
                     foundMatchingAccess = true;
-                    subscription = accessPoint.getSubscription();
-                    EDR edr = cdrToEdr(cdr, accessPoint, subscription);
+                EDR edr = cdrToEdr(cdr, accessPoint, accessPoint.getSubscription());
                     edrs.add(edr);
                 }
             }
@@ -300,12 +278,7 @@ public class MEVEOCdrParser implements ICdrParser {
                 throw new InvalidAccessException(cdr);
             }
             return edrs;
-        } catch (CDRParsingException e) {
-            cdr.setStatus(CDRStatusEnum.ERROR);
-            cdr.setRejectReason(e.getMessage());
-            throw e;
         }
-    }
 
     /**
      * Convert CDR to EDR
@@ -352,13 +325,18 @@ public class MEVEOCdrParser implements ICdrParser {
         return edr;
     }
 
+    @Override
+    public boolean isDuplicateCheckOn() {
+        return EdrService.isDuplicateCheckOn();
+    }
+
     /**
      * Check if CDR was processed already by comparing Origin record/digest values
      * 
      * @param cdr CDR to check
      * @throws DuplicateException CDR was processed already
      */
-    private void deduplicate(CDR cdr) throws DuplicateException {
+    public void deduplicate(CDR cdr) throws DuplicateException {
         if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
             throw new DuplicateException(cdr);
         }
@@ -371,7 +349,6 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Override
     public boolean isApplicable(String type) {
-        // TODO Add implementation of this method
         return false;
     }
 }

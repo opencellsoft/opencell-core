@@ -114,7 +114,7 @@ public class RatedTransactionsJob extends Job {
         batchSize.setActive(true);
         batchSize.setDescription(resourceMessages.getString("jobExecution.batchSize"));
         batchSize.setFieldType(CustomFieldTypeEnum.LONG);
-        batchSize.setValueRequired(false);
+        batchSize.setValueRequired(true);
         batchSize.setDefaultValue("10000");
         batchSize.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:2");
         result.put(batchSize.getCode(), batchSize);
