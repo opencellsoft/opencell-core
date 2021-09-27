@@ -5352,7 +5352,6 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="default_value" value="0"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:2"/>
-
         </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -5616,8 +5615,42 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="creator" value="applicationInitializer"/>
             <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:7"/>
         </insert>
-    </changeSet>
-    
-	
-	
+		<insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-40" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="null" />
+            <column name="uuid" value="ServiceTemplateToProductJob" />
+            <column name="code" value="ServiceTemplateToProductJob" />
+            <column name="description" value="ServiceTemplateToProductJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="ScriptingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="null" />
+            <column name="timerentity_id" value="null" />
+            <column name="cf_values">
+            	<![CDATA[
+            		{"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.ServiceTemplateToProductScript","id":-30}}],"ScriptingJob_TransactionType":[{"string":"REQUIRES_NEW"}]}
+            	]]>
+			</column>
+       	</insert>
+	</changeSet>
+	<changeSet id="INTRD_1985_20210923_data" author="TarikFA.">
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" valueNumeric="QuoteOffer" />
+			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" valueNumeric="OrderOffer" />
+			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

@@ -14,11 +14,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
@@ -32,10 +33,10 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OrderOffer",inheritCFValuesFrom = "quoteOffer")
-@Table(name = "cpq_order_offer")
+@Table(name = "cpq_order_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "order.code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
-public class OrderOffer extends AuditableCFEntity {
+public class OrderOffer extends BusinessCFEntity {
 
 
 	/**
