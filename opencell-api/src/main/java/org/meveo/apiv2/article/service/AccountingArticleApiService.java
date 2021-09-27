@@ -99,16 +99,16 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Override
     public Optional<AccountingArticle> findById(Long id) {
-        return Optional.ofNullable(accountingArticleService.findById(id));
+        return Optional.ofNullable(accountingArticleService.findById(id, fetchFields));
     }
 
     @Override
     public Optional<AccountingArticle> update(Long id, AccountingArticle baseEntity) {
-        Optional<AccountingArticle> accountingArticleOtional = findById(id);
-        if (!accountingArticleOtional.isPresent()) {
+        Optional<AccountingArticle> accountingArticleOptional = findById(id);
+        if (accountingArticleOptional.isEmpty()) {
             return Optional.empty();
         }
-        AccountingArticle accountingArticle = accountingArticleOtional.get();
+        AccountingArticle accountingArticle = accountingArticleOptional.get();
 
         if (baseEntity.getTaxClass() != null && baseEntity.getTaxClass().getId() != null) {
             TaxClass taxClass = taxClassService.findById(baseEntity.getTaxClass().getId());
