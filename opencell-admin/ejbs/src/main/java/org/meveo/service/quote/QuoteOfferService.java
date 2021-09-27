@@ -4,31 +4,25 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class QuoteOfferService extends PersistenceService<QuoteOffer> {
-
-	public QuoteOffer findByTemplateAndQuoteVersion(String offerTemplateCode, String CpqQuoteCode, int quoteVersion ) {
-		try {
-			return (QuoteOffer) this.getEntityManager().createNamedQuery("QuoteOffer.findByTemplateAndQuoteVersion")
-											.setParameter("offerTemplateCode", offerTemplateCode)
-												.setParameter("cpqQuoteCode", CpqQuoteCode)
-													.setParameter("quoteVersion", quoteVersion)
-														.getSingleResult();
-		}catch(NoResultException e) {
-			return null;
-		}
-		
-	}
 	
+	@Inject
+	private CustomGenericEntityCodeService customGenericEntityCodeService;
+
 	@SuppressWarnings("unchecked")
 	public List<QuoteOffer> findByQuoteVersion(QuoteVersion quoteVersion) {
 		QueryBuilder queryBuilder = new QueryBuilder(QuoteOffer.class, "qo", Arrays.asList("quoteVersion"));
@@ -38,19 +32,27 @@ public class QuoteOfferService extends PersistenceService<QuoteOffer> {
 	}
 	
 	
-	public QuoteOffer findByQuoteVersionAndOffer(Long quoteVersionId,String offerCode) {
+	public QuoteOffer findByCodeAndQuoteVersion(String code, Long quoteVersionId) {
+		if(Strings.isEmpty(code) || quoteVersionId == null)
+			throw new BusinessException("code and quoteVersion must not be empty");
+		Query query=getEntityManager().createNamedQuery("QuoteOffer.findByCodeAndQuoteVersion");
+		query.setParameter("quoteVersionId", quoteVersionId)
+			  .setParameter("code", code);
 		try {
-			Query query=getEntityManager().createNamedQuery("QuoteOffer.findQuoteAttribute");
-			if(quoteVersionId!=null) {
-				query=query.setParameter("quoteVersionId", quoteVersionId);
-			}
-			if(offerCode!=null) {
-				query=query.setParameter("offerCode",offerCode);
-			}										 
-			return (QuoteOffer)query.getResultList().get(0);
+			return (QuoteOffer) query.getSingleResult();
 		}catch(NoResultException e ) {
-			log.error("cant find QuoteProduct with quoteVersion and : {} offer : {} and  product : {}", quoteVersionId, offerCode);
 			return null;
 		}
+	}
+	
+	@Override
+	public void create(QuoteOffer entity) throws BusinessException {
+		if(Strings.isEmpty(entity.getCode())) {
+			entity.setCode(customGenericEntityCodeService.getGenericEntityCode(entity));
+		}
+		var quoteOfferExist = findByCodeAndQuoteVersion(entity.getCode(), entity.getQuoteVersion().getId());
+		if(quoteOfferExist != null)
+			throw new EntityAlreadyExistsException("Quote offer already exist with code : " + entity.getCode() + " and quote version id : " + entity.getQuoteVersion().getId());
+		super.create(entity);
 	}
 }

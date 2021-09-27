@@ -9267,4 +9267,18 @@ public class OrderAdvancement extends ModuleScript {
 	
    </changeSet>
    
+   <changeSet id="INTRD_1985_20210923" author="TarikFA.">
+   		<addColumn tableName="quote_offer">
+			<column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+   		</addColumn>
+   		<addUniqueConstraint columnNames="code, quote_version_id" tableName="quote_offer"/>
+   		
+   		<addColumn tableName="cpq_order_offer">
+			<column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+   		</addColumn>
+   		<addUniqueConstraint columnNames="code, order_id" tableName="cpq_order_offer"/>
+   </changeSet>
+   
 </databaseChangeLog>
