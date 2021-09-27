@@ -26,6 +26,9 @@ public class OfferTemplateAttributeDTO {
     @Schema(description = "Indicate if the attribute has a mandatory EL")
     private String mandatoryWithEl;
 
+    @Schema(description = "diplay the attribute")
+    private boolean display;
+
     @Schema(description = "indicate if the attribute is read only")
     protected boolean readOnly = Boolean.FALSE;
     
@@ -56,6 +59,7 @@ public class OfferTemplateAttributeDTO {
         	this.attributeCode = offerTemplateAttribute.getAttribute().getCode();
         this.sequence = offerTemplateAttribute.getSequence();
         this.mandatoryWithEl = offerTemplateAttribute.getMandatoryWithEl();
+        this.display = offerTemplateAttribute.isDisplay();
         this.readOnly = offerTemplateAttribute.getReadOnly();
         this.defaultValue = offerTemplateAttribute.getDefaultValue();
         this.validationLabel = offerTemplateAttribute.getValidationLabel();
@@ -118,6 +122,18 @@ public class OfferTemplateAttributeDTO {
 		this.attributeCode = attributeCode;
 	}
 	/**
+     * @return the display
+     */
+    public boolean isDisplay() {
+        return display;
+    }
+    /**
+     * @param display the display to set
+     */
+    public void setDisplay(boolean display) {
+        this.display = display;
+    }
+    /**
 	 * @return the readOnly
 	 */
 	public boolean isReadOnly() {
