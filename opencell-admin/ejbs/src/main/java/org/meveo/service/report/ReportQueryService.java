@@ -80,6 +80,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     @ApplicationProvider
     protected Provider appProvider;
 
+    private static final String ROOT_DIR = "reports" + File.separator;
     private static final String DEFAULT_EMAIL_ADDRESS = "no-reply@opencellsoft.com";
     private static final String DELIMITER = ";";
     private static final String REPORT_EXECUTION_FILE_SUFFIX = "YYYYMMdd-HHmmss";
@@ -390,13 +391,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                             .map(String::valueOf)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
-            String outputFilePath = "";
             try {
-                outputFilePath = createResultFile(data, fileHeader, fileName.toString(), ".csv");
+                createResultFile(data, fileHeader, fileName.toString(), ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, outputFilePath, data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fileName.toString(), data.size()));
         } else {
             return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
@@ -498,7 +498,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private String createResultFile(List<String> data, String header, String fileName, String extension)
             throws IOException {
-        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + "reports" + File.separator);
+        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + ROOT_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
