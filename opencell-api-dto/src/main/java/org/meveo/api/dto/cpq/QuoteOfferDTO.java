@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -51,7 +52,7 @@ import org.meveo.model.quote.QuoteVersion;
  */
 @XmlRootElement(name = "QuoteOfferDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class QuoteOfferDTO extends BaseEntityDto{
+public class QuoteOfferDTO extends BusinessEntityDto{
 
     public QuoteOfferDTO() {
 		super();
@@ -156,6 +157,8 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
 		offerId = quoteOffer.getOfferTemplate().getId();
 		sequence=quoteOffer.getSequence();
+		code = quoteOffer.getCode();
+		description = quoteOffer.getDescription();
 		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
