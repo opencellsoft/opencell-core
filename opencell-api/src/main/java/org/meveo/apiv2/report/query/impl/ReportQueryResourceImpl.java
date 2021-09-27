@@ -134,7 +134,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 					.orElseThrow(() -> new NotFoundException("The query execution result with {" + queryExecutionResultId + "} does not exists"));
 			DownloadReportQueryResponseDto response = new DownloadReportQueryResponseDto();
 				var dateNow = new Date();
-				var dateFormat = new SimpleDateFormat("YYMMDD");
+				var dateFormat = new SimpleDateFormat("yyyyMMdd");
 				var houreFormat = new SimpleDateFormat("HHmmss");
 				var fileName = new StringBuilder(dateFormat.format(dateNow))
 													.append("_")
