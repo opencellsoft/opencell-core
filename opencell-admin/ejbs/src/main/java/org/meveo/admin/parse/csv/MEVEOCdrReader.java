@@ -121,8 +121,8 @@ public class MEVEOCdrReader implements ICdrCsvReader {
         } finally {
             cdr.setSource(line);
             cdr.setLine(line);
-        cdr.setOriginBatch(batchName);
-        cdr.setOriginRecord(getOriginRecord(line));
+            cdr.setOriginBatch(batchName);
+            cdr.setOriginRecord(getOriginRecord(line));
         }
         return cdr;
 
