@@ -474,6 +474,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     	templateAttribute.setAttribute(attribute);
                     	templateAttribute.setMandatoryWithEl(offerAttributeDto.getMandatoryWithEl());
                     	templateAttribute.setSequence(offerAttributeDto.getSequence());
+                    	templateAttribute.setDisplay(offerAttributeDto.isDisplay());
                     	templateAttribute.setReadOnly(offerAttributeDto.isReadOnly());
                     	templateAttribute.setMandatory(offerAttributeDto.isMandatory());
                     	templateAttribute.setDefaultValue(offerAttributeDto.getDefaultValue());
