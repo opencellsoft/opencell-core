@@ -245,7 +245,7 @@ public class IteratorBasedJobProcessing implements Serializable {
         int checkJobStatusEveryNr = jobSpeed.getCheckNb();
         int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
 
-        boolean useMultipleItemProcessing = batchSize > 1 && processMultipleItemFunction != null;
+        boolean useMultipleItemProcessing = (processMultipleItemFunction != null && batchSize != null && batchSize > 1) || processSingleItemFunction == null;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
 
