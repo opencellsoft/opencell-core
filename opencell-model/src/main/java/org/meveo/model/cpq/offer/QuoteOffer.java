@@ -35,12 +35,11 @@ import org.meveo.model.quote.QuoteVersion;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "QuoteOffer")
-@Table(name="quote_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "quoteVersion.id"}))
+@Table(name="quote_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion"),
-		@NamedQuery(name = "QuoteOffer.findQuoteAttribute", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  " + " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode")
+		@NamedQuery(name = "QuoteOffer.findByCodeAndQuoteVersion", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  where qv.id=:quoteVersionId and qf.code=:code")
 })
 public class QuoteOffer extends BusinessCFEntity {
 

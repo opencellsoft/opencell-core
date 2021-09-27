@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -33,9 +35,12 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OrderOffer",inheritCFValuesFrom = "quoteOffer")
-@Table(name = "cpq_order_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "order.code"}))
+@Table(name = "cpq_order_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "order_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
+@NamedQueries({
+		@NamedQuery(name = "OrderOffer.findByCodeAndOrderCode", query = "select oo from OrderOffer oo left join oo.order oorder  where oorder.id=:orderCode  and oo.code=:code")
+})
 public class OrderOffer extends BusinessCFEntity {
 
 
