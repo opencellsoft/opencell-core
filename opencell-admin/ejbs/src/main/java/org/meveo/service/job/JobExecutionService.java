@@ -260,6 +260,7 @@ public class JobExecutionService extends BaseService {
      * @param jobInstance job instance to check
      * @return return true if job are running
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean isJobRunningOnThis(JobInstance jobInstance) {
         return isJobRunningOnThis(jobInstance.getId());
     }
@@ -270,6 +271,7 @@ public class JobExecutionService extends BaseService {
      * @param jobInstanceId job instance id to check
      * @return return true if job are running
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean isJobRunningOnThis(Long jobInstanceId) {
         return JobRunningStatusEnum.RUNNING_THIS == jobCacheContainerProvider.isJobRunning(jobInstanceId);
     }
@@ -281,6 +283,7 @@ public class JobExecutionService extends BaseService {
      * @return Is Job currently running on this cluster node and was not requested to be stopped
      */
     // @Lock(LockType.READ)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean isShouldJobContinue(Long jobInstanceId) {
         return jobCacheContainerProvider.isShouldJobContinue(jobInstanceId);
     }
@@ -293,6 +296,7 @@ public class JobExecutionService extends BaseService {
      * @return Previous job execution status - was Job locked or running before and if on this or another node
      */
     // @Lock(LockType.WRITE)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
         return jobCacheContainerProvider.lockForRunning(jobInstance, limitToSingleNode);
     }
@@ -307,6 +311,7 @@ public class JobExecutionService extends BaseService {
      * @return Previous job execution status - was Job locked or running before and if on this or another node
      */
     @SuppressWarnings("rawtypes")
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
         return jobCacheContainerProvider.markJobAsRunning(jobInstance, limitToSingleNode, jobExecutionResultId, threads);
     }
@@ -316,6 +321,7 @@ public class JobExecutionService extends BaseService {
      * 
      * @param jobInstanceId Job instance identifier
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void markJobAsFinished(JobInstance jobInstance) {
         jobCacheContainerProvider.markJobAsFinished(jobInstance);
     }
@@ -325,6 +331,7 @@ public class JobExecutionService extends BaseService {
      * 
      * @param jobInstanceId Job instance identifier
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void markJobToStop(JobInstance jobInstance) {
         jobCacheContainerProvider.markJobToStop(jobInstance);
     }
@@ -335,6 +342,7 @@ public class JobExecutionService extends BaseService {
      * @param id Job instance identifier
      * @return True if job was execution was canceled by a user
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean isJobCancelled(Long jobInstanceId) {
 
         JobExecutionStatus jobStatus = jobCacheContainerProvider.getJobStatus(jobInstanceId);

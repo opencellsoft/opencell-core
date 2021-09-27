@@ -93,7 +93,8 @@ public class FrontendServlet extends HttpServlet {
 
         // Get requested file by path info.
         String requestedFile = request.getPathInfo();
-        log.debug("requestedFile={}", requestedFile);
+        log.trace("requestedFile={}", requestedFile);
+        
         String providerCode = null;
         // Validate the requested file ------------------------------------------------------------
         if (requestedFile.startsWith("/")) {
@@ -126,8 +127,6 @@ public class FrontendServlet extends HttpServlet {
             throw new IOException("FrontendServlet path '" + basePath + "' is readable.");
         }
 
-        log.debug("requestedFile=" + requestedFile);
-
         // Check if file is actually supplied to the request URL.
         if (requestedFile == null) {
             // Do your thing if the file is not supplied to the request URL.
@@ -144,7 +143,7 @@ public class FrontendServlet extends HttpServlet {
             // Do your thing if the file appears to be non-existing.
             // Throw an exception, or send 404, or show default/warning page, or just ignore it.
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.debug("!file.exists");
+            log.trace("file {} does not exist", requestedFile);
             return;
         }
 
@@ -163,7 +162,7 @@ public class FrontendServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             response.setHeader("ETag", eTag); // Required in 304.
             response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
-            log.debug("If-None-Match");
+            log.trace("file {} if-none-match", requestedFile);
             return;
         }
 
@@ -174,7 +173,7 @@ public class FrontendServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             response.setHeader("ETag", eTag); // Required in 304.
             response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
-            log.debug("If-Modified-Match");
+            log.trace("file {} If-Modified-Since", requestedFile);
             return;
         }
 
@@ -184,7 +183,7 @@ public class FrontendServlet extends HttpServlet {
         String ifMatch = request.getHeader("If-Match");
         if (ifMatch != null && !matches(ifMatch, eTag)) {
             response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
-            log.debug("If-Match");
+            log.trace("file {} If-Match", requestedFile);
             return;
         }
 
@@ -192,7 +191,7 @@ public class FrontendServlet extends HttpServlet {
         long ifUnmodifiedSince = request.getDateHeader("If-Unmodified-Since");
         if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
             response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
-            log.debug("If-Unmodified-Since");
+            log.trace("file {} If-Unmodified-Since", requestedFile);
             return;
         }
 
@@ -210,7 +209,7 @@ public class FrontendServlet extends HttpServlet {
             if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
                 response.setHeader("Content-Range", "bytes */" + length); // Required in 416.
                 response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                log.debug("Range header do not match format");
+                log.trace("file {} Range header do not match format", requestedFile);
                 return;
             }
 
@@ -247,7 +246,7 @@ public class FrontendServlet extends HttpServlet {
                     if (start > end) {
                         response.setHeader("Content-Range", "bytes */" + length); // Required in 416.
                         response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                        log.debug("Range is not syntactically valid");
+                        log.trace("file {} Range is not syntactically valid", requestedFile);
                         return;
                     }
 
@@ -261,7 +260,7 @@ public class FrontendServlet extends HttpServlet {
 
         // Get content type by file name and set default GZIP support and content disposition.
         String contentType = getServletContext().getMimeType(fileName);
-        log.debug("Servlet context found MIME=" + contentType);
+        log.trace("Servlet context found file {},  MIME={}", requestedFile, contentType);
         boolean acceptsGzip = false;
         String disposition = "inline";
 
@@ -289,8 +288,6 @@ public class FrontendServlet extends HttpServlet {
             String accept = request.getHeader("Accept");
             disposition = accept != null && accepts(accept, contentType) ? "inline" : "attachment";
         }
-
-        log.debug("before Initialize content-type:" + contentType);
 
         // Initialize response.
         response.reset();
@@ -371,7 +368,7 @@ public class FrontendServlet extends HttpServlet {
                     sos.println("--" + MULTIPART_BOUNDARY + "--");
                 }
             }
-            log.debug("content-type:" + response.getContentType());
+            log.trace("file: {}, content-type: {}", requestedFile, response.getContentType());
         } finally {
             // Gently close streams.
             close(output);

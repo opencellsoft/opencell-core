@@ -32,6 +32,8 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -109,6 +111,7 @@ public class MediationApi extends BaseApi {
      * @throws BusinessException business exception.
      * @return
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public List<CdrErrorDto> registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
         List<String> cdrLines = postData.getCdr();
         if (cdrLines == null || cdrLines.size() == 0) {

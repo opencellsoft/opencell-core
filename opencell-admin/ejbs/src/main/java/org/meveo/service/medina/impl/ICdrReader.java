@@ -29,9 +29,9 @@ public interface ICdrReader {
     }
 
     /**
-     * Get next record. A synchronized method to read from CDR source
+     * Get next record. A synchronized method to read from CDR source. Any failure to parse a line is reflected in CDR.rejectReason and CDR.rejectReasonException.
      *
-     * @param cdrParser the cdr parser
+     * @param cdrParser The cdr parser to apply
      * @return CDR record
      * @throws IOException Failure to read the CDR source
      */
@@ -43,13 +43,4 @@ public interface ICdrReader {
      * @throws IOException IO exception
      */
     void close() throws IOException;
-
-    /**
-     * Get CDR Records
-     * 
-     * @param cdrParser CDR Parser
-     * @param cdrLines CDR Lines
-     * @return List of CDRs
-     */
-    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines);
 }
