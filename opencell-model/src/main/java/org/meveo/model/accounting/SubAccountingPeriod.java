@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -17,15 +16,16 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "sub_accounting_period")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "sub_accounting_period_seq"), })
 @NamedQueries({
-	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number") })
-public class SubAccountingPeriod extends BaseEntity {
+	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number"),
+    @NamedQuery(name = "SubAccountingPeriod.findByAP", query = "SELECT count(SAP) FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId") })
+public class SubAccountingPeriod extends AuditableEntity {
 
     /**
      * 
