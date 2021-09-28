@@ -1,11 +1,23 @@
 package org.meveo.service.cpq.order;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -19,6 +31,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
@@ -30,23 +43,6 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author Tarik FA.
@@ -125,13 +121,35 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			entity.setCode(UUID.randomUUID().toString());
         return super.update(entity);
     }
+    
 
 	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) throws BusinessException {
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
 			throw new BusinessException("Can not validate order with status different then DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
 		}
-
-		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList());
+		
+		/*ServiceCharge si = null;
+		si.getServiceSubscriptionCharges().get(0).getChargeTemplate().getOneShotChargeTemplateType();
+		*/
+		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> {
+			if(o.getProducts().isEmpty()) return false;
+			
+			for(OrderProduct quoteProduct: o.getProducts()) {
+				if(quoteProduct.getProductVersion() != null) {
+					var product = quoteProduct.getProductVersion().getProduct();
+					for(ProductChargeTemplateMapping<?> charge: product.getProductCharges()) {
+						if(charge.getChargeTemplate() != null && charge.getChargeTemplate() instanceof OneShotChargeTemplate) {
+							var oneShotCharge = (OneShotChargeTemplate) charge.getChargeTemplate();
+							if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
+								return true;
+						}
+					}
+				}   
+			}
+			
+			return false;
+		}).collect(Collectors.toList());
+		
 		Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
 		if(order.getDiscountPlan()!=null) {
 			discountPlans.add(order.getDiscountPlan());
