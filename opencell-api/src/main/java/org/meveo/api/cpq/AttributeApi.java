@@ -100,6 +100,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
         attribute.setValidationType(postData.getValidationType());
         attribute.setValidationPattern(postData.getValidationPattern());
         attribute.setValidationLabel(postData.getValidationLabel());
+        attribute.setSequence(postData.getSequence());
 		attributeService.create(attribute);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
@@ -181,6 +182,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 		attribute.setReadOnly(postData.isReadOnly());
+		attribute.setSequence(postData.getSequence());
 		attribute.setDefaultValue(postData.getDefaultValue());
 		attribute.setDisabled(postData.isDisabled());
 		if(postData.getUnitNbDecimal() != null) {
