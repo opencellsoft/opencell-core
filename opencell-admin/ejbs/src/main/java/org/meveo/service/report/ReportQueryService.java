@@ -121,7 +121,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 	@SuppressWarnings("unchecked")
 	private List<String> executeQuery(ReportQuery reportQuery, Class<?> targetEntity) {
     	List<Object> result = execute(reportQuery, targetEntity, false);
-    	List<String> response = new ArrayList<String>();
+    	List<String> response = new ArrayList<>();
 		for(Object object : result) {
     		var line = "";
 				Map<String, Object> entries = (Map<String, Object>)object;
@@ -352,20 +352,24 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         params.put("startDate", startDate);
         Format format = new SimpleDateFormat("HH:mm:ss");
         params.put("duration", format.format(duration));
-        if(success) {
-            emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
-            params.put("lineCount", lineCount);
-            content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-            subject = emailTemplate.getSubject();
+        try {
+            if(success) {
+                emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
+                params.put("lineCount", lineCount);
+                content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                subject = emailTemplate.getSubject();
 
-        } else {
-            emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
-            params.put("error", error);
-            content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-            subject = emailTemplate.getSubject();
+            } else {
+                emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
+                params.put("error", error);
+                content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                subject = emailTemplate.getSubject();
+            }
+            emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
+                    null, asList(userEmail), subject, content, null);
+        } catch (Exception exception) {
+            log.error("Failed to send notification email " + exception.getMessage());
         }
-        emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
-                null, asList(userEmail), subject, content, null);
     }
 
     @Asynchronous
