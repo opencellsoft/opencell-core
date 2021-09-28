@@ -9146,6 +9146,8 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9826,6 +9828,8 @@
             <column name="cf_values" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="quote_offer_id" type="bigint"/>
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-482" author="NabilOUACHI">
