@@ -101,7 +101,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	
 	public SubAccountingPeriod findLastSubAccountingPeriod() {
     	try {
-			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findLastAP")
+			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findLastSubAP")
 					.getSingleResult();
 		} catch (NoResultException e) {
 			log.debug("No SubAccountingPeriod found");
