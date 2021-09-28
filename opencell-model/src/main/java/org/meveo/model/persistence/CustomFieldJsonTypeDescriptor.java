@@ -104,7 +104,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 //        Logger log = LoggerFactory.getLogger(getClass());
 //        log.error("AKK CF value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
 
-        if (value == null) {
+        if (value == null || toString(value) == null) {
             return null;
 
         } else if (CharacterStream.class.isAssignableFrom(type)) {
