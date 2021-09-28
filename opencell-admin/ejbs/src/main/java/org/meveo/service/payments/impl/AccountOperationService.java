@@ -52,7 +52,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
@@ -495,15 +494,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 	 * @param accountOperation
 	 */
 	public void handleAccountingPeriods(AccountOperation accountOperation) {
-		// if transaction is Payment then the control is performed on collection_date
-		if (accountOperation instanceof Payment) {
-			accountOperation.setAccountingDate(accountOperation.getCollectionDate());
-		}
-		// if transaction is not a Payment (RecordedInvoice, reject, writeOff, ...etc.) then the control is performed on transaction_date
-		else {
-			accountOperation.setAccountingDate(accountOperation.getTransactionDate());
-		}
 
+		accountOperation.setAccountingDate(accountOperation.getTransactionDate());
 		if (accountOperation.getAccountingDate() == null) {
 			log.warn("No accountingDate has been defined for this accoutingOperation : {}", accountOperation);
 			return;

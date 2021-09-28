@@ -91,7 +91,7 @@ public class AccountOperationServiceTest {
 
 		accountOperationService.handleAccountingPeriods(payment);
 		assertThat(payment.getStatus()).isEqualTo(AccountOperationStatus.POSTED);
-		assertThat(payment.getAccountingDate()).isEqualToIgnoringHours(payment.getCollectionDate());
+		assertThat(payment.getAccountingDate()).isEqualToIgnoringHours(payment.getTransactionDate());
 	}
 
 	@Test
