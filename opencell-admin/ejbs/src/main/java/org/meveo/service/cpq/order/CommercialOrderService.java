@@ -17,6 +17,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -28,6 +29,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -122,33 +124,36 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         return super.update(entity);
     }
     
+    @SuppressWarnings("rawtypes")
+	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
+    	return validOffers.stream().filter(o -> {
+			if(o.getProducts().isEmpty()) return false;
+			for(OrderProduct quoteProduct: o.getProducts()) {
+				if(quoteProduct.getProductVersion() != null) {
+					var product = quoteProduct.getProductVersion().getProduct();
+					for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
+						if(charge.getChargeTemplate() != null) {
+							ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
+							if(templateCharge instanceof OneShotChargeTemplate) {
+								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
+								if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
+									return true;
+							}
+						}else
+							return true;
+					}
+				}   
+			}
+			return false;
+		}).collect(Collectors.toList());
 
+    }
 	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) throws BusinessException {
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
 			throw new BusinessException("Can not validate order with status different then DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
 		}
 		
-		/*ServiceCharge si = null;
-		si.getServiceSubscriptionCharges().get(0).getChargeTemplate().getOneShotChargeTemplateType();
-		*/
-		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> {
-			if(o.getProducts().isEmpty()) return false;
-			
-			for(OrderProduct quoteProduct: o.getProducts()) {
-				if(quoteProduct.getProductVersion() != null) {
-					var product = quoteProduct.getProductVersion().getProduct();
-					for(ProductChargeTemplateMapping<?> charge: product.getProductCharges()) {
-						if(charge.getChargeTemplate() != null && charge.getChargeTemplate() instanceof OneShotChargeTemplate) {
-							var oneShotCharge = (OneShotChargeTemplate) charge.getChargeTemplate();
-							if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
-								return true;
-						}
-					}
-				}   
-			}
-			
-			return false;
-		}).collect(Collectors.toList());
+		List<OrderOffer> validOffers = validateOffers(order.getOffers());
 		
 		Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
 		if(order.getDiscountPlan()!=null) {
