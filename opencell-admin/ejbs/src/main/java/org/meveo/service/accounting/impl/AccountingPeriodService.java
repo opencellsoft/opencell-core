@@ -151,6 +151,8 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	private void validateCustLockNumDaysAndCustLockOpt(Integer customLockNumberDays, CustomLockOption customLockOption) {
 		if (customLockNumberDays == null || customLockOption == null)
 			throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
+		if (customLockNumberDays < 1 || customLockNumberDays > 31)
+			throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays must be from 1 (included) to 31 (included).");
 	}
 
 	private void validateForceCustomDay(Integer forceCustomDay) {
