@@ -1,5 +1,6 @@
 package org.meveo.model.cpq;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 
     @OneToMany(mappedBy = "parentAttributeValue", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id")
-	protected List<T> assignedAttributeValue;
+	protected List<T> assignedAttributeValue = new ArrayList<>();
 
 
     @Column(name = "string_value")

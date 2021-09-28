@@ -334,10 +334,29 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .forEach(
                         commercialRuleHeader -> {
                             log.info("about to apply replacement rule: " + commercialRuleHeader.getCode());
-                            Optional<QuoteAttribute> attributeToReplace = quoteProduct.getQuoteAttributes()
+                            Optional<QuoteAttribute> attributeToReplace = quoteProduct.getProductVersion().getAttributes()
                                     .stream()
-                                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleHeader.getTargetAttribute().getCode()))
-                                    .findFirst();
+                                    .filter(attribute -> attribute.getCode().equals(commercialRuleHeader.getTargetAttribute().getCode()))
+                                    .map(attribute -> {
+                                        Optional<QuoteAttribute> matchedAttribute = quoteProduct.getQuoteAttributes()
+                                                .stream()
+                                                .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(attribute.getCode()))
+                                                .findFirst();
+
+                                        if (matchedAttribute.isPresent())
+                                            return matchedAttribute.get();
+                                        else {
+                                            QuoteAttribute quoteAttribute = new QuoteAttribute();
+                                            quoteAttribute.setAttribute(attribute);
+                                            quoteAttribute.setQuoteProduct(quoteProduct);
+                                            quoteAttributeService.create(quoteAttribute);
+                                            quoteProduct.getQuoteAttributes().add(quoteAttribute);
+                                            return quoteAttribute;
+                                        }
+
+                                    })
+                                    .findAny();
+
                             if (attributeToReplace.isPresent()) {
                                 List<CommercialRuleItem> commercialRuleItems = commercialRuleHeader.getCommercialRuleItems();
                                 if (!commercialRuleItems.isEmpty()) {
