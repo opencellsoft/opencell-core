@@ -17,6 +17,14 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
@@ -26,15 +34,29 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AutomatedRefund;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.MatchingTypeEnum;
+import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentErrorEnum;
+import org.meveo.model.payments.PaymentErrorTypeEnum;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentHistory;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.payments.Refund;
+import org.meveo.model.payments.RejectedPayment;
+import org.meveo.model.payments.RejectedType;
 import org.meveo.service.base.PersistenceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -566,6 +588,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setRejectedCode(errorCode);
                 rejectedPayment.setListAaccountOperationSupposedPaid(listAoThatSupposedPaid);
 
+                accountOperationService.handleAccountingPeriods(rejectedPayment);
                 accountOperationService.create(rejectedPayment);
                 for(AccountOperation ao : listAoThatSupposedPaid) {
                     ao.setRejectedPayment(rejectedPayment);

@@ -242,7 +242,8 @@ public class AccountOperationApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        
+        accountOperationService.handleAccountingPeriods(accountOperation);
         accountOperationService.create(accountOperation);
 
         if (postData.getMatchingAmounts() != null && postData.getMatchingAmounts().getMatchingAmount() != null) {
