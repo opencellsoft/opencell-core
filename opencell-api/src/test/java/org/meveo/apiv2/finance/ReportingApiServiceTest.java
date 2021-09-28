@@ -37,7 +37,7 @@ public class ReportingApiServiceTest {
 
 	@Test
 	public void getTrialBalances() {
-		List<TrialBalance> balances = reportingApiService.list(ReportingPeriodEnum.CURRENT_YEAR, null, null, "accountingCode.code", SortOrderEnum.DESCENDING, 0L, 2L);
+		List<TrialBalance> balances = reportingApiService.list(ReportingPeriodEnum.CURRENT_YEAR,null, null, null, "accountingCode.code", SortOrderEnum.DESCENDING, 0L, 2L);
 		assertEquals(2, balances.size());
 		
 		assertEquals("411000000", balances.get(0).getAccountingCode());

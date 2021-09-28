@@ -31,6 +31,7 @@ public interface ReportingResource {
 			"TrialBalance" }, description = "Get trial balance report", responses = { @ApiResponse(responseCode = "200", description = "return trial balance report"),
 					@ApiResponse(responseCode = "204", description = "Empty trial balance report") })
 	Response getTrialBalances(@Parameter(description = "The trial balance report period") @DefaultValue("CURRENT_QUARTER") @QueryParam("period") ReportingPeriodEnum period,
+			@Parameter(description = "code or label") @QueryParam("codeOrLabel") String codeOrLabel,
 			@Parameter(description = "The trial balance report start date") @QueryParam("startDate") Date startDate,
 			@Parameter(description = "The trial balance report end date") @QueryParam("endDate") Date endDate,
 			@Parameter(description = "The sorting by field") @QueryParam("sortBy") String sortBy,

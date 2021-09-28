@@ -39,12 +39,12 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 	private static final String BALANCE_CRITERIA = "COALESCE(SUM(CASE WHEN (accountingDate >= '%s' AND  accountingDate < '%s' AND transactionCategory = '%s') THEN COALESCE(amountWithoutTax, amount) END), 0)";
 
 	
-	public List<TrialBalance> list(ReportingPeriodEnum period, Date startDate, Date endDate, String sortBy, SortOrderEnum sortOrder, Long offset, Long limit) {
+	public List<TrialBalance> list(ReportingPeriodEnum period, String codeOrLabel, Date startDate, Date endDate, String sortBy, SortOrderEnum sortOrder, Long offset, Long limit) {
 
 		Set<String> fetchFieldsAliasSet = new LinkedHashSet<>();
 		fetchFieldsAliasSet.addAll(Arrays.asList("accountingCode", "accountingLabel", "initialBalanceDebit", "initialBalanceCredit", "currentDebitBalance", "currentCreditBalance"));
 
-		PaginationConfiguration paginationConfiguration = getSearchConfig(period, startDate, endDate, sortBy, sortOrder, offset, limit);
+		PaginationConfiguration paginationConfiguration = getSearchConfig(period, codeOrLabel, startDate, endDate, sortBy, sortOrder, offset, limit);
 		List<Map<String, Object>> res = loadService.findAggregatedPaginatedRecords(AccountOperation.class, paginationConfiguration, fetchFieldsAliasSet);
 		ReportingMapper mapper = new ReportingMapper();
 		List<TrialBalance> trialBalances = new ArrayList<>();
@@ -64,12 +64,12 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 		return trialBalances;
 	}
 
-	public int count(ReportingPeriodEnum period, Date startDate, Date endDate) {
-		PaginationConfiguration paginationConfiguration = getSearchConfig(period, startDate, endDate, null, null, null, null);
+	public int count(ReportingPeriodEnum period, String codeOrLabel, Date startDate, Date endDate) {
+		PaginationConfiguration paginationConfiguration = getSearchConfig(period, codeOrLabel, startDate, endDate, null, null, null, null);
 		return loadService.getAggregatedRecordsCount(AccountOperation.class, paginationConfiguration);
 	}
 
-	private PaginationConfiguration getSearchConfig(ReportingPeriodEnum period, Date startDate, Date endDate, String sortBy, SortOrderEnum sortOrder, Long offset, Long limit) {
+	private PaginationConfiguration getSearchConfig(ReportingPeriodEnum period, String codeOrLabel, Date startDate, Date endDate, String sortBy, SortOrderEnum sortOrder, Long offset, Long limit) {
 		
 		DatePeriod targetPeriod = getTargetPeriod(period, startDate, endDate);
 		
@@ -84,6 +84,9 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 		Set<String> fetchFieldsSet = new LinkedHashSet<>();
 		Map<String, Object> filters = new HashMap<>();
 		filters.put("toRange accountingDate", reportEndDateInclusive);
+		if(codeOrLabel != null && !codeOrLabel.isEmpty()){
+			filters.put("SQL", "(a.accountingCode.code = '" + codeOrLabel + "' OR a.accountingCode.description = '" + codeOrLabel + "')");
+		}
 
 		String initalBalanceDebit = String.format(BALANCE_CRITERIA, earliestDate, reportStartDate, "DEBIT");
 		String initalBalanceCredit = String.format(BALANCE_CRITERIA, earliestDate, reportStartDate, "CREDIT");
