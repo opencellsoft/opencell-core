@@ -48,6 +48,9 @@ public class OtherCreditAndChargeService extends
 
 	@Inject
 	private OCCTemplateService occTemplateService;
+
+	@Inject
+	private AccountOperationService accountOperationService;
 	
 	@EJB
 	private CustomerAccountService customerAccountService;
@@ -134,6 +137,7 @@ public class OtherCreditAndChargeService extends
     public void create(OtherCreditAndCharge occ) throws BusinessException {
 
         occ.setType(OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value());
+        accountOperationService.handleAccountingPeriods(occ);
         super.create(occ);
     }
 	

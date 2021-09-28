@@ -57,6 +57,7 @@ public class RefundService extends PersistenceService<Refund> {
     @MeveoAudit
     @Override
     public void create(Refund entity) throws BusinessException {
+        accountOperationService.handleAccountingPeriods(entity);
         super.create(entity);
     }
 

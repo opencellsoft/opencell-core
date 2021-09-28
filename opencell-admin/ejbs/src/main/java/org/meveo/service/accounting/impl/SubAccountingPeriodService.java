@@ -99,6 +99,16 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 	}
 	
+	public SubAccountingPeriod findLastSubAccountingPeriod() {
+    	try {
+			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findLastAP")
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No SubAccountingPeriod found");
+			return null;
+		}
+    }
+	
 	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {

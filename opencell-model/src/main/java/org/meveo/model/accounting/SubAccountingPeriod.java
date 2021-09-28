@@ -24,6 +24,7 @@ import org.meveo.model.AuditableEntity;
         @Parameter(name = "sequence_name", value = "sub_accounting_period_seq"), })
 @NamedQueries({
 	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number"),
+	@NamedQuery(name = "SubAccountingPeriod.findLastSubAP", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.endDate = (select max(endDate) from SubAccountingPeriod)"),
     @NamedQuery(name = "SubAccountingPeriod.findByAP", query = "SELECT count(SAP) FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId") })
 public class SubAccountingPeriod extends AuditableEntity {
 
