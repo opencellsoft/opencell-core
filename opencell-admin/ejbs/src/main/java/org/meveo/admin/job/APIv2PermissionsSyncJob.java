@@ -76,7 +76,7 @@ public class APIv2PermissionsSyncJob  extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode(CF_NB_RUNS);
-        nbRuns.setAppliesTo("JobInstance_" + this.getClass().getName());
+        nbRuns.setAppliesTo("JobInstance_" + this.getClass().getSimpleName());
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -87,7 +87,7 @@ public class APIv2PermissionsSyncJob  extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode(Job.CF_WAITING_MILLIS);
-        waitingMillis.setAppliesTo("JobInstance_" + this.getClass().getName());
+        waitingMillis.setAppliesTo("JobInstance_" + this.getClass().getSimpleName());
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
