@@ -93,6 +93,10 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
         populateCustomFields(postData.getCustomFields(), attribute, true);
+        attribute.setValidationType(postData.getValidationType());
+        attribute.setValidationPattern(postData.getValidationPattern());
+        attribute.setValidationLabel(postData.getValidationLabel());
+        attribute.setSequence(postData.getSequence());
 		attributeService.create(attribute);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
@@ -171,7 +175,10 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
+		attribute.setReadOnly(postData.isReadOnly());
+		attribute.setSequence(postData.getSequence());
+		attribute.setDefaultValue(postData.getDefaultValue());
+        attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		}
