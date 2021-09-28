@@ -297,7 +297,7 @@
                                 <h:form>
 
                                     <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" lazy="true" resizableColumns="true"
-                                        value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
+                                        value="#{userAccountBean.getWalletOperations(wallet.value.id)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
                                         widgetVar="walletOperationsTable" styleClass="verticalSpaceSmall custom-grid">
                                         <hftl:column label="#{messages['walletOperation.operationDate']}" entity="#{e}" field="operationDate" isDate="true" />
                                         <hftl:column label="#{messages['walletOperation.startDate']}" entity="#{e}" field="startDate" isDate="true" />

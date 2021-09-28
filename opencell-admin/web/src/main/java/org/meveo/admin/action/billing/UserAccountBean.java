@@ -123,7 +123,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private Map<Long, Amounts> openBalance = new HashMap<>();
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
-    private Map<String, LazyDataModel<WalletOperation>> walletOperations = new HashMap<String, LazyDataModel<WalletOperation>>();
+    private Map<Long, LazyDataModel<WalletOperation>> walletOperations = new HashMap<Long, LazyDataModel<WalletOperation>>();
 
     private EntityListDataModelPF<ProductInstance> productInstances = null;
 
@@ -307,17 +307,16 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {
+    public LazyDataModel<WalletOperation> getWalletOperations(Long walletInstanceId) {
 
         HashMap<String, Object> filters = new HashMap<String, Object>();
-        filters.put("wallet.code", walletCode);
-        filters.put("wallet.userAccount", entity);
+        filters.put("wallet.id", walletInstanceId);
+        filters.put("userAccount", entity);
 
-        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-            log.debug("getWalletOperations {}", walletCode);
-            walletOperations.put(walletCode, walletOperationBean.getLazyDataModel(filters, true));
+        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletInstanceId)) {
+            walletOperations.put(walletInstanceId, walletOperationBean.getLazyDataModel(filters, true));
         }
-        return walletOperations.get(walletCode);
+        return walletOperations.get(walletInstanceId);
     }
 
     public void populateAccounts(BillingAccount billingAccount) {
