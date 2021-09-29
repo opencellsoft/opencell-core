@@ -34,11 +34,12 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.AccountOperationRs;
-import org.meveo.model.payments.AccountOperationStatus;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -201,13 +202,23 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            validateInputDate(newAccountingDate, formatter);
             accountOperationApi.updateAccountingDate(id, formatter.parse(newAccountingDate));
         } catch (Exception exception) {
             processException(exception, result);
         }
         return result;
     }
-    
+
+    private void validateInputDate(String date, SimpleDateFormat formatter) {
+        formatter.setLenient(false);
+        try {
+            formatter.parse(date);
+        } catch (ParseException e) {
+            throw new BadRequestException("Bad date format");
+        }
+    }
+
     @Override
     public ActionStatus updateStatus(Long id, String newStatus) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
