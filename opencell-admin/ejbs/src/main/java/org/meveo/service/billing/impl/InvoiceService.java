@@ -3852,6 +3852,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } else if (entity instanceof Subscription) {
             invoice.setSubscription((Subscription) entity);
+        } else if(entity instanceof CommercialOrder){
+            CommercialOrder commercialOrder = (CommercialOrder) entity;
+            invoice.setCommercialOrder(commercialOrder);
         }
         if (paymentMethod != null) {
             invoice.setPaymentMethodType(paymentMethod.getPaymentType());
