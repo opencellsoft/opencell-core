@@ -34,6 +34,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.AccountOperationRs;
+import org.meveo.model.payments.AccountOperationStatus;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -201,6 +202,17 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             accountOperationApi.updateAccountingDate(id, formatter.parse(newAccountingDate));
+        } catch (Exception exception) {
+            processException(exception, result);
+        }
+        return result;
+    }
+    
+    @Override
+    public ActionStatus updateStatus(Long id, String newStatus) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            accountOperationApi.updateStatus(id, newStatus);
         } catch (Exception exception) {
             processException(exception, result);
         }
