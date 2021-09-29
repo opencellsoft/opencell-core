@@ -1,8 +1,12 @@
 package org.meveo.apiv2.article.impl;
 
+import static org.meveo.apiv2.models.ImmutableResource.builder;
+import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableAttributeMapping;
 import org.meveo.apiv2.models.ImmutableResource;
@@ -17,6 +21,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.service.base.PersistenceService;
 
 public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.article.ArticleMappingLine, ArticleMappingLine> {
     @Override
@@ -93,6 +98,12 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     }
 
     private ImmutableResource createResource(BusinessEntity baseEntity) {
-        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).code(baseEntity.getCode()).build() : null;
+        PersistenceService persistenceService;
+        if(baseEntity instanceof HibernateProxy) {
+            persistenceService = (PersistenceService) getServiceInterface(((HibernateProxy)baseEntity)
+                    .getHibernateLazyInitializer().getPersistentClass());
+            baseEntity = (BusinessEntity) persistenceService.findById(baseEntity.getId());
+        }
+        return baseEntity != null ? builder().id(baseEntity.getId()).code(baseEntity.getCode()).build() : null;
     }
 }
