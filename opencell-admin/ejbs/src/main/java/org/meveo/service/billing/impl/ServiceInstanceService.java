@@ -675,7 +675,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         if (serviceInstance.getId() != null) {
-            log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
+            log.info("Terminating service {} for {} with reason {}", serviceInstance.getId(), terminationDate, terminationReason);
         }
 
         // checks if termination date is > now (do not ignore time, as service time is time sensative)
