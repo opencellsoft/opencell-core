@@ -85,7 +85,7 @@ public class ReportingApiService implements ApiService<AccountOperation> {
 		Map<String, Object> filters = new HashMap<>();
 		filters.put("toRange accountingDate", reportEndDateInclusive);
 		if(codeOrLabel != null && !codeOrLabel.isEmpty()){
-			filters.put("SQL", "(a.accountingCode.code = '" + codeOrLabel + "' OR a.accountingCode.description = '" + codeOrLabel + "')");
+			filters.put("SQL", "(a.accountingCode.code like '" + codeOrLabel + "%' OR a.accountingCode.description like '" + codeOrLabel + "%')");
 		}
 
 		String initalBalanceDebit = String.format(BALANCE_CRITERIA, earliestDate, reportStartDate, "DEBIT");
