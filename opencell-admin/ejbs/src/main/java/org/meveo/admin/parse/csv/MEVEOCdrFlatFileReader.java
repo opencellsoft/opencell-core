@@ -26,6 +26,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Named;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Named
+@Stateful
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvReader {
 

@@ -242,7 +242,7 @@ public class MediationJobBean extends BaseJobBean {
                             try {
                                 CDR cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
                                 if (cdr == null) {
-                                    break mainLoop;
+                                    break;
                                 }
 
                                 if (!StringUtils.isBlank(cdr.getRejectReason())) {
@@ -252,7 +252,7 @@ public class MediationJobBean extends BaseJobBean {
                                 cdrs.add(cdr);
 
                                 if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                                    break mainLoop;
+                                    return;
                                 }
                                 i++;
                                 nrOfItemsInBatch++;
@@ -263,7 +263,11 @@ public class MediationJobBean extends BaseJobBean {
                                 break mainLoop;
                             }
                         }
-
+                        
+                        if (cdrs.isEmpty()) {
+                            break mainLoop;
+                        }
+     
                         thisNewTX.processCDRs(cdrs, jobExecutionResult, cdrParserFinal, outputFileWriterFinal, rejectFileWriterFinal, fileName, isDuplicateCheckOn, updateTotalCount, checkJobStatusEveryNr);
 
                         try {
