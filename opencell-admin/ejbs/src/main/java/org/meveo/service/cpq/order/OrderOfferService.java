@@ -27,9 +27,9 @@ public class OrderOfferService extends PersistenceService<OrderOffer> {
 
 	public OrderOffer findByCodeAndQuoteVersion(String code, String orderCode) {
 		if(Strings.isEmpty(code) || Strings.isEmpty(orderCode))
-			throw new BusinessException("code and quoteVersion must not be empty");
-		Query query=getEntityManager().createNamedQuery("OrderOffer.findByCodeAndQuoteVersion");
-		query.setParameter("quoteVersionId", orderCode)
+			throw new BusinessException("code and order code must not be empty");
+		Query query=getEntityManager().createNamedQuery("OrderOffer.findByCodeAndOrderCode");
+		query.setParameter("orderCode", orderCode)
 			  .setParameter("code", code);
 		try {
 			return (OrderOffer) query.getSingleResult();
