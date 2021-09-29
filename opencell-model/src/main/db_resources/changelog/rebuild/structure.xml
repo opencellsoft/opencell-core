@@ -10082,6 +10082,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="aggregate_id_f" type="bigint" />
+            <column name="cpq_quote_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -14133,6 +14134,12 @@
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
+    
+      <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15950,6 +15957,7 @@
     <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql"/>
     <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius"/>
+    <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
 
     
     

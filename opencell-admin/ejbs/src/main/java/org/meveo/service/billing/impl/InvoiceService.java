@@ -159,6 +159,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Customer;
@@ -180,6 +181,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
@@ -378,6 +380,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private Map<String, String> descriptionMap = new HashMap<>();
 
     private static int rtPaginationSize = 30000;
+    
+    @Inject
+    private CpqQuoteService cpqQuoteService;
 
     @PostConstruct
     private void init() {
@@ -4821,7 +4826,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-            if ((entityToInvoice instanceof Order) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -4945,6 +4950,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } else if (entityToInvoice instanceof CommercialOrder) {
                 entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
                 ba = ((CommercialOrder) entityToInvoice).getBillingAccount();
+            } else if (entityToInvoice instanceof CpqQuote) {
+                entityToInvoice = cpqQuoteService.retrieveIfNotManaged((CpqQuote) entityToInvoice);
+                ba = ((CpqQuote) entityToInvoice).getBillableAccount();
             }
 
             if (billingRun != null) {

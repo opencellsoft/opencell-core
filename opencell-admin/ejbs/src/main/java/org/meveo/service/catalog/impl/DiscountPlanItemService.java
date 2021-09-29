@@ -272,7 +272,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         List<InvoiceLine> discountPrices = new ArrayList<>();
         AccountingArticle accountintArticle = invoiceLine.getAccountingArticle();
-        Product product = invoiceLine.getProductVersion().getProduct();
+        Product product = invoiceLine.getProduct();
         OfferTemplate offerTemplate = invoiceLine.getOfferTemplate();
         BigDecimal amountWithoutTax = invoiceLine.getAmountWithoutTax();
         BigDecimal discountAmount = BigDecimal.ZERO;

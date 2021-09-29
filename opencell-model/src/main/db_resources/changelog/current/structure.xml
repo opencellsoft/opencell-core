@@ -9582,4 +9582,12 @@ public class OrderAdvancement extends ModuleScript {
         <alterSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
     </changeSet>
     
+     <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay">
+     <addColumn tableName="cpq_invoice_line">
+            <column name="cpq_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    
 </databaseChangeLog>
