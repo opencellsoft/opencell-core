@@ -164,7 +164,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
-    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, OfferTemplate offerTemplate,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription());
@@ -181,6 +181,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
         invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
         invoiceLine.setValueDate(new Date());
+        invoiceLine.setOfferTemplate(offerTemplate);
         if(accountingArticle!=null && commercialOrder!=null) {
          TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), commercialOrder.getSeller(), commercialOrder.getBillingAccount(),commercialOrder.getUserAccount() , commercialOrder.getOrderDate(), false, false);
          if(taxInfo!=null)
