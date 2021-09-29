@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.PaymentMethod;
 
 /**
@@ -45,7 +44,7 @@ public class RatedTransactionGroup implements Serializable {
     /**
      * Seller
      */
-    private Seller seller;
+    private Long sellerId;
 
     /**
      * Invoice type
@@ -68,9 +67,9 @@ public class RatedTransactionGroup implements Serializable {
     private PaymentMethod paymentMethod;
 
     /**
-     * Rated transactions
+     * Data to invoice
      */
-    private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+    private List<IInvoiceable> invoiceables = new ArrayList<IInvoiceable>();
 
     public RatedTransactionGroup() {
 
@@ -85,9 +84,9 @@ public class RatedTransactionGroup implements Serializable {
      * @param invoiceType Invoice type
      * @param prepaid Is this for prepaid transactions
      */
-    public RatedTransactionGroup(BillingAccount billingAccount, Seller seller, BillingCycle billingCycle, InvoiceType invoiceType, boolean prepaid) {
+    public RatedTransactionGroup(BillingAccount billingAccount, Long sellerId, BillingCycle billingCycle, InvoiceType invoiceType, boolean prepaid) {
         this.billingAccount = billingAccount;
-        this.seller = seller;
+        this.sellerId = sellerId;
         this.billingCycle = billingCycle;
         this.invoiceType = invoiceType;
         this.prepaid = prepaid;
@@ -97,17 +96,16 @@ public class RatedTransactionGroup implements Serializable {
      * Constructor.
      *
      * @param billingAccount Billing account
-     * @param seller         Seller
-     * @param billingCycle   Billing cycle
-     * @param invoiceType    Invoice type
-     * @param prepaid        Is this for prepaid transactions
-     * @param invoiceKey     invoice key
-     * @param paymentMethod  Payment method
+     * @param seller Seller
+     * @param billingCycle Billing cycle
+     * @param invoiceType Invoice type
+     * @param prepaid Is this for prepaid transactions
+     * @param invoiceKey invoice key
+     * @param paymentMethod Payment method
      */
-    public RatedTransactionGroup(BillingAccount billingAccount, Seller seller, BillingCycle billingCycle, InvoiceType invoiceType, boolean prepaid, String invoiceKey,
-            PaymentMethod paymentMethod) {
+    public RatedTransactionGroup(BillingAccount billingAccount, Long sellerId, BillingCycle billingCycle, InvoiceType invoiceType, boolean prepaid, String invoiceKey, PaymentMethod paymentMethod) {
 
-        this(billingAccount, seller, billingCycle, invoiceType, prepaid);
+        this(billingAccount, sellerId, billingCycle, invoiceType, prepaid);
         this.invoiceKey = invoiceKey;
         this.paymentMethod = paymentMethod;
     }
@@ -129,29 +127,29 @@ public class RatedTransactionGroup implements Serializable {
     /**
      * @return Seller
      */
-    public Seller getSeller() {
-        return seller;
+    public Long getSellerId() {
+        return sellerId;
     }
 
     /**
      * @param seller Seller
      */
-    public void setSeller(Seller seller) {
-        this.seller = seller;
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
     }
 
     /**
      * @return Rated transactions
      */
-    public List<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
+    public List<IInvoiceable> getInvoiceables() {
+        return invoiceables;
     }
 
     /**
      * @param ratedTransactions Rated transactions
      */
-    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
+    public void setRatedTransactions(List<IInvoiceable> invoiceables) {
+        this.invoiceables = invoiceables;
     }
 
     /**
@@ -195,7 +193,7 @@ public class RatedTransactionGroup implements Serializable {
     public String getInvoiceKey() {
 
         if (invoiceKey == null) {
-            invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid + "_" + getPaymentMethod().getId();
+            invoiceKey = billingAccount.getId() + "_" + sellerId + "_" + invoiceType.getId() + "_" + prepaid + "_" + getPaymentMethod().getId();
         }
         return invoiceKey;
     }

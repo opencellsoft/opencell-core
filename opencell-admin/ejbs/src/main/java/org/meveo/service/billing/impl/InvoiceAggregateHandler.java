@@ -299,7 +299,7 @@ public class InvoiceAggregateHandler {
             categoryInvoiceAgregate.setItemNumber(categoryInvoiceAgregate.getItemNumber() + (isToAdd ? 1 : -1));
 
             if (isToAdd) {
-                subCategoryInvoiceAgregate.addRatedTransaction(ratedTransaction, appProvider.isEntreprise(), true);
+                subCategoryInvoiceAgregate.addInvoiceable(ratedTransaction, appProvider.isEntreprise(), true);
             } else {
                 subCategoryInvoiceAgregate.removeRatedTransaction(ratedTransaction, appProvider.isEntreprise(), true);
             }

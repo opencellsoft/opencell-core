@@ -206,7 +206,7 @@
 										</ui:repeat>
 									</p:panelGrid>
 
-									<p:dataTable editable="true" editMode="cell" resizableColumns="true" id="ratedTransactionTable" var="rated" value="#{aSubCatInvAgregate.getRatedtransactionsToAssociate()}">
+									<p:dataTable editable="true" editMode="cell" resizableColumns="true" id="ratedTransactionTable" var="rated" value="#{aSubCatInvAgregate.getInvoiceablesToAssociate()}">
 										<p:column width="5%">
 											<f:facet name="header">
 												<h:outputText value="#{messages['ratedTransaction.chargeDate']}" />

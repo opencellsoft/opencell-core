@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -137,7 +135,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     private BigDecimal oldAmountWithTax;
 
     @Transient
-    private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
+    private List<IInvoiceable> invoiceablesToAssociate = new ArrayList<>();
 
     @Transient
     private List<InvoiceLine> invoiceLinesToAssociate = new ArrayList<>();
@@ -242,35 +240,35 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
 
     /**
-     * Associate Rated transaction to an aggregate, increment the itemNumber field value and sum up amounts.
+     * Associate Invoiceable data to an aggregate, increment the itemNumber field value and sum up amounts.
      * 
-     * @param ratedTransaction Rated transaction to associate
+     * @param invoiceable Rated transaction to associate
      * @param isEnterprise Is it enterprise/b2b installation - interested to track
      * @param updateAmounts Shall Subcategory aggregate amounts be updated with values of rated transaction amounts
      */
-    public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise, boolean updateAmounts) {
+    public void addInvoiceable(IInvoiceable invoiceable, boolean isEnterprise, boolean updateAmounts) {
 
         if (this.itemNumber == null) {
             this.itemNumber = 0;
         }
         this.itemNumber++;
-        this.ratedtransactionsToAssociate.add(ratedTransaction);
+        this.invoiceablesToAssociate.add(invoiceable);
 
         if (updateAmounts) {
             if (isEnterprise) {
-                addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+                addAmountWithoutTax(invoiceable.getAmountWithoutTax());
             } else {
-                addAmountWithTax(ratedTransaction.getAmountWithTax());
+                addAmountWithTax(invoiceable.getAmountWithTax());
             }
-            addAmountTax(ratedTransaction.getAmountTax());
+            addAmountTax(invoiceable.getAmountTax());
 
             if (amountsByTax == null) {
                 amountsByTax = new LinkedHashMap<>();
             }
-            if (!amountsByTax.containsKey(ratedTransaction.getTax())) {
-                amountsByTax.put(ratedTransaction.getTax(), new SubcategoryInvoiceAgregateAmount(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax()));
+            if (!amountsByTax.containsKey(invoiceable.getTax())) {
+                amountsByTax.put(invoiceable.getTax(), new SubcategoryInvoiceAgregateAmount(invoiceable.getAmountWithoutTax(), invoiceable.getAmountWithTax(), invoiceable.getAmountTax()));
             } else {
-                amountsByTax.get(ratedTransaction.getTax()).addAmounts(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax());
+                amountsByTax.get(invoiceable.getTax()).addAmounts(invoiceable.getAmountWithoutTax(), invoiceable.getAmountWithTax(), invoiceable.getAmountTax());
             }
         }
     }
@@ -291,7 +289,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         if (this.itemNumber < 0) {
             this.itemNumber = 0;
         }
-        this.ratedtransactionsToAssociate.remove(ratedTransaction);
+        this.invoiceablesToAssociate.remove(ratedTransaction);
 
         if (updateAmounts) {
             if (isEnterprise) {
@@ -576,17 +574,17 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * 
      * @return A list of rated transactions to associate with an invoice subcategory aggregate.
      */
-    public List<RatedTransaction> getRatedtransactionsToAssociate() {
-        return ratedtransactionsToAssociate;
+    public List<? extends IInvoiceable> getInvoiceablesToAssociate() {
+        return invoiceablesToAssociate;
     }
 
     /**
      * A transient method.
      * 
-     * @param ratedtransactionsToAssociate A list of rated transactions to associate with an invoice subcategory aggregate
+     * @param invoiceablesToAssociate A list of invoiceable data to associate with an invoice subcategory aggregate
      */
-    public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
-        this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
+    public void setInvoiceablesToAssociate(List<IInvoiceable> invoiceablesToAssociate) {
+        this.invoiceablesToAssociate = invoiceablesToAssociate;
     }
 
     /**

@@ -1945,7 +1945,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         WalletInstance wallet = subCatInvoiceAgregate.getWallet();
         Long walletId = wallet != null ? wallet.getId() : null;
         if (isVirtual) {
-            ratedTransactions = subCatInvoiceAgregate.getRatedtransactionsToAssociate();
+            ratedTransactions = (List<RatedTransaction>)subCatInvoiceAgregate.getInvoiceablesToAssociate();
         }
         String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
         if (invoiceSubCat.getDescriptionI18n() != null && invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode) != null) {
