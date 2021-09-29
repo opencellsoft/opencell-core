@@ -133,7 +133,7 @@ public class ProductVersion extends AuditableEntity{
 
 	
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "productVersion", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
     private List<ProductVersionAttribute> attributes = new ArrayList<ProductVersionAttribute>();
 	
 	
