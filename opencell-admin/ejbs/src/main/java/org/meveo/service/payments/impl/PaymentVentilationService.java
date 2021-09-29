@@ -64,6 +64,9 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @Inject
     private CustomerAccountService customerAccountService;
 
+    @Inject
+    private AccountOperationService accountOperationService;
+    
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -127,6 +130,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         payment.setPaymentInfo2(originalOTG.getPaymentInfo2());
         // Additional payment information 3 - Account Number
         payment.setPaymentInfo3(originalOTG.getPaymentInfo3());
+        accountOperationService.handleAccountingPeriods(payment);
         paymentService.create(payment);
 
         return payment;

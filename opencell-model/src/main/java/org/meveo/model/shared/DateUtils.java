@@ -453,6 +453,20 @@ public class DateUtils {
         return result;
     }
 
+	public static Date setDayOfWeekToDate(Date date, Integer dayOfWeek) {
+		Date result = null;
+
+		if (date != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+			calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+			result = calendar.getTime();
+		}
+
+		return result;
+	}
+	
     public static Date setHourToDate(Date date, Integer hour) {
         Date result = null;
 
@@ -553,7 +567,31 @@ public class DateUtils {
         return result;
     }
 
-    public static Integer getMonthFromDate(Date date) {
+	public static Integer getActualMaximumDayForDate(Date date) {
+		Integer result = null;
+
+		if (date != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			result = calendar.getActualMaximum(Calendar.DATE);
+		}
+
+		return result;
+	}
+
+	public static Integer getActualMinimumDayForDate(Date date) {
+		Integer result = null;
+
+		if (date != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			result = calendar.getActualMinimum(Calendar.DATE);
+		}
+
+		return result;
+	}
+
+	public static Integer getMonthFromDate(Date date) {
         Integer result = null;
 
         if (date != null) {

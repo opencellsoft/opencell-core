@@ -49,7 +49,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		if (endDateInput !=null && entity.getEndDate().compareTo(endDateInput) != 0) {
 			throw new ValidationException("Once the end date is set, it CANNOT be modified");
 		}
-		if (entity.isUseSubAccountingCycles() && isUseSubAccountingPeriods != null) {
+		if (entity.isUseSubAccountingCycles() && !Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
 			throw new ValidationException("Use sub-accounting cycles CANNOT be modified");
 		} else
 			Optional.ofNullable(isUseSubAccountingPeriods).ifPresent(b -> entity.setUseSubAccountingCycles(Boolean.TRUE.equals(isUseSubAccountingPeriods)));
@@ -151,6 +151,8 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	private void validateCustLockNumDaysAndCustLockOpt(Integer customLockNumberDays, CustomLockOption customLockOption) {
 		if (customLockNumberDays == null || customLockOption == null)
 			throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays and the customLockOption must not be null");
+		if (customLockNumberDays < 1 || customLockNumberDays > 31)
+			throw new BusinessApiException("When regularUserLockOption option is set to CUSTOM then the customLockNumberDays must be from 1 (included) to 31 (included).");
 	}
 
 	private void validateForceCustomDay(Integer forceCustomDay) {
