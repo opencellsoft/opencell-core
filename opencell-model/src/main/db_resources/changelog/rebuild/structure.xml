@@ -10107,6 +10107,7 @@
             <column name="offer_template_id" type="bigint"/>
             <column name="order_lot_id" type="bigint"/>
             <column name="product_version_id" type="bigint"/>
+             <column name="cpq_quote_id" type="bigint"/>
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
@@ -14055,6 +14056,11 @@
           <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
+    
+      <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15833,6 +15839,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-1384_17082021" author="YoussefIZEM" />
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
 	<changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay"/>
+	<changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -1,21 +1,16 @@
 package org.meveo.model.cpq;
 
-import static javax.persistence.FetchType.LAZY;
-
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,13 +23,16 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.quote.QuoteStatusEnum;
 
 
@@ -44,7 +42,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
-public class CpqQuote extends BusinessEntity  {
+public class CpqQuote extends BusinessEntity implements IBillableEntity {
 
 	/**
 	 * 
@@ -427,6 +425,84 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setPreviousStatus(String previousStatus) {
 		this.previousStatus = previousStatus;
+	}
+
+	@Override
+	public BillingRun getBillingRun() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBillingRun(BillingRun billingRun) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<RatedTransaction> getMinRatedTransactions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BillingCycle getBillingCycle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<InvoiceLine> getMinInvoiceLines() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
