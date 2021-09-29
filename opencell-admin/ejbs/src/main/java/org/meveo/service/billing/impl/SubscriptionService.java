@@ -311,6 +311,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
             throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
         }
 
+        log.info("Terminating subscription {} for {} with reason {}", subscription.getId(), terminationDate, terminationReason);
+
         // checks if termination date is > now (do not ignore time, as subscription time is time sensitive)
         Date now = new Date();
         if (terminationDateTime.compareTo(now) <= 0) {
@@ -359,6 +361,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                     if (chargeTemplate == null || chargeTemplate.getOneShotChargeTemplateType() == null || !chargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
                         continue;
                     }
+                    log.info("Reimbursing the OTHER type subscription charge {}", oneShotChargeInstance.getId());
                     oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber, ChargeApplicationModeEnum.REIMBURSMENT);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
