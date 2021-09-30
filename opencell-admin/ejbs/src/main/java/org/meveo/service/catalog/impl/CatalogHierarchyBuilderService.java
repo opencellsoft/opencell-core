@@ -85,7 +85,6 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.quote.QuoteArticleLine;
-import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
@@ -97,6 +96,7 @@ import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
+import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -202,6 +202,7 @@ public class CatalogHierarchyBuilderService {
     @Inject private QuoteArticleLineService articleLineService;
     @Inject private QuotePriceService quotePriceService;
     @Inject private GroupedAttributeService groupedAttributeService;
+    @Inject private ProductVersionAttributeService productVersionAttributeService;
 
 
     public void duplicateProductVersion(ProductVersion entity, List<ProductVersionAttribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
@@ -214,6 +215,7 @@ public class CatalogHierarchyBuilderService {
         			newMedia.setCode(media.getCode() + "_" + entity.getId());
         			mediaService.create(newMedia);
         		}
+        		productAttribute = productVersionAttributeService.refreshOrRetrieve(productAttribute);
                 entity.getAttributes().add(productAttribute);
 			}
         }

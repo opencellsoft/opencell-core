@@ -258,6 +258,7 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
 			orderPrice.setChargeTemplate(price.getChargeTemplate());
 			orderPrice.setOrderOffer(orderOffer);
+			orderPrice.setPriceTypeEnum(price.getPriceTypeEnum());
 			orderPriceService.create(orderPrice);
 		});
 	}

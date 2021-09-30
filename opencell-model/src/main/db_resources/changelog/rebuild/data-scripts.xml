@@ -1335,7 +1335,7 @@ public class ValidateBRScript extends Script {
                 <column name="id" value="-11" />
                 <column name="version" value="0"/>
                 <column name="disabled" value="0"/>
-                <column name="created" value="${db.current.time}"/>
+                <column name="created" valueDate="${db.current.time}"/>
                 <column name="code" value="NOTIF_QUOTE_VALIDATION"/>
                 <column name="class_name_filter" value="org.meveo.model.cpq.CpqQuote"/>
                 <column name="event_expression_filter" value="#{event.status == 'ACCEPTED' }"/>
@@ -1363,7 +1363,7 @@ public class ValidateBRScript extends Script {
                 <column name="id" value="-12" />
                 <column name="version" value="0"/>
                 <column name="disabled" value="0"/>
-                <column name="created" value="${db.current.time}"/>
+                <column name="created" valueDate="${db.current.time}"/>
                 <column name="code" value="NOTIF_ORDER_ADVANCEMENT"/>
                 <column name="class_name_filter" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
                 <column name="event_type_filter" value="ADVT_RATE_INCREASED"/>

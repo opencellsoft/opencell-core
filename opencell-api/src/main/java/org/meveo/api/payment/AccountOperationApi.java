@@ -48,6 +48,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountingCode;
@@ -620,4 +621,21 @@ public class AccountOperationApi extends BaseApi {
                 .stream()
                 .anyMatch(role -> role.getPermissions() != null && role.hasPermission("financeManagement"));
     }
+
+	/**
+	 * @param id
+	 * @param newStatus
+	 */
+	public void updateStatus(Long id, String newStatus) {
+		AccountOperationStatus statusEnum = AccountOperationStatus.valueOf(newStatus);
+        AccountOperation accountOperation = ofNullable(accountOperationService.findById(id))
+                .orElseThrow(() -> new EntityDoesNotExistsException(AccountOperation.class, id));
+        if(AccountOperationStatus.POSTED.equals(accountOperation.getStatus()) && AccountOperationStatus.EXPORTED.equals(statusEnum)) {
+        	accountOperation.setStatus(statusEnum);
+        	accountOperationService.update(accountOperation);
+        } else {
+        	throw new ConflictException("not possible to change accountOperation status from '"+accountOperation.getStatus()+"' to '"+newStatus+"'");
+        }
+		
+	}
 }

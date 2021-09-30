@@ -171,7 +171,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
+        attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		}

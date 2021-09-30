@@ -88,13 +88,16 @@ public class FilterConverter {
 
     private Object toNumber(Class<?> entity, String key, String value) throws NoSuchFieldException, NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        Class<?> type = entity.getDeclaredField(key).getType();
+        Class<?> type = from(key, entity).getType();
         Method method;
         if(type.isAssignableFrom(Long.class)) {
             return Long.valueOf(value);
         }
-        if (type.isAssignableFrom(BigInteger.class)) {
+        if(type.isAssignableFrom(BigInteger.class)) {
             return BigInteger.valueOf(Long.valueOf(value));
+        }
+        if(type.isAssignableFrom(Integer.class)) {
+            return Integer.valueOf(value);
         }
         Double doubleValue = valueOf(value);
         method = type.getMethod("valueOf", double.class);
