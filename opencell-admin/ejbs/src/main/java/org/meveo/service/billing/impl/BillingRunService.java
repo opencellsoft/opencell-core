@@ -50,6 +50,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
@@ -601,12 +602,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (billingCycle != null) {
 
             Date startDate = billingRun.getStartDate();
-            Date endDate = billingRun.getEndDate();           
+            Date endDate = billingRun.getEndDate();
+            DatePeriod subscriptionDatePeriod = billingRun.getSubscriptionDate();
+
             if ((startDate != null) && (endDate == null)) {
                 endDate = new Date();
             }          
             if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate);
+                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate, subscriptionDatePeriod);
             }            
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
                 return orderService.findOrders(billingCycle, startDate, endDate);
@@ -1321,6 +1324,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         	startDate = new Date(0);
         }
 
+        Date subscriptionDateFrom = null;
+        Date subscriptionDateTo = null;
+        if (billingRun.getSubscriptionDate() != null) {
+            subscriptionDateFrom = billingRun.getSubscriptionDate().getFrom();
+            subscriptionDateTo = billingRun.getSubscriptionDate().getTo();
+        }
+        if (subscriptionDateFrom == null) {
+            subscriptionDateFrom : new Date(0);
+        }
+        if (subscriptionDateTo == null) {
+            subscriptionDateTo : new Date();
+        }
+
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ?
                 "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch" :
                 startDate == null ? "RatedTransaction.sumTotalInvoiceableByBAInBatch" : "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
@@ -1338,7 +1354,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
-        }      
+        }
+
+        query.setParameter("subscriptionDateFrom", DateUtils.setDateToStartOfDay(subscriptionDateFrom));
+        query.setParameter("subscriptionDateTo", DateUtils.setDateToStartOfDay(subscriptionDateTo));
+
         return query.getResultList();
     }
 

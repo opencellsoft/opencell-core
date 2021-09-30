@@ -765,11 +765,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate, DatePeriod subscriptionDatePeriod) {
         try {
             QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
             qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
             qb.addOrderCriterionAsIs("id", true);
+
+            if (subscriptionDatePeriod != null) {
+                if (subscriptionDatePeriod.getFrom() != null) {
+                    qb.addCriterionDateRangeFromTruncatedToDay("subscriptionDate", subscriptionDatePeriod.getFrom());
+                }
+                if (subscriptionDatePeriod.getTo() != null) {
+                    qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", subscriptionDatePeriod.getTo());
+                }
+            }
 
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
