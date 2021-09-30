@@ -50,7 +50,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
@@ -603,13 +602,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
             Date startDate = billingRun.getStartDate();
             Date endDate = billingRun.getEndDate();
-            DatePeriod subscriptionDatePeriod = billingRun.getSubscriptionDate();
-
             if ((startDate != null) && (endDate == null)) {
                 endDate = new Date();
             }          
             if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate, subscriptionDatePeriod);
+                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate);
             }            
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
                 return orderService.findOrders(billingCycle, startDate, endDate);
@@ -1334,7 +1331,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             subscriptionDateFrom : new Date(0);
         }
         if (subscriptionDateTo == null) {
-            subscriptionDateTo : new Date();
+            subscriptionDateTo : DateUtils.addDaysToDate(new Date(), 1);
         }
 
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ?
@@ -1359,7 +1356,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         query.setParameter("subscriptionDateFrom", DateUtils.setDateToStartOfDay(subscriptionDateFrom));
         query.setParameter("subscriptionDateTo", DateUtils.setDateToStartOfDay(subscriptionDateTo));
 
-        return query.getResultList();
+        return query.setMaxResults(Integer.parseInt(paramBeanFactory.getInstance().getProperty("billingRun.lot.size","100000"))).getResultList();
     }
 
     /**

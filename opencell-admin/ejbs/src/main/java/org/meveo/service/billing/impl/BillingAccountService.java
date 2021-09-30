@@ -33,6 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.*;
@@ -331,7 +332,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @return A list of Billing accounts
      */
     public List<BillingAccount> findBillingAccounts(BillingRun billingRun) {
-        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).setMaxResults(Integer.parseInt(paramBeanFactory.getInstance().getProperty("billingRun.lot.size","100000"))).getResultList();
     }
 
     /**

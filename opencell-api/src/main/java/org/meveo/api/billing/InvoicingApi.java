@@ -39,6 +39,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -97,6 +98,7 @@ public class InvoicingApi extends BaseApi {
         billingRunEntity.setProcessType(createBillingRunDto.getBillingRunTypeEnum());
         billingRunEntity.setStartDate(createBillingRunDto.getStartDate());
         billingRunEntity.setEndDate(createBillingRunDto.getEndDate());
+        billingRunEntity.setSubscriptionDate(new DatePeriod(createBillingRunDto.getSubscriptionDateFrom(), createBillingRunDto.getSubscriptionDateTo()));
         billingRunEntity.setProcessDate(new Date());
         billingRunEntity.setInvoiceDate(createBillingRunDto.getInvoiceDate());
         if (createBillingRunDto.getInvoiceDate() == null) {
