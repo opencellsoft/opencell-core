@@ -24,10 +24,10 @@ import java.util.List;
 
 import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
-import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.standardReport.AgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
-import org.meveo.apiv2.standardReport.resource.StandardReportResource;
+import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.shared.Name;
 
 import com.google.common.annotations.VisibleForTesting;
 @VisibleForTesting
@@ -72,6 +72,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 											.add((BigDecimal)agedList[3])
 											.add((BigDecimal)agedList[4])
 											.add((BigDecimal)agedList[5]));
+			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[6]);
+			agedReceivableDto.setCustomerAccountName(agedList[7]==null?null:((Name) agedList[7]).getFullName());
 			dtoList.add(agedReceivableDto);
 		} 
 		return dtoList;
