@@ -36,7 +36,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 
-		validateInputs(entity, isUseSubAccountingPeriods);
+		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType());
 		if(entity.getAccountingPeriodYear()==null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(null, entity.getEndDate()));
 		}
@@ -54,7 +54,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		} else
 			Optional.ofNullable(isUseSubAccountingPeriods).ifPresent(b -> entity.setUseSubAccountingCycles(Boolean.TRUE.equals(isUseSubAccountingPeriods)));
 
-		validateInputs(entity, isUseSubAccountingPeriods);
+		validateInputs(entity, isUseSubAccountingPeriods, subAccountingPeriodType);
 
 		if (isUsedOnAccountingOperations(entity)) {
 			throw new ValidationException("sub-accounting cycles type CANNOT be modified because the sub dates is used in the account operations");
@@ -165,7 +165,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			throw new BusinessApiException("When accountingOperationAction is set to FORCE then the forceOption & forceCustomDay is mandatory");
 	}
 
-	private void validateInputs(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
+	private void validateInputs(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Object subAccountingPeriodType) {
 		validateEndDate(entity.getEndDate());
 		if (AccountingOperationAction.FORCE.equals(entity.getAccountingOperationAction())) {
 			validateForceOptionAndForceCustDay(entity.getForceOption(), entity.getForceCustomDay());
@@ -181,7 +181,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		if (RegularUserLockOption.CUSTOM.equals(entity.getRegularUserLockOption())) {
 			validateCustLockNumDaysAndCustLockOpt(entity.getCustomLockNumberDays(), entity.getCustomLockOption());
 		}
-		if (Boolean.TRUE.equals(isUseSubAccountingPeriods) && entity.getSubAccountingPeriodType() == null) {
+		if (Boolean.TRUE.equals(isUseSubAccountingPeriods) && subAccountingPeriodType == null) {
 			throw new BusinessApiException("subAccountingPeriodType cannot be null to use subAccountingPeriods");
 		}
 	}
