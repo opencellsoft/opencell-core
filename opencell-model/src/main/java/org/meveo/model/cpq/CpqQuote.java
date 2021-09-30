@@ -429,80 +429,62 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 
 	@Override
 	public BillingRun getBillingRun() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setBillingRun(BillingRun billingRun) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public List<RatedTransaction> getMinRatedTransactions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountWithTax() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountTax() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public BillingCycle getBillingCycle() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<InvoiceLine> getMinInvoiceLines() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	
