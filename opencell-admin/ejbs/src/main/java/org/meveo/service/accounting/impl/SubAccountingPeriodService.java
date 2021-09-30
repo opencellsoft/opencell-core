@@ -72,7 +72,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
 		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
 		while (!endDatePeriod.isAfter(endDate)) {
-			if (endDatePeriod.toLocalDate().isAfter(now)) {
+			if (!endDatePeriod.isBefore(now.atTime(LocalTime.MAX))) {
 				createSubAccPeriod(ap, startDatePeriod, endDatePeriod);
 			}
 			//next period
