@@ -64,7 +64,7 @@ import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.tax.TaxClassService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * The Class PaymentScheduleApi.

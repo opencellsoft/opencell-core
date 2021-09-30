@@ -16,7 +16,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderTypeService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 
 /**

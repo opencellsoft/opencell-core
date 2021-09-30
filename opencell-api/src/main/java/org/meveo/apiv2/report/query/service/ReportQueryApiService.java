@@ -38,7 +38,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 

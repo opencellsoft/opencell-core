@@ -192,7 +192,7 @@ public class DunningDocumentApi extends BaseApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering,
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, PagingAndFiltering.SortOrder.ASCENDING, null, pagingAndFiltering,
             DunningDocument.class);
 
         Long totalCount = dunningDocumentService.count(paginationConfiguration);

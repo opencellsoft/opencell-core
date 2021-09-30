@@ -115,7 +115,7 @@ import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi

@@ -32,6 +32,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -744,6 +745,6 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
      * @return A list of entities
      */
     public List<CustomEntityTemplate> listSortedByName() {
-        return getPersistenceService().list(new PaginationConfiguration("name", SortOrder.ASCENDING));
+        return getPersistenceService().list(new PaginationConfiguration("name", PagingAndFiltering.SortOrder.ASCENDING));
     }
 }

@@ -70,7 +70,7 @@ import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.tax.TaxCategoryService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

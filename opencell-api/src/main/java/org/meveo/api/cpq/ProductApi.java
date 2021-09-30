@@ -85,7 +85,7 @@ import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerBrandService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Tarik FAKHOURI

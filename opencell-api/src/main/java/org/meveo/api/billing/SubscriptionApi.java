@@ -1309,7 +1309,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionsDto result = new SubscriptionsDto();
         List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
-                sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
+                sortOrder != null ? PagingAndFiltering.SortOrder.valueOf(sortOrder.name()) : PagingAndFiltering.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, CustomFieldInheritanceEnum.getInheritCF(true, mergedCF)));
@@ -1369,7 +1369,7 @@ public class SubscriptionApi extends BaseApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, PagingAndFiltering.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = subscriptionService.count(paginationConfiguration);
 

@@ -27,7 +27,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
