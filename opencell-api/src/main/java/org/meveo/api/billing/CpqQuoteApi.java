@@ -788,9 +788,14 @@ public class CpqQuoteApi extends BaseApi {
         if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
         	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
         }
+        quoteOffer.setSequence(quoteOfferDto.getSequence());
+        quoteOffer.setCode(quoteOfferDto.getCode());
+        quoteOffer.setDescription(quoteOfferDto.getDescription());
         populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
         quoteOfferService.create(quoteOffer);
         quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
+        quoteOfferDto.setCode(quoteOffer.getCode());
+        quoteOfferDto.setDescription(quoteOffer.getDescription());
         newPopulateProduct(quoteOfferDto, quoteOffer);
         newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
 
@@ -1216,6 +1221,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
+            quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
             quotePriceService.create(quotePrice);
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
@@ -1231,6 +1237,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate());
+            quotePrice.setChargeTemplate(a.getChargeTemplate());
             if(a.getRecurrenceDuration()!=null) {
             	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
             }

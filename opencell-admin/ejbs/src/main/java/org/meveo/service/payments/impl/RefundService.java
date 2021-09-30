@@ -20,6 +20,7 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -56,6 +57,7 @@ public class RefundService extends PersistenceService<Refund> {
     @MeveoAudit
     @Override
     public void create(Refund entity) throws BusinessException {
+        accountOperationService.handleAccountingPeriods(entity);
         super.create(entity);
     }
 
@@ -101,8 +103,8 @@ public class RefundService extends PersistenceService<Refund> {
         for (Long aoId : aoIdsToPay) {
             AccountOperation ao = accountOperationService.findById(aoId);
             if(ao != null) {
-	            sumTax = sumTax.add(ao.getTaxAmount());
-	            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
+	            sumTax = Optional.ofNullable(ao.getTaxAmount()).orElse(BigDecimal.ZERO);
+	            sumWithoutTax = sumWithoutTax.add(Optional.ofNullable(ao.getAmountWithoutTax()).orElse(BigDecimal.ZERO));
 	            if (!StringUtils.isBlank(ao.getOrderNumber())) {
 	                orderNums = orderNums + ao.getOrderNumber() + "|";
 	            }

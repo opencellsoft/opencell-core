@@ -57,7 +57,7 @@ public class OrderValidationScript extends Script {
             throw new BusinessException("Can not validate order with status different then DRAFT, order id: " + order.getId());
         }
 
-        List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList());
+        List<OrderOffer> validOffers = commercialOrderService.validateOffers(order.getOffers());
 
         if(order.getOrderNumber() == null)
             order = serviceSingleton.assignCommercialOrderNumber(order);

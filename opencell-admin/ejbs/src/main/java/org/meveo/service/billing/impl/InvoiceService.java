@@ -17,8 +17,8 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -38,8 +38,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -1105,8 +1117,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // Mass update RTs with status and invoice info
-            em.createNamedQuery("massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
-            em.createNamedQuery("deletePendingTable").executeUpdate();
+            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
+            em.createNamedQuery("RatedTransaction.deletePendingTable").executeUpdate();
         }
 
         // Finalize invoices
@@ -3000,8 +3012,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Update unpaid invoices status
      */
-    public void updateUnpaidInvoicesStatus() {
-        getEntityManager().createNamedQuery("Invoice.updateUnpaidInvoicesStatus").executeUpdate();
+    public List<Long> listUnpaidInvoicesIds() {
+        return getEntityManager()
+                .createNamedQuery("Invoice.listUnpaidInvoicesIds", Long.class)
+                .getResultList();
     }
 
     /**
@@ -3873,6 +3887,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } else if (entity instanceof Subscription) {
             invoice.setSubscription((Subscription) entity);
+        } else if(entity instanceof CommercialOrder){
+            CommercialOrder commercialOrder = (CommercialOrder) entity;
+            invoice.setCommercialOrder(commercialOrder);
         }
         if (paymentMethod != null) {
             invoice.setPaymentMethodType(paymentMethod.getPaymentType());

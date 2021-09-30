@@ -9318,7 +9318,6 @@ public class OrderAdvancement extends ModuleScript {
 		
 		
    </changeSet>
-	
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius">
 	   <dropColumn tableName="billing_cycle" columnName="due_date_delay_el_sp"/>
        <dropColumn tableName="billing_cycle" columnName="invoice_type_el_sp"/>       
@@ -9406,6 +9405,181 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
+
     
+    <changeSet id="INTRD_1629_20210914" author="TarikFA.">
+    
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="collection_plan_status"/>
+        </preConditions>
+        
+    	
+	    <createSequence sequenceName="collection_plan_status_seq"/>
+	    	<createTable tableName="collection_plan_status">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collection_plan_status" />
+	            </column>
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="version" type="int4" />
+	            <column name="dunning_settings_id" type="bigint" />
+	            <column name="language" type="${type.json}" />
+	            <column name="status" type="varchar(255)" >
+	            	<constraints unique="true"/>
+	            </column>
+	            <column name="context" type="varchar(255)" />
+	    	</createTable>
+	    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id" 
+	    							 referencedTableName="dunning_settings" 
+	    							 baseColumnNames="dunning_settings_id" 
+	    							 baseTableName="collection_plan_status" 
+	    							 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_account_operation">
+            <column name="operation_action" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+	
+    <changeSet id="INTRD_1782_20210913" author="TarikFA.">
+    	<addColumn tableName="cpq_product_version_attributes">
+    		<column name="mandatorwith_el" type="varchar(255)"/>
+    	</addColumn>
+    </changeSet>
+    
+    <changeSet id="INTRD_1794_20210917" author="TarikFA.">
+    	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
+    			<columnExists tableName="cpq_product_version_attributes" columnName="mandatory"/>
+    	</preConditions>
+    	<dropColumn tableName="cpq_product_version_attributes">
+    		<column name="mandatory" />
+    		<column name="priority" />
+    		<column name="display" />
+    	</dropColumn>
+    </changeSet>
+    
+    <changeSet id="INTRD-1901_20210920" author="TarikFA.">
+    	<createSequence sequenceName="offer_template_attribute_seq"/>
+    	<createTable tableName="offer_template_attribute">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_offer_template_attribute_pk"/>
+            </column>
+            <column name="version" type="int4" defaultValue="0" />
+    		<column name="mandatorwith_el" type="varchar(255)"/>
+            <column name="offer_template_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="sequence" type="INT4" defaultValue="0" />
+    	</createTable>
+    	
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_offer_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+                                 
+    </changeSet>
+    
+    <changeSet id="INTRD-1924_20210922" author="TarikFA.">
+    	<addColumn tableName="cpq_product_version_attributes">
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+    	</addColumn>
+    </changeSet>
+    
+    <changeSet id="INTRD-1925_20210922" author="TarikFA.">
+    	<addColumn tableName="offer_template_attribute">
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+    	</addColumn>
+		
+		<dropColumn tableName="cpq_attribute">
+			<column name="mandatory"/>
+			<column name="read_only"/>
+			<column name="display"/>
+			<column name="default_value"/>
+			<column name="validation_pattern"/>
+			<column name="validation_label"/>
+		</dropColumn>
+		    	
+    </changeSet>
+   <changeSet id="INTRD_1985_20210923" author="TarikFA.">
+   		<addColumn tableName="quote_offer">
+			<column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+   		</addColumn>
+   		<addUniqueConstraint columnNames="code, quote_version_id" tableName="quote_offer"/>
+    
+   		<addColumn tableName="cpq_order_offer">
+			<column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+   		</addColumn>
+   		<addUniqueConstraint columnNames="code, order_id" tableName="cpq_order_offer"/>
+   </changeSet>
+   
+    
+    <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="user_account_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set user_account_id = wi.user_account_id from ${db.schema.adapted}billing_wallet wi where wallet_id=wi.id and wallet_id is not null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set billing_account_id = ua.billing_account_id from ${db.schema.adapted}billing_user_account ua where user_account_id=ua.id and user_account_id is not null</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius">
+        <createTable tableName="billing_wallet_operation_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wo_pending_pk"/>
+            </column>
+            <column name="rated_transaction_id" type="bigint" />
+        </createTable>
+    </changeSet>
+        
+    <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius">
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="500"/>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code='batchSize'</sql>
+    </changeSet>
+    
+    
+    <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql">
+        <dropForeignKeyConstraint baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id"/>
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
+        <dropForeignKeyConstraint baseTableName="query_scheduler_users" constraintName="fk_query_scheduler_id"/>        
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_usr_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />        
+        
+    </changeSet>
+    
+    <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius">
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="500"/>
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
+    </changeSet>
     
 </databaseChangeLog>

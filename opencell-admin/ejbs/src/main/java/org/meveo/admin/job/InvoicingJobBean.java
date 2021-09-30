@@ -21,9 +21,9 @@ package org.meveo.admin.job;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -431,7 +431,7 @@ public class InvoicingJobBean extends BaseJobBean {
 
         List<Long> billingAccountIds = billingAccountService.findNotProcessedBillingAccounts(billingRun);
 
-        Consumer<Long> task = (baId) -> {
+        BiConsumer<Long, JobExecutionResultImpl> task = (baId, jobResult) -> {
 
             // TODO this way of finding reason is not very good, as nextInvoiceDate will be null only of the first run.
             BillingAccount ba = billingAccountService.findById(baId);
@@ -441,7 +441,7 @@ public class InvoicingJobBean extends BaseJobBean {
             invoiceService.incrementBAInvoiceDateInNewTx(billingRun, baId);
         };
 
-        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) billingAccountIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL, false);
+        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) billingAccountIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL, false);
     }
 
     /**
@@ -491,22 +491,22 @@ public class InvoicingJobBean extends BaseJobBean {
             }
 
             // Assign invoice numbers
-            Consumer<Long> task = (invoiceId) -> {
+            BiConsumer<Long, JobExecutionResultImpl> task = (invoiceId, jobResult) -> {
                 invoiceService.recalculateDates(invoiceId);
                 invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
                 invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
             // Increment next invoice date of a billing account
-            task = (baId) -> {
+            task = (baId, jobResult) -> {
                 invoiceService.incrementBAInvoiceDate(billingRun, baId);
             };
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
         }
     }
 

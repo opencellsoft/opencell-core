@@ -38,9 +38,6 @@ import org.meveo.commons.encryption.IEncryptable;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.postgresql.util.PGobject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -107,7 +104,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 //        Logger log = LoggerFactory.getLogger(getClass());
 //        log.error("AKK CF value to unwrap is {}, to a type {}", (value != null ? value.getClass() : null), type);
 
-        if (value == null) {
+        if (value == null || toString(value) == null) {
             return null;
 
         } else if (CharacterStream.class.isAssignableFrom(type)) {

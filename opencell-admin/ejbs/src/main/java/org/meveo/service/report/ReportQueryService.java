@@ -80,6 +80,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     @ApplicationProvider
     protected Provider appProvider;
 
+    private static final String ROOT_DIR = "reports" + File.separator;
     private static final String DEFAULT_EMAIL_ADDRESS = "no-reply@opencellsoft.com";
     private static final String DELIMITER = ";";
     private static final String REPORT_EXECUTION_FILE_SUFFIX = "YYYYMMdd-HHmmss";
@@ -120,7 +121,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 	@SuppressWarnings("unchecked")
 	private List<String> executeQuery(ReportQuery reportQuery, Class<?> targetEntity) {
     	List<Object> result = execute(reportQuery, targetEntity, false);
-    	List<String> response = new ArrayList<String>();
+    	List<String> response = new ArrayList<>();
 		for(Object object : result) {
     		var line = "";
 				Map<String, Object> entries = (Map<String, Object>)object;
@@ -351,20 +352,24 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         params.put("startDate", startDate);
         Format format = new SimpleDateFormat("HH:mm:ss");
         params.put("duration", format.format(duration));
-        if(success) {
-            emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
-            params.put("lineCount", lineCount);
-            content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-            subject = emailTemplate.getSubject();
+        try {
+            if(success) {
+                emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
+                params.put("lineCount", lineCount);
+                content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                subject = emailTemplate.getSubject();
 
-        } else {
-            emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
-            params.put("error", error);
-            content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-            subject = emailTemplate.getSubject();
+            } else {
+                emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
+                params.put("error", error);
+                content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                subject = emailTemplate.getSubject();
+            }
+            emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
+                    null, asList(userEmail), subject, content, null);
+        } catch (Exception exception) {
+            log.error("Failed to send notification email " + exception.getMessage());
         }
-        emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
-                null, asList(userEmail), subject, content, null);
     }
 
     @Asynchronous
@@ -390,16 +395,15 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                             .map(String::valueOf)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
-            String outputFilePath = "";
             try {
-                outputFilePath = createResultFile(data, fileHeader, fileName.toString(), ".csv");
+                createResultFile(data, fileHeader, fileName.toString(), ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            Date endDate = new Date();
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, endDate, BACKGROUND, outputFilePath, data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fileName.toString(), data.size()));
+        } else {
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
-        return new AsyncResult<>(null);
     }
 
     public List<Object> toExecutionResult(List<String> fields, List<Object> executionResult, Class<?> targetEntity) {
@@ -419,8 +423,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             }
             for (Object item : response) {
                 for (Map.Entry<String, Object> entry : ((Map<String, Object>)item).entrySet()) {
-                    List<Field> field = getFields(entry.getValue().getClass());
-                    initLazyLoadedValues(field, entry.getValue());
+                    if(entry.getValue() != null) {
+                        List<Field> field = getFields(entry.getValue().getClass());
+                        initLazyLoadedValues(field, entry.getValue());
+                    }
                 }
             }
             return response;
@@ -482,7 +488,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             Map<String, Object> filters = converter.convertFilters(reportQuery.getFilters());
             for (Entry<String, Object> entry : filters.entrySet()) {
                 if(!(entry.getValue() instanceof Boolean)) {
-                    result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    if(entry.getKey().length()>1 && entry.getKey().contains(" ")){
+                        String[] compareExpression = entry.getKey().split(" ");
+                        result.setParameter("a_" + compareExpression[compareExpression.length-1], entry.getValue());
+                    }else{
+                        result.setParameter("a_" + entry.getKey(), entry.getValue());
+                    }
                 }
             }
         }
@@ -491,16 +502,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private String createResultFile(List<String> data, String header, String fileName, String extension)
             throws IOException {
-        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + "reports" + File.separator);
+        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + ROOT_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        try(PrintWriter pw = new PrintWriter(dir + File.separator + fileName + extension)) {
+        String filePath = dir + File.separator + fileName + extension;
+        try(PrintWriter pw = new PrintWriter(filePath)) {
             pw.println(header);
             data.stream()
                     .forEach(pw::println);
         }
-        return "reports" + File.separator + fileName + extension;
+        return filePath;
     }
 
     private QueryExecutionResult saveQueryResult(ReportQuery reportQuery, Date startDate, Date endDate,
@@ -571,7 +583,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return number of ReportQueries
      */
     public Long countAllowedQueriesForUser(MeveoUser currentUser, Map<String, Object> filters) {
-        return currentUser.getRoles().contains("query_manager") ? count()
-                : count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
+        if(currentUser.getRoles().contains("query_manager")) {
+                return count(new PaginationConfiguration(filters));
+        } else {
+            return count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
+        }
+
     }
 }

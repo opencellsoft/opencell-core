@@ -19,8 +19,10 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,6 +39,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
@@ -49,9 +52,7 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
@@ -368,6 +369,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         if (accountOperation.getCustomerAccount() != null) {
             accountOperation.getCustomerAccount().getAccountOperations().add(newAccountOperation);
         }
+        
+        this.handleAccountingPeriods(newAccountOperation);
         create(newAccountOperation);
 
         newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.c.name()));
@@ -492,42 +495,101 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 	 */
 	public void handleAccountingPeriods(AccountOperation accountOperation) {
 
-		Date accountingDate = null;
-		// if transaction is of type “invoice” then the control is performed on transaction_date
-		if (accountOperation instanceof RecordedInvoice) {
-			accountingDate = accountOperation.getTransactionDate();
+		accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+		if (accountOperation.getAccountingDate() == null) {
+			log.warn("No accountingDate has been defined for this accoutingOperation : {}", accountOperation);
+			return;
 		}
-		// if transaction is of type “payment” then the control is performed on collection_date
-		else if (accountOperation instanceof Payment) {
-			accountingDate = accountOperation.getCollectionDate();
-		}
-
-		if (accountingDate != null) {
-			String year = String.valueOf(DateUtils.getYearFromDate(accountingDate));
-			AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(year);
-			SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
-
-			if (accountingPeriod != null && subAccountingPeriod != null) {
-				AccountingPeriodStatusEnum accountingPeriodStatus = accountingPeriod.getAccountingPeriodStatus();
-				SubAccountingPeriodStatusEnum subAccountingPeriodStatus = subAccountingPeriod.getRegularUsersSubPeriodStatus();
-				// if condition is OK
-				if (accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN && subAccountingPeriodStatus == SubAccountingPeriodStatusEnum.OPEN) {
-					// account operation is created with status “posted”
+		
+		String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
+		AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
+		if (accountingPeriod != null) {
+			if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED) {
+				rejectAccountOperation(accountOperation);
+			} else {
+				if (Boolean.FALSE.equals(accountingPeriod.isUseSubAccountingCycles())) {
 					accountOperation.setStatus(AccountOperationStatus.POSTED);
-					// accounting_date equals Transaction date for “invoice” or Collection date for “payment”
-					accountOperation.setAccountingDate(accountingDate);
 				} else {
-					if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
-						accountOperation.setAccountingDate(accountingDate);
-						accountOperation.setStatus(AccountOperationStatus.POSTED);
-						accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+					SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
+					if (subAccountingPeriod == null) {
+						log.warn("No sub accounting period has been defined for this accoutingPeriod : {}", accountingPeriod);
 					} else {
-						accountOperation.setAccountingDate(null);
-						accountOperation.setStatus(AccountOperationStatus.REJECTED);
-						accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
+						if (subAccountingPeriod.getRegularUsersSubPeriodStatus() == SubAccountingPeriodStatusEnum.OPEN) {
+							accountOperation.setStatus(AccountOperationStatus.POSTED);
+						} else {
+							if (accountingPeriod.getAccountingOperationAction() == AccountingOperationAction.FORCE) {
+								forceAccountOperation(accountOperation, accountingPeriod);
+							} else {
+								rejectAccountOperation(accountOperation);
+							}
+						}
 					}
 				}
 			}
+		} else {
+			log.warn("No accounting period has been defined for this year : {}", fiscalYear);
 		}
 	}
+	
+	private void rejectAccountOperation(AccountOperation accountOperation) {
+		accountOperation.setAccountingDate(null);
+		accountOperation.setStatus(AccountOperationStatus.REJECTED);
+		accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
+	}
+
+	private void forceAccountOperation(AccountOperation accountOperation, AccountingPeriod accountingPeriod) {
+		accountOperation.setStatus(AccountOperationStatus.POSTED);
+		accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+		// setting the accoutingDate
+		SubAccountingPeriod openSubAccountingPeriod = subAccountingPeriodService.findLastSubAccountingPeriod();
+		if (openSubAccountingPeriod != null && openSubAccountingPeriod.getRegularUsersSubPeriodStatus() == SubAccountingPeriodStatusEnum.OPEN
+				&& openSubAccountingPeriod.getStartDate() != null) {
+			setAccountingDate(accountOperation, accountingPeriod, openSubAccountingPeriod.getStartDate());
+		} else {
+			log.warn("No open sub accounting period found for this accoutingPeriod : {}", accountingPeriod);
+		}
+	}
+
+	private void setAccountingDate(AccountOperation accountOperation, AccountingPeriod accountingPeriod, Date dateReference) {
+
+		Date accoutingOperationDate = null;
+		int customDay = Optional.ofNullable(accountingPeriod.getForceCustomDay()).orElse(0);
+		
+		AccountingPeriodForceEnum option = accountingPeriod.getForceOption();
+		switch (option) {
+		case FIRST_DAY:
+			accoutingOperationDate = DateUtils.setDayToDate(dateReference, 1);
+			break;
+			
+		case FIRST_SUNDAY:
+			accoutingOperationDate = DateUtils.setDayOfWeekToDate(dateReference, Calendar.SUNDAY);
+			break;
+			
+		case CUSTOM_DAY:
+			Integer lastDayOfMonth = DateUtils.getActualMaximumDayForDate(dateReference);
+			Integer firstDayOfMonth = DateUtils.getActualMinimumDayForDate(dateReference);
+			if (customDay > lastDayOfMonth) {
+				accoutingOperationDate = DateUtils.setDayToDate(dateReference, lastDayOfMonth);
+			} else if (customDay < firstDayOfMonth) {
+				accoutingOperationDate = DateUtils.setDayToDate(dateReference, firstDayOfMonth);
+			} else {
+				accoutingOperationDate = DateUtils.setDayToDate(dateReference, customDay);
+			}
+			break;
+			
+		default:
+			break;
+		} 
+		
+		accountOperation.setAccountingDate(accoutingOperationDate);
+	}
+	
+    public int updateAOOperationActionToNone(List<Long> AOIds) throws BusinessException {
+        String strQuery = "UPDATE AccountOperation o SET o.operationAction=org.meveo.model.payments.OperationActionEnum.NONE " + " WHERE o.id in (:AOIds) ";
+        Query query = getEntityManager().createQuery(strQuery);
+        query.setParameter("AOIds", AOIds);
+        int affectedRecords = query.executeUpdate();
+        log.debug("updated record AO to operation action equal to None count={}", affectedRecords);
+        return affectedRecords;
+    }
 }

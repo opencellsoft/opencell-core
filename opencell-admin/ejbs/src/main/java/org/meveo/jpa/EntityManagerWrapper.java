@@ -22,9 +22,11 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A wrapper for Entity manager injection and its manipulation in application manager persistence context. Only one level of depth is supported. That is, can not nest two
- * interceptors.
+ * A wrapper for Entity manager injection and its manipulation in application manager persistence context. Only one level of depth is supported. That is, can not nest two interceptors.
  * 
  * @author Andrius Karpavicius
  * @since 5.1
@@ -87,9 +89,13 @@ public class EntityManagerWrapper implements Serializable {
      */
     public void newEntityManager(EntityManager newEntityManager) {
         if (!amp || previousEntityManager != null) {
+            // Logger log = LoggerFactory.getLogger(getClass());
+            // log.error("AKK EMW will not set a nested EM as "+ (amp?"not amp":"nested already"));
             return;
         }
 
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK EMW setting a nested EM");
         previousEntityManager = entityManager;
         entityManager = newEntityManager;
     }
@@ -99,21 +105,33 @@ public class EntityManagerWrapper implements Serializable {
      */
     public void popEntityManager() {
         if (!amp || previousEntityManager == null) {
+            // Logger log = LoggerFactory.getLogger(getClass());
+            // log.error("AKK EMW will not pop a nested EM as "+ (amp?"not amp":"not nested"));
             return;
         }
 
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK EMW popping nested EM");
         entityManager.close();
         entityManager = previousEntityManager;
+        previousEntityManager = null;
     }
 
     /**
      * Terminate the lifecycle of Entity manager wrapper
      */
     public void dispose() {
+
+        entityManager.clear();
+
         if (!amp) {
+            // Logger log = LoggerFactory.getLogger(getClass());
+            // log.error("AKK EMW will not dispose EM as not amp");
             return;
         }
 
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK EMW dispose");
         entityManager.close();
     }
 

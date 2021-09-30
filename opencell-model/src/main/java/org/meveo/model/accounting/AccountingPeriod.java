@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "accounting_period")
@@ -24,7 +24,7 @@ import org.meveo.model.BaseEntity;
 @NamedQueries({
 		@NamedQuery(name = "AccountingPeriod.findByFiscalYear", query = "SELECT AP FROM AccountingPeriod AP where AP.accountingPeriodYear=:fiscalYear"),
 		@NamedQuery(name = "AccountingPeriod.findLastAP", query = "SELECT AP FROM AccountingPeriod AP where AP.endDate = (select max(endDate) from AccountingPeriod)") })
-public class AccountingPeriod extends BaseEntity {
+public class AccountingPeriod extends AuditableEntity {
 
     /**
      * 

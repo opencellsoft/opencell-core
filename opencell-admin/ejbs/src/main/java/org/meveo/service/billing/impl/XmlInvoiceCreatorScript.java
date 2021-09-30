@@ -1057,7 +1057,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     taxInvoiceAgregates.add((TaxInvoiceAgregate) invoiceAgregate);
                 }
             }
-            taxInvoiceAgregates.sort(Comparator.comparing(ta -> ta.getTax().getCode()));
+            taxInvoiceAgregates.sort(Comparator.comparing(ta -> (ta != null && ta.getTax() != null ? ta.getTax().getCode() : "")));
             for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregates) {
                 Element tax = doc.createElement("tax");
                 Tax taxData = taxInvoiceAgregate.getTax();
@@ -1121,24 +1121,27 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
             XMLInvoiceHeaderCategoryDTO headerCat = null;
-            if (headerCategories.containsKey(invoiceCategory.getCode())) {
+            if (invoiceCategory != null && headerCategories.containsKey(invoiceCategory.getCode())) {
                 headerCat = headerCategories.get(invoiceCategory.getCode());
                 headerCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
                 headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
                 headerCat.addAmountTax(categoryInvoiceAgregate.getAmountTax());
             } else {
                 headerCat = new XMLInvoiceHeaderCategoryDTO();
-                if (invoiceCategory.getDescriptionI18n() == null || invoiceCategory.getDescriptionI18n().get(billingAccountLanguage) == null) {
+                if (invoiceCategory != null
+                        && (invoiceCategory.getDescriptionI18n() == null || invoiceCategory.getDescriptionI18n().get(billingAccountLanguage) == null)) {
                     headerCat.setDescription(invoiceCategory.getDescription());
                 } else {
-                    headerCat.setDescription(invoiceCategory.getDescriptionI18n().get(billingAccountLanguage));
+                    headerCat.setDescription(invoiceCategory != null ? invoiceCategory.getDescriptionI18n().get(billingAccountLanguage) : "");
                 }
-                headerCat.setCode(invoiceCategory.getCode());
+                headerCat.setCode(invoiceCategory != null ? invoiceCategory.getCode() : "");
                 headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
                 headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
                 headerCat.setAmountTax(categoryInvoiceAgregate.getAmountTax());
-                headerCat.setSortIndex(categoryInvoiceAgregate.getInvoiceCategory().getSortIndex());
-                headerCategories.put(invoiceCategory.getCode(), headerCat);
+                headerCat.setSortIndex(categoryInvoiceAgregate.getInvoiceCategory() != null
+                        && categoryInvoiceAgregate.getInvoiceCategory().getSortIndex() != null
+                        ? categoryInvoiceAgregate.getInvoiceCategory().getSortIndex() : 0);
+                headerCategories.put(invoiceCategory != null ? invoiceCategory.getCode() : invoice.getCode(), headerCat);
             }
             List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
             Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
@@ -1171,12 +1174,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     // description translated is set on aggregate
                     // String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription() == null ? "" : subCatInvoiceAgregate.getDescription();
                     String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
-                    if (invoiceSubCat.getDescriptionI18n() != null && invoiceSubCat.getDescriptionI18n().get(billingAccountLanguage) != null) {
+                    if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
+                            && invoiceSubCat.getDescriptionI18n().get(billingAccountLanguage) != null) {
                         // get label description by language code
                         invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18n().get(billingAccountLanguage);
                     }
                     subCategory.setAttribute("label", getDefaultIfNull(invoiceSubCategoryLabel, ""));
-                    subCategory.setAttribute("code", invoiceSubCat.getCode());
+                    subCategory.setAttribute("code", invoiceSubCat != null ? invoiceSubCat.getCode() : "");
                     subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAgregate.getAmountWithTax()));
                     subCategory.setAttribute("amountWithoutTax", toPlainString(subCatInvoiceAgregate.getAmountWithoutTax()));
                     subCategory.setAttribute("amountTax", toPlainString(subCatInvoiceAgregate.getAmountTax()));
@@ -2273,67 +2277,56 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Element createILSection(Document doc, Invoice invoice, InvoiceLine invoiceLine, String invoiceDateFormat,
                                       String invoiceDateTimeFormat, InvoiceConfiguration invoiceConfiguration, String invoiceLanguageCode) {
         Element line;
-        if(invoiceLine.getRatedTransactions() != null && !invoiceLine.getRatedTransactions().isEmpty()) {
-            line = createRTSection(doc, invoice, invoiceLine.getRatedTransactions().get(0), invoiceDateFormat,
-                    invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode);
-            Element article = doc.createElement("article");
-            String articleCode = invoiceLine.getRatedTransactions().get(0).getCode();
-            article.appendChild(doc.createTextNode(getDefaultIfNull(articleCode, "")));
-            article.setAttribute("code", articleCode);
-            article.setAttribute("label", invoiceLine.getLabel());
-            line.appendChild(article);
-        } else {
-            line = doc.createElement("line");
-            Date periodStartDate = invoiceLine != null
-                    && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getFrom() : null;
-            Date periodEndDate = invoiceLine != null
-                    && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getTo() : null;
-            line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
-            line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
-            line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());
-            line.setAttribute("sortIndex", "");
-            line.setAttribute("code", invoiceLine.getOrderRef());
-            Element label = doc.createElement("label");
-            label.appendChild(doc.createTextNode(getDefaultIfNull(invoiceLine.getLabel(), "")));
-            line.appendChild(label);
-            Element article = doc.createElement("article");
-            article.appendChild(doc.createTextNode(""));
-            article.setAttribute("code", "");
-            article.setAttribute("label", invoiceLine.getLabel());
-            line.appendChild(article);
-            if (invoiceLine.getUnitPrice() != null) {
-                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                lineUnitAmountWithoutTax.appendChild(doc.createTextNode(invoiceLine.getUnitPrice() .toPlainString()));
-                line.appendChild(lineUnitAmountWithoutTax);
-            }
-            Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-            lineAmountWithoutTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountWithoutTax())));
-            line.appendChild(lineAmountWithoutTax);
-            Element lineAmountWithTax = doc.createElement("amountWithTax");
-            lineAmountWithTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountWithTax())));
-            line.appendChild(lineAmountWithTax);
-            Element lineAmountTax = doc.createElement("amountTax");
-            lineAmountTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountTax())));
-            line.appendChild(lineAmountTax);
-            Element quantity = doc.createElement("quantity");
-            Text quantityTxt = doc.createTextNode(invoiceLine.getQuantity() != null ? invoiceLine.getQuantity().toPlainString() : "");
-            quantity.appendChild(quantityTxt);
-            Element unitPrice = doc.createElement("unitPrice");
-            Text unitPriceTxt = doc.createTextNode(invoiceLine.getUnitPrice() != null ? invoiceLine.getUnitPrice().toPlainString() : "");
-            unitPrice.appendChild(unitPriceTxt);
-            line.appendChild(unitPrice);
-            line.appendChild(quantity);
-            Element usageDate = doc.createElement("usageDate");
-            Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoiceLine.getValueDate(), invoiceDateFormat));
-            usageDate.appendChild(usageDateTxt);
-            line.appendChild(usageDate);
-            ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-            if (serviceInstance != null) {
-                String offerCode = invoiceLine.getOfferTemplate() != null ? invoiceLine.getOfferTemplate().getCode() : null;
-                Element serviceTag = createServiceSection(doc, invoice, serviceInstance, offerCode, true);
-                if (serviceTag != null) {
-                    line.appendChild(serviceTag);
-                }
+        line = doc.createElement("line");
+        Date periodStartDate = invoiceLine != null
+                && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getFrom() : null;
+        Date periodEndDate = invoiceLine != null
+                && invoiceLine.getValidity() != null ? invoiceLine.getValidity().getTo() : null;
+        line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
+        line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
+        line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());
+        line.setAttribute("sortIndex", "");
+        line.setAttribute("code", invoiceLine.getOrderRef());
+        Element label = doc.createElement("label");
+        label.appendChild(doc.createTextNode(getDefaultIfNull(invoiceLine.getLabel(), "")));
+        line.appendChild(label);
+        Element article = doc.createElement("article");
+        article.appendChild(doc.createTextNode(""));
+        article.setAttribute("code", "");
+        article.setAttribute("label", invoiceLine.getLabel());
+        line.appendChild(article);
+        if (invoiceLine.getUnitPrice() != null) {
+            Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+            lineUnitAmountWithoutTax.appendChild(doc.createTextNode(invoiceLine.getUnitPrice().toPlainString()));
+            line.appendChild(lineUnitAmountWithoutTax);
+        }
+        Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+        lineAmountWithoutTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountWithoutTax())));
+        line.appendChild(lineAmountWithoutTax);
+        Element lineAmountWithTax = doc.createElement("amountWithTax");
+        lineAmountWithTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountWithTax())));
+        line.appendChild(lineAmountWithTax);
+        Element lineAmountTax = doc.createElement("amountTax");
+        lineAmountTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountTax())));
+        line.appendChild(lineAmountTax);
+        Element quantity = doc.createElement("quantity");
+        Text quantityTxt = doc.createTextNode(invoiceLine.getQuantity() != null ? invoiceLine.getQuantity().toPlainString() : "");
+        quantity.appendChild(quantityTxt);
+        Element unitPrice = doc.createElement("unitPrice");
+        Text unitPriceTxt = doc.createTextNode(invoiceLine.getUnitPrice() != null ? invoiceLine.getUnitPrice().toPlainString() : "");
+        unitPrice.appendChild(unitPriceTxt);
+        line.appendChild(unitPrice);
+        line.appendChild(quantity);
+        Element usageDate = doc.createElement("usageDate");
+        Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoiceLine.getValueDate(), invoiceDateFormat));
+        usageDate.appendChild(usageDateTxt);
+        line.appendChild(usageDate);
+        ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+        if (serviceInstance != null) {
+            String offerCode = invoiceLine.getOfferTemplate() != null ? invoiceLine.getOfferTemplate().getCode() : null;
+            Element serviceTag = createServiceSection(doc, invoice, serviceInstance, offerCode, true);
+            if (serviceTag != null) {
+                line.appendChild(serviceTag);
             }
         }
         return line;
@@ -2474,13 +2467,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                                                               String invoiceDateTimeFormat, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
         InvoiceCategory invoiceCategory = categoryInvoiceAggregate.getInvoiceCategory();
         String invoiceCategoryLabel = categoryInvoiceAggregate.getDescription();
-        if (invoiceCategory.getDescriptionI18n() != null && invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+        if (invoiceCategory != null && invoiceCategory.getDescriptionI18n() != null
+                && invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode) != null) {
             invoiceCategoryLabel = invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode);
         }
         Element categoryTag = doc.createElement("category");
         categoryTag.setAttribute("label", getDefaultIfNull(invoiceCategoryLabel, ""));
-        categoryTag.setAttribute("code", invoiceCategory.getCode());
-        categoryTag.setAttribute("sortIndex", (invoiceCategory.getSortIndex() != null) ? invoiceCategory.getSortIndex() + "" : "");
+        categoryTag.setAttribute("code", invoiceCategory != null ? invoiceCategory.getCode() : "");
+        categoryTag.setAttribute("sortIndex", (invoiceCategory != null && invoiceCategory.getSortIndex() != null)
+                ? invoiceCategory.getSortIndex() + "" : "");
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
         amountWithoutTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAggregate.getAmountWithoutTax())));
         categoryTag.appendChild(amountWithoutTax);
@@ -2528,19 +2523,23 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             invoiceLines = subCatInvoiceAggregate.getInvoiceLinesToAssociate();
         }
         String invoiceSubCategoryLabel = subCatInvoiceAggregate.getDescription();
-        if (invoiceSubCat.getDescriptionI18n() != null && invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+        if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
+                && invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode) != null) {
             invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode);
         }
         Element subCategory = doc.createElement("subCategory");
         subCategory.setAttribute("label", getDefaultIfNull(invoiceSubCategoryLabel, ""));
-        subCategory.setAttribute("code", invoiceSubCat.getCode());
+        subCategory.setAttribute("code", invoiceSubCat != null ? invoiceSubCat.getCode() : "");
         subCategory.setAttribute("amountWithoutTax", toPlainString(subCatInvoiceAggregate.getAmountWithoutTax()));
         subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAggregate.getAmountWithTax()));
         subCategory.setAttribute("amountTax", toPlainString(subCatInvoiceAggregate.getAmountTax()));
-        subCategory.setAttribute("sortIndex", (invoiceSubCat.getSortIndex() != null) ? invoiceSubCat.getSortIndex() + "" : "");
+        subCategory.setAttribute("sortIndex", (invoiceSubCat!= null && invoiceSubCat.getSortIndex() != null)
+                ? invoiceSubCat.getSortIndex() + "" : "");
         for (InvoiceLine invoiceLine : invoiceLines) {
-            if ((invoiceLine.getInvoiceAggregateF().getId() != null && !invoiceLine.getInvoiceAggregateF().getId().equals(subCatInvoiceAggregate.getId()))
-                    || (invoiceLine.getInvoiceAggregateF().getId() == null && !invoiceLine.getAccountingArticle().getInvoiceSubCategory().getId().equals(invoiceSubCat.getId()))) {
+            if ((invoiceLine.getInvoiceAggregateF() != null && invoiceLine.getInvoiceAggregateF().getId() != null
+                    && !invoiceLine.getInvoiceAggregateF().getId().equals(subCatInvoiceAggregate.getId()))
+                    || (invoiceLine.getInvoiceAggregateF() != null && invoiceLine.getInvoiceAggregateF().getId() == null
+                    && invoiceLine.getAccountingArticle() != null && !invoiceLine.getAccountingArticle().getInvoiceSubCategory().getId().equals(invoiceSubCat.getId()))) {
                 continue;
             }
             Element ilTag = createILSection(doc, invoice, invoiceLine, invoiceDateFormat, invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode);

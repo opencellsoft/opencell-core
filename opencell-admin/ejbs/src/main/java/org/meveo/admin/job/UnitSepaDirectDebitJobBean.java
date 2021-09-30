@@ -227,6 +227,7 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setDdRequestItem(ddRequestItem);
 		automatedPayment.setSeller(ddRequestItem.getDdRequestLOT().getSeller());
 
+        accountOperationService.handleAccountingPeriods(automatedPayment);
 		accountOperationService.create(automatedPayment);
 		if (isToMatching) {
 			List<Long> aoIds = new ArrayList<Long>();

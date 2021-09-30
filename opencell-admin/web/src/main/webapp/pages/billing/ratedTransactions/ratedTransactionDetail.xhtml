@@ -47,7 +47,6 @@
                 disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.rawAmountWithoutTax']}" field="rawAmountWithoutTax" converter="bigDecimal4DigitsConverter"
                 disabled="#{ratedTransactionBean.isBilled()}" />
-            <hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}" />
@@ -62,6 +61,11 @@
             <hftl:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.orderId']}" field="orderNumber" disabled="#{ratedTransactionBean.isBilled()}" />            
             <hftl:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" disabled="#{ratedTransactionBean.isBilled()}" />
+
+
+            <hftl:customFields backingBean="#{ratedTransactionBean}" messagesId=":formPanel:messages" />
+                        
+            <hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="#{ratedTransactionBean.isBilled()}"  newLine="true" />
 
             <ui:param name="buttons" value="true" />
             <!--             <ui:define name="buttons"> -->

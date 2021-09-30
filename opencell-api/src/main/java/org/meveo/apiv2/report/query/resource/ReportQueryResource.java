@@ -91,7 +91,7 @@ public interface ReportQueryResource {
     		                            description = "query execution result successfully generated"),
     		                    @ApiResponse(responseCode = "404",
     		                            description = "the Report query execution does not exist / the file path is missing / file path doesn't exist / file extension is not CSV format ") })
-    Response findQueryResult(@PathParam("queryexecutionResultId") Long queryexecutionResultId);
+    Response findQueryResult(@PathParam("queryexecutionResultId") Long queryExecutionResultId);
     
     @GET
     @Path("/{queryId}/download")

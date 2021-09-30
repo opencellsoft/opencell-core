@@ -152,7 +152,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         }
         ReportQuery entity = reportQuery.get();
     	if(!currentUser.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
-    			currentUser.getRoles().contains("query_user") && 
+    			!currentUser.getRoles().contains("query_manager") && 
     			toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED) {
     		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
     	}
@@ -315,7 +315,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public Long countAllowedQueriesForUserWithFilters(String query) {
-        Map<String, Object> filters = (!currentUser.getRoles().contains("query_manager") && query != null) ?
+        Map<String, Object> filters = (query != null && !query.isBlank()) ?
                 buildFilters(query) : new HashMap<>();
         return reportQueryService.countAllowedQueriesForUser(currentUser, filters);
     }

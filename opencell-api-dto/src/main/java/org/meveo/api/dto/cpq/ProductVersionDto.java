@@ -59,10 +59,10 @@ public class ProductVersionDto extends BaseEntityDto {
     protected DatePeriod validity = new DatePeriod();
  
     /** The attributeCodes. */
-    @XmlElementWrapper(name = "attributeCodes")
-    @XmlElement(name = "attributeCodes")
+    @XmlElementWrapper(name = "productAttributes")
+    @XmlElement(name = "productAttributes")
     @Schema(description = "List of the attribute")
-    protected Set<ProductVersionAttributeDTO> attributes=new HashSet<ProductVersionAttributeDTO>();
+    protected Set<ProductVersionAttributeDTO> productAttributes=new HashSet<ProductVersionAttributeDTO>();
     
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")
@@ -110,13 +110,13 @@ public class ProductVersionDto extends BaseEntityDto {
                  .collect(Collectors.toSet());
          }
          if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-        	 this.attributes = productVersion.getAttributes()
+        	 this.productAttributes = productVersion.getAttributes()
                      .stream()
                      .map(ProductVersionAttributeDTO::new)
                      .collect(Collectors.toSet());
          }
          if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-        	 this.attributes = productVersion.getAttributes()
+        	 this.productAttributes = productVersion.getAttributes()
                      .stream()
                      .map(ProductVersionAttributeDTO::new)
                      .collect(Collectors.toSet());
@@ -241,19 +241,19 @@ public class ProductVersionDto extends BaseEntityDto {
 	public void setValidity(DatePeriod validity) {
 		this.validity = validity;
 	}
+	/**
+	 * @return the productAttributes
+	 */
+	public Set<ProductVersionAttributeDTO> getProductAttributes() {
+		return productAttributes;
+	}
+	/**
+	 * @param productAttributes the productAttributes to set
+	 */
+	public void setProductAttributes(Set<ProductVersionAttributeDTO> productAttributes) {
+		this.productAttributes = productAttributes;
+	}
 
-    /**
-     * @return the attributes
-     */
-    public Set<ProductVersionAttributeDTO> getAttributes() {
-        return attributes;
-    }
-    /**
-     * @param attributes the attributes to set
-     */
-    public void setAttributes(Set<ProductVersionAttributeDTO> attributes) {
-        this.attributes = attributes;
-    }
 	
     
 }

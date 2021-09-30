@@ -1,7 +1,5 @@
 package org.meveo.apiv2.accounting.resource.impl;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -13,7 +11,6 @@ import org.meveo.apiv2.accounting.service.SubAccountingPeriodApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
-import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 
 public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 
@@ -42,7 +39,7 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	@Override
 	public Response update(String fiscalYear, org.meveo.apiv2.accounting.AccountingPeriod accountingPeriodResource) {
 		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
-		accountingPeriodApiService.update(accountingPeriodMapper.toEntity(accountingPeriod, accountingPeriodResource));
+		accountingPeriodApiService.update(accountingPeriodMapper.toEntity(accountingPeriod, accountingPeriodResource), accountingPeriodResource);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear).build())
                 .build();
 	}

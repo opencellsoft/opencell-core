@@ -31,13 +31,14 @@ import org.meveo.model.rating.EDR;
 public interface ICdrParser {
 
     /**
-     * Convert record into a CDR object. Parsing exceptions are available in CDR.rejectReason
+     * Convert record into a CDR object. An attempt is to parse as much as possible. Parsing exceptions are available in CDR.rejectReason and CDR.rejectReasonException unless completelly impossible to parse.
      *
      * @param source the source
      * @return the cdr
+     * @throws CDRParsingException Failure to parse CDR
      */
-    CDR parse(Object source);
-    
+    CDR parse(Object source) throws CDRParsingException;
+
     /**
      * Parses the Cdr by api.
      *
@@ -45,8 +46,9 @@ public interface ICdrParser {
      * @param userName the user name
      * @param ipAddress the ip address
      * @return the cdr
+     * @throws CDRParsingException Failure to parse CDR
      */
-    CDR parseByApi(String line, String userName, String ipAddress);
+    CDR parseByApi(String line, String userName, String ipAddress) throws CDRParsingException;
 
     /**
      * Get a list of Access points CDR corresponds to
@@ -61,14 +63,14 @@ public interface ICdrParser {
      * Convert cdr to edr.
      *
      * @param cdr the cdr
-     * @param accessPoints 
+     * @param accessPoints
      * @return the list
-     * @throws CDRParsingException 
+     * @throws CDRParsingException Failure to parse CDR
      */
     List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException;
 
     /**
-     * >Identifies a specific data type. Null by default. Would be needed only in case where multiple CDR formats have to be supported at once.
+     * Identifies a specific data type. Null by default. Would be needed only in case where multiple CDR formats have to be supported at once.
      * 
      * @return
      */
@@ -78,7 +80,22 @@ public interface ICdrParser {
      * determine if cdrToEdrConverter is applicable for a given source/data type
      * 
      * @param type Identifies a specific data type. Would be needed only in case where multiple CDR formats have to be supported at once.
-     * @return
+     * @return True if parser is applicable for a given source/data type
      */
     boolean isApplicable(String type);
+
+    /**
+     * Is EDR deduplication turned on
+     * 
+     * @return True if deduplication is turned on
+     */
+    boolean isDuplicateCheckOn();
+
+    /**
+     * Check if CDR was processed already by comparing Origin record/digest values
+     * 
+     * @param cdr CDR to check
+     * @throws DuplicateException CDR was processed already
+     */
+    void deduplicate(CDR cdr) throws DuplicateException;
 }

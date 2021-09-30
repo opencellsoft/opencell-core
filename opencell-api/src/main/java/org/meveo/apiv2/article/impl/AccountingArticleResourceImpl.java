@@ -21,7 +21,6 @@ import org.meveo.apiv2.article.resource.AccountingArticleResource;
 import org.meveo.apiv2.article.service.AccountingArticleApiService;
 import org.meveo.apiv2.article.service.AccountingArticleBaseApi;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-//import org.meveo.apiv2.ordering.resource.order.ImmutableOrder;
 import org.meveo.model.article.AccountingArticle;
 
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
@@ -48,10 +47,10 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	public Response updateAccountingArticle(Long id, org.meveo.apiv2.article.AccountingArticle accountingArticle) {
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
         accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(), accountingArticleEntity, false);
-        Optional<AccountingArticle> accoutningUpdated = accountingArticleApiService.update(id, accountingArticleEntity);
+        Optional<AccountingArticle> accountingUpdated = accountingArticleApiService.update(id, accountingArticleEntity);
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticleEntity.getId()).build())
-                .entity(toResourceOrderWithLink(mapper.toResource(accoutningUpdated.orElseThrow(NotFoundException::new))))
+                .entity(toResourceOrderWithLink(mapper.toResource(accountingUpdated.orElseThrow(NotFoundException::new))))
                 .build();
 	}
 
