@@ -1,7 +1,9 @@
 package org.meveo.service.accounting.impl;
 
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -76,6 +78,11 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 		if (endDate.before(new Date())) {
 			throw new ValidationException("the given endDate " + DateUtils.formatAsDate(endDate) + " is incorrect , the endDate must be greater than today");
+		}
+
+		List<String> allowedDates = Arrays.asList("03-31", "06-30", "09-30", "12-31");
+		if (!allowedDates.contains(DateUtils.formatDateWithPattern(endDate, "MM-dd"))) {
+			throw new ValidationException("End date will only be March 31st, June 30th, September 30th, December 31st.");
 		}
 	}
     
