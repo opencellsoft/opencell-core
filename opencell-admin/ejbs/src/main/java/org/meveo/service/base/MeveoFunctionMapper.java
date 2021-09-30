@@ -1936,7 +1936,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
     		if(!quoteOffer.getQuoteAttributes().isEmpty())
     			quoteAttribute= quoteOffer.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
     	}
-    	if(attribute.getAttributeType()!=null) {
+    	if(attribute.getAttributeType()!=null && quoteAttribute.isPresent()) {
     		switch (attribute.getAttributeType()) {
 			case TOTAL :
 			case COUNT :
