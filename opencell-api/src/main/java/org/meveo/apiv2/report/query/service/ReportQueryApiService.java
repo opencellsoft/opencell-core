@@ -10,7 +10,14 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,6 +46,8 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
@@ -52,6 +61,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     private List<String> fetchFields = asList("fields");
 
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
+    private static final Logger logger = LoggerFactory.getLogger(ReportQueryApiService.class);
 
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -151,6 +161,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
+        logger.debug("currentUser username: {} ",currentUser.getUserName());
+        logger.debug("currentUser is query manager: {} ",currentUser.hasRole("query_manager"));
     	if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
     			!currentUser.hasRole("query_manager")) {
     		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
