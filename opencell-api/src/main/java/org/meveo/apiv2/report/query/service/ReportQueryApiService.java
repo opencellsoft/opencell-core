@@ -151,9 +151,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
-    	if(!currentUser.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
-    			!currentUser.getRoles().contains("query_manager") && 
-    			toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED) {
+    	if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
+    			!currentUser.hasRole("query_manager")) {
     		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
     	}
         Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
