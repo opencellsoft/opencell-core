@@ -49,7 +49,7 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.security.SecuredBusinessEntityService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * API class in managing {@link Role}.

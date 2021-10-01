@@ -49,7 +49,7 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +57,10 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Inject
     private ReportQueryService reportQueryService;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -171,12 +171,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
-        
+
         User user = userService.findByUsername(currentUser.getUserName());
-        
+
         user = (User) userService.getEntityManager().createNamedQuery("User.listUserRoles").setParameter("username", user.getUserName()).getSingleResult();
-        
-        if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !user.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
+
+        if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !user.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) &&
     			!user.getRoles().contains("query_manager")) {
     		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
     	}

@@ -50,7 +50,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * PaymentGatewayDto CRUD.

@@ -4289,7 +4289,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.tax.TaxClassService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class ServiceTemplateToProductScript extends Script {
 

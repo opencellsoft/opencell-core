@@ -48,7 +48,7 @@ import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.slf4j.Logger;
 
 /**
