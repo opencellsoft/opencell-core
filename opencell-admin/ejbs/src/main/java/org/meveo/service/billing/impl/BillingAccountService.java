@@ -29,6 +29,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,7 +38,15 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.CustomerCategory;
@@ -46,14 +55,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.*;
 
 /**
  * The Class BillingAccountService.
@@ -463,6 +464,29 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      */
     public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
         return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
+
+    /**
+     * find billing account by his number
+     *
+     * @param billingAccountNumber the billing account number
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
+    public BillingAccount findByNumber(String billingAccountNumber) throws BusinessException {
+        if (StringUtils.isBlank(billingAccountNumber)) {
+            return null;
+        }
+        Query query = getEntityManager().createQuery("SELECT ba from BillingAccount ba  where  ba.externalRef1=:billingAccountNumber");
+        query.setParameter("billingAccountNumber", billingAccountNumber);
+        try {
+            return (BillingAccount) query.getSingleResult();
+        } catch (NoResultException e) {
+            //throw new BusinessException("The billing account is not found for a number : " + billingAccountNumber);
+            return null;
+        } catch (NonUniqueResultException e) {
+            throw new BusinessException("there are multiple billing accounts with the same number " + billingAccountNumber);
+        }
     }
 
     public BillingAccount instantiateDiscountPlans(BillingAccount entity, List<DiscountPlan> discountPlans) throws BusinessException {
