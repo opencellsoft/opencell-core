@@ -34,14 +34,18 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.RoleService;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
@@ -53,6 +57,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Inject
     private ReportQueryService reportQueryService;
+    
+    @Inject
+    private UserService userService;
+    
+    @Inject
+    private RoleService roleService;
 
     @Inject
     @CurrentUser
@@ -161,10 +171,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
-        logger.debug("currentUser username: {} ",currentUser.getUserName());
-        logger.debug("currentUser is query manager: {} ",currentUser.hasRole("query_manager"));
-    	if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !currentUser.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
-    			!currentUser.hasRole("query_manager")) {
+        
+        User user = userService.findByUsername(currentUser.getUserName());
+        
+        user = (User) userService.getEntityManager().createNamedQuery("User.listUserRoles").setParameter("username", user.getUserName()).getSingleResult();
+        
+        if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !user.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
+    			!user.getRoles().contains("query_manager")) {
     		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
     	}
         Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
