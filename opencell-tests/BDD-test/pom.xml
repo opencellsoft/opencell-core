@@ -26,6 +26,8 @@
         <adminPassword>opencell.admin</adminPassword>
         <superUsername>opencell.superadmin</superUsername>
         <superPassword>opencell.superadmin</superPassword>
+
+        <evosuiteVersion>1.0.6</evosuiteVersion>
     </properties>
 
     <!-- setting up local and distant test environments -->
@@ -65,6 +67,13 @@
     </profiles>
 
     <dependencies>
+        <dependency>
+            <groupId>org.evosuite</groupId>
+            <artifactId>evosuite-standalone-runtime</artifactId>
+            <version>${evosuiteVersion}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -199,6 +208,30 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.evosuite.plugins</groupId>
+                <artifactId>evosuite-maven-plugin</artifactId>
+                <version>${evosuiteVersion}</version>
+                <executions><execution>
+                    <goals> <goal> prepare </goal> </goals>
+                    <phase> process-test-classes </phase>
+                </execution></executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>org.evosuite.runtime.InitializingListener</value>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -209,26 +242,26 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <buildDirectory>${project.build.directory}</buildDirectory>
-                        <opencell.url>${opencell.url}</opencell.url>
-                        <adminUsername>${adminUsername}</adminUsername>
-                        <adminPassword>${adminPassword}</adminPassword>
-                        <superUsername>${superUsername}</superUsername>
-                        <superPassword>${superPassword}</superPassword>
-                        <opencell.keycloak.secret>${opencell.keycloak.secret}</opencell.keycloak.secret>
-                        <opencell.keycloak.url>${opencell.keycloak.url}</opencell.keycloak.url>
-                        <opencell.keycloak.realm>${opencell.keycloak.realm}</opencell.keycloak.realm>
-                        <opencell.keycloak.clientId>${opencell.keycloak.clientId}</opencell.keycloak.clientId>
-                        <restapi.baseurl>${restapi.baseurl}</restapi.baseurl>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>2.19.1</version>-->
+<!--                <configuration>-->
+<!--                    <systemPropertyVariables>-->
+<!--                        <buildDirectory>${project.build.directory}</buildDirectory>-->
+<!--                        <opencell.url>${opencell.url}</opencell.url>-->
+<!--                        <adminUsername>${adminUsername}</adminUsername>-->
+<!--                        <adminPassword>${adminPassword}</adminPassword>-->
+<!--                        <superUsername>${superUsername}</superUsername>-->
+<!--                        <superPassword>${superPassword}</superPassword>-->
+<!--                        <opencell.keycloak.secret>${opencell.keycloak.secret}</opencell.keycloak.secret>-->
+<!--                        <opencell.keycloak.url>${opencell.keycloak.url}</opencell.keycloak.url>-->
+<!--                        <opencell.keycloak.realm>${opencell.keycloak.realm}</opencell.keycloak.realm>-->
+<!--                        <opencell.keycloak.clientId>${opencell.keycloak.clientId}</opencell.keycloak.clientId>-->
+<!--                        <restapi.baseurl>${restapi.baseurl}</restapi.baseurl>-->
+<!--                    </systemPropertyVariables>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>

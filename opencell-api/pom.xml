@@ -310,7 +310,7 @@
 								<version>7.2</version>
 							</dependency>
 					</dependencies>
-                </plugin>         
+                </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
