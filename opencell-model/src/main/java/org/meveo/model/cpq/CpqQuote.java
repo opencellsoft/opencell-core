@@ -1,25 +1,22 @@
 package org.meveo.model.cpq;
 
-import static javax.persistence.FetchType.LAZY;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -28,13 +25,16 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.quote.QuoteStatusEnum;
 
 
@@ -44,7 +44,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
-public class CpqQuote extends BusinessEntity  {
+public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 
 	/**
 	 * 
@@ -201,6 +201,39 @@ public class CpqQuote extends BusinessEntity  {
 	@NotNull
 	private InvoiceType orderInvoiceType;
 	 
+	
+	 /**
+     * Rated transactions to reach minimum amount per invoice
+     */
+    @Transient
+    private List<RatedTransaction> minRatedTransactions;
+
+    /**
+     * Total invoicing amount without tax
+     */
+    @Transient
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
+    @Transient
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
+    @Transient
+    private BigDecimal totalInvoicingAmountTax;
+
+    @Transient
+    private List<InvoiceLine> minInvoiceLines;
+    
+    /**
+     * Billing run
+     */
+    @Transient
+    private BillingRun billingRun;
 	    
 	/**
 	 * @return the seller
@@ -427,6 +460,71 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setPreviousStatus(String previousStatus) {
 		this.previousStatus = previousStatus;
+	}
+
+	@Override
+	public BillingRun getBillingRun() {
+		return billingRun;
+	}
+
+	@Override
+	public void setBillingRun(BillingRun billingRun) {
+       this.billingRun=billingRun;
+ }
+
+	@Override
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        this.minRatedTransactions=ratedTransactions;
+ }
+
+	@Override
+	public List<RatedTransaction> getMinRatedTransactions() {
+		return minRatedTransactions;
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		return totalInvoicingAmountWithoutTax;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+      this.totalInvoicingAmountWithoutTax=totalInvoicingAmountWithoutTax;
+ }
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		return totalInvoicingAmountWithTax;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		this.totalInvoicingAmountWithTax=totalInvoicingAmountWithTax;
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountTax() {
+		return totalInvoicingAmountTax;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		this.totalInvoicingAmountTax=totalInvoicingAmountTax;
+	}
+
+	@Override
+	public BillingCycle getBillingCycle() {
+		return null;
+	}
+
+	@Override
+	public List<InvoiceLine> getMinInvoiceLines() {
+		return minInvoiceLines;
+	}
+
+	@Override
+	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
+		this.minInvoiceLines=invoiceLines;
 	}
 
 	

@@ -8,7 +8,23 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,12 +34,21 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 
@@ -69,9 +94,11 @@ import org.meveo.model.cpq.ProductVersion;
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.BillingAccountByILIds", query = "SELECT il.billingAccount FROM InvoiceLine il WHERE il.id in (:ids)"),
 		@NamedQuery(name = "InvoiceLine.listByInvoice", query = "SELECT il FROM InvoiceLine il where il.invoice=:invoice and il.status='BILLED' order by il.valueDate"),
-		@NamedQuery(name = "InvoiceLine.listByInvoiceNotFree", query = "SELECT il FROM InvoiceLine il where il.invoice=:invoice and il.amountWithoutTax<>0 and il.status='BILLED' order by il.valueDate")
-
-})
+		@NamedQuery(name = "InvoiceLine.listByInvoiceNotFree", query = "SELECT il FROM InvoiceLine il where il.invoice=:invoice and il.amountWithoutTax<>0 and il.status='BILLED' order by il.valueDate"),
+		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByQuote", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND il.quote.id=:quoteId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuote", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name="InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote")
+		})
 public class InvoiceLine extends AuditableEntity {
 
 	
@@ -214,6 +241,10 @@ public class InvoiceLine extends AuditableEntity {
 	@ManyToOne(fetch = LAZY, cascade = PERSIST)
 	@JoinColumn(name = "aggregate_id_f")
 	private SubCategoryInvoiceAgregate invoiceAggregateF;
+	
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "cpq_quote_id")
+    private CpqQuote quote;
 
 	public InvoiceLine() {
 	}
@@ -561,4 +592,14 @@ public class InvoiceLine extends AuditableEntity {
 	public void setInvoiceAggregateF(SubCategoryInvoiceAgregate invoiceAggregateF) {
 		this.invoiceAggregateF = invoiceAggregateF;
 	}
+
+	public CpqQuote getQuote() {
+		return quote;
+	}
+
+	public void setQuote(CpqQuote quote) {
+		this.quote = quote;
+	}
+	
+	
 }

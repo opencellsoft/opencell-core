@@ -537,7 +537,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
 	}
 
-	private void forceAccountOperation(AccountOperation accountOperation, AccountingPeriod accountingPeriod) {
+	public void forceAccountOperation(AccountOperation accountOperation, AccountingPeriod accountingPeriod) {
 		accountOperation.setStatus(AccountOperationStatus.POSTED);
 		accountOperation.setReason(AccountOperationRejectionReason.FORCED);
 		// setting the accoutingDate
