@@ -332,7 +332,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @return A list of Billing accounts
      */
     public List<BillingAccount> findBillingAccounts(BillingRun billingRun) {
-        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).setMaxResults(Integer.parseInt(paramBeanFactory.getInstance().getProperty("billingRun.lot.size","100000"))).getResultList();
+        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 
     /**

@@ -1356,7 +1356,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         query.setParameter("subscriptionDateFrom", DateUtils.setDateToStartOfDay(subscriptionDateFrom));
         query.setParameter("subscriptionDateTo", DateUtils.setDateToStartOfDay(subscriptionDateTo));
 
-        return query.setMaxResults(Integer.parseInt(paramBeanFactory.getInstance().getProperty("billingRun.lot.size","100000"))).getResultList();
+        String brLotSize = paramBeanFactory.getInstance().getProperty("billingRun.lot.size", null);
+        if (brLotSize != null) {
+            log.info("Using param billingRun.lot.size={}", brLotSize);
+            return query.setMaxResults(Integer.parseInt(brLotSize)).getResultList();
+        } else {
+            return query.getResultList();
+        }
     }
 
     /**
