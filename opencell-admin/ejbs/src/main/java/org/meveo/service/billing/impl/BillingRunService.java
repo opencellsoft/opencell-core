@@ -1322,19 +1322,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         	startDate = new Date(0);
         }
 
-        Date subscriptionDateFrom = null;
-        Date subscriptionDateTo = null;
-        if (billingRun.getSubscriptionDate() != null) {
-            subscriptionDateFrom = billingRun.getSubscriptionDate().getFrom();
-            subscriptionDateTo = billingRun.getSubscriptionDate().getTo();
-        }
-        if (subscriptionDateFrom == null) {
-            subscriptionDateFrom = new Date(0);
-        }
-        if (subscriptionDateTo == null) {
-            subscriptionDateTo = DateUtils.addDaysToDate(new Date(), 1);
-        }
-
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ?
                 "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch" :
                 startDate == null ? "RatedTransaction.sumTotalInvoiceableByBAInBatch" : "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
@@ -1353,9 +1340,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
         }
-
-        query.setParameter("subscriptionDateFrom", DateUtils.setDateToStartOfDay(subscriptionDateFrom));
-        query.setParameter("subscriptionDateTo", DateUtils.setDateToStartOfDay(subscriptionDateTo));
 
         String brLotSize = paramBeanFactory.getInstance().getProperty("billingRun.lot.size", null);
         if (!StringUtils.isBlank(brLotSize)) {

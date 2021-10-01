@@ -205,15 +205,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     private Date lastTransactionDate;
 
     /**
-     * Subscription date
-     */
-    @Embedded
-    @AttributeOverrides(value = {
-            @AttributeOverride(name = "from", column = @Column(name = "subscription_date_from")),
-            @AttributeOverride(name = "to", column = @Column(name = "subscription_date_to")) })
-    private DatePeriod subscriptionDate = new DatePeriod();
-
-    /**
      * Rejection reason
      */
     @Column(name = "rejection_reason", length = 255)
@@ -446,14 +437,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
-    }
-
-    public DatePeriod getSubscriptionDate() {
-        return subscriptionDate;
-    }
-
-    public void setSubscriptionDate(DatePeriod subscriptionDate) {
-        this.subscriptionDate = subscriptionDate;
     }
 
     public PreInvoicingReportsDTO getPreInvoicingReports() {

@@ -98,7 +98,6 @@ public class InvoicingApi extends BaseApi {
         billingRunEntity.setProcessType(createBillingRunDto.getBillingRunTypeEnum());
         billingRunEntity.setStartDate(createBillingRunDto.getStartDate());
         billingRunEntity.setEndDate(createBillingRunDto.getEndDate());
-        billingRunEntity.setSubscriptionDate(new DatePeriod(createBillingRunDto.getSubscriptionDateFrom(), createBillingRunDto.getSubscriptionDateTo()));
         billingRunEntity.setProcessDate(new Date());
         billingRunEntity.setInvoiceDate(createBillingRunDto.getInvoiceDate());
         if (createBillingRunDto.getInvoiceDate() == null) {

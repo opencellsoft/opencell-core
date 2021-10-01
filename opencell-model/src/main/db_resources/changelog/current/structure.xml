@@ -3370,13 +3370,6 @@ END $$;]]>
             <column name="payment_history_id"></column>
         </dropColumn> -->
  </changeSet>
-
-    <changeSet id="#2045_29092021" author="Mounir_BOUKAYOUA">
-        <addColumn tableName="billing_billing_run">
-            <column name="subscription_date_from" type="datetime" />
-            <column name="subscription_date_to" type="datetime" />
-        </addColumn>
-    </changeSet>
     
 
 </databaseChangeLog>
