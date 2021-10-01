@@ -1328,10 +1328,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             subscriptionDateTo = billingRun.getSubscriptionDate().getTo();
         }
         if (subscriptionDateFrom == null) {
-            subscriptionDateFrom : new Date(0);
+            subscriptionDateFrom = new Date(0);
         }
         if (subscriptionDateTo == null) {
-            subscriptionDateTo : DateUtils.addDaysToDate(new Date(), 1);
+            subscriptionDateTo = DateUtils.addDaysToDate(new Date(), 1);
         }
 
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ?
