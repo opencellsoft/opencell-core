@@ -15958,6 +15958,10 @@
     <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql"/>
     <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius"/>
     <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
+ 	<changeSet id="INTRD-1924_20210922" author="TarikFA." />
+   	<changeSet id="INTRD_1985_20210923" author="TarikFA." />
+    <changeSet id="INTRD-1925_20210922" author="TarikFA." />
+    <changeSet id="INTRD_1794_20210917" author="TarikFA." />
 
     
     
