@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -543,7 +544,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public List<T> listAll() {
         if (clazz != null && BusinessEntity.class.isAssignableFrom(clazz)) {
-            return getPersistenceService().list(new PaginationConfiguration("code", SortOrder.ASCENDING));
+            return getPersistenceService().list(new PaginationConfiguration("code", PagingAndFiltering.SortOrder.ASCENDING));
         } else {
             return getPersistenceService().list();
         }
@@ -1542,7 +1543,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
      * 
-     * @param Entity class to reference
+     * @param entityClass class to reference
      * @param id Entity ID
      * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
      *         customer

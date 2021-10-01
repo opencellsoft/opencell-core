@@ -253,7 +253,7 @@ public class ContractApi extends BaseApi{
 		 pagingAndFiltering.getFilters().clear();
 		 pagingAndFiltering.getFilters().putAll(filters);
 		 List<String> fields = Arrays.asList("billingAccount");
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, fields, pagingAndFiltering, Contract.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, PagingAndFiltering.SortOrder.ASCENDING, fields, pagingAndFiltering, Contract.class);
 
         Long totalCount = contractService.count(paginationConfiguration);
         ContractListResponsDto result = new ContractListResponsDto();

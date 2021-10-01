@@ -42,7 +42,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * Base API service for CRUD operations on entity

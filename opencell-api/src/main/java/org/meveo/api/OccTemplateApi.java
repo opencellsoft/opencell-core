@@ -218,7 +218,7 @@ public class OccTemplateApi extends BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     public GetOccTemplatesResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
             OCCTemplate.class);
 
         Long totalCount = occTemplateService.count(paginationConfiguration);
