@@ -169,8 +169,8 @@ public class ReportQueryResourceImplTest {
                 "status", "VALIDATED");
         List<Object> executionResult = asList(item, item2, item3);
 
-        when(reportQueryApiService.execute(1L, false)).thenReturn(of(executionResult));
-        Response response = reportQueryResource.execute(1L, false);
+        when(reportQueryApiService.execute(1L, false, false)).thenReturn(of(executionResult));
+        Response response = reportQueryResource.execute(1L, false, false);
 
         Object responseEntity = response.getEntity();
         assertEquals(3, ((ExecutionResult)responseEntity).getTotal());
@@ -190,8 +190,8 @@ public class ReportQueryResourceImplTest {
         reportQuery.setVisibility(PRIVATE);
         reportQuery.setGeneratedQuery("SELECT a.invoiceNumber, a.amountWithTax, a.status FROM Invoice a");
 
-        when(reportQueryApiService.execute(1L, true)).thenReturn(of("Accepted"));
-        Response response = reportQueryResource.execute(1L, true);
+        when(reportQueryApiService.execute(1L, true, false)).thenReturn(of("Accepted"));
+        Response response = reportQueryResource.execute(1L, true, false);
 
         ImmutableSuccessResponse successResponse = (ImmutableSuccessResponse) response.getEntity();
         assertEquals(200, response.getStatus());
