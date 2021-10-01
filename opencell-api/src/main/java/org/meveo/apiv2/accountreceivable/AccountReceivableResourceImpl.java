@@ -1,6 +1,18 @@
 package org.meveo.apiv2.accountreceivable;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
@@ -11,11 +23,6 @@ import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class AccountReceivableResourceImpl implements AccountReceivableResource {
     @Inject
     private AccountOperationService accountOperationService;
@@ -23,6 +30,9 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
     private AccountingPeriodService accountingPeriodService;
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
+    
+	@Inject
+	private AccountOperationApiService accountOperationServiceApi;
 
     @Override
     public Response post(Map<String, Set<Long>> accountOperations) {
@@ -103,4 +113,21 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
         }
         return Response.ok().build();
     }
+    
+	@Override
+	public Response markExported(ChangeStatusDto changeStatusDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			accountOperationServiceApi.changeStatus(changeStatusDto);
+			return Response.ok(result).build();
+		} catch (EntityDoesNotExistsException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			return Response.status(Response.Status.NOT_FOUND).entity(result).build();
+		} catch (ConflictException e) {
+			result.setStatus(ActionStatusEnum.WARNING);
+			result.setMessage(e.getMessage());
+			return Response.status(Response.Status.CONFLICT).entity(result).build();
+		}
+	}
 }
