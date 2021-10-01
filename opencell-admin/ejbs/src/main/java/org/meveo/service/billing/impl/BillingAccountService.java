@@ -33,6 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.*;
@@ -289,7 +290,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
             qb.addOrderCriterionAsIs("id", true);
 
-            return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+            String brLotSize = paramBeanFactory.getInstance().getProperty("billingRun.lot.size", null);
+            if (!StringUtils.isBlank(brLotSize)) {
+                log.info("Using param billingRun.lot.size={}", brLotSize);
+                return (List<BillingAccount>) qb.getQuery(getEntityManager()).setMaxResults(Integer.parseInt(brLotSize)).getResultList();
+            } else {
+                return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+            }
+
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
         }
