@@ -1,6 +1,7 @@
 package org.meveo.api.dto;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -21,6 +22,7 @@ public class AgedReceivableDto extends BaseEntity {
 	private BigDecimal generalTotal;
 	private DunningLevelEnum dunningLevel;
 	private String customerAccountName;
+	private Date dueDate;
 
 	public AgedReceivableDto() {
 		super();
@@ -110,4 +112,11 @@ public class AgedReceivableDto extends BaseEntity {
 		this.customerAccountName = customerAccountName;
 	}
 
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
 }

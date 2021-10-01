@@ -484,7 +484,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.amount else 0 end ) as sum_31_60, "
         		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.amount else 0 end ) as sum_61_90, "
         		+ " (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amount else 0 end ) as sum_90_up,"
-        		+" ao.customerAccount.dunningLevel, ao.customerAccount.name "
+        		+" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.dueDate "
         		+ "from " + RecordedInvoice.class.getSimpleName()+" as ao"); 
         if(customerAccount != null) {
         	qb.addCriterionEntity("customerAccount", customerAccount);

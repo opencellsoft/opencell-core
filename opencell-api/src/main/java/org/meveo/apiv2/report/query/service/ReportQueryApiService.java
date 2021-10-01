@@ -38,6 +38,7 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryVisibilityEnum;
@@ -50,18 +51,18 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
-import org.primefaces.model.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
+    private static final String QUERY_MANAGER_ROLE = "query_manager";
+    private static final String QUERY_USER_ROLE = "query_user";
     @Inject
     private ReportQueryService reportQueryService;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -72,7 +73,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     private List<String> fetchFields = asList("fields");
 
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
-    private static final Logger logger = LoggerFactory.getLogger(ReportQueryApiService.class);
+    
+
+    private static final int EXECUTE = 1;
+    private static final int READ = 2;
+    private static final int UPDATE = 3;
 
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -96,17 +101,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return ofNullable(reportQuery);
     }
 
-    private static final int EXECUTE = 1;
-    private static final int READ = 2;
-    private static final int UPDATE = 3;
     
     private void checkPermissionExist() {
-    	if(!currentUser.getRoles().contains("query_manager") && !currentUser.getRoles().contains("query_user"))
+    	if(!currentUser.getRoles().contains(QUERY_MANAGER_ROLE) && !currentUser.getRoles().contains(QUERY_USER_ROLE))
     		throw new BadRequestException("You don't have permission to access report queries");
     }
     private void checkPermissionByAction(ReportQuery report, int action) {
     	checkPermissionExist();
-    	if(currentUser.getRoles().contains("query_user")) {
+    	if(currentUser.getRoles().contains(QUERY_USER_ROLE)) {
     		if(report.getVisibility() == PRIVATE && !report.getAuditable().getCreator().equals(currentUser.getUserName())) {
 	    		if(action == READ) {
 	        		throw new BadRequestException("Only Public and Protected query can you see");
@@ -208,14 +210,10 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         user = (User) userService.getEntityManager().createNamedQuery("User.listUserRoles").setParameter("username", user.getUserName()).getSingleResult();
         
         checkPermissionByAction(reportQuery.get(), UPDATE);
-        /*if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !user.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
-    			!user.getRoles().contains("query_manager")) {
-    		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
-    	}*/
         Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
-        ofNullable(toUpdate.getCode()).ifPresent(code -> entity.setCode(code));
-        ofNullable(toUpdate.getVisibility()).ifPresent(visibility -> entity.setVisibility(visibility));
-        ofNullable(toUpdate.getTargetEntity()).ifPresent(target -> entity.setTargetEntity(target));
+        ofNullable(toUpdate.getCode()).ifPresent(entity::setCode);
+        ofNullable(toUpdate.getVisibility()).ifPresent(entity::setVisibility);
+        ofNullable(toUpdate.getTargetEntity()).ifPresent(entity::setTargetEntity);
         entity.setDescription(toUpdate.getDescription());
         entity.setFields(toUpdate.getFields());
         entity.setFilters(toUpdate.getFilters());
@@ -237,13 +235,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @Override
     public Optional<ReportQuery> delete(Long id) {
         ReportQuery reportQuery = reportQueryService.findById(id);
-        if(!reportQuery.getAuditable().getCreator().equals(currentUser.getUserName())
-                && reportQuery.getVisibility() == PRIVATE
-                && !currentUser.getRoles().contains("query_manager")) {
-            throw new BadRequestException("You don't have permission to delete query that belongs to another user.");
-        }
         if (reportQuery != null) {
             try {
+                if(!reportQuery.getAuditable().getCreator().equals(currentUser.getUserName())
+                        && reportQuery.getVisibility() == PRIVATE
+                        && !currentUser.hasRole(QUERY_MANAGER_ROLE)) {
+                    throw new BadRequestException("You don't have permission to delete query that belongs to another user.");
+                }
                 reportQueryService.remove(reportQuery);
                 return of(reportQuery);
             } catch (Exception exception) {
@@ -283,19 +281,19 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      * @param queryId report query Id
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
      */
-    public Optional<Object> execute(Long queryId, boolean async) {
+    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification) {
     	checkPermissionExist();
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
         if(!query.getAuditable().getCreator().equals(currentUser.getUserName()) && query.getVisibility() == PRIVATE
-                && !currentUser.getRoles().contains("query_manager")) {
+                && !currentUser.getRoles().contains(QUERY_MANAGER_ROLE)) {
             throw new BadRequestException("You don't have permission to execute query that belongs to another user.");
         }
 
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
-            reportQueryService.executeAsync(query, targetEntity, currentUser);
+            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification);
             result = of("Accepted");
         } else {
             result = of(reportQueryService.execute(query, targetEntity));
@@ -315,7 +313,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         if (StringUtils.isBlank(verifyQueryInput.getQueryName())) {
             throw new ForbiddenException("The queryName parameter is missing.");
         }
-        if (verifyQueryInput == null || StringUtils.isBlank(verifyQueryInput.getQueryName()) || verifyQueryInput.getVisibility() == null) {
+        if (StringUtils.isBlank(verifyQueryInput.getQueryName()) || verifyQueryInput.getVisibility() == null) {
             throw new ForbiddenException("The visibility parameter is missing.");
         }
 

@@ -297,7 +297,7 @@ public class AccountOperationApi extends BaseApi {
      */
     public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
             AccountOperation.class);
 
         Long totalCount = accountOperationService.count(paginationConfiguration);

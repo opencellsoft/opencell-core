@@ -43,6 +43,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BaseEntity;
@@ -63,7 +64,6 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
 @Named
@@ -356,7 +356,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public void exportData() {
         exportFuture = null;
 
-        PaginationConfiguration config = new PaginationConfiguration(filters, "id", SortOrder.ASCENDING);
+        PaginationConfiguration config = new PaginationConfiguration(filters, "id", PagingAndFiltering.SortOrder.ASCENDING);
 
         try {
             exportFuture = customTableService.exportData(entity, config);

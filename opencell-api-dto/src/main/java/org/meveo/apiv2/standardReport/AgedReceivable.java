@@ -19,6 +19,7 @@
 package org.meveo.apiv2.standardReport;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlType;
@@ -47,5 +48,7 @@ public interface AgedReceivable extends Resource {
     BigDecimal getSum_90_up();
     @Nullable
     BigDecimal getGeneral_total();
+    @Nullable
+    Date dueDate();
     
 }

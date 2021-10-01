@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
@@ -37,6 +39,7 @@ import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
@@ -592,4 +595,16 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         log.debug("updated record AO to operation action equal to None count={}", affectedRecords);
         return affectedRecords;
     }
+
+	/**
+	 * @param status 
+	 * @param list
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateStatusInNewTransaction(List<AccountOperation> accountOperations, AccountOperationStatus status) {
+    	accountOperations.stream().forEach(ao -> {
+			ao.setStatus(status);
+			update(ao);});
+	}
 }

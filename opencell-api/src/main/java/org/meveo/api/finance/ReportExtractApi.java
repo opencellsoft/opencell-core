@@ -48,7 +48,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.ReportExtractExecutionResultService;
 import org.meveo.service.finance.ReportExtractService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * The CRUD Api for ReportExtract Entity.

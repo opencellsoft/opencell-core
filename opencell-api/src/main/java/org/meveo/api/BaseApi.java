@@ -76,7 +76,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.util.ApplicationProvider;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

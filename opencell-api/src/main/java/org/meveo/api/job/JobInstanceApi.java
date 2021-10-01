@@ -289,7 +289,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, JobInstance.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, PagingAndFiltering.SortOrder.ASCENDING, null, pagingAndFiltering, JobInstance.class);
 
         Long totalCount = jobInstanceService.count(paginationConfiguration);
 
