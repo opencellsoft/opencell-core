@@ -88,7 +88,8 @@ import org.meveo.model.shared.Name;
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "User.updateLastLoginById", query = "update User set lastLoginDate=:lastLoginDate where id=:id"),
-        @NamedQuery(name = "User.updateLastLoginByUsername", query = "update User set lastLoginDate=:lastLoginDate where lower(userName)=:username") })
+        @NamedQuery(name = "User.updateLastLoginByUsername", query = "update User set lastLoginDate=:lastLoginDate where lower(userName)=:username"),
+        @NamedQuery(name = "User.listUserRoles", query = "SELECT u FROM User u JOIN FETCH u.roles as role WHERE u.userName = :username")})
 
 public class User extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity, ISearchable {
 
