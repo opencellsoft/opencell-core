@@ -29,7 +29,7 @@ public class CustomerPaymentRecordDto implements Serializable {
     private String reference;
     // end of record : Always / hard coded as V
     private String endOfRecord;
-    private StringBuffer errorMessage;
+    private StringBuilder errorMessage;
     private String fileName;
 
     /**
@@ -181,7 +181,7 @@ public class CustomerPaymentRecordDto implements Serializable {
      *
      * @return the errorMessage
      */
-    public StringBuffer getErrorMessage() {
+    public StringBuilder getErrorMessage() {
         return errorMessage;
     }
 
@@ -190,7 +190,7 @@ public class CustomerPaymentRecordDto implements Serializable {
      *
      * @param errorMessage the errorMessage
      */
-    public void setErrorMessage(StringBuffer errorMessage) {
+    public void setErrorMessage(StringBuilder errorMessage) {
         this.errorMessage = errorMessage;
     }
 
