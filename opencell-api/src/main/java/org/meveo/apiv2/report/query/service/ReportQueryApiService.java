@@ -49,17 +49,17 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     private static final String QUERY_MANAGER_ROLE = "query_manager";
     @Inject
     private ReportQueryService reportQueryService;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -169,7 +169,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
-        
+
         User user = userService.findByUsernameWithFetchRoles(currentUser.getUserName());
 
         if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !user.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
@@ -244,7 +244,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      * @param queryId report query Id
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
      */
-    public Optional<Object> execute(Long queryId, boolean async) {
+    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification) {
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
         if(!query.getAuditable().getCreator().equals(currentUser.getUserName()) && query.getVisibility() == PRIVATE
@@ -255,7 +255,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
-            reportQueryService.executeAsync(query, targetEntity, currentUser);
+            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification);
             result = of("Accepted");
         } else {
             result = of(reportQueryService.execute(query, targetEntity));

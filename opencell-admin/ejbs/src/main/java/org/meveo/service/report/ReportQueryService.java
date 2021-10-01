@@ -310,8 +310,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param targetEntity target entity
      * @param currentUser current user
      */
-    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser) {
-        launchAndForget(reportQuery, targetEntity, currentUser);
+    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification) {
+        launchAndForget(reportQuery, targetEntity, currentUser, sendNotification);
     }
 
     /**
@@ -322,21 +322,23 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param currentUser current user email to be used for notification
      */
     @Asynchronous
-    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser) {
+    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification) {
         Date startDate = new Date();
         try {
             Future<QueryExecutionResult> asyncResult = executeReportQueryAndSaveResult(reportQuery, targetEntity, startDate);
             QueryExecutionResult executionResult = asyncResult.get();
-            if(executionResult != null) {
+            if(executionResult != null && sendNotification) {
                 notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
                         executionResult.getStartDate(), executionResult.getExecutionDuration(),
                         executionResult.getLineCount(), null);
             }
         } catch (InterruptedException | CancellationException e) {
         } catch (Exception exception) {
-            long duration = new Date().getTime() - startDate.getTime();
-            notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
-                    startDate, duration, null, exception.getMessage());
+        	if(sendNotification) {
+	            long duration = new Date().getTime() - startDate.getTime();
+	            notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
+	                    startDate, duration, null, exception.getMessage());
+        	}
             log.error("Failed to execute async report query", exception);
         }
     }

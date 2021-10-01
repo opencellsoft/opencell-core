@@ -128,7 +128,7 @@ public interface ReportQueryResource {
                             description = "Query does not exists")})
     Response execute(@Parameter(description = "Query id", required = true) @PathParam("queryId") Long id,
                      @Parameter(description = "Execution type Synchronously or asynchronously")
-                     @QueryParam("async") boolean async);
+                     @QueryParam("async") boolean async, @QueryParam("sendNotification") @DefaultValue("true") boolean sendNotification);
     
     @POST
     @Path("/verify")

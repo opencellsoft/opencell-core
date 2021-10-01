@@ -47,7 +47,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestBuilderService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * DDRequestBuilderDto CRUD.
