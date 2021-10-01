@@ -64,7 +64,6 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
 @Named
