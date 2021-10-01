@@ -9895,6 +9895,18 @@
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+            <column name="cf_values">
+	            <![CDATA[{"FlatFileProcessingJob_mappingConf":[{"string":"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\n   <stream name=\"record\" format=\"fixedlength\" strict=\"true\">\n      <record name=\"payment\" occurs=\"0+\" class=\"org.meveo.api.dto.payment.CustomerPaymentRecordDto\" minLength=\"80\" maxLength=\"80\">\n         <field name=\"payCode\" minOccurs=\"0\" length=\"3\" />\n         <field name=\"accountNumber\" minOccurs=\"0\" length=\"11\" />\n         <field name=\"checkDigit\" minOccurs=\"0\" length=\"2\" />\n         <field name=\"paidAmount\" minOccurs=\"0\" length=\"10\" />\n         <field name=\"filler\" minOccurs=\"0\" length=\"5\" />\n         <field name=\"date\" minOccurs=\"0\" length=\"6\" format=\"ddMMyy\"/>\n         <field name=\"reference\" minOccurs=\"0\" length=\"42\" />\n         <field name=\"endOfRecord\" minOccurs=\"0\" length=\"1\" />\n      </record>\n   </stream>\n</beanio>"}]
+						,"FlatFileProcessingJob_recordVariableName":[{"string":"record"}]
+						,"FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]
+						,"FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}]
+						,"FlatFileProcessingJob_fileNameExtension":[{"string":"PMT"}]
+						,"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ProcessCustomerPaymentsFileScript"}]
+						,"FlatFileProcessingJob_archiveDir":[{"string":"imports/payment/archive"}]
+						,"FlatFileProcessingJob_rejectDir":[{"string":"imports/payment/reject"}]
+						,"FlatFileProcessingJob_outputDir":[{"string":"imports/payment/output"}]
+						,"FlatFileProcessingJob_inputDir":[{"string":"imports/payment/input"}]}]]>
+            </column>
         </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -10175,7 +10187,27 @@
             <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:7"/>
         </insert>
     </changeSet>
-
+	<changeSet id="1589_20210930" author="YoussefIZEM">
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-35" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="T3P9476" />
+            <column name="description" value="WS BAD DEBT WRITE-OFFS IRRE"></column>
+            <column name="chart_of_account_type" value="REVENUE" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+		<insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-50" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="accounting_code_id" valueNumeric="-35" />
+            <column name="code" value="PAY_BATCH" />
+            <column name="description" value="Payment from batch payment file" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" value="-2" />
+        </insert>
+    </changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
