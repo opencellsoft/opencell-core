@@ -112,6 +112,15 @@ public class UserService extends PersistenceService<User> {
         }
     }
 
+    @RolesAllowed({ "userManagement", "userSelfManagement" })
+    public User findByUsernameWithFetchRoles(String username) {
+        try {
+            return getEntityManager().createNamedQuery("User.listUserRoles", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
     public User findByEmail(String email) {
         try {
             return (User) getEntityManager().createQuery("from User where email = :email").setParameter("email", email).getSingleResult();
