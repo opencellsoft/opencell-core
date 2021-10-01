@@ -2372,7 +2372,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
         if (customerPaymentRecordDto == null) {
             throw new BusinessException(String.format("Parameter record is missing"));
         }
-        customerPaymentRecordDto.setErrorMessage(new StringBuffer());
+        customerPaymentRecordDto.setErrorMessage(new StringBuilder());
         String fileName = (String) parameters.get("origin_filename");
         if (StringUtils.isBlank(fileName)) {
             throw new BusinessException(String.format("Parameter origin_filename is missing"));
