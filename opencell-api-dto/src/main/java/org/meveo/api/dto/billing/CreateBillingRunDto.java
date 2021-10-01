@@ -63,12 +63,6 @@ public class CreateBillingRunDto extends BaseEntityDto {
     /** The end date. */
     private Date endDate;
 
-    /** The subscription date from. */
-    private Date subscriptionDateFrom;
-
-    /** The subscription date to. */
-    private Date subscriptionDateTo;
-
     /** The invoice date. */
     private Date invoiceDate;
 
@@ -158,22 +152,6 @@ public class CreateBillingRunDto extends BaseEntityDto {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public Date getSubscriptionDateFrom() {
-        return subscriptionDateFrom;
-    }
-
-    public void setSubscriptionDateFrom(Date subscriptionDateFrom) {
-        this.subscriptionDateFrom = subscriptionDateFrom;
-    }
-
-    public Date getSubscriptionDateTo() {
-        return subscriptionDateTo;
-    }
-
-    public void setSubscriptionDateTo(Date subscriptionDateTo) {
-        this.subscriptionDateTo = subscriptionDateTo;
     }
 
     /**
