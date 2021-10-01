@@ -5684,4 +5684,9 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
 	</changeSet>
+	<changeSet id="#2122_20211001" author="YoussefIZEM">
+        <update tableName="ar_account_operation">
+            <column name="accounting_date" valueComputed="transaction_date"></column>
+        </update>
+    </changeSet>
 </databaseChangeLog>
