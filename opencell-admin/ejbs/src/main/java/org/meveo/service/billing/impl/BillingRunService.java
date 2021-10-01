@@ -48,6 +48,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
@@ -1356,7 +1357,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         query.setParameter("subscriptionDateFrom", DateUtils.setDateToStartOfDay(subscriptionDateFrom));
         query.setParameter("subscriptionDateTo", DateUtils.setDateToStartOfDay(subscriptionDateTo));
 
-        return query.setMaxResults(Integer.parseInt(paramBeanFactory.getInstance().getProperty("billingRun.lot.size","100000"))).getResultList();
+        String brLotSize = paramBeanFactory.getInstance().getProperty("billingRun.lot.size", null);
+        if (!StringUtils.isBlank(brLotSize)) {
+            log.info("Using param billingRun.lot.size={}", brLotSize);
+            return query.setMaxResults(Integer.parseInt(brLotSize)).getResultList();
+        } else {
+            return query.getResultList();
+        }
     }
 
     /**
