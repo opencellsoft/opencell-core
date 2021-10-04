@@ -13,6 +13,7 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
@@ -49,7 +50,12 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         PricePlanMatrixColumn pricePlanMatrixColumn = new PricePlanMatrixColumn();
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
-        pricePlanMatrixColumn.setRange(dtoData.getRange());
+        if (attribute.getAttributeType() != AttributeTypeEnum.DATE && attribute.getAttributeType() != AttributeTypeEnum.NUMERIC 
+        		&& attribute.getAttributeType() != AttributeTypeEnum.INTEGER && attribute.getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
+        	pricePlanMatrixColumn.setRange(false);
+		}else {
+        	pricePlanMatrixColumn.setRange(dtoData.getRange());
+		}
         pricePlanMatrixColumn.setType(attribute.getAttributeType().getColumnType(dtoData.getRange()));
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn, pricePlanMatrixVersion);
 
@@ -66,6 +72,12 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn,pricePlanMatrixVersion);
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
+        if (attribute.getAttributeType() != AttributeTypeEnum.DATE && attribute.getAttributeType() != AttributeTypeEnum.NUMERIC 
+        		&& attribute.getAttributeType() != AttributeTypeEnum.INTEGER && attribute.getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
+        	pricePlanMatrixColumn.setRange(false);
+		}else {
+        	pricePlanMatrixColumn.setRange(dtoData.getRange());
+		}
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
     }
 
