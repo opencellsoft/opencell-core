@@ -8,6 +8,8 @@ import static java.util.stream.Collectors.joining;
 import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PROTECTED;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     private static final String QUERY_MANAGER_ROLE = "query_manager";
+    private static final String QUERY_USER_ROLE = "query_user";
     @Inject
     private ReportQueryService reportQueryService;
 
@@ -70,6 +73,11 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     private List<String> fetchFields = asList("fields");
 
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
+    
+
+    private static final int EXECUTE = 1;
+    private static final int READ = 2;
+    private static final int UPDATE = 3;
 
     @Override
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -87,11 +95,38 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Override
     public Optional<ReportQuery> findById(Long id) {
-        return ofNullable(reportQueryService.findById(id, fetchFields));
+    	var reportQuery = reportQueryService.findById(id, fetchFields);
+    	if(reportQuery != null)
+    		checkPermissionByAction(reportQuery, READ);
+        return ofNullable(reportQuery);
+    }
+
+    
+    private void checkPermissionExist() {
+    	if(!currentUser.getRoles().contains(QUERY_MANAGER_ROLE) && !currentUser.getRoles().contains(QUERY_USER_ROLE))
+    		throw new BadRequestException("You don't have permission to access report queries");
+    }
+    private void checkPermissionByAction(ReportQuery report, int action) {
+    	checkPermissionExist();
+    	if(currentUser.getRoles().contains(QUERY_USER_ROLE)) {
+    		if(report.getVisibility() == PRIVATE && !report.getAuditable().getCreator().equals(currentUser.getUserName())) {
+	    		if(action == READ) {
+	        		throw new BadRequestException("Only Public and Protected query can you see");
+	    		}
+	    		if(action == EXECUTE) {
+	        		throw new BadRequestException("Only Public and Protected query can you execute");
+	    		}
+    		}
+    		if(report.getVisibility() == PROTECTED && !report.getAuditable().getCreator().equals(currentUser.getUserName())) {
+    			if(action == UPDATE)
+	        		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
+    		}
+    	}
     }
 
     @Override
     public ReportQuery create(ReportQuery entity) {
+    	checkPermissionExist();
         Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
             entity.setGeneratedQuery(generateQuery(entity, targetEntity));
@@ -169,13 +204,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
-
-        User user = userService.findByUsernameWithFetchRoles(currentUser.getUserName());
-
-        if(toUpdate.getVisibility() == QueryVisibilityEnum.PROTECTED && !user.getUserName().equalsIgnoreCase(entity.getAuditable().getCreator()) && 
-    			!user.hasRole(QUERY_MANAGER_ROLE)) {
-    		throw new BadRequestException("You don't have permission to update query that belongs to another user.");
-    	}
+        
+        User user = userService.findByUsername(currentUser.getUserName());
+        
+        user = (User) userService.getEntityManager().createNamedQuery("User.listUserRoles").setParameter("username", user.getUserName()).getSingleResult();
+        
+        checkPermissionByAction(reportQuery.get(), UPDATE);
         Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
         ofNullable(toUpdate.getCode()).ifPresent(entity::setCode);
         ofNullable(toUpdate.getVisibility()).ifPresent(entity::setVisibility);
@@ -226,7 +260,10 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Override
     public Optional<ReportQuery> findByCode(String code) {
-        return of(reportQueryService.findByCode(code, fetchFields));
+    	var reportQuery = reportQueryService.findByCode(code, fetchFields);
+    	if(reportQuery != null)
+    		checkPermissionByAction(reportQuery, READ);
+        return of(reportQuery);
     }
 
 	public byte[] downloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
@@ -245,6 +282,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
      */
     public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification) {
+    	checkPermissionExist();
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
         if(!query.getAuditable().getCreator().equals(currentUser.getUserName()) && query.getVisibility() == PRIVATE
@@ -264,7 +302,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public ActionStatus verifyReportQuery(VerifyQueryInput verifyQueryInput) {
-    	
+    	checkPermissionExist();
     	ActionStatus result = new ActionStatus();
         result.setStatus(ActionStatusEnum.SUCCESS);
         result.setMessage("New query");
@@ -312,6 +350,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
+    	checkPermissionExist();
         Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);
