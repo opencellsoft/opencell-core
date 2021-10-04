@@ -42,6 +42,7 @@ import javax.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.Hibernate;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
@@ -453,14 +454,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         for (Field field : fields) {
             try {
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), item.getClass());
-                if(propertyDescriptor.getReadMethod().invoke(item) instanceof PersistentSet) {
-                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
-                }
-                if(propertyDescriptor.getReadMethod().invoke(item) instanceof PersistentBag) {
-                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
-                }
-                if (propertyDescriptor.getReadMethod().invoke(item) instanceof HibernateProxy) {
-                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
+                Object property = propertyDescriptor.getReadMethod().invoke(item);
+                if(property instanceof PersistentSet || property instanceof PersistentBag) {
+                    ((PersistentBag) property).removeAll((Collection) property);
+                }else if (property instanceof HibernateProxy) {
+                    Hibernate.initialize(property);
+                    Object implementation = ((HibernateProxy)property).getHibernateLazyInitializer().getImplementation();
+                    propertyDescriptor.getWriteMethod().invoke(item, implementation);
                 }
             } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
