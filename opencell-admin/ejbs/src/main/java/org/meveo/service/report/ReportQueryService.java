@@ -397,12 +397,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                             .map(String::valueOf)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
+            String fullFileName = fileName.toString();
             try {
-                createResultFile(data, fileHeader, fileName.toString(), ".csv");
+                fullFileName = createResultFile(data, fileHeader, fileName.toString(), ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fileName.toString(), data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fullFileName, data.size()));
         } else {
             return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
