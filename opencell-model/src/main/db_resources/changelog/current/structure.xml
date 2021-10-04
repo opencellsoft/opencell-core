@@ -9589,5 +9589,11 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
+
+    <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE">
+        <addColumn tableName="query_scheduler">
+            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
