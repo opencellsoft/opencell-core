@@ -36,6 +36,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
     @Override
     public AgedReceivable toResource(AgedReceivableDto agedReceivableDto) {
         return ImmutableAgedReceivable.builder().customerAccountCode(agedReceivableDto.getCustomerAccountCode())
+        		.customerAccountName(agedReceivableDto.getCustomerAccountName())
+        		.dunningLevel(agedReceivableDto.getDunningLevel())
                .notYetDue(agedReceivableDto.getNotYetDue())
                .sum_1_30(agedReceivableDto.getSum1To30())
                .sum_31_60(agedReceivableDto.getSum31To60())
@@ -75,12 +77,22 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 											.add((BigDecimal)agedList[4])
 											.add((BigDecimal)agedList[5]));
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[6]);
-			Name name = (Name) agedList[7];
-			agedReceivableDto.setCustomerAccountName(name!=null ? name.getFirstName()+" "+name.getLastName() : null);
+			agedReceivableDto.setCustomerAccountName(agedList[7]==null?null:getName((Name) agedList[7]));
 			agedReceivableDto.setDueDate(agedList[8]==null?null:((Date) agedList[8]));
+			
 			dtoList.add(agedReceivableDto);
 		} 
 		return dtoList;
+	}
+
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	private String getName(Name name) {
+		return (name.getFirstName() != null ? name.getFirstName() : "")
+				+ (name.getLastName() != null ? " " + name.getLastName() : "");
 	}
 
    

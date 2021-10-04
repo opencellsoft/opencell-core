@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.payments.DunningLevelEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -50,5 +51,9 @@ public interface AgedReceivable extends Resource {
     BigDecimal getGeneral_total();
     @Nullable
     Date dueDate();
+    @Nullable
+    String getCustomerAccountName();
+    @Nullable
+    DunningLevelEnum getDunningLevel();
     
 }

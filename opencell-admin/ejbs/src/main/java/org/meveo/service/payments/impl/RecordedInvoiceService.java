@@ -32,7 +32,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
