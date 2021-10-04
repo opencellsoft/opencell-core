@@ -33,7 +33,6 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
@@ -103,10 +102,11 @@ public class UnitSepaDirectDebitJobBean {
 	 * @throws BusinessException                the business exception
 	 * @throws NoAllOperationUnmatchedException the no all operation unmatched
 	 *                                          exception
-	 * @throws UnbalanceAmountException         the unbalance amount exception
+	 * @throws UnbalanceAmountException         the unbalanced amount exception
 	 */
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	//@JpaAmpNewTx
+	// The separated transaction is disabled to be able to rollback all payment AO if the Sepa file is not well generated. pls refer to ticket: INTRD-1392
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
@@ -116,7 +116,7 @@ public class UnitSepaDirectDebitJobBean {
 		String errorMsg = null;
 		if (!ddrequestItem.hasError()) {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
-				log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
+				log.info("invoice: {}  balanceDue: {}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
@@ -173,6 +173,7 @@ public class UnitSepaDirectDebitJobBean {
 	 * @throws UnbalanceAmountException         the unbalance amount exception
 	 */
 	@SuppressWarnings("unchecked")
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public <T extends AccountOperation> T createPaymentOrRefund(DDRequestItem ddRequestItem, PaymentMethodEnum paymentMethodEnum, BigDecimal amount,
 			CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate,
 			List<AccountOperation> occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
