@@ -129,7 +129,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     	checkPermissionExist();
         Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
-            entity.setGeneratedQuery(generateQuery(entity, targetEntity));
+        	String generatedQuery=generateQuery(entity, targetEntity);
+            entity.setGeneratedQuery(generatedQuery);
             reportQueryService.create(entity, currentUser.getUserName());
             return entity;
         } catch (Exception exception) {
@@ -159,9 +160,9 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
                     .append(" ")
                     .append(entity.getSortOrder() != null ? entity.getSortOrder().getLabel()
                             : SortOrderEnum.ASCENDING.getLabel());
-            return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ") + sortOptions;
+            return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "") + sortOptions;
         }
-        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ");
+        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "");
     }
 
     private String addFields(String query, List<String> fields, String sortBy) {
@@ -220,7 +221,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         entity.setSortBy(toUpdate.getSortBy());
         entity.setSortOrder(toUpdate.getSortOrder());
         try {
-            entity.setGeneratedQuery(generateQuery(entity, targetEntity));
+        	String generatedQuery=generateQuery(entity, targetEntity);
+            entity.setGeneratedQuery(generatedQuery);
             return of(reportQueryService.update(entity));
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
