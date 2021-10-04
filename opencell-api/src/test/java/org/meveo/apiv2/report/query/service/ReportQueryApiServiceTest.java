@@ -52,7 +52,7 @@ public class ReportQueryApiServiceTest {
         reportQuery.setAuditable(auditable);
         Set<String> roles = new HashSet<>();
         roles.add("query_manager");
-
+        when(currentUser.getRoles()).thenReturn(roles);
         when(reportQueryService.findById(any(), any())).thenReturn(reportQuery);
         when(currentUser.getUserName()).thenReturn("opencell.admin");
         when(reportQueryService.findById(any())).thenReturn(reportQuery);
