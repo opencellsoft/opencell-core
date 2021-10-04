@@ -89,7 +89,7 @@ public class SepaDirectDebitAsync {
 	 * @throws BusinessException BusinessException
 	 */
 	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, boolean isToMatching, PaymentStatusEnum paymentStatus, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 

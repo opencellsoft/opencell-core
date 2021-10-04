@@ -196,16 +196,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
 
-							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
-							result.addReport(ddRequestLOT.getRejectedCause());
-							
-							if (StringUtils.isBlank(ddRequestLOT.getRejectedCause())) {
-							    if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-	                                dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
-	                            }
-                            }
+							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
+						    dDRequestLOTService.createPaymentsOrRefundsAndGenerateDDRequestLotFile(ddRequestLOT, ddRequestBuilderInterface, ddrequestLotOp, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
