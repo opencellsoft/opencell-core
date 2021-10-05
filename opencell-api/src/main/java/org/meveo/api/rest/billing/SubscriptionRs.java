@@ -662,7 +662,7 @@ public interface SubscriptionRs extends IBaseRs {
 				)}
 	)
     GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
-            @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
+            @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
 
     /**
      * Returns a list of service instances.
@@ -687,7 +687,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.
@@ -713,7 +713,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
+    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
     /**
@@ -761,7 +761,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
+    ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
     
     /**
      * Activate a given Subscription.
@@ -829,7 +829,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
+    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
 
     /**
      * Create a subscription and activate services in a single transaction.
