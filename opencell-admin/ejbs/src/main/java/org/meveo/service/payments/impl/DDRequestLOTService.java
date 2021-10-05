@@ -266,7 +266,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Boolean isToMatching, PaymentStatusEnum paymentStatus, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());

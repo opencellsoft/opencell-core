@@ -37,6 +37,7 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
@@ -113,8 +114,7 @@ public class UnitSepaDirectDebitJobBean {
 	 *                                          exception
 	 * @throws UnbalanceAmountException         the unbalance amount exception
 	 */
-	//@JpaAmpNewTx
-    // The separated transaction is disabled to be able to rollback all payment AO if the Sepa file is not well generated. pls refer to ticket: INTRD-1392
+	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
@@ -182,7 +182,6 @@ public class UnitSepaDirectDebitJobBean {
 	 * @throws UnbalanceAmountException         the unbalanced amount exception
 	 */
 	@SuppressWarnings("unchecked")
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public <T extends AccountOperation> T createPaymentOrRefund(DDRequestItem ddRequestItem, PaymentMethodEnum paymentMethodEnum, BigDecimal amount,
 			CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate,
 			List<AccountOperation> occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
