@@ -19,6 +19,7 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,9 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -468,5 +471,26 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     public List<Long> queryInvoiceIdsForPS() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, PaginationConfiguration paginationConfiguration) {
+        
+    	String datePattern = "yyyy-MM-dd";
+        
+        QueryBuilder qb = new QueryBuilder("Select ao.customerAccount.code,sum (case when ao.dueDate > '"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amount else 0 end ) as notYetDue,  "
+        		+ "sum (case when ao.dueDate <= '"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amount else 0 end ) as sum_1_30, "
+        		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.amount else 0 end ) as sum_31_60, "
+        		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.amount else 0 end ) as sum_61_90, "
+        		+ " (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amount else 0 end ) as sum_90_up,"
+        		+" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.dueDate "
+        		+ "from " + RecordedInvoice.class.getSimpleName()+" as ao"); 
+        if(customerAccount != null) {
+        	qb.addCriterionEntity("customerAccount", customerAccount);
+        }
+        qb.addGroupCriterion("ao.customerAccount.code, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.dueDate, ao.amount");
+        qb.addPaginationConfiguration(paginationConfiguration);
+        
+        return qb.getQuery(getEntityManager()).getResultList();
     }
 }

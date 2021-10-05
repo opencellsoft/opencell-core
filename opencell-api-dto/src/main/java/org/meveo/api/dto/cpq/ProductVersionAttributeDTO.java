@@ -2,47 +2,69 @@ package org.meveo.api.dto.cpq;
 
 
 import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
+
+import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.ProductVersionAttribute;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @author Tarik FAKHOURI
  *
  */
 public class ProductVersionAttributeDTO {
-    @Schema(description = "Id of product version", required = true)
-    @NotNull
-    private Long productVersionId;
+	
     @Schema(description = "Code of attribute", required = true)
     @NotNull
-    private AttributeDTO attributeDto;
+    private String attributeCode;
+    
     @Schema(description = "attribute order in the GUI")
     private Integer sequence = 0;
 
     @Schema(description = "Indicate if the attribute has a mandatory EL")
     private String mandatoryWithEl;
+
+    @Schema(description = "indicate if the attribute is read only")
+    protected boolean readOnly = Boolean.FALSE;
     
+    @Schema(description = "default value for attribute")
+    protected String defaultValue;
+
+	@Schema(description = "Validation type", example = "Possible value are: EL, REGEX")
+	protected AttributeValidationType validationType;
+
+	@Schema(description = "Validation pattern")
+	protected String validationPattern;
+
+	@Schema(description = "Validation label")
+	protected String validationLabel;
+    /**
+     * Mandatory
+     */
+    @NotNull
+    @Schema(description = "indicate if the attribute is mandatory")
+    protected boolean mandatory=Boolean.FALSE;
+	  /**
+     * Display
+     */
+    @Schema(description = "diplay the attribute")
+    protected boolean display;
     
     public ProductVersionAttributeDTO() {
         super();
     }
     public ProductVersionAttributeDTO(ProductVersionAttribute pva) {
-        this.productVersionId = pva.getProductVersion().getId();
-        this.attributeDto = new AttributeDTO(pva.getAttribute());
+        
+        if(pva.getAttribute() != null)
+        	this.attributeCode = pva.getAttribute().getCode();
         this.sequence = pva.getSequence();
         this.mandatoryWithEl = pva.getMandatoryWithEl();
-    }
-    /**
-     * @return the productVersionId
-     */
-    public Long getProductVersionId() {
-        return productVersionId;
-    }
-    /**
-     * @param productVersionId the productVersionId to set
-     */
-    public void setProductVersionId(Long productVersionId) {
-        this.productVersionId = productVersionId;
+        mandatory=pva.isMandatory();
+        display=pva.isDisplay();
+        readOnly = pva.getReadOnly();
+        defaultValue = pva.getDefaultValue();
     }
     /**
      * @return the sequence
@@ -56,34 +78,6 @@ public class ProductVersionAttributeDTO {
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
-    @Override
-    public int hashCode() {
-        return Objects.hash(attributeDto, productVersionId, sequence);
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ProductVersionAttributeDTO other = (ProductVersionAttributeDTO) obj;
-        return Objects.equals(attributeDto, other.attributeDto)
-                && Objects.equals(productVersionId, other.productVersionId) && Objects.equals(sequence, other.sequence);
-    }
-    /**
-     * @return the attributeDto
-     */
-    public AttributeDTO getAttributeDto() {
-        return attributeDto;
-    }
-    /**
-     * @param attributeDto the attributeDto to set
-     */
-    public void setAttributeDto(AttributeDTO attributeDto) {
-        this.attributeDto = attributeDto;
-    }
 	/**
 	 * @return the mandatoryWithEl
 	 */
@@ -95,5 +89,119 @@ public class ProductVersionAttributeDTO {
 	 */
 	public void setMandatoryWithEl(String mandatoryWithEl) {
 		this.mandatoryWithEl = mandatoryWithEl;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductVersionAttributeDTO other = (ProductVersionAttributeDTO) obj;
+		return Objects.equals(attributeCode, other.attributeCode)
+				&& Objects.equals(mandatoryWithEl, other.mandatoryWithEl) && Objects.equals(sequence, other.sequence);
+	}
+
+    @Override
+	public int hashCode() {
+		return Objects.hash(attributeCode, mandatoryWithEl, sequence);
+	}
+	/**
+	 * @return the attributeCode
+	 */
+	public String getAttributeCode() {
+		return attributeCode;
+	}
+	/**
+	 * @param attributeCode the attributeCode to set
+	 */
+	public void setAttributeCode(String attributeCode) {
+		this.attributeCode = attributeCode;
+	}
+	/**
+	 * @return the readOnly
+	 */
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+	/**
+	 * @param readOnly the readOnly to set
+	 */
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+	/**
+	 * @return the defaultValue
+	 */
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+	/**
+	 * @param defaultValue the defaultValue to set
+	 */
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+	/**
+	 * @return the validationType
+	 */
+	public AttributeValidationType getValidationType() {
+		return validationType;
+	}
+	/**
+	 * @param validationType the validationType to set
+	 */
+	public void setValidationType(AttributeValidationType validationType) {
+		this.validationType = validationType;
+	}
+	/**
+	 * @return the validationPattern
+	 */
+	public String getValidationPattern() {
+		return validationPattern;
+	}
+	/**
+	 * @param validationPattern the validationPattern to set
+	 */
+	public void setValidationPattern(String validationPattern) {
+		this.validationPattern = validationPattern;
+	}
+	/**
+	 * @return the validationLabel
+	 */
+	public String getValidationLabel() {
+		return validationLabel;
+	}
+	/**
+	 * @param validationLabel the validationLabel to set
+	 */
+	public void setValidationLabel(String validationLabel) {
+		this.validationLabel = validationLabel;
+	}
+	/**
+	 * @return the mandatory
+	 */
+	public boolean isMandatory() {
+		return mandatory;
+	}
+	/**
+	 * @param mandatory the mandatory to set
+	 */
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+	/**
+	 * @return the display
+	 */
+	public boolean isDisplay() {
+		return display;
+	}
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(boolean display) {
+		this.display = display;
 	}
 }

@@ -21,15 +21,15 @@ public interface CardRefund {
     @Nullable
     String getCvv();
     @Nullable
-    String getExpiryDate();
+    Date getExpiryDate();
     @Nullable
     String getCardType();
     @Nullable
     Date getDueDate();
     @Nullable
     List<Long> getAoToPay();
-    @Value.Default default boolean isCreateAO(){return false;}
-    @Value.Default default boolean isToMatch(){return false;}
+    @Value.Default default boolean createAO(){return false;}
+    @Value.Default default boolean toMatch(){return false;}
     @Nullable
     String getComment();
 }

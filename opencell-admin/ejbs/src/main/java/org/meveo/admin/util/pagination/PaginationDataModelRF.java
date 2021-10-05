@@ -36,7 +36,7 @@ import org.meveo.model.IEntity;
 //import org.richfaces.model.ArrangeableState;
 //import org.richfaces.model.FilterField;
 //import org.richfaces.model.SortField;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * Pagination model implementation. To make sorting work, initiate object with sorting options.
@@ -91,7 +91,7 @@ public abstract class PaginationDataModelRF<T> extends DataModel<T> implements S
         super();
 
         for (String fieldName : unsortedFields) {
-            sortOrders.put(fieldName, SortOrder.UNSORTED);
+            sortOrders.put(fieldName, SortOrder.ASCENDING);
         }
 
         if (defaultSortField != null && defaultSortField.length() > 0) {

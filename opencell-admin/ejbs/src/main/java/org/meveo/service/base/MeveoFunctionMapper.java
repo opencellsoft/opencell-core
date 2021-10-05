@@ -1932,11 +1932,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
     		if(!quoteProduct.getQuoteAttributes().isEmpty())
     			quoteAttribute=quoteProduct.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
     	}else {
-    		QuoteOffer quoteOffer =QuoteOffertService().findByQuoteVersionAndOffer(quoteVersionId, offerCode);
+    		QuoteOffer quoteOffer =QuoteOffertService().findByCodeAndQuoteVersion(offerCode, quoteVersionId);
     		if(!quoteOffer.getQuoteAttributes().isEmpty())
     			quoteAttribute= quoteOffer.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
     	}
-    	if(attribute.getAttributeType()!=null) {
+    	if(attribute.getAttributeType()!=null && quoteAttribute.isPresent()) {
     		switch (attribute.getAttributeType()) {
 			case TOTAL :
 			case COUNT :

@@ -35,7 +35,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.cpq.AttributeApi;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
@@ -46,9 +45,9 @@ import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -88,6 +87,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -115,7 +115,7 @@ import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -413,7 +413,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
-        processAttributes(postData, offerTemplate);
+        processTemplateAttribute(postData, offerTemplate);
         processMedias(postData, offerTemplate);
         processCommercialRule(postData, offerTemplate);
         try {
@@ -459,13 +459,30 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
     }
     
-    private void processAttributes(OfferTemplateDto postData, OfferTemplate offerTemplate) {
-        List<AttributeDTO> attributes = postData.getAttributes();
-        offerTemplate.getAttributes().clear();
-        if(attributes != null && !attributes.isEmpty()){
-            offerTemplate.setAttributes(attributes
+    private void processTemplateAttribute(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+        List<OfferTemplateAttributeDTO> offerAttributes = postData.getOfferAttributes();
+        offerTemplate.getOfferAttributes().clear();
+        if(offerAttributes != null && !offerAttributes.isEmpty()){
+            offerTemplate.getOfferAttributes().addAll(offerAttributes
                     .stream()
-                    .map(attributeDTO -> attributeService.findByCode(attributeDTO.getCode()))
+                    .map(offerAttributeDto -> {
+                    	var attribute = attributeService.findByCode(offerAttributeDto.getAttributeCode());
+                    	if(attribute == null)
+                    		throw new EntityDoesNotExistsException(Attribute.class, offerAttributeDto.getAttributeCode());
+                    	var templateAttribute =  new OfferTemplateAttribute();
+                    	templateAttribute.setOfferTemplate(offerTemplate);
+                    	templateAttribute.setAttribute(attribute);
+                    	templateAttribute.setMandatoryWithEl(offerAttributeDto.getMandatoryWithEl());
+                    	templateAttribute.setSequence(offerAttributeDto.getSequence());
+                    	templateAttribute.setDisplay(offerAttributeDto.isDisplay());
+                    	templateAttribute.setReadOnly(offerAttributeDto.isReadOnly());
+                    	templateAttribute.setMandatory(offerAttributeDto.isMandatory());
+                    	templateAttribute.setDefaultValue(offerAttributeDto.getDefaultValue());
+                    	templateAttribute.setValidationLabel(offerAttributeDto.getValidationLabel());
+                    	templateAttribute.setValidationPattern(offerAttributeDto.getValidationPattern());
+                    	templateAttribute.setValidationType(offerAttributeDto.getValidationType());
+                    	return templateAttribute;
+                    })
                     .collect(Collectors.toList()));
         }
     }
@@ -812,7 +829,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                                                     .stream()
                                                     .map(ProductVersionAttributeDTO::new)
                                                     .collect(Collectors.toSet());  
-		    									getProductVersionResponse.setAttributes(attributes);
+		    									getProductVersionResponse.setProductAttributes(attributes);
         									}
         								productDTO.setCurrentProductVersion(getProductVersionResponse);
         								}
@@ -847,14 +864,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         } 
         if(loadAttributes) {
-            List<Attribute> attributes = offerTemplate.getAttributes();
-            if (attributes != null && !attributes.isEmpty()) {
-                List<AttributeDTO> attributesDto = new ArrayList<>();
-                for (Attribute attribute : attributes) {
-                    attributesDto.add(new AttributeDTO(attribute, entityToDtoConverter.getCustomFieldsDTO(attribute)));
-                }
-                dto.setAttributes(attributesDto);
-            }
+        	dto.setOfferAttributes(offerTemplate.getOfferAttributes().stream().map(OfferTemplateAttributeDTO::new).collect(Collectors.toList()));
         } 
         return dto;
     }

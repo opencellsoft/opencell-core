@@ -104,7 +104,7 @@
         <createSequence sequenceName="billing_invoice_seq" />
         <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3" />
         <createSequence sequenceName="billing_invoice_template_seq" />
-        <createSequence sequenceName="billing_rated_transaction_seq" />
+        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="500" />
         <createSequence sequenceName="billing_rejected_ba_seq" />
         <createSequence sequenceName="billing_reservation_seq" />
         <createSequence sequenceName="billing_service_instance_seq" />
@@ -158,7 +158,7 @@
         <createSequence sequenceName="job_execution_seq" />
         <createSequence sequenceName="medina_access_seq" />
         <createSequence sequenceName="meveo_timer_seq" startValue="2" />
-        <createSequence sequenceName="rating_edr_seq" />
+        <createSequence sequenceName="rating_edr_seq" incrementBy="500" />
         <createSequence sequenceName="rm_service_param_template_seq" />
         <createSequence sequenceName="billing_invoice_configuration_seq" startValue="2" />
         <createSequence sequenceName="ar_credit_category_seq" startValue="6" />
@@ -233,7 +233,7 @@
         <createSequence sequenceName="flat_file_seq" startValue="1" />
         <createSequence sequenceName="ar_accounting_writing_seq"/>
         <createSequence sequenceName="adm_file_type_seq"/>
-        <createSequence sequenceName="rating_cdr_seq" />
+        <createSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
         <createSequence sequenceName="billing_tax_category_seq" startValue="1" />
         <createSequence sequenceName="billing_tax_class_seq" startValue="1" />
         <createSequence sequenceName="billing_tax_mapping_seq" startValue="1" />
@@ -2010,7 +2010,6 @@
             <column name="payment_fees" type="numeric(23, 12)" />
             <column name="comment" type="${type.longtext}" />
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="recorded_invoice_id" type="bigint" />
             <column name="cat_inv_agregate_id" type="bigint" />
             <column name="ddrequest_item_id" type="bigint" />
@@ -3617,6 +3616,8 @@
             <column name="product_version_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
             <column name="old_wallet_id" type="bigint" />
+            <column name="user_account_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -8855,7 +8856,6 @@
             <column name="short_description" type="varchar(255)"/>
             <column name="invoicing_plan_id" type="bigint"/>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
             	<constraints unique="true" uniqueConstraintName="cpq_quote_version_uuid_unique"/>
             </column>
@@ -8915,7 +8915,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
 
@@ -9147,6 +9146,8 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9173,21 +9174,9 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="parent_id" type="bigint" />
-            <column name="mandatory" type="${type.boolean}" >
-                <constraints nullable="false"/>
-            </column>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
-            <column name="sequence" type="int4" />
-            <column name="display" type="${type.boolean}" >
-                <constraints nullable="false"/>
-            </column>
             <column name="attribute_type" type="varchar(100)" />
             <column name="unit_nb_decimal" type="int4" />
-            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="default_value" type="varchar(255)"></column>
-            <column name="validation_type" type="varchar(10)" />
-            <column name="validation_pattern" type="varchar(2000)" />
-            <column name="validation_label" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-458" author="NabilOUACHI">
@@ -9252,10 +9241,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="priority" type="int4" />
-            <column name="display" type="${type.boolean}" >
-                <constraints nullable="false"/>
-            </column>
     		<column name="mandatorwith_el" type="varchar(255)"/>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
         </createTable>
         <!--
     	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
@@ -9836,6 +9828,8 @@
             <column name="cf_values" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="quote_offer_id" type="bigint"/>
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-482" author="NabilOUACHI">
@@ -10088,6 +10082,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="aggregate_id_f" type="bigint" />
+            <column name="cpq_quote_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -10437,6 +10432,16 @@
             <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="rebuild-str-tbl-430" author="AndriusKarpavicius">  
+        <createTable tableName="billing_wallet_operation_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wo_pending_pk"/>
+            </column>
+            <column name="rated_transaction_id" type="bigint" />
+        </createTable>
+    </changeSet>
+    
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -14129,6 +14134,12 @@
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
+    
+      <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -14486,12 +14497,13 @@
             <column name="every_second" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_instance_id" type="bigint" />
             <column name="report_query_id" type="bigint" />
+            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_scheduler" constraintName="fk_report_query_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="query_scheduler" constraintName="fk_job_instance_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="meveo_job_instance" />
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
         	referencedColumnNames="id" referencedTableName="query_scheduler" />
         
         <createTable tableName="query_scheduler_users">
@@ -14503,7 +14515,7 @@
             </column>
 		</createTable>
 		<addPrimaryKey columnNames="query_scheduler_id, user_id" constraintName="adm_query_scheduler_user_pkey" tableName="query_scheduler_users" />
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_usr_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="query_scheduler_users" constraintName="fk_user_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
         						onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
@@ -14822,7 +14834,7 @@
         <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_account_operation" constraintName="fk_journal_account_operation_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="journal" /> 
     </changeSet>
-    
+
     <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
 	    <createSequence sequenceName="collection_plan_status_seq"/>
     	<createTable tableName="collection_plan_status">
@@ -14850,9 +14862,43 @@
     							 referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="INTRD-1901_20210920_build" author="TarikFA.">
+    	<createSequence sequenceName="offer_template_attribute_seq"/>
+    	<createTable tableName="offer_template_attribute">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_offer_template_attribute_pk"/>
+            </column>
+            <column name="version" type="int4" defaultValue="0" />
+    		<column name="mandatorwith_el" type="varchar(255)"/>
+            <column name="offer_template_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+    	</createTable>
+    	
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_offer_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+                                 
+    </changeSet>
+
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
-	<changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
+	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
 
@@ -15904,6 +15950,20 @@
     <changeSet id="INTRD_1629_20210914" author="TarikFA." />
     <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-1581_20210902" author="AbdelkaderBouazza"/>
+    <changeSet id="INTRD-1901_20210920" author="TarikFA." />
+    <changeSet id="INTRD_1782_20210913" author="TarikFA." />
+    <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql"/>
+    <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql"/>
+    <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius"/>
+    <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
+ 	<changeSet id="INTRD-1924_20210922" author="TarikFA." />
+   	<changeSet id="INTRD_1985_20210923" author="TarikFA." />
+    <changeSet id="INTRD-1925_20210922" author="TarikFA." />
+    <changeSet id="INTRD_1794_20210917" author="TarikFA." />
+    <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE"/>
     
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

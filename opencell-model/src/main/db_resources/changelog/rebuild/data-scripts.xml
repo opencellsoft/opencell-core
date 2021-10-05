@@ -1,0 +1,2582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-decisionRule">
+        <insert tableName="wf_decision_rule">
+            <column name="id" valueNumeric="1" />
+            <column name="version" valueNumeric="0" />
+            <column name="condition_el" value="#{mv:getCFValue(entity,'Territory')==_VALUE_}" />
+            <column name="name" value="Territory" />
+            <column name="type" value="STRING" />
+            <column name="value" value="Other" />
+            <column name="model" valueNumeric="1" />
+        </insert>
+        <insert tableName="wf_decision_rule">
+            <column name="id" valueNumeric="2" />
+            <column name="version" valueNumeric="0" />
+            <column name="condition_el" value="#{mv:getCFValue(entity,'Territory')==_VALUE_}" />
+            <column name="name" value="Territory" />
+            <column name="type" value="STRING" />
+            <column name="value" value="south" />
+            <column name="model" valueNumeric="0" />
+        </insert>
+        <insert tableName="wf_decision_rule">
+            <column name="id" valueNumeric="3" />
+            <column name="version" valueNumeric="0" />
+            <column name="condition_el" value="#{mv:getCFValue(entity,'Territory')==_VALUE_}" />
+            <column name="name" value="Territory" />
+            <column name="type" value="STRING" />
+            <column name="value" value="west" />
+            <column name="model" valueNumeric="1" />
+        </insert>
+        <insert tableName="wf_decision_rule">
+            <column name="id" valueNumeric="4" />
+            <column name="version" valueNumeric="0" />
+            <column name="condition_el" value="#{mv:getCFValue(entity,'Territory')==_VALUE_}" />
+            <column name="name" value="Territory" />
+            <column name="type" value="STRING" />
+            <column name="value" value="north" />
+            <column name="model" valueNumeric="0" />
+        </insert>
+        <insert tableName="wf_decision_rule">
+            <column name="id" valueNumeric="5" />
+            <column name="version" valueNumeric="0" />
+            <column name="condition_el" value="#{mv:getCFValue(entity,'SalesAmount')==_VALUE_}" />
+            <column name="name" value="Sales amount" />
+            <column name="type" value="STRING" />
+            <column name="value" value="Other" />
+            <column name="model" valueNumeric="1" />
+        </insert>
+        <insert tableName="wf_decision_rule">
+            <column name="id" valueNumeric="6" />
+            <column name="version" valueNumeric="0" />
+            <column name="condition_el" value="#{mv:getCFValue(entity,'AccountType')==_VALUE_}" />
+            <column name="name" value="Account Type" />
+            <column name="type" value="STRING" />
+            <column name="value" value="Other" />
+            <column name="model" valueNumeric="1" />
+        </insert>
+    </changeSet>
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-paymentGateway">
+        <insert tableName="ar_payment_gateway">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="INGENICO_OGONE_SEPA" />
+            <column name="description" value="Ingenico API Connect OGONE for Sepa payments" />
+            <column name="type" value="NATIF" />
+            <column name="payment_method" value="DIRECTDEBIT" />
+            <column name="country_id" valueNumeric="70" />
+            <column name="implementation_class_name" value="org.meveo.service.payments.impl.IngenicoGatewayPayment" />
+            <column name="uuid" value="gateway_INGENICO_ONGONE" />
+        </insert>
+        <insert tableName="ar_payment_gateway">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SLIMPAY_SEPA" />
+            <column name="description" value="Slimpay for Sepa payments" />
+            <column name="type" value="NATIF" />
+            <column name="payment_method" value="DIRECTDEBIT" />
+            <column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
+            <column name="country_id" valueNumeric="220" />
+            <column name="uuid" value="gateway_SLIMPAY" />
+        </insert>
+        <insert tableName="ar_payment_gateway">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="INGENICO_OGONE_CARD" />
+            <column name="description" value="Ingenico API Connect OGONE for Card payments" />
+            <column name="type" value="NATIF" />
+            <column name="payment_method" value="CARD" />
+            <column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
+            <column name="trading_currency_id" value="-2" /><!-- EUR -->
+            <column name="uuid" value="gateway_SLIMPAY" />
+        </insert>
+        <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="CARD" />
+        </insert>
+        <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="DIRECTDEBIT" />
+        </insert>
+        <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="PAYPAL" />
+        </insert>
+        <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="STRIPE" />
+        </insert>      
+    </changeSet>
+    
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-payment-gateway">
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script)
+        VALUES (-10, 0, 0,  ${db.current.time}, 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', 'package org.meveo.service.script.demo;
+
+import java.io.StringReader;
+import java.util.Map;
+import javax.xml.xpath.*;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.*;
+import org.meveo.service.script.payment.PaymentScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
+/**
+ * @author anasseh
+ */
+public class CustomGatewayPaymentScript extends PaymentScript{
+    private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
+
+    public void createCardToken(Map<String, Object> methodContext) throws BusinessException {           
+        methodContext.put(PaymentScript.RESULT_TOKEN, "7ced0000-3ab2-000d-6a50-08d4b8a6"+(int )(Math.random() * 1000 + 1));
+    }
+    public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "PAL");
+    }
+    public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD");
+    }
+    private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
+        try{
+            log.debug("EXECUTE  methodContext {} ", methodContext);
+            Long amountCts = (Long)methodContext.get(PaymentScript.CONTEXT_AMOUNT_CTS);
+            if(amountCts == null){
+                throw new BusinessException("amountCts is null");
+            }
+            CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+            if(paymentToken == null){
+                throw new BusinessException("paymentMethod is null");
+            }
+            String body  = "{";
+            body  += " \"PSPID\" : \"PSPID\" ,";
+            body  += " \"USERID\" : \"USERID\" ,";
+            body  += " \"PSWD\" : \"PSWD\" ,";
+            body  += " \"REFKIND\" :  \"PSPID\" ,";
+            body  += " \"REFID\" : \"PSPID\" ,";
+            body  += " \"OPERATION\" : \""+operationType +"\" ,";
+            body  += " \"AMOUNT\" : \""+amountCts.longValue()+"\" ,";
+            body  += " \"CURRENCY\" : \""+paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode()+"\" ,";
+            body  += " \"TRANSACTIONID\" : \""+paymentToken.getTokenId()+"\" ,";
+            body  += " \"SHASIGN\" : \"SHASIGN\" ,";
+            body  += " }";
+            String paymentResponse = "<root>";
+            paymentResponse += "<STATUS>92</STATUS>";
+            paymentResponse += "<PAYID>"+((int )(Math.random() * 100000 + 1))+"</PAYID>"; 
+            paymentResponse += "<TRANSACTIONID>92</TRANSACTIONID>";
+            paymentResponse += "<CRMTOKEN>clientSide</CRMTOKEN>"; 
+            paymentResponse += "<BRAND>VISA</BRAND>";
+            paymentResponse += "<ACCEPTENCE>bankRef</ACCEPTENCE>"; 
+            paymentResponse += "</root>";
+            methodContext.put(PaymentScript.RESULT_PAYMENT_STATUS, PaymentStatusEnum.PENDING);
+            methodContext.put(PaymentScript.RESULT_PAYMENT_ID, getValue(paymentResponse,"/root/PAYID"));
+            methodContext.put(PaymentScript.RESULT_TRANSACTION_ID, getValue(paymentResponse,"/root/TRANSACTIONID"));
+            methodContext.put(PaymentScript.RESULT_CODE_CLIENT_SIDE, getValue(paymentResponse,"/root/CRMTOKEN"));
+            methodContext.put(PaymentScript.RESULT_PAYMENT_BRAND, getValue(paymentResponse,"/root/BRAND"));
+            methodContext.put(PaymentScript.RESULT_BANK_REFERENCE, getValue(paymentResponse,"/root/ACCEPTENCE"));           
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+    private String getValue(String sourceXML,String expression) throws XPathExpressionException{        
+        InputSource iSource = new InputSource(new StringReader(sourceXML));
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();      
+        return xpath.evaluate(expression, iSource);         
+    }
+}');]]></sql>
+
+        <sql dbms="mysql"><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0,  ${db.current.time}, 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
+            package org.meveo.service.script.demo;
+
+import java.io.StringReader;
+import java.util.Map;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.script.payment.PaymentScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
+/**
+ *
+ * @author anasseh
+ *
+ */
+
+public class CustomGatewayPaymentScript extends PaymentScript{
+
+    private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
+
+    @Override
+    public void createCardToken(Map<String, Object> methodContext) throws BusinessException {
+        methodContext.put(PaymentScript.RESULT_TOKEN, "7ced0000-3ab2-000d-6a50-08d4b8a6"+(int )(Math.random() * 1000 + 1));
+    }
+
+    @Override
+    public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "PAL");
+    }
+
+    @Override
+    public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD");
+    }
+
+
+
+    private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
+        try{
+            log.debug("EXECUTE  methodContext {} ", methodContext);
+            Long amountCts = (Long)methodContext.get(PaymentScript.CONTEXT_AMOUNT_CTS);
+            if(amountCts == null){
+                throw new BusinessException("amountCts is null");
+            }
+            CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+            if(paymentToken == null){
+                throw new BusinessException("paymentMethod is null");
+            }
+
+            String body  = "{";
+            body  += " \\"PSPID\\" : \\"PSPID\\" ,";
+            body  += " \\"USERID\\" : \\"USERID\\" ,";
+            body  += " \\"PSWD\\" : \\"PSWD\\" ,";
+            body  += " \\"REFKIND\\" :  \\"PSPID\\" ,";
+            body  += " \\"REFID\\" : \\"PSPID\\" ,";
+            body  += " \\"OPERATION\\" : \\""+operationType +"\\" ,";
+            body  += " \\"AMOUNT\\" : \\""+amountCts.longValue()+"\\" ,";
+            body  += " \\"CURRENCY\\" : \\""+paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode()+"\\" ,";
+            body  += " \\"TRANSACTIONID\\" : \\""+paymentToken.getTokenId()+"\\" ,";
+            body  += " \\"SHASIGN\\" : \\"SHASIGN\\" ,";
+            body  += " }";
+            log.debug("request body {} ", body);
+/*          invoke here the real webService.
+
+*/
+            String paymentResponse = "<root>";
+            paymentResponse += "<STATUS>92</STATUS>";
+            paymentResponse += "<PAYID>"+((int )(Math.random() * 100000 + 1))+"</PAYID>";
+            paymentResponse += "<TRANSACTIONID>92</TRANSACTIONID>";
+            paymentResponse += "<CRMTOKEN>clientSide</CRMTOKEN>";
+            paymentResponse += "<BRAND>VISA</BRAND>";
+            paymentResponse += "<ACCEPTENCE>bankRef</ACCEPTENCE>";
+            paymentResponse += "</root>";
+            methodContext.put(PaymentScript.RESULT_PAYMENT_STATUS, PaymentStatusEnum.PENDING);
+            methodContext.put(PaymentScript.RESULT_PAYMENT_ID, getValue(paymentResponse,"/root/PAYID"));
+            methodContext.put(PaymentScript.RESULT_TRANSACTION_ID, getValue(paymentResponse,"/root/TRANSACTIONID"));
+            methodContext.put(PaymentScript.RESULT_CODE_CLIENT_SIDE, getValue(paymentResponse,"/root/CRMTOKEN"));
+            methodContext.put(PaymentScript.RESULT_PAYMENT_BRAND, getValue(paymentResponse,"/root/BRAND"));
+            methodContext.put(PaymentScript.RESULT_BANK_REFERENCE, getValue(paymentResponse,"/root/ACCEPTENCE"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private String getValue(String sourceXML,String expression) throws XPathExpressionException{
+        InputSource iSource = new InputSource(new StringReader(sourceXML));
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
+        return xpath.evaluate(expression, iSource);
+    }
+}
+        ');]]></sql>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-11  , 0, 0,  ${db.current.time}, 'org.meveo.service.script.demo.PaymentCallBackScript', 'PaymentCallBackScript', 'JAVA', '
+            package org.meveo.service.script.smoove;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.payments.impl.PaymentService;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 
+ * @author anasseh
+ *
+ *         Script executed after a payment callBack (inbound request), if the payment is rejected , the invoice matching is removed and a new is created with a the new reject
+ *         payment account operation
+ *
+ */
+
+public class PaymentCallBackScript extends Script {
+
+    private static final Logger log = LoggerFactory.getLogger(PaymentCallBackScript.class);
+    private PaymentService paymentService = (PaymentService) getServiceInterface("PaymentService");
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        log.debug("EXECUTE  methodContext {} ", methodContext);
+        @SuppressWarnings("unchecked")
+        Map<String, String> params = (Map<String, String>) methodContext.get("params");
+        log.info("params:" + params);
+        if (params.get("STATUS") == null) {
+            throw new BusinessException("Parameter STATUS is required");
+        }
+        if (params.get("PAYID") == null) {
+            throw new BusinessException("Parameter PAYID is required");
+        }
+        PaymentStatusEnum paymentStatus = PaymentStatusEnum.ACCEPTED;
+        if (!"9".equals(params.get("STATUS"))) {
+            paymentStatus = PaymentStatusEnum.REJECTED;
+        }
+        paymentService.paymentCallback(params.get("PAYID"), paymentStatus, params.get("NCERROR"), params.get("NCERROR"));
+    }
+
+}
+        ');]]></sql>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway (id, version, disabled, created, updated, code, description, type, payment_method, card_type,
+        implementation_class_name, script_instance_id, trading_currency_id, application_el, uuid, creator) VALUES (-10, 0, 0,  ${db.current.time}, NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
+          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin');]]></sql>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification (id, version, disabled, created, updated, code, description, class_name_filter, event_expression_filter, event_type_filter, creator, updater, counter_instance_id, counter_template_id, script_instance_id, priority) VALUES (-10, 0, 0,  ${db.current.time}, NULL, 'PaymentCallBack', NULL, 'org.meveo.model.notification.InboundRequest',
+          '#{event.pathInfo.startsWith("/DEMO/custom_payment-callback?")}', 'INBOUND_REQ', 'opencell.admin', NULL, NULL, NULL, -11, 0);]]></sql>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification_params VALUES (-10, '#{event.getParameters()}', 'params');]]></sql>
+        <sql><![CDATA[ UPDATE ${db.schema.adapted}ar_payment_gateway set application_el ='#{"is already setup" eq "OK"}' where code <> 'customGatewayDemo';]]></sql>
+
+    </changeSet>
+    
+    
+    <changeSet author="ZBARIKI" id="#6048_20210326" dbms="postgresql">
+        <sql><![CDATA[UPDATE ${db.schema.adapted}meveo_script_instance SET
+            script = 'package org.meveo.service.script;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections4.MapUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.crm.Customer;
+import org.meveo.service.base.BusinessEntityService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.CounterPeriodService;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.RejectedBillingAccountService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.order.OrderItemService;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.MatchingAmountService;
+import org.meveo.service.payments.impl.PaymentHistoryService;
+import org.meveo.service.script.Script;
+
+/**
+ *
+ * @author Said Ramli
+ */
+@SuppressWarnings({ "unchecked", "unused" })
+public class DeleteCustomersScript extends Script {
+
+    private final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
+            AccountOperationService.class.getSimpleName());
+    private final CustomerService customerService = (CustomerService) getServiceInterface(
+            CustomerService.class.getSimpleName());
+    private final InvoiceService invoiceService = (InvoiceService) getServiceInterface(
+            InvoiceService.class.getSimpleName());
+    private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(
+            SubscriptionService.class.getSimpleName());
+    private final RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(
+            RatedTransactionService.class.getSimpleName());
+    private final WalletService walletService = (WalletService) getServiceInterface(
+            WalletService.class.getSimpleName());
+    private final RejectedBillingAccountService rejectedBillingAccountService = (RejectedBillingAccountService) getServiceInterface(
+            RejectedBillingAccountService.class.getSimpleName());
+    private final CounterInstanceService counterInstanceService = (CounterInstanceService) getServiceInterface(
+            CounterInstanceService.class.getSimpleName());
+    private final CounterPeriodService counterPeriodService = (CounterPeriodService) getServiceInterface(
+            CounterPeriodService.class.getSimpleName());
+    private final OrderItemService orderItemService = (OrderItemService) getServiceInterface(
+            OrderItemService.class.getSimpleName());
+    private final ProductInstanceService productInstanceService = (ProductInstanceService) getServiceInterface(
+            ProductInstanceService.class.getSimpleName());
+    private final BusinessEntityService businessEntityService = (BusinessEntityService) getServiceInterface(
+            BusinessEntityService.class.getSimpleName());
+    private final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
+            WalletOperationService.class.getSimpleName());
+    private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
+            ServiceInstanceService.class.getSimpleName());
+
+    private final PaymentHistoryService paymentHistoryService = (PaymentHistoryService) getServiceInterface(
+            PaymentHistoryService.class.getSimpleName());
+
+    private final EdrService edrService = (EdrService) getServiceInterface(EdrService.class.getSimpleName());
+
+    @SuppressWarnings("rawtypes")
+    private final ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(
+            ChargeInstanceService.class.getSimpleName());
+
+    private static final List<String> noCheckAllowedValues = Arrays.asList("0", "1");
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+        log.debug(" >>> execute {} ", methodContext.entrySet());
+
+        try {
+
+            Map<String, String> record = (Map<String, String>) methodContext.get("RECORD");
+            if (MapUtils.isEmpty(record)) {
+                throw new BusinessException(String.format("Parameter RECORD is missing"));
+            }
+
+            final String customerCode = record.get("customerCode");
+            Customer customer = customerService.findByCode(customerCode);
+            if (customer == null) {
+                throw new BusinessException(String.format("No customer found having code = %s ", customerCode));
+            }
+
+            String noCheckVal = record.get("noCheck");
+            if (isNotBlank(noCheckVal) && !noCheckAllowedValues.contains(noCheckVal)) {
+                throw new BusinessException(
+                        String.format("Invalid ''noCheck'' value = %s , allowed values are [0,1]", noCheckVal));
+            }
+            boolean noCheck = "1".contentEquals(noCheckVal);
+
+            if (!noCheck) {
+                // If noCheck is 0 then the following conditions must be met in order to allow
+                // deletion:
+                // No unmatched AO
+                // No open EDR/WO/RT
+
+                this.checkUnmatchedAOs(customer);
+                this.checkOpenEDRs(customer);
+                this.checkOpenWOs(customer);
+                this.checkOpenRTs(customer);
+            }
+
+            this.removeCustomerHirarchy(customer);
+
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception e) {
+            log.error(" Error executing DeleteCustomersScript ", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private void checkOpenEDRs(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start checkOpenEDRs for customer = {} ", customer);
+            String query = "select count(edr.id) from EDR edr where edr.status = ''OPEN'' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> params = new HashMap();
+            params.put("customerId", customer.getId());
+            Object count = edrService.executeSelectQuery(query,params);
+            log.debug(" count of open EDRs = {} ", count);
+            log.debug(" End checkOpenEDRs for customer = {} ", customer);
+
+            if (((Long) count).intValue() > 0) {
+                throw new BusinessException(" Customer has [" + count + "] open EDRs ");
+            }
+        } catch (Exception e) {
+            log.error(" Error on checkOpenEDRs : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void checkOpenWOs(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start checkOpenWOs for customer = {} ", customer);
+            String query = "select count(wo.id) from WalletOperation wo where wo.status = ''OPEN'' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+            final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
+                    WalletOperationService.class.getSimpleName());
+
+            Map<String, Object> params = new HashMap();
+            params.put("customerId", customer.getId());
+            Object count = walletOperationService.executeSelectQuery(query, params);
+            log.debug(" count of open WOs = {} ", count);
+            log.debug(" End checkOpenWOs for customer = {} ", customer);
+
+            if (((Long) count).intValue() > 0) {
+                throw new BusinessException(" Customer has [" + count + "] open WOs ");
+            }
+        } catch (Exception e) {
+            log.error(" Error on checkOpenWOs : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void checkOpenRTs(Customer customer) throws BusinessException {
+        try {
+
+            log.debug(" Start checkOpenRTs for customer = {} ", customer);
+            String query = "select count(rt.id) from RatedTransaction rt where rt.status = ''OPEN'' and rt.billingAccount.customerAccount.customer.id =:customerId ";
+            Map<String, Object> params = new HashMap();
+            params.put("customerId", customer.getId());
+
+            Object count = this.ratedTransactionService.executeSelectQuery(query, params);
+            log.debug(" count of open RTs = {} ", count);
+            log.debug(" End checkOpenRTs for customer = {} ", customer);
+
+            if (((Long) count).intValue() > 0) {
+                throw new BusinessException(" Customer has [" + count + "] open RTs ");
+            }
+        } catch (Exception e) {
+            log.error(" Error on checkOpenRTs : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void checkUnmatchedAOs(Customer customer) throws BusinessException {
+        try {
+
+            log.debug(" Start checkUnmatchedAOs for customer = {} ", customer);
+            String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = ''O'' and ao.customerAccount.customer.id =:customerId ";
+            final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
+                    AccountOperationService.class.getSimpleName());
+            Map<String, Object> params = new HashMap();
+            params.put("customerId", customer.getId());
+            Object count = accountOperationService.executeSelectQuery(query, params);
+            log.debug(" count of unmatched AOs = {} ", count);
+            log.debug(" End checkUnmatchedAOs for customer = {} ", customer);
+
+            if (((Long) count).intValue() > 0) {
+                throw new BusinessException(" Customer has [" + count + "] unmatched AOs ");
+            }
+        } catch (Exception e) {
+            log.error(" Error on checkUnmatchedAOs : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void removeCustomerHirarchy(Customer customer) throws BusinessException {
+        log.debug(" Start removeCustomerHirarchy for customer = {} ", customer);
+
+        //
+        // A workaround for #4134 , no need for this method if #4134 is fixed (only
+        // 6.1.X is concerned)!
+        this.nullifyAOsSeller(customer);
+
+        this.removeWalletOperations(customer);
+        this.removeChargeInstances(customer);
+        // the relationship [SubCategoryInvoiceAgregate <=> WalletInstance] should be broke fisrt
+        this.nullifySubCategoryInvoiceAgregatesWallet(customer);
+        this.removeWalletInstances(customer);
+
+        this.removePaymentHistory(customer);
+        this.removeRatedTransactions(customer);
+        this.removeInvoices(customer);
+
+
+        this.removeServiceInstances(customer);
+        this.removeAccess(customer);
+        this.removeEDRs(customer);
+        this.removeSubscriptions(customer);
+
+        this.removeRejectedBAs(customer);
+
+        this.removeCounterPeriods(customer);
+        this.removeCounterInstances(customer);
+        this.removeOrderItems(customer);
+        this.removeProductInstances(customer);
+        this.removeMatchingAmounts(customer);
+
+        this.customerService.remove(customer);
+
+        log.debug(" End removeCustomerHirarchy for customer = {} ", customer);
+    }
+
+    private void removeEDRs(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeEDRs for customer = {} ", customer);
+
+            String query = "select edr.id from EDR edr where edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object result = edrService.executeSelectQuery(query, queryParams);
+
+            Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null);
+            log.debug(" {} EDR to delete ", ids.size());
+
+            for (Long id : ids) {
+                edrService.remove(id);
+            }
+
+            log.debug(" End removeEDRs for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeEDRs : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void removeMatchingAmounts(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeMatchingAmounts for customer = {} ", customer);
+
+            final MatchingAmountService matchingAmountService = (MatchingAmountService) getServiceInterface(MatchingAmountService.class.getSimpleName());
+            final String query = "select ma.id from MatchingAmount ma where ma.accountOperation.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object result = matchingAmountService.executeSelectQuery(query, queryParams);
+
+            Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null);
+            log.debug(" {} MatchingAmount to delete ", ids.size());
+
+            for (Long id : ids) {
+                matchingAmountService.remove(id);
+            }
+
+            log.debug(" End removeMatchingAmounts for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeMatchingAmounts : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void removeAccess(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeAccess for customer = {} ", customer);
+
+            final AccessService accessService = (AccessService) getServiceInterface(
+                    AccessService.class.getSimpleName());
+
+            final String query = "select a.id from Access a where a.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object result = accessService.executeSelectQuery(query, queryParams);
+
+            Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null);
+            log.debug(" {} Access to delete ", ids.size());
+
+            for (Long id : ids) {
+                accessService.remove(id);
+            }
+
+            log.debug(" End removeAccess for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeAccess : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void removeServiceInstances(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeServiceInstances for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findServiceInstances(customer));
+            log.debug(" {} ServiceInstance to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.serviceInstanceService.remove(id);
+            }
+
+            log.debug(" End removeServiceInstances for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeServiceInstances : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findServiceInstances(Customer customer) {
+        try {
+            log.debug(" findServiceInstances for customer={} ", customer);
+            String query = "select si.id from ServiceInstance si where si.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.serviceInstanceService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findServiceInstances : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeWalletOperations(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeWalletOperations for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findWalletOperations(customer));
+            log.debug(" {} WalletOperation to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.walletOperationService.remove(id);
+            }
+
+            log.debug(" End removeWalletOperations for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeWalletOperations : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findWalletOperations(Customer customer) {
+        try {
+            log.debug(" findWalletOperations for customer={} ", customer);
+            String query = "select wo.id from WalletOperation wo where wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.walletOperationService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findWalletOperations : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross"
+     *
+     * @param customer
+     * @throws BusinessException
+     */
+    private void removePaymentHistory(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removePaymentHistory for customer = {} ", customer);
+            String query = "select ph2.id from PaymentHistory ph2 where ph2.customerCode=:customerCode";
+
+            Map<String, Object> params = new HashMap();
+            params.put("customerCode", customer.getCode());
+            List<Long> ids = (List<Long>) this.paymentHistoryService.executeSelectQuery(query, params);
+
+            for (Long id : ids) {
+                this.paymentHistoryService.remove(id);
+
+            }
+            log.debug(" {} PaymentHistory to delete ", ids.size());
+            log.debug(" End removePaymentHistory for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removePaymentHistory : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    /**
+     * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross"
+     *
+     * @param customer
+     * @throws BusinessException
+     */
+    private void nullifyAOsSeller(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start nullifyAOsSeller for customer = {} ", customer);
+
+            String query = "select ao2.id from AccountOperation ao2 where ao2.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> params = new HashMap();
+            params.put("customerId", customer.getId());
+            List<Long> ids = (List<Long>) this.accountOperationService.executeSelectQuery(query, params);
+            for (Long id : ids) {
+                accountOperationService.remove(id);
+            }
+
+            log.debug(" seller to nullify for {} AOs ", ids.size());
+            log.debug(" End nullifyAOsSeller for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on nullifyAOsSeller : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void nullifySubCategoryInvoiceAgregatesWallet(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer);
+            String query = "select subCatIn.id from SubCategoryInvoiceAgregate subCatIn where subCatIn.wallet.userAccount.billingAccount.customerAccount.customer.id =:customerId";
+            Map<String, Object> params = new HashMap<>();
+            params.put("customerId", customer.getId());
+
+            List<Long> ids = (List<Long>) this.businessEntityService.executeSelectQuery(query, params);
+            for (Long id: ids) {
+                this.businessEntityService.remove(id);
+            }
+
+            log.debug(" wallet to nullify for {} SubCategoryInvoiceAgregate ", ids.size());
+            log.debug(" End nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on nullifySubCategoryInvoiceAgregatesWallet : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+
+    }
+
+
+    private void removeProductInstances(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeProductInstances for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findProductInstances(customer));
+            log.debug(" {} ProductInstance to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.productInstanceService.remove(id);
+            }
+
+            log.debug(" End removeProductInstances for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeProductInstances : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findProductInstances(Customer customer) {
+        try {
+            log.debug(" findProductInstances for customer={} ", customer);
+            String query = "select p.id from ProductInstance p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.productInstanceService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findProductInstances : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeOrderItems(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeOrderItem for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findOrderItems(customer));
+            log.debug(" {} OrderItem to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.orderItemService.remove(id);
+            }
+
+            log.debug(" End removeOrderItem for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeOrderItem : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findOrderItems(Customer customer) {
+        try {
+            log.debug(" findOrderItems for customer={} ", customer);
+            String query = "select p.id from OrderItem p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.orderItemService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findCounterPeriods : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeCounterPeriods(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeCounterPeriods for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findCounterPeriods(customer));
+            log.debug(" {} CounterPeriod to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.counterPeriodService.remove(id);
+            }
+
+            log.debug(" End removeCounterPeriods for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeCounterPeriods : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findCounterPeriods(Customer customer) {
+        try {
+            log.debug(" findCounterPeriods for customer={} ", customer);
+            String query = "select c.id from CounterPeriod c where c.counterInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.counterPeriodService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findCounterPeriods : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeCounterInstances(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeCounterInstances for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findCounterInstances(customer));
+            log.debug(" {} CounterInstance to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.counterInstanceService.remove(id);
+            }
+
+            log.debug(" End removeCounterInstances for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeCounterInstances : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findCounterInstances(Customer customer) {
+        try {
+            log.debug(" findCounterInstances for customer={} ", customer);
+            String query = "select c.id from CounterInstance c where c.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.counterInstanceService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findCounterInstances : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeRejectedBAs(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeRejectedBAs for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findRejectedBillingAccounts(customer));
+            log.debug(" {} RejectedBillingAccount to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.rejectedBillingAccountService.remove(id);
+            }
+
+            log.debug(" End removeRejectedBAs for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeRejectedBAs : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findRejectedBillingAccounts(Customer customer) {
+        try {
+            log.debug(" findRejectedBillingAccounts for customer={} ", customer);
+            String query = "select rba.id from RejectedBillingAccount rba where rba.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.rejectedBillingAccountService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findRejectedBillingAccounts : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeInvoices(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeInvoices for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findInvoicesIds(customer));
+            log.debug(" {} Invoices to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.invoiceService.remove(id);
+            }
+
+            log.debug(" End removeInvoices for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeInvoices : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private void removeWalletInstances(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeWalletInstances for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findWalletInstances(customer));
+            log.debug(" {} WalletInstance to delete ", ids.size());
+
+            for (Long id : ids) {
+                // a workaround for #4132
+                WalletInstance wallet = this.walletService.findById(id);
+                wallet.getUserAccount().setWallet(null);
+
+                this.walletService.remove(id);
+            }
+
+            log.debug(" End removeWalletInstances for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeWalletInstances : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findWalletInstances(Customer customer) {
+        try {
+            log.debug(" findWalletInstances for customer={} ", customer);
+            String query = "select wi.id from WalletInstance wi where wi.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.walletService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findWalletInstances : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeRatedTransactions(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeRatedTransactions for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findRatedTransactions(customer));
+            log.debug(" {} RTs to delete ", ids.size());
+
+            for (Long id : ids) {
+                this.ratedTransactionService.remove(id);
+            }
+
+            log.debug(" End removeRatedTransactions for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeRatedTransactions : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+
+    }
+
+    private List<Long> findRatedTransactions(Customer customer) {
+        try {
+            log.debug(" findRatedTransactions for customer={} ", customer);
+            String query = "select rt.id from RatedTransaction rt where rt.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.ratedTransactionService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findRatedTransactions : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeChargeInstances(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeChargeInstances for customer = {} ", customer);
+
+            Collection<Long> ids = safe(this.findChargeInstances(customer));
+            log.debug(" {} ChargeInstance to delete ", ids.size());
+            for (Long ciId : ids) {
+                this.chargeInstanceService.remove(ciId);
+            }
+            log.debug(" End removeChargeInstances for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeChargeInstances : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findChargeInstances(Customer customer) {
+        try {
+            log.debug(" findChargeInstances for customer={} ", customer);
+            String query = "select ci.id from ChargeInstance ci where ci.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customerId", customer.getId());
+            Object ids = this.chargeInstanceService.executeSelectQuery(query, queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findChargeInstances : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void removeSubscriptions(Customer customer) throws BusinessException {
+        try {
+            log.debug(" Start removeSubscriptions for customer = {} ", customer);
+            Collection<Long> ids = safe(this.findSubscriptions(customer));
+            log.debug(" {} Subscription to delete ", ids.size());
+
+            for (Long subscriptionId : ids) {
+                this.subscriptionService.remove(subscriptionId);
+            }
+            log.debug(" End removeSubscriptions for customer = {} ", customer);
+        } catch (Exception e) {
+            log.error(" Error on removeSubscriptions : [{}] ", e.getMessage(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    private List<Long> findSubscriptions(Customer customer) {
+        try {
+            log.debug(" findSubscriptions for customer={} ", customer);
+            StringBuffer query = new StringBuffer(
+                    "select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer ");
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customer", customer);
+            Object ids = this.subscriptionService.executeSelectQuery(query.toString(), queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on findSubscriptions : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private List<Long> findInvoicesIds(Customer customer) {
+        try {
+            log.debug(" findInvoicesIds for customer={} ", customer);
+            StringBuffer query = new StringBuffer(
+                    "select inv.id from Invoice inv where inv.billingAccount.customerAccount.customer =:customer ");
+
+            Map<String, Object> queryParams = new HashMap<>();
+            queryParams.put("customer", customer);
+            Object ids = this.invoiceService.executeSelectQuery(query.toString(), queryParams);
+
+            return ids != null ? ((List<Long>) ids) : null;
+        } catch (Exception e) {
+            log.error(" Error on getSubscription : [{}] ", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private <T> Collection<T> safe(Collection<T> collection) {
+        return collection == null ? Collections.EMPTY_LIST : collection;
+    }
+}'
+            WHERE code = 'org.meveo.service.script.DeleteCustomersScript';
+           ]]>
+        </sql>
+    </changeSet>
+        
+    <changeSet author="MohamedSTITANE" id="#6048_20210326" dbms="oracle">
+        <!--  escape insert limit of 4000 char for oracle      -->
+        <sql endDelimiter="/">
+            <![CDATA[
+            declare
+                scriptData Clob;
+            begin
+                scriptData := to_clob('package org.meveo.service.script; import static org.apache.commons.lang3.StringUtils.isNotBlank; import java.util.Arrays; import java.util.Collection; import java.util.Collections; import java.util.HashMap; import java.util.List; import java.util.Map; import org.apache.commons.collections4.MapUtils; import org.meveo.admin.exception.BusinessException; import org.meveo.model.billing.SubCategoryInvoiceAgregate; import org.meveo.model.billing.WalletInstance; import org.meveo.model.crm.Customer; import org.meveo.service.base.BusinessEntityService; import org.meveo.service.billing.impl.ChargeInstanceService; import org.meveo.service.billing.impl.CounterInstanceService; import org.meveo.service.billing.impl.CounterPeriodService; import org.meveo.service.billing.impl.EdrService; import org.meveo.service.billing.impl.InvoiceService; import org.meveo.service.billing.impl.ProductInstanceService; import org.meveo.service.billing.impl.RatedTransactionService; import org.meveo.service.billing.impl.RejectedBillingAccountService; import org.meveo.service.billing.impl.ServiceInstanceService; import org.meveo.service.billing.impl.SubscriptionService; import org.meveo.service.billing.impl.WalletOperationService; import org.meveo.service.billing.impl.WalletService; import org.meveo.service.crm.impl.CustomerService; import org.meveo.service.medina.impl.AccessService; import org.meveo.service.order.OrderItemService; import org.meveo.service.payments.impl.AccountOperationService; import org.meveo.service.payments.impl.MatchingAmountService; import org.meveo.service.payments.impl.PaymentHistoryService; import org.meveo.service.script.Script; /** * * @author Said Ramli */ @SuppressWarnings({ "unchecked", "unused" }) public class DeleteCustomersScript extends Script { private final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface( AccountOperationService.class.getSimpleName()); private final CustomerService customerService = (CustomerService) getServiceInterface( CustomerService.class.getSimpleName()); private final InvoiceService invoiceService = (InvoiceService) getServiceInterface( InvoiceService.class.getSimpleName()); private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface( SubscriptionService.class.getSimpleName()); private final RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface( RatedTransactionService.class.getSimpleName()); private final WalletService walletService = (WalletService) getServiceInterface( WalletService.class.getSimpleName()); private final RejectedBillingAccountService rejectedBillingAccountService = (RejectedBillingAccountService) getServiceInterface( RejectedBillingAccountService.class.getSimpleName()); private final CounterInstanceService counterInstanceService = (CounterInstanceService) getServiceInterface( CounterInstanceService.class.getSimpleName()); private final CounterPeriodService counterPeriodService = (CounterPeriodService) getServiceInterface( CounterPeriodService.class.getSimpleName()); private final OrderItemService orderItemService = (OrderItemService) getServiceInterface( OrderItemService.class.getSimpleName()); private final ProductInstanceService productInstanceService = (ProductInstanceService) getServiceInterface( ProductInstanceService.class.getSimpleName()); private final BusinessEntityService businessEntityService = (BusinessEntityService) getServiceInterface( BusinessEntityService.class.getSimpleName()); private final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface( WalletOperationService.class.getSimpleName()); private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface( ServiceInstanceService.class.getSimpleName()); private final PaymentHistoryService paymentHistoryService = (PaymentHistoryService) getServiceInterface( PaymentHistoryService.class.getSimpleName()); private final EdrService edrService = (EdrService) getServiceInterface(EdrService.class.getSimpleName()); @SuppressWarnings("rawtypes") private final ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface( ChargeInstanceService.class.getSimpleName()); private static final List<String> noCheckAllowedValues = Arrays.asList("0", "1"); @Override public void execute(Map<String, Object> methodContext) throws BusinessException { log.debug(" >>> execute {} ", methodContext.entrySet()); try { Map<String, String> record = (Map<String, String>) methodContext.get("RECORD"); if (MapUtils.isEmpty(record)) { throw new BusinessException(String.format("Parameter RECORD is missing")); } final String customerCode = record.get("customerCode"); Customer customer = customerService.findByCode(customerCode); if (customer == null) { throw new BusinessException(String.format("No customer found having code = %s ", customerCode)); } String noCheckVal = record.get("noCheck"); if (isNotBlank(noCheckVal) && !noCheckAllowedValues.contains(noCheckVal)) { throw new BusinessException( String.format("Invalid ''noCheck'' value = %s , allowed values are [0,1]", noCheckVal)); } boolean noCheck = "1".contentEquals(noCheckVal); if (!noCheck) { // If noCheck is 0 then the following conditions must be met in order to allow // deletion: // No unmatched AO // No open EDR/WO/RT this.checkUnmatchedAOs(customer); this.checkOpenEDRs(customer); this.checkOpenWOs(customer); this.checkOpenRTs(customer); } this.removeCustomerHirarchy(customer); } catch (BusinessException be) { throw be; } catch (Exception e) { log.error(" Error executing DeleteCustomersScript ", e); throw new BusinessException(e.getMessage()); } } private void checkOpenEDRs(Customer customer) throws BusinessException { try { log.debug(" Start checkOpenEDRs for customer = {} ", customer); String query = "select count(edr.id) from EDR edr where edr.status = ''OPEN'' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> params = new HashMap(); params.put("customerId", customer.getId()); Object count = edrService.executeSelectQuery(query,params); log.debug(" count of open EDRs = {} ", count); log.debug(" End checkOpenEDRs for customer = {} ", customer); if (((Long) count).intValue() > 0) { throw new BusinessException(" Customer has [" + count + "] open EDRs "); } } catch (Exception e) { log.error(" Error on checkOpenEDRs : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void checkOpenWOs(Customer customer) throws BusinessException { try { log.debug(" Start checkOpenWOs for customer = {} ", customer); String query = "select count(wo.id) from WalletOperation wo where wo.status = ''OPEN'' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId "; final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface( WalletOperationService.class.getSimpleName()); Map<String, Object> params = new HashMap(); params.put("customerId", customer.getId()); Object count = walletOperationService.executeSelectQuery(query, params); log.debug(" count of open WOs = {} ", count); log.debug(" End checkOpenWOs for customer = {} ", customer); if (((Long) count).intValue() > 0) { throw new BusinessException(" Customer has [" + count + "] open WOs "); } } catch (Exception e) { log.error(" Error on checkOpenWOs : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void checkOpenRTs(Customer customer) throws BusinessException { try { log.debug(" Start checkOpenRTs for customer = {} ", customer); String query = "select count(rt.id) from RatedTransaction rt where rt.status = ''OPEN'' and rt.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> params = new HashMap(); params.put("customerId", customer.getId()); Object count = this.ratedTransactionService.executeSelectQuery(query, params); log.debug(" count of open RTs = {} ", count); log.debug(" End checkOpenRTs for customer = {} ", customer); if (((Long) count).intValue() > 0) { throw new BusinessException(" Customer has [" + count + "] open RTs "); } } catch (Exception e) { log.error(" Error on checkOpenRTs : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void checkUnmatchedAOs(Customer customer) throws BusinessException { try { log.debug(" Start checkUnmatchedAOs for customer = {} ", customer); String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = ''O'' and ao.customerAccount.customer.id =:customerId "; final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface( AccountOperationService.class.getSimpleName()); Map<String, Object> params = new HashMap(); params.put("customerId", customer.getId()); Object count = accountOperationService.executeSelectQuery(query, params); log.debug(" count of unmatched AOs = {} ", count); log.debug(" End checkUnmatchedAOs for customer = {} ", customer); if (((Long) count).intValue() > 0) { throw new BusinessException(" Customer has [" + count + "] unmatched AOs "); } } catch (Exception e) { log.error(" Error on checkUnmatchedAOs : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void removeCustomerHirarchy(Customer customer) throws BusinessException { log.debug(" Start removeCustomerHirarchy for customer = {} ", customer); // // A workaround for #4134 , no need for this method if #4134 is fixed (only // 6.1.X is concerned)! this.nullifyAOsSeller(customer); this.removeWalletOperations(customer); this.removeChargeInstances(customer); // the relationship [SubCategoryInvoiceAgregate <=> WalletInstance] should be broke fisrt this.nullifySubCategoryInvoiceAgregatesWallet(customer); this.removeWalletInstances(customer); this.removePaymentHistory(customer); this.removeRatedTransactions(customer); this.removeInvoices(customer); this.removeServiceInstances(customer); this.removeAccess(customer); this.removeEDRs(customer); this.removeSubscriptions(customer); this.removeRejectedBAs(customer); this.removeCounterPeriods(customer); this.removeCounterInstances(customer); this.removeOrderItems(customer); this.removeProductInstances(customer); this.removeMatchingAmounts(customer); this.customerService.remove(customer); log.debug(" End removeCustomerHirarchy for customer = {} ", customer); } private void removeEDRs(Customer customer) throws BusinessException { try { log.debug(" Start removeEDRs for customer = {} ", customer); String query = "select edr.id from EDR edr where edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object result = edrService.executeSelectQuery(query, queryParams); Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null); log.debug(" {} EDR to delete ", ids.size()); for (Long id : ids) { edrService.remove(id); } log.debug(" End removeEDRs for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeEDRs : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void removeMatchingAmounts(Customer customer) throws BusinessException { try { log.debug(" Start removeMatchingAmounts for customer = {} ", customer); final MatchingAmountService matchingAmountService = (MatchingAmountService) getServiceInterface(MatchingAmountService.class.getSimpleName()); final String query = "select ma.id from MatchingAmount ma where ma.accountOperation.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object result = matchingAmountService.executeSelectQuery(query, queryParams); Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null); log.debug(" {} MatchingAmount to delete ", ids.size()); for (Long id : ids) { matchingAmountService.remove(id); } log.debug(" End removeMatchingAmounts for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeMatchingAmounts : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void removeAccess(Customer customer) throws BusinessException { try { log.debug(" Start removeAccess for customer = {} ", customer); final AccessService accessService = (AccessService) getServiceInterface( AccessService.class.getSimpleName()); final String query = "select a.id from Access a where a.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object result = accessService.executeSelectQuery(query, queryParams); Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null); log.debug(" {} Access to delete ", ids.size()); for (Long id : ids) { accessService.remove(id); } log.debug(" End removeAccess for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeAccess : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void removeServiceInstances(Customer customer) throws BusinessException { try { log.debug(" Start removeServiceInstances for customer = {} ", customer); Collection<Long> ids = safe(this.findServiceInstances(customer)); log.debug(" {} ServiceInstance to delete ", ids.size()); for (Long id : ids) { this.serviceInstanceService.remove(id); } log.debug(" End removeServiceInstances for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeServiceInstances : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findServiceInstances(Customer customer) { try { log.debug(" findServiceInstances for customer={} ", customer); String query = "select si.id from ServiceInstance si where si.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.serviceInstanceService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findServiceInstances : [{}] ", e.getMessage(), e); return null; } } private void removeWalletOperations(Customer customer) throws BusinessException { try { log.debug(" Start removeWalletOperations for customer = {} ", customer); Collection<Long> ids = safe(this.findWalletOperations(customer)); log.debug(" {} WalletOperation to delete ", ids.size()); for (Long id : ids) { this.walletOperationService.remove(id); } log.debug(" End removeWalletOperations for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeWalletOperations : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findWalletOperations(Customer customer) { try { log.debug(" findWalletOperations for customer={} ", customer); String query = "select wo.id from WalletOperation wo where wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.walletOperationService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findWalletOperations : [{}] ", e.getMessage(), e); return null; } } /** * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross" * * @param customer * @throws BusinessException */ private void removePaymentHistory(Customer customer) throws BusinessException { try { log.debug(" Start removePaymentHistory for customer = {} ", customer); String query = "select ph2.id from PaymentHistory ph2 where ph2.customerCode=:customerCode"; Map<String, Object> params = new HashMap(); params.put("customerCode", customer.getCode()); List<Long> ids = (List<Long>) this.paymentHistoryService.executeSelectQuery(query, params); for (Long id : ids) { this.paymentHistoryService.remove(id); } log.debug(" {} PaymentHistory to delete ", ids.size()); log.debug(" End removePaymentHistory for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removePaymentHistory : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } /** * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross" * * @param customer * @throws BusinessException */ private void nullifyAOsSeller(Customer customer) throws BusinessException { try { log.debug(" Start nullifyAOsSeller for customer = {} ", customer); String query = "select ao2.id from AccountOperation ao2 where ao2.customerAccount.customer.id =:customerId "; Map<String, Object> params = new HashMap(); params.put("customerId", customer.getId()); List<Long> ids = (List<Long>) this.accountOperationService.executeSelectQuery(query, params); for (Long id : ids) { accountOperationService.remove(id); } log.debug(" seller to nullify for {} AOs ", ids.size()); log.debug(" End nullifyAOsSeller for customer = {} ", customer); } catch (Exception e) { log.error(" Error on nullifyAOsSeller : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void nullifySubCategoryInvoiceAgregatesWallet(Customer customer) throws BusinessException { try { log.debug(" Start nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer); String query = "select subCatIn.id from SubCategoryInvoiceAgregate subCatIn where subCatIn.wallet.userAccount.billingAccount.customerAccount.customer.id =:customerId"; Map<String, Object> params = new HashMap<>(); params.put("customerId", customer.getId()); List<Long> ids = (List<Long>) this.businessEntityService.executeSelectQuery(query, params); for (Long id: ids) { this.businessEntityService.remove(id); } log.debug(" wallet to nullify for {} SubCategoryInvoiceAgregate ", ids.size()); log.debug(" End nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer); } catch (Exception e) { log.error(" Error on nullifySubCategoryInvoiceAgregatesWallet : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void removeProductInstances(Customer customer) throws BusinessException { try { log.debug(" Start removeProductInstances for customer = {} ", customer); Collection<Long> ids = safe(this.findProductInstances(customer)); log.debug(" {} ProductInstance to delete ", ids.size()); for (Long id : ids) { this.productInstanceService.remove(id); } log.debug(" End removeProductInstances for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeProductInstances : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findProductInstances(Customer customer) { try { log.debug(" findProductInstances for customer={} ", customer); String query = "select p.id from ProductInstance p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.productInstanceService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findProductInstances : [{}] ", e.getMessage(), e); return null; } } private void removeOrderItems(Customer customer) throws BusinessException { try { log.debug(" Start removeOrderItem for customer = {} ", customer); Collection<Long> ids = safe(this.findOrderItems(customer)); log.debug(" {} OrderItem to delete ", ids.size()); for (Long id : ids) { this.orderItemService.remove(id); } log.debug(" End removeOrderItem for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeOrderItem : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findOrderItems(Customer customer) { try { log.debug(" findOrderItems for customer={} ", customer); String query = "select p.id from OrderItem p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.orderItemService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findCounterPeriods : [{}] ", e.getMessage(), e); return null; } } private void removeCounterPeriods(Customer customer) throws BusinessException { try { log.debug(" Start removeCounterPeriods for customer = {} ", customer); Collection<Long> ids = safe(this.findCounterPeriods(customer)); log.debug(" {} CounterPeriod to delete ", ids.size()); for (Long id : ids) { this.counterPeriodService.remove(id); } log.debug(" End removeCounterPeriods for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeCounterPeriods : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findCounterPeriods(Customer customer) { try { log.debug(" findCounterPeriods for customer={} ", customer); String query = "select c.id from CounterPeriod c where c.counterInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.counterPeriodService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findCounterPeriods : [{}] ", e.getMessage(), e); return null; } } private void removeCounterInstances(Customer customer) throws BusinessException { try { log.debug(" Start removeCounterInstances for customer = {} ", customer); Collection<Long> ids = safe(this.findCounterInstances(customer)); log.debug(" {} CounterInstance to delete ", ids.size()); for (Long id : ids) { this.counterInstanceService.remove(id); } log.debug(" End removeCounterInstances for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeCounterInstances : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findCounterInstances(Customer customer) { try { log.debug(" findCounterInstances for customer={} ", customer); String query = "select c.id from CounterInstance c where c.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.counterInstanceService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findCounterInstances : [{}] ", e.getMessage(), e); return null; } } private void removeRejectedBAs(Customer customer) throws BusinessException { try { log.debug(" Start removeRejectedBAs for customer = {} ", customer); Collection<Long> ids = safe(this.findRejectedBillingAccounts(customer)); log.debug(" {} RejectedBillingAccount to delete ", ids.size()); for (Long id : ids) { this.rejectedBillingAccountService.remove(id); } log.debug(" End removeRejectedBAs for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeRejectedBAs : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findRejectedBillingAccounts(Customer customer) { try { log.debug(" findRejectedBillingAccounts for customer={} ", customer); String query = "select rba.id from RejectedBillingAccount rba where rba.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.rejectedBillingAccountService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findRejectedBillingAccounts : [{}] ", e.getMessage(), e); return null; } } private void removeInvoices(Customer customer) throws BusinessException { try { log.debug(" Start removeInvoices for customer = {} ", customer); Collection<Long> ids = safe(this.findInvoicesIds(customer)); log.debug(" {} Invoices to delete ", ids.size()); for (Long id : ids) { this.invoiceService.remove(id); } log.debug(" End removeInvoices for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeInvoices : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private void removeWalletInstances(Customer customer) throws BusinessException { try { log.debug(" Start removeWalletInstances for customer = {} ", customer); Collection<Long> ids = safe(this.findWalletInstances(customer)); log.debug(" {} WalletInstance to delete ", ids.size()); for (Long id : ids) { // a workaround for #4132 WalletInstance wallet = this.walletService.findById(id); wallet.getUserAccount().setWallet(null); this.walletService.remove(id); } log.debug(" End removeWalletInstances for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeWalletInstances : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findWalletInstances(Customer customer) { try { log.debug(" findWalletInstances for customer={} ", customer); String query = "select wi.id from WalletInstance wi where wi.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.walletService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findWalletInstances : [{}] ", e.getMessage(), e); return null; } } private void removeRatedTransactions(Customer customer) throws BusinessException { try { log.debug(" Start removeRatedTransactions for customer = {} ", customer); Collection<Long> ids = safe(this.findRatedTransactions(customer)); log.debug(" {} RTs to delete ", ids.size()); for (Long id : ids) { this.ratedTransactionService.remove(id); } log.debug(" End removeRatedTransactions for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeRatedTransactions : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findRatedTransactions(Customer customer) { try { log.debug(" findRatedTransactions for customer={} ", customer); String query = "select rt.id from RatedTransaction rt where rt.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.ratedTransactionService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findRatedTransactions : [{}] ", e.getMessage(), e); return null; } } private void removeChargeInstances(Customer customer) throws BusinessException { try { log.debug(" Start removeChargeInstances for customer = {} ", customer); Collection<Long> ids = safe(this.findChargeInstances(customer)); log.debug(" {} ChargeInstance to delete ", ids.size()); for (Long ciId : ids) { this.chargeInstanceService.remove(ciId); } log.debug(" End removeChargeInstances for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeChargeInstances : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findChargeInstances(Customer customer) { try { log.debug(" findChargeInstances for customer={} ", customer); String query = "select ci.id from ChargeInstance ci where ci.userAccount.billingAccount.customerAccount.customer.id =:customerId "; Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customerId", customer.getId()); Object ids = this.chargeInstanceService.executeSelectQuery(query, queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findChargeInstances : [{}] ", e.getMessage(), e); return null; } } private void removeSubscriptions(Customer customer) throws BusinessException { try { log.debug(" Start removeSubscriptions for customer = {} ", customer); Collection<Long> ids = safe(this.findSubscriptions(customer)); log.debug(" {} Subscription to delete ", ids.size()); for (Long subscriptionId : ids) { this.subscriptionService.remove(subscriptionId); } log.debug(" End removeSubscriptions for customer = {} ", customer); } catch (Exception e) { log.error(" Error on removeSubscriptions : [{}] ", e.getMessage(), e); throw new BusinessException(e); } } private List<Long> findSubscriptions(Customer customer) { try { log.debug(" findSubscriptions for customer={} ", customer); StringBuffer query = new StringBuffer( "select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer "); Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customer", customer); Object ids = this.subscriptionService.executeSelectQuery(query.toString(), queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on findSubscriptions : [{}] ", e.getMessage(), e); return null; } } private List<Long> findInvoicesIds(Customer customer) { try { log.debug(" findInvoicesIds for customer={} ", customer); StringBuffer query = new StringBuffer( "select inv.id from Invoice inv where inv.billingAccount.customerAccount.customer =:customer "); Map<String, Object> queryParams = new HashMap<>(); queryParams.put("customer", customer); Object ids = this.invoiceService.executeSelectQuery(query.toString(), queryParams); return ids != null ? ((List<Long>) ids) : null; } catch (Exception e) { log.error(" Error on getSubscription : [{}] ", e.getMessage(), e); return null; } } private <T> Collection<T> safe(Collection<T> collection) { return collection == null ? Collections.EMPTY_LIST : collection; } }');
+                UPDATE meveo_script_instance SET script = scriptData
+                WHERE code = 'org.meveo.service.script.DeleteCustomersScript';
+            END;
+            /
+           ]]>
+        </sql>
+    </changeSet>
+    
+
+    <changeSet author="AmineBENAICHA" id="#6048_20210611">
+        <insert tableName="meveo_script_instance" dbms="postgres">
+            <column name="id" valueNumeric="-30"/>
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="org.meveo.service.script.ServiceTemplateToProductScript" />
+            <column name="description" value="Migration ServiceTemplate To Product" />
+            <column name="src_type" value="JAVA" />
+            <column name="script">
+                <![CDATA[
+                package org.meveo.service.script; import java.util.Calendar; import java.util.List; import java.util.Map; import java.util.UUID; import java.util.stream.Collectors; import org.meveo.admin.exception.BusinessException; import org.meveo.admin.util.pagination.PaginationConfiguration; import org.meveo.model.article.AccountingArticle; import org.meveo.model.article.ArticleMapping; import org.meveo.model.article.ArticleMappingLine; import org.meveo.model.billing.ServiceInstance; import org.meveo.model.catalog.OfferTemplate; import org.meveo.model.catalog.ProductChargeTemplateMapping; import org.meveo.model.catalog.ServiceChargeTemplate; import org.meveo.model.catalog.ServiceTemplate; import org.meveo.model.cpq.Product; import org.meveo.model.cpq.ProductVersion; import org.meveo.model.cpq.enums.VersionStatusEnum; import org.meveo.model.cpq.offer.OfferComponent; import org.meveo.model.tax.TaxClass; import org.meveo.service.billing.impl.ServiceInstanceService; import org.meveo.service.billing.impl.article.AccountingArticleService; import org.meveo.service.billing.impl.article.ArticleMappingLineService; import org.meveo.service.billing.impl.article.ArticleMappingService; import org.meveo.service.catalog.impl.OfferTemplateService; import org.meveo.service.catalog.impl.ServiceTemplateService; import org.meveo.service.cpq.ProductService; import org.meveo.service.cpq.ProductVersionService; import org.meveo.service.tax.TaxClassService; import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder; public class ServiceTemplateToProductScript extends Script { public static final String DEFAULT_TAX_CLASS_CODE = "CMP_DATA"; public static final long ARTICLE_MAPPING_ID = 1L; private static final Integer PAGE_COUNT = 100; private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName()); private ProductService productService = (ProductService) getServiceInterface(ProductService.class.getSimpleName()); private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName()); private OfferTemplateService offerTemplateService= (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName()); private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName()); private ArticleMappingService articleMappingService = (ArticleMappingService) getServiceInterface(ArticleMappingService.class.getSimpleName()); private ArticleMappingLineService articleMappingLineService = (ArticleMappingLineService) getServiceInterface(ArticleMappingLineService.class.getSimpleName()); private ServiceTemplateService serviceTemplateService = (ServiceTemplateService) getServiceInterface(ServiceTemplateService.class.getSimpleName()); private TaxClassService taxClassService = (TaxClassService) getServiceInterface(TaxClassService.class.getSimpleName()); @Override public void execute(Map<String, Object> methodContext) throws BusinessException { List<ServiceTemplate> serviceTemplates = (List<ServiceTemplate>) methodContext.get("SERVICE_TEMPLATE"); if(serviceTemplates != null && !serviceTemplates.isEmpty()){ serviceTemplates.forEach(this::map); } else { long count = serviceTemplateService.count(new PaginationConfiguration("id", SortOrder.ASCENDING)); if (PAGE_COUNT < count) { serviceTemplateService.list(new PaginationConfiguration(null, null)) .forEach(this::map); } else { for (int index = 0; index < count; index = index + PAGE_COUNT) { serviceTemplateService.list(new PaginationConfiguration(index, PAGE_COUNT, null, null, null, "id", SortOrder.ASCENDING)) .forEach(this::map); } } } } public Product map(ServiceTemplate serviceTemplate) { Product product = createProduct(serviceTemplate); createArticle(product); ProductVersion productVersion = createProductVersion(product); List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate); serviceInstances.forEach(serviceInstance -> { serviceInstance.setProductVersion(productVersion); serviceInstance.setServiceTemplate(null); serviceInstanceService.update(serviceInstance); OfferTemplate offer = serviceInstance.getSubscription().getOffer(); OfferComponent offerComponent = new OfferComponent(); offerComponent.setProduct(product); offerComponent.setOfferTemplate(offer); offer.getOfferComponents().add(offerComponent); offer.getOfferServiceTemplates().removeIf(o -> o.getServiceTemplate().getId().equals(serviceTemplate.getId())); offerTemplateService.update(offer); }); return product; } private void createArticle(Product product) { product.getProductCharges().stream() .map(pc -> pc.getChargeTemplate()) .forEach(chargeTemplate -> { AccountingArticle accountingArticle; List<AccountingArticle> accountingArticles = accountingArticleService.findByTaxClassAndSubCategory(chargeTemplate.getTaxClass(), chargeTemplate.getInvoiceSubCategory()); if(accountingArticles.isEmpty()){ TaxClass taxClass = taxClassService.findByCode(DEFAULT_TAX_CLASS_CODE); accountingArticle = new AccountingArticle(UUID.randomUUID().toString(), "Migration Accounting article", taxClass, chargeTemplate.getInvoiceSubCategory()); accountingArticleService.create(accountingArticle); }else { accountingArticle = accountingArticles.get(0); } ArticleMapping defaultArticleMapping = articleMappingService.findById(ARTICLE_MAPPING_ID); ArticleMappingLine articleMappingLine = new ArticleMappingLine(); articleMappingLine.setChargeTemplate(chargeTemplate); articleMappingLine.setArticleMapping(defaultArticleMapping); articleMappingLine.setProduct(product); articleMappingLine.setAccountingArticle(accountingArticle); articleMappingLineService.create(articleMappingLine); }); } private Product createProduct(ServiceTemplate serviceTemplate) { Product product = new Product(); product.setCode(serviceTemplate.getCode()); product.setDescription(serviceTemplate.getDescription()); List<ProductChargeTemplateMapping> productCharges = getProductCharges(serviceTemplate); product.setProductCharges(productCharges); product.setCfValues(serviceTemplate.getCfValues()); product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues()); product.setDisabled(serviceTemplate.isDisabled()); productService.create(product); return product; } private ProductVersion createProductVersion(Product product) { ProductVersion productVersion= new ProductVersion(); productVersion.setProduct(product); productVersion.setShortDescription(product.getDescription()); productVersion.setStatus(VersionStatusEnum.PUBLISHED); productVersion.setStatusDate(Calendar.getInstance().getTime()); productVersionService.create(productVersion); return productVersion; } private ProductChargeTemplateMapping mapToProductChargeTemplate(ServiceChargeTemplate serviceCharge) { ProductChargeTemplateMapping productChargeTemplateMapping = new ProductChargeTemplateMapping(); productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate()); return productChargeTemplateMapping; } private List<ProductChargeTemplateMapping> getProductCharges(ServiceTemplate serviceTemplate) { List<ProductChargeTemplateMapping> productCharges = serviceTemplate.getServiceSubscriptionCharges() .stream() .map(this::mapToProductChargeTemplate) .collect(Collectors.toList()); productCharges.addAll( serviceTemplate.getServiceRecurringCharges() .stream() .map(this::mapToProductChargeTemplate) .collect(Collectors.toList()) ); productCharges.addAll( serviceTemplate.getServiceTerminationCharges() .stream() .map(this::mapToProductChargeTemplate) .collect(Collectors.toList()) ); productCharges.addAll( serviceTemplate.getServiceUsageCharges() .stream() .map(this::mapToProductChargeTemplate) .collect(Collectors.toList()) ); return productCharges; } }
+                ]]>
+            </column>
+        </insert>
+        <!--  escape insert limit of 4000 char for oracle      -->
+        <sql dbms="oracle" endDelimiter="/">
+            <![CDATA[
+            declare
+                scriptData Clob;
+            begin
+                scriptData := to_clob('package org.meveo; import java.util.*; import java.util.stream.Collectors; import org.meveo.admin.exception.BusinessException; import org.meveo.admin.util.pagination.PaginationConfiguration; import org.meveo.model.article.*; import org.meveo.model.billing.ServiceInstance; import org.meveo.model.catalog.*; import org.meveo.model.cpq.*; import org.meveo.model.cpq.enums.VersionStatusEnum; import org.meveo.model.cpq.offer.OfferComponent; import org.meveo.model.tax.TaxClass; import org.meveo.service.billing.impl.ServiceInstanceService; import org.meveo.service.billing.impl.article.*; import org.meveo.service.catalog.impl.*; import org.meveo.service.cpq.*; import org.meveo.service.tax.TaxClassService; import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder; public class ServiceTemplateToProductScript extends Script { public static final String DEFAULT_TAX_CLASS_CODE = "CMP_DATA"; public static final long ARTICLE_MAPPING_ID = 1L; private static final Integer PAGE_COUNT = 100; private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName()); private ProductService productService = (ProductService) getServiceInterface(ProductService.class.getSimpleName()); private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName()); private OfferTemplateService offerTemplateService = (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName()); private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName()); private ArticleMappingService articleMappingService = (ArticleMappingService) getServiceInterface(ArticleMappingService.class.getSimpleName()); private ArticleMappingLineService articleMappingLineService = (ArticleMappingLineService) getServiceInterface(ArticleMappingLineService.class.getSimpleName()); private ServiceTemplateService serviceTemplateService = (ServiceTemplateService) getServiceInterface(ServiceTemplateService.class.getSimpleName()); private TaxClassService taxClassService = (TaxClassService) getServiceInterface(TaxClassService.class.getSimpleName()); @Override public void execute(Map<String, Object> methodContext) throws BusinessException { List<ServiceTemplate> serviceTemplates = (List<ServiceTemplate>) methodContext.get("SERVICE_TEMPLATE"); if (serviceTemplates != null && !serviceTemplates.isEmpty()) { serviceTemplates.forEach(this::map); } else { long count = serviceTemplateService.count(new PaginationConfiguration("id", SortOrder.ASCENDING)); if (PAGE_COUNT < count) { serviceTemplateService.list(new PaginationConfiguration(null, null)).forEach(this::map); } else { for (int index = 0; index < count; index = index + PAGE_COUNT) { serviceTemplateService.list(new PaginationConfiguration(index, PAGE_COUNT, null, null, null, "id", SortOrder.ASCENDING)).forEach(this::map); } } } } public Product map(ServiceTemplate serviceTemplate) { Product product = createProduct(serviceTemplate); createArticle(product); ProductVersion productVersion = createProductVersion(product); List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate); serviceInstances.forEach(serviceInstance -> { serviceInstance.setProductVersion(productVersion); serviceInstance.setServiceTemplate(null); serviceInstanceService.update(serviceInstance); OfferTemplate offer = serviceInstance.getSubscription().getOffer(); OfferComponent offerComponent = new OfferComponent(); offerComponent.setProduct(product); offerComponent.setOfferTemplate(offer); offer.getOfferComponents().add(offerComponent); offer.getOfferServiceTemplates().removeIf(o -> o.getServiceTemplate().getId().equals(serviceTemplate.getId())); offerTemplateService.update(offer); }); return product; } private void createArticle(Product product) { product.getProductCharges().stream().map(pc -> pc.getChargeTemplate()).forEach(chargeTemplate -> { AccountingArticle accountingArticle; List<AccountingArticle> accountingArticles = accountingArticleService .findByTaxClassAndSubCategory(chargeTemplate.getTaxClass(), chargeTemplate.getInvoiceSubCategory()); if (accountingArticles.isEmpty()) { TaxClass taxClass = taxClassService.findByCode(DEFAULT_TAX_CLASS_CODE); accountingArticle = new AccountingArticle(UUID.randomUUID().toString(), "Migration Accounting article", taxClass, chargeTemplate.getInvoiceSubCategory()); accountingArticleService.create(accountingArticle); } else { accountingArticle = accountingArticles.get(0); } ArticleMapping defaultArticleMapping = articleMappingService.findById(ARTICLE_MAPPING_ID); ArticleMappingLine articleMappingLine = new ArticleMappingLine(); articleMappingLine.setChargeTemplate(chargeTemplate); articleMappingLine.setArticleMapping(defaultArticleMapping); articleMappingLine.setProduct(product); articleMappingLine.setAccountingArticle(accountingArticle); articleMappingLineService.create(articleMappingLine); }); } private Product createProduct(ServiceTemplate serviceTemplate) { Product product = new Product(); product.setCode(serviceTemplate.getCode()); product.setDescription(serviceTemplate.getDescription()); List<ProductChargeTemplateMapping> productCharges = getProductCharges(serviceTemplate); product.setProductCharges(productCharges); product.setCfValues(serviceTemplate.getCfValues()); product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues()); product.setDisabled(serviceTemplate.isDisabled()); productService.create(product); return product; } private ProductVersion createProductVersion(Product product) { ProductVersion productVersion = new ProductVersion(); productVersion.setProduct(product); productVersion.setShortDescription(product.getDescription()); productVersion.setStatus(VersionStatusEnum.PUBLISHED); productVersion.setStatusDate(Calendar.getInstance().getTime()); productVersionService.create(productVersion); return productVersion; } private ProductChargeTemplateMapping mapToProductChargeTemplate(ServiceChargeTemplate serviceCharge) { ProductChargeTemplateMapping productChargeTemplateMapping = new ProductChargeTemplateMapping(); productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate()); return productChargeTemplateMapping; } private List<ProductChargeTemplateMapping> getProductCharges(ServiceTemplate serviceTemplate) { List<ProductChargeTemplateMapping> productCharges = serviceTemplate.getServiceSubscriptionCharges().stream().map(this::mapToProductChargeTemplate) .collect(Collectors.toList()); productCharges.addAll(serviceTemplate.getServiceRecurringCharges().stream().map(this::mapToProductChargeTemplate).collect(Collectors.toList())); productCharges.addAll(serviceTemplate.getServiceTerminationCharges().stream().map(this::mapToProductChargeTemplate).collect(Collectors.toList())); productCharges.addAll(serviceTemplate.getServiceUsageCharges().stream().map(this::mapToProductChargeTemplate).collect(Collectors.toList())); return productCharges; } }');
+                INSERT INTO OPENCELL.MEVEO_SCRIPT_INSTANCE (ID, VERSION, DISABLED, CREATED, CODE, DESCRIPTION, SRC_TYPE, SCRIPT)
+                VALUES (-30, 0, 0, ${db.current.time} , 'org.meveo.service.script.ServiceTemplateToProductScript', 'KPI Customer Per Offer Reporting Script', 'JAVA', scriptData);
+            end;
+            /
+            ]]>
+        </sql>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-40" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="null" />
+            <column name="uuid" value="ServiceTemplateToProductJob" />
+            <column name="code" value="ServiceTemplateToProductJob" />
+            <column name="description" value="ServiceTemplateToProductJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="ScriptingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="null" />
+            <column name="timerentity_id" value="null" />
+            <column name="cf_values">
+                <![CDATA[
+                    {"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.ServiceTemplateToProductScript","id":-30}}],"ScriptingJob_TransactionType":[{"string":"REQUIRES_NEW"}]}
+                ]]>
+            </column>
+        </insert>
+    </changeSet>
+    
+
+    <changeSet id="4316_20190625_job" author="horriKhalid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-22" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-06-25 00:00:00.000" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="ScriptingJob" />
+            <column name="code" value="ValidateBR_Job" />
+            <column name="creator" value="opencell.admin" />
+            <column name="following_job_id" valueNumeric="-11" />
+            <column name="description" value="Validates *all* Billing Runs"></column>
+            <column name="uuid" value="ValidateBR_Job" />
+            <column name="cf_values" value='{"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.ValidateBRScript"}}]}'></column>
+        </insert>
+    </changeSet>
+    <changeSet id="4316_20190625_script" author="horriKhalid">
+        <sql><![CDATA[
+        INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-24, 0, 0, ${db.current.time}, 'org.meveo.service.script.ValidateBRScript', 'Validate Billing Runs', 'JAVA', '
+            package org.meveo.service.script;
+
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
+import org.meveo.service.billing.impl.BillingRunService;
+
+/**
+ * @author phung
+ *
+ */
+public class ValidateBRScript extends Script {
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+        BillingRunService billingRunService = (BillingRunService) getServiceInterface("BillingRunService");
+
+        BillingRunExtensionService billingRunExtensionService = (BillingRunExtensionService) getServiceInterface(
+                "BillingRunExtensionService");
+
+        if (billingRunService != null) {
+            List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.PREINVOICED,  BillingRunStatusEnum.POSTINVOICED);
+
+            for (BillingRun billingRun : billingRuns) {
+
+                try {
+                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
+                            BillingRunStatusEnum.POSTVALIDATED, null);
+                } catch (Exception e) {
+                    System.err.println("Error " + e.getMessage());
+                }
+            }
+
+        }
+
+    }
+}
+
+        ');
+        ]]></sql>
+    </changeSet>
+    
+    
+    <changeSet id="#277_20210622" author="TarikFA.">
+            <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-31, 0, 0, ${db.current.time}, 'org.meveo.service.quote.script.QuoteValidation', 'quote validation', 'JAVA', '
+            package org.meveo.service.quote.script;
+            public class QuoteValidation extends QuoteValidationScript {}
+            ');]]></sql>
+            
+            <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-32, 0, 0, ${db.current.time}, 'org.meveo.service.quote.script.OrderAdvancement', 'order advancemnt script', 'JAVA', '
+            package org.meveo.service.quote.script;
+            public class OrderAdvancement extends OrderAdvancementScript {}
+            ');]]></sql>
+            
+            <insert tableName="adm_notification">
+                <column name="id" value="-11" />
+                <column name="version" value="0"/>
+                <column name="disabled" value="0"/>
+                <column name="created" valueDate="${db.current.time}"/>
+                <column name="code" value="NOTIF_QUOTE_VALIDATION"/>
+                <column name="class_name_filter" value="org.meveo.model.cpq.CpqQuote"/>
+                <column name="event_expression_filter" value="#{event.status == 'ACCEPTED' }"/>
+                <column name="event_type_filter" value="STATUS_UPDATED"/>
+                <column name="creator" value="opencell.admin"/>
+                <column name="script_instance_id" value="-31"/>
+                <column name="uuid" value="GENERIC_UUID_CPQUOTE"/>
+                <column name="priority" value="0"/>
+                <column name="run_async" value="0"/>
+                <column name="save_successful_notif" value="1"/>
+            </insert>
+            
+            <insert tableName="adm_notification_params">
+                <column name="notification_id" value="-11" />
+                <column name="params" value="#{event}" />
+                <column name="params_key" value="cpqQuote" />
+            </insert>
+            
+            <insert tableName="adm_script_notification">
+                <column name="id" value="-11"/>
+            </insert>
+            
+            
+            <insert tableName="adm_notification">
+                <column name="id" value="-12" />
+                <column name="version" value="0"/>
+                <column name="disabled" value="0"/>
+                <column name="created" valueDate="${db.current.time}"/>
+                <column name="code" value="NOTIF_ORDER_ADVANCEMENT"/>
+                <column name="class_name_filter" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
+                <column name="event_type_filter" value="ADVT_RATE_INCREASED"/>
+                <column name="creator" value="opencell.admin"/>
+                <column name="script_instance_id" value="-32"/>
+                <column name="uuid" value="GENERIC_UUID_ORDER"/>
+                <column name="priority" value="0"/>
+                <column name="run_async" value="0"/>
+                <column name="save_successful_notif" value="1"/>
+            </insert>
+            
+            <insert tableName="adm_notification_params">
+                <column name="notification_id" value="-12" />
+                <column name="params" value="#{event}" />
+                <column name="params_key" value="commercialOrder" />
+            </insert>
+            
+            <insert tableName="adm_script_notification">
+                <column name="id" value="-12"/>
+            </insert>
+    </changeSet>
+    
+
+    <changeSet id="INTRD-263_20210716" author="ZBariki">
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_QUERY_RESULT_SUCCESS" />
+            <column name="type" value="OTHER"/>
+            <column name="tag_start" value="#{"/>
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query result" />
+            <column name="subject" value="[opencell] Query result query.name query execution start date" />
+            <column name="textcontent">
+                <![CDATA[Dear #{userName},
+
+The result for your query is ready.
+Check the result on Opencell Portal direct link to the result on the portal
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+Line count : #{lineCount}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq"/>
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_QUERY_RESULT_FAILURE" />
+            <column name="type" value="OTHER" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query failure notification" />
+            <column name="subject" value="[opencell] Query failed query.name query execution start date" />
+            <column name="textcontent">
+                <![CDATA[Dear #{userName},
+
+Query execution failed with error :
+#{error}
+
+Contact your administrator or support.
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
+        </insert>
+    </changeSet>
+    
+    
+   <changeSet id="J215_20210708" author="Mohammed_ELAZZOUZI">
+   
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueNumeric="-43" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.ServiceImportScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="script processor to import service instances]"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="script"><![CDATA[package org.meveo.service.script;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+
+
+public class ServiceImportScript extends Script {
+
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
+	private static final String RECORD_VARIABLE_NAME = "record";
+
+	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
+			"ServiceInstanceService");
+	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
+			"CustomFieldTemplateService");
+	private ServiceTemplateService serviceTemplateService = (ServiceTemplateService) getServiceInterface(
+			"ServiceTemplateService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(
+			"SubscriptionService");
+	private SubscriptionTerminationReasonService reasonService = (SubscriptionTerminationReasonService) getServiceInterface(
+			"SubscriptionTerminationReasonService");
+	@Override
+	public void execute(Map<String, Object> context) throws BusinessException {
+		try {
+			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+			if (recordMap != null && !recordMap.isEmpty()) {
+				DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+				if (!"ServiceInstance".equals(OC_ENTITY)) {
+					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+				}
+				String OC_ACTION = (String) recordMap.get("OC_ACTION");
+				if (!Stream.of(ServiceInstanceActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+				}
+				ServiceInstanceActionEnum action = ServiceInstanceActionEnum.valueOf(OC_ACTION);
+
+				String OC_Subscription_code = (String) recordMap.get("OC_Subscription_code");
+				String OC_ServiceInstance_code = (String) recordMap.get("OC_ServiceInstance_code");
+				List<ServiceInstance> serviceInstances = serviceInstanceService
+						.findByCodeAndCodeSubscription(OC_ServiceInstance_code, OC_Subscription_code);
+				
+				ServiceInstance serviceInstance = null;
+				if (action==ServiceInstanceActionEnum.INSTANTIATE ) {
+					serviceInstance = new ServiceInstance();
+					mapServiceInstanceFields(recordMap, serviceInstance);
+					serviceInstance.setCode(OC_ServiceInstance_code);
+					Subscription subscription = subscriptionService.findByCode(OC_Subscription_code);
+					if(subscription==null) {
+						throw new ValidationException("no Subscription found with subscriptionCode: '" + OC_Subscription_code + "'");
+					}
+					serviceInstance.setSubscription(subscription );
+					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(OC_ServiceInstance_code);
+					if(serviceTemplate==null) {
+						throw new ValidationException("no serviceTemplate found with code: '" + OC_ServiceInstance_code + "'");
+					}
+					serviceInstance.setServiceTemplate(serviceTemplate);
+					serviceInstanceService.create(serviceInstance);
+				} else {
+					if (serviceInstances == null || serviceInstances.isEmpty()) {
+						throw new ValidationException("no ServiceInstanceFound for subscriptionCode/serviceInstanceCode: '"
+										+ OC_Subscription_code + "'/'" + OC_ServiceInstance_code + "'");
+					}
+					serviceInstance = serviceInstances.get(0);
+				}
+				
+
+				switch (action) {
+				case INSTANTIATE:
+					serviceInstanceService.serviceInstanciation(serviceInstance);
+					break;
+				case ACTIVATE:
+					serviceInstanceService.serviceActivation(serviceInstance);
+					break;
+				case RESUME:
+					serviceInstanceService.serviceReactivation(serviceInstance, new Date(), true, false);
+					break;
+				case SUSPEND:
+					serviceInstanceService.serviceSuspension(serviceInstance, new Date());
+					break;
+				case TERMINATE:
+					String terminationDate = (String) recordMap.get("OC_terminationDate");
+					Date OC_terminationDate = StringUtils.isEmpty(terminationDate) ? new Date() : dateFormat.parse(terminationDate);
+					String OC_terminationReason = (String) recordMap.get("OC_terminationReason");
+					SubscriptionTerminationReason reason = reasonService.findByCodeReason(OC_terminationReason);
+					if(reason==null) {
+						throw new ValidationException("no TerminationReason found with code: '" + OC_terminationReason + "'");
+					}
+					serviceInstanceService.terminateService(serviceInstance, OC_terminationDate, reason, serviceInstance.getOrderNumber());
+					break;
+				case UPDATE:
+					updateService(recordMap, serviceInstance);
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (Exception exception) {
+			throw new BusinessException(exception);
+		}
+	}
+
+	private void updateService(Map<String, Object> recordMap, ServiceInstance serviceInstance) throws Exception {
+		mapServiceInstanceFields(recordMap, serviceInstance);
+		serviceInstanceService.update(serviceInstance);
+	}
+
+	private void mapServiceInstanceFields(Map<String, Object> recordMap, ServiceInstance serviceInstance)
+			throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_ServiceInstance_subscriptionDate = (String) recordMap.get("OC_ServiceInstance_subscriptionDate");
+		String OC_ServiceInstance_rateUntilDate = (String) recordMap.get("OC_ServiceInstance_rateUntilDate");
+		String OC_ServiceInstance_endAgreementDate = (String) recordMap.get("OC_ServiceInstance_endAgreementDate");
+
+		Date subscriptionDate = StringUtils.isEmpty(OC_ServiceInstance_subscriptionDate) ? null : dateFormat.parse(OC_ServiceInstance_subscriptionDate);
+		Date rateUntilDate = StringUtils.isEmpty(OC_ServiceInstance_rateUntilDate) ? null : dateFormat.parse(OC_ServiceInstance_rateUntilDate);
+		Date endAgreementDate = StringUtils.isEmpty(OC_ServiceInstance_endAgreementDate) ? null : dateFormat.parse(OC_ServiceInstance_endAgreementDate);
+		String OC_ServiceInstance_description = (String) recordMap.get("OC_ServiceInstance_description");
+		String OC_ServiceInstance_quantity = (String) recordMap.get("OC_ServiceInstance_quantity");
+
+		serviceInstance.setSubscriptionDate(subscriptionDate);
+		serviceInstance.setRateUntilDate(rateUntilDate);
+		serviceInstance.setEndAgreementDate(endAgreementDate);
+		serviceInstance.setQuantity(new BigDecimal(OC_ServiceInstance_quantity));
+		serviceInstance.setDescription(OC_ServiceInstance_description);
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> serviceInstance.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+	}
+	public enum ServiceInstanceActionEnum {
+		INSTANTIATE, ACTIVATE, RESUME, SUSPEND, TERMINATE, UPDATE
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
+		
+		if (StringUtils.isEmpty(stringCF)) {
+            return stringCF;
+        }
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "ServiceInstance");
+		if (cft == null) {
+            throw new BusinessException("No Custom Field exist on ServiceInstance with code "+cftCode);
+        }
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key != "" ? key + "|" + s : s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value != "" ? value + "|" + s : s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key != "" ? key + "|" + s : s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDate(stringCF);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
+	}
+}]]></column>
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueNumeric="-44" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.AccessImportScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="script processor to import access points"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="script"><![CDATA[package org.meveo.service.script;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.medina.impl.AccessService;
+
+public class AccessImportScript extends Script {
+
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
+	private static final String RECORD_VARIABLE_NAME = "record";
+
+	private AccessService accessService = (AccessService) getServiceInterface("AccessService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+	CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface(
+			"CustomFieldTemplateService");
+
+	@Override
+	public void execute(Map<String, Object> context) throws BusinessException {
+		try {
+			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+			if (recordMap != null && !recordMap.isEmpty()) {
+				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+				if (!"AccessPoint".equals(OC_ENTITY)) {
+					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+				}
+				String OC_ACTION = (String) recordMap.get("OC_ACTION");
+				if (!Stream.of(AccessActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+				}
+				AccessActionEnum action = AccessActionEnum.valueOf(OC_ACTION);
+
+				Access access = validateAndGetAccess(action, recordMap);
+
+				if (AccessActionEnum.DELETE.equals(action)) {
+					accessService.remove(access);
+				} else {
+					setAccessValues(recordMap, access);
+					if (AccessActionEnum.CREATE.equals(action)) {
+				        if (accessService.isDuplicateAndOverlaps(access)) {
+				            throw new BusinessException( "Duplicate subscription/access point: '"+access.getSubscription().getCode()+"'/'"+access.getAccessUserId()+"'");
+				        }
+						accessService.create(access);
+					} else if (AccessActionEnum.UPDATE.equals(action)) {
+						accessService.update(access);
+					}
+
+				}
+			}
+		} catch (Exception exception) {
+			throw new BusinessException(exception);
+		}
+	}
+
+	private Access validateAndGetAccess(AccessActionEnum action, Map<String, Object> recordMap) {
+		Access access = null;
+		String OC_subscription_code = (String) recordMap.get("OC_Subscription_code");
+		String OC_Access_code = (String) recordMap.get("OC_accessPoint_code");
+		List<Access> accessList = accessService.getActiveAccessByCodeAndCodeSubscription(OC_Access_code, OC_subscription_code);
+		if (!AccessActionEnum.CREATE.equals(action)) {
+			if (accessList == null || accessList.isEmpty()) {
+				throw new ValidationException("no Access found for subscriptionCode/AccessCode: '"
+						+ OC_subscription_code + "'/'" + OC_Access_code + "'");
+			}
+			access = accessList.get(0);
+		} else {
+			access = new Access();
+			Subscription subscription = subscriptionService.findByCode(OC_subscription_code);
+			if (subscription == null) {
+				throw new ValidationException("no subscription found for code: '" + OC_subscription_code + "'");
+			}
+			access.setSubscription(subscription);
+			access.setAccessUserId(OC_Access_code);
+		}
+		return access;
+	}
+
+	private void setAccessValues(Map<String, Object> recordMap, Access access) throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_accessPoint_startDate = (String) recordMap.get("OC_accessPoint_startDate");
+		String OC_accessPoint_endDate = (String) recordMap.get("OC_accessPoint_endDate");
+		Date startDate = StringUtils.isEmpty(OC_accessPoint_startDate) ? null : dateFormat.parse(OC_accessPoint_startDate);
+		Date endDate = StringUtils.isEmpty(OC_accessPoint_endDate) ? null : dateFormat.parse(OC_accessPoint_endDate);
+		access.setEndDate(endDate);
+		access.setStartDate(startDate);
+
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> access.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+	}
+
+	public enum AccessActionEnum {
+		CREATE, UPDATE, DELETE
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
+		
+		if (StringUtils.isEmpty(stringCF)) {
+            return stringCF;
+        }
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Access");
+		if (cft == null) {
+            throw new BusinessException("No Custom Field exist on Access with code "+cftCode);
+        }
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+		
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key != "" ? key + "|" + s : s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value != "" ? value + "|" + s : s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key != "" ? key + "|" + s : s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDate(stringCF);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
+	}
+}]]></column>
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueNumeric="-45" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.SubscriptionImportScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="script processor to import subscriptions"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="script"><![CDATA[package org.meveo.service.script;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+
+public class SubscriptionImportScript extends Script {
+
+	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
+	private static final String RECORD_VARIABLE_NAME = "record";
+	private SubscriptionTerminationReasonService reasonService= (SubscriptionTerminationReasonService) getServiceInterface("SubscriptionTerminationReasonService");
+	private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+	private UserAccountService userAccountService = (UserAccountService) getServiceInterface("UserAccountService");
+	private SellerService sellerService = (SellerService) getServiceInterface("SellerService");
+	private OfferTemplateService offerService = (OfferTemplateService) getServiceInterface("OfferTemplateService");
+	private CustomFieldTemplateService customFieldTemplateService =(CustomFieldTemplateService) getServiceInterface("CustomFieldTemplateService");
+
+	@Override
+	public void execute(Map<String, Object> context) throws BusinessException {
+		try {
+			Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+			if (recordMap != null && !recordMap.isEmpty()) {
+				String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+				if (!"SUBSCRIPTION".equals(OC_ENTITY)) {
+					throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+				}
+				String OC_ACTION = (String) recordMap.get("OC_ACTION");
+				if (!Stream.of(SubscriptionActionEnum.values()).anyMatch(e -> e.toString().equals(OC_ACTION))) {
+					throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+				}
+				SubscriptionActionEnum action = SubscriptionActionEnum.valueOf(OC_ACTION);
+
+				String OC_subscription_code = (String) recordMap.get("OC_subscription_code");
+				Subscription subscription = subscriptionService
+						.findByCode(OC_subscription_code);
+				if (subscription == null && !SubscriptionActionEnum.CREATE.equals(action)) {
+					throw new ValidationException("no Subscription Found for subscriptionCode: '"
+							+ OC_subscription_code + "'");
+				}
+				if (subscription != null && SubscriptionActionEnum.CREATE.equals(action)) {
+					throw new ValidationException("subscription already exists with code: '"
+							+ OC_subscription_code + "'");
+				}
+
+				switch (action) {
+				case CREATE:
+					subscription = new Subscription();
+					subscription.setCode(OC_subscription_code);
+					mapSubscriptionValues(recordMap, subscription);
+					subscriptionService.create(subscription);
+					break;
+				case ACTIVATE:
+					subscriptionService.activateInstantiatedService(subscription);
+					break;
+				case RESUME:
+					subscriptionService.subscriptionReactivation(subscription, new Date());
+					break;
+				case SUSPEND:
+					subscriptionService.subscriptionSuspension(subscription, new Date());
+					break;
+				case TERMINATE:
+					DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+					Date OC_terminationDate = extractDate(recordMap, dateFormat, "OC_terminationDate");
+					String terminationCode = (String)recordMap.get("OC_subscriptionTerminationReason_code");
+					if(terminationCode==null) {
+						throw new ValidationException("OC_subscriptionTerminationReason_code is mandatory to terminate subscription" );
+					}
+					SubscriptionTerminationReason terminationReason = reasonService.findByCodeReason(terminationCode);
+					if(terminationReason==null) {
+						throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminationCode);
+					}
+					subscription.setSubscriptionTerminationReason(terminationReason);
+					subscriptionService.terminateSubscription(subscription, OC_terminationDate, terminationReason, null);
+					break;
+				case UPDATE:
+					mapSubscriptionValues(recordMap, subscription);
+					subscriptionService.update(subscription);
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (Exception exception) {
+			throw new BusinessException(exception);
+		}
+	}
+
+	private void mapSubscriptionValues(Map<String, Object> recordMap, Subscription subscription) throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+		String OC_seller_code = (String) recordMap.get("OC_seller_code");
+		String OC_offer_code = (String) recordMap.get("OC_offer_code");
+		String OC_userAccount_code = (String) recordMap.get("OC_userAccount_code");
+		Date subscriptionDate = extractDate(recordMap, dateFormat, "OC_subscriptionDate");
+		Date endAgreementDate = extractDate(recordMap, dateFormat, "OC_endAgreementDate");
+		Date OC_terminationDate = extractDate(recordMap, dateFormat, "OC_terminationDate");
+		
+		String OC_subscription_description = (String) recordMap.get("OC_subscription_description");
+
+		
+
+		UserAccount userAccount = userAccountService.findByCode(OC_userAccount_code);
+		if(userAccount==null) {
+			throw new EntityDoesNotExistsException(UserAccount.class, OC_userAccount_code);
+		}
+		Seller seller = sellerService.findByCode(OC_seller_code);
+		if(seller==null) {
+			throw new EntityDoesNotExistsException(Seller.class, OC_seller_code);
+		}
+		OfferTemplate offer = offerService.findByCode(OC_offer_code);
+		if(offer==null) {
+			throw new EntityDoesNotExistsException(OfferTemplate.class, OC_offer_code);
+		}
+		subscription.setUserAccount(userAccount);
+		subscription.setSeller(seller);
+		subscription.setOffer(offer);
+		subscription.setTerminationDate(OC_terminationDate);
+		subscription.setSubscriptionDate(subscriptionDate);
+		subscription.setEndAgreementDate(endAgreementDate);
+		subscription.setDescription(OC_subscription_description);
+		recordMap.keySet().stream().filter(key -> key.startsWith("CF_"))
+				.forEach(key -> subscription.setCfValue(key.substring(3), parseStringCf(key.substring(3), (String)recordMap.get(key))));
+	}
+
+	public enum SubscriptionActionEnum {
+		CREATE, UPDATE, SUSPEND, RESUME, ACTIVATE, TERMINATE
+	}
+	
+	private Date extractDate(Map<String, Object> recordMap, DateFormat dateFormat, final String key)
+			throws ParseException {
+		final String str = (String) recordMap.get(key);
+		return StringUtils.isEmpty(str)?null:dateFormat.parse(str);
+	}
+	
+	public Object parseStringCf(String cftCode, String stringCF) {
+		if (StringUtils.isEmpty(stringCF)) {
+            return stringCF;
+        }
+		CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(cftCode, "Subscription");
+		if (cft == null) {
+            throw new BusinessException("No Custom Field exist on Subscription with code "+cftCode);
+        }
+		CustomFieldStorageTypeEnum storageType = cft.getStorageType();
+        
+
+		switch (storageType) {
+		case SINGLE:
+			return parseSingleValue(cft, stringCF);
+		case MATRIX:
+			Map<String, Object> matrix = new HashMap<>();
+			final List<CustomFieldMatrixColumn> matrixKeys = cft.getMatrixKeyColumns();
+			final List<CustomFieldMatrixColumn> matrixValues = cft.getMatrixValueColumns();
+			if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + matrixValues.size())) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					String value = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key != "" ? key + "|" + s : s;
+					}
+					for (String s : list.subList(keySize, list.size())) {
+						value = value != "" ? value + "|" + s : s;
+					}
+					matrix.put(key, value);
+				}
+			} else {
+				List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+				for (String stringCFLine : stringCFLines) {
+					List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+					final int keySize = matrixKeys.size();
+					if (list == null || list.size() != (keySize + 1)) {
+						throw new ValidationException("Not valid String representation of MATRIX Custom Field : " + cft.getCode() + "/" + stringCF);
+					}
+					String key = "";
+					for (String s : list.subList(0, keySize)) {
+						key = key != "" ? key + "|" + s : s;
+					}
+					matrix.put(key, parseSingleValue(cft, list.get(list.size() - 1)));
+				}
+			}
+			return matrix;
+		case MAP:
+			Map<String, Object> map = new HashMap<>();
+			if(stringCF.isEmpty()) {
+				return map;
+			}
+			List<String> stringCFLines = stringCF.contains("\n") ? Arrays.asList(stringCF.split("\n")) : Arrays.asList(stringCF);
+			
+			for (String stringCFLine : stringCFLines) {
+				List<String> list = Arrays.asList(stringCFLine.split("\\|"));
+				if (list == null || list.size() != 2) {
+					throw new ValidationException("Not valid String representation of MAP Custom Field : " + cft.getCode() + "/" + stringCF);
+				}
+				String key = list.get(0);
+				map.put(key, parseSingleValue(cft, list.get(1)));
+			}
+			return map;
+		case LIST:
+			// TODO
+			return stringCF;
+		default:
+			return stringCF;
+		}
+	}
+
+	private static Object parseSingleValue(CustomFieldTemplate cft, String stringCF) {
+		if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+		    return Double.parseDouble(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+		    return Boolean.parseBoolean(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+		    return Long.parseLong(stringCF);
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+		        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+		    return stringCF;
+		} else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+		    return DateUtils.parseDate(stringCF);
+		} else {
+			throw new ValidationException("NOT YET IMPLEMENTED");
+		}
+	}
+}]]></column>
+        </insert>
+   
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-46" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
+            <column name="code" value="importServicesJob" />
+            <column name="description" value="importServicesJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="importServicesJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values">
+	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n          \t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationReason\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_quantity\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_rateUntilDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationReason\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_ServiceInstance_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PPC_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_APPEL_SORTANT_PRIXMINUTE_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_NRC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_CHATS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_SMS_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_NRC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUTPARUNITE_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_LICENCE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_SMS_SORTANT_ZONE\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_UNITAIRE_OPTION\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_PRIX_REC_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_REC\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MATRICE_COUT_APPEL_ENTRANT\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_EMAILS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_PRIX_HITS_PALIER\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PRIX_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TAILLE_TRANCHE_STOCKAGE_GO\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_STOCKAGE_EMAILS_GO_INCLUS\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_MAP_MIN_FACTURATION\" required=\"false\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/services/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/services/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/services/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.ServiceImportScript"}]}]]>
+            </column>
+            <column name="verbose_report" value="1" />
+          </insert>
+          <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-47" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
+            <column name="code" value="importSubscriptionsJob" />
+            <column name="description" value="importSubscriptionsJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="importSubscriptionsJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values">
+	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_offer_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_seller_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" ignore=\"true\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_subscription_description\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_userAccount_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_offer_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_seller_code\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_endAgreementDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_terminationDate\" required=\"false\"/>\r\n\t\t\t<field name=\"OC_subscriptionTerminationReason_code\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_REACH\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_PAYS_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_TYPE_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NIVEAU_NUM\" required=\"false\"/>\r\n\t\t\t<field name=\"CF_CF_NUM_COMMANDE_SUB\" required=\"false\"/>\r\n\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/subscriptions/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/subscriptions/inputs"}],
+	            "waitingMillis":[{"long":0}],"FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],"FlatFileProcessingJob_rejectDir":[{"string":"/imports/subscriptions/rejects"}],
+	            "nbRuns":[{"long":1}],"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.SubscriptionImportScript"}]}]]>
+            </column>
+            <column name="verbose_report" value="1" />
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-48" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
+            <column name="code" value="importAccesPointsJob" />
+            <column name="description" value="importAccesPointsJob" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="importAccesPointsJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values">
+	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
+	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
+	            "FlatFileProcessingJob_mappingConf":[{"string":"<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\",\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_code\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_startDate\" ignore=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_endDate\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"OC_ENTITY\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_ACTION\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_Subscription_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_code\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_startDate\" required=\"true\"/>\r\n\t\t\t<field name=\"OC_accessPoint_endDate\" required=\"true\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}],
+	            "FlatFileProcessingJob_recordVariableName":[{"string":"record"}],
+	            "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+	            "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
+	            "FlatFileProcessingJob_archiveDir":[{"string":"/imports/accessPoints/archives"}],
+	            "FlatFileProcessingJob_inputDir":[{"string":"/imports/accessPoints/inputs"}],
+	            "waitingMillis":[{"long":0}],
+	            "FlatFileProcessingJob_nbLinesToProcess":[{"long":1}],
+	            "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
+	            "FlatFileProcessingJob_rejectDir":[{"string":"/imports/accessPoints/rejects"}],
+	            "nbRuns":[{"long":1}],
+	            "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.AccessImportScript"}]}]]>
+            </column>
+            <column name="verbose_report" value="1" />
+        </insert>
+	</changeSet>
+    
+	<changeSet id="1589_20210930" author="YoussefIZEM">
+   
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueNumeric="-55" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.ProcessCustomerPaymentsFileScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="Process customer payments file script"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="script"><![CDATA[
+package org.meveo.service.script;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.CustomerPaymentRecordDto;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.payments.impl.PaymentService;
+import org.meveo.service.script.Script;
+
+import org.meveo.model.payments.ApplicationPropertiesEnum;
+import org.meveo.model.payments.AccountOperationCFsEnum;
+
+/**
+ * @author Abdellatif BARI
+ */
+@Stateless
+public class ProcessCustomerPaymentsFileScript extends Script {
+
+	private transient BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
+    
+    private transient PaymentService paymentService = (PaymentService) getServiceInterface(PaymentService.class.getSimpleName());
+
+	private transient OCCTemplateService oCCTemplateService = (OCCTemplateService) getServiceInterface(OCCTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> parameters) throws BusinessException {
+        try {
+            CustomerPaymentRecordDto customerPaymentRecordDto = initContext(parameters);
+            processItem(customerPaymentRecordDto);
+        } catch (Exception e) {
+            log.error("error on process customer payments file {} ", e.getMessage(), e);
+            if (e instanceof BusinessException) {
+                throw e;
+            } else {
+                // wrap the exception in a business exception and throwing it
+                throw new BusinessException(e);
+            }
+        }
+    }
+
+    /**
+     * Init context
+     *
+     * @param parameters parameters
+     * @return the customer payment record Dto
+     * @throws BusinessException the business exception
+     */
+    private CustomerPaymentRecordDto initContext(Map<String, Object> parameters) throws BusinessException {
+        CustomerPaymentRecordDto customerPaymentRecordDto = (CustomerPaymentRecordDto) parameters.get("record");
+        if (customerPaymentRecordDto == null) {
+            throw new BusinessException(String.format("Parameter record is missing"));
+        }
+        customerPaymentRecordDto.setErrorMessage(new StringBuilder());
+        String fileName = (String) parameters.get("origin_filename");
+        if (StringUtils.isBlank(fileName)) {
+            throw new BusinessException(String.format("Parameter origin_filename is missing"));
+        }
+        customerPaymentRecordDto.setFileName(fileName);
+        return customerPaymentRecordDto;
+    }
+
+    /**
+     * Process item
+     *
+     * @param customerPaymentRecordDto the customerPayment record Dto
+     * @throws BusinessException the business exception
+     */
+    private void processItem(CustomerPaymentRecordDto customerPaymentRecordDto) throws BusinessException {
+        validateItem(customerPaymentRecordDto);
+        populateItem(customerPaymentRecordDto);
+        if (customerPaymentRecordDto.getErrorMessage().length() > 0) {
+            throw new BusinessException(customerPaymentRecordDto.getErrorMessage().toString());
+        }
+    }
+
+    /**
+     * Validate item
+     *
+     * @param customerPaymentRecordDto the customerPayment record Dto
+     * @throws BusinessException the business exception
+     */
+    private void validateItem(CustomerPaymentRecordDto customerPaymentRecordDto) throws BusinessException {
+        if (StringUtils.isBlank(customerPaymentRecordDto.getPaidAmount())) {
+            customerPaymentRecordDto.getErrorMessage().append("The payment amount is required.");
+        } else {
+            customerPaymentRecordDto.setPaidAmount(customerPaymentRecordDto.getPaidAmount().trim());
+            if (!isDouble(customerPaymentRecordDto.getPaidAmount())) {
+                customerPaymentRecordDto.getErrorMessage().append("The payment amount is invalid");
+            }
+        }
+        if (customerPaymentRecordDto.getDate() == null) {
+            customerPaymentRecordDto.getErrorMessage().append("The payment date is required");
+        }
+        if (StringUtils.isBlank(customerPaymentRecordDto.getEndOfRecord()) || !customerPaymentRecordDto.getEndOfRecord().equalsIgnoreCase("V")) {
+            customerPaymentRecordDto.getErrorMessage().append("The end of record must always hard coded as V.");
+        }
+    }
+
+    /**
+     * Check number is double
+     *
+     * @param strNum the string number
+     * @return true is the string is double.
+     */
+    public static boolean isDouble(String strNum) {
+        if (StringUtils.isBlank(strNum)) {
+            return false;
+        }
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Convert String to integer value (possibility to have null as default value)
+     *
+     * @param str string to be converted
+     * @return the integer value
+     */
+    public static Integer toInteger(String str) {
+        return toInteger(str, null);
+    }
+
+    /**
+     * Convert String to integer value (possibility to have null as default value)
+     *
+     * @param str          string to be converted
+     * @param defaultValue the default value
+     * @return the integer value
+     */
+    public static Integer toInteger(String str, Integer defaultValue) {
+        if (StringUtils.isBlank(str)) {
+            return defaultValue;
+        } else {
+            try {
+                return Integer.parseInt(str.trim());
+            } catch (NumberFormatException ne) {
+                return defaultValue;
+            }
+        }
+    }
+    
+    /**
+     * Populate tariff plan item
+     *
+     * @param customerPaymentRecordDto the customerPayment record Dto
+     * @throws BusinessException the business exception
+     */
+    private void populateItem(CustomerPaymentRecordDto customerPaymentRecordDto) throws BusinessException {
+        // if everything is OK and no errors
+        if (customerPaymentRecordDto.getErrorMessage().length() == 0) {
+            Integer accountNumber = toInteger(customerPaymentRecordDto.getAccountNumber());
+            if (accountNumber != null) {
+                customerPaymentRecordDto.setAccountNumber(accountNumber.toString());
+            }
+
+            BillingAccount billingAccount = billingAccountService.findByNumber(customerPaymentRecordDto.getAccountNumber());
+            if (billingAccount != null) {
+                // create payment.
+                createPayment(customerPaymentRecordDto, billingAccount);
+            } else { // the billing account is not found in Opencell
+                log.warn("The billing account " + customerPaymentRecordDto.getAccountNumber() + " is not found ");
+                postUnmatchedPayment(customerPaymentRecordDto);
+            }
+        }
+    }
+
+    /**
+     * post unmatched payment into the suspense billing account
+     *
+     * @param customerPaymentRecordDto the customerPayment record Dto
+     * @throws BusinessException the business exception
+     */
+    private void postUnmatchedPayment(CustomerPaymentRecordDto customerPaymentRecordDto) throws BusinessException {
+        // get the suspense billing account
+        String suspenseBillingAccountCode = ApplicationPropertiesEnum.SUSPENSE_BILLING_ACCOUNT_CODE.getProperty();
+        BillingAccount billingAccount = billingAccountService.findByCode(suspenseBillingAccountCode);
+        if (billingAccount != null) {
+            // Create payment and put it into the suspense billing account
+            createPayment(customerPaymentRecordDto, billingAccount);
+        } else {
+            log.error("The suspense billing account {} is not found", suspenseBillingAccountCode);
+            customerPaymentRecordDto.getErrorMessage().append("The suspense billing account " + suspenseBillingAccountCode + " is not found ");
+        }
+    }
+
+    /**
+     * create the customer payment
+     *
+     * @param billingAccount the billing account
+     * @return the payment
+     * @throws BusinessException the business exception
+     */
+    private Payment createNewPayment(CustomerPaymentRecordDto customerPaymentRecordDto, BillingAccount billingAccount) throws BusinessException {
+
+        String occTemplateCode = ApplicationPropertiesEnum.TEMPLATE_BATCH_PAYMENT_CREDIT.getProperty();
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
+        }
+
+        BigDecimal amount = new BigDecimal(customerPaymentRecordDto.getPaidAmount()).divide(BigDecimal.valueOf(100));
+        /*
+         * if (!StringUtils.isBlank(checkDigit)) { checkDigit = checkDigit.trim(); if (checkDigit.equals("-")) { amount = amount.negate(); } }
+         */
+
+        Payment payment = new Payment();
+        payment.setCustomerAccount(billingAccount.getCustomerAccount());
+        payment.setPaymentMethod(PaymentMethodEnum.CARD);
+        // payment.setOrderNumber(?);
+        payment.setAmountWithoutTax(amount);
+        payment.setAmount(amount);
+        payment.setMatchingAmount(BigDecimal.ZERO);
+        payment.setUnMatchingAmount(amount);
+        payment.setAccountingCode(occTemplate.getAccountingCode());
+        payment.setCode(occTemplate.getCode());
+        payment.setDescription(occTemplate.getDescription());
+        payment.setTransactionCategory(OperationCategoryEnum.CREDIT); // EIR must provide the category of the transaction CREDIT or DEBIT
+        payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+        payment.setReference(customerPaymentRecordDto.getReference());
+        payment.setTransactionDate(customerPaymentRecordDto.getDate());
+        // using the date the file is processed as the Payment Date (to be displayed on the invoice)
+        payment.setDueDate(new Date());
+        payment.setMatchingStatus(MatchingStatusEnum.O);
+        payment.setCfValue(AccountOperationCFsEnum.BILLING_ACCOUNT_NUMBER.name(), billingAccount.getExternalRef1());
+        //payment.setCfValue(FROM_AccountOperationCFsEnum.BILLING_ACCOUNT_NUMBER.name(), billingAccount.getExternalRef1());
+        payment.setCfValue(AccountOperationCFsEnum.PAYMENT_FILE_ACCOUNT_CUSTOMER_NUMBER.name(), customerPaymentRecordDto.getAccountNumber());
+        payment.setCfValue(AccountOperationCFsEnum.PAYMENT_FILE_NAME.name(), customerPaymentRecordDto.getFileName());
+        return payment;
+    }
+
+    /**
+     * create the customer payment
+     *
+     * @param billingAccount the billing account
+     * @return the customer payment record Dto
+     * @throws BusinessException the business exception
+     */
+    private void createPayment(CustomerPaymentRecordDto customerPaymentRecordDto, BillingAccount billingAccount) throws BusinessException {
+        try {
+            Payment payment = createNewPayment(customerPaymentRecordDto, billingAccount);
+            paymentService.create(payment);
+        } catch (BusinessException e) {
+            log.error("Couldn't create Payement. error : {}", e);
+            customerPaymentRecordDto.getErrorMessage().append("Couldn't create payment. error : " + e.getMessage());
+        }
+    }
+}		]]></column>
+        </insert>
+	</changeSet>
+   
+       <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#liquibase_hack_data-scripts" author="AbdelmounaimAkadid">
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-scripts.xml'</sql>
+    </changeSet>
+
+</databaseChangeLog>

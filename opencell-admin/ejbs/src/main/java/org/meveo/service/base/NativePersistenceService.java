@@ -813,7 +813,7 @@ public class NativePersistenceService extends BaseService {
 
     private boolean checkAggFunctions(String field) {
         if (field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
-                || field.startsWith("MAX(") || field.startsWith("MIN(")) {
+                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(")) {
             return true;
         } else {
             return false;

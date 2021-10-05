@@ -366,9 +366,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         seller = sellerService.refreshOrRetrieve(seller);
         TaxInfo taxInfo = null;
         if (isDetailedWithServices()) {
-            taxInfo = taxMappingService.determineTax(selectedTaxClass, seller, entity.getBillingAccount(), ua, entity.getInvoiceDate(), true, false);
+            taxInfo = taxMappingService.determineTax(selectedTaxClass, seller, entity.getBillingAccount(), ua, usageDate, true, false);
         } else {
-            taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, entity.getInvoiceDate());
+            taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, usageDate);
         }
 
         // AKK check what happens with tax

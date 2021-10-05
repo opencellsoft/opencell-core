@@ -272,7 +272,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         List<InvoiceLine> discountPrices = new ArrayList<>();
         AccountingArticle accountintArticle = invoiceLine.getAccountingArticle();
-        Product product = invoiceLine.getProductVersion().getProduct();
+        Product product = invoiceLine.getProduct();
         OfferTemplate offerTemplate = invoiceLine.getOfferTemplate();
         BigDecimal amountWithoutTax = invoiceLine.getAmountWithoutTax();
         BigDecimal discountAmount = BigDecimal.ZERO;
@@ -286,7 +286,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
                 discountAmount = discountAmount.add(getDiscountAmount(amountWithoutTax, discountPlanItem, product, attributesValues));
                 if (discountAmount != null && discountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, invoiceLine.getTaxRate(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                    invoiceLinesService.createInvoiceLine(null, discountAccountingArticle, invoiceLine.getProductVersion(), invoiceLine.getOrderLot(), amounts[0], amounts[1], amounts[2], invoiceLine.getTaxRate());
+                    invoiceLinesService.createInvoiceLine(null, discountAccountingArticle, invoiceLine.getProductVersion(), invoiceLine.getOrderLot(), invoiceLine.getOfferTemplate(), amounts[0], amounts[1], amounts[2], invoiceLine.getTaxRate());
                 }
             }
 

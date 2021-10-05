@@ -1309,7 +1309,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionsDto result = new SubscriptionsDto();
         List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
-                sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
+                sortOrder != null ? PagingAndFiltering.SortOrder.valueOf(sortOrder.name()) : PagingAndFiltering.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, CustomFieldInheritanceEnum.getInheritCF(true, mergedCF)));
@@ -1369,7 +1369,7 @@ public class SubscriptionApi extends BaseApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, PagingAndFiltering.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = subscriptionService.count(paginationConfiguration);
 
@@ -2827,7 +2827,13 @@ public class SubscriptionApi extends BaseApi {
             newSubscription.setAutoEndOfEngagement(newSubscription.getOffer().getAutoEndOfEngagement());
             newSubscription.autoUpdateEndOfEngagementDate();
         }
+        newSubscription.setVersionNumber(subscriptionService.findListByCode(code).stream()
+                .map(subscription -> subscription.getVersionNumber())
+                .max(Integer::compareTo).get()+1);
+        newSubscription.setPreviousVersion(lastVersionSubscription);
+        lastVersionSubscription.setNextVersion(newSubscription);
         subscriptionService.update(newSubscription);
+        subscriptionService.update(lastVersionSubscription);
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
@@ -2876,26 +2882,23 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, offerRollbackDto.getTerminationReason());
         }
 
-        List<Subscription> subscriptions = subscriptionService.findListByCode(code);
 
-        if (subscriptions.isEmpty())
+        Subscription actualSubscription = subscriptionService.getLastVersionSubscription(code);
+        if (actualSubscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, code);
-        if (subscriptions.size() == 1)
-            throw new InvalidParameterException("Subscription with code: " + code + " had one version, could not rollback it");
+        }
+        if (actualSubscription.getPreviousVersion() == null) {
+            throw new InvalidParameterException("Subscription with code: " + code + " had no version to rollback to, could not rollback it");
+        }
 
+        Subscription lastSubscription = actualSubscription.getPreviousVersion();
 
-        Subscription actualSubscription = subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() == null)
-                .findFirst()
-                .get();
-
-        Subscription lastSubscription = subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() != null)
-                .sorted((a, b) -> b.getValidity().getTo().compareTo(a.getValidity().getTo()))
-                .findFirst()
-                .get();
-
-        actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
+        lastSubscription.setNextVersion(null);
+        if (lastSubscription.getPreviousVersion() != null) {
+            lastSubscription.setPreviousVersion(actualSubscription);
+        }
+        actualSubscription.setNextVersion(lastSubscription);
+        actualSubscription.setToValidity(actualSubscription.getValidity()!=null ? actualSubscription.getValidity().getFrom() : null);
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);
 
         lastSubscription.setToValidity(null);
@@ -2930,14 +2933,17 @@ public class SubscriptionApi extends BaseApi {
 
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
-                    OrderAttribute orderAttribute = new OrderAttribute();
+                	OrderAttribute orderAttribute = new OrderAttribute(); 
+                	if(ai.getOrderAttributeCode()!=null) {
                     Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
                     orderAttribute.setAttribute(attribute);
                     orderAttribute.setStringValue(ai.getStringValue());
                     orderAttribute.setDoubleValue(ai.getDoubleValue());
                     orderAttribute.setDateValue(ai.getDateValue());
+                	}
                     return orderAttribute;
-                })
+                	
+                	})
                 .collect(Collectors.toList());
 
         commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes);

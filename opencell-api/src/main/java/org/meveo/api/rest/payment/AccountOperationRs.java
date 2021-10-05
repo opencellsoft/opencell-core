@@ -338,4 +338,28 @@ public interface AccountOperationRs extends IBaseRs {
 					)}
 	)
 	ActionStatus updateAccountingDate(@PathParam("id") Long id, @PathParam("newAccountingDate") String newAccountingDate);
+	
+	/**
+	 * update account operation's status
+	 * @param id account operation identifier
+	 * @param newStatus account operation new status
+	 *
+	 * @return Request processing status
+	 */
+	@PUT
+	@Path("/{id}/status/{newStatus}")
+	@Operation(
+			summary=" Update status of an account operation  ",
+			description=" Update status of an account operation  ",
+			operationId="    PUT_AccountOperation_updateStatus",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content = @Content(
+									schema = @Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus updateStatus(@PathParam("id") Long id, @PathParam("newStatus") String newStatus);
 }

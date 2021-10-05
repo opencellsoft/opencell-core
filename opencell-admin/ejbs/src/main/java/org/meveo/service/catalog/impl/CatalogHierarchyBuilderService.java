@@ -85,7 +85,6 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.quote.QuoteArticleLine;
-import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
@@ -97,6 +96,7 @@ import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
+import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -202,6 +202,7 @@ public class CatalogHierarchyBuilderService {
     @Inject private QuoteArticleLineService articleLineService;
     @Inject private QuotePriceService quotePriceService;
     @Inject private GroupedAttributeService groupedAttributeService;
+    @Inject private ProductVersionAttributeService productVersionAttributeService;
 
 
     public void duplicateProductVersion(ProductVersion entity, List<ProductVersionAttribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
@@ -214,6 +215,7 @@ public class CatalogHierarchyBuilderService {
         			newMedia.setCode(media.getCode() + "_" + entity.getId());
         			mediaService.create(newMedia);
         		}
+        		productAttribute = productVersionAttributeService.refreshOrRetrieve(productAttribute);
                 entity.getAttributes().add(productAttribute);
 			}
         }
@@ -1227,9 +1229,11 @@ public class CatalogHierarchyBuilderService {
     }
     
     private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
+    	quoteVersion.getMedias().size();
     	quoteVersion.getQuoteOffers().size();
     	quoteVersion.getQuoteOffers().forEach(qo -> {
     		qo.getQuoteProduct().size();
+    		qo.getQuoteAttributes().size();
     		qo.getQuoteProduct().forEach(qp -> {
     			qp.getQuoteAttributes().size();
     			qp.getQuoteArticleLines().size();
@@ -1281,6 +1285,8 @@ public class CatalogHierarchyBuilderService {
     		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
     		quoteOfferService.create(duplicate);
     		duplicateQuoteProduct(quoteProducts, duplicate);
+
+			duplicateQuoteAttribute(quoteOffer.getQuoteAttributes(), null, duplicate);
 		}
     }
     
@@ -1296,7 +1302,7 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
 			quoteProductService.create(duplicate);
 			
-			duplicateQuoteAttribute(quoteAttributes, duplicate);
+			duplicateQuoteAttribute(quoteAttributes, duplicate, null);
 			duplicateArticleLine(quoteArticleLines, duplicate);
 			
 		}
@@ -1313,11 +1319,14 @@ public class CatalogHierarchyBuilderService {
     }
     
     
-    private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct) {
+    private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct, QuoteOffer offer) {
     	for (QuoteAttribute quoteAttribute : attributes) {
 			final var duplicate = new QuoteAttribute(quoteAttribute);
 			quoteAttributeService.detach(quoteAttribute);
-			duplicate.setQuoteProduct(quoteProduct);
+			if(quoteProduct != null)
+				duplicate.setQuoteProduct(quoteProduct);
+			if(offer != null)
+				duplicate.setQuoteOffer(offer);
 			quoteAttributeService.create(duplicate);
 		}
     }

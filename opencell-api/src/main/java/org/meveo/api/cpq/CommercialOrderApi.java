@@ -76,7 +76,7 @@ import org.meveo.service.order.OrderService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 
 
@@ -131,13 +131,21 @@ public class CommercialOrderApi extends BaseApi {
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
 		final CommercialOrder order = new CommercialOrder();
-		
 		final BillingAccount billingAccount = loadEntityByCode(billingAccountService, orderDto.getBillingAccountCode(), BillingAccount.class);
 		order.setBillingAccount(billingAccount);
-		final Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-		if(seller == null)
-			throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
+		Seller seller = null;
+		if(!Strings.isEmpty(orderDto.getSellerCode())) {
+			seller = sellerService.findByCode(orderDto.getSellerCode());
+			if(seller == null)
+				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
+		}else {
+			seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+			if(seller == null)
+				throw new EntityDoesNotExistsException("the customer is not attached to a seller");
+		}
 		order.setSeller(seller);
+		
+		
 		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
 		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
 			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));

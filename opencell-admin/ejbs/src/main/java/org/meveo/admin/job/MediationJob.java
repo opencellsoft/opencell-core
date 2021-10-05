@@ -256,6 +256,17 @@ public class MediationJob extends Job {
         readerCF.setMaxValue(256L);
         readerCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put(MEDIATION_JOB_READER, readerCF);
+        
+        CustomFieldTemplate batchSize = new CustomFieldTemplate();
+        batchSize.setCode(CF_BATCH_SIZE);
+        batchSize.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
+        batchSize.setActive(true);
+        batchSize.setDescription(resourceMessages.getString("jobExecution.batchSize"));
+        batchSize.setFieldType(CustomFieldTypeEnum.LONG);
+        batchSize.setValueRequired(true);
+        batchSize.setDefaultValue("1000");
+        batchSize.setGuiPosition("tab:Configuration:0;field:6");
+        result.put(batchSize.getCode(), batchSize);
 
         return result;
     }

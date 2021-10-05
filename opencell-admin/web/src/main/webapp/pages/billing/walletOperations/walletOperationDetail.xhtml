@@ -29,7 +29,7 @@
             <hftl:formField label="#{messages['pricePlan.title']}" id="priceplanSelectId" field="priceplan" valueLabelField="code" />
             <hftl:formField label="#{messages['walletOperation.offer']}" field="offerCode" />
             <hftl:decorateFormField label="#{messages['userAccount']}" fieldId="userAccount">
-                <h:outputText id="userAccount" value="#{walletOperationBean.entity.wallet.userAccount.code}" styleClass="field-value" />
+                <h:outputText id="userAccount" value="#{walletOperationBean.entity.userAccount.code}" styleClass="field-value" />
             </hftl:decorateFormField>
             <hftl:formField label="#{messages['operation.wallet']}" field="wallet" valueLabelField="code" />
             <hftl:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
@@ -56,7 +56,10 @@
             <hftl:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
             <hftl:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
             <hftl:formField label="#{messages['walletOperation.invoicingDate']}" field="invoicingDate" />
-            <hftl:formField label="#{messages['walletOperation.status']}" field="status" />
+                        
+            <hftl:customFields backingBean="#{walletOperationBean}" messagesId=":walletOperationFormId:messages" />
+            
+            <hftl:formField label="#{messages['walletOperation.status']}" field="status" newLine="true" />
 
             <hftl:formField label="#{messages['walletOperation.statusRT.long']}" field="ratedTransaction" childField="status" edit="false"
                 rendered="#{walletOperationBean.entity.status=='TREATED'}" />
@@ -71,8 +74,6 @@
                     <h:outputText value=" #{walletOperationBean.entity.reratedWalletOperation.code}" />
                 </h:link>
             </hftl:decorateFormField>
-
-            <hftl:customFields backingBean="#{walletOperationBean}" messagesId=":walletOperationFormId:messages" />
 
             <ui:param name="buttons" value="true">
                 <ui:define name="buttons">

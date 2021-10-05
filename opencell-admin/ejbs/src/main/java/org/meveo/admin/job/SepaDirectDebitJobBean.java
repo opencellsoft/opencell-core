@@ -19,11 +19,14 @@ package org.meveo.admin.job;
 
 import static java.lang.Boolean.TRUE;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -43,11 +46,13 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.OperationActionEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -108,7 +113,6 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     @Inject
     private SellerService sellerService;
 
-
 	@Inject
 	private AccountOperationService accountOperationService;
 
@@ -121,9 +125,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    
     @Inject
     private  ParamBeanFactory paramBeanFactory;
+
     /**
      * Execute.
      *
@@ -196,21 +200,27 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-						List<AccountOperation> listAoToPay = this.filterAoToRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
+						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
+
+						if (paymentOrRefundEnum == PaymentOrRefundEnum.REFUND && listAoToPay != null) {
+						    listAoToPay = listAoToPay.stream()
+	                                .filter(accountOperation -> OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction()))
+	                                .collect(Collectors.toList());
+                        }
+
 						if (listAoToPay == null || listAoToPay.isEmpty()) {
 							throw new BusinessEntityException("no invoices!");
 						}
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
+
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
-							result.addReport(ddRequestLOT.getRejectedCause());
-							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-                                dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
-								log.info("end createPaymentsOrRefundsForDDRequestLot");
-							}
+                            dDRequestLOTService.createPaymentsOrRefundsAndGenerateDDRequestLotFile(ddRequestLOT, ddRequestBuilderInterface, ddrequestLotOp, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
 						}
+
+						// Update operationAction of each Account operation to "NONE"
 						accountOperationService.updateAOOperationActionToNone(listAoToPay.stream()
+						        .filter(a -> a.getStatus() != AccountOperationStatus.REJECTED && StringUtils.isBlank(a.getReason()))
 								.map(accountOperation -> accountOperation.getId())
 								.collect(Collectors.toList()));
 					}
@@ -334,26 +344,25 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     }
 
     /**
-     * Filter ao to refund, based on a given script, which is set through a job CF.
+     * Filter ao to pay or refund, based on a given script, which is set through a job CF.
      *
      * @param ddRequestBuilderInterface the ddRequestBuilderInterface
      * @param jobInstance the job instance
      * @param ddRequestLotOp the dd request lot op
      * @return the accountOperation list to process
      */
-	private List<AccountOperation> filterAoToRefund(DDRequestBuilderInterface ddRequestBuilderInterface, JobInstance jobInstance, DDRequestLotOp ddRequestLotOp) {
+	private List<AccountOperation> filterAoToPayOrRefund(DDRequestBuilderInterface ddRequestBuilderInterface, JobInstance jobInstance, DDRequestLotOp ddRequestLotOp) {
 		AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
 		if (aoFilterScript != null) {
 			Map<String, Object> methodContext = new HashMap<>();				
 			 methodContext.put(AccountOperationFilterScript.FROM_DUE_DATE, ddRequestLotOp.getFromDueDate());
 			 methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, ddRequestLotOp.getToDueDate());
 			 methodContext.put(AccountOperationFilterScript.PAYMENT_METHOD, PaymentMethodEnum.DIRECTDEBIT);
-			 methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, PaymentOrRefundEnum.REFUND.getOperationCategoryToProcess());
+			 methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess());
 
 			return aoFilterScript.filterAoToPay(methodContext);
 		}
-
-		return ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp, PaymentOrRefundEnum.REFUND);
+		return ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp);
 	}
 
     /**
@@ -382,5 +391,4 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
         }
         return null;
     }
-
 }

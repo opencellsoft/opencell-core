@@ -94,7 +94,7 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptUtils;
 import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

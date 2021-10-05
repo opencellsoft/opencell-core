@@ -48,7 +48,7 @@ import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.slf4j.Logger;
 
 /**
@@ -179,7 +179,7 @@ public class ApplicationInitializer {
             esPopulationService.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         }
 
-        cfValueAcumulator.loadCfAccumulationRules();
+        // cfValueAcumulator.loadCfAccumulationRules();
 
         log.info("Initialized application for provider {}", provider.getCode());
 

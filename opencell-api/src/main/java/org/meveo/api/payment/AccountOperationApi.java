@@ -48,6 +48,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountingCode;
@@ -242,7 +243,8 @@ public class AccountOperationApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        
+        accountOperationService.handleAccountingPeriods(accountOperation);
         accountOperationService.create(accountOperation);
 
         if (postData.getMatchingAmounts() != null && postData.getMatchingAmounts().getMatchingAmount() != null) {
@@ -295,7 +297,7 @@ public class AccountOperationApi extends BaseApi {
      */
     public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
             AccountOperation.class);
 
         Long totalCount = accountOperationService.count(paginationConfiguration);
@@ -619,4 +621,21 @@ public class AccountOperationApi extends BaseApi {
                 .stream()
                 .anyMatch(role -> role.getPermissions() != null && role.hasPermission("financeManagement"));
     }
+
+	/**
+	 * @param id
+	 * @param newStatus
+	 */
+	public void updateStatus(Long id, String newStatus) {
+		AccountOperationStatus statusEnum = AccountOperationStatus.valueOf(newStatus);
+        AccountOperation accountOperation = ofNullable(accountOperationService.findById(id))
+                .orElseThrow(() -> new EntityDoesNotExistsException(AccountOperation.class, id));
+        if(AccountOperationStatus.POSTED.equals(accountOperation.getStatus()) && AccountOperationStatus.EXPORTED.equals(statusEnum)) {
+        	accountOperation.setStatus(statusEnum);
+        	accountOperationService.update(accountOperation);
+        } else {
+        	throw new ConflictException("not possible to change accountOperation status from '"+accountOperation.getStatus()+"' to '"+newStatus+"'");
+        }
+		
+	}
 }

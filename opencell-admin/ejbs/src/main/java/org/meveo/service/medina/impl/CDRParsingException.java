@@ -20,14 +20,26 @@ package org.meveo.service.medina.impl;
 
 import java.io.Serializable;
 
+import javax.ejb.ApplicationException;
+
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 
+@ApplicationException(rollback = false)
 public class CDRParsingException extends Exception {
 
     private static final long serialVersionUID = 2383961368878309626L;
 
     private Serializable cdr;
     private CDRRejectionCauseEnum rejectionCause;
+
+    public CDRParsingException(String message) {
+        super(message);
+    }
+
+    public CDRParsingException(CDRRejectionCauseEnum cause, String message) {
+        super(message);
+        setRejectionCause(cause);
+    }
 
     public CDRParsingException(Serializable cdr, CDRRejectionCauseEnum cause, Throwable e) {
         super(e);
@@ -59,6 +71,14 @@ public class CDRParsingException extends Exception {
 
     @Override
     public String getMessage() {
-        return rejectionCause + " " + super.getMessage();
+        return (rejectionCause != null ? rejectionCause + " " : " ") + super.getMessage();
+    }
+
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
     }
 }

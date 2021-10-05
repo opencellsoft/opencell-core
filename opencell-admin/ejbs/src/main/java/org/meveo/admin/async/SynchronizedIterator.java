@@ -3,6 +3,8 @@ package org.meveo.admin.async;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.hibernate.ScrollableResults;
+
 /**
  * Provides a one at a time access to iterator.getNext() function
  * 
@@ -22,6 +24,8 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      */
     private Iterator<T> iterator;
 
+    private ScrollableResults scrollableResults;
+    
     public SynchronizedIterator() {
     }
 
@@ -29,17 +33,31 @@ public class SynchronizedIterator<T> implements Iterator<T> {
         iterator = dataList.iterator();
         size = dataList.size();
     }
+    
+    public SynchronizedIterator(ScrollableResults scrollableResults, int size) {
+        this.scrollableResults = scrollableResults;
+        this.size = size;
+    }
 
-    @Override
     /**
      * A synchronized implementation of Iterator.next(). Will return null if no more values are available
      * 
      * @return Returns the next element, or null if no more elements are found
      */
+    @SuppressWarnings("unchecked")
+    @Override
     public synchronized T next() {
 
         if (iterator != null && iterator.hasNext()) {
             return iterator.next();
+        
+        } else if (scrollableResults!=null) {
+            if (scrollableResults.next()) {
+                return (T) scrollableResults.get(0);
+            } else {
+                return null;
+            }
+            
         } else {
             return null;
         }

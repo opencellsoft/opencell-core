@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -51,7 +52,7 @@ import org.meveo.model.quote.QuoteVersion;
  */
 @XmlRootElement(name = "QuoteOfferDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class QuoteOfferDTO extends BaseEntityDto{
+public class QuoteOfferDTO extends BusinessEntityDto{
 
     public QuoteOfferDTO() {
 		super();
@@ -136,7 +137,9 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	private List<TaxPricesDto> prices;
     
     
-
+	/** Discount plan code */
+	@Schema(description = "the position of the quote item in GUI")
+	private Integer sequence;
    
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer) {
@@ -153,6 +156,9 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		contractCode=quoteOffer.getContractCode();
 		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
 		offerId = quoteOffer.getOfferTemplate().getId();
+		sequence=quoteOffer.getSequence();
+		code = quoteOffer.getCode();
+		description = quoteOffer.getDescription();
 		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -402,6 +408,12 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	}
 	public void setPrices(List<TaxPricesDto> prices) {
 		this.prices = prices;
+	}
+	public Integer getSequence() {
+		return sequence;
+	}
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 	
 	

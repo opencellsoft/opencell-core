@@ -1,20 +1,29 @@
 package org.meveo.apiv2.refund;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
+
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.payment.RefundApi;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationActionEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.inject.Inject;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.Objects;
 
 public class RefundResourceImpl implements RefundResource{
 
@@ -22,6 +31,8 @@ public class RefundResourceImpl implements RefundResource{
     private RefundApi refundApi;
     @Inject
     private CustomerAccountService customerAccountService;
+    @Inject
+    private AccountOperationService accountOperationService;
 
 
     @Override
@@ -38,30 +49,57 @@ public class RefundResourceImpl implements RefundResource{
     @Override
     public Response refundBySCT(SCTRefund sctRefund) {
         if(Objects.isNull(sctRefund.getCustomerAccountCode()) || sctRefund.getCustomerAccountCode().isBlank()){
-            throw new ClientErrorException("Customer account code is required!", Response.Status.BAD_REQUEST);
+            throw new BadRequestException("Customer account code is required!");
         }
         CustomerAccount CAByCode = customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("paymentMethods"));
-        if(PaymentMethodEnum.DIRECTDEBIT.equals(CAByCode.getPreferredPaymentMethodType())){
-            CAByCode.getAccountOperations()
-                    .forEach(accountOperation -> accountOperation.setOperationAction(OperationActionEnum.TO_REFUND));
+        if(Objects.isNull(CAByCode)){
+            throw new EntityDoesNotExistsException(CustomerAccount.class, sctRefund.getCustomerAccountCode());
+        }
+        if(!PaymentMethodEnum.DIRECTDEBIT.equals(CAByCode.getPreferredPaymentMethodType())) {
+        	throw new ValidationException("DIRECTDEBIT is not the Preferred Payment Method Type for customerAccount :"+sctRefund.getCustomerAccountCode());
+        }
+        if(sctRefund.getAoToRefund() != null && !sctRefund.getAoToRefund().isEmpty()){
+        	validateIban(sctRefund.getIBAN());
+            HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());
+            customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"))
+                    .getAccountOperations().stream()
+                    .filter(accountOperation -> aoIds.contains(accountOperation.getId()) 
+                    		&& OperationCategoryEnum.CREDIT.equals(accountOperation.getTransactionCategory()))
+                    .forEach(accountOperation -> {
+                        accountOperation.setOperationAction(OperationActionEnum.TO_REFUND);
+                        accountOperationService.update(accountOperation);
+                    });
         }
         return Response.ok().build();
     }
 
-    private PayByCardDto toPayByCardDto(CardRefund cardRefund) {
+	private void validateIban(String iban) {
+		if(iban==null) {
+			return;
+		}
+		String IBAN_PATTERN = "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}";
+		Pattern pattern = Pattern.compile(IBAN_PATTERN);
+		Matcher matcher = pattern.matcher(iban);
+		if(!matcher.matches()) {
+			throw new ValidationException("wrong IBAN value : " + iban);
+		}
+		
+	}
+
+	private PayByCardDto toPayByCardDto(CardRefund cardRefund) {
         PayByCardDto payByCardDto = new PayByCardDto();
         payByCardDto.setCtsAmount(cardRefund.getCtsAmount());
         payByCardDto.setCardNumber(cardRefund.getCardNumber());
         payByCardDto.setCustomerAccountCode(cardRefund.getCustomerAccountCode());
         payByCardDto.setOwnerName(cardRefund.getOwnerName());
         payByCardDto.setCvv(cardRefund.getCvv());
-        payByCardDto.setExpiryDate(cardRefund.getExpiryDate());
+        payByCardDto.setExpiryDate(cardRefund.getExpiryDate() == null? null :cardRefund.getExpiryDate().getTime()+"");
         if(Objects.nonNull(cardRefund.getCardType())){
             payByCardDto.setCardType(CreditCardTypeEnum.valueOf(cardRefund.getCardType()));
         }
         payByCardDto.setAoToPay(cardRefund.getAoToPay());
-        payByCardDto.setCreateAO(cardRefund.isCreateAO());
-        payByCardDto.setToMatch(cardRefund.isToMatch());
+        payByCardDto.setCreateAO(cardRefund.createAO());
+        payByCardDto.setToMatch(cardRefund.toMatch());
         payByCardDto.setComment(cardRefund.getComment());
         return payByCardDto;
     }

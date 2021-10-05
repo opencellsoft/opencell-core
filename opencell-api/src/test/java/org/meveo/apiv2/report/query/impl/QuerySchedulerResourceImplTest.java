@@ -68,6 +68,7 @@ public class QuerySchedulerResourceImplTest {
         QueryScheduler queryScheduler = new QueryScheduler();
         queryScheduler.setReportQuery(reportQuery);
         queryScheduler.setFileFormat("csv");
+        queryScheduler.setIsQueryScheduler(true);
         queryScheduler.getQueryTimer().setDayOfMonth("1");
         queryScheduler.getQueryTimer().setDayOfWeek("Sun");
         queryScheduler.getQueryTimer().setEveryDayOfMonth(false);
@@ -105,6 +106,7 @@ public class QuerySchedulerResourceImplTest {
         		.everyHour(true)
         		.everyMinute(false)
         		.everySecond(false)
+        		.isQueryScheduler(true)
         		.build();
         
         Response response = reportQueryResource.createQueryScheduler(Long.valueOf(1), input);

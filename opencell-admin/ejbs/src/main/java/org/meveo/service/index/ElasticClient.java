@@ -65,6 +65,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -505,7 +506,7 @@ public class ElasticClient {
             sortOrders = new SortOrder[size];
             for (int i = 0; i < size; i++) {
                 sortFields[i] = (String) paginationConfig.getOrderings()[i * 2];
-                sortOrders[i] = ((org.primefaces.model.SortOrder) paginationConfig.getOrderings()[i * 2 + 1]) == org.primefaces.model.SortOrder.DESCENDING ? SortOrder.DESC : SortOrder.ASC;
+                sortOrders[i] = (paginationConfig.getOrderings()[i * 2 + 1]) == PagingAndFiltering.SortOrder.DESCENDING ? SortOrder.DESC : SortOrder.ASC;
             }
         }
 
@@ -953,8 +954,24 @@ public class ElasticClient {
         return esConfiguration.getEntityClassesManaged();
     }
 
+    /**
+     * Is Elastic Search integration turned on.
+     * 
+     * @return true if enabled
+     */
     public boolean isEnabled() {
         return esConnection.isEnabled();
+    }
+    
+    /**
+     * Is Elastic Search integration turned on for a given entity type
+     * 
+     * @param Entity type to check for
+     * 
+     * @return true if integration is turned on and indexing is of interest for a given entity type
+     */
+    public boolean isEnabled(ISearchable entity) {
+        return esConnection.isEnabled() && esPopulationService.getIndexAndType(entity) != null;
     }
 
     /**
@@ -1068,7 +1085,7 @@ public class ElasticClient {
             // Drop all indexes - of all providers
             esPopulationService.dropAllIndexes();
 
-            final List<Provider> providers = providerService.list(new PaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING));
+            final List<Provider> providers = providerService.list(new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING));
 
             int i = 0;
 

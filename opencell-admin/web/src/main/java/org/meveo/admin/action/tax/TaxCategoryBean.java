@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -38,7 +39,7 @@ import org.meveo.service.tax.TaxCategoryService;
  */
 @Named
 @ViewScoped
-public class TaxCategoryBean extends BaseBean<TaxCategory> implements Serializable {
+public class TaxCategoryBean extends CustomFieldBean<TaxCategory> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**

@@ -98,7 +98,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CreditCategoryService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi

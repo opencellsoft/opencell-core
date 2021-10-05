@@ -39,7 +39,7 @@ public class ProductDto extends BaseEntityDto{
     @NotNull
 	@Schema(description = "Code of the product", required = true)
     protected String code;
-	@Schema(description = "Description of the product")
+	@Schema(description = "Description of the product", required = true)
     protected String label;
 	@Schema(description = "Status of the product")
 	protected ProductStatusEnum status;
@@ -56,9 +56,9 @@ public class ProductDto extends BaseEntityDto{
 	@Schema(description = "List of model children")
 	protected Set<String> modelChildren;
 	@Schema(description = "Indicate if the discount is activate", defaultValue = "false")
-	protected boolean discountFlag=Boolean.FALSE;
+	protected Boolean discountFlag=Boolean.FALSE;
 	@Schema(description = "Indicate if the product packaged", defaultValue = "false")
-	protected boolean packageFlag=Boolean.FALSE;
+	protected Boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
 	@Schema(description = "The custom fields")
     protected CustomFieldsDto customFields;
@@ -74,7 +74,7 @@ public class ProductDto extends BaseEntityDto{
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
 	@Schema(description = "List commercial rule codes")
-    protected List<String> commercialRuleCodes=new ArrayList<String>();
+    protected List<String> commercialRuleCodes;
 
 	@Schema(description = "List discount list code")
 	protected List<String> discountListCodes=new ArrayList<String>();
@@ -248,28 +248,28 @@ public class ProductDto extends BaseEntityDto{
 	/**
 	 * @return the discountFlag
 	 */
-	public boolean isDiscountFlag() {
+	public Boolean isDiscountFlag() {
 		return discountFlag;
 	}
 
 	/**
 	 * @param discountFlag the discountFlag to set
 	 */
-	public void setDiscountFlag(boolean discountFlag) {
+	public void setDiscountFlag(Boolean discountFlag) {
 		this.discountFlag = discountFlag;
 	}
 
 	/**
 	 * @return the packageFlag
 	 */
-	public boolean isPackageFlag() {
+	public Boolean isPackageFlag() {
 		return packageFlag;
 	}
 
 	/**
 	 * @param packageFlag the packageFlag to set
 	 */
-	public void setPackageFlag(boolean packageFlag) {
+	public void setPackageFlag(Boolean packageFlag) {
 		this.packageFlag = packageFlag;
 	}
 
