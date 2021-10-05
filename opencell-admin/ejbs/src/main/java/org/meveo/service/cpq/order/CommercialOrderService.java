@@ -253,7 +253,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	@Override
 	public CommercialOrder findById(Long id) {
 		CommercialOrder commercialOrder = super.findById(id);
-		if(commercialOrder.getCode() == null) {
+		if(commercialOrder != null && commercialOrder.getCode() == null) {
 			commercialOrder.setCode(UUID.randomUUID().toString());
 			commercialOrder = super.update(commercialOrder);
 		}
