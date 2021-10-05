@@ -14497,6 +14497,7 @@
             <column name="every_second" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_instance_id" type="bigint" />
             <column name="report_query_id" type="bigint" />
+            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_scheduler" constraintName="fk_report_query_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
