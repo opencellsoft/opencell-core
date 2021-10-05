@@ -608,6 +608,8 @@ public class AccountOperationApi extends BaseApi {
                     + currentUser.getUserName() + ", user does not have financeManagement permission");
         }
         accountOperation.setAccountingDate(accountingDate);
+        accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+        
         return accountOperationService.update(accountOperation);
     }
 
