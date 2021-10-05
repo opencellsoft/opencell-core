@@ -22,7 +22,6 @@ import java.sql.Types;
 
 import org.hibernate.dialect.Oracle12cDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.StandardBasicTypes;
 
 /**
  * JPA extensions for searching amount Custom field value fields
@@ -42,6 +41,7 @@ import org.hibernate.type.StandardBasicTypes;
 public class MeveoOracleDialect extends Oracle12cDialect {
     public MeveoOracleDialect() {
         super();
+        registerFunction( "concat", new StandardSQLFunction( "concat", new org.hibernate.type.StringType()));
         registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
         registerFunction("numericFromJson", new DoubleOracleJsonSearchFunction());
         registerFunction("varcharFromJson", new OracleJsonSearchFunction());

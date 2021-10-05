@@ -101,4 +101,18 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 		// TODO Auto-generated method stub
 		return Optional.empty();
 	}
+
+
+	/**
+	 * @param customerAccountCode
+	 * @param startDate
+	 * @return
+	 */
+	public Long getCountAgedReceivables(String customerAccountCode) {
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+        if (customerAccountCode != null && customerAccount == null) {
+			throw new NotFoundException("Customer account with code "+customerAccountCode+" doesn't exist");
+		}
+        return recordedInvoiceService.getCountAgedReceivables(customerAccount);
+	}
 }
