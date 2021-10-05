@@ -64,6 +64,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
             jobInstance.setJobTemplate("ReportQueryJob");
             jobInstance.setQueryScheduler(entity);
             jobInstance.setCfValue("reportQuery", reportQuery);
+			jobInstance.setDisabled(!entity.getIsQueryScheduler());
             jobInstanceService.create(jobInstance);
 
             // Update the QueryScheduler

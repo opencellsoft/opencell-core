@@ -20,6 +20,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobInstance;
@@ -56,6 +57,10 @@ public class QueryScheduler extends BusinessEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_instance_id")
 	private JobInstance jobInstance;
+
+	@Type(type = "numeric_boolean")
+	@Column(name = "is_query_scheduler")
+	private boolean isQueryScheduler;
 
 	public QueryScheduler() {
 		super();
@@ -107,5 +112,13 @@ public class QueryScheduler extends BusinessEntity {
 
 	public void setEmailsToNotify(List<String> emailsToNotify) {
 		this.emailsToNotify = emailsToNotify;
+	}
+
+	public void setIsQueryScheduler(boolean isQueryScheduler) {
+		this.isQueryScheduler = isQueryScheduler;
+	}
+
+	public boolean getIsQueryScheduler() {
+		return isQueryScheduler;
 	}
 }
