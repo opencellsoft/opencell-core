@@ -1022,14 +1022,14 @@
             <properties>
                 <!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2 -->
                 <db.driver>oracle.jdbc.OracleDriver</db.driver>
-                <db.url>jdbc:oracle:thin:@//localhost:1521/ORCL</db.url>
-                <db.username>opencell</db.username>
+                <db.url>jdbc:oracle:thin:@//192.168.1.6:1521/XE</db.url>
+                <db.username>sys as sysdba</db.username>
                 <!-- A setup for oracle XE 
                 <db.url>jdbc:oracle:thin:@//localhost:1521/XE</db.url>
                 <db.username>c##opencell</db.username>
                 <db.password>opencell</db.password>
 				-->                
-                <db.password>opencell</db.password>
+                <db.password>sys</db.password>
                 <opencell.dialect>oracle.MeveoOracleDialect</opencell.dialect>
             </properties>
             <dependencies>

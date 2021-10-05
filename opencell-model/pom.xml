@@ -75,6 +75,11 @@
                         <artifactId>postgresql</artifactId>
                         <version>42.2.5</version>
                     </dependency>
+                    <dependency>
+                        <groupId>com.oracle.database.jdbc</groupId>
+                        <artifactId>ojdbc10</artifactId>
+                        <version>19.3.0.0</version>
+                    </dependency>
                 </dependencies>
 
                 <!-- common configuration shared by all executions -->
