@@ -34,6 +34,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Formula;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningDocument;
 
@@ -74,6 +75,9 @@ public class RecordedInvoice extends AccountOperation {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
+    
+    @Formula("concat(amount, due_date, customer_account_id)") 
+    private String agedReceivableReportKey;
 
     public Date getProductionDate() {
         return productionDate;
@@ -156,6 +160,20 @@ public class RecordedInvoice extends AccountOperation {
     */
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
+	}
+
+	/**
+	 * @return the agedReceivableReportKey
+	 */
+	public String getAgedReceivableReportKey() {
+		return agedReceivableReportKey;
+	}
+
+	/**
+	 * @param agedReceivableReportKey the agedReceivableReportKey to set
+	 */
+	public void setAgedReceivableReportKey(String agedReceivableReportKey) {
+		this.agedReceivableReportKey = agedReceivableReportKey;
 	}
 
 
