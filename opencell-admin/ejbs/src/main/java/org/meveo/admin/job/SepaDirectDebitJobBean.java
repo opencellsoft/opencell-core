@@ -162,7 +162,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-                try {                	
+                try {
                     DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
                     if (dateRangeScript != null) { // computing custom due date range :
                         this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
@@ -170,13 +170,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
                         List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance, ddrequestLotOp);
                         DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
-                        if (ddRequestLOT != null) {                        	
-                            dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
-							result.addReport(ddRequestLOT.getRejectedCause());
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-                            if (isEmpty(ddRequestLOT.getRejectedCause())) {
-                                result.registerSucces();
-                            }
+                        if (ddRequestLOT != null) {
+                            dDRequestLOTService.createPaymentsOrRefundsAndGenerateDDRequestLotFile(ddRequestLOT, ddRequestBuilderInterface, nbRuns, waitingMillis, result);
                         }
                     }
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {

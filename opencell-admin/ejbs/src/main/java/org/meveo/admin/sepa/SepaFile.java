@@ -51,6 +51,7 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -451,7 +452,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
      */
     private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
         CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
-        PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+        PaymentMethod preferedPaymentMethod = PersistenceUtils.initializeAndUnproxy(ca.getPreferredPaymentMethod());
         if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
             throw new BusinessException("Payment method not valid!");
         }

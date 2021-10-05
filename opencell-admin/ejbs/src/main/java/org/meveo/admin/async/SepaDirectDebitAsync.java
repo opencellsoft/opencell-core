@@ -37,7 +37,6 @@ import javax.inject.Inject;
 import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
-import org.meveo.admin.sepa.SepaFile;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
@@ -94,9 +93,6 @@ public class SepaDirectDebitAsync {
 	@Inject
 	private JobExecutionService jobExecutionService;
 	
-    @Inject
-    private SepaFile sepaFile;
-	
 	@Inject
 	private PaymentGatewayService paymentGatewayService;
 
@@ -109,8 +105,9 @@ public class SepaDirectDebitAsync {
 	 * @return Future String
 	 * @throws BusinessException BusinessException
 	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+	//@Asynchronous
+    // The Asynchronous is disabled to be able to rollback all payment AO if the Sepa file is not well generated. pls refer to ticket: INTRD-1392
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
@@ -139,9 +136,9 @@ public class SepaDirectDebitAsync {
 	 * @return the future
 	 * @throws BusinessException the business exception
 	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Future<DDRequestLOT> launchAndForgetDDRequesltLotCreation(DDRequestLotOp ddrequestLotOp, DDRequestBuilder ddRequestBuilder, List<AccountOperation> listAoToPay,
+	//@Asynchronous
+	//@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public DDRequestLOT launchAndForgetDDRequesltLotCreation(DDRequestLotOp ddrequestLotOp, DDRequestBuilder ddRequestBuilder, List<AccountOperation> listAoToPay,
 			Provider appProvider) throws BusinessException {
 
 		// currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -152,7 +149,6 @@ public class SepaDirectDebitAsync {
 		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
 		ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
 		ddRequestLOTService.create(ddRequestLOT);
-        ddRequestLOT.setFileName(sepaFile.getDDFileName(ddRequestLOT, appProvider));
 		int nbItemsKo = 0;
 		int nbItemsOk = 0;
 		String allErrors = "";
@@ -214,7 +210,8 @@ public class SepaDirectDebitAsync {
 		ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));
 		ddRequestLOT.setTotalAmount(totalAmount);
 
-		return new AsyncResult<DDRequestLOT>(ddRequestLOT);
+		//return new AsyncResult<DDRequestLOT>(ddRequestLOT);
+		return ddRequestLOT;
 	}
 
 
