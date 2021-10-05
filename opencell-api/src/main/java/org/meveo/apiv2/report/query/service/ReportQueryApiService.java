@@ -9,7 +9,6 @@ import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PROTECTED;
-import static org.meveo.model.report.query.QueryVisibilityEnum.PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,12 +58,6 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     private static final String QUERY_USER_ROLE = "query_user";
     @Inject
     private ReportQueryService reportQueryService;
-
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private RoleService roleService;
 
     @Inject
     @CurrentUser
@@ -205,12 +198,8 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return empty();
         }
         ReportQuery entity = reportQuery.get();
-        
-        User user = userService.findByUsername(currentUser.getUserName());
-        
-        user = (User) userService.getEntityManager().createNamedQuery("User.listUserRoles").setParameter("username", user.getUserName()).getSingleResult();
-        
         checkPermissionByAction(reportQuery.get(), UPDATE);
+
         Class<?> targetEntity = getEntityClass(toUpdate.getTargetEntity());
         ofNullable(toUpdate.getCode()).ifPresent(entity::setCode);
         ofNullable(toUpdate.getVisibility()).ifPresent(entity::setVisibility);
