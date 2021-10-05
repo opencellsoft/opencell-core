@@ -400,11 +400,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     .collect(toList());
             String fullFileName = fileName.toString();
             try {
-                fullFileName = createResultFile(data, fileHeader, fileName.toString(), ".csv");
+               createResultFile(data, fileHeader, fullFileName, ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fullFileName, data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fullFileName+".csv", data.size()));
         } else {
             return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
