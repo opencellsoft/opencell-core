@@ -228,7 +228,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             File xmlFile = new File(fullXmlFilePath);
             StreamResult result = new StreamResult(xmlFile);
             trans.transform(source, result);
-            log.info("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
+            log.info("XML file '{}' produced for invoice {}", fullXmlFilePath, invoice.getInvoiceNumberOrTemporaryNumber());
             return xmlFile;
         } catch (TransformerException e) {
             throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumberOrTemporaryNumber(), e);
