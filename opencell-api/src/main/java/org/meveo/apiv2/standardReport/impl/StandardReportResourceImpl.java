@@ -12,11 +12,11 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.standardReport.AgedReceivables;
+import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
+import org.meveo.apiv2.standardReport.ImmutableAgedReceivables;
 import org.meveo.apiv2.standardReport.resource.StandardReportResource;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
-import org.meveo.apiv2.standardReport.ImmutableAgedReceivables;
 
 public class StandardReportResourceImpl implements StandardReportResource {
 
@@ -48,7 +48,7 @@ public class StandardReportResourceImpl implements StandardReportResource {
                 .stream()
                 .map(AgedReceivableDto -> agedReceivableMapper.toResourceAgedReceivable(agedReceivableMapper.toResource(AgedReceivableDto)))
                 .toArray(ImmutableAgedReceivable[]::new);
-        Long count = Long.valueOf(agedBalanceList.size());
+        Long count = Long.valueOf(standardReportApiService.getCountAgedReceivables(customerAccountCode));
         AgedReceivables agedReceivables = ImmutableAgedReceivables.builder().addData(agedReceivablesData).startDate(DateUtils.formatDateWithPattern(startDate, "dd/MM/yyyy").toString()).offset(offset).limit(limit).total(count)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(StandardReportResource.class)
                         .offset(offset).limit(limit).total(count).build());

@@ -493,4 +493,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         
         return qb.getQuery(getEntityManager()).getResultList();
     }
+    
+    public Long getCountAgedReceivables(CustomerAccount customerAccount) {
+		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName()); 
+        if(customerAccount != null) {
+        	qb.addCriterionEntity("customerAccount", customerAccount);
+        }
+        return (Long) qb.getQuery(getEntityManager()).getSingleResult();
+    }
+
 }
