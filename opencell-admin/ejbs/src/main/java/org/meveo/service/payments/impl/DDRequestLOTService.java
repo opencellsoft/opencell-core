@@ -251,7 +251,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         if (ddrequestItemsOK.isEmpty()) {
             return;
         }
-        String fileName = ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider);;
+        String fileName = ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider);
 	    try {
     	    ddRequestLOT.setFileName(fileName);
             dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
@@ -275,7 +275,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Boolean isToMatching, PaymentStatusEnum paymentStatus, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
