@@ -92,7 +92,7 @@
 
                 <executions>
                     <execution>
-                        <id>reset-db</id>
+                        <id>reset-pg</id>
                         <goals>
                             <goal>execute</goal>
                         </goals>
@@ -102,6 +102,30 @@
                             <sqlCommand>
                                 drop schema IF EXISTS ${db.schema} cascade;
                                 create schema ${db.schema} AUTHORIZATION ${db.username};
+                            </sqlCommand>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>reset-oracle</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <delimiter>/</delimiter>
+                            <delimiterType>row</delimiterType>
+                            <autocommit>true</autocommit>
+                            <!-- drop schema instead of database to avoid restarting wildfly -->
+                            <sqlCommand>
+                                declare
+                                    cursor user_seqs is (select sequence_name from user_sequences);
+                                    dropcmd varchar2(1000);
+                                begin
+                                    for seq in user_seqs loop
+                                        dropcmd := 'DROP SEQUENCE ' || seq.sequence_name;
+                                        dbms_output.put_line(dropcmd);
+                                        --execute immediate dropcmd;
+                                    end loop;
+                                end;
                             </sqlCommand>
                         </configuration>
                     </execution>

@@ -4736,7 +4736,7 @@ Opencell team.
         </insert>
     </changeSet>
     
-       <changeSet id="J215_20210708" author="Mohammed_ELAZZOUZI">
+       <changeSet id="J215_20210708" author="Mohammed_ELAZZOUZI" dbms="postgresql">
    
         <insert tableName="meveo_script_instance">
             <column name="id" valueNumeric="-43" />
@@ -5689,7 +5689,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="accounting_date" valueComputed="transaction_date"></column>
         </update>
     </changeSet>
-	<changeSet id="1589_20210930" author="YoussefIZEM">
+	<changeSet id="1589_20210930" author="YoussefIZEM" dbms="postgresql">
         <insert tableName="billing_accounting_code">
             <column name="id" valueNumeric="-35" />
             <column name="version" valueNumeric="0" />
