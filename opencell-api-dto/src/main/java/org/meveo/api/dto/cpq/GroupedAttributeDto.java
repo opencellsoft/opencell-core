@@ -41,6 +41,7 @@ public class GroupedAttributeDto {
 	 private List<String> commercialRuleCodes=new ArrayList<String>();
 	@Schema(description = "custome field associated to groupped attribute")
 	 private CustomFieldsDto customFields;
+    private Integer sequence = 0;
 	
 	public GroupedAttributeDto() {
 		
@@ -53,6 +54,7 @@ public class GroupedAttributeDto {
 			this.display = groupedService.getDisplay();
 			this.disabled=groupedService.isDisabled();
 			this.id = groupedService.getId();
+			this.sequence = groupedService.getSequence();
 		}
 	}
 	
@@ -231,6 +233,20 @@ public class GroupedAttributeDto {
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	
