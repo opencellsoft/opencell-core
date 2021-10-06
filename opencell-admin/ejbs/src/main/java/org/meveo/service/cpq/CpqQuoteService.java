@@ -174,7 +174,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	  	        ParamBean paramBean = ParamBean.getInstance();
 	  	        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
 	  	        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
-	  	        xmlFileName= String.format("%s_%s-%s", quoteDate, prefix, identifier);
+	  	        xmlFileName= String.format("%s_%s-%s-%s", quoteDate, prefix, identifier,quoteVersion.getId());
 	         }
 	    	return xmlFileName;
 	      
@@ -216,7 +216,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 		  	        ParamBean paramBean = ParamBean.getInstance();
 		  	        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
 		  	        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
-		  	      pdfFileName= String.format("%s_%s-%s", quoteDate, prefix, identifier);
+		  	      pdfFileName= String.format("%s_%s-%s-%s", quoteDate, prefix, identifier,quoteVersion.getId());
 	        }
 	        if (pdfFileName != null && !pdfFileName.toLowerCase().endsWith(".pdf")) {
 	            pdfFileName = pdfFileName + ".pdf";
