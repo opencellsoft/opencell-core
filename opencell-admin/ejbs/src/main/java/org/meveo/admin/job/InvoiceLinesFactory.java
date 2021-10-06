@@ -118,10 +118,8 @@ public class InvoiceLinesFactory {
         	amountWithoutTax=amountWithTax.divide(coef, 2, RoundingMode.HALF_UP);
         }
         invoiceLine.setAmountWithoutTax(amountWithoutTax);
-        
         invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithoutTax));
-    	
-       
+
         ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
@@ -141,8 +139,6 @@ public class InvoiceLinesFactory {
                 report.registerWarning("No service instance associated with rated transaction id : " + rtID);
             }
         }
-
-
         return invoiceLine;
     }
 
