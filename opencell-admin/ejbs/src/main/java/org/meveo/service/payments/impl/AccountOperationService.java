@@ -503,7 +503,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		if (accountOperation instanceof Refund || 
 				accountOperation instanceof Payment || 
 				accountOperation instanceof RejectedPayment) {
-			accountOperation.setAccountingDate(accountOperation.getCollectionDate());
+			accountOperation.setAccountingDate(accountOperation.getCollectionDate() != null ? accountOperation.getCollectionDate() : accountOperation.getDueDate());
 		} else {
 			accountOperation.setAccountingDate(accountOperation.getTransactionDate());
 		}

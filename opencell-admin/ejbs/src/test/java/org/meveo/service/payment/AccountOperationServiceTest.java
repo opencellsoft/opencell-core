@@ -88,10 +88,11 @@ public class AccountOperationServiceTest {
 		when(accountingPeriodService.findByAccountingPeriodYear(any())).thenReturn(closedAP);
 
 		Payment payment = (Payment) createAccountOperation("P");
+		payment.setCollectionDate(null);
 
 		accountOperationService.handleAccountingPeriods(payment);
 		assertThat(payment.getStatus()).isEqualTo(AccountOperationStatus.POSTED);
-		assertThat(payment.getAccountingDate()).isEqualToIgnoringHours(payment.getCollectionDate());
+		assertThat(payment.getAccountingDate()).isEqualToIgnoringHours(payment.getDueDate());
 	}
 
 	@Test
@@ -263,8 +264,10 @@ public class AccountOperationServiceTest {
 
 		Date transactionDate = new Date();
 		Date collectionDate = DateUtils.addDaysToDate(transactionDate, 5);
-		ao.setTransactionDate(transactionDate);
+		Date dueDate = DateUtils.addDaysToDate(collectionDate, 1);
+		ao.setDueDate(dueDate);
 		ao.setCollectionDate(collectionDate);
+		ao.setTransactionDate(transactionDate);
 
 		return ao;
 	}
