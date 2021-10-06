@@ -87,8 +87,9 @@ public class SepaDirectDebitAsync {
 	 * @return Future String
 	 * @throws BusinessException BusinessException
 	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+	//@Asynchronous
+	// The Asynchronous is disabled to be able to rollback all payment AO if the Sepa file is not well generated. pls refer to ticket: INTRD-1392
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
