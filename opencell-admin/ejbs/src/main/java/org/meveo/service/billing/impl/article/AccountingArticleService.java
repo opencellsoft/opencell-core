@@ -120,36 +120,36 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.getResultList();
 	}
 
-	@SuppressWarnings("rawtypes")
-	public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) {
-		if(chargeInstance==null) {
-			return null;
-		}
-		ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
-		   Map<String, Object> attributes = new HashMap<>();
-		  List<AttributeValue> attributeValues = serviceInstance != null ?
-				  serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(toList())
-				  : new ArrayList<>();
-	       for (AttributeValue attributeValue : attributeValues) {
-               Attribute attribute = attributeValue.getAttribute();
-               Object value = attribute.getAttributeType().getValue(attributeValue);
-               if (value != null) {
-                   attributes.put(attributeValue.getAttribute().getCode(), value);
-               }
-           }
-	       if(serviceInstance != null && serviceInstance.getProductVersion() == null) {
-    		   return null;
-    	   }
-           Optional<AccountingArticle> accountingArticle = Optional.empty();
-           try {
-           	if(serviceInstance != null) {
-				accountingArticle = getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargeInstance.getChargeTemplate(),attributes);
-           	}
-           } catch(BusinessException e) {
-           		throw new MeveoApiException(e.getMessage());
-           }
-           return accountingArticle.isPresent() ? accountingArticle.get() : null;
-	}
+    @SuppressWarnings("rawtypes")
+    public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) {
+        if (chargeInstance == null || chargeInstance.getServiceInstance() == null || chargeInstance.getServiceInstance().getProductVersion() == null) {
+            return null;
+        }
+        ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
+
+        Map<String, Object> attributes = new HashMap<>();
+        List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(toList());
+        for (AttributeValue attributeValue : attributeValues) {
+            Attribute attribute = attributeValue.getAttribute();
+            Object value = attribute.getAttributeType().getValue(attributeValue);
+            if (value != null) {
+                attributes.put(attributeValue.getAttribute().getCode(), value);
+            }
+        }
+        try {
+            Optional<AccountingArticle> accountingArticle = getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargeInstance.getChargeTemplate(), attributes);
+            if (accountingArticle.isPresent()) {
+                return accountingArticle.get();
+
+            } else {
+                log.warn("No article found for chargeInstance {}/{}", chargeInstance.getId(), chargeInstance.getCode());
+                return null;
+            }
+
+        } catch (BusinessException e) {
+            throw new MeveoApiException(e.getMessage());
+        }
+    }
 	
 	public List<AccountingArticle> findByTaxClassAndSubCategory(TaxClass taxClass, InvoiceSubCategory invoiceSubCategory) {
 		return getEntityManager().createNamedQuery("AccountingArticle.findByTaxClassAndSubCategory", AccountingArticle.class)
