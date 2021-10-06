@@ -49,7 +49,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)

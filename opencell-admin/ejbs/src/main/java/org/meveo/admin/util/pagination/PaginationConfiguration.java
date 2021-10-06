@@ -17,7 +17,7 @@
  */
 package org.meveo.admin.util.pagination;
 
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import java.io.Serializable;
 import java.util.ArrayList;

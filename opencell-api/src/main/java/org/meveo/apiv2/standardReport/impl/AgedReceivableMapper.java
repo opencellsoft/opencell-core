@@ -20,6 +20,7 @@ package org.meveo.apiv2.standardReport.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.meveo.api.dto.AgedReceivableDto;
@@ -35,12 +36,15 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
     @Override
     public AgedReceivable toResource(AgedReceivableDto agedReceivableDto) {
         return ImmutableAgedReceivable.builder().customerAccountCode(agedReceivableDto.getCustomerAccountCode())
+        		.customerAccountName(agedReceivableDto.getCustomerAccountName())
+        		.dunningLevel(agedReceivableDto.getDunningLevel())
                .notYetDue(agedReceivableDto.getNotYetDue())
                .sum_1_30(agedReceivableDto.getSum1To30())
                .sum_31_60(agedReceivableDto.getSum31To60())
                .sum_61_90(agedReceivableDto.getSum61To90())
                .sum_90_up(agedReceivableDto.getSum90Up())
                .general_total(agedReceivableDto.getGeneralTotal())
+				.dueDate(agedReceivableDto.getDueDate())
                .build();
     }
 
@@ -73,10 +77,22 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 											.add((BigDecimal)agedList[4])
 											.add((BigDecimal)agedList[5]));
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[6]);
-			agedReceivableDto.setCustomerAccountName(agedList[7]==null?null:((Name) agedList[7]).getFullName());
+			agedReceivableDto.setCustomerAccountName(agedList[7]==null?null:getName((Name) agedList[7]));
+			agedReceivableDto.setDueDate(agedList[8]==null?null:((Date) agedList[8]));
+			
 			dtoList.add(agedReceivableDto);
 		} 
 		return dtoList;
+	}
+
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	private String getName(Name name) {
+		return (name.getFirstName() != null ? name.getFirstName() : "")
+				+ (name.getLastName() != null ? " " + name.getLastName() : "");
 	}
 
    

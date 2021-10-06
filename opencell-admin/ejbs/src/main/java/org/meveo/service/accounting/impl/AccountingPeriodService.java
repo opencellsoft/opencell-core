@@ -168,8 +168,10 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	}
 
 	private void validateForceOptionAndForceCustDay(AccountingPeriodForceEnum forceOption, Integer forceCustomDay) {
-		if (forceOption == null || forceCustomDay == null)
-			throw new BusinessApiException("When accountingOperationAction is set to FORCE then the forceOption & forceCustomDay is mandatory");
+		if (forceOption == null)
+			throw new BusinessApiException("When accountingOperationAction is set to FORCE then the forceOption is mandatory");
+		if (forceOption == AccountingPeriodForceEnum.CUSTOM_DAY && forceCustomDay == null)
+			throw new BusinessApiException("When accountingOperationAction is set to FORCE and forceOption is set to CUSTOM_DAY then the forceCustomDay is mandatory");
 	}
 
 	private void validateInputs(AccountingPeriod entity, Boolean isUseSubAccountingPeriods, Object subAccountingPeriodType) {

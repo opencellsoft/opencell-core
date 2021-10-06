@@ -34,7 +34,7 @@ import javax.faces.model.DataModel;
 //import org.ajax4jsf.model.SequenceRange;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 //import org.richfaces.model.Arrangeable;
 //import org.richfaces.model.ArrangeableState;
 

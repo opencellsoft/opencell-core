@@ -155,4 +155,20 @@ public class SubAccountingPeriod extends AuditableEntity {
 	public void setAllUsersReopeningReason(String allUsersReopeningReason) {
 		this.allUsersReopeningReason = allUsersReopeningReason;
 	}
+	
+	/**
+	 * Check if the current S-AP is open
+	 * @return
+	 */
+	public boolean isOpen() {
+		return this.regularUsersSubPeriodStatus == SubAccountingPeriodStatusEnum.OPEN;
+	}
+
+	/**
+	 * Check if the current S-AP is closed
+	 * @return
+	 */
+	public boolean isClosed() {
+		return this.regularUsersSubPeriodStatus == SubAccountingPeriodStatusEnum.CLOSED;
+	}
 }

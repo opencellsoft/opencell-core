@@ -115,7 +115,7 @@ public class UnitSepaDirectDebitJobBean {
 	 * @throws UnbalanceAmountException         the unbalance amount exception
 	 */
 	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
@@ -125,7 +125,7 @@ public class UnitSepaDirectDebitJobBean {
 		String errorMsg = null;
 		if (!ddrequestItem.hasError()) {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
-				log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
+				log.info("invoice: {}  balanceDue: {}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
@@ -179,7 +179,7 @@ public class UnitSepaDirectDebitJobBean {
 	 * @throws BusinessException                the business exception
 	 * @throws NoAllOperationUnmatchedException the no all operation unmatched
 	 *                                          exception
-	 * @throws UnbalanceAmountException         the unbalance amount exception
+	 * @throws UnbalanceAmountException         the unbalanced amount exception
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends AccountOperation> T createPaymentOrRefund(DDRequestItem ddRequestItem, PaymentMethodEnum paymentMethodEnum, BigDecimal amount,

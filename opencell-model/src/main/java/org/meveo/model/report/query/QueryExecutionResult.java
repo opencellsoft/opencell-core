@@ -8,6 +8,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,6 +23,8 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "query_execution_result")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "query_result_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "QueryExecutionResult.findIdsByReportQuery", query = "select qer.id from QueryExecutionResult qer where qer.reportQuery = :reportQuery") })
 public class QueryExecutionResult extends AuditableEntity {
 
     private static final long serialVersionUID = -4801486541562306601L;

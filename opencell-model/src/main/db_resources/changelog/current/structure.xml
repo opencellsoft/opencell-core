@@ -8154,37 +8154,37 @@ public class OrderAdvancement extends ModuleScript {
 
 
 		<sql>DELETE FROM ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (
-								SELECT id FROM "crm_custom_field_tmpl" 
+								SELECT id FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess');</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'New', 'NEW' FROM "crm_custom_field_tmpl" 
+								SELECT id, 'New', 'NEW' FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Draft', 'DRAFT' FROM "crm_custom_field_tmpl" 
+								SELECT id, 'Draft', 'DRAFT' FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Canceled', 'CANCELED' FROM "crm_custom_field_tmpl" 
+								SELECT id, 'Canceled', 'CANCELED' FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Suspect', 'SUSPECT' FROM "crm_custom_field_tmpl" 
+								SELECT id, 'Suspect', 'SUSPECT' FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Validated', 'VALIDATED' FROM "crm_custom_field_tmpl" 
+								SELECT id, 'Validated', 'VALIDATED' FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Rejected', 'REJECTED' FROM "crm_custom_field_tmpl" 
+								SELECT id, 'Rejected', 'REJECTED' FROM crm_custom_field_tmpl 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
     	
     </changeSet>
@@ -8228,7 +8228,7 @@ public class OrderAdvancement extends ModuleScript {
         <addNotNullConstraint tableName="cpq_quote_version" columnName="created"/>
     </changeSet>
     
-    <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
+    <changeSet id="#6122_20210524" author="AbdelmounaimAkadid" dbms="postgresql">
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = to_json(REPLACE(cf_values::TEXT, '"string":"DraftOnly"', '"listString":["DRAFT"]')) where job_template = 'XMLInvoiceGenerationJob';</sql>
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = to_json(REPLACE(cf_values::TEXT, '"string":"FinalOnly"', '"listString":["VALIDATED"]')) where job_template = 'XMLInvoiceGenerationJob';</sql>
    	</changeSet>
@@ -8977,11 +8977,19 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
     
     <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
-    <changeSet id="#INTRD-828-create-view" author="AbdelmounaimAkadid">
-        <createView viewName="billing_wallet_operation_period">
+    <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql">
+    	<createView viewName="billing_wallet_operation_period">
             select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
             from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
-            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle">
+    	<createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (trunc(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id)) = trunc(o.start_date)) then 0 else 1 end) as flag
+            FROM billing_wallet_operation o
+            WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
     
@@ -9588,6 +9596,12 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+
+    <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE">
+        <addColumn tableName="query_scheduler">
+            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
     </changeSet>
     
     <changeSet id="#6117_20210622" author="AndriusKarpavicius">

@@ -42,6 +42,7 @@ import javax.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.Hibernate;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
@@ -53,6 +54,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.report.query.QueryExecutionModeEnum;
 import org.meveo.model.report.query.QueryExecutionResult;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
+import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.QueryStatusEnum;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
@@ -62,6 +64,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.ApplicationProvider;
 
 @Stateless
@@ -69,12 +72,17 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     @Inject
     private QueryExecutionResultService queryExecutionResultService;
+    @Inject
+    private QuerySchedulerService querySchedulerService;
 
     @Inject
     private EmailSender emailSender;
 
     @Inject
     private EmailTemplateService emailTemplateService;
+
+    @Inject
+    private JobInstanceService jobInstanceService;
 
     @Inject
     @ApplicationProvider
@@ -163,29 +171,29 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 		    	fw.close();
     		}else if (format == QueryExecutionResultFormatEnum.EXCEL) {
     			var wb = new XSSFWorkbook();
-    			XSSFSheet  sheet = wb.createSheet(reportQuery.getTargetEntity());
-    			int i = 0;
-    			int j = 0;
-				var rowHeader = sheet.createRow(i++);
-    			for (String header : columnnHeader) {
-    				Cell cell = rowHeader.createCell(j++);
-    				cell.setCellValue(header);
-				}
-    			for (String rowSelect : selectResult) {
-    				rowHeader = sheet.createRow(i++);
-    				j = 0;
-    				var splitLine = rowSelect.split(";");
-    				for (String field : splitLine) {
-    					Cell cell = rowHeader.createCell(j++);
-        				cell.setCellValue(field);
-					}
-				}
+                    XSSFSheet sheet = wb.createSheet(reportQuery.getTargetEntity());
+                    int i = 0;
+                    int j = 0;
+                    var rowHeader = sheet.createRow(i++);
+                    for (String header : columnnHeader) {
+                        Cell cell = rowHeader.createCell(j++);
+                        cell.setCellValue(header);
+                    }
+                    for (String rowSelect : selectResult) {
+                        rowHeader = sheet.createRow(i++);
+                        j = 0;
+                        var splitLine = rowSelect.split(";");
+                        for (String field : splitLine) {
+                            Cell cell = rowHeader.createCell(j++);
+                            cell.setCellValue(field);
+                        }
+                    }
 
-    			FileOutputStream fileOut = new FileOutputStream(tempFile.toFile());
-    			wb.write(fileOut);
-    			fileOut.close();
+                    FileOutputStream fileOut = new FileOutputStream(tempFile.toFile());
+                    wb.write(fileOut);
+                    fileOut.close();
     			wb.close();
-    		}
+            }
     	}
     	return Files.readAllBytes(tempFile);
 	}
@@ -242,26 +250,26 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 }
             } else if (format == QueryExecutionResultFormatEnum.EXCEL) {
                 var wb = new XSSFWorkbook();
-                XSSFSheet sheet = wb.createSheet();
-                int i = 0;
-                int j = 0;
-                var rowHeader = sheet.createRow(i++);
-                for (String header : columnnHeader) {
-                    Cell cell = rowHeader.createCell(j++);
-                    cell.setCellValue(header);
-                }
-                for (String rowSelect : selectResult) {
-                    rowHeader = sheet.createRow(i++);
-                    j = 0;
-                    var splitLine = rowSelect.split(";");
-                    for (String field : splitLine) {
+                    XSSFSheet sheet = wb.createSheet();
+                    int i = 0;
+                    int j = 0;
+                    var rowHeader = sheet.createRow(i++);
+                    for (String header : columnnHeader) {
                         Cell cell = rowHeader.createCell(j++);
-                        cell.setCellValue(field);
+                        cell.setCellValue(header);
                     }
-                }
-                FileOutputStream fileOut = new FileOutputStream(file);
-                wb.write(fileOut);
-                fileOut.close();
+                    for (String rowSelect : selectResult) {
+                        rowHeader = sheet.createRow(i++);
+                        j = 0;
+                        var splitLine = rowSelect.split(";");
+                        for (String field : splitLine) {
+                            Cell cell = rowHeader.createCell(j++);
+                            cell.setCellValue(field);
+                        }
+                    }
+                    FileOutputStream fileOut = new FileOutputStream(file);
+                    wb.write(fileOut);
+                    fileOut.close();
                 wb.close();
             }
         }
@@ -310,8 +318,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param targetEntity target entity
      * @param currentUser current user
      */
-    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser) {
-        launchAndForget(reportQuery, targetEntity, currentUser);
+    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification) {
+        launchAndForget(reportQuery, targetEntity, currentUser, sendNotification);
     }
 
     /**
@@ -322,21 +330,23 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param currentUser current user email to be used for notification
      */
     @Asynchronous
-    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser) {
+    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification) {
         Date startDate = new Date();
         try {
             Future<QueryExecutionResult> asyncResult = executeReportQueryAndSaveResult(reportQuery, targetEntity, startDate);
             QueryExecutionResult executionResult = asyncResult.get();
-            if(executionResult != null) {
+            if(executionResult != null && sendNotification) {
                 notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
                         executionResult.getStartDate(), executionResult.getExecutionDuration(),
                         executionResult.getLineCount(), null);
             }
         } catch (InterruptedException | CancellationException e) {
         } catch (Exception exception) {
-            long duration = new Date().getTime() - startDate.getTime();
-            notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
-                    startDate, duration, null, exception.getMessage());
+        	if(sendNotification) {
+	            long duration = new Date().getTime() - startDate.getTime();
+	            notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
+	                    startDate, duration, null, exception.getMessage());
+        	}
             log.error("Failed to execute async report query", exception);
         }
     }
@@ -395,12 +405,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                             .map(String::valueOf)
                             .collect(joining(DELIMITER)))
                     .collect(toList());
+            String fullFileName = fileName.toString();
             try {
-                createResultFile(data, fileHeader, fileName.toString(), ".csv");
+               createResultFile(data, fileHeader, fullFileName, ".csv");
             } catch (IOException exception) {
                 log.error(exception.getMessage());
             }
-            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fileName.toString(), data.size()));
+            return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, ROOT_DIR + fullFileName+".csv", data.size()));
         } else {
             return new AsyncResult<>(saveQueryResult(reportQuery, startDate, new Date(), BACKGROUND, null, 0));
         }
@@ -450,14 +461,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         for (Field field : fields) {
             try {
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), item.getClass());
-                if(propertyDescriptor.getReadMethod().invoke(item) instanceof PersistentSet) {
-                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
-                }
-                if(propertyDescriptor.getReadMethod().invoke(item) instanceof PersistentBag) {
-                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
-                }
-                if (propertyDescriptor.getReadMethod().invoke(item) instanceof HibernateProxy) {
-                    propertyDescriptor.getWriteMethod().invoke(item, (Object)null);
+                Object property = propertyDescriptor.getReadMethod().invoke(item);
+                if(property instanceof PersistentSet || property instanceof PersistentBag) {
+                    ((PersistentBag) property).removeAll((Collection) property);
+                }else if (property instanceof HibernateProxy) {
+                    Hibernate.initialize(property);
+                    Object implementation = ((HibernateProxy)property).getHibernateLazyInitializer().getImplementation();
+                    propertyDescriptor.getWriteMethod().invoke(item, implementation);
                 }
             } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
@@ -588,6 +598,22 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         } else {
             return count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));
         }
-
+    }
+    public void remove(ReportQuery reportQuery) {
+        try {
+            QueryScheduler queryScheduler = querySchedulerService.findByReportQuery(reportQuery);
+            if (queryScheduler != null) {
+                Optional.ofNullable(queryScheduler.getJobInstance()).ifPresent(jobInstanceService::remove);
+                querySchedulerService.remove(queryScheduler);
+            }
+            List<Long> resultsIds = queryExecutionResultService.findByReportQuery(reportQuery);
+            if (!resultsIds.isEmpty()) {
+                queryExecutionResultService.remove(resultsIds.parallelStream().collect(Collectors.toSet()));
+            }
+            reportQuery.setFields(Collections.emptyList());
+            super.remove(reportQuery);
+        } catch (Exception e) {
+            throw new BusinessException("An exception is happened : " + e.getMessage());
+        }
     }
 }

@@ -19,12 +19,14 @@
 package org.meveo.apiv2.standardReport;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlType;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.payments.DunningLevelEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -47,5 +49,11 @@ public interface AgedReceivable extends Resource {
     BigDecimal getSum_90_up();
     @Nullable
     BigDecimal getGeneral_total();
+    @Nullable
+    Date dueDate();
+    @Nullable
+    String getCustomerAccountName();
+    @Nullable
+    DunningLevelEnum getDunningLevel();
     
 }

@@ -2,6 +2,7 @@ package org.meveo.apiv2.report.query.service;
 
 import static java.util.Optional.empty;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobInstance;
@@ -45,16 +47,24 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
         		}
         		user.setVersion(userService.findById(user.getId()).getVersion());
         	}
-        	querySchedulerService.create(entity);
         	
         	ReportQuery reportQuery = entity.getReportQuery();
-        	JobInstance jobInstance = new JobInstance();
-            jobInstance.setCode(reportQuery.getCode() + "_Job");
+			String code = reportQuery.getCode() + "_Job";
+			Optional<JobInstance> instance = Optional.ofNullable(jobInstanceService.findByCode(code));
+			if (instance.isPresent()) {
+				throw new ValidationException("The Job with {" + code + "} already exists, it means that this report query is already scheduled");
+			}
+
+			querySchedulerService.create(entity);
+
+			JobInstance jobInstance = new JobInstance();
+			jobInstance.setCode(code);
             jobInstance.setDescription("Job for report query='" + reportQuery.getCode() + "'");
             jobInstance.setJobCategoryEnum(MeveoJobCategoryEnum.REPORTING_QUERY);
             jobInstance.setJobTemplate("ReportQueryJob");
             jobInstance.setQueryScheduler(entity);
             jobInstance.setCfValue("reportQuery", reportQuery);
+			jobInstance.setDisabled(!entity.getIsQueryScheduler());
             jobInstanceService.create(jobInstance);
 
             // Update the QueryScheduler
@@ -69,7 +79,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
 
 	@Override
 	public List<QueryScheduler> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return null;
+		return Collections.emptyList();
 		
 	}
 

@@ -51,8 +51,6 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_AccountOperation_Without_AccountingPeriod() {
 
-		when(accountingPeriodService.findByAccountingPeriodYear(any())).thenReturn(null);
-
 		AccountOperation ao = new AccountOperation();
 		Date transactionDate = new Date();
 		Date collectionDate = DateUtils.addDaysToDate(transactionDate, 5);
@@ -68,6 +66,7 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_AutomatedPayment_ClosedAccountingPeriod() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod closedAP = new AccountingPeriod();
 		closedAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.CLOSED);
 		when(accountingPeriodService.findByAccountingPeriodYear(any())).thenReturn(closedAP);
@@ -83,6 +82,7 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_Payment_OpenAccountingPeriod() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod closedAP = new AccountingPeriod();
 		closedAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
 		when(accountingPeriodService.findByAccountingPeriodYear(any())).thenReturn(closedAP);
@@ -91,12 +91,13 @@ public class AccountOperationServiceTest {
 
 		accountOperationService.handleAccountingPeriods(payment);
 		assertThat(payment.getStatus()).isEqualTo(AccountOperationStatus.POSTED);
-		assertThat(payment.getAccountingDate()).isEqualToIgnoringHours(payment.getTransactionDate());
+		assertThat(payment.getAccountingDate()).isEqualToIgnoringHours(payment.getCollectionDate());
 	}
 
 	@Test
 	public void handleAccountingPeriods_RejectedPayment_OpenAccountingPeriod() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod openAP = new AccountingPeriod();
 		openAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
 		when(accountingPeriodService.findByAccountingPeriodYear(any())).thenReturn(openAP);
@@ -105,12 +106,13 @@ public class AccountOperationServiceTest {
 
 		accountOperationService.handleAccountingPeriods(rejectedPayment);
 		assertThat(rejectedPayment.getStatus()).isEqualTo(AccountOperationStatus.POSTED);
-		assertThat(rejectedPayment.getAccountingDate()).isEqualToIgnoringHours(rejectedPayment.getTransactionDate());
+		assertThat(rejectedPayment.getAccountingDate()).isEqualToIgnoringHours(rejectedPayment.getCollectionDate());
 	}
 
 	@Test
 	public void handleAccountingPeriods_RecordedInvoice_OpenSubAccoutingPeriod() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod openAP = new AccountingPeriod();
 		openAP.setUseSubAccountingCycles(Boolean.TRUE);
 		openAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
@@ -130,6 +132,7 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_WriteOff_Block_Case() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod openAP = new AccountingPeriod();
 		openAP.setUseSubAccountingCycles(Boolean.TRUE);
 		openAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
@@ -151,6 +154,7 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_Refund_Force_Case_First_Day() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod openAP = new AccountingPeriod();
 		openAP.setUseSubAccountingCycles(Boolean.TRUE);
 		openAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
@@ -179,6 +183,7 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_AutomatedRefund_Force_Case_First_Sunday() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod openAP = new AccountingPeriod();
 		openAP.setUseSubAccountingCycles(Boolean.TRUE);
 		openAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
@@ -207,6 +212,7 @@ public class AccountOperationServiceTest {
 	@Test
 	public void handleAccountingPeriods_OCC_Force_Case_Custom_Day() {
 
+		when(accountingPeriodService.count()).thenReturn(1L);
 		AccountingPeriod openAP = new AccountingPeriod();
 		openAP.setUseSubAccountingCycles(Boolean.TRUE);
 		openAP.setAccountingPeriodStatus(AccountingPeriodStatusEnum.OPEN);
