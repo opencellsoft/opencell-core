@@ -308,7 +308,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         if (subCat == null) {
             return null;
         }
-        return subCat.getRatedtransactionsToAssociate();
+        return ((List<RatedTransaction>)subCat.getInvoiceablesToAssociate());
     }
 
     @ActionMethod
@@ -501,7 +501,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void deleteLinkedInvoiceCategoryDetaild() {
 
         List<RatedTransaction> listToRemove = new ArrayList<RatedTransaction>();
-        listToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
+        listToRemove.addAll((List<RatedTransaction>)selectedSubCategoryInvoiceAgregateDetaild.getInvoiceablesToAssociate());
         for (RatedTransaction rt : listToRemove) {
             aggregateHandler.removeRT(rt);
         }
@@ -517,7 +517,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void reComputeAmounts(RatedTransaction ratedTx) {
         aggregateHandler.reset();
         for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
-            for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
+            for (RatedTransaction rt : ((List<RatedTransaction>)subcat.getInvoiceablesToAssociate())) {
                 synchroniseAmounts(rt);
                 aggregateHandler.addRT(entity.getInvoiceDate(), rt);
             }
@@ -628,10 +628,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 subCatInvAggrCopy.updateAudit(currentUser);
                 subCatInvAggrCopy.setInvoice(invoiceCopy);
                 subCatInvAggrCopy.setCategoryInvoiceAgregate(catInvAggrCopy);
-                subCatInvAggrCopy.setRatedtransactionsToAssociate(new ArrayList<RatedTransaction>());
+                subCatInvAggrCopy.setInvoiceablesToAssociate(new ArrayList<>());
                 subCategoryInvoiceAggregatesCopy.add(subCatInvAggrCopy);
 
-                for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
+                for (RatedTransaction rt : ((List<RatedTransaction>)subCatInvAggr.getInvoiceablesToAssociate())) {
                     RatedTransaction rtCopy = new RatedTransaction();
                     BeanUtils.copyProperties(rtCopy, rt);
                     rtCopy.setId(null);
@@ -697,6 +697,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         BillingAccount billingAccount = getFreshBA();
 
+        entity.setInvoiceType(invoiceTypeService.retrieveIfNotManaged(entity.getInvoiceType()));
+
         List<RatedTransaction> rts = null;
         for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
             TaxInvoiceAgregate taxInvAgr = entry.getValue();
@@ -723,6 +725,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             invoiceService.postCreate(entity);
         }
 
+        invoiceService.postCreate(entity);
         entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
         if (entity.getInvoiceNumber() == null) {
             entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
@@ -748,7 +751,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             subCatInvAggr.setInvoice(entity);
             subCatInvAggr.updateAudit(currentUser);
 
-            for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
+            for (RatedTransaction rt : ((List<RatedTransaction>)subCatInvAggr.getInvoiceablesToAssociate())) {
                 rt.setInvoice(entity);
                 rt.setInvoiceAgregateF(subCatInvAggr);
                 rt.changeStatus(RatedTransactionStatusEnum.BILLED);

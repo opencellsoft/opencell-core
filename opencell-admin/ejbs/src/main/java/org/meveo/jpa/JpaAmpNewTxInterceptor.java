@@ -70,7 +70,7 @@ public class JpaAmpNewTxInterceptor implements Serializable {
                 }
             }
             
-            //log.error("AKKKKKK in interceptor");
+            //log.error("AKK in interceptor");
             obj = invocationContext.proceed();
             emWrapper.getEntityManager().flush();
             emWrapper.getEntityManager().clear();

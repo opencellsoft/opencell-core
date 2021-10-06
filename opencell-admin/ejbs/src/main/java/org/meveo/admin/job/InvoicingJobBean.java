@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,7 +47,6 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -397,13 +395,11 @@ public class InvoicingJobBean extends BaseJobBean {
 
         final MinAmountForAccounts minAmountForAccountsAdjusted = minAmountForAccounts.adjustForFirstRun(alreadyInstantiatedMinRTs);
 
-        Function<IBillableEntity, List<Invoice>> task = (entityToInvoice) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice,
-                billingRun, billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null,
-                null, null, null, minAmountForAccountsAdjusted, false, !billingRun.isSkipValidationScript());
+        BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (entityToInvoice, jobResult) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun,
+            billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null, null, null, null, minAmountForAccountsAdjusted, false, !billingRun.isSkipValidationScript());
 
-        List<List<Invoice>> invoices = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult,
-                new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, nbRuns,
-                waitingMillis, false, jobInstance.getJobSpeed(), true);
+        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, false, jobInstance.getJobSpeed(),
+            true);
     }
 
     /**

@@ -110,11 +110,11 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
         CDR cdr = null;
         try {
             cdr = cdrParser.parse(recordContext.getRecord());
-            
+
         } catch (CDRParsingException e) {
             cdr = new CDR();
             cdr.setRejectReasonException(e);
-        
+
         } finally {
             cdr.setSource(RecordContext.serializeRecord(recordContext.getRecord()));
             cdr.setType(recordContext.getRecord().getClass().getName());

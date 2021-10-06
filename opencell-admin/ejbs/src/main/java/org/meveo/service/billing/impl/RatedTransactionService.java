@@ -342,6 +342,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
     }
 
+
     /**
      * @param aggregatedWo aggregated wallet operations
      * @param aggregationSettings aggregation settings of wallet operations

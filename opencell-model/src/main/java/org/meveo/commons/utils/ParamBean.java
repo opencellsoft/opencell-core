@@ -193,12 +193,14 @@ public class ParamBean {
      * @return True of multitenancy is enabled
      */
     public static boolean isMultitenancyEnabled() {
-        ParamBean currentInstance = getInstance();
-        if (currentInstance == null) {
-            return multiTenancyEnabled;
-        }
 
         if (multiTenancyEnabled == null) {
+            
+            ParamBean currentInstance = getInstance();
+            if (currentInstance == null) {
+                return multiTenancyEnabled;
+            }
+            
             multiTenancyEnabled = Boolean.valueOf(currentInstance.getProperty("meveo.multiTenancy", "false"));
         }
         return multiTenancyEnabled;

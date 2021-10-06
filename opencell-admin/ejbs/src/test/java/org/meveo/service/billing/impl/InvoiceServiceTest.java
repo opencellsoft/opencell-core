@@ -88,6 +88,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
@@ -143,6 +144,9 @@ public class InvoiceServiceTest {
 
     @Mock
     private InvoiceTypeService invoiceTypeService;
+
+    @Mock
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Mock
     private DiscountPlanInstanceService discountPlanInstanceService;
@@ -208,7 +212,16 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
-        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        
+        List<RatedTransaction> ratedTransactions = new ArrayList<>();
+        RatedTransaction rt1 = getRatedTransaction(subscription, 1l);
+        RatedTransaction rt2 = getRatedTransaction(subscription, 2l);
+        RatedTransaction rt3 = getRatedTransaction(subscription, 3l);
+        ratedTransactions.add(rt1);
+        ratedTransactions.add(rt2);
+        ratedTransactions.add(rt3);
+        
+        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(subscription, ba, null, bc, invoiceType, false, paymentMethod, ratedTransactions.iterator());
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
         RatedTransactionGroup ratedTransactionGroup = ratedTransactionsToInvoice.ratedTransactionGroups.get(0);
@@ -222,7 +235,16 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
-        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        
+        List<RatedTransaction> ratedTransactions = new ArrayList<>();
+        RatedTransaction rt1 = getRatedTransaction(ba, 1l);
+        RatedTransaction rt2 = getRatedTransaction(ba, 2l);
+        RatedTransaction rt3 = getRatedTransaction(ba, 3l);
+        ratedTransactions.add(rt1);
+        ratedTransactions.add(rt2);
+        ratedTransactions.add(rt3);
+        
+        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(ba, ba, null, bc, invoiceType, false, paymentMethod, ratedTransactions.iterator());
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
         RatedTransactionGroup ratedTransactionGroup = ratedTransactionsToInvoice.ratedTransactionGroups.get(0);
@@ -239,8 +261,18 @@ public class InvoiceServiceTest {
         InvoiceType invoiceType = new InvoiceType();
         PaymentMethod paymentMethod = new CardPaymentMethod();
 
-        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class), mock(Date.class),
-            mock(Date.class), false, paymentMethod, null);
+        List<RatedTransaction> ratedTransactions = new ArrayList<>();
+        RatedTransaction rt1 = getRatedTransaction(order, 1l);
+        rt1.setBillingAccount(ba);
+        RatedTransaction rt2 = getRatedTransaction(order, 2l);
+        rt2.setBillingAccount(ba);
+        RatedTransaction rt3 = getRatedTransaction(order, 3l);
+        rt3.setBillingAccount(ba);
+        ratedTransactions.add(rt1);
+        ratedTransactions.add(rt2);
+        ratedTransactions.add(rt3);
+        
+        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(order, ba, new BillingRun(), bc, invoiceType, false, paymentMethod, ratedTransactions.iterator());
 
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
@@ -304,24 +336,31 @@ public class InvoiceServiceTest {
         cat2.setCode("cat2");
         cat2.setId(12L);
 
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
         InvoiceSubCategory subCat11 = new InvoiceSubCategory();
         subCat11.setInvoiceCategory(cat1);
         subCat11.setCode("subCat11");
+        subCat11.setAccountingCode(accountingCode);
         subCat11.setId(13L);
 
         InvoiceSubCategory subCat12 = new InvoiceSubCategory();
         subCat12.setInvoiceCategory(cat1);
         subCat12.setCode("subCat12");
+        subCat12.setAccountingCode(accountingCode);
         subCat12.setId(14L);
 
         InvoiceSubCategory subCat21 = new InvoiceSubCategory();
         subCat21.setInvoiceCategory(cat2);
         subCat21.setCode("subCat21");
+        subCat21.setAccountingCode(accountingCode);
         subCat21.setId(15L);
 
         InvoiceSubCategory subCat22 = new InvoiceSubCategory();
         subCat22.setInvoiceCategory(cat2);
         subCat22.setCode("subCat22");
+        subCat22.setAccountingCode(accountingCode);
         subCat22.setId(16L);
 
         Tax tax = new Tax();
@@ -331,9 +370,6 @@ public class InvoiceServiceTest {
 
         TaxClass taxClass = new TaxClass();
         taxClass.setId(18L);
-
-        AccountingCode accountingCode = new AccountingCode();
-        accountingCode.setId(19L);
 
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setId(4L);
@@ -392,6 +428,18 @@ public class InvoiceServiceTest {
         taxInfo.taxClass = taxClass;
 
         when(taxMappingService.determineTax(any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenReturn(taxInfo);
+        when(entityManager.getReference(eq(Tax.class), any())).thenReturn(tax);
+
+        when(invoiceSubCategoryService.findById(eq(subCat11.getId()))).thenReturn(subCat11);
+        when(invoiceSubCategoryService.findById(eq(subCat12.getId()))).thenReturn(subCat12);
+        when(invoiceSubCategoryService.findById(eq(subCat21.getId()))).thenReturn(subCat21);
+        when(invoiceSubCategoryService.findById(eq(subCat22.getId()))).thenReturn(subCat22);
+
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua1.getId()))).thenReturn(ua1);
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua2.getId()))).thenReturn(ua2);
+
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet1.getId()))).thenReturn(wallet1);
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet2.getId()))).thenReturn(wallet2);
 
         when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
         when(appProvider.getRounding()).thenReturn(6);
@@ -407,7 +455,7 @@ public class InvoiceServiceTest {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
-        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, false);
+        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, true);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(13);
         assertThat(((SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0)).getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
@@ -473,7 +521,7 @@ public class InvoiceServiceTest {
         invoice = new Invoice();
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
-        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, false);
+        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, true);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(7);
         assertThat(((SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0)).getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
@@ -658,6 +706,21 @@ public class InvoiceServiceTest {
         when(taxMappingService.determineTax(eq(taxClass10), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenReturn(taxInfo10);
         when(taxMappingService.determineTax(eq(taxClass20), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenReturn(taxInfo20);
 
+        when(entityManager.getReference(eq(Tax.class), eq(tax10.getId()))).thenReturn(tax10);
+        when(entityManager.getReference(eq(Tax.class), eq(tax20.getId()))).thenReturn(tax20);
+
+        when(entityManager.getReference(eq(TaxClass.class), eq(taxClass10.getId()))).thenReturn(taxClass10);
+        when(entityManager.getReference(eq(TaxClass.class), eq(taxClass20.getId()))).thenReturn(taxClass20);
+        
+        when(invoiceSubCategoryService.findById(eq(subCat11.getId()))).thenReturn(subCat11);
+        when(invoiceSubCategoryService.findById(eq(subCat12.getId()))).thenReturn(subCat12);
+        when(invoiceSubCategoryService.findById(eq(subCat21.getId()))).thenReturn(subCat21);
+        when(invoiceSubCategoryService.findById(eq(subCat22.getId()))).thenReturn(subCat22);
+
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua1.getId()))).thenReturn(ua1);
+
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet1.getId()))).thenReturn(wallet1);
+        
         when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
         when(appProvider.getRounding()).thenReturn(6);
         when(appProvider.getInvoiceRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
@@ -673,12 +736,12 @@ public class InvoiceServiceTest {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
-        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, false);
+        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, true);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(12);
         SubCategoryInvoiceAgregate subAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0);
         assertThat(subAggr11.getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
-        assertThat(subAggr11.getRatedtransactionsToAssociate().size()).isEqualTo(4);
+        assertThat(subAggr11.getInvoiceablesToAssociate().size()).isEqualTo(4);
         assertThat(subAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
         assertThat(subAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
         assertThat(subAggr11.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
@@ -691,7 +754,7 @@ public class InvoiceServiceTest {
 
         SubCategoryInvoiceAgregate subAggr12 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(1);
         assertThat(subAggr12.getInvoiceSubCategory().getCode()).isEqualTo("subCat12");
-        assertThat(subAggr12.getRatedtransactionsToAssociate().size()).isEqualTo(4);
+        assertThat(subAggr12.getInvoiceablesToAssociate().size()).isEqualTo(4);
         assertThat(subAggr12.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
         assertThat(subAggr12.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
         assertThat(subAggr12.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
@@ -704,7 +767,7 @@ public class InvoiceServiceTest {
 
         SubCategoryInvoiceAgregate subAggr21 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(2);
         assertThat(subAggr21.getInvoiceSubCategory().getCode()).isEqualTo("subCat21");
-        assertThat(subAggr21.getRatedtransactionsToAssociate().size()).isEqualTo(4);
+        assertThat(subAggr21.getInvoiceablesToAssociate().size()).isEqualTo(4);
         assertThat(subAggr21.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
         assertThat(subAggr21.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
         assertThat(subAggr21.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
@@ -717,7 +780,7 @@ public class InvoiceServiceTest {
 
         SubCategoryInvoiceAgregate subAggr22 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(3);
         assertThat(subAggr22.getInvoiceSubCategory().getCode()).isEqualTo("subCat22");
-        assertThat(subAggr22.getRatedtransactionsToAssociate().size()).isEqualTo(4);
+        assertThat(subAggr22.getInvoiceablesToAssociate().size()).isEqualTo(4);
         assertThat(subAggr22.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
         assertThat(subAggr22.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
         assertThat(subAggr22.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
@@ -745,7 +808,7 @@ public class InvoiceServiceTest {
         SubCategoryInvoiceAgregate descAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(6);
         assertThat(descAggr11.isDiscountAggregate()).isTrue();
         assertThat(descAggr11.getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
-        assertThat(descAggr11.getRatedtransactionsToAssociate().size()).isEqualTo(0);
+        assertThat(descAggr11.getInvoiceablesToAssociate().size()).isEqualTo(0);
         assertThat(descAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(-13.05d).setScale(2, HALF_UP));
         assertThat(descAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(-14.36d).setScale(2, HALF_UP));
         assertThat(descAggr11.getAmountTax()).isEqualTo(new BigDecimal(-1.31d).setScale(2, HALF_UP));
@@ -757,7 +820,7 @@ public class InvoiceServiceTest {
         SubCategoryInvoiceAgregate descAggr12 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(9);
         assertThat(descAggr12.isDiscountAggregate()).isTrue();
         assertThat(descAggr12.getInvoiceSubCategory().getCode()).isEqualTo("subCat12");
-        assertThat(descAggr12.getRatedtransactionsToAssociate().size()).isEqualTo(0);
+        assertThat(descAggr12.getInvoiceablesToAssociate().size()).isEqualTo(0);
         assertThat(descAggr12.getAmountWithoutTax()).isEqualTo(new BigDecimal(-28.0).setScale(2, HALF_UP));
         assertThat(descAggr12.getAmountWithTax()).isEqualTo(new BigDecimal(-32.2d).setScale(2, HALF_UP));
         assertThat(descAggr12.getAmountTax()).isEqualTo(new BigDecimal(-4.2d).setScale(2, HALF_UP));
@@ -772,7 +835,7 @@ public class InvoiceServiceTest {
         SubCategoryInvoiceAgregate descAggr21 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(10);
         assertThat(descAggr21.isDiscountAggregate()).isTrue();
         assertThat(descAggr21.getInvoiceSubCategory().getCode()).isEqualTo("subCat21");
-        assertThat(descAggr21.getRatedtransactionsToAssociate().size()).isEqualTo(0);
+        assertThat(descAggr21.getInvoiceablesToAssociate().size()).isEqualTo(0);
         assertThat(descAggr21.getAmountWithoutTax()).isEqualTo(new BigDecimal(-300d).setScale(2, HALF_UP));
         assertThat(descAggr21.getAmountWithTax()).isEqualTo(new BigDecimal(-340.00d).setScale(2, HALF_UP));
         assertThat(descAggr21.getAmountTax()).isEqualTo(new BigDecimal(-40.00d).setScale(2, HALF_UP));
@@ -787,7 +850,7 @@ public class InvoiceServiceTest {
         SubCategoryInvoiceAgregate descAggr22 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(11);
         assertThat(descAggr22.isDiscountAggregate()).isTrue();
         assertThat(descAggr22.getInvoiceSubCategory().getCode()).isEqualTo("subCat22");
-        assertThat(descAggr22.getRatedtransactionsToAssociate().size()).isEqualTo(0);
+        assertThat(descAggr22.getInvoiceablesToAssociate().size()).isEqualTo(0);
         assertThat(descAggr22.getAmountWithoutTax()).isEqualTo(new BigDecimal(300d).setScale(2, HALF_UP));
         assertThat(descAggr22.getAmountWithTax()).isEqualTo(new BigDecimal(330.00d).setScale(2, HALF_UP));
         assertThat(descAggr22.getAmountTax()).isEqualTo(new BigDecimal(30.00d).setScale(2, HALF_UP));
@@ -942,7 +1005,7 @@ public class InvoiceServiceTest {
 
         Mockito.doReturn(order).when(invoiceService).tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode());
         Mockito.doReturn(billingAccount).when(invoiceService).tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode());
-        //Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
+        // Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
         Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, inputInvoice.getInvoiceTypeCode());
         Mockito.doNothing().when(invoiceService).postCreate(any());
         final Invoice advancePaymentInvoice = invoiceService.createBasicInvoice(inputInvoice);
@@ -1414,24 +1477,31 @@ public class InvoiceServiceTest {
         cat2.setCode("cat2");
         cat2.setId(12L);
 
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
         InvoiceSubCategory subCat11 = new InvoiceSubCategory();
         subCat11.setInvoiceCategory(cat1);
         subCat11.setCode("subCat11");
+        subCat11.setAccountingCode(accountingCode);
         subCat11.setId(13L);
 
         InvoiceSubCategory subCat12 = new InvoiceSubCategory();
         subCat12.setInvoiceCategory(cat1);
         subCat12.setCode("subCat12");
+        subCat12.setAccountingCode(accountingCode);
         subCat12.setId(14L);
 
         InvoiceSubCategory subCat21 = new InvoiceSubCategory();
         subCat21.setInvoiceCategory(cat2);
         subCat21.setCode("subCat21");
+        subCat21.setAccountingCode(accountingCode);
         subCat21.setId(15L);
 
         InvoiceSubCategory subCat22 = new InvoiceSubCategory();
         subCat22.setInvoiceCategory(cat2);
         subCat22.setCode("subCat22");
+        subCat22.setAccountingCode(accountingCode);
         subCat22.setId(16L);
 
         Tax tax = new Tax();
@@ -1441,9 +1511,6 @@ public class InvoiceServiceTest {
 
         TaxClass taxClass = new TaxClass();
         taxClass.setId(18L);
-
-        AccountingCode accountingCode = new AccountingCode();
-        accountingCode.setId(19L);
 
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setId(4L);
@@ -1502,6 +1569,18 @@ public class InvoiceServiceTest {
         taxInfo.taxClass = taxClass;
 
         when(taxMappingService.determineTax(any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenReturn(taxInfo);
+        when(entityManager.getReference(eq(Tax.class), any())).thenReturn(tax);
+
+        when(invoiceSubCategoryService.findById(eq(subCat11.getId()))).thenReturn(subCat11);
+        when(invoiceSubCategoryService.findById(eq(subCat12.getId()))).thenReturn(subCat12);
+        when(invoiceSubCategoryService.findById(eq(subCat21.getId()))).thenReturn(subCat21);
+        when(invoiceSubCategoryService.findById(eq(subCat22.getId()))).thenReturn(subCat22);
+
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua1.getId()))).thenReturn(ua1);
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua2.getId()))).thenReturn(ua2);
+
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet1.getId()))).thenReturn(wallet1);
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet2.getId()))).thenReturn(wallet2);
 
         when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
         when(appProvider.getRounding()).thenReturn(6);
@@ -1518,7 +1597,7 @@ public class InvoiceServiceTest {
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
         invoice.setInvoiceDate(new Date());
-        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, false);
+        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, true);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(21);
         assertThat(invoice.getAmountWithTax().doubleValue()).isEqualTo(46d);
@@ -1604,24 +1683,31 @@ public class InvoiceServiceTest {
         cat2.setCode("cat2");
         cat2.setId(12L);
 
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
         InvoiceSubCategory subCat11 = new InvoiceSubCategory();
         subCat11.setInvoiceCategory(cat1);
         subCat11.setCode("subCat11");
+        subCat11.setAccountingCode(accountingCode);
         subCat11.setId(13L);
 
         InvoiceSubCategory subCat12 = new InvoiceSubCategory();
         subCat12.setInvoiceCategory(cat1);
         subCat12.setCode("subCat12");
+        subCat12.setAccountingCode(accountingCode);
         subCat12.setId(14L);
 
         InvoiceSubCategory subCat21 = new InvoiceSubCategory();
         subCat21.setInvoiceCategory(cat2);
         subCat21.setCode("subCat21");
+        subCat21.setAccountingCode(accountingCode);
         subCat21.setId(15L);
 
         InvoiceSubCategory subCat22 = new InvoiceSubCategory();
         subCat22.setInvoiceCategory(cat2);
         subCat22.setCode("subCat22");
+        subCat22.setAccountingCode(accountingCode);
         subCat22.setId(16L);
 
         Tax tax = new Tax();
@@ -1631,9 +1717,6 @@ public class InvoiceServiceTest {
 
         TaxClass taxClass = new TaxClass();
         taxClass.setId(18L);
-
-        AccountingCode accountingCode = new AccountingCode();
-        accountingCode.setId(19L);
 
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setId(4L);
@@ -1692,6 +1775,18 @@ public class InvoiceServiceTest {
         taxInfo.taxClass = taxClass;
 
         when(taxMappingService.determineTax(any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenReturn(taxInfo);
+        when(entityManager.getReference(eq(Tax.class), any())).thenReturn(tax);
+
+        when(invoiceSubCategoryService.findById(eq(subCat11.getId()))).thenReturn(subCat11);
+        when(invoiceSubCategoryService.findById(eq(subCat12.getId()))).thenReturn(subCat12);
+        when(invoiceSubCategoryService.findById(eq(subCat21.getId()))).thenReturn(subCat21);
+        when(invoiceSubCategoryService.findById(eq(subCat22.getId()))).thenReturn(subCat22);
+
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua1.getId()))).thenReturn(ua1);
+        when(entityManager.getReference(eq(UserAccount.class), eq(ua2.getId()))).thenReturn(ua2);
+
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet1.getId()))).thenReturn(wallet1);
+        when(entityManager.getReference(eq(WalletInstance.class), eq(wallet2.getId()))).thenReturn(wallet2);
 
         when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
         when(appProvider.getRounding()).thenReturn(6);
@@ -1709,7 +1804,7 @@ public class InvoiceServiceTest {
         invoice.setBillingAccount(ba);
         invoice.setSubscription(subscription1);
         invoice.setInvoiceDate(new Date());
-        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, false);
+        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, true);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(21);
         assertThat(invoice.getAmountWithTax().doubleValue()).isEqualTo(46d);
