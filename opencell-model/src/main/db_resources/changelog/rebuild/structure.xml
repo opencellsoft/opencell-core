@@ -9526,9 +9526,7 @@
             <column name="creator" type="varchar(50)"/>
             <column name="updater" type="varchar(50)"/>
             <column name="updated" type="datetime"/>
-            <column name="article_mapping_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="article_mapping_id" type="bigint" />
             <column name="article_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -15840,6 +15838,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
 	<changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay"/>
 	<changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
+    <changeSet id="INTRD-2252_20211006" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
