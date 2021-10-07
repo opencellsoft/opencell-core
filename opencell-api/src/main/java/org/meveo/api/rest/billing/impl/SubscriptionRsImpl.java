@@ -448,11 +448,24 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
+    public ActionStatus activatePatchedSubscription(String subscriptionCode, Boolean updateEffectiveDate, Date newEffectiveDate) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.activatePatchedSubscription(subscriptionCode, updateEffectiveDate, newEffectiveDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus activate(ActivateSubscriptionRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateSubscriptionByCode(putData.getSubscriptionCode());
+            subscriptionApi.activateSubscription(putData.getSubscriptionCode(), null);
         } catch (Exception e) {
             processException(e, result);
         }

@@ -847,6 +847,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return new ArrayList<>();
         }
     }
+
+    public List<Subscription> findListByCodeAndValidityDate(String code, Date date) {
+        return getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                .setParameter("code", code.toLowerCase())
+                .setParameter("validityDate", date)
+                .getResultList();
+    }
     
 
     /**
