@@ -741,6 +741,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 userAccountTag.appendChild(subscriptionsTag);
             }
             for (Subscription subscription : subscriptions) {
+            	if(SubscriptionStatusEnum.ACTIVE.equals(subscription.getStatus())) {
                 OfferTemplate offer = subscription.getOffer();
                 if (displaySubscription) {
                     Element subscriptionTag = doc.createElement("subscription");
@@ -753,7 +754,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subscriptionDateTag.appendChild(subscriptionDateText);
                     subscriptionTag.appendChild(subscriptionDateTag);
                     Element endAgreementTag = doc.createElement("endAgreementDate");
-                    Text endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat));
+                    Text endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate()), invoiceDateTimeFormat));
                     endAgreementTag.appendChild(endAgreementText);
                     subscriptionTag.appendChild(endAgreementTag);
                     addCustomFields(subscription, doc, subscriptionTag);
@@ -777,6 +778,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     }
                 }
             }
+        }
         }
 
         return allServiceInstances;
