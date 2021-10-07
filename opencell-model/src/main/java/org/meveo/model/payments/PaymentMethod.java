@@ -64,12 +64,11 @@ import org.meveo.model.document.Document;
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId and pm.disabled = false"),
         @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true"),
         @NamedQuery(name = "PaymentMethod.listByCustomerAccount", query = "select m from PaymentMethod m inner join m.customerAccount ca where ca=:customerAccount"),
-        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForDDRequestItem", query = "SELECT ca.id, ca.code, ca.description, pm.class, pm.bankCoordinates.bic, pm.bankCoordinates.iban, pm.alias, pm.mandateIdentification, pm.mandateDate  FROM CustomerAccount ca JOIN DDPaymentMethod pm on ca.id = pm.customerAccount.id JOIN AccountOperation ao on ca.id = ao.customerAccount.id  WHERE ao.ddRequestItem.id = :id AND pm.preferred = true"),
         @NamedQuery(name = "PaymentMethod.isReferenced", query = "select count(*) from PaymentMethod pm \n" +
                 "left join Subscription sub on sub.paymentMethod.id = pm.id \n" +
                 "left join BillingAccount ba on ba.paymentMethod.id = pm.id \n" +
-                "left join Invoice inv on inv.paymentMethod.id = pm.id where pm.id = :pmId and pm.disabled = false and inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED") })
-
+                "left join Invoice inv on inv.paymentMethod.id = pm.id where pm.id = :pmId and pm.disabled = false and inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
+        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForDDRequestItem", query = "SELECT ca.id, ca.code, ca.description, pm.class, pm.bankCoordinates.bic, pm.bankCoordinates.iban, pm.alias, pm.mandateIdentification, pm.mandateDate FROM CustomerAccount ca JOIN DDPaymentMethod pm on ca.id = pm.customerAccount.id JOIN AccountOperation ao on ca.id = ao.customerAccount.id  WHERE ao.ddRequestItem.id = :id AND pm.preferred = true ORDER BY ao.id ASC") })
 public abstract class PaymentMethod extends EnableCFEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
