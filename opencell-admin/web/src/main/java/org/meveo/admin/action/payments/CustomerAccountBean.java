@@ -545,6 +545,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
             return;
         }
+        paymentMethodService.checkReferencedPMBeforeRemoveOrDisable(paymentMethod);
         entity.getPaymentMethods().remove(paymentMethod);
         entity.addPaymentMethodToAudit(new Object() {
         }.getClass().getEnclosingMethod().getName(), paymentMethod);
@@ -557,6 +558,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
             return;
         }
+        paymentMethodService.checkReferencedPMBeforeRemoveOrDisable(paymentMethod);
         paymentMethod.setDisabled(true);
         paymentMethod.setPreferred(false);
         entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);

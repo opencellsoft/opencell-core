@@ -235,6 +235,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 }
             }
         }
+        if(entity.isDisabled()){
+            checkReferencedPMBeforeRemoveOrDisable(entity);
+        }
         PaymentMethod paymentMethod = super.update(entity);
 
         // Mark other payment methods as not preferred
@@ -246,13 +249,18 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         return paymentMethod;
     }
 
+    private Long getReferencedPaymentMethod(PaymentMethod entity) {
+        return (Long) getEntityManager().createNamedQuery("PaymentMethod.isReferenced")
+                .setParameter("pmId", entity.getId())
+                .getSingleResult();
+    }
+
 
     @Override
     public void remove(PaymentMethod paymentMethod) throws BusinessException {
-
         boolean wasPreferred = paymentMethod.isPreferred();
         Long caId = paymentMethod.getCustomerAccount().getId();
-
+        checkReferencedPMBeforeRemoveOrDisable(paymentMethod);
         long paymentMethodCount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfPaymentMethods").setParameter("caId", caId).getSingleResult();
         if (paymentMethodCount <= 1) {
             throw new ValidationException("At least one payment method on a customer account is required");
@@ -264,6 +272,12 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             Long minId = (Long) getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).getSingleResult();
             getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
             getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
+        }
+    }
+
+    public void checkReferencedPMBeforeRemoveOrDisable(PaymentMethod paymentMethod) {
+        if (getReferencedPaymentMethod(paymentMethod) > 1) {
+            throw new BusinessException("Can not disable or remove a referenced payment method");
         }
     }
 
