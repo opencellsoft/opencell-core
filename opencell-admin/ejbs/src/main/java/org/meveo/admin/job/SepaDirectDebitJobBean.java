@@ -19,14 +19,11 @@ package org.meveo.admin.job;
 
 import static java.lang.Boolean.TRUE;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -34,6 +31,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -46,7 +44,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -195,6 +192,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					isToMatching = true;
 				}
 				try {
+					DDRequestLOT ddRequestLOT = null;
 					DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
 					if (dateRangeScript != null) { // computing custom due date range :
 						this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
@@ -211,18 +209,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						if (listAoToPay == null || listAoToPay.isEmpty()) {
 							throw new BusinessEntityException("no invoices!");
 						}
-						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
+						ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
                             dDRequestLOTService.createPaymentsOrRefundsAndGenerateDDRequestLotFile(ddRequestLOT, ddRequestBuilderInterface, ddrequestLotOp, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
 						}
-
-						// Update operationAction of each Account operation to "NONE"
-						accountOperationService.updateAOOperationActionToNone(listAoToPay.stream()
-						        .filter(a -> a.getStatus() != AccountOperationStatus.REJECTED && StringUtils.isBlank(a.getReason()))
-								.map(accountOperation -> accountOperation.getId())
-								.collect(Collectors.toList()));
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
                         if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {					    
@@ -239,6 +230,19 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					if (ddrequestLotOp.getRecurrent() == TRUE) {
 						this.createNewDdrequestLotOp(ddrequestLotOp);
 					}
+					// Update operationAction of each Account operation to "NONE"
+					if (ddRequestLOT != null && ddRequestLOT.getDdrequestItems() != null) {
+						List<Long> aoIds = ddRequestLOT.getDdrequestItems()
+								.stream()
+								.filter(item -> !item.hasError() && !CollectionUtils.isEmpty(item.getAccountOperations()))
+								.flatMap(item -> item.getAccountOperations().stream())
+								.map(ao -> ao.getId())
+								.collect(Collectors.toList());
+						if (!CollectionUtils.isEmpty(aoIds)) {
+							accountOperationService.updateAOOperationActionToNone(aoIds);
+						}
+					}
+
 				} catch (Exception e) {
 					log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 					if (ddrequestLotOp.getRecurrent() == TRUE) {
