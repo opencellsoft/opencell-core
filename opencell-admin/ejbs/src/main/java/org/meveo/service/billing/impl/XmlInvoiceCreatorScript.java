@@ -1022,9 +1022,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
         Element categoriesTag = doc.createElement("categories");
+        Element categoryTag=null;
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
-            Element categoryTag = createDetailsUAInvoiceCategorySection(doc, invoice, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
-                    invoiceConfiguration);
+        	if(categoryInvoiceAgregate.getInvoiceCategory()!=null) {
+        		categoryTag = createDetailsUAInvoiceCategorySection(doc, invoice, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
+        				invoiceConfiguration);
+        	}
             if (categoryTag != null) {
                 categoriesTag.appendChild(categoryTag);
             }
