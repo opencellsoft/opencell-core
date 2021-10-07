@@ -7824,7 +7824,7 @@
         		<![CDATA[   package org.meveo.service.script;
             		public class OrderValidation extends OrderValidationScript {}]]>
         	</column>
-            <column name="created" valueDate="2021-10-06" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="src_type" value="JAVA" />
@@ -7846,14 +7846,14 @@
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
 			<column name="entity_class" value="QuoteOffer" />
 			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
         
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="generic_sequence_seq"/>
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="code" value="order_offer_sequence" />
@@ -7867,7 +7867,7 @@
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
 			<column name="entity_class" value="OrderOffer" />
 			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
