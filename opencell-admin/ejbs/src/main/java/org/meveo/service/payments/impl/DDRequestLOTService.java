@@ -253,8 +253,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         }
         String fileName = ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider);
 	    try {
-    	    ddRequestLOT.setFileName(fileName);
+	    	
             dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
+           
 	    }
 	    catch (Exception e) {
             if (StringUtils.isNotBlank(fileName)) {
