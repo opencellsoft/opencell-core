@@ -7831,7 +7831,7 @@
         </insert>
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="generic_sequence_seq" />
-            <column name="created" valueDate="now()" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="code" value="quote_offer_sequence" />
