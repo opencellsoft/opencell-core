@@ -909,6 +909,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
 
     }
+
+    public List<Subscription> findListByCodeAndValidityDate(String code, Date date) {
+        return getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                .setParameter("code", code.toLowerCase())
+                .setParameter("validityDate", date)
+                .getResultList();
+    }
     
     /**
      * Find matching or overlapping versions for a given subscription code and date range

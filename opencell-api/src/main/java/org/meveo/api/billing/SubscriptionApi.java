@@ -2220,12 +2220,68 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptionValidityDate == null) {
             subscriptionValidityDate = new Date();
         }
-        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
-        if (subscription == null) {
+        List<Subscription> subscriptions = subscriptionService.findListByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
+        if (subscriptions.size() == 0) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        } else if (subscriptions.size() == 1) {
+            subscriptionService.activateInstantiatedService(subscriptions.get(1));
+        } else {
+            // so in this case, practically subscriptions list contains
+            // the current last one sub valid on subscriptionValidityDate,
+            // plus others subs that were all rolled back (so terminated)
+            Optional<Subscription> lastSub = subscriptions.stream().filter(sub -> sub.getStatus() != SubscriptionStatusEnum.RESILIATED).findFirst();
+            if (lastSub.isEmpty()) {
+                throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            } else {
+                subscriptionService.activateInstantiatedService(lastSub.get());
+            }
+        }
+    }
+
+    /**
+     * Activate the patched version of a given Subscription.
+     *
+     * @param subscriptionCode subscription code
+     * @param updateEffectiveDate should update effective date or not
+     * @param newEffectiveDate new effective date
+     * @throws BusinessException Business Exception
+     * @throws MissingParameterException Missing Parameter Exception
+     */
+    public void activatePatchedSubscription(String subscriptionCode, Boolean updateEffectiveDate, Date newEffectiveDate) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        handleMissingParameters();
+
+        if (newEffectiveDate == null) {
+            newEffectiveDate = new Date();
+        }
+        Subscription patchedSubscription = subscriptionService.getLastVersionSubscription(subscriptionCode);
+        if (patchedSubscription == null || patchedSubscription.getValidity() == null || patchedSubscription.getValidity().getFrom() == null) {
+            // there is no sub with this code or the last version of this sub is actually the initial version
+            // so no patched sub exist for this code
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        subscriptionService.activateInstantiatedService(subscription);
+        if (Boolean.TRUE.equals(updateEffectiveDate)) {
+            Date patchedSubValidFrom = patchedSubscription.getValidity().getFrom();
+
+            Date previousSubValidityDate = DateUtils.setMinuteToDate(patchedSubValidFrom, DateUtils.getMinuteFromDate(patchedSubValidFrom)-1) ;
+            Subscription currentSubscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, previousSubValidityDate);
+
+            if (currentSubscription.getValidity().getFrom() != null && newEffectiveDate.before(currentSubscription.getValidity().getFrom())) {
+                throw new InvalidParameterException("new effective date should be after current active subscription valid from");
+            }
+
+            currentSubscription.setToValidity(newEffectiveDate);
+            patchedSubscription.setFromValidity(newEffectiveDate);
+
+            subscriptionService.updateNoCheck(currentSubscription);
+            subscriptionService.updateNoCheck(patchedSubscription);
+        }
+
+        subscriptionService.activateInstantiatedService(patchedSubscription);
     }
 
     public void cancelSubscriptionRenewal(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
@@ -2568,11 +2624,6 @@ public class SubscriptionApi extends BaseApi {
             throw new InvalidParameterException("A version already exists for effectiveDate=" + formatter.format(effectiveDate) + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
-        if (subscriptionTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
-        }
-
         if (isNotBlank(subscriptionPatchDto.getOfferTemplate()) && !subscriptionPatchDto.getOfferTemplate().toLowerCase().equals(lastVersionSubscription.getOffer().getCode().toLowerCase())) {
             if((lastVersionSubscription.getOffer().getOfferChangeRestricted() != null && lastVersionSubscription.getOffer().getOfferChangeRestricted())
                     || lastVersionSubscription.getOffer().getAllowedOffersChange().stream().noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))
@@ -2585,8 +2636,18 @@ public class SubscriptionApi extends BaseApi {
         existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
 
         lastVersionSubscription.setToValidity(effectiveDate);
-        Subscription terminateSubscription = subscriptionService.terminateSubscription(lastVersionSubscription, effectiveDate, subscriptionTerminationReason, lastVersionSubscription.getOrderNumber());
-        boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+
+        boolean isImmediateTerminationOldSub = false;
+        boolean terminateOldSubscription = subscriptionPatchDto.getTerminateOldSubscription() == null || Boolean.TRUE == subscriptionPatchDto.getTerminateOldSubscription();
+        if (terminateOldSubscription) {
+            // terminaison code
+            SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
+            if (subscriptionTerminationReason == null) {
+                throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
+            }
+            Subscription terminateSubscription = subscriptionService.terminateSubscription(lastVersionSubscription, effectiveDate, subscriptionTerminationReason, lastVersionSubscription.getOrderNumber());
+            isImmediateTerminationOldSub = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+        }
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
@@ -2636,13 +2697,11 @@ public class SubscriptionApi extends BaseApi {
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
         }
 
-        if (isImmediateTermination) {
+        if (isImmediateTerminationOldSub) {
             // set subscription to status activate and activate its instantiated services
             subscriptionService.activateInstantiatedService(newSubscription);
         }
-
         versionCreatedEvent.fire(newSubscription);
-
     }
 
     private boolean isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(SubscriptionPatchDto subscriptionPatchDto, Subscription existingSubscription) {
