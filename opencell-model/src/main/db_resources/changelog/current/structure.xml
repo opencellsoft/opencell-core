@@ -2866,7 +2866,7 @@ END $$;]]>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FilteringJob'</sql>
     </changeSet>
 
-    <changeSet id="#5471_20200930" author="AndriusKarpavicius">
+    <changeSet id="#5471_20200930" author="AndriusKarpavicius" failOnError="false">
         <addColumn tableName="meveo_filter">
             <column name="entity_class" type="varchar(255)"/>
         </addColumn>
