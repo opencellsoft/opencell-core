@@ -214,12 +214,6 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
                             dDRequestLOTService.createPaymentsOrRefundsAndGenerateDDRequestLotFile(ddRequestLOT, ddRequestBuilderInterface, ddrequestLotOp, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
 						}
-
-//						// Update operationAction of each Account operation to "NONE"
-//						accountOperationService.updateAOOperationActionToNone(listAoToPay.stream()
-//						        .filter(a -> a.getStatus() != AccountOperationStatus.REJECTED && StringUtils.isBlank(a.getReason()))
-//								.map(accountOperation -> accountOperation.getId())
-//								.collect(Collectors.toList()));
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
                         if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {					    
