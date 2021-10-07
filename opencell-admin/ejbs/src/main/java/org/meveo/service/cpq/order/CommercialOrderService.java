@@ -138,7 +138,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
 								if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
 									return true;
-							}
+							}else
+								return true;
 						}else
 							return true;
 					}
