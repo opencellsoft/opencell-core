@@ -741,6 +741,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 userAccountTag.appendChild(subscriptionsTag);
             }
             for (Subscription subscription : subscriptions) {
+            	if(SubscriptionStatusEnum.ACTIVE.equals(subscription.getStatus())) {
                 OfferTemplate offer = subscription.getOffer();
                 if (displaySubscription) {
                     Element subscriptionTag = doc.createElement("subscription");
@@ -777,6 +778,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     }
                 }
             }
+        }
         }
 
         return allServiceInstances;
