@@ -44,6 +44,7 @@
 
     <include file="rebuild/structure.xml" relativeToChangelogFile="true" />
     <include file="rebuild/data.xml" relativeToChangelogFile="true" />
+    <include file="rebuild/data-demo.xml" relativeToChangelogFile="true" />
     <include file="rebuild/data-scripts.xml" relativeToChangelogFile="true" />
     <include file="rebuild/data-reports.xml" relativeToChangelogFile="true" />
 

@@ -611,6 +611,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         for (PaymentMethod pm : entity.getPaymentMethods()) {
             pm.updateAudit(currentUser);
         }
+        entity.getPaymentMethods().stream()
+                .filter(paymentMethod -> paymentMethod.isDisabled())
+                .forEach(paymentMethod -> paymentMethodService.checkReferencedPMBeforeRemoveOrDisable(paymentMethod));
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
