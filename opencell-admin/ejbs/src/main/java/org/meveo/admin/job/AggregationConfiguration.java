@@ -14,7 +14,11 @@ public class AggregationConfiguration {
     /**
      * InvoiceLine Aggregation types
      */
-    private AggregationOption aggregationOption;
+    private AggregationOption aggregationOption = AggregationOption.NO_AGGREGATION;
+    
+    public AggregationConfiguration(boolean enterprise) {
+        this.enterprise = enterprise;
+    }
 
     public AggregationConfiguration(boolean enterprise, AggregationOption aggregationOption) {
         this.enterprise = enterprise;
