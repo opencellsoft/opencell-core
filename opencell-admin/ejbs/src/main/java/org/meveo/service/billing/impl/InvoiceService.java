@@ -818,6 +818,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return rts;
     }
+    
+    private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, boolean isDraft) {
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate, ratedTransactionFilter, rtPaginationSize);
+        // if draft add unrated wallet operation
+        if (isDraft) {
+            ratedTransactions.addAll(getDraftRatedTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate));
+        }
+        return ratedTransactions;
+    }
+
+    private List<RatedTransaction> getDraftRatedTransactions(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate) {
+        return walletOperationService.listToRate(entityToInvoice, invoiceUpToDate).stream()
+            .filter(wo -> wo.getOperationDate().before(lastTransactionDate) && (wo.getOperationDate().after(firstTransactionDate) || wo.getOperationDate().equals(firstTransactionDate))).map(RatedTransaction::new)
+            .collect(Collectors.toList());
+    }
 
     private List<Long> getDrafWalletOperationIds(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate) {
         return walletOperationService.listToRate(entityToInvoice, invoiceUpToDate).stream()
