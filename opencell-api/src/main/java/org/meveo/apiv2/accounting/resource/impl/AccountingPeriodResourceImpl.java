@@ -51,7 +51,7 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	}
 	@Override
 	public Response updateAllUserStatus(String fiscalYear, String number, String status, String reason) {
-		final SubAccountingPeriod subAccountingPeriod = subAccountingPeriodApiService.findByNumber(Integer.parseInt(number)).orElseThrow(NotFoundException::new);
+		final SubAccountingPeriod subAccountingPeriod = subAccountingPeriodApiService.findByNumber(Integer.parseInt(number), fiscalYear).orElseThrow(NotFoundException::new);
 		subAccountingPeriodApiService.updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 		subAccountingPeriodApiService.update(subAccountingPeriod);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear, number, status).build())
@@ -60,7 +60,7 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	
 	@Override
 	public Response updateRegularUserStatus(String fiscalYear, String number, String status, String reason) {
-		final SubAccountingPeriod subAccountingPeriod = subAccountingPeriodApiService.findByNumber(Integer.parseInt(number)).orElseThrow(NotFoundException::new);
+		final SubAccountingPeriod subAccountingPeriod = subAccountingPeriodApiService.findByNumber(Integer.parseInt(number), fiscalYear).orElseThrow(NotFoundException::new);
 		subAccountingPeriodApiService.updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 		subAccountingPeriodApiService.update(subAccountingPeriod);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear, number, status).build())
