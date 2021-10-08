@@ -22,6 +22,7 @@ public class AgedReceivableDto extends BaseEntity {
 	private BigDecimal generalTotal;
 	private DunningLevelEnum dunningLevel;
 	private String customerAccountName;
+	private String customerAccountDescription;
 	private Date dueDate;
 
 	public AgedReceivableDto() {
@@ -119,4 +120,13 @@ public class AgedReceivableDto extends BaseEntity {
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 	}
+
+	public String getCustomerAccountDescription() {
+		return customerAccountDescription;
+	}
+
+	public void setCustomerAccountDescription(String customerAccountDescription) {
+		this.customerAccountDescription = customerAccountDescription;
+	}
+
 }

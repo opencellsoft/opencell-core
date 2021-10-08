@@ -23,7 +23,7 @@ import org.meveo.model.AuditableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "sub_accounting_period_seq"), })
 @NamedQueries({
-	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number"),
+	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number and SAP.accountingPeriod.accountingPeriodYear=:fiscalYear"),
 	@NamedQuery(name = "SubAccountingPeriod.findLastSubAP", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.endDate = (select max(endDate) from SubAccountingPeriod where regularUsersSubPeriodStatus = 'OPEN')"),
     @NamedQuery(name = "SubAccountingPeriod.findByAP", query = "SELECT count(SAP) FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId") })
 public class SubAccountingPeriod extends AuditableEntity {
