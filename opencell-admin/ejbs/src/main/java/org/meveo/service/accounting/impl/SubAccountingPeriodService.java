@@ -92,10 +92,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		create(subAccountingPeriod);
 	}
 
-	public SubAccountingPeriod findByNumber(Integer number) {
+	public SubAccountingPeriod findByNumber(Integer number, String fiscalYear) {
 		try {
 			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findByNumber")
-					.setParameter("number", number).getSingleResult();
+					.setParameter("number", number).setParameter("fiscalYear", fiscalYear).getSingleResult();
 		} catch (NoResultException e) {
 			log.debug("No {} of SubAccountingPeriodYear {} found", getEntityClass().getSimpleName(), number);
 			return null;
