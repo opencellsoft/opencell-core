@@ -221,9 +221,6 @@ public class RefundApi extends BaseApi {
         // case card payment
         if (!StringUtils.isBlank(cardPaymentRequestDto.getCardNumber())) {
             useCard = true;
-            if (StringUtils.isBlank(cardPaymentRequestDto.getCvv())) {
-                missingParameters.add("cvv");
-            }
             if (StringUtils.isBlank(cardPaymentRequestDto.getExpiryDate()) || cardPaymentRequestDto.getExpiryDate().length() != 4
                     || !org.apache.commons.lang3.StringUtils.isNumeric(cardPaymentRequestDto.getExpiryDate())) {
 
