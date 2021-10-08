@@ -52,7 +52,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
 			String code = reportQuery.getCode();
 			Optional<JobInstance> instance = Optional.ofNullable(jobInstanceService.findByCode(code));
 			if (instance.isPresent()) {
-				throw new ValidationException("The query with name {" + code + "} is already scheduled");
+				throw new ValidationException("The query with name " + code + " is already scheduled");
 			}
 
 			querySchedulerService.create(entity);
