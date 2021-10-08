@@ -54,6 +54,8 @@ public interface AgedReceivable extends Resource {
     @Nullable
     String getCustomerAccountName();
     @Nullable
+    String getCustomerAccountDescription();
+    @Nullable
     DunningLevelEnum getDunningLevel();
     
 }

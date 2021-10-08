@@ -270,7 +270,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, boolean continueProcess, boolean isPreRequisite,String offerCode) {
-    	boolean isSelected=false;
+    	boolean isSelected=true;
     	if(line.getSourceAttribute()==null) {
     		return true;
     	}

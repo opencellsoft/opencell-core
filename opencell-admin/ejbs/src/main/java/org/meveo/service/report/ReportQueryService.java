@@ -470,7 +470,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     propertyDescriptor.getWriteMethod().invoke(item, implementation);
                 }
             } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                log.warn("Error initLazyLoadedValues() for field : {}", field.getName());
             }
         }
     }
