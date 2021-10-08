@@ -315,7 +315,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             // a query with that name already exists and belongs to user (regardless of visibility)
             if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
             	result.setStatus(ActionStatusEnum.WARNING);
-                result.setMessage("The query already exists and belong to you");
+                result.setMessage("The query already exists and belongs to you");
                 return result;
             }
             
