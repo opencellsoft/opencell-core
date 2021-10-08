@@ -127,7 +127,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Override
     public void create(Subscription subscription) throws BusinessException {
     	
-        OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
         if(offerTemplate.isDisabled()) {
         	throw new BusinessException("Cannot subscribe to disabled offer");
         }
