@@ -67,13 +67,15 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type, LocalDateTime startDateTime, LocalDateTime endDate) {
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
+		int number = 1;
 		LocalDate now = startDateTime == null ? LocalDate.now() : startDateTime.toLocalDate();
 		int currentYear = now.getYear();
 		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
 		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
 		while (!endDatePeriod.isAfter(endDate)) {
 			if (!endDatePeriod.isBefore(now.atTime(LocalTime.MAX))) {
-				createSubAccPeriod(ap, startDatePeriod, endDatePeriod);
+				createSubAccPeriod(ap, startDatePeriod, endDatePeriod, number);
+				number ++;
 			}
 			//next period
 			startDatePeriod = endDatePeriod.plusDays(1).toLocalDate().atStartOfDay();
@@ -81,11 +83,12 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 	}
 
-	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate) {
+	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate, int number) {
 		SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
 		subAccountingPeriod.setAccountingPeriod(ap);
 		subAccountingPeriod.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 		subAccountingPeriod.setEndDate(Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+		subAccountingPeriod.setNumber(number);
 		create(subAccountingPeriod);
 	}
 
