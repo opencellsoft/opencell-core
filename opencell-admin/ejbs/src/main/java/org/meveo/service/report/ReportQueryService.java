@@ -471,6 +471,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 }
             } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
                 //e.printStackTrace();
+                log.warn("Error initLazyLoadedValues() for field : {}", field.getName());
             }
         }
     }
