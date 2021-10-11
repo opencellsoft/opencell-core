@@ -106,6 +106,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
@@ -960,6 +961,9 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstanceDto.getAttributeCode(), Attribute.class));
                 attributeInstance.setServiceInstance(serviceInstance);
                 attributeInstance.setSubscription(subscription);
+                Auditable auditable = new Auditable();
+                auditable.setCreated(new Date());
+                attributeInstance.setAuditable(auditable);
                 serviceInstance.addAttributeInstance(attributeInstance);
             }
         }
