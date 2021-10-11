@@ -101,7 +101,9 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
     private void checkPermissionByAction(ReportQuery report, int action) {
     	checkPermissionExist();
-    	if(currentUser.getRoles().contains(QUERY_USER_ROLE)) {
+    	if(currentUser.getRoles().contains(QUERY_MANAGER_ROLE)) {
+    		return;
+    	} else {
     		if(report.getVisibility() == PRIVATE && !report.getAuditable().getCreator().equals(currentUser.getUserName())) {
 	    		if(action == READ) {
 	        		throw new BadRequestException("Only Public and Protected query can you see");
