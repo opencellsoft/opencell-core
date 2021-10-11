@@ -9616,5 +9616,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="tax_percent" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>   
+    
+    <changeSet id="#INTRD-1275_20211011" author="anasseh">
+    	<sql>update  ${db.schema.adapted}ar_account_operation set status ='POSTED' where status is null;</sql>
+        <sql>update  ${db.schema.adapted}ar_account_operation set accounting_date =created where accounting_date is null;</sql>
+    </changeSet>	
 
 </databaseChangeLog>
