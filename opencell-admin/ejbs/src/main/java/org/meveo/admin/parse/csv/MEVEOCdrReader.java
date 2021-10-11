@@ -29,9 +29,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -50,7 +52,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Named
+@Singleton
+@Lock(LockType.READ)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrReader implements ICdrCsvReader {
 
