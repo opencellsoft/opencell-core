@@ -3,6 +3,7 @@ package org.meveo.apiv2.report.query.resource;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -128,7 +129,8 @@ public interface ReportQueryResource {
                             description = "Query does not exists")})
     Response execute(@Parameter(description = "Query id", required = true) @PathParam("queryId") Long id,
                      @Parameter(description = "Execution type Synchronously or asynchronously")
-                     @QueryParam("async") boolean async, @QueryParam("sendNotification") @DefaultValue("true") boolean sendNotification);
+                     @QueryParam("async") boolean async, @QueryParam("sendNotification") @DefaultValue("true") boolean sendNotification, 
+                     @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery);
     
     @POST
     @Path("/verify")

@@ -271,8 +271,9 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      *
      * @param queryId report query Id
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
+     * @param emails 
      */
-    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification) {
+    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification, List<String> emails) {
     	checkPermissionExist();
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
@@ -284,7 +285,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
-            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification);
+            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification, emails);
             result = of("Accepted");
         } else {
             result = of(reportQueryService.execute(query, targetEntity));
@@ -315,7 +316,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             // a query with that name already exists and belongs to user (regardless of visibility)
             if (currentUser.getUserName().equalsIgnoreCase(reportQuery.getAuditable().getCreator())) {
             	result.setStatus(ActionStatusEnum.WARNING);
-                result.setMessage("The query already exists and belong to you");
+                result.setMessage("The query already exists and belongs to you");
                 return result;
             }
             
