@@ -29,6 +29,8 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -168,9 +170,13 @@ public class ReportQueryResourceImplTest {
                 "amountWithTax", 30.0,
                 "status", "VALIDATED");
         List<Object> executionResult = asList(item, item2, item3);
+        
+        ReportQueryInput input = builder()
+                .emails(asList())
+                .build();
 
-        when(reportQueryApiService.execute(1L, false, false)).thenReturn(of(executionResult));
-        Response response = reportQueryResource.execute(1L, false, false);
+        when(reportQueryApiService.execute(1L, false, false, new ArrayList<String>())).thenReturn(of(executionResult));
+        Response response = reportQueryResource.execute(1L, false, false, input);
 
         Object responseEntity = response.getEntity();
         assertEquals(3, ((ExecutionResult)responseEntity).getTotal());
@@ -189,9 +195,14 @@ public class ReportQueryResourceImplTest {
         reportQuery.setFields(asList("invoiceNumber","amountWithTax", "status"));
         reportQuery.setVisibility(PRIVATE);
         reportQuery.setGeneratedQuery("SELECT a.invoiceNumber, a.amountWithTax, a.status FROM Invoice a");
+        
 
-        when(reportQueryApiService.execute(1L, true, false)).thenReturn(of("Accepted"));
-        Response response = reportQueryResource.execute(1L, true, false);
+        ReportQueryInput input = builder()
+                .emails(asList())
+                .build();
+
+        when(reportQueryApiService.execute(1L, true, false, new ArrayList<String>())).thenReturn(of("Accepted"));
+        Response response = reportQueryResource.execute(1L, true, false, input);
 
         ImmutableSuccessResponse successResponse = (ImmutableSuccessResponse) response.getEntity();
         assertEquals(200, response.getStatus());
