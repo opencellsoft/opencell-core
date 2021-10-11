@@ -114,7 +114,7 @@ public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCod
     }
 
     public AccountingCodeListResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, AccountingCode.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING, null, pagingAndFiltering, AccountingCode.class);
 
         Long totalCount = accountingCodeService.count(paginationConfiguration);
 

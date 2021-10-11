@@ -109,7 +109,7 @@ import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * CRUD API for managing {@link Invoice}.

@@ -32,7 +32,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -484,14 +483,23 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.amount else 0 end ) as sum_31_60, "
         		+ "sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.amount else 0 end ) as sum_61_90, "
         		+ " (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amount else 0 end ) as sum_90_up,"
-        		+" ao.customerAccount.dunningLevel, ao.customerAccount.name "
+        		+" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate "
         		+ "from " + RecordedInvoice.class.getSimpleName()+" as ao"); 
         if(customerAccount != null) {
         	qb.addCriterionEntity("customerAccount", customerAccount);
         }
-        qb.addGroupCriterion("ao.customerAccount.code, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.dueDate, ao.amount");
+        qb.addGroupCriterion("ao.customerAccount.code, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount");
         qb.addPaginationConfiguration(paginationConfiguration);
         
         return qb.getQuery(getEntityManager()).getResultList();
     }
+    
+    public Long getCountAgedReceivables(CustomerAccount customerAccount) {
+		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName()); 
+        if(customerAccount != null) {
+        	qb.addCriterionEntity("customerAccount", customerAccount);
+        }
+        return (Long) qb.getQuery(getEntityManager()).getSingleResult();
+    }
+
 }

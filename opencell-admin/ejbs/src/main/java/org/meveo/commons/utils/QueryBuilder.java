@@ -24,7 +24,7 @@ import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -1401,7 +1401,7 @@ public class QueryBuilder {
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1 && paginationConfiguration.getOrderings().length != 0) {
             Object[] orderings = paginationConfiguration.getOrderings();
-            Object defaultOrder = orderings[1] != null ? SortOrder.valueOf((String) orderings[1]) : orderings[1];
+            Object defaultOrder = orderings[1] instanceof String ? SortOrder.valueOf((String) orderings[1]) : orderings[1];
             String[] fields = orderings[0].toString().split(", ");
             for (String field : fields){
             	String currentAlias = alias;

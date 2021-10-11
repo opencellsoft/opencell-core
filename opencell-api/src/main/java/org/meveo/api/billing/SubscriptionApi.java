@@ -106,6 +106,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
@@ -960,6 +961,9 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstanceDto.getAttributeCode(), Attribute.class));
                 attributeInstance.setServiceInstance(serviceInstance);
                 attributeInstance.setSubscription(subscription);
+                Auditable auditable = new Auditable();
+                auditable.setCreated(new Date());
+                attributeInstance.setAuditable(auditable);
                 serviceInstance.addAttributeInstance(attributeInstance);
             }
         }
@@ -1309,7 +1313,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionsDto result = new SubscriptionsDto();
         List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
-                sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
+                sortOrder != null ? PagingAndFiltering.SortOrder.valueOf(sortOrder.name()) : PagingAndFiltering.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, CustomFieldInheritanceEnum.getInheritCF(true, mergedCF)));
@@ -1369,7 +1373,7 @@ public class SubscriptionApi extends BaseApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, PagingAndFiltering.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = subscriptionService.count(paginationConfiguration);
 
@@ -2827,7 +2831,9 @@ public class SubscriptionApi extends BaseApi {
             newSubscription.setAutoEndOfEngagement(newSubscription.getOffer().getAutoEndOfEngagement());
             newSubscription.autoUpdateEndOfEngagementDate();
         }
-        newSubscription.setVersionNumber(lastVersionSubscription.getVersionNumber()+1);
+        newSubscription.setVersionNumber(subscriptionService.findListByCode(code).stream()
+                .map(subscription -> subscription.getVersionNumber())
+                .max(Integer::compareTo).get()+1);
         newSubscription.setPreviousVersion(lastVersionSubscription);
         lastVersionSubscription.setNextVersion(newSubscription);
         subscriptionService.update(newSubscription);
@@ -2892,7 +2898,9 @@ public class SubscriptionApi extends BaseApi {
         Subscription lastSubscription = actualSubscription.getPreviousVersion();
 
         lastSubscription.setNextVersion(null);
-        lastSubscription.setPreviousVersion(actualSubscription);
+        if (lastSubscription.getPreviousVersion() != null) {
+            lastSubscription.setPreviousVersion(actualSubscription);
+        }
         actualSubscription.setNextVersion(lastSubscription);
         actualSubscription.setToValidity(actualSubscription.getValidity()!=null ? actualSubscription.getValidity().getFrom() : null);
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);

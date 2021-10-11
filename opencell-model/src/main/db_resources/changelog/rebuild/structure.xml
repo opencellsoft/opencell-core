@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet author="AndriusKarpavicius"  id="rebuild_pg_operators" dbms="postgresql">
+    <changeSet author="AndriusKarpavicius"  id="rebuild_pg_operators" dbms="postgresql" failOnError="false">
     	<sql>CREATE OPERATOR ^|(
 			  PROCEDURE = jsonb_exists_any,
 			  LEFTARG = jsonb,
@@ -34,13 +34,7 @@
     
     <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
     If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
-    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql">
-        <sql>create extension "uuid-ossp"</sql>
-    </changeSet>
-
-    <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
-    If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
-    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql">
+    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql" failOnError="false">
         <sql>create extension "uuid-ossp"</sql>
     </changeSet>
 
@@ -10082,6 +10076,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="aggregate_id_f" type="bigint" />
+            <column name="cpq_quote_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -14133,6 +14128,12 @@
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
+    
+      <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -14490,6 +14491,7 @@
             <column name="every_second" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_instance_id" type="bigint" />
             <column name="report_query_id" type="bigint" />
+            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_scheduler" constraintName="fk_report_query_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
@@ -15742,156 +15744,84 @@
 
     <changeSet id="540-103-add-swagger-docs-to-All-ChargeTemplates" author="TarikFA."></changeSet>
 
-
     <changeSet id="#540-100-20201225" author="TarikFA"></changeSet>
-
     <changeSet id="20201230_pricematrix" author="NabilOuachi"></changeSet>
-
     <changeSet id="20201230-ticket5870" author="NabilOUACHI"></changeSet>
-
     <changeSet id="540-112-20210107" author="TarikF"></changeSet>
     <changeSet id="20210113" author="TarikF"></changeSet>
-
     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-attribute_tag"></changeSet>
-
     <changeSet id="540-139-20012020" author="NabilOUACHI"></changeSet>
     <changeSet id="#20210121-540-128" author="TarikFA"></changeSet>
     <changeSet id="#20210122-540-128" author="TarikFA"></changeSet>
-
     <changeSet id="#20210127-540-190" author="TarikFA"></changeSet>
-
     <changeSet id="Invoice_lines_job_20200114" author="ZBariki"></changeSet>
     <changeSet id="#5916_20210128" author="MohammedELAZZOUZI"></changeSet>
-
     <changeSet id="#5937_20210204" author="TarikFA"></changeSet>
-
     <changeSet id="#214_20210203" author="NabilOUACHI"></changeSet>
-
     <changeSet id="20210204_540" author="TarikFA"></changeSet>
     <changeSet id="Invoice_lines_job_202001145" author="ZBariki"></changeSet>
     <changeSet id="Invoicing_job_20210205_45" author="ZBariki"></changeSet>
     <changeSet id="#20210205_540_223" author="TarikFA"></changeSet>
-
     <changeSet id="#5938_20210205" author="MohammedELAZZOUZI"></changeSet>
-
     <changeSet id="#20210209_540177" author="TarikFA"></changeSet>
-
     <changeSet id="#20210215-248" author="NabilOUACHI"></changeSet>
-
     <changeSet id="#20210212_540238" author="TarikFA"></changeSet>
-
     <changeSet id="#5950_20210210" author="MohammedELAZZOUZI"></changeSet>
 
-
     <changeSet id="#246_20210212" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#248_20210215" author="NabilOuachi"></changeSet>
-
     <changeSet id="#20200215-247" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210217_260" author="TarikFA"></changeSet>
-
     <changeSet id="#5952_20210210" author="ZBariki"></changeSet>
-
     <changeSet id="#268_20210219_cpq_structure" author="Mbarek-Ay"></changeSet>
-
-
     <changeSet id="#222_20210219" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#270_20210222" author="Mbarek-Ay"></changeSet>
-
-
-
-
-
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-
     <changeSet id="#20210123_540_280" author="TarikFA."></changeSet>
-
-
     <changeSet   id="#20210123_540_281" author="TarikFA."></changeSet>
-
     <changeSet id="#20210224_5868" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210222_907" author="ZBariki"></changeSet>
-
     <changeSet id="#20210302_540" author="TarikFA."></changeSet>
-
     <changeSet id="#20210303_540305" author="TarikFA."></changeSet>
-
     <changeSet id="#20210304_540320" author="TarikFA."></changeSet>
-
-
     <changeSet id="#20210304-312" author="Mbarek-Ay"></changeSet>
-
-
     <changeSet id="#20210310-342" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210315-329" author="Mbarek-Ay"></changeSet>
-
-
     <changeSet id="#20210316-356" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210316-356-2" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210317_M540_16" author="TarikFA."></changeSet>
-
     <changeSet id="#2020317-342" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210322_377" author="TarikFA."></changeSet>
-
     <changeSet id="#20210323_380" author="TarikFA."></changeSet>
-
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20220325_360" author="TarikFA."></changeSet>
     <changeSet id="#20210329_399" author="TarikFA."></changeSet>
     <changeSet id="#20210401_402" author="TarikFA."></changeSet>
 
-    <changeSet id="#20210406_opencell-portal-593" author="TarikFA."></changeSet>
-
-
-
-
-
-    <changeSet id="rebuild-str-fk_6012_20210323" author="MohamedAliHammal"></changeSet>
-    <changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI"></changeSet>
-
-    <changeSet id="#20210415-435" author="Mbarek-Ay"></changeSet>
-
-    <changeSet id="#20210416_441" author="TarikFA."></changeSet>
-
-    <changeSet id="#470_20210422" author="Mbarek-Ay"></changeSet>
-    
-    <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
-    
-	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
-	</changeSet>
-
-    <changeSet id="#5937_20210428" author="Mbarek-Ay"></changeSet>
-    <changeSet id="#5595_540498_20210430" author="TarikFA."></changeSet>
-
+    <changeSet id="#20210406_opencell-portal-593" author="TarikFA."/>
+    <changeSet id="rebuild-str-fk_6012_20210323" author="MohamedAliHammal"/>
+    <changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI"/>
+    <changeSet id="#20210415-435" author="Mbarek-Ay"/>
+    <changeSet id="#20210416_441" author="TarikFA."/>
+    <changeSet id="#470_20210422" author="Mbarek-Ay"/>    
+    <changeSet id="#446_20210427" author="Mbarek-Ay"/>    
+	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid"/>
+    <changeSet id="#5937_20210428" author="Mbarek-Ay"/>
+    <changeSet id="#5595_540498_20210430" author="TarikFA."/>
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
 	<changeSet id="#5595_540499_20210430" author="TarikFA." />
 	<changeSet id="#5595_540504_20210503" author="TarikFA." />
     <changeSet id="#6076_20210504" author="Zbariki" />
-    <changeSet id="#5595_20210506" author="NabilOuachi"></changeSet>
-    <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
+    <changeSet id="#5595_20210506" author="NabilOuachi"/>
+    <changeSet id="#5595_20210512" author="RachidAityaazza"/>
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
     <changeSet id="#5257_20210519" author="AndriusKarpavicius"/>
-
-    <changeSet id="#533_20210526" author="NabilOuachi">
-    </changeSet>
-    <changeSet id="#5869_20210521" author="NabilOuachi">
-    </changeSet>
-    
-    <changeSet id="#5595_540582_20210528" author="TarikFA." />
-    
-    <changeSet id="#6147_20210530" author="anasseh" />
-    
+    <changeSet id="#533_20210526" author="NabilOuachi"/>
+    <changeSet id="#5869_20210521" author="NabilOuachi"/>    
+    <changeSet id="#5595_540582_20210528" author="TarikFA." />    
+    <changeSet id="#6147_20210530" author="anasseh" />    
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#559_20210603" author="TarikFA." />
@@ -15928,8 +15858,7 @@
 	<changeSet id="#INTRD-689_20210818" author="RAityaazza"/>
 	<changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-1441_20210728" author="TarikFA." />
-	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI" />
-	
+	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI" />	
 	<changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
@@ -15950,7 +15879,13 @@
     <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql"/>
     <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius"/>
-
+    <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
+ 	<changeSet id="INTRD-1924_20210922" author="TarikFA." />
+   	<changeSet id="INTRD_1985_20210923" author="TarikFA." />
+    <changeSet id="INTRD-1925_20210922" author="TarikFA." />
+    <changeSet id="INTRD_1794_20210917" author="TarikFA." />
+    <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE"/>
+    <changeSet id="#INTRD-1275_20211011" author="anasseh" />
     
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -55,6 +55,7 @@ public class QuerySchedulerMapper extends ResourceMapper<org.meveo.apiv2.report.
         queryScheduler.setFileFormat(resource.getFileFormat());
         queryScheduler.setUsersToNotify(resource.getUsersToNotify());
         queryScheduler.setEmailsToNotify(resource.getEmailsToNotify());
+        queryScheduler.setIsQueryScheduler(Boolean.TRUE.equals(resource.getIsQueryScheduler()));
         queryScheduler.getQueryTimer().setDayOfMonth(resource.getDayOfMonth());
         queryScheduler.getQueryTimer().setDayOfWeek(resource.getDayOfWeek());
         queryScheduler.getQueryTimer().setEveryDayOfMonth(resource.getEveryDayOfMonth());

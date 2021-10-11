@@ -217,4 +217,20 @@ public class AccountingPeriod extends AuditableEntity {
 	public void setForceCustomDay(Integer forceCustomDay) {
 		this.forceCustomDay = forceCustomDay;
 	}
+	
+	/**
+	 * Check if the current AP is open
+	 * @return
+	 */
+	public boolean isOpen() {
+		return this.accountingPeriodStatus == AccountingPeriodStatusEnum.OPEN;
+	}
+
+	/**
+	 * Check if the current AP is closed
+	 * @return
+	 */
+	public boolean isClosed() {
+		return this.accountingPeriodStatus == AccountingPeriodStatusEnum.CLOSED;
+	}
 }

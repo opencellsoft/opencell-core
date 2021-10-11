@@ -256,7 +256,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		customFieldEntity =
 				invoiceBaseApi.populateCustomFieldsForGenericApi(invoice.getCustomFields(), customFieldEntity, false);
 		List<Invoice> invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
-				isDraft, customFieldEntity.getCfValues(), false);
+				isDraft, customFieldEntity.getCfValues(), true);
 		if (invoices == null || invoices.isEmpty()) {
 			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
 		}

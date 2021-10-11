@@ -77,7 +77,6 @@ public class InvoiceLinesFactory {
 
     private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        BigInteger rtID = (BigInteger) record.get("id");
         ofNullable(record.get("billing_account__id"))
                 .ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("id"))
@@ -128,20 +127,21 @@ public class InvoiceLinesFactory {
         if (chargeInstance != null) {
             if(invoiceLine.getServiceInstance() != null) {
                 ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-                Product product = serviceInstance.getProductVersion() != null ?
-                        invoiceLine.getServiceInstance().getProductVersion().getProduct() : null;
-                List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-                Map<String, Object> attributes = fromAttributeValue(attributeValues);
-                if(invoiceLine.getAccountingArticle()==null) {
+                if(invoiceLine.getAccountingArticle() == null) {
+                    Product product = serviceInstance.getProductVersion() != null ?
+                            invoiceLine.getServiceInstance().getProductVersion().getProduct() : null;
+                    List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+                    Map<String, Object> attributes = fromAttributeValue(attributeValues);
                     AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
                             .orElseThrow(() -> new BusinessException("No accountingArticle found"));
                     invoiceLine.setAccountingArticle(accountingArticle);
                 }
             } else {
-                report.registerWarning("No service instance associated with rated transaction id : " + rtID);
+                if (report != null) {                    
+                    report.registerWarning("No service instance associated with invoice line id : " + invoiceLine.getId());
+                }
             }
         }
-
 
         return invoiceLine;
     }

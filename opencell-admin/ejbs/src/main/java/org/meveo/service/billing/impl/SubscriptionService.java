@@ -86,7 +86,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
-import org.primefaces.model.SortOrder;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 
 /**
@@ -127,7 +127,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Override
     public void create(Subscription subscription) throws BusinessException {
     	
-        OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
         if(offerTemplate.isDisabled()) {
         	throw new BusinessException("Cannot subscribe to disabled offer");
         }

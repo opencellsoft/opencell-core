@@ -138,7 +138,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
 								if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
 									return true;
-							}
+							}else
+								return true;
 						}else
 							return true;
 					}
@@ -253,7 +254,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	@Override
 	public CommercialOrder findById(Long id) {
 		CommercialOrder commercialOrder = super.findById(id);
-		if(commercialOrder.getCode() == null) {
+		if(commercialOrder != null && commercialOrder.getCode() == null) {
 			commercialOrder.setCode(UUID.randomUUID().toString());
 			commercialOrder = super.update(commercialOrder);
 		}

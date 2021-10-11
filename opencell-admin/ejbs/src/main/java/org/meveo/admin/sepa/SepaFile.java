@@ -79,7 +79,9 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CalendarBankingService;
-import org.meveo.service.payments.impl.*;
+import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
+import org.meveo.service.payments.impl.PaymentGatewayService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,8 +152,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	/** The Constant CATEGORY_PURPOSE_CODE. */
 	private static final String CATEGORY_PURPOSE_CODE = "SUPP";
 
-	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
 	private PaymentMethodService paymentMethodService = (PaymentMethodService) EjbUtils.getServiceInterface(PaymentMethodService.class.getSimpleName());
+	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
 
 	private Pattern pattern = Pattern.compile(IBAN_PATTERN);
 
@@ -520,9 +522,10 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 	private Object[] getPreferredPaymentMethod(Long ddRequestItemID) {
 		return (Object[]) paymentMethodService.getEntityManager()
-					.createNamedQuery("PaymentMethod.getPreferredPaymentMethodForDDRequestItem")
-					.setParameter("id", ddRequestItemID)
-					.getSingleResult();
+				.createNamedQuery("PaymentMethod.getPreferredPaymentMethodForDDRequestItem")
+				.setParameter("id", ddRequestItemID)
+				.setMaxResults(1)
+				.getSingleResult();
 	}
 
 	/**

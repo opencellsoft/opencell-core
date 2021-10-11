@@ -30,12 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
-import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -90,9 +88,9 @@ public class SepaDirectDebitAsync {
 	 * @return Future String
 	 * @throws BusinessException BusinessException
 	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-//	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
+	//@Asynchronous
+    // The Asynchronous is disabled to be able to rollback all payment AO if the Sepa file is not well generated. pls refer to ticket: INTRD-1392
+	// @Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, boolean isToMatching, PaymentStatusEnum paymentStatus, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
