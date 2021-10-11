@@ -728,6 +728,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         invoiceService.postCreate(entity);
         entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
         if (entity.getInvoiceNumber() == null) {
+            entity.setStatus(InvoiceStatusEnum.VALIDATED);
             entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
         }
         try {
@@ -775,9 +776,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         return rts;
     }
 
-    private void cancelRTs(List<RatedTransaction> RtsToCancel) {
-        RtsToCancel.stream().forEach(rt -> aggregateHandler.removeRT(rt));
-        ratedTransactionService.cancelRatedTransactions(RtsToCancel.stream().map(rt -> rt.getId()).collect(Collectors.toList()));
+    private void cancelRTs(List<RatedTransaction> rtsToCancel) {
+        if (rtsToCancel != null && !rtsToCancel.isEmpty()) {
+            rtsToCancel.stream().forEach(rt -> aggregateHandler.removeRT(rt));
+            ratedTransactionService.cancelRatedTransactions(rtsToCancel.stream().map(rt -> rt.getId()).collect(Collectors.toList()));
+        }
     }
 
     /**
