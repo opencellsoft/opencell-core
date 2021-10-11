@@ -26,10 +26,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
-import javax.ejb.Stateful;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.RecordContext;
@@ -50,7 +51,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Stateful
+@Singleton
+@Lock(LockType.READ)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvReader {
 
@@ -65,11 +67,11 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
         }
     }
 
-    private String batchName;
-    private String username;
-    private CDR_ORIGIN_ENUM origin;
+    protected String batchName;
+    protected String username;
+    protected CDR_ORIGIN_ENUM origin;
 
-    private Integer totalNumberOfRecords;
+    protected Integer totalNumberOfRecords;
 
     @Override
     public void init(File cdrFile) throws FileNotFoundException {
