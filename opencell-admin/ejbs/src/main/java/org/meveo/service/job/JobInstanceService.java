@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -275,7 +276,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
 
-        if (jobInstance.isActive() && jobInstance.getTimerEntity() != null && jobInstance.isRunnableOnNode(currentNode)) {
+        if (jobInstance.isActive() && (jobInstance.getTimerEntity() != null || jobInstance.getQueryScheduler() != null) && jobInstance.isRunnableOnNode(currentNode)) {
             if (job == null) {
                 job = getJobByName(jobInstance.getJobTemplate());
             }
@@ -340,17 +341,81 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         return expression;
     }
 
-    private ScheduleExpression getScheduleExpression(QueryScheduler queryScheduler) {
+    @VisibleForTesting
+    public ScheduleExpression getScheduleExpression(QueryScheduler queryScheduler) {
         QueryTimer timer = queryScheduler.getQueryTimer();
         ScheduleExpression expression = new ScheduleExpression();
-        expression.dayOfMonth(StringUtils.isBlank(timer.getDayOfMonth()) ? "*" : (timer.isEveryDayOfMonth() ? "*/" + timer.getDayOfMonth() : timer.getDayOfMonth()));
-        expression.dayOfWeek(StringUtils.isBlank(timer.getDayOfWeek()) ? "*" : (timer.isEveryDayOfWeek() ? "*/" + timer.getDayOfWeek() : timer.getDayOfWeek()));
-        expression.hour(StringUtils.isBlank(timer.getHour()) ? "*" : (timer.isEveryHour() ? "*/" + timer.getHour() : timer.getHour()));
-        expression.minute(StringUtils.isBlank(timer.getMinute()) ? "*" : (timer.isEveryMinute() ? "*/" + timer.getMinute() : timer.getMinute()));
-        expression.month(StringUtils.isBlank(timer.getMonth()) ? "*" : (timer.isEveryMonth() ? "*/" + timer.getMonth() : timer.getMonth()));
-        expression.second(StringUtils.isBlank(timer.getSecond()) ? "*" : (timer.isEverySecond() ? "*/" + timer.getSecond() : timer.getSecond()));
+        if(timer.isEveryDayOfWeek()){
+            expression.dayOfWeek("*");
+            computeHours(timer, expression);
+            computeMinutes(timer, expression);
+            computeSeconds(timer, expression);
+        }else if(!StringUtils.isBlank(timer.getDayOfWeek())){
+            expression.dayOfWeek(timer.getDayOfWeek());
+        }
+
+        if(timer.isEveryDayOfMonth()){
+            expression.dayOfMonth("*");
+            computeHours(timer, expression);
+            computeMinutes(timer, expression);
+            computeSeconds(timer, expression);
+        }else if(!StringUtils.isBlank(timer.getDayOfMonth())){
+            expression.dayOfMonth(timer.getDayOfMonth());
+        }
+
+        if(timer.isEveryHour()){
+            expression.dayOfMonth("*");
+            expression.hour("*");
+            computeMinutes(timer, expression);
+            computeSeconds(timer, expression);
+        }else if(!StringUtils.isBlank(timer.getHour())){
+            expression.hour(timer.getHour());
+        }
+
+        if(timer.isEveryMinute()){
+            expression.dayOfMonth("*");
+            expression.hour("*");
+            expression.minute("*");
+            computeSeconds(timer, expression);
+        }else if(!StringUtils.isBlank(timer.getMinute())){
+            expression.minute(timer.getMinute());
+        }
+
+        if(timer.isEverySecond()){
+            expression.dayOfMonth("*");
+            expression.hour("*");
+            expression.minute("*");
+            expression.second("*");
+        }else if(!StringUtils.isBlank(timer.getSecond())){
+            expression.second(timer.getSecond());
+        }
+        expression.month(StringUtils.isBlank(timer.getMonth()) ? "*" : timer.getMonth());
         expression.year(StringUtils.isBlank(timer.getYear()) ? "*" : timer.getYear());
         return expression;
+    }
+
+    private void computeSeconds(QueryTimer timer, ScheduleExpression expression) {
+        if (StringUtils.isBlank(timer.getSecond())) {
+            expression.second(0);
+        } else {
+            expression.second(timer.getSecond());
+        }
+    }
+
+    private void computeMinutes(QueryTimer timer, ScheduleExpression expression) {
+        if (StringUtils.isBlank(timer.getMinute())) {
+            expression.minute(0);
+        } else {
+            expression.minute(timer.getMinute());
+        }
+    }
+
+    private void computeHours(QueryTimer timer, ScheduleExpression expression) {
+        if (StringUtils.isBlank(timer.getHour())) {
+            expression.hour(0);
+        } else {
+            expression.hour(timer.getHour());
+        }
     }
 
     /**
