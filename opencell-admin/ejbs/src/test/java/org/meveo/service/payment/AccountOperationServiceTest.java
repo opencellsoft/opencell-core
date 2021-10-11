@@ -170,7 +170,7 @@ public class AccountOperationServiceTest {
 		Date startDate = DateUtils.parseDateWithPattern("2021-07-01", DateUtils.DATE_PATTERN);
 		openSAP.setStartDate(startDate);
 		openSAP.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
-		when(subAccountingPeriodService.findLastSubAccountingPeriod()).thenReturn(openSAP);
+		when(subAccountingPeriodService.findNextOpenSubAccountingPeriod(any())).thenReturn(openSAP);
 
 		Refund refund = (Refund) createAccountOperation("RF");
 
@@ -199,7 +199,7 @@ public class AccountOperationServiceTest {
 		Date startDate = DateUtils.parseDateWithPattern("2021-07-01", DateUtils.DATE_PATTERN);
 		openSAP.setStartDate(startDate);
 		openSAP.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
-		when(subAccountingPeriodService.findLastSubAccountingPeriod()).thenReturn(openSAP);
+		when(subAccountingPeriodService.findNextOpenSubAccountingPeriod(any())).thenReturn(openSAP);
 
 		AutomatedRefund refund = (AutomatedRefund) createAccountOperation("ARF");
 
@@ -229,7 +229,7 @@ public class AccountOperationServiceTest {
 		Date startDate = DateUtils.parseDateWithPattern("2021-02-01", DateUtils.DATE_PATTERN);
 		openSAP.setStartDate(startDate);
 		openSAP.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
-		when(subAccountingPeriodService.findLastSubAccountingPeriod()).thenReturn(openSAP);
+		when(subAccountingPeriodService.findNextOpenSubAccountingPeriod(any())).thenReturn(openSAP);
 
 		OtherCreditAndCharge refund = (OtherCreditAndCharge) createAccountOperation("OCC");
 
