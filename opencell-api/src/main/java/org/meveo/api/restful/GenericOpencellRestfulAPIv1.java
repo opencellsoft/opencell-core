@@ -2,15 +2,21 @@ package org.meveo.api.restful;
 
 import io.swagger.v3.jaxrs2.SwaggerSerializers;
 import io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner;
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.GenericOpenApiContext;
+import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.meveo.api.dto.billing.*;
+import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
+import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
@@ -20,7 +26,11 @@ import org.meveo.api.restful.services.Apiv1ConstantDictionary;
 import org.meveo.api.restful.services.Apiv1GetService;
 import org.meveo.api.restful.swagger.ApiRestSwaggerGeneration;
 import org.meveo.api.restful.util.RegExHashMap;
-import org.meveo.apiv2.generic.exception.*;
+import org.meveo.apiv2.generic.exception.BadRequestExceptionMapper;
+import org.meveo.apiv2.generic.exception.EJBTransactionRolledbackExceptionMapper;
+import org.meveo.apiv2.generic.exception.IllegalArgumentExceptionMapper;
+import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
+import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.util.Inflector;
@@ -36,7 +46,15 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -90,7 +108,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         loadVersionInformation();
         loadMapPathAndInterfaceIBaseRs();
         loadSetGetAll();
-        //loadSwaggerJson();
+        loadSwaggerJson();
     }
 
     private void loadSetGetAll() {
@@ -117,11 +135,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                 .scannerClass(JaxrsAnnotationScanner.class.getName())
                 .resourcePackages(new HashSet<>(Arrays.asList("org.meveo.api.rest")));
 
-        try {
-            oasStandardApi = new JaxrsOpenApiContextBuilder<>()
-                    .openApiConfiguration(oasStandardConfig).buildContext(true).read();
-        } catch (OpenApiConfigurationException e) {
-            throw new RuntimeException(e.getMessage(), e);
+        OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(
+                OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT );
+        if ( ctx instanceof GenericOpenApiContext ) {
+            ((GenericOpenApiContext) ctx).getOpenApiScanner().setConfiguration(oasStandardConfig);
+            oasStandardApi = ctx.read();
         }
 
         API_STD_SWAGGER = oasStandardApi;
