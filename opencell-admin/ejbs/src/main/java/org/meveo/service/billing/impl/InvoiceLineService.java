@@ -26,6 +26,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
@@ -63,6 +65,7 @@ import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
@@ -605,5 +608,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .setParameter("invoice", invoice)
                     .getResultList();
         }
+    }
+    
+    public List<InvoiceLine> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+            AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+        InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
+        //Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        for (Map<String, Object> record : groupedRTs) {
+            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result);
+            create(invoiceLine);
+            invoiceLines.add(invoiceLine);
+            //iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+        }
+        return invoiceLines;  
     }
 }
