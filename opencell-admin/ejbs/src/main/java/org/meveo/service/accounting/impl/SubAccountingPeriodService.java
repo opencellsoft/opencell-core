@@ -111,6 +111,18 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 			return null;
 		}
     }
+
+	public SubAccountingPeriod findNextOpenSubAccountingPeriod(Date accountingDate) {
+		try {
+			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findNextOpenSubAP")
+					.setParameter("accountingDate", accountingDate)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No Open SubAccountingPeriod found after {}", accountingDate);
+			return null;
+		}
+	}
 	
 	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {

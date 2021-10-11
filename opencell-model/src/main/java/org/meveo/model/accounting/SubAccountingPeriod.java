@@ -25,6 +25,7 @@ import org.meveo.model.AuditableEntity;
 @NamedQueries({
 	@NamedQuery(name = "SubAccountingPeriod.findByNumber", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.number=:number and SAP.accountingPeriod.accountingPeriodYear=:fiscalYear"),
 	@NamedQuery(name = "SubAccountingPeriod.findLastSubAP", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.endDate = (select max(endDate) from SubAccountingPeriod where regularUsersSubPeriodStatus = 'OPEN')"),
+	@NamedQuery(name = "SubAccountingPeriod.findNextOpenSubAP", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.endDate = (select min(endDate) from SubAccountingPeriod where regularUsersSubPeriodStatus = 'OPEN' AND startDate >= :accountingDate)"),
     @NamedQuery(name = "SubAccountingPeriod.findByAP", query = "SELECT count(SAP) FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId") })
 public class SubAccountingPeriod extends AuditableEntity {
 
@@ -46,12 +47,12 @@ public class SubAccountingPeriod extends AuditableEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "regular_users_sub_period_status")
-    private SubAccountingPeriodStatusEnum regularUsersSubPeriodStatus;
+    private SubAccountingPeriodStatusEnum regularUsersSubPeriodStatus = SubAccountingPeriodStatusEnum.OPEN;
     
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "all_users_sub_period_status")
-    private SubAccountingPeriodStatusEnum allUsersSubPeriodStatus;
+    private SubAccountingPeriodStatusEnum allUsersSubPeriodStatus = SubAccountingPeriodStatusEnum.OPEN;
     
 
     @Temporal(TemporalType.TIMESTAMP)
