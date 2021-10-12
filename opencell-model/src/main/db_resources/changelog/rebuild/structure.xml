@@ -9496,9 +9496,7 @@
             <column name="creator" type="varchar(50)"/>
             <column name="updater" type="varchar(50)"/>
             <column name="updated" type="datetime"/>
-            <column name="article_mapping_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="article_mapping_id" type="bigint" />
             <column name="article_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -15886,9 +15884,12 @@
     <changeSet id="INTRD_1794_20210917" author="TarikFA." />
     <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE"/>
     <changeSet id="#INTRD-1275_20211011" author="anasseh" />
+    <changeSet id="INTRD-2252_20211006" author="TarikFA." />
     
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+
+    <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
