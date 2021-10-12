@@ -8,6 +8,14 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
@@ -18,19 +26,17 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.billing.impl.*;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public class InvoiceLinesFactory {
 
@@ -125,22 +131,16 @@ public class InvoiceLinesFactory {
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
         if (chargeInstance != null) {
-            if(invoiceLine.getServiceInstance() != null) {
                 ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-                if(invoiceLine.getAccountingArticle() == null) {
-                    Product product = serviceInstance.getProductVersion() != null ?
-                            invoiceLine.getServiceInstance().getProductVersion().getProduct() : null;
-                    List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-                    Map<String, Object> attributes = fromAttributeValue(attributeValues);
+                Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ?
+                        invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
+                List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+                Map<String, Object> attributes = fromAttributeValue(attributeValues);
+                if(invoiceLine.getAccountingArticle()==null) {
                     AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
                             .orElseThrow(() -> new BusinessException("No accountingArticle found"));
                     invoiceLine.setAccountingArticle(accountingArticle);
                 }
-            } else {
-                if (report != null) {                    
-                    report.registerWarning("No service instance associated with invoice line id : " + invoiceLine.getId());
-                }
-            }
         }
 
         return invoiceLine;
@@ -176,6 +176,7 @@ public class InvoiceLinesFactory {
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
+    	if(serviceInstance == null) return Collections.emptyList();
         return serviceInstance.getAttributeInstances()
                     .stream()
                     .map(attributeInstance -> (AttributeValue) attributeInstance)
