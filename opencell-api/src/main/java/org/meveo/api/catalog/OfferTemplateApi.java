@@ -21,6 +21,7 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -812,6 +814,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			        										return result;
 			        									}).collect(Collectors.toSet()); 
 		    									getProductVersionResponse.setAttributes(attributes);
+                                            Set<GroupedAttributeDto> groupedAttributeDtos = attributes
+                                                    .stream()
+                                                    .map(att -> att.getGroupedAttributes())
+                                                    .flatMap(Collection::stream)
+                                                    .collect(Collectors.toSet());
+                                            getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
         									}
         								productDTO.setCurrentProductVersion(getProductVersionResponse);
         								}
