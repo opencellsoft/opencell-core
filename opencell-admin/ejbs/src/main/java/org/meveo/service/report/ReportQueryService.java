@@ -236,7 +236,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         queryResult.setEndDate(new Date());
         queryResult.setExecutionDuration(queryResult.getEndDate().getTime() - queryResult.getStartDate().getTime());
         queryResult.setLineCount(selectResult.size());
-        queryResult.setFilePath(outputFile.getParentFile().getName() +  File.separator + outputFile.getName());
+        queryResult.setFilePath(outputFile.getPath().substring(paramBeanFactory.getChrootDir().length()));
     }
 
     private void writeOutputFile(File file, QueryExecutionResultFormatEnum format, Set<String> columnnHeader, List<String> selectResult) throws IOException {
