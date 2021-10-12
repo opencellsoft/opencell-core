@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 
@@ -23,9 +24,12 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	@Inject private ArticleMappingLineService articleMappingLineService;
 
 	@SuppressWarnings("unchecked")
-	public List<ArticleMappingLine> findByProductCode(Product product) {
+	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate) {
 		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("product", "chargeTemplate"));
-		queryBuilder.addCriterionEntity("am.product.code", product.getCode());
+		if(product != null)
+			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
+		if(chargeTemplate != null)
+			queryBuilder.addCriterionEntity("am.chargeTemplate.code", chargeTemplate.getCode());
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}

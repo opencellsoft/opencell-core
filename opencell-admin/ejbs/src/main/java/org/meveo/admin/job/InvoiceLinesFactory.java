@@ -28,6 +28,7 @@ import org.meveo.service.cpq.order.OrderLotService;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -124,10 +125,9 @@ public class InvoiceLinesFactory {
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
         if (chargeInstance != null) {
-            if(invoiceLine.getServiceInstance() != null) {
                 ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-                Product product = serviceInstance.getProductVersion() != null ?
-                        invoiceLine.getServiceInstance().getProductVersion().getProduct() : null;
+                Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ?
+                        invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
                 List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
                 Map<String, Object> attributes = fromAttributeValue(attributeValues);
                 if(invoiceLine.getAccountingArticle()==null) {
@@ -135,9 +135,6 @@ public class InvoiceLinesFactory {
                             .orElseThrow(() -> new BusinessException("No accountingArticle found"));
                     invoiceLine.setAccountingArticle(accountingArticle);
                 }
-            } else {
-                report.registerWarning("No service instance associated with rated transaction id : " + rtID);
-            }
         }
         return invoiceLine;
     }
@@ -172,6 +169,7 @@ public class InvoiceLinesFactory {
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
+    	if(serviceInstance == null) return Collections.emptyList();
         return serviceInstance.getAttributeInstances()
                     .stream()
                     .map(attributeInstance -> (AttributeValue) attributeInstance)
