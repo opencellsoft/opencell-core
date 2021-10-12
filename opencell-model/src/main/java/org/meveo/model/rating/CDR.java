@@ -291,7 +291,9 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     private String updater;
     
     /** The serialized CDR dto. to be used while re-processing the CDR */
-    @Column(name = "source", nullable = true, columnDefinition = "TEXT")
+    // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
+    //@Column(name = "source", nullable = true, columnDefinition = "TEXT")
+    @Transient
     private String source;
     
 	@Transient
