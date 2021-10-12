@@ -3,6 +3,7 @@ package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -42,7 +43,7 @@ public class GroupedAttributeDto {
 	@Schema(description = "custome field associated to groupped attribute")
 	 private CustomFieldsDto customFields;
     private Integer sequence = 0;
-	
+
 	public GroupedAttributeDto() {
 		
 	}
@@ -249,8 +250,29 @@ public class GroupedAttributeDto {
 		this.sequence = sequence;
 	}
 
-	
 
-	
-	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof GroupedAttributeDto)) return false;
+		GroupedAttributeDto that = (GroupedAttributeDto) o;
+		return isDisplay() == that.isDisplay() &&
+				isDisabled() == that.isDisabled() &&
+				isMandatory() == that.isMandatory() &&
+				isSelectable() == that.isSelectable() &&
+				isRuled() == that.isRuled() &&
+				Objects.equals(getId(), that.getId()) &&
+				Objects.equals(getCode(), that.getCode()) &&
+				Objects.equals(getDescription(), that.getDescription()) &&
+				Objects.equals(getAttributes(), that.getAttributes()) &&
+				Objects.equals(getAttributeCodes(), that.getAttributeCodes()) &&
+				Objects.equals(getCommercialRuleCodes(), that.getCommercialRuleCodes()) &&
+				Objects.equals(getCustomFields(), that.getCustomFields()) &&
+				Objects.equals(getSequence(), that.getSequence());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getCode(), getDescription(), getAttributes(), getAttributeCodes(), isDisplay(), isDisabled(), isMandatory(), isSelectable(), isRuled(), getCommercialRuleCodes(), getCustomFields(), getSequence());
+	}
 }
