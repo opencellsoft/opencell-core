@@ -117,6 +117,8 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
         scriptContext.put(PaymentScript.CONTEXT_CARD_CVV, cvv);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
+        
 
         paymentScriptInterface.doPaymentCard(scriptContext);
 
@@ -181,6 +183,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
         scriptContext.put(PaymentScript.CONTEXT_CARD_CVV, cvv);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
 
         paymentScriptInterface.doRefundCard(scriptContext);
 
