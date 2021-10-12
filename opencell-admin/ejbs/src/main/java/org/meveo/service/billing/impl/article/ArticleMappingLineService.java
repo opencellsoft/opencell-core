@@ -30,9 +30,12 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	private ArticleMappingLineService articleMappingLineService;
 
 	@SuppressWarnings("unchecked")
-	public List<ArticleMappingLine> findByProductCode(Product product) {
+	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate) {
 		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("product", "chargeTemplate"));
-		queryBuilder.addCriterionEntity("am.product.code", product.getCode());
+		if(product != null)
+			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
+		if(chargeTemplate != null)
+			queryBuilder.addCriterionEntity("am.chargeTemplate.code", chargeTemplate.getCode());
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
