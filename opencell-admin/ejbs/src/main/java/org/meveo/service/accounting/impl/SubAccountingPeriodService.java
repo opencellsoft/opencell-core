@@ -47,7 +47,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         Date maxDate = findMaxSubAccountingPeriod();
 
         LocalDateTime startDateTime = maxDate == null ? LocalDateTime.now() : maxDate.toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    .atZone(ZoneId.systemDefault()).plusSeconds(1).toLocalDateTime();
         LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDate);
 	}
