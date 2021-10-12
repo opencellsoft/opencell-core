@@ -1,6 +1,7 @@
 package org.meveo.model.cpq.offer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +16,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -124,6 +127,11 @@ public class QuoteOffer extends BusinessCFEntity {
     @OneToMany(mappedBy = "quoteOffer", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuotePrice> quotePrices = new ArrayList<QuotePrice>();
+    
+    /** Delivery timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -307,7 +315,15 @@ public class QuoteOffer extends BusinessCFEntity {
 		QuoteOffer other = (QuoteOffer) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
+
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
 
 }

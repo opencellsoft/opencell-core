@@ -3245,6 +3245,7 @@
             <column name="quote_product_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
             <column name="reactivation_date" type="datetime" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -8817,6 +8818,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
 
@@ -9142,6 +9144,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9759,6 +9762,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="quote_product_id" type="bigint"/>
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
@@ -9824,6 +9828,7 @@
             <column name="quote_offer_id" type="bigint"/>
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-482" author="NabilOUACHI">
@@ -15893,6 +15898,7 @@
     <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE"/>
     <changeSet id="#6117_20210622" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1275_20211011" author="anasseh"/>
+    <changeSet id="#2374_20211012" author="HatimOUDAD"/>
 
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

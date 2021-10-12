@@ -3,9 +3,11 @@ package org.meveo.model.cpq.commercial;
 import static javax.persistence.FetchType.LAZY;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -16,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -82,6 +86,11 @@ public class OrderOffer extends BusinessCFEntity {
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_offer_id")
 	private QuoteOffer quoteOffer;
+	
+	 /** Delivery timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
     
 	
     @Override
@@ -158,10 +167,12 @@ public class OrderOffer extends BusinessCFEntity {
 		this.quoteOffer = quoteOffer;
 	}
 
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
 
-	
-	
-	
-	
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
 	
 }
