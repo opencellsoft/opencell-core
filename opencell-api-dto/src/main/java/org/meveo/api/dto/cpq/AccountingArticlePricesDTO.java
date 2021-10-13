@@ -128,6 +128,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	            quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
 	            quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
 	            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
+	            quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
 	            return Optional.of(quotePrice);
 	    	}
 	    	return pricesPerType.get(key).stream().reduce((a, b) -> {
@@ -147,6 +148,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	            if(a.getRecurrencePeriodicity()!=null) {
 	            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
 	            }
+	            quotePrice.setChargeTemplate(a.getChargeTemplate());
 	            return quotePrice;
 	        });
 	    }
