@@ -33,14 +33,12 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.AutomatedRefund;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -49,12 +47,11 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -93,9 +90,6 @@ public class UnitSepaDirectDebitJobBean {
 	/** The d D request item service. */
 	@Inject
 	private DDRequestItemService dDRequestItemService;
-	
-	@Inject
-	private CustomerAccountService customerAccountService;
 
 	/** The log. */
 	@Inject
@@ -109,21 +103,21 @@ public class UnitSepaDirectDebitJobBean {
 	 * @throws BusinessException                the business exception
 	 * @throws NoAllOperationUnmatchedException the no all operation unmatched
 	 *                                          exception
-	 * @throws UnbalanceAmountException         the unbalance amount exception
+	 * @throws UnbalanceAmountException         the unbalanced amount exception
 	 */
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
+		//ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
-		log.debug("processing DD requestItem id  : " + ddrequestItem.getId());
+		log.debug("processing DD requestItem id  : {}", ddrequestItem.getId());
 		AccountOperation automatedPayment = null;
 		PaymentErrorTypeEnum paymentErrorTypeEnum = null;
 		PaymentStatusEnum paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
 		String errorMsg = null;
 		if (!ddrequestItem.hasError()) {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
-				log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
+				log.info("invoice: {}  balanceDue: {}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
@@ -147,14 +141,12 @@ public class UnitSepaDirectDebitJobBean {
 				result.registerError(errorMsg);
 			}
 		}
-		
-		PaymentMethod pmUsed = customerAccountService.getPreferredPaymentMethod(ddrequestItem.getAccountOperations().get(0),PaymentMethodEnum.DIRECTDEBIT);
-
+		Payment payment = automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null;
+		Refund refund = automatedPayment instanceof Refund ? (Refund) automatedPayment : null;
 		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
-				(automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null),
-				(automatedPayment instanceof Refund ? (Refund) automatedPayment : null), (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
-				paymentStatusEnum, errorMsg, errorMsg, paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess(),
-				ddRequestLOT.getDdRequestBuilder().getCode(),(DDPaymentMethod) PersistenceUtils.initializeAndUnproxy(pmUsed),ddrequestItem.getAccountOperations());
+				payment, refund, (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
+				paymentStatusEnum, errorMsg, errorMsg, payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null), paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum() == PaymentOrRefundEnum.PAYMENT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),ddrequestItem.getAccountOperations());
 
 	}
 
@@ -186,8 +178,8 @@ public class UnitSepaDirectDebitJobBean {
 			CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate,
 			List<AccountOperation> occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
 			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:"
-				+ customerAccount.getCode() + "...");
+		log.info("create payment for amount: {} paymentMethodEnum: {} isToMatching: {} customerAccount: {}", amount , paymentMethodEnum, isToMatching ,
+				customerAccount.getCode());
 
 		ParamBean paramBean = paramBeanFactory.getInstance();
 		String occTemplateCode = null;
