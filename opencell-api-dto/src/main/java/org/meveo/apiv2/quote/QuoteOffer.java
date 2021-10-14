@@ -1,5 +1,6 @@
 package org.meveo.apiv2.quote;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -58,6 +59,10 @@ public interface QuoteOffer extends Resource{
     @Schema(description = "list of the quote attributes")
     @Nullable
 	List<QuoteAttributeDTO> getQuoteAttributes();
+    
+    @Schema(description = "delivery date")
+    @Nullable
+	Date getDeliveryDate();
 	
 //	List<QuotePrice> getQuotePrices();
 }

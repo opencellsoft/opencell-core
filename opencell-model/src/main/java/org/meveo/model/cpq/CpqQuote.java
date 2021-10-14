@@ -61,7 +61,7 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 		this.applicantAccount = copy.applicantAccount; 
 		//to move to quote version
 		this.sendDate = copy.sendDate;
-		this.quoteLotDateBegin = copy.quoteLotDateBegin;
+		this.deliveryDate = copy.deliveryDate;
 		this.quoteLotDuration = copy.quoteLotDuration;
 		this.opportunityRef = copy.opportunityRef;
 		this.customerRef = copy.customerRef;
@@ -131,7 +131,7 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prestation_date_begin")
-	private Date quoteLotDateBegin;
+	private Date deliveryDate;
 	/**
 	 * prestationDuration
 	 */
@@ -368,16 +368,16 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 		this.billableAccount = billableAccount;
 	}
 	/**
-	 * @return the quoteLotDateBegin
+	 * @return the deliveryDate
 	 */
-	public Date getQuoteLotDateBegin() {
-		return quoteLotDateBegin;
+	public Date getDeliveryDate() {
+		return deliveryDate;
 	}
 	/**
-	 * @param quoteLotDateBegin the quoteLotDateBegin to set
+	 * @param deliveryDate the deliveryDate to set
 	 */
-	public void setQuoteLotDateBegin(Date quoteLotDateBegin) {
-		this.quoteLotDateBegin = quoteLotDateBegin;
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 	/**
 	 * @return the quoteLotDuration

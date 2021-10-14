@@ -282,7 +282,7 @@ public class CpqQuoteApi extends BaseApi {
 
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
-        cpqQuote.setQuoteLotDateBegin(quote.getQuoteLotDateBegin());
+        cpqQuote.setDeliveryDate(quote.getDeliveryDate());
         cpqQuote.setQuoteLotDuration(quote.getQuoteLotDuration());
         cpqQuote.setOpportunityRef(quote.getOpportunityRef());
         cpqQuote.setCustomerRef(quote.getExternalId());
@@ -583,7 +583,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         quote.setSendDate(quoteDto.getSendDate());
 
-        quote.setQuoteLotDateBegin(quoteDto.getQuoteLotDateBegin());
+        quote.setDeliveryDate(quoteDto.getDeliveryDate());
         quote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
         quote.setOpportunityRef(quoteDto.getOpportunityRef());
         quote.setCustomerRef(quoteDto.getExternalId());
@@ -725,7 +725,7 @@ public class CpqQuoteApi extends BaseApi {
             dto.setApplicantAccountCode(quote.getApplicantAccount().getCode());
         if (quote.getBillableAccount() != null)
             dto.setBillableAccountCode(quote.getBillableAccount().getCode());
-        dto.setQuoteLotDateBegin(quote.getQuoteLotDateBegin());
+        dto.setDeliveryDate(quote.getDeliveryDate());
         dto.setQuoteLotDuration(quote.getQuoteLotDuration());
         dto.setOpportunityRef(quote.getOpportunityRef());
         if (quote.getSeller() != null)

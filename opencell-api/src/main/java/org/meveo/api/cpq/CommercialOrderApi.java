@@ -192,7 +192,7 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
-		order.setRealisationDate(orderDto.getRealisationDate());
+		order.setDeliveryDate(orderDto.getDeliveryDate());
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
 		order.setExternalReference(orderDto.getExternalReference());
@@ -327,8 +327,8 @@ public class CommercialOrderApi extends BaseApi {
 			order.setProgressDate(orderDto.getProgressDate());
 		if(orderDto.getOrderDate() != null)
 			order.setOrderDate(orderDto.getOrderDate());
-		if(orderDto.getRealisationDate() != null)
-			order.setRealisationDate(orderDto.getRealisationDate());
+		if(orderDto.getDeliveryDate() != null)
+			order.setDeliveryDate(orderDto.getDeliveryDate());
 		if(orderDto.getCustomerServiceBegin() != null)
 			order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		
