@@ -61,6 +61,7 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.position = copy.position;
 		this.cfValues = copy.getCfValues();
 		this.sequence=copy.sequence;
+		this.deliveryDate=copy.deliveryDate;
 	}
 
 

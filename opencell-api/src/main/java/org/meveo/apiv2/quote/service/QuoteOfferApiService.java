@@ -48,6 +48,7 @@ public class QuoteOfferApiService {
 		var duplicate = new QuoteOffer(quoteOffer);
 		duplicate.setQuoteVersion(quoteVersion);
 		duplicate.setSequence(quoteOffer.getSequence());
+		duplicate.setDeliveryDate(quoteOffer.getDeliveryDate());
 		
 		quoteOfferService.detach(quoteOffer);
 		

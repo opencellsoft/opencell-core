@@ -24,6 +24,7 @@ public class QuoteOfferMapper extends ResourceMapper<org.meveo.apiv2.quote.Quote
 				.sequence(entity.getSequence())
 				.quoteProduct(entity.getQuoteProduct().stream().map(qp -> new QuoteProductDTO(qp, true)).collect(Collectors.toList()))
 				.quoteAttributes(entity.getQuoteAttributes().stream().map(qa -> new QuoteAttributeDTO(qa)).collect(Collectors.toList()))
+				.deliveryDate(entity.getDeliveryDate())
 				.build();
 	}
 	

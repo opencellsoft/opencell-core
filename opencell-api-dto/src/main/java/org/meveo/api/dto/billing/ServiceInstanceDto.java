@@ -148,6 +148,11 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      * The renewal service.
      */
     private SubscriptionRenewalDto serviceRenewal;
+    
+    /**
+     * The delivery date
+     */
+    private Date deliveryDate;
 
     /**
      * Instantiates a new service instance dto.
@@ -181,6 +186,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
         setMinimumAmountEl(serviceInstance.getMinimumAmountEl());
         setMinimumLabelEl(serviceInstance.getMinimumLabelEl());
+        deliveryDate = serviceInstance.getDeliveryDate();
     }
 
     /**
@@ -627,4 +633,21 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 	public void setAttributeInstances(List<AttributeInstanceDto> attributeInstances) {
 		this.attributeInstances = attributeInstances;
 	}
+	
+	/**
+	 * 
+	 * @return delivery date
+	 */
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+	/**
+	 * 
+	 * @param deliveryDate
+	 */
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	
+	
 }

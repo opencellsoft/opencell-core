@@ -561,6 +561,7 @@ public class CommercialOrderApi extends BaseApi {
 		orderOffer.setOrder(commercialOrder);
 		orderOffer.setOfferTemplate(offerTemplate);
 		orderOffer.setDiscountPlan(discountPlan);
+		orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -602,6 +603,7 @@ public class CommercialOrderApi extends BaseApi {
     	orderOffer.setOrder(commercialOrder);
     	orderOffer.setOfferTemplate(offerTemplate);
     	orderOffer.setDiscountPlan(discountPlan);
+    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
     	orderOfferService.update(orderOffer); 
@@ -801,7 +803,8 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setProductVersion(productVersion);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
-		orderProduct.setQuantity(orderProductDto.getQuantity()); 
+		orderProduct.setQuantity(orderProductDto.getQuantity());
+		orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
 		orderProduct.updateAudit(currentUser); 
 		return orderProduct;
     }
