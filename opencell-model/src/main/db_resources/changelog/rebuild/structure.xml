@@ -15941,6 +15941,7 @@
     <changeSet id="#INTRD-1275_20211011" author="anasseh"/>
 	<changeSet id="INTRD-2252_20211006" author="TarikFA." />
 	<changeSet id="#2374_20211012" author="HatimOUDAD"/>
+	<changeSet id="INTRD-2412_20211015" author="MohammedELAZZOUZI"/>
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
