@@ -47,4 +47,8 @@ public interface ReportQueryInput {
     @Nullable
     @Schema(description = "Sort order", example = "Possible value are : DESCENDING, ASCENDING")
     SortOrderEnum getSortOrder();
+    
+    @Nullable
+    @Schema(description = "Report query emails")
+    List<String> getEmails();
 }

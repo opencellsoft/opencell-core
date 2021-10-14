@@ -170,15 +170,15 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 	}
 
     @Override
-    public Response execute(Long id, boolean async, boolean sendNotification) {
+    public Response execute(Long id, boolean async, boolean sendNotification, ReportQueryInput resource) {
         if(async) {
-            reportQueryApiService.execute(id, async, sendNotification);
+            reportQueryApiService.execute(id, async, sendNotification, resource.getEmails());
             return Response.ok().entity(ImmutableSuccessResponse.builder()
                     .status("ACCEPTED")
                     .message("Execution request accepted")
                     .build()).build();
         } else {
-            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async, sendNotification).orElse(EMPTY_LIST);
+            List<Object> result = (List<Object>) reportQueryApiService.execute(id, async, sendNotification, resource.getEmails()).orElse(EMPTY_LIST);
             ExecutionResult executionResult = builder()
                     .executionResults(result)
                     .total(result.size())

@@ -4,6 +4,7 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +19,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -92,6 +95,11 @@ public class QuoteProduct extends AuditableCFEntity {
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    /** Delivery timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
 
 	public QuoteProduct() {
 	}
@@ -105,6 +113,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.discountPlan=copy.getDiscountPlan();
 		this.quoteOffer = copy.quoteOffer;
 		this.quoteAttributes = copy.quoteAttributes;
+		this.deliveryDate = copy.deliveryDate;
 	}
 	
 	public void update(QuoteProduct other) {
@@ -116,6 +125,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.discountPlan=other.getDiscountPlan();
 		this.quoteOffer = other.quoteOffer;
 		this.quoteAttributes = other.quoteAttributes;
+		this.deliveryDate = other.deliveryDate;
     }
 
 	public DiscountPlan getDiscountPlan() {
@@ -246,5 +256,20 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.quoteArticleLines = quoteArticleLines;
 	}
 
+	/**
+	 * 
+	 * @return delivery date
+	 */
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	/**
+	 * 
+	 * @param deliveryDate
+	 */
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
 
 }
