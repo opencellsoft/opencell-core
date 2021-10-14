@@ -87,9 +87,8 @@ public class SepaDirectDebitAsync {
 	 * @return Future String
 	 * @throws BusinessException BusinessException
 	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems,  JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
 			if (result != null && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
@@ -122,9 +121,10 @@ public class SepaDirectDebitAsync {
 				
 		Map<String,Object> result = new HashMap<String, Object>();
 
-		String allErrors="";
+		
 		Long nbItemsKo = 0L,nbItemsOk=0L;	
 		BigDecimal totalAmount = BigDecimal.ZERO;
+		StringBuilder allErrors = new StringBuilder();
 			for (AccountOperation ao : listAoToPay) {
 				ao = accountOperationService.refreshOrRetrieve(ao);
 				CustomerAccount ca = ao.getCustomerAccount();
@@ -133,7 +133,7 @@ public class SepaDirectDebitAsync {
 				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
 				if (errorMsg != null) {
 					nbItemsKo++;
-					allErrors += errorMsg + " ; ";
+					allErrors.append(errorMsg).append(" ; ");
 				} else {
 					nbItemsOk++;
 					totalAmount = totalAmount.add(ao.getUnMatchingAmount());
@@ -142,7 +142,7 @@ public class SepaDirectDebitAsync {
 			
 			result.put("nbItemsOk",nbItemsOk);
 			result.put("nbItemsKo",nbItemsKo);
-			result.put("allErrors",allErrors);
+			result.put("allErrors",allErrors.toString());
 			result.put("totalAmount",totalAmount);
 			
 			return new AsyncResult<Map<String,Object>>(result);

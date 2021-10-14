@@ -17,6 +17,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -73,6 +75,10 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	/** The dd request item service. */
 	@Inject
 	private DDRequestItemService ddRequestItemService;
+	
+	/** The d D request LOT service. */
+    @Inject
+    private DDRequestLOTService dDRequestLOTService;
 
 	@Inject
 	private PaymentService paymentService;
@@ -81,17 +87,15 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	private SepaDirectDebitAsync sepaDirectDebitAsync;
 
 	@Inject
-	private DDRequestBuilderFactory ddRequestBuilderFactory;
-
-	@Inject
 	private AccountOperationService accountOperationService;
 	
 	
 	@Inject
 	private PaymentGatewayService paymentGatewayService;
-
+	
 	@Inject
 	private CalendarBankingService calendarBankingService;
+
 	/**
 	 * Creates the DDRequest lot.
 	 *
@@ -112,16 +116,13 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 				throw new BusinessEntityException("no invoices!");
 			}
 
-			DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-
 			DDRequestLOT ddRequestLOT = new DDRequestLOT();
 			ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
+			ddRequestLOT.setSendDate(new Date());
 			ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
 			ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
-			
 			ddRequestLOT.setSendDate(calendarBankingService.addBusinessDaysToDate(new Date(), ArConfig.getDateValueAfter()));
 			create(ddRequestLOT);
-			ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
 
 			return ddRequestLOT;
 		} catch (Exception e) {
@@ -226,16 +227,47 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		}
 
 	}
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider)
 			throws BusinessEntityException, Exception {		
 		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
 	}
 
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT) throws Exception {
-		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, 1L, 0L, null);
-	}
+        createPaymentsOrRefundsForDDRequestLot(ddRequestLOT,1L, 0L, null);
+    }
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createPaymentsOrRefundsAndGenerateDDRequestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface,
+            DDRequestLotOp ddrequestLotOp, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result)
+                    throws Exception, BusinessException {
+
+	   
+       dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT,nbRuns, waitingMillis, result);
+        
+
+	    List<DDRequestItem> ddrequestItemsOK = ddRequestLOT.getDdrequestItems().stream().filter(item -> !item.hasError()).collect(Collectors.toList());
+        if (ddrequestItemsOK.isEmpty()) {
+            return;
+        }
+        String fileName = ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider);
+	    try {
+	    	
+            dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
+           
+	    }
+	    catch (Exception e) {
+            if (StringUtils.isNotBlank(fileName)) {
+                File f = new File(fileName);
+                f.delete();
+            }
+            throw e;
+        }
+	    finally {
+	        result.addReport(ddRequestLOT.getRejectedCause());
+        }
+    }
 
 	/**
 	 * Creates the payments or refunds for DD request lot.
@@ -243,17 +275,18 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		if (ddRequestLOT.isPaymentCreated()) {
 			throw new BusinessException("Payment Already created.");
 		}
-
+		
 		SubListCreator subListCreator = new SubListCreator(ddRequestLOT.getDdrequestItems(), nbRuns.intValue());
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), result));
+			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(),result));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -275,11 +308,15 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 				log.error("Failed to execute async method", cause);
 			}
 		}
-		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
+		if(ddRequestLOT == null) {
+			log.info("\n\n\n\n\n yes ddrequestLot is nul");
+		}else {
+			log.info("\n\n\n\n\n NOT ddrequestLot is nul");
+		}
+		//ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		ddRequestLOT.setPaymentCreated(true);
 		update(ddRequestLOT);
 		log.info("Successful createPaymentsForDDRequestLot ddRequestLotId: {}", ddRequestLOT.getId());
-
 	}
 
 	/**
@@ -409,6 +446,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		if (accountOperation.getReference() == null) {
 			return prefix + "accountOperation.reference";
 		}
+		
 		return null;
 	}
 

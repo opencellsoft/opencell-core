@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -380,7 +379,7 @@ public class PaymentService extends PersistenceService<Payment> {
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
 
 			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
-					errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
+					doPaymentResponseDto.getPaymentID(),errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
         } catch (PaymentException e) {
             log.error("PaymentException during payment AO:", e);
@@ -400,7 +399,7 @@ public class PaymentService extends PersistenceService<Payment> {
         doPaymentResponseDto.setErrorMessage(msg);
         doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
         doPaymentResponseDto.setErrorCode(code);
-        paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, code, msg, PaymentErrorTypeEnum.ERROR, operationCat,
+        paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, code, msg,doPaymentResponseDto.getPaymentID(), PaymentErrorTypeEnum.ERROR, operationCat,
             paymentGateway.getCode(), preferredMethod,aoIdsToPay);
         return doPaymentResponseDto;
     }
