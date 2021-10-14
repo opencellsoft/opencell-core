@@ -9622,4 +9622,8 @@ public class OrderAdvancement extends ModuleScript {
         <sql>update  ${db.schema.adapted}ar_account_operation set accounting_date =created where accounting_date is null;</sql>
     </changeSet>	
 
+    <changeSet id="INTRD-2252_20211006" author="TarikFA.">
+    	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
+    </changeSet>
+   
 </databaseChangeLog>
