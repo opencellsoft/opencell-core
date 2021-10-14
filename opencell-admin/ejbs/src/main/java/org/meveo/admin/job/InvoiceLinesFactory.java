@@ -17,6 +17,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -27,6 +28,7 @@ import org.meveo.service.cpq.order.OrderLotService;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,12 @@ public class InvoiceLinesFactory {
      *
      * @param record map of ratedTransaction
      * @param configuration aggregation configuration
+     * @param result JobExecutionResultImpl
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration) throws BusinessException{
-        InvoiceLine invoiceLine = initInvoiceLine(record);
+    public InvoiceLine create(Map<String, Object> record,
+                              AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+        InvoiceLine invoiceLine = initInvoiceLine(record, result);
         if(configuration.getAggregationOption() == NO_AGGREGATION) {
             withNoAggregationOption(invoiceLine, record, configuration.isEnterprise());
         } else {
@@ -72,8 +76,9 @@ public class InvoiceLinesFactory {
         return invoiceLine;
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> record) {
+    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report) {
         InvoiceLine invoiceLine = new InvoiceLine();
+        BigInteger rtID = (BigInteger) record.get("id");
         ofNullable(record.get("billing_account__id"))
                 .ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("id"))
@@ -114,25 +119,23 @@ public class InvoiceLinesFactory {
         	amountWithoutTax=amountWithTax.divide(coef, 2, RoundingMode.HALF_UP);
         }
         invoiceLine.setAmountWithoutTax(amountWithoutTax);
-        
         invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithoutTax));
-    	
-       
+
         ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
-        ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-        Product product = serviceInstance.getProductVersion() != null ?
-                invoiceLine.getServiceInstance().getProductVersion().getProduct() : null;
-
-        List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-        Map<String, Object> attributes = fromAttributeValue(attributeValues);
-        if(invoiceLine.getAccountingArticle()==null) {
-        	  AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
-                      .orElseThrow(() -> new BusinessException("No accountingArticle found"));
-              invoiceLine.setAccountingArticle(accountingArticle);
+        if (chargeInstance != null) {
+                ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+                Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ?
+                        invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
+                List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+                Map<String, Object> attributes = fromAttributeValue(attributeValues);
+                if(invoiceLine.getAccountingArticle()==null) {
+                    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
+                            .orElseThrow(() -> new BusinessException("No accountingArticle found"));
+                    invoiceLine.setAccountingArticle(accountingArticle);
+                }
         }
-      
         return invoiceLine;
     }
 
@@ -166,6 +169,7 @@ public class InvoiceLinesFactory {
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
+    	if(serviceInstance == null) return Collections.emptyList();
         return serviceInstance.getAttributeInstances()
                     .stream()
                     .map(attributeInstance -> (AttributeValue) attributeInstance)
