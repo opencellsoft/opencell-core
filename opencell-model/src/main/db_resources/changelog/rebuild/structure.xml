@@ -9175,6 +9175,7 @@
             <column name="priority" type="int4" defaultValueNumeric="0"/>
             <column name="attribute_type" type="varchar(100)" />
             <column name="unit_nb_decimal" type="int4" />
+            <column name="attribute_category" type="varchar(255)"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-458" author="NabilOUACHI">
