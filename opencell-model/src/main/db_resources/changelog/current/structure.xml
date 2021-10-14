@@ -9620,8 +9620,24 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="#INTRD-1275_20211011" author="anasseh">
     	<sql>update  ${db.schema.adapted}ar_account_operation set status ='POSTED' where status is null;</sql>
         <sql>update  ${db.schema.adapted}ar_account_operation set accounting_date =created where accounting_date is null;</sql>
-    </changeSet>
-
+    </changeSet> 
+	<changeSet id="#2374_20211012" author="HatimOUDAD">
+        <addColumn tableName="billing_service_instance" >
+            <column name="delivery_date" type="datetime" />
+        </addColumn>
+        <addColumn tableName="cpq_order_product" >
+            <column name="delivery_date" type="datetime" />
+        </addColumn>
+        <addColumn tableName="cpq_order_offer" >
+            <column name="delivery_date" type="datetime" />
+        </addColumn>
+        <addColumn tableName="cpq_quote_product" >
+            <column name="delivery_date" type="datetime" />
+        </addColumn>
+        <addColumn tableName="quote_offer" >
+            <column name="delivery_date" type="datetime" />
+        </addColumn>
+    </changeSet>   
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
         <createTable tableName="dunning_action_notification_template">

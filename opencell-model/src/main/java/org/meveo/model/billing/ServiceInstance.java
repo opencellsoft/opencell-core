@@ -309,6 +309,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_article_id")
     private AccountingArticle minimumArticle;
+    
+    /** Delivery timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
 
     /**
      * PK of OrderItem.id.
@@ -1234,4 +1239,13 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
                 .filter(ch -> ch.getId() != null)
                 .collect(Collectors.toList());
     }
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+    
 }
