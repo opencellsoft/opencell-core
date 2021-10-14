@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -190,9 +191,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return true;
     }
     
-    public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,List<ProductContextDTO> selectedProducts,LinkedHashMap<String, Object> selectedOfferAttributes) {
+    public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,List<ProductContextDTO> selectedProducts,LinkedHashMap<String, Object> selectedOfferAttributes, Predicate<CommercialRuleHeader> commercialRuleHeaderFilter) {
         Boolean isSelectable = Boolean.FALSE;
-        commercialRules = commercialRules.stream().filter(rule -> !RuleTypeEnum.REPLACEMENT.equals(rule.getRuleType())).collect(Collectors.toList());
+        commercialRules = commercialRules.stream()
+                .filter(rule -> !RuleTypeEnum.REPLACEMENT.equals(rule.getRuleType()))
+                .filter(rule -> !rule.isDisabled())
+                .filter(commercialRuleHeaderFilter)
+                .collect(Collectors.toList());
         List<CommercialRuleItem> items = null;
         boolean continueProcess = false;
         for (CommercialRuleHeader commercialRule : commercialRules) {
