@@ -296,6 +296,7 @@
         <createSequence sequenceName="dunning_collection_management_seq" startValue="1" />
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
+        <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
     </changeSet>
     
      
@@ -9499,9 +9500,7 @@
             <column name="creator" type="varchar(50)"/>
             <column name="updater" type="varchar(50)"/>
             <column name="updated" type="datetime"/>
-            <column name="article_mapping_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="article_mapping_id" type="bigint" />
             <column name="article_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -14900,7 +14899,49 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
                                  
     </changeSet>
-
+    <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
+        <createTable tableName="dunning_action_notification_template">
+            <column name="dunning_action_id"  type="bigint"/>
+            <column name="action_notification_template"  type="varchar(200)"/>
+        </createTable>
+        <createTable tableName="dunning_level">
+            <column name="level_id" type="bigint" />
+            <column name="related_levels" type="varchar(255)" />
+        </createTable>
+        <createTable tableName="ar_dunning_action">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_action_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="action_name" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_description" type="varchar(255)" />
+            <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="action_type" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_mode" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_channel" type="varchar(255)"/>
+            <column name="related_levels" type="varchar(255)"/>
+            <column name="script_instance_id" type="bigint"/>
+            <column name="action_notification_template" type="varchar(255)"/>
+            <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_meveo_script_instance"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+        <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
+    </changeSet>
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
@@ -15898,8 +15939,8 @@
     <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE"/>
     <changeSet id="#6117_20210622" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-1275_20211011" author="anasseh"/>
-    <changeSet id="#2374_20211012" author="HatimOUDAD"/>
-
+	<changeSet id="INTRD-2252_20211006" author="TarikFA." />
+	<changeSet id="#2374_20211012" author="HatimOUDAD"/>
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

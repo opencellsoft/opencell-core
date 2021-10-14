@@ -128,6 +128,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	            quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
 	            quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
 	            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
+	            quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
 	            return Optional.of(quotePrice);
 	    	}
 	    	return UtilsDto.reducePrices(key, pricesPerType, PriceLevelEnum.PRODUCT, quoteVersion, quoteOffer);

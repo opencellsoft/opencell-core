@@ -21,6 +21,7 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.ProductDto;
@@ -176,7 +178,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @Inject
     private MediaService mediaService;
     
-    @Inject 
+    @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
     
     @Override
@@ -585,7 +587,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 					if(offerProductDtos.size() != (i + 1)) {
 						for (int j = i + 1; j < offerProductDtos.size(); j++) {
 							var nextOfferProduct = offerProductDtos.get(j);
-							if(currentOfferProduct.getSequence() == nextOfferProduct.getSequence()) 
+							if(currentOfferProduct.getSequence() == nextOfferProduct.getSequence())
 								throw new MeveoApiException("Offer product can not have the same sequence between products");
 						}
 					}
@@ -828,8 +830,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         									Set<ProductVersionAttributeDTO> attributes = productVersion.getAttributes()
                                                     .stream()
                                                     .map(ProductVersionAttributeDTO::new)
-                                                    .collect(Collectors.toSet());  
+                                                    .collect(Collectors.toSet());
 		    									getProductVersionResponse.setProductAttributes(attributes);
+                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
+                                                    .stream()
+                                                    .map(att -> new GroupedAttributeDto(att))
+                                                    .collect(Collectors.toSet());
+                                            getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
         									}
         								productDTO.setCurrentProductVersion(getProductVersionResponse);
         								}

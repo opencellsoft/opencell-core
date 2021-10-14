@@ -202,7 +202,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 
 						if (paymentOrRefundEnum == PaymentOrRefundEnum.REFUND && listAoToPay != null) {
 						    listAoToPay = listAoToPay.stream()
-	                                .filter(accountOperation -> (OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction()) || accountOperation.getOperationAction() == null))
+	                                .filter(accountOperation -> (OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction())))
 	                                .collect(Collectors.toList());
                         }
 
