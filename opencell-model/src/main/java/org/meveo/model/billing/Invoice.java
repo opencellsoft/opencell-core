@@ -63,6 +63,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -527,6 +528,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "is_already_applied_minimum")
     private boolean isAlreadyAppliedMinimum;
 
+    
+    /**
+     * Cpq quote
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cpq_quote_id")
+    private CpqQuote cpqQuote;
+    
     /**
      * Indicates if the invoice discounts have already been applied
      */
@@ -1577,4 +1586,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setDraftInvoiceLines(List<InvoiceLine> draftInvoiceLines) {
         this.draftInvoiceLines = draftInvoiceLines;
     }
+
+
+	public CpqQuote getCpqQuote() {
+		return cpqQuote;
+	}
+
+
+	public void setCpqQuote(CpqQuote cpqQuote) {
+		this.cpqQuote = cpqQuote;
+	}
+    
+    
 }

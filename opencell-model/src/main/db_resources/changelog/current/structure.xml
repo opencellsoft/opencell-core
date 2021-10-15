@@ -9681,5 +9681,13 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_invoice_dunning_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses" referencedColumnNames="id" />
     </changeSet>
+    
+      <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
+     <addColumn tableName="billing_invoice">
+            <column name="cpq_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
    
 </databaseChangeLog>
