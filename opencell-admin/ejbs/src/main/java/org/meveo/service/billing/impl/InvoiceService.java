@@ -3860,6 +3860,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
+            invoice.setCpqQuote(commercialOrder.getQuote());
         } else if(entity instanceof CpqQuote){
             CpqQuote quote = (CpqQuote) entity;
             invoice.setCpqQuote(quote);
