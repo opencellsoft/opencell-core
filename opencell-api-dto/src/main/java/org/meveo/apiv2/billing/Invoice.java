@@ -289,4 +289,9 @@ public interface Invoice extends Resource {
 	@Schema(description = "The order attached to this invoice")
 	@Nullable
 	Resource getCommercialOrder();
+	
+	@Schema(description = "The cpqQuote attached to this invoice")
+	@Nullable
+	Resource getCpqQuote();
+}
 }
