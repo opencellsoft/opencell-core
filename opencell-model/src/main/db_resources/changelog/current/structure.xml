@@ -9694,4 +9694,1057 @@ public class OrderAdvancement extends ModuleScript {
     	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
     </changeSet>
    
+        
+    <changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius">
+        <addColumn tableName="ar_customer_account">
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />   
+        </addColumn>
+        
+        <addColumn tableName="billing_billing_account">
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />                 
+        </addColumn>
+        <addColumn tableName="billing_user_account">            
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />    
+        </addColumn>
+
+        <renameColumn tableName="com_contact" oldColumnName="company" newColumnName="company_name" columnDataType="varchar(200)"/>
+        
+        <addColumn tableName="com_contact">            
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />    
+        </addColumn>
+        
+        <addColumn tableName="crm_customer">                   
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />              
+        </addColumn>
+        <addColumn tableName="crm_seller">            
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />    
+            <column name="minimum_article_id" type="bigint" />
+        </addColumn>
+        
+        <dropAllForeignKeyConstraints baseTableName="account_entity"/>
+        <dropForeignKeyConstraint baseTableName="crm_customer" constraintName="fk_rylbq2w5ij2o2lbubhv99m4ox"/>
+        <dropForeignKeyConstraint baseTableName="ar_customer_account" constraintName="fk_9i811xvc40e19t613cmpvwmu9" />
+        <dropForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_fky4ah96o9fohkx7u569phxxr" />
+        <dropForeignKeyConstraint baseTableName="billing_user_account" constraintName="fk_alpl7r5p2nm43w0ro26ckcqnb" />          
+        
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rt_ua"/>
+        <dropForeignKeyConstraint baseTableName="document" constraintName="document_account_entity_id_fk"/>
+        
+    </changeSet>
+        
+    <changeSet id="#INTRD-2421_20211012-pg" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}crm_seller set version=ae.version,created=ae.created,updated=ae.updated,code=ae.code,description=ae.description,address_1=ae.address_1,address_2=ae.address_2,address_3=ae.address_3,
+address_4=ae.address_4,address_5=ae.address_5,address_city=ae.address_city,address_country_id=ae.address_country_id,address_state=ae.address_state,address_zipcode=ae.address_zipcode,
+default_level=ae.default_level,external_ref_1=ae.external_ref_1,external_ref_2=ae.external_ref_2,firstname=ae.firstname,lastname=ae.lastname,provider_contact=ae.provider_contact,
+creator=ae.creator,updater=ae.updater,title_id=ae.title_id,primary_contact=ae.primary_contact,uuid=ae.uuid,bam_id=ae.bam_id,cf_values=ae.cf_values,
+job_title=ae.job_title,email=ae.email,fax=ae.fax,mobile=ae.mobile,phone=ae.phone,vat_no=ae.vat_no,registration_no=ae.registration_no,minimum_amount_el=ae.minimum_amount_el,
+minimum_label_el=ae.minimum_label_el,minimum_charge_template_id=ae.minimum_charge_template_id,company=ae.company,legal_entity_type_id=ae.legal_entity_type_id
+from ${db.schema.adapted}account_entity ae where crm_seller.id=ae.id and ae.account_type='ACCT_S'</sql>
+
+        <sql>update ${db.schema.adapted}crm_customer set version=ae.version,created=ae.created,updated=ae.updated,code=ae.code,description=ae.description,address_1=ae.address_1,address_2=ae.address_2,address_3=ae.address_3,
+address_4=ae.address_4,address_5=ae.address_5,address_city=ae.address_city,address_country_id=ae.address_country_id,address_state=ae.address_state,address_zipcode=ae.address_zipcode,
+default_level=ae.default_level,external_ref_1=ae.external_ref_1,external_ref_2=ae.external_ref_2,firstname=ae.firstname,lastname=ae.lastname,provider_contact=ae.provider_contact,
+creator=ae.creator,updater=ae.updater,title_id=ae.title_id,primary_contact=ae.primary_contact,uuid=ae.uuid,bam_id=ae.bam_id,cf_values=ae.cf_values,
+job_title=ae.job_title,email=ae.email,fax=ae.fax,mobile=ae.mobile,phone=ae.phone,vat_no=ae.vat_no,registration_no=ae.registration_no,minimum_amount_el=ae.minimum_amount_el,
+minimum_label_el=ae.minimum_label_el,minimum_charge_template_id=ae.minimum_charge_template_id,company=ae.company,legal_entity_type_id=ae.legal_entity_type_id
+from ${db.schema.adapted}account_entity ae where crm_customer.id=ae.id and ae.account_type='ACCT_CUST'</sql>
+
+        <sql>update ${db.schema.adapted}ar_customer_account set version=ae.version,created=ae.created,updated=ae.updated,code=ae.code,description=ae.description,address_1=ae.address_1,address_2=ae.address_2,address_3=ae.address_3,
+address_4=ae.address_4,address_5=ae.address_5,address_city=ae.address_city,address_country_id=ae.address_country_id,address_state=ae.address_state,address_zipcode=ae.address_zipcode,
+default_level=ae.default_level,external_ref_1=ae.external_ref_1,external_ref_2=ae.external_ref_2,firstname=ae.firstname,lastname=ae.lastname,provider_contact=ae.provider_contact,
+creator=ae.creator,updater=ae.updater,title_id=ae.title_id,primary_contact=ae.primary_contact,uuid=ae.uuid,bam_id=ae.bam_id,cf_values=ae.cf_values,
+job_title=ae.job_title,email=ae.email,fax=ae.fax,mobile=ae.mobile,phone=ae.phone,vat_no=ae.vat_no,registration_no=ae.registration_no,minimum_amount_el=ae.minimum_amount_el,
+minimum_label_el=ae.minimum_label_el,minimum_charge_template_id=ae.minimum_charge_template_id,company=ae.company,legal_entity_type_id=ae.legal_entity_type_id
+from ${db.schema.adapted}account_entity ae where ar_customer_account.id=ae.id and ae.account_type='ACCT_CA'</sql>   
+     
+        <sql>update ${db.schema.adapted}billing_billing_account set version=ae.version,created=ae.created,updated=ae.updated,code=ae.code,description=ae.description,address_1=ae.address_1,address_2=ae.address_2,address_3=ae.address_3,
+address_4=ae.address_4,address_5=ae.address_5,address_city=ae.address_city,address_country_id=ae.address_country_id,address_state=ae.address_state,address_zipcode=ae.address_zipcode,
+default_level=ae.default_level,external_ref_1=ae.external_ref_1,external_ref_2=ae.external_ref_2,firstname=ae.firstname,lastname=ae.lastname,provider_contact=ae.provider_contact,
+creator=ae.creator,updater=ae.updater,title_id=ae.title_id,primary_contact=ae.primary_contact,uuid=ae.uuid,bam_id=ae.bam_id,cf_values=ae.cf_values,
+job_title=ae.job_title,email=ae.email,fax=ae.fax,mobile=ae.mobile,phone=ae.phone,vat_no=ae.vat_no,registration_no=ae.registration_no,minimum_amount_el=ae.minimum_amount_el,
+minimum_label_el=ae.minimum_label_el,minimum_charge_template_id=ae.minimum_charge_template_id,company=ae.company,legal_entity_type_id=ae.legal_entity_type_id
+from ${db.schema.adapted}account_entity ae where billing_billing_account.id=ae.id and ae.account_type='ACCT_BA'</sql>   
+
+        <sql>update ${db.schema.adapted}billing_user_account set version=ae.version,created=ae.created,updated=ae.updated,code=ae.code,description=ae.description,address_1=ae.address_1,address_2=ae.address_2,address_3=ae.address_3,
+address_4=ae.address_4,address_5=ae.address_5,address_city=ae.address_city,address_country_id=ae.address_country_id,address_state=ae.address_state,address_zipcode=ae.address_zipcode,
+default_level=ae.default_level,external_ref_1=ae.external_ref_1,external_ref_2=ae.external_ref_2,firstname=ae.firstname,lastname=ae.lastname,provider_contact=ae.provider_contact,
+creator=ae.creator,updater=ae.updater,title_id=ae.title_id,primary_contact=ae.primary_contact,uuid=ae.uuid,bam_id=ae.bam_id,cf_values=ae.cf_values,
+job_title=ae.job_title,email=ae.email,fax=ae.fax,mobile=ae.mobile,phone=ae.phone,vat_no=ae.vat_no,registration_no=ae.registration_no,minimum_amount_el=ae.minimum_amount_el,
+minimum_label_el=ae.minimum_label_el,minimum_charge_template_id=ae.minimum_charge_template_id,company=ae.company,legal_entity_type_id=ae.legal_entity_type_id
+from ${db.schema.adapted}account_entity ae where billing_user_account.id=ae.id and ae.account_type='ACCT_UA'</sql>     
+
+        <sql>update ${db.schema.adapted}com_contact set version=ae.version,created=ae.created,updated=ae.updated,code=ae.code,description=ae.description,address_1=ae.address_1,address_2=ae.address_2,address_3=ae.address_3,
+address_4=ae.address_4,address_5=ae.address_5,address_city=ae.address_city,address_country_id=ae.address_country_id,address_state=ae.address_state,address_zipcode=ae.address_zipcode,
+default_level=ae.default_level,external_ref_1=ae.external_ref_1,external_ref_2=ae.external_ref_2,firstname=ae.firstname,lastname=ae.lastname,provider_contact=ae.provider_contact,
+creator=ae.creator,updater=ae.updater,title_id=ae.title_id,primary_contact=ae.primary_contact,uuid=ae.uuid,cf_values=ae.cf_values,
+job_title=ae.job_title,email=ae.email,fax=ae.fax,mobile=ae.mobile,phone=ae.phone,vat_no=ae.vat_no,registration_no=ae.registration_no,company=ae.company,legal_entity_type_id=ae.legal_entity_type_id
+from ${db.schema.adapted}account_entity ae where com_contact.id=ae.id and ae.account_type='ACCT_CTACT'</sql>             
+    </changeSet>
+        
+    <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius">
+        
+        <addNotNullConstraint tableName="crm_seller" columnName="created"/>
+        <addNotNullConstraint tableName="crm_seller" columnName="code"/>
+        <addNotNullConstraint tableName="crm_seller" columnName="uuid"/>
+        <addNotNullConstraint tableName="crm_customer" columnName="created"/>
+        <addNotNullConstraint tableName="crm_customer" columnName="code"/>
+        <addNotNullConstraint tableName="crm_customer" columnName="uuid"/>
+        <addNotNullConstraint tableName="ar_customer_account" columnName="created"/>
+        <addNotNullConstraint tableName="ar_customer_account" columnName="code"/>
+        <addNotNullConstraint tableName="ar_customer_account" columnName="uuid"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="created"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="code"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="uuid"/>
+        <addNotNullConstraint tableName="billing_user_account" columnName="created"/>
+        <addNotNullConstraint tableName="billing_user_account" columnName="code"/>
+        <addNotNullConstraint tableName="billing_user_account" columnName="uuid"/>
+        <addNotNullConstraint tableName="com_contact" columnName="created"/>
+        <addNotNullConstraint tableName="com_contact" columnName="code"/>
+        <addNotNullConstraint tableName="com_contact" columnName="uuid"/>
+                 
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="crm_seller" constraintName="fk_seller_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="crm_customer" constraintName="fk_cust_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="ar_customer_account" constraintName="fk_ca_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="billing_billing_account" constraintName="fk_ba_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="billing_user_account" constraintName="fk_ua_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="com_contact" constraintName="fk_com_contact_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+      
+        
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="crm_seller" constraintName="fk_seller_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="crm_customer" constraintName="fk_cust_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="ar_customer_account" constraintName="fk_ca_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="billing_billing_account" constraintName="fk_ba_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="billing_user_account" constraintName="fk_ua_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="com_contact" constraintName="fk_com_contact_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        
+        <addForeignKeyConstraint baseTableName="crm_seller" constraintName="fk_seller_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="crm_customer" constraintName="fk_cust_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="ar_customer_account" constraintName="fk_ca_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_ba_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_user_account" constraintName="fk_ua_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_seller_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_customer" constraintName="fk_cust_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ar_customer_account" constraintName="fk_ca_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="billing_billing_account" constraintName="fk_ba_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="billing_user_account" constraintName="fk_ua_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_contact" constraintName="fk_com_contact_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        
+        
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+        
+        
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="crm_seller"
+            constraintName="fk_seller_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="crm_customer"
+            constraintName="fk_cust_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="ar_customer_account"
+            constraintName="fk_ca_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_billing_account"
+            constraintName="fk_ba_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_user_account"
+            constraintName="fk_ua_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        
+  
+        
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="crm_seller" constraintName="fk_seller_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="crm_customer" constraintName="fk_cust_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="ar_customer_account" constraintName="fk_ca_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="billing_billing_account" constraintName="fk_ba_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="billing_user_account" constraintName="fk_ua_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="com_contact" constraintName="fk_com_contact_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+                
+        <sql>CREATE INDEX crm_seller_ctb_index ON ${db.schema.adapted}crm_seller(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX crm_customer_ctb_index ON ${db.schema.adapted}crm_customer(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_ctb_index ON ${db.schema.adapted}ar_customer_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_ctb_index ON ${db.schema.adapted}billing_billing_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX billing_user_account_ctb_index ON ${db.schema.adapted}billing_user_account(primary_contact, title_id, bam_id)</sql>
+        
+        <dropIndex tableName="crm_customer" indexName="crm_customer_primary_contact_index"/>
+        <dropIndex tableName="ar_customer_account" indexName="ar_customer_account_index"/>
+        <dropIndex tableName="account_entity" indexName="customer_code"/>
+        <dropIndex tableName="billing_user_account" indexName="billing_user_account_index"/>
+        <dropIndex tableName="billing_billing_account" indexName="billing_billing_account_index"/>
+                
+                
+        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
+        <sql>CREATE INDEX crm_customer_bam_id_index ON ${db.schema.adapted}crm_customer(bam_id);</sql>
+        <sql>CREATE INDEX ar_customer_account_bam_id_index ON ${db.schema.adapted}ar_customer_account(bam_id);</sql>
+        <sql>CREATE INDEX billing_billing_account_bam_id_index ON ${db.schema.adapted}billing_billing_account(bam_id);</sql>
+        <sql>CREATE INDEX billing_user_account_bam_id_index ON ${db.schema.adapted}billing_user_account(bam_id);</sql>
+        
+        <sql>CREATE INDEX crm_seller_title_id_index ON ${db.schema.adapted}crm_seller(title_id);</sql>
+        <sql>CREATE INDEX crm_customer_title_id_index ON ${db.schema.adapted}crm_customer(title_id);</sql>
+        <sql>CREATE INDEX ar_customer_account_title_id_index ON ${db.schema.adapted}ar_customer_account(title_id);</sql>
+        <sql>CREATE INDEX billing_billing_account_title_id_index ON ${db.schema.adapted}billing_billing_account(title_id);</sql>
+        <sql>CREATE INDEX billing_user_account_title_id_index ON ${db.schema.adapted}billing_user_account(title_id);</sql>
+        <sql>CREATE INDEX com_contact_title_id_index ON ${db.schema.adapted}com_contact(title_id);</sql>
+        
+        <sql>CREATE INDEX crm_seller_primary_contact_index ON ${db.schema.adapted}crm_seller(primary_contact);</sql>
+        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(primary_contact);</sql>
+        <sql>CREATE INDEX ar_customer_account_primary_contact_index ON ${db.schema.adapted}ar_customer_account(primary_contact);</sql>
+        <sql>CREATE INDEX billing_billing_account_primary_contact_index ON ${db.schema.adapted}billing_billing_account(primary_contact);</sql>
+        <sql>CREATE INDEX billing_user_account_primary_contact_index ON ${db.schema.adapted}billing_user_account(primary_contact);</sql>
+        <sql>CREATE INDEX com_contact_primary_contact_index ON ${db.schema.adapted}com_contact(primary_contact);</sql>
+        
+        <sql>CREATE INDEX crm_customer_cust_category_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
+        
+        <sql>CREATE INDEX seller_code ON ${db.schema.adapted}crm_seller(lower(code));</sql>
+        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}crm_customer(lower(code));</sql>
+        <sql>CREATE INDEX ca_code ON ${db.schema.adapted}ar_customer_account(lower(code));</sql>
+        <sql>CREATE INDEX ba_code ON ${db.schema.adapted}billing_billing_account(lower(code));</sql>
+        <sql>CREATE INDEX ua_code ON ${db.schema.adapted}billing_user_account(lower(code));</sql>
+        <sql>CREATE INDEX com_contact_code ON ${db.schema.adapted}com_contact(lower(code));</sql>
+                
+        <sql>CREATE INDEX seller_upper_code ON ${db.schema.adapted}crm_seller(UPPER(code));</sql>
+        <sql>CREATE INDEX customer_upper_code ON ${db.schema.adapted}crm_customer(UPPER(code));</sql>
+        <sql>CREATE INDEX ca_upper_code ON ${db.schema.adapted}ar_customer_account(UPPER(code));</sql>
+        <sql>CREATE INDEX ba_upper_code ON ${db.schema.adapted}billing_billing_account(UPPER(code));</sql>
+        <sql>CREATE INDEX ua_upper_code ON ${db.schema.adapted}billing_user_account(UPPER(code));</sql>
+        <sql>CREATE INDEX com_contact_upper_code ON ${db.schema.adapted}com_contact(UPPER(code));</sql> 
+        
+        <sql>CREATE INDEX ar_customer_account_credit_cat_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
+        <sql>CREATE INDEX billing_user_account_ba_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_ca_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
+        
+        <dropTable tableName="account_entity" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius">
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[SELECT
+                    TO_CHAR(ao.invoice_date,'MM') AS "Mois",
+                    TO_CHAR(ao.invoice_date,'DD/MM/YYYY') AS "Date facture",
+                    text('HG') AS "Code comptable",
+                    ae.code AS "Client facturé",
+                    text('MAI') AS "Type article",
+                    split_part(bac.code, ',', 6) AS "Famille statistique",
+                    split_part(bac.code, ',', 2) AS "Article",
+                    trim(TO_CHAR(ia.amount_without_tax,'9999990D00')) AS "Montant HT",
+                    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qté facturée",
+                    ao.reference AS "No facture",
+                    ao.occ_description AS "Catégorie facture",
+                    ao.occ_code AS "Type de pièce",
+                    text('VEN') AS "Journal"
+                FROM
+                    ar_customer_account ae
+                INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
+                INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
+                INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = 'F')
+                LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
+                WHERE :START_DATE<>:END_DATE
+                AND ao.invoice_date >= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '-12 month'
+                AND ao.invoice_date <= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '0 month'
+                ORDER BY
+                    ae.code,
+                    occ_code,
+                    split_part(bac.code, ',', 6),
+                    split_part(bac.code, ',', 2)
+                ]]>
+            </column>
+            <where>code='SALES_JOURNAL'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select s.code AS "Seller code"
+    , s.description AS "Seller description"
+    , coalesce(c.code, '') AS "Customer code"
+    , coalesce(replace(c.description, ',', ' '), '') AS "Customer description"
+    , coalesce(ca.code, '') AS "Customer Account code"
+    , coalesce(replace(ca.description, ',', ' '), '') AS "Customer Account description"
+    , coalesce(ba.code, '') AS "Billing Account code"
+    , coalesce(replace(ba.description, ',', ' '), '') AS "Billing Account description"
+    , coalesce(ua.code, '') AS "User Account code"
+    , coalesce(replace(ua.description, ',', ' '), '') AS "User Account description"
+    , coalesce(su.code, '') AS "Subscription code"
+    , coalesce(replace(su.description, ',', ' '), '') AS "Subscription description"
+    , coalesce(ap.acces_user_id, '') AS "Access Point id"  
+from  crm_seller s left
+    OUTER JOIN crm_customer c  on c.seller_id = s.id left
+    OUTER JOIN ar_customer_account ca  on ca.customer_id = c.id left
+    OUTER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id left
+    OUTER JOIN billing_user_account ua  on ua.billing_account_id = ba.id left
+    OUTER JOIN billing_subscription su  on su.user_account_id = ua.id left
+    OUTER JOIN medina_access ap  on ap.subscription_id = su.id 
+where s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' 
+    || :SEARCH_CRITERION || '%'  or c.code ilike '%' || :SEARCH_CRITERION 
+    || '%'  or c.description ilike '%' || :SEARCH_CRITERION || '%'  or ca.code ilike '%' 
+    || :SEARCH_CRITERION || '%'  or ca.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ba.code ilike '%' || :SEARCH_CRITERION || '%'  or ba.description ilike '%' 
+    || :SEARCH_CRITERION || '%'  or ua.code ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ua.description ilike '%' || :SEARCH_CRITERION || '%'  or su.code ilike '%' 
+    || :SEARCH_CRITERION || '%'  or su.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ap.acces_user_id ilike '%' || :SEARCH_CRITERION || '%'  
+order by s.code
+    ,c.code
+    ,ca.code
+    ,ba.code
+    ,ua.code
+    ,su.code
+    ,ap.acces_user_id]]>
+            </column>
+            <where>code='FULL_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select s.code AS "Seller code"
+                            , s.description AS "Seller description"
+                            , coalesce(c.code, '') AS "Customer code"
+                            , coalesce(replace(c.description, ',', ' '), '') AS "Customer description"  
+                    from  crm_seller s left
+                            OUTER JOIN crm_customer c  on c.seller_id = s.id left
+                    where(  s.code ilike '%' || :SEARCH_CRITERION 
+                            || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or c.code ilike '%' 
+                            || :SEARCH_CRITERION || '%'  or c.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+                    and (  s.code ilike '%' || :SELLER || '%'  or s.description ilike '%' || :SELLER || '%'  )  
+                    order by s.code
+                            ,c.code]]>
+            </column>
+            <where>code='CUSTOMERS_PER_SELLER'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+    , s.code AS "Seller code"
+    , s.description AS "Seller description"
+    , c.code AS "Customer code"
+    , c.description AS "Customer description"
+    , ca.code AS "Customer Account code"
+    , ca.description AS "Customer Account description"
+    , ba.code AS "Billing Account code"
+    , ba.description AS "Billing Account description"
+    , it.code AS "Invoice type code"
+    , it.description AS "Invoice type description"
+    , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+    , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from crm_seller s 
+    INNER JOIN crm_customer c  on c.seller_id = s.id
+    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or c.code ilike '%' || :SEARCH_CRITERION || '%'  or c.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ca.code ilike '%' || :SEARCH_CRITERION || '%'  or ca.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ba.code ilike '%' || :SEARCH_CRITERION || '%'  or ba.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  )  group by date_trunc('month', i.invoice_date)
+    , it.code
+    , it.description
+    , s.code
+    , s.description
+    , c.code
+    , c.description
+    , ca.code
+    , ca.description
+    , ba.code
+    , ba.description order by date_trunc('month', i.invoice_date) DESC
+    , it.code DESC
+    , s.code
+    , c.code
+    , ca.code
+    , ba.code]]>
+            </column>
+            <where>code='INVOICED_BA_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+    , ba.code AS "Billing Account code"
+    , ba.description AS "Billing Account description"
+    , it.code AS "Invoice type code"
+    , it.description AS "Invoice type description"
+    , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+    , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from crm_seller s
+    INNER JOIN crm_customer c  on c.seller_id = s.id
+    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  ba.code ilike '%' || :SEARCH_CRITERION || '%'  or ba.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
+    , it.code
+    , it.description
+    , ba.code
+    , ba.description order by date_trunc('month', i.invoice_date) DESC
+    , it.code DESC
+    , ba.code]]>
+            </column>
+            <where>code='INVOICED_BA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+    , ca.code AS "Customer Account code"
+    , ca.description AS "Customer Account description"
+    , it.code AS "Invoice type code"
+    , it.description AS "Invoice type description"
+    , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+    , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from crm_seller s
+    INNER JOIN crm_customer c  on c.seller_id = s.id
+    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  ca.code ilike '%' || :SEARCH_CRITERION || '%'  or ca.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
+    , it.code
+    , it.description
+    , ca.code
+    , ca.description order by date_trunc('month', i.invoice_date) DESC
+    , it.code DESC
+    , ca.code]]>
+            </column>
+            <where>code='INVOICED_CA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+    , c.code AS "Customer code"
+    , c.description AS "Customer description"
+    , it.code AS "Invoice type code"
+    , it.description AS "Invoice type description"
+    , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+    , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from crm_seller s
+    INNER JOIN crm_customer c  on c.seller_id = s.id
+    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  c.code ilike '%' || :SEARCH_CRITERION || '%'  or c.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
+    , it.code
+    , it.description
+    , c.code
+    , c.description order by date_trunc('month', i.invoice_date) DESC
+    , it.code DESC
+    , c.code]]>
+            </column>
+            <where>code='INVOICED_C'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+    ,s.code AS "Seller code"
+    ,s.description AS "Seller description"
+    ,c.code AS "Customer code"
+    ,c.description AS "Customer description"
+    ,ca.code AS "Customer Account code"
+    ,ca.description AS "Customer Account description"
+    ,ba.code AS "Billing Account code"
+    ,ba.description AS "Billing Account description"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount DEBIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'CREDIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount CREDIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE - ao.amount
+                END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+    INNER JOIN crm_customer c ON c.seller_id = s.id
+    INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
+    INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+        AND ao.reference = i.invoice_number
+        AND ao.invoice_date = i.invoice_date
+        AND ao.amount = abs(i.amount_with_tax)
+WHERE ao.invoice_date IS NOT NULL
+    AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+    AND (
+        s.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR s.description ilike '%' || :SEARCH_CRITERION || '%'
+        OR c.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR c.description ilike '%' || :SEARCH_CRITERION || '%'
+        OR ca.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR ca.description ilike '%' || :SEARCH_CRITERION || '%'
+        OR ba.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR ba.description ilike '%' || :SEARCH_CRITERION || '%'
+        )
+GROUP BY date_trunc('month', ao.invoice_date)
+    ,s.code
+    ,s.description
+    ,c.code
+    ,c.description
+    ,ca.code
+    ,ca.description
+    ,ba.code
+    ,ba.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+    ,s.code
+    ,c.code
+    ,ca.code
+    ,ba.code]]>
+            </column>
+            <where>code='RECORDED_BA_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+    ,ba.code AS "Billing Account code"
+    ,ba.description AS "Billing Account description"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount DEBIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'CREDIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount CREDIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE - ao.amount
+                END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+    INNER JOIN crm_customer c ON c.seller_id = s.id
+    INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
+    INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+        AND ao.reference = i.invoice_number
+        AND ao.invoice_date = i.invoice_date
+        AND ao.amount = abs(i.amount_with_tax)
+WHERE ao.invoice_date IS NOT NULL
+    AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+    AND (
+        ba.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR ba.description ilike '%' || :SEARCH_CRITERION || '%'
+        )
+GROUP BY date_trunc('month', ao.invoice_date)
+    ,ba.code
+    ,ba.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+    ,ba.code]]>
+            </column>
+            <where>code='RECORDED_BA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+    ,ca.code AS "Customer Account code"
+    ,ca.description AS "Customer Account description"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount DEBIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'CREDIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount CREDIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE - ao.amount
+                END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+    INNER JOIN crm_customer c ON c.seller_id = s.id
+    INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+    INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+WHERE ao.invoice_date IS NOT NULL
+    AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+    AND (
+        ca.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR ca.description ilike '%' || :SEARCH_CRITERION || '%'
+        )
+GROUP BY date_trunc('month', ao.invoice_date)
+    ,ca.code
+    ,ca.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+    ,ca.code]]>
+            </column>
+            <where>code='RECORDED_CA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+    ,c.code AS "Customer code"
+    ,c.description AS "Customer description"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount DEBIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'CREDIT'
+                    THEN ao.amount
+                ELSE 0
+                END), '99999999990.00') AS "Amount CREDIT"
+    ,to_char(sum(CASE 
+                WHEN ao.transaction_category = 'DEBIT'
+                    THEN ao.amount
+                ELSE - ao.amount
+                END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+    INNER JOIN crm_customer c ON c.seller_id = s.id
+    INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+    INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+WHERE ao.invoice_date IS NOT NULL
+    AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+    AND (
+        c.code ilike '%' || :SEARCH_CRITERION || '%'
+        OR c.description ilike '%' || :SEARCH_CRITERION || '%'
+        )
+GROUP BY date_trunc('month', ao.invoice_date)
+    ,c.code
+    ,c.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+    ,c.code]]>
+            </column>
+            <where>code='RECORDED_C'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select s.code AS "Seller code"
+                    , s.description AS "Seller description"
+                    , c.code AS "Customer code"
+                    , c.description AS "Customer description"
+                    , ca.code AS "Customer Account code"
+                    , ca.description AS "Customer Account description"
+                    , ba.code AS "Billing Account code"
+                    , ba.description AS "Billing Account description"
+                    , ua.code AS "User Account code"
+                    , ua.description AS "User Account description"
+                    , count(DISTINCT wo.id) AS "Transaction count"
+                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+                from  billing_wallet_operation wo 
+                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
+                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
+                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+                    INNER JOIN crm_customer c  on c.id = ca.customer_id 
+                    INNER JOIN crm_seller s  on s.id = c.seller_id 
+                where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+                    and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+                and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or c.code ilike '%' 
+                    || :SEARCH_CRITERION || '%'  or c.description ilike '%' || :SEARCH_CRITERION || '%'  or ca.code ilike '%' 
+                    || :SEARCH_CRITERION || '%'  or ca.description ilike '%' || :SEARCH_CRITERION || '%'  or ba.code ilike '%' 
+                    || :SEARCH_CRITERION || '%'  or ba.description ilike '%' || :SEARCH_CRITERION || '%'  or ua.code ilike '%' 
+                    || :SEARCH_CRITERION || '%'  or ua.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+                group by s.code
+                    , s.description
+                    , c.code
+                    , c.description
+                    , ca.code
+                    , ca.description
+                    , ba.code
+                    , ba.description
+                    , ua.code
+                    , ua.description order by s.code
+                    , c.code
+                    , ca.code
+                    , ba.code
+                    , ua.code
+                ]]>
+            </column>
+            <where>code='UNBILLED_UA_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select ua.code AS "User Account code"
+                    , ua.description AS "User Account description"
+                    , count(DISTINCT wo.id) AS "Transaction count"
+                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+                from  billing_wallet_operation wo 
+                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
+                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
+                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+                    INNER JOIN crm_customer c  on c.id = ca.customer_id 
+                    INNER JOIN crm_seller s  on s.id = c.seller_id 
+                where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   
+                    and EXISTS (   select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id   
+                and rt.STATUS = 'OPEN'   )  )  )  and(  ua.code ilike '%' || :SEARCH_CRITERION || '%'  or ua.description ilike '%' 
+                    || :SEARCH_CRITERION || '%'  )  
+                group by ua.code
+                    , ua.description 
+                order by ua.code
+                ]]>
+            </column>
+            <where>code='UNBILLED_UA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select ba.code AS "Billing Account code"
+                    , ba.description AS "Billing Account description"
+                    , count(DISTINCT wo.id) AS "Transaction count"
+                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+                from  billing_wallet_operation wo
+                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
+                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
+                    INNER JOIN crm_customer c  on c.id = ca.customer_id
+                    INNER JOIN crm_seller s  on s.id = c.seller_id 
+                where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+                    and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+                    and(  ba.code ilike '%' || :SEARCH_CRITERION || '%'  or ba.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+                group by ba.code, ba.description 
+                order by ba.code
+                ]]>
+            </column>
+            <where>code='UNBILLED_BA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select ca.code AS "Customer Account code"
+                    , ca.description AS "Customer Account description"
+                    , count(DISTINCT wo.id) AS "Transaction count"
+                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+                from  billing_wallet_operation wo
+                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
+                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
+                    INNER JOIN crm_customer c  on c.id = ca.customer_id
+                    INNER JOIN crm_seller s  on s.id = c.seller_id 
+                where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+                    and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+                and(  ca.code ilike '%' || :SEARCH_CRITERION || '%'  or ca.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+                group by ca.code, ca.description 
+                order by ca.code
+                ]]>
+            </column>
+            <where>code='UNBILLED_CA'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select c.code AS "Customer code"
+                    , c.description AS "Customer description"
+                    , count(DISTINCT wo.id) AS "Transaction count"
+                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+                from  billing_wallet_operation wo
+                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+                    INNER JOIN crm_customer c  on c.id = ca.customer_id 
+                    INNER JOIN crm_seller s  on s.id = c.seller_id 
+                where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   
+                    and EXISTS (   select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN'   )  )  )  
+                and(  c.code ilike '%' || :SEARCH_CRITERION || '%'  or c.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+                group by c.code, c.description 
+                order by c.code
+                ]]>
+            </column>
+            <where>code='UNBILLED_C'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query">
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+    , to_char(i.invoice_date, 'YYYY-MM-DD') AS "Invoice date"
+    , i.invoice_number AS "Invoice number"
+    , to_char(i.amount_without_tax, '9999999990.00') AS "Amount without tax"
+    , to_char(i.amount_with_tax, '9999999990.00') AS "Amount with tax"
+    , it.code AS "Invoice type code"
+    , it.description AS "Invoice type description"
+    , s.code AS "Seller code"
+    , s.description AS "Seller description"
+    , c.code AS "Customer code"
+    , c.description AS "Customer description"
+    , ca.code AS "Customer Account code"
+    , ca.description AS "Customer Account description"
+    , ba.code AS "Billing Account code"
+    , ba.description AS "Billing Account description"  
+from crm_seller s
+    INNER JOIN crm_customer c  on c.seller_id = s.id
+    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or c.code ilike '%' || :SEARCH_CRITERION || '%'  or c.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ca.code ilike '%' || :SEARCH_CRITERION || '%'  or ca.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  or ba.code ilike '%' || :SEARCH_CRITERION || '%'  or ba.description ilike '%' || :SEARCH_CRITERION 
+    || '%'  )  
+order by date_trunc('month', i.invoice_date) DESC
+    , i.invoice_date DESC
+    , it.code
+    , i.invoice_number]]>
+            </column>
+            <where>code='INVOICES'</where>
+        </update>
+    </changeSet>
+    
+    
+    
 </databaseChangeLog>

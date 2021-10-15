@@ -24,9 +24,6 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -98,15 +95,15 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	 * @return Edit page url.
 	 */
 	public String getView(String type) {
-		if (type.equals(Customer.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.CUSTOMER_KEY)) {
 			return "/pages/crm/customers/customerDetail.xhtml";
-		} else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+		} else if (type.equals(CustomerTreeBean.CUSTOMER_ACCOUNT_KEY)) {
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
 		}
-		if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.BILLING_ACCOUNT_KEY)) {
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml";
 		}
-		if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.USER_ACCOUNT_KEY)) {
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml";
 		} else {
 			return "/pages/crm/customers/customerDetail.xhtml";
@@ -116,16 +113,16 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	}
 
 	public String getIdParameterName(String type) {
-		if (type.equals(Customer.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.CUSTOMER_KEY)) {
 			return "customerId";
 		}
-		if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.CUSTOMER_ACCOUNT_KEY)) {
 			return "customerAccountId";
 		}
-		if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.BILLING_ACCOUNT_KEY)) {
 			return "billingAccountId";
 		}
-		if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+		if (type.equals(CustomerTreeBean.USER_ACCOUNT_KEY)) {
 			return "userAccountId";
 		}
 		return "customerId";

@@ -33,25 +33,20 @@ declare
 	var_max_ae_id integer := 1;
     var_schema_name varchar := 'public';
     var_rec record;
-	var_seller_end_id integer := null;
 	var_first_customer_id integer := null;
 
 BEGIN
 	for var_rec IN (
-		SELECT table_name FROM information_schema.tables WHERE table_schema = var_schema_name and table_type='BASE_TABLE'
+		SELECT table_name FROM information_schema.tables WHERE table_schema = var_schema_name and table_type='BASE TABLE'
 	
 	)  LOOP
 	       EXECUTE format ('ALTER TABLE %I DISABLE TRIGGER ALL',var_rec.table_name );
 	
 	  END LOOP;
 
-	create sequence IF NOT EXISTS perf_parent_entity_seq;
-	create sequence IF NOT EXISTS perf_parent_entity2_seq;
-	create sequence IF NOT EXISTS perf_account_seq;
-	create sequence IF NOT EXISTS perf_account2_seq;
 
     IF param_step_to_run IS NULL THEN
-	 	update billing_invoice set recorded_invoice_id = null;
+	 	--update billing_invoice set recorded_invoice_id = null;
 		delete from ar_account_operation;
 		delete from billing_rated_transaction;
 		delete from billing_invoice_agregate;
@@ -64,14 +59,13 @@ BEGIN
 		delete from rating_cdr;
 		delete from rating_edr;
 		delete from billing_subscription;
-		update billing_user_account set wallet_id=null;
+		--update billing_user_account set wallet_id=null;
 		delete from billing_wallet;
 		delete from billing_user_account;
 		delete from billing_billing_account ;
 		delete from ar_payment_token;
 		delete from ar_customer_account;
 		delete from crm_customer;	
-		delete from account_entity where account_type!='ACCT_S';
 		delete from job_execution;
 		delete from billing_billing_run;
 		delete from audit_log;
@@ -98,89 +92,66 @@ BEGIN
 
 	-- select max(id) into var_invoice_subcat_id from billing_invoice_sub_cat;
 	select id into var_rec_cal_id from cat_calendar where code='CAL_MONTHLY_1ST';
-	select max(id) into var_seller_end_id from account_entity;
 
     
-    -- "ACCT_CUST"
+    -- "Customer"
     
 	IF param_step_to_run IS NULL or lower(param_step_to_run) ='customer' THEN
 
 		select ceil(log(2,param_max_customers)) into var_customer_iterations;
 	
-		INSERT INTO account_entity(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, account_type, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id)
-		(select nextval('account_entity_seq'),0,now(),null,'cust_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,'firstname_'||currval('account_entity_seq'),'lastname_'||currval('account_entity_seq'),null,null,null,var_title_id,null,'ACCT_CUST','cust_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null);
+		INSERT INTO crm_customer(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, customer_brand_id, customer_category_id, seller_id, additional_details_id, address_book_id,minimum_target_account_id,invoicing_threshold, check_threshold,threshold_per_entity)
+		(select nextval('account_entity_seq'),0,now(),null,'cust_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,'firstname_'||currval('account_entity_seq'),'lastname_'||currval('account_entity_seq'),null,null,null,var_title_id,null,'cust_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null,var_customer_brand_id, var_customer_category_id, var_seller_id, null, null, null, null, null, 0);
 
-                select currval('account_entity_seq') into var_first_customer_id;	   
+        select currval('account_entity_seq') into var_first_customer_id;	   
 
 		while counter < var_customer_iterations loop
-	            INSERT INTO account_entity(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, account_type, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id)
-                        (select nextval('account_entity_seq'),0,now(),null,'cust_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,'firstname_'||currval('account_entity_seq'),'lastname_'||currval('account_entity_seq'),null,null,null,var_title_id,null,'ACCT_CUST','cust_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null from account_entity where id>var_seller_end_id);
+	            INSERT INTO crm_customer(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, customer_brand_id, customer_category_id, seller_id, additional_details_id, address_book_id,minimum_target_account_id,invoicing_threshold, check_threshold,threshold_per_entity)
+                        (select nextval('account_entity_seq'),0,now(),null,'cust_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,'firstname_'||currval('account_entity_seq'),'lastname_'||currval('account_entity_seq'),null,null,null,var_title_id,null,'cust_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null,var_customer_brand_id, var_customer_category_id, var_seller_id, null, null, null, null, null, 0 from crm_customer);
 	        
 	            counter := counter + 1;
 		end loop;     
 	
 		-- Remove customers exceeding the number needed
-	    --select max(ae.id) into var_max_ae_id from (select id from account_entity order by id limit param_max_customers) ae;
-	    delete from account_entity where id >= (var_first_customer_id + param_max_customers);
-	    
-		INSERT INTO crm_customer
-		(id, customer_brand_id, customer_category_id, seller_id, additional_details_id, address_book_id,minimum_target_account_id,invoicing_threshold, check_threshold,threshold_per_entity)
-		select ae.id, var_customer_brand_id, var_customer_category_id, var_seller_id, null, null, null, null, null, 0 from account_entity ae where ae.id>var_seller_end_id;
-	
+	    delete from crm_customer where id >= (var_first_customer_id + param_max_customers);
+	  
 	END IF;
 
-	select setval('account_entity_seq', (select max(id)+1 from account_entity), false) into var_foo;
+	select setval('account_entity_seq', (select max(id)+1 from crm_customer), false) into var_foo;
 
-	-- "ACCT_CA"
+	-- "Customer account"
 
 	IF param_step_to_run IS NULL or lower(param_step_to_run) ='ca' THEN
+		
+		INSERT INTO ar_customer_account(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, date_dunning_level, date_status, dunning_level, pswd, status, customer_id, trading_currency_id, trading_language_id, credit_category_id, due_date_delay_el, excluded_from_payment, crm_address_book_id, minimum_target_account_id, invoicing_threshold, check_threshold, threshold_per_entity) 
+		(select nextval('account_entity_seq'),0,now(),null,'ca_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,'firstname_'||currval('account_entity_seq'),'lastname_'||currval('account_entity_seq'),null,null,null,var_title_id,null,'ca_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null,NOW(),NOW(),'R0','password','ACTIVE',id,var_trading_currency_id,var_trading_language_id,null,null,0,null,null,null,null,0 from crm_customer);
 	
-		select setval('perf_account_seq', (select max(id)+1 from account_entity), false) into var_foo;
-		select setval('perf_parent_entity_seq', (select min(id) from crm_customer), false) into var_foo;
-	
-		INSERT INTO account_entity(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, account_type, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id) 
-		(select nextval('account_entity_seq'),0,now(),null,'ca_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,'firstname_'||currval('account_entity_seq'),'lastname_'||currval('account_entity_seq'),null,null,null,var_title_id,null,'ACCT_CA','ca_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null from crm_customer);
-	
-		INSERT INTO ar_customer_account(id, date_dunning_level, date_status, dunning_level, pswd, status, customer_id, trading_currency_id, trading_language_id, credit_category_id, due_date_delay_el, excluded_from_payment, crm_address_book_id, minimum_target_account_id, invoicing_threshold, check_threshold, threshold_per_entity)
-		(select nextval('perf_account_seq'),NOW(),NOW(),'R0','password','ACTIVE',nextval('perf_parent_entity_seq'),var_trading_currency_id,var_trading_language_id,null,null,0,null,null,null,null,0 from crm_customer);
-	
-	    	INSERT INTO ar_payment_token (id, version, created, updated, disabled, alias, is_default, bank_name, bank_code ,account_number,iban, bic,mandate_date,mandate_identification, customer_account_id, token_type)
+	  	INSERT INTO ar_payment_token (id, version, created, updated, disabled, alias, is_default, bank_name, bank_code ,account_number,iban, bic,mandate_date,mandate_identification, customer_account_id, token_type)
 		(select nextval('ar_payment_token_seq'), 0, now(), now(), 0, 'SEPA', 1,'Some Bank','12456','...','FR123456789123456789','BDNFR123456',TO_DATE('2020-01-10','YYYY-MM-DD'),'G', ca.id, 'DIRECTDEBIT' from ar_customer_account ca); 
 
 	END IF;
 
-	-- "ACCT_BA"
+	-- "Billing account"
 	
 	IF param_step_to_run IS NULL or lower(param_step_to_run) ='ba' THEN
-		
-		select setval('perf_account_seq', (select max(id)+1 from account_entity), false) into var_foo;
-		select setval('perf_parent_entity_seq', (select min(id) from ar_customer_account), false) into var_foo;
-	
-		INSERT INTO account_entity(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, account_type, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id) 	(select nextval('account_entity_seq'),0,now(),null,'ba_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,'ACCT_BA','ba_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null from crm_customer);
-	
-		INSERT INTO billing_billing_account(id, br_amount_with_tax, br_amount_without_tax, discount_rate, electronic_billing, invoice_prefix, next_invoice_date, status, status_date, subscription_date, termination_date, billing_cycle, billing_run, customer_account_id, termin_reason_id, trading_country_id, trading_language_id, invoicing_threshold, mailing_type, cced_emails, email_template_id, minimum_invoice_sub_category_id, tax_category_id, check_threshold, payment_method_id, threshold_per_entity) 
-		(select nextval('perf_account_seq'), null, null, null, 0, 'test', now() ,'ACTIVE', NOW(), TO_DATE('2021-03-01','YYYY-MM-DD'), null, var_bc_id, null, nextval('perf_parent_entity_seq'), null, var_trading_country_id, var_trading_language_id, null, null, null, null, null, var_tax_cat_id, null, null, 0 from crm_customer);
+			
+		INSERT INTO billing_billing_account(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, br_amount_with_tax, br_amount_without_tax, discount_rate, electronic_billing, invoice_prefix, next_invoice_date, status, status_date, subscription_date, termination_date, billing_cycle, billing_run, customer_account_id, termin_reason_id, trading_country_id, trading_language_id, invoicing_threshold, mailing_type, cced_emails, email_template_id, minimum_invoice_sub_category_id, tax_category_id, check_threshold, payment_method_id, threshold_per_entity) 	
+		(select nextval('account_entity_seq'),0,now(),null,'ba_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,'ba_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, 0, 'test', now() ,'ACTIVE', NOW(), TO_DATE('2021-03-01','YYYY-MM-DD'), null, var_bc_id, null, id, null, var_trading_country_id, var_trading_language_id, null, null, null, null, null, var_tax_cat_id, null, null, 0 from ar_customer_account);
 
 	END IF;
 
-	-- "ACCT_UA"
+	-- "User account"
 	
 	IF param_step_to_run IS NULL or lower(param_step_to_run) ='ua' THEN
+			
 		
-		select setval('perf_account_seq', (select max(id)+1 from account_entity), false) into var_foo;
-		select setval('perf_account2_seq', (select max(id)+1 from account_entity), false) into var_foo;
-		select setval('perf_parent_entity_seq', (select min(id) from billing_billing_account), false) into var_foo;
-	
-		INSERT INTO account_entity(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, account_type, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id) 
-		(select nextval('account_entity_seq'),0,now(),null,'ua_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,'ACCT_UA','ua_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null from crm_customer);
-	
-		INSERT INTO billing_user_account(id,status, status_date, subscription_date, termination_date, billing_account_id, termin_reason_id, wallet_id)
-		  (select  nextval('perf_account_seq'), 'ACTIVE', NOW(), NOW(), null, nextval('perf_parent_entity_seq'), null, null from crm_customer);
-	
+		INSERT INTO billing_user_account(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, status, status_date, subscription_date, termination_date, billing_account_id, termin_reason_id, wallet_id) 
+		(select nextval('account_entity_seq'),0,now(),null,'ua_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,'ua_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null, 'ACTIVE', NOW(), NOW(), null, id, null, currval('account_entity_seq') from billing_billing_account);
+		
 		INSERT INTO billing_wallet(id,version,created, updated, code, description,user_account_id)
-			(select nextval('perf_account2_seq'), 0, now(), now(), 'PRINCIPAL',null, currval('perf_account2_seq') from crm_customer);
+			(select id, 0, now(), now(), 'PRINCIPAL',null, id from billing_user_account);
 	
-		update 	billing_user_account set wallet_id=id;
+		select setval('account_entity_seq', (select max(id)+1 from billing_wallet), false) into var_foo;
 
 	END IF;
 	
@@ -208,9 +179,7 @@ BEGIN
 	-- For subscription charge:
 
 	IF param_step_to_run IS NULL or lower(param_step_to_run) ='subscription_charge' THEN
-	
-		select setval('perf_parent_entity_seq', (select min(id) from BILLING_SERVICE_INSTANCE), false) into var_foo;
-	
+		
 		INSERT INTO BILLING_CHARGE_INSTANCE(id, version, created, code, description,  is_prepaid, status, status_date, charge_template_id, trading_country, trading_currency, seller_id, subscription_id, user_account_id, charge_type, quantity, service_instance_id, uuid, calendar_id, apply_in_advance, subscription_date, charge_date, next_charge_date, charged_to_date, priority)
 		(select nextval('billing_charge_instance_seq'), 0, NOW(), 'CH_OSS', null,  0, 'CLOSED', NOW(), var_oss_charge_id,var_trading_country_id, var_trading_currency_id,var_seller_id,sub.id, sub.user_account_id,'S', 2,  serv.id, 'ch_'||currval('billing_charge_instance_seq'), null, 1,sub.subscription_date, sub.subscription_date, null, null, 1 from BILLING_SERVICE_INSTANCE serv join billing_subscription sub on serv.subscription_id=sub.id);
 	
@@ -258,7 +227,7 @@ BEGIN
 
 
 	for var_rec IN (
-		SELECT table_name FROM information_schema.tables WHERE table_schema = var_schema_name and table_type='BASE_TABLE'
+		SELECT table_name FROM information_schema.tables WHERE table_schema = var_schema_name and table_type='BASE TABLE'
 	
 	)  LOOP
 	       EXECUTE format ('ALTER TABLE %I ENABLE TRIGGER ALL',var_rec.table_name );

@@ -2166,13 +2166,12 @@ public class ValidateBRScript extends Script {
 				    ao.code AS "Type de pièce",
 				    text('VEN') AS "Journal"
 				FROM
-				    account_entity ae
+				    ar_customer_account ae
 				INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
 				INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
 				INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = 'F')
 				LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
 				WHERE :START_DATE<>:END_DATE
-				AND ae.account_type = 'ACCT_CA'
 				AND ao.invoice_date >= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '-12 month'
 				AND ao.invoice_date <= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '0 month'
 				ORDER BY

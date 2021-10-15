@@ -94,8 +94,6 @@ import org.meveo.model.intcrm.AddressBook;
 })
 public class CustomerAccount extends AccountEntity implements IWFEntity, ICounterEntity {
 
-	public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
-
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -171,7 +169,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	private Date dateDunningLevel;
 
 	/**
-	 * Parent cusg
+	 * Parent customer
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = false)
@@ -256,12 +254,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@Column(name = "threshold_per_entity")
 	private boolean thresholdPerEntity;
 
-    /**
-     * Corresponding to minimum invoice AccountingArticle
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "minimum_article_id")
-    private AccountingArticle minimumArticle;
 
 	@Transient
 	private String dueBalance;
@@ -279,10 +271,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 		if (cfAccumulatedValues != null) {
 			cfAccumulatedValues.setEncrypted(true);
 		}
-	}
-
-	public CustomerAccount() {
-		accountType = ACCOUNT_TYPE;
 	}
 
 	public boolean isThresholdPerEntity() {
@@ -788,12 +776,4 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	public String getDueBalance() {
 		return dueBalance;
 	}
-
-    public AccountingArticle getMinimumArticle() {
-        return minimumArticle;
-    }
-
-    public void setMinimumArticle(AccountingArticle minimumArticle) {
-        this.minimumArticle = minimumArticle;
-    }
 }

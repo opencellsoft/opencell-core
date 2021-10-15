@@ -18,7 +18,6 @@
 package org.meveo.model;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -34,6 +33,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
@@ -51,11 +51,10 @@ import org.meveo.model.shared.Title;
  */
 @Entity
 @ObservableEntity
-@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type" }))
+@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "account_entity_seq"), })
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "account_type") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @EntityListeners({ AccountCodeGenerationListener.class })
 public abstract class AccountEntity extends BusinessCFEntity {
 
@@ -111,13 +110,6 @@ public abstract class AccountEntity extends BusinessCFEntity {
     protected ProviderContact primaryContact;
 
     /**
-     * Account type
-     */
-    @Column(name = "account_type", insertable = true, updatable = false, length = 10)
-    @Size(max = 10)
-    protected String accountType;
-
-    /**
      * Business account model that created this account
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -166,6 +158,13 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_charge_template_id")
     private OneShotChargeTemplate minimumChargeTemplate;
+    
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
     
     @Column(name = "company")
     @Type(type = "numeric_boolean")
@@ -231,10 +230,6 @@ public abstract class AccountEntity extends BusinessCFEntity {
 
     public void setPrimaryContact(ProviderContact primaryContact) {
         this.primaryContact = primaryContact;
-    }
-
-    public String getAccountType() {
-        return accountType;
     }
 
     public BusinessAccountModel getBusinessAccountModel() {
@@ -351,6 +346,13 @@ public abstract class AccountEntity extends BusinessCFEntity {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
+    }
 
 	/**
 	 * @return the isCompany
@@ -380,5 +382,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
 		this.legalEntityType = legalEntityType;
 	}
 
-
+    public String getAccountType() {
+        return this.getClass().getSimpleName();
+    }
 }

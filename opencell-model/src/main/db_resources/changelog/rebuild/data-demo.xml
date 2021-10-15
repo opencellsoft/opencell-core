@@ -1457,46 +1457,34 @@
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-sellerDEMO">
-        <insert tableName="account_entity">
+        <insert tableName="crm_seller">
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="MAIN_SELLER" />
             <column name="description" value="Demo Distributor" />
-            <column name="account_type" value="ACCT_S" />
             <column name="uuid" value="MAIN_SELLER" />
-        </insert>
-        <insert tableName="crm_seller">
-            <column name="id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
         </insert>
-        <insert tableName="account_entity">
+        <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.934" />
             <column name="code" value="SELLER_US" />
             <column name="description" value="US Seller" />
-            <column name="account_type" value="ACCT_S" />
             <column name="uuid" value="SELLER_US" />
-        </insert>
-        <insert tableName="crm_seller">
-            <column name="id" valueNumeric="-2" />
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
         </insert>
-        <insert tableName="account_entity">
+        <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.955" />
             <column name="code" value="SELLER_FR" />
             <column name="description" value="France Seller" />
-            <column name="account_type" value="ACCT_S" />
             <column name="uuid" value="SELLER_FR" />
-        </insert>
-        <insert tableName="crm_seller">
-            <column name="id" valueNumeric="-3" />
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />

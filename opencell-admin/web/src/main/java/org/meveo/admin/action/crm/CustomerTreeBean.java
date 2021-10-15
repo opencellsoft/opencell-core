@@ -27,7 +27,6 @@ import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BaseEntity;
@@ -58,8 +57,13 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
-    private static final String SUBSCRIPTION_KEY = "subscription";
-    private static final String ACCESS_KEY = "access";
+    protected static final String SELLER_KEY = "Seller";
+    protected static final String CUSTOMER_KEY = "Customer";
+    protected static final String CUSTOMER_ACCOUNT_KEY = "CustomerAccount";
+    protected static final String BILLING_ACCOUNT_KEY = "BillingAccount";
+    protected static final String USER_ACCOUNT_KEY = "UserAccount";
+    protected static final String SUBSCRIPTION_KEY = "subscription";
+    protected static final String ACCESS_KEY = "access";
 
     private static final long serialVersionUID = 1L;
 
@@ -465,19 +469,19 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     }
 
     public String getIcon(String type) {
-        if (type.equals(Customer.ACCOUNT_TYPE)) {
+        if (type.equals(CUSTOMER_KEY)) {
             return "/img/customer-icon.png";
         }
 
-        if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+        if (type.equals(CUSTOMER_ACCOUNT_KEY)) {
             return "/img/customerAccount-icon.png";
         }
 
-        if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+        if (type.equals(BILLING_ACCOUNT_KEY)) {
             return "/img/billingAccount-icon.png";
         }
 
-        if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+        if (type.equals(USER_ACCOUNT_KEY)) {
             return "/img/userAccount-icon.png";
         }
 
@@ -613,7 +617,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
                 } else {
                     this.code = ((Customer) entity).getDescriptionOrCode();
-                    this.type = Customer.ACCOUNT_TYPE;
+                    this.type = CUSTOMER_KEY;
                 }
 
             } else if (entity instanceof CustomerAccount) {
@@ -627,7 +631,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
                     this.firstName = (name != null && name.getFirstName() != null) ? name.getFirstName() : "";
                     this.lastName = (name != null && name.getLastName() != null) ? name.getLastName() : "";
                     this.currency = ((CustomerAccount) entity).getTradingCurrency().getCurrencyCode();
-                    this.type = CustomerAccount.ACCOUNT_TYPE;
+                    this.type = CUSTOMER_ACCOUNT_KEY;
                 }
 
             } else if (entity instanceof BillingAccount) {
@@ -641,7 +645,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
                     this.code = ((BillingAccount) entity).getDescriptionOrCode();
                     this.firstName = (name != null && name.getFirstName() != null) ? name.getFirstName() : "";
                     this.lastName = (name != null && name.getLastName() != null) ? name.getLastName() : "";
-                    this.type = BillingAccount.ACCOUNT_TYPE;
+                    this.type = BILLING_ACCOUNT_KEY;
                 }
 
             } else if (entity instanceof UserAccount) {
@@ -655,7 +659,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
                     this.code = ((UserAccount) entity).getDescriptionOrCode();
                     this.firstName = (name != null && name.getFirstName() != null) ? name.getFirstName() : "";
                     this.lastName = (name != null && name.getLastName() != null) ? name.getLastName() : "";
-                    this.type = UserAccount.ACCOUNT_TYPE;
+                    this.type = USER_ACCOUNT_KEY;
                 }
 
             } else if (entity instanceof Subscription) {
@@ -749,13 +753,13 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
          * @return Edit page url.
          */
         public String getView() {
-            if (type.equals(Customer.ACCOUNT_TYPE)) {
+            if (type.equals(CUSTOMER_KEY)) {
                 return "customerDetail";
-            } else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+            } else if (type.equals(CUSTOMER_ACCOUNT_KEY)) {
                 return "customerAccountDetail";
-            } else if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+            } else if (type.equals(BILLING_ACCOUNT_KEY)) {
                 return "billingAccountDetail";
-            } else if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+            } else if (type.equals(USER_ACCOUNT_KEY)) {
                 return "userAccountDetail";
             } else if (type.equals(SUBSCRIPTION_KEY)) {
                 return "subscriptionDetail";

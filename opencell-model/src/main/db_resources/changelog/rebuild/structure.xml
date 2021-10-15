@@ -1422,62 +1422,6 @@
 
     <!-- start tables -->
 
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-114">
-        <createTable tableName="account_entity">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="account_entity_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="address_1" type="varchar(255)" />
-            <column name="address_2" type="varchar(255)" />
-            <column name="address_3" type="varchar(255)" />
-            <column name="address_4" type="varchar(255)" />
-            <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
-            <column name="address_country_id" type="bigint" />
-            <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
-            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="external_ref_1" type="varchar(255)" />
-            <column name="external_ref_2" type="varchar(255)" />
-            <column name="firstname" type="varchar(100)" />
-            <column name="lastname" type="varchar(100)" />
-            <column name="provider_contact" type="varchar(255)" />
-
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="title_id" type="bigint" />
-            <column name="primary_contact" type="bigint" />
-            <column name="account_type" type="varchar(10)">
-                <constraints nullable="false" />
-            </column>
-            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
-                <constraints nullable="false" />
-            </column>
-            <column name="bam_id" type="bigint" />
-            <column name="cf_values" type="${type.json}" />
-            <column name="job_title" type="varchar(255)" />
-            <column name="email" type="varchar(2000)" />
-            <column name="fax" type="varchar(50)" />
-            <column name="mobile" type="varchar(100)" />
-            <column name="phone" type="varchar(100)" />
-            <column name="vat_no" type="varchar(100)" />
-            <column name="registration_no" type="varchar(100)" />
-            <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_label_el" type="varchar(2000)" />
-            <column name="minimum_charge_template_id" type="bigint" />
-            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />
-        </createTable>
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-115">
         <createTable tableName="adm_country">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -2110,6 +2054,52 @@
             <column name="check_threshold" type="varchar(25)"/>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
+                        
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />     
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-150">
@@ -2440,6 +2430,52 @@
             </column>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
+                        
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />     
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -3497,6 +3533,52 @@
             <column name="termin_reason_id" type="bigint" />
             <column name="wallet_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
+            
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />     
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-201">
@@ -4406,7 +4488,7 @@
             <column name="assistant_name" type="varchar(50)" />
             <column name="assistant_phone" type="varchar(15)" />
             <column name="position" type="varchar(200)" />
-            <column name="company" type="varchar(200)" />
+            <column name="company_name" type="varchar(200)" />
             <column name="phone" type="varchar(50)" />
             <column name="mobile" type="varchar(50)" />
             <column name="imported_from" type="varchar(50)" />
@@ -4417,6 +4499,45 @@
             <column name="website_url" type="varchar(255)" />
             <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="address_book_id" type="bigint" />
+            
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />     
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -4717,6 +4838,52 @@
             <column name="check_threshold" type="varchar(25)"/>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
+            
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />            
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -4943,6 +5110,52 @@
             <column name="legal_text" type="${type.text}" />
             <column name="legal_type" type="varchar(255)" />
             <column name="general_ledger_id" type="bigint" />
+            
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="address_1" type="varchar(255)" />
+            <column name="address_2" type="varchar(255)" />
+            <column name="address_3" type="varchar(255)" />
+            <column name="address_4" type="varchar(255)" />
+            <column name="address_5" type="varchar(255)" />
+            <column name="address_city" type="varchar(50)" />
+            <column name="address_country_id" type="bigint" />
+            <column name="address_state" type="varchar(50)" />
+            <column name="address_zipcode" type="varchar(10)" />
+            <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+            <column name="provider_contact" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="title_id" type="bigint" />
+            <column name="primary_contact" type="bigint" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bam_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="job_title" type="varchar(255)" />
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(100)" />
+            <column name="phone" type="varchar(100)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="legal_entity_type_id" type="bigint" />          
+            <column name="minimum_article_id" type="bigint" />  
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -10349,7 +10562,11 @@
     </changeSet>
     
      <changeSet id="rebuild-str-tbl-500" author="AndriusKarpavicius" dbms="oracle">
-        <sql>alter table ACCOUNT_ENTITY modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CRM_SELLER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table CRM_CUSTOMER modify cf_values check (cf_values is json)</sql>
+        <sql>alter table AR_CUSTOMER_ACCOUNT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_BILLING_ACCOUNT modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_USER_ACCOUNT modify cf_values check (cf_values is json)</sql>
         <sql>alter table ADM_NOTIFICATION modify cf_values check (cf_values is json)</sql>
         <sql>alter table ADM_ROLE modify cf_values check (cf_values is json)</sql>
         <sql>alter table ADM_USER modify cf_values check (cf_values is json)</sql>
@@ -10582,7 +10799,11 @@
         <addUniqueConstraint columnNames="users_id" constraintName="uk_mp4h7biod5wtjo1x3yp80q3um" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_notif_email_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-458">
-        <addUniqueConstraint columnNames="code, account_type" tableName="account_entity" constraintName="uk_account_entity" />
+        <addUniqueConstraint columnNames="code" tableName="crm_seller" constraintName="uk_crm_seller" />
+        <addUniqueConstraint columnNames="code" tableName="crm_customer" constraintName="uk_crm_customer" />
+        <addUniqueConstraint columnNames="code" tableName="ar_customer_account" constraintName="uk_ar_customer_account" />
+        <addUniqueConstraint columnNames="code" tableName="billing_billing_account" constraintName="uk_billing_billing_account" />
+        <addUniqueConstraint columnNames="code" tableName="billing_user_account" constraintName="uk_billing_user_account" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-459">
         <addUniqueConstraint columnNames="code" constraintName="uk_my3lp1lx5r0jeftgekg48nf89" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_calendar" />
@@ -10810,7 +11031,17 @@
     <!-- start fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-477">
-        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="account_entity" constraintName="fk_10ogn6loj5rxbuv94vlistxb8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="crm_seller" constraintName="fk_seller_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="crm_customer" constraintName="fk_cust_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="ar_customer_account" constraintName="fk_ca_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="billing_billing_account" constraintName="fk_ba_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="billing_user_account" constraintName="fk_ua_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
+        <addForeignKeyConstraint baseColumnNames="primary_contact" baseTableName="com_contact" constraintName="fk_com_contact_primary_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider_contact" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-479">
@@ -11037,10 +11268,6 @@
         <addForeignKeyConstraint baseColumnNames="wallet_template_id" baseTableName="cat_serv_rec_wallet_template" constraintName="fk_9b8d2ybpb5tcws4rdlshtsitm" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_wallet_template" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-628">
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="ar_customer_account" constraintName="fk_9i811xvc40e19t613cmpvwmu9" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-629">
         <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="crm_seller" constraintName="fk_9kbreo3t9k9wk0vo2xld9rin2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
@@ -11088,10 +11315,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-646">
         <addForeignKeyConstraint baseColumnNames="counter_instance_id" baseTableName="billing_counter_period" constraintName="fk_ah6awbukub9hunnmg30i5qgfd" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-649">
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="billing_user_account" constraintName="fk_alpl7r5p2nm43w0ro26ckcqnb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-651">
         <addForeignKeyConstraint baseColumnNames="aggregate_id_r" baseTableName="billing_rated_transaction" constraintName="fk_amwacie0nqfumpd1sc7y9nv0p" deferrable="false" initiallyDeferred="false"
@@ -11252,10 +11475,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-730">
         <addForeignKeyConstraint baseColumnNames="invoicecategory" baseTableName="billing_invoice_agregate" constraintName="fk_fgcgjix0bu0jcnnh7h92gdl3f" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_cat" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-735">
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="billing_billing_account" constraintName="fk_fky4ah96o9fohkx7u569phxxr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-738">
         <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="billing_billing_account" constraintName="fk_fr8rdcj2vx5ityva2l4fkcns4" deferrable="false" initiallyDeferred="false"
@@ -11428,7 +11647,17 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-840">
-        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="account_entity" constraintName="fk_kysnihoom2p6tjxemg0rfquva" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="crm_seller" constraintName="fk_seller_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="crm_customer" constraintName="fk_cust_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="ar_customer_account" constraintName="fk_ca_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="billing_billing_account" constraintName="fk_ba_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="billing_user_account" constraintName="fk_ua_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="com_contact" constraintName="fk_com_contact_title" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-856">
@@ -11586,10 +11815,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-955">
         <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="cat_calendar_days" constraintName="fk_rwouj86saa1b0ox91xjgs05ea" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-956">
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="crm_customer" constraintName="fk_rylbq2w5ij2o2lbubhv99m4ox" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="account_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-958">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_role_permission" constraintName="fk_s1wxui3m4sv9x5mbyi8gp77hu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -11941,7 +12166,17 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_decision_rule" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1137">
-        <addForeignKeyConstraint constraintName="fk_account_entity_crm_business_account_model" baseTableName="account_entity" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+        <addForeignKeyConstraint baseTableName="crm_seller" constraintName="fk_seller_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="crm_customer" constraintName="fk_cust_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="ar_customer_account" constraintName="fk_ca_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_ba_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_user_account" constraintName="fk_ua_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+            referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="com_contact" constraintName="fk_com_contact_bam" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
             referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1143">
@@ -12070,7 +12305,17 @@
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1176">
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id_account" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_seller_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_customer" constraintName="fk_cust_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ar_customer_account" constraintName="fk_ca_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="billing_billing_account" constraintName="fk_ba_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="billing_user_account" constraintName="fk_ua_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_contact" constraintName="fk_com_contact_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
     </changeSet>
 
@@ -12328,7 +12573,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1232">
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1233">
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -12768,12 +13013,21 @@
                                  referencedTableName="billing_billing_account"/>
 	</changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1341">          
-        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="account_entity"
-                                 constraintName="fk_ca_minimum_charge_template_id" deferrable="false"
-                                 initiallyDeferred="false"
-                                 onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id"
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="crm_seller"
+            constraintName="fk_seller_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="crm_customer"
+            constraintName="fk_cust_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="ar_customer_account"
+            constraintName="fk_ca_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_billing_account"
+            constraintName="fk_ba_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_user_account"
+            constraintName="fk_ua_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+            referencedTableName="cat_charge_template" />
 	</changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1342">          
         <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_subscription"
@@ -12846,11 +13100,6 @@
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1354">          
         <addForeignKeyConstraint baseTableName="wo_aggregation_line" baseColumnNames="wo_aggregation_settings_id"
                                  constraintName="wo_aggregation_settings_id_fk" referencedTableName="wo_aggregation_settings"
-                                 referencedColumnNames="id"/>
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1355">          
-    	<addForeignKeyConstraint baseTableName="document" baseColumnNames="linked_account_entity_id"
-                                 constraintName="document_account_entity_id_fk" referencedTableName="account_entity"
                                  referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1356">          
@@ -13887,7 +14136,17 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1586">
-        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="account_entity" constraintName="fk_account_entity_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="crm_seller" constraintName="fk_seller_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="crm_customer" constraintName="fk_cust_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="ar_customer_account" constraintName="fk_ca_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="billing_billing_account" constraintName="fk_ba_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="billing_user_account" constraintName="fk_ua_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+        <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="com_contact" constraintName="fk_com_contact_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1587">
@@ -14161,13 +14420,17 @@
         <sql>CREATE INDEX transaction_billing_index ON ${db.schema.adapted}billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
         <sql>CREATE INDEX invoice_agre_index ON ${db.schema.adapted}billing_invoice_agregate(invoice_id)</sql>
         <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema.adapted}billing_chrginst_wallet(wallet_instance_id)</sql>
-        <sql>CREATE INDEX ar_customer_account_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_credit_cat_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
         <sql>CREATE INDEX meveo_module_index ON ${db.schema.adapted}meveo_module(script_instance_id)</sql>
-        <sql>CREATE INDEX account_entity_index ON ${db.schema.adapted}account_entity(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX crm_seller_ctb_index ON ${db.schema.adapted}crm_seller(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX crm_customer_ctb_index ON ${db.schema.adapted}crm_customer(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_ctb_index ON ${db.schema.adapted}ar_customer_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_ctb_index ON ${db.schema.adapted}billing_billing_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX billing_user_account_ctb_index ON ${db.schema.adapted}billing_user_account(primary_contact, title_id, bam_id)</sql>
         <sql>CREATE INDEX meveo_module_item_index ON ${db.schema.adapted}meveo_module_item(module_id)</sql>
         <sql>CREATE INDEX billing_service_instance_index ON ${db.schema.adapted}billing_service_instance(subscription_id)</sql>
-        <sql>CREATE INDEX billing_user_account_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
-        <sql>CREATE INDEX billing_billing_account_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
+        <sql>CREATE INDEX billing_user_account_ba_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_ca_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
         <sql>CREATE INDEX crm_customer_index ON ${db.schema.adapted}crm_customer(customer_brand_id)</sql>
         <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema.adapted}ar_payment_token(customer_account_id)</sql>
         <sql>CREATE INDEX billing_subscription_index ON ${db.schema.adapted}billing_subscription(user_account_id)</sql>
@@ -14199,10 +14462,29 @@
         <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
         <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
         <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
-        <sql>CREATE INDEX account_entity_bam_id_index ON ${db.schema.adapted}account_entity(bam_id);</sql>
-        <sql>CREATE INDEX account_entity_title_id_index ON ${db.schema.adapted}account_entity(title_id);</sql>
-        <sql>CREATE INDEX account_entity_primary_contact_index ON ${db.schema.adapted}account_entity(primary_contact);</sql>
-        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
+        
+        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
+        <sql>CREATE INDEX crm_customer_bam_id_index ON ${db.schema.adapted}crm_customer(bam_id);</sql>
+        <sql>CREATE INDEX ar_customer_account_bam_id_index ON ${db.schema.adapted}ar_customer_account(bam_id);</sql>
+        <sql>CREATE INDEX billing_billing_account_bam_id_index ON ${db.schema.adapted}billing_billing_account(bam_id);</sql>
+        <sql>CREATE INDEX billing_user_account_bam_id_index ON ${db.schema.adapted}billing_user_account(bam_id);</sql>
+        
+        <sql>CREATE INDEX crm_seller_title_id_index ON ${db.schema.adapted}crm_seller(title_id);</sql>
+        <sql>CREATE INDEX crm_customer_title_id_index ON ${db.schema.adapted}crm_customer(title_id);</sql>
+        <sql>CREATE INDEX ar_customer_account_title_id_index ON ${db.schema.adapted}ar_customer_account(title_id);</sql>
+        <sql>CREATE INDEX billing_billing_account_title_id_index ON ${db.schema.adapted}billing_billing_account(title_id);</sql>
+        <sql>CREATE INDEX billing_user_account_title_id_index ON ${db.schema.adapted}billing_user_account(title_id);</sql>
+        <sql>CREATE INDEX com_contact_title_id_index ON ${db.schema.adapted}com_contact(title_id);</sql>
+        
+        <sql>CREATE INDEX crm_seller_primary_contact_index ON ${db.schema.adapted}crm_seller(primary_contact);</sql>
+        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(primary_contact);</sql>
+        <sql>CREATE INDEX ar_customer_account_primary_contact_index ON ${db.schema.adapted}ar_customer_account(primary_contact);</sql>
+        <sql>CREATE INDEX billing_billing_account_primary_contact_index ON ${db.schema.adapted}billing_billing_account(primary_contact);</sql>
+        <sql>CREATE INDEX billing_user_account_primary_contact_index ON ${db.schema.adapted}billing_user_account(primary_contact);</sql>
+        <sql>CREATE INDEX com_contact_primary_contact_index ON ${db.schema.adapted}com_contact(primary_contact);</sql>
+        
+        <sql>CREATE INDEX crm_customer_cust_category_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
+        
         <sql>CREATE INDEX ord_quote_version_index ON ${db.schema.adapted}ord_quote(version);</sql>
         <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema.adapted}billing_invoice(version);</sql>
         <sql>CREATE INDEX ord_order_payment_index ON ${db.schema.adapted}ord_order(payment_method_id);</sql>
@@ -14255,14 +14537,26 @@
         <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema.adapted}crm_customer_brand((lower(code)))</sql>
         <sql>CREATE INDEX crm_customer_category_index ON ${db.schema.adapted}crm_customer_category((lower(code)))</sql>
         <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id, lower(code), charge_template_id)</sql>
-        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}account_entity(lower(code));</sql>
+        <sql>CREATE INDEX seller_code ON ${db.schema.adapted}crm_seller(lower(code));</sql>
+        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}crm_customer(lower(code));</sql>
+        <sql>CREATE INDEX ca_code ON ${db.schema.adapted}ar_customer_account(lower(code));</sql>
+        <sql>CREATE INDEX ba_code ON ${db.schema.adapted}billing_billing_account(lower(code));</sql>
+        <sql>CREATE INDEX ua_code ON ${db.schema.adapted}billing_user_account(lower(code));</sql>
+        <sql>CREATE INDEX com_contact_code ON ${db.schema.adapted}com_contact(lower(code));</sql>
         <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema.adapted}cat_offer_template((lower(code)));</sql>
         <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema.adapted}cat_service_template(lower(code));</sql>
         <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema.adapted}cat_charge_template(lower(code));</sql>
         <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(lower(code));</sql>
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(lower(code));</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(lower(code));</sql>
-        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
+        
+        <sql>CREATE INDEX seller_upper_code ON ${db.schema.adapted}crm_seller(UPPER(code));</sql>
+        <sql>CREATE INDEX customer_upper_code ON ${db.schema.adapted}crm_customer(UPPER(code));</sql>
+        <sql>CREATE INDEX ca_upper_code ON ${db.schema.adapted}ar_customer_account(UPPER(code));</sql>
+        <sql>CREATE INDEX ba_upper_code ON ${db.schema.adapted}billing_billing_account(UPPER(code));</sql>
+        <sql>CREATE INDEX ua_upper_code ON ${db.schema.adapted}billing_user_account(UPPER(code));</sql>
+        <sql>CREATE INDEX com_contact_upper_code ON ${db.schema.adapted}com_contact(UPPER(code));</sql>        
+        
         <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei((lower(cet_code)),(lower(code)));</sql>
         <sql>CREATE UNIQUE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX adm_file_format_code_index ON ${db.schema.adapted}adm_file_format(lower(code))</sql>
@@ -14322,7 +14616,6 @@
         <sql>CREATE UNIQUE INDEX billing_finance_segment_code_index ON ${db.schema.adapted}billing_finance_segment(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX billing_general_ledger_code_index ON ${db.schema.adapted}billing_general_ledger(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX hierarchy_entity_code_index ON ${db.schema.adapted}hierarchy_entity(lower(code), hierarchy_type)</sql>
-        <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
        	<sql>CREATE INDEX medina_access_lower_uid_index on ${db.schema.adapted}medina_access (lower(acces_user_id))</sql>
        	<sql>CREATE INDEX idx_ar_payment_history_external_payment_id ON ${db.schema.adapted}ar_payment_history (external_payment_id )</sql>
     </changeSet>
@@ -14332,14 +14625,18 @@
         <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema.adapted}crm_customer_brand(code)</sql>
         <sql>CREATE INDEX crm_customer_category_index ON ${db.schema.adapted}crm_customer_category(code)</sql>
         <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id, code, charge_template_id)</sql>
-        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}account_entity(code);</sql>
+        <sql>CREATE INDEX seller_code ON ${db.schema.adapted}crm_seller(code);</sql>
+        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}crm_customer(code);</sql>
+        <sql>CREATE INDEX ca_code ON ${db.schema.adapted}ar_customer_account(code);</sql>
+        <sql>CREATE INDEX ba_code ON ${db.schema.adapted}billing_billing_account(code);</sql>
+        <sql>CREATE INDEX ua_code ON ${db.schema.adapted}billing_user_account(code);</sql>
+        <sql>CREATE INDEX com_contact_code ON ${db.schema.adapted}com_contact(code);</sql>        
         <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema.adapted}cat_offer_template(code);</sql>
         <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema.adapted}cat_service_template(code);</sql>
         <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema.adapted}cat_charge_template(code);</sql>
         <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(code);</sql>
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(code);</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(code);</sql>
-        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(code)</sql>
         <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei(cet_code,code);</sql>
         <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el)</sql>
         <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el)</sql>
@@ -15943,6 +16240,11 @@
 	<changeSet id="INTRD-2252_20211006" author="TarikFA." />
 	<changeSet id="#2374_20211012" author="HatimOUDAD"/>
 	<changeSet id="INTRD-2412_20211015" author="MohammedELAZZOUZI"/>
+    <changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-2421_20211012-pg" author="AndriusKarpavicius" dbms="postresql"/>
+    <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius"/>
+    
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
