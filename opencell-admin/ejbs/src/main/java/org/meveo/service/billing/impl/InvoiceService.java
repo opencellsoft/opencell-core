@@ -3860,6 +3860,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
+            invoice.setCpqQuote(commercialOrder.getQuote());
+        } else if(entity instanceof CpqQuote){
+            CpqQuote quote = (CpqQuote) entity;
+            invoice.setCpqQuote(quote);
         }
         if (paymentMethod != null) {
             invoice.setPaymentMethodType(paymentMethod.getPaymentType());
@@ -5719,6 +5723,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setCommercialOrder(commercialOrder);
         }
         
+        if(invoiceRessource.getCpqQuote()!=null) {
+            final Long cpqQuoteId = invoiceRessource.getCpqQuote().getId();
+            CpqQuote cpqQuote = (CpqQuote)tryToFindByEntityClassAndId(CpqQuote.class, cpqQuoteId);
+            toUpdate.setCpqQuote(cpqQuote);
+        }
         if(input.getCfValues()!=null) {
             toUpdate.setCfValues(input.getCfValues());
         }

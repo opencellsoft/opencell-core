@@ -9292,5 +9292,13 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="INTRD-2252_20211006" author="TarikFA.">
     	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
     </changeSet>
+    
+     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
+     <addColumn tableName="billing_invoice">
+            <column name="cpq_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
    
 </databaseChangeLog>

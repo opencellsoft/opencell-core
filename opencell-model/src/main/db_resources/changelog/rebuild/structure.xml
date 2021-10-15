@@ -2823,6 +2823,7 @@
             <column name="has_minimum" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="commercial_order_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
+            <column name="cpq_quote_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -14059,6 +14060,12 @@
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
+    
+     <changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15839,6 +15846,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay"/>
 	<changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
     <changeSet id="INTRD-2252_20211006" author="TarikFA." />
+    <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
