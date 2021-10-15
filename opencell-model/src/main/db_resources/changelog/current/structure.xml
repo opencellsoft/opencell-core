@@ -9660,5 +9660,26 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="INTRD-2252_20211006" author="TarikFA.">
     	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
     </changeSet>
+
+    <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza">
+
+        <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="collection_plan_statuses" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_pause_reasons_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_payment_retries_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_invoice_dunning_statuses_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses" referencedColumnNames="id" />
+    </changeSet>
    
 </databaseChangeLog>
