@@ -294,4 +294,4 @@ public interface Invoice extends Resource {
 	@Nullable
 	Resource getCpqQuote();
 }
-}
+
