@@ -20,6 +20,7 @@ package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -76,6 +77,8 @@ public class QuoteProductDTO extends BaseEntityDto{
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
 
 	private CustomFieldsDto customFields;
+	
+	private Date deliveryDate;
     
     public QuoteProductDTO() {
     	super();
@@ -96,6 +99,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
 		quantity=quoteProduct.getQuantity();
 		discountPlanCode=quoteProduct.getDiscountPlan() != null ?quoteProduct.getDiscountPlan().getCode() : null;
+		deliveryDate=quoteProduct.getDeliveryDate();
 	   }
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
@@ -262,4 +266,16 @@ public class QuoteProductDTO extends BaseEntityDto{
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	
+	
 }

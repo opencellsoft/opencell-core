@@ -68,8 +68,8 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	private String billableAccountCode;
     
 	@JsonSerialize(using = CustomDateSerializer.class)
-    @Schema(description = "The begin of date of quote lot ")
-	private Date quoteLotDateBegin;
+    @Schema(description = "The delivery date of quote lot ")
+	private Date deliveryDate;
 	
     @Schema(description = "Duration of the quote lot")
 	private int quoteLotDuration;
@@ -223,18 +223,18 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 
 
 	/**
-	 * @return the quoteLotDateBegin
+	 * @return the deliveryDate
 	 */
-	public Date getQuoteLotDateBegin() {
-		return quoteLotDateBegin;
+	public Date getDeliveryDate() {
+		return deliveryDate;
 	}
 
 
 	/**
-	 * @param quoteLotDateBegin the quoteLotDateBegin to set
+	 * @param deliveryDate the deliveryDate to set
 	 */
-	public void setQuoteLotDateBegin(Date quoteLotDateBegin) {
-		this.quoteLotDateBegin = quoteLotDateBegin;
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 

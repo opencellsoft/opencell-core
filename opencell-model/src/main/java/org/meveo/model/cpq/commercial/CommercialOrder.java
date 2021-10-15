@@ -82,7 +82,7 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 		this.orderProgress = copy.orderProgress;
 		this.progressDate = copy.progressDate;
 		this.orderDate = copy.orderDate;
-		this.realisationDate = copy.realisationDate;
+		this.deliveryDate = copy.deliveryDate;
 		this.customerServiceBegin = copy.customerServiceBegin;
 		this.customerServiceDuration = copy.customerServiceDuration;
 		this.externalReference = copy.externalReference;
@@ -161,7 +161,7 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 
 
 	@Column(name = "realisation_date")
-	private Date realisationDate;
+	private Date deliveryDate;
 
 	@Column(name = "customer_service_begin")
 	private Date customerServiceBegin;
@@ -414,18 +414,18 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 
 
 	/**
-	 * @return the realisationDate
+	 * @return the deliveryDate
 	 */
-	public Date getRealisationDate() {
-		return realisationDate;
+	public Date getDeliveryDate() {
+		return deliveryDate;
 	}
 
 
 	/**
-	 * @param realisationDate the realisationDate to set
+	 * @param deliveryDate the deliveryDate to set
 	 */
-	public void setRealisationDate(Date realisationDate) {
-		this.realisationDate = realisationDate;
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 

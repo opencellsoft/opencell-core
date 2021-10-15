@@ -20,6 +20,7 @@ package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -72,6 +73,9 @@ public class OrderProductDto extends BaseEntityDto{
 
 	@Schema(description = "The quantity")
     private BigDecimal quantity;
+	
+	@Schema(description = "The delivery date")
+    private Date deliveryDate;
     
     private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>(); 
     
@@ -94,6 +98,7 @@ public class OrderProductDto extends BaseEntityDto{
 		productVersion=orderProduct.getProductVersion().getCurrentVersion();
 		quantity=orderProduct.getQuantity();
 		discountPlanCode=orderProduct.getDiscountPlan()!=null?orderProduct.getDiscountPlan().getCode():null;
+		deliveryDate=orderProduct.getDeliveryDate();
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
@@ -245,8 +250,16 @@ public class OrderProductDto extends BaseEntityDto{
 	public void setDiscountPlanCode(String discountPlanCode) {
 		this.discountPlanCode = discountPlanCode;
 	}
-	
-	
 
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	
 	
 }
