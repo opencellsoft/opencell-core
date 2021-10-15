@@ -9674,8 +9674,8 @@ public class OrderAdvancement extends ModuleScript {
             <column name="related_levels" type="varchar(255)"/>
             <column name="script_instance_id" type="bigint"/>
             <column name="action_notification_template" type="varchar(255)"/>
-            <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueBoolean="true"/>
-            <column name="attach_due_invoices" type="${type.boolean}"  defaultValueBoolean="false"/>
+            <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="attach_due_invoices" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_meveo_script_instance"
                                  deferrable="false" initiallyDeferred="false"
