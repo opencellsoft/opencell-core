@@ -19,8 +19,8 @@ public interface CdrListInput extends Resource {
     List<String> getCdrs();
 
     @Default
-    @Schema(description = "How the CDR list is processed")
+    @Schema(description = "How the CDR list is processed : STOP_ON_FIRST_FAIL, PROCESS_ALL, ROLL_BACK_ON_ERROR")
     default RegisterCdrListModeEnum getMode() {
-        return RegisterCdrListModeEnum.stopOnFirstFail;
+        return RegisterCdrListModeEnum.STOP_ON_FIRST_FAIL;
     }
 }

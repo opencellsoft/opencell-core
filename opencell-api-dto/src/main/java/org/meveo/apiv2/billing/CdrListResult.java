@@ -1,12 +1,12 @@
 package org.meveo.apiv2.billing;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.api.dto.BaseEntityDto;
 
 public class CdrListResult extends BaseEntityDto {
-
     private static final long serialVersionUID = 1026307230457632555L;
 
     private RegisterCdrListModeEnum mode;
@@ -14,7 +14,9 @@ public class CdrListResult extends BaseEntityDto {
     private List<Long> edrIds = new ArrayList<>();
     private List<CdrError> errors = new ArrayList<>();
 
-    public static class Statistics {
+    public static class Statistics implements Serializable {
+        private static final long serialVersionUID = -199653879663048902L;
+
         private int total;
         private int success;
         private int fail;
@@ -51,7 +53,9 @@ public class CdrListResult extends BaseEntityDto {
         }
     }
 
-    public static class CdrError {
+    public static class CdrError implements Serializable {
+        private static final long serialVersionUID = 5139169395026374653L;
+
         private String errorCode;
         private String errorMessage;
         private String cdr;
