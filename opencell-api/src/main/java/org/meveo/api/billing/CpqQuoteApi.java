@@ -1285,6 +1285,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
             	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
+            	quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             }
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
@@ -1364,9 +1365,9 @@ public class CpqQuoteApi extends BaseApi {
         Integer durationTermInMonth = null;
         if (durationOrQuantityAttribute != null &&
                 (durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.NUMERIC ||
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_TEXT ||
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INFO ||
-                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.TEXT)) {
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_TEXT ||
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.LIST_NUMERIC ||
+                durationOrQuantityAttribute.getAttributeType() == AttributeTypeEnum.INTEGER)) {
             Optional<QuoteAttribute> offerQuoteAttribute = quoteOffer.getQuoteAttributes()
                     .stream()
                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))

@@ -202,7 +202,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 
 						if (paymentOrRefundEnum == PaymentOrRefundEnum.REFUND && listAoToPay != null) {
 						    listAoToPay = listAoToPay.stream()
-	                                .filter(accountOperation -> OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction()))
+	                                .filter(accountOperation -> (OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction())))
 	                                .collect(Collectors.toList());
                         }
 
@@ -210,6 +210,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							throw new BusinessEntityException("no invoices!");
 						}
 						ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
+						ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
                             dDRequestLOTService.createPaymentsOrRefundsAndGenerateDDRequestLotFile(ddRequestLOT, ddRequestBuilderInterface, ddrequestLotOp, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);

@@ -538,8 +538,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			} else {
 				SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
 				if (subAccountingPeriod == null) {
+					log.warn("No sub accounting period has been defined for this accountingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
 					rejectAccountOperation(accountOperation);
-					log.warn("No sub accounting period has been defined for this accoutingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
 				} else {
 					if (subAccountingPeriod.isOpen()) {
 						accountOperation.setStatus(AccountOperationStatus.POSTED);
@@ -565,9 +565,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		accountOperation.setStatus(AccountOperationStatus.POSTED);
 		accountOperation.setReason(AccountOperationRejectionReason.FORCED);
 		// setting the accoutingDate
-		SubAccountingPeriod openSubAccountingPeriod = subAccountingPeriodService.findLastSubAccountingPeriod();
-		if (openSubAccountingPeriod != null && openSubAccountingPeriod.getStartDate() != null) {
-			setAccountingDate(accountOperation, accountingPeriod, openSubAccountingPeriod.getStartDate());
+		SubAccountingPeriod nextOpenSubAccountingPeriod = subAccountingPeriodService.findNextOpenSubAccountingPeriod(accountOperation.getAccountingDate());
+		if (nextOpenSubAccountingPeriod != null && nextOpenSubAccountingPeriod.getStartDate() != null) {
+			setAccountingDate(accountOperation, accountingPeriod, nextOpenSubAccountingPeriod.getStartDate());
 		} else {
 			rejectAccountOperation(accountOperation);
 			log.warn("No open sub accounting period found");

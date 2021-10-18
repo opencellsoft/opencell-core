@@ -26,6 +26,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
@@ -63,8 +65,10 @@ import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.CpqQuoteService;
@@ -100,6 +104,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Inject
     private CommercialOrderService commercialOrderService;
     
+    @Inject
+    private BillingAccountService billingAccountService;
+    
+    @Inject
+    private SellerService sellerService;
     
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -127,12 +136,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         		date=invoice.getInvoiceDate();
         	}
     	 seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	 billingAccount=invoice.getBillingAccount();
-    	}
-    	 else if (entity.getBillingAccount()!=null) {
+    	 seller=sellerService.retrieveIfNotManaged(seller);
+    	 billingAccount=billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
+    	} else if (entity.getBillingAccount()!=null) {
     		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    		 billingAccount=entity.getBillingAccount();
+    		 billingAccount=billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
     	 }
+    	
     	 if(accountingArticle!=null) {
              TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount,null, date, false, false);
              if(taxInfo!=null)
@@ -605,5 +615,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .setParameter("invoice", invoice)
                     .getResultList();
         }
+    }
+    
+    public List<InvoiceLine> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+            AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+        InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
+        //Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        for (Map<String, Object> record : groupedRTs) {
+            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result);
+            create(invoiceLine);
+            invoiceLines.add(invoiceLine);
+            //iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+        }
+        return invoiceLines;  
     }
 }
