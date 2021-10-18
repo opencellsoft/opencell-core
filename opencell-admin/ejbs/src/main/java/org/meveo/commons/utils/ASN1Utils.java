@@ -18,7 +18,7 @@
 package org.meveo.commons.utils;
 
 /**
- * Utils class to help for ASN1 files parsing. 
+ * Driver.Utils class to help for ASN1 files parsing.
  * 
  * @author Ignas Lelys
  *

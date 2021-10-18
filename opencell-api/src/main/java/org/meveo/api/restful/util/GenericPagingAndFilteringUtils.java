@@ -13,7 +13,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.util.*;
 
 /**
- * Utils class for working with GenericPagingAndFiltering.
+ * Driver.Utils class for working with GenericPagingAndFiltering.
  *
  * @author Thang Nguyen
  */

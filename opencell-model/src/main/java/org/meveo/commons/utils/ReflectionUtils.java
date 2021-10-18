@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utils class for java reflection api.
+ * Driver.Utils class for java reflection api.
  *
  * @author Ignas Lelys
  * @author Abdellatif BARI

@@ -1,0 +1,24 @@
+{
+  "contactInformation": {
+    "phone": "0123456789",
+    "mobile": "0678912345",
+    "email": "billing@.com"
+  },
+  "address": {
+    "zipCode": "92300",
+    "country": "FR",
+    "contactInformation": {
+      "phone": "0123456789",
+      "mobile": "0678912345",
+      "email": "billing@.com"
+    },
+    "address3": "",
+    "address2": "",
+    "city": "Levallois Da Nang",
+    "address1": "52 rue Kleber"
+  },
+  "countryCode": "FR",
+  "description": "Seller OC",
+  "languageCode": "FRA",
+  "currencyCode": "EUR"
+}

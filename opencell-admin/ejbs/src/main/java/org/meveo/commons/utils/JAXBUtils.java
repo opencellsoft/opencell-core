@@ -25,7 +25,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 /**
- * Utils class for working with jaxb.
+ * Driver.Utils class for working with jaxb.
  * 
  * @author anasseh
  * 
