@@ -14914,7 +14914,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
                                  
     </changeSet>
-    <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
+    <changeSet id="#INTRD-2364-create_data_model-rebuild" author="AbdelkaderBouazza">
         <createTable tableName="dunning_action_notification_template">
             <column name="dunning_action_id"  type="bigint"/>
             <column name="action_notification_template"  type="varchar(200)"/>
@@ -15955,6 +15955,8 @@
     <changeSet id="#INTRD-1275_20211011" author="anasseh" />
     <changeSet id="INTRD-2252_20211006" author="TarikFA." />
     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza" />
+    <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza" />
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
