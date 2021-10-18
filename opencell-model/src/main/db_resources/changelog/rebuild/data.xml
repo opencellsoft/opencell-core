@@ -9,6 +9,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="product activation date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-1"></column>
         	<column name="code" value="product activation date"></column>
@@ -20,6 +21,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="product quantity" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-2"></column>
         	<column name="code" value="product quantity"></column>
@@ -31,6 +33,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="usage date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-3"></column>
         	<column name="code" value="usage date"></column>
@@ -42,6 +45,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="usage quantity" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-4"></column>
         	<column name="code" value="usage quantity"></column>
@@ -53,6 +57,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="renewal date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-5"></column>
         	<column name="code" value="renewal date"></column>
@@ -64,6 +69,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="delivery date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-6"></column>
         	<column name="code" value="delivery date"></column>
@@ -75,6 +81,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="quote validation date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-7"></column>
         	<column name="code" value="quote validation date"></column>
@@ -86,6 +93,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="subscription date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-8"></column>
         	<column name="code" value="subscription date"></column>
@@ -97,6 +105,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="subscription age months" />
         	<column name="attribute_type" value="INTEGER"></column>
         	<column name="id" valueNumeric="-9"></column>
         	<column name="code" value="subscription age months"></column>
@@ -108,6 +117,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="subscription age days" />
         	<column name="attribute_type" value="INTEGER"></column>
         	<column name="id" valueNumeric="-10"></column>
         	<column name="code" value="subscription age days"></column>
@@ -119,6 +129,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 1" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-11"></column>
         	<column name="code" value="EDR text parameter 1"></column>
@@ -130,6 +141,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 2" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-12"></column>
         	<column name="code" value="EDR text parameter 2"></column>
@@ -141,6 +153,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 3" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-13"></column>
         	<column name="code" value="EDR text parameter 3"></column>
@@ -152,6 +165,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 4" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-14"></column>
         	<column name="code" value="EDR text parameter 4"></column>
@@ -163,6 +177,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 5" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-15"></column>
         	<column name="code" value="EDR text parameter 5"></column>
@@ -174,6 +189,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 6" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-16"></column>
         	<column name="code" value="EDR text parameter 6"></column>
@@ -185,6 +201,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 7" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-17"></column>
         	<column name="code" value="EDR text parameter 7"></column>
@@ -196,6 +213,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 8" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-18"></column>
         	<column name="code" value="EDR text parameter 8"></column>
@@ -207,6 +225,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR text parameter 9" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-19"></column>
         	<column name="code" value="EDR text parameter 9"></column>
@@ -218,6 +237,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR date parameter 1" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-21"></column>
         	<column name="code" value="EDR date parameter 1"></column>
@@ -229,6 +249,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR date parameter 2" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-22"></column>
         	<column name="code" value="EDR date parameter 2"></column>
@@ -240,6 +261,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR date parameter 3" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-23"></column>
         	<column name="code" value="EDR date parameter 3"></column>
@@ -251,6 +273,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR date parameter 4" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-24"></column>
         	<column name="code" value="EDR date parameter 4"></column>
@@ -262,6 +285,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR date parameter 5" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-25"></column>
         	<column name="code" value="EDR date parameter 5"></column>
@@ -273,6 +297,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR numeric parameter 1" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-31"></column>
         	<column name="code" value="EDR numeric parameter 1"></column>
@@ -284,6 +309,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR numeric parameter 2" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-32"></column>
         	<column name="code" value="EDR numeric parameter 2"></column>
@@ -295,6 +321,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR numeric parameter 3" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-33"></column>
         	<column name="code" value="EDR numeric parameter 3"></column>
@@ -306,6 +333,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR numeric parameter 4" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-34"></column>
         	<column name="code" value="EDR numeric parameter 4"></column>
@@ -317,12 +345,12 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
+        	<column name="uuid" value="EDR numeric parameter 5" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-35"></column>
         	<column name="code" value="EDR numeric parameter 5"></column>
         	<column name="description" value="EDR numeric parameter 5"></column>
         </insert>
-       
     </changeSet>
     
     <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
