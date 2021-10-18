@@ -38,7 +38,7 @@ public class DunningAction extends AuditableEntity {
     private ActionChannelEnum actionChannel = ActionChannelEnum.EMAIL;
 
     @ElementCollection(targetClass = DunningLevelEnum.class)
-    @CollectionTable(name = "dunning_level", joinColumns = @JoinColumn(name = "level_id"))
+    @CollectionTable(name = "ar_dunning_level", joinColumns = @JoinColumn(name = "level_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "related_levels")
     private List<DunningLevelEnum> relatedLevels;
