@@ -617,7 +617,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
-
+        
         activateServices(activateServicesDto.getServicesToActivateDto(), subscription, activateServicesDto.getOrderNumber(), activateServicesDto.getOrderItemId(), activateServicesDto.getOrderItemAction());
     }
 
@@ -829,7 +829,11 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        			serviceInstanceService.serviceActivation(serviceInstance);
+        		    if (serviceInstance.getDeliveryDate().after(new Date())) {
+        				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
+        			}else {
+        				serviceInstanceService.serviceActivation(serviceInstance);
+        			}
         		} catch (BusinessException e) {
         			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
         			throw e;
@@ -2663,6 +2667,11 @@ public class SubscriptionApi extends BaseApi {
 	            throw e;
 	        }
     	}
+		if (subscription.getSubscriptionDate().after(new Date())) {
+			subscription.setStatus(SubscriptionStatusEnum.PENDING);
+		}else {
+			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+		}
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
 
@@ -2950,7 +2959,7 @@ public class SubscriptionApi extends BaseApi {
                 	})
                 .collect(Collectors.toList());
 
-        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes);
+        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null);
 
     }
 

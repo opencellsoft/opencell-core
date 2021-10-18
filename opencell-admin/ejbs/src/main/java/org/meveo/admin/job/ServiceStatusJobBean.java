@@ -119,6 +119,9 @@ public class ServiceStatusJobBean extends IteratorBasedJobBean<Long> {
             serviceInstance.setRenewalNotifiedDate(new Date());
             serviceInstance = serviceInstanceService.update(serviceInstance);
             serviceEndOfTermEventProducer.fire(serviceInstance);
+        }else if (serviceInstance.getStatus() == InstanceStatusEnum.PENDING) {
+        	//Recurring charges will be calculated in a regular RR job
+        	serviceInstanceService.serviceActivation(serviceInstance, true, false);
         }
     }
 }
