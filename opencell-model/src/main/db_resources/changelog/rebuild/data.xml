@@ -7873,6 +7873,346 @@
 		</insert>
     
     </changeSet>
+    
+    <changeSet id="INTRD_2290_20211015_build" author="TarikFA.">
+    	<insert tableName="dunning_settings">
+    		<column name="id" valueSequenceNext="dunning_settings_seq" />
+    		<column name="code" value="DUN_DEF"/>
+    		<column name="description" value="Default Dunning Settings generated"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="max_dunning_levels" valueNumeric="5" />
+            <column name="max_days_outstanding" valueNumeric="3" />
+            <column name="dunning_mode" value="CUSTOMER_LEVEL" />
+    	</insert>
+    	<insert tableName="dunning_pause_reasons">
+    		<column name="id" valueSequenceNext="dunning_pause_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="pause_reason" value="5 jours (ouvrés) avant paiement" />
+            <column name="description" value="Client demande 5 jours (ouvrés) avant de payer." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_pause_reasons">
+    		<column name="id" valueSequenceNext="dunning_pause_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="pause_reason" value="5 business days before payment" />
+            <column name="description" value="Client asks for a 5 business days delay before proceeding to payment." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_pause_reasons">
+    		<column name="id" valueSequenceNext="dunning_pause_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="pause_reason" value="10 jours (ouvrés) avant paiement" />
+            <column name="description" value="Client demande 10 jours (ouvrés) avant de payer." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	
+    	</insert>
+    	<insert tableName="dunning_pause_reasons">
+    		<column name="id" valueSequenceNext="dunning_pause_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="pause_reason" value="10 business days before payment" />
+            <column name="description" value="Client asks for a 10 business days delay before proceeding to payment." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	
+    	</insert>
+    	<insert tableName="dunning_pause_reasons">
+    		<column name="id" valueSequenceNext="dunning_pause_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="pause_reason" value="30 jours (ouvrés) avant paiement" />
+            <column name="description" value="Client demande 30 jours (ouvrés) avant de payer." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_pause_reasons">
+    		<column name="id" valueSequenceNext="dunning_pause_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="pause_reason" value="30 business days before payment" />
+            <column name="description" value="Client asks for a 30 business days delay before proceeding to payment." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_stop_reasons">
+    		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="stop_reason" value="Client conteste la facture" />
+            <column name="description" value="Client conteste la facture. Dept comptable reprend la suite" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_stop_reasons">
+    		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="stop_reason" value="Client disputes invoice" />
+            <column name="description" value="Client disputes the invoice. Accounting dept in charge" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_stop_reasons">
+    		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="stop_reason" value="Client insolvable" />
+            <column name="description" value=" Client se déclare insolvable. Renvoi au dept comptale" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_stop_reasons">
+    		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="stop_reason" value="Insolvent client" />
+            <column name="description" value="Client let’s us know she/he is insolvent. Accounting dept to follow-up." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_stop_reasons">
+    		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="stop_reason" value="Entreprise dépose le bilan" />
+            <column name="description" value="L’entreprise a débuter une procédure de dépôt de bilan. Renvoi au dept comptable." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_stop_reasons">
+    		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="stop_reason" value="Company has declared bankrupcy" />
+            <column name="description" value="The client company has initiated a bankrupcy procedure. Finance dept will follow-up." />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Pause" />
+            <column name="context" value="Relance en pause" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Pause" />
+            <column name="context" value="Paused dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Stop" />
+            <column name="context" value="Relance arrêtée" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Stop" />
+            <column name="context" value="Stopped dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Succès" />
+            <column name="context" value="Relance réussie" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Success" />
+            <column name="context" value="Successful dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Echec" />
+            <column name="context" value="Relance non aboutie" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Failed" />
+            <column name="context" value="Failed dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Actif" />
+            <column name="context" value="En cours" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="invoice_dunning_statuses">
+    		<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Active" />
+            <column name="context" value="Active" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Pause" />
+            <column name="context" value="Relance en pause" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Pause" />
+            <column name="context" value="Paused dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Stop" />
+            <column name="context" value="Relance arrêtée" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Stop" />
+            <column name="context" value="Stopped dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Succès" />
+            <column name="context" value="Relance réussie" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Success" />
+            <column name="context" value="Successful dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Echec" />
+            <column name="context" value="Relance non aboutie" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Failed" />
+            <column name="context" value="Failed dunning" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="FR" />
+            <column name="status" value="Actif" />
+            <column name="context" value="En cours" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    	<insert tableName="dunning_collection_plan_statuses">
+    		<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="language" value="EN" />
+            <column name="status" value="Active" />
+            <column name="context" value="Active" />
+            <column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
+    	</insert>
+    
+    </changeSet>
+    <changeSet id="INTRD_2290_20211015" author="TarikFA." />
+    
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
