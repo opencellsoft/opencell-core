@@ -32,6 +32,7 @@ import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
+import org.meveo.apiv2.dunning.dunningAction.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
@@ -101,7 +102,7 @@ public class GenericOpencellRestful extends Application {
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class, ReportingResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
-				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class,
+				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class, DunningActionImpl.class,
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class, DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class, StandardReportResourceImpl.class )
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
