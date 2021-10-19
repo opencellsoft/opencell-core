@@ -97,7 +97,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
     	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
     	
-    	this.detach(pricePlanMatrixVersion);
+    	//this.detach(pricePlanMatrixVersion);
     	
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
         if(!setNewVersion) {

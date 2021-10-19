@@ -7,6 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 
@@ -24,7 +27,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Mohammed Amine Tazi
  */
-@Stateful
+@Singleton
+@Lock(LockType.READ)
 public class CDRReprocessingReader implements ICdrReader, Serializable {
 
     private static final long serialVersionUID = 6112779360487934487L;

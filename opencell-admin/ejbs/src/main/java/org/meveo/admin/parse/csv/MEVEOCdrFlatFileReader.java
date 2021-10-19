@@ -26,10 +26,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
-import javax.ejb.Stateful;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.RecordContext;
@@ -50,7 +51,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Stateful
+@Singleton
+@Lock(LockType.READ)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvReader {
 
@@ -65,11 +67,11 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
         }
     }
 
-    private String batchName;
-    private String username;
-    private CDR_ORIGIN_ENUM origin;
+    protected String batchName;
+    protected String username;
+    protected CDR_ORIGIN_ENUM origin;
 
-    private Integer totalNumberOfRecords;
+    protected Integer totalNumberOfRecords;
 
     @Override
     public void init(File cdrFile) throws FileNotFoundException {
@@ -109,15 +111,30 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
         }
         CDR cdr = null;
         try {
-            cdr = cdrParser.parse(recordContext.getRecord());
+            if (recordContext.getRecord() != null) {
+                cdr = cdrParser.parse(recordContext.getRecord());
+                
+            } else if (recordContext.getRejectReason() != null) {
+                cdr = new CDR();
+                cdr.setRejectReasonException(recordContext.getRejectReason());
+            }
 
         } catch (CDRParsingException e) {
             cdr = new CDR();
             cdr.setRejectReasonException(e);
 
         } finally {
-            cdr.setSource(RecordContext.serializeRecord(recordContext.getRecord()));
-            cdr.setType(recordContext.getRecord().getClass().getName());
+
+            // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
+            if (recordContext.getRecord()!=null) {
+//            try {
+//                String source = RecordContext.serializeRecord(recordContext.getRecord());
+//                cdr.setSource(source);
+//            } catch (Exception e) {
+//                log.error("Failed to serialize CDR record", e);
+//            }
+              cdr.setType(recordContext.getRecord().getClass().getName());
+            }
             String line = recordContext.getLineContent();
             cdr.setLine(line);
             cdr.setOriginBatch(batchName);
