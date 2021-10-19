@@ -37,40 +37,74 @@ import java.util.List;
         @Parameter(name = "sequence_name", value = "dunning_level_seq")})
 public class DunningLevel extends BusinessEntity {
 
+    /**
+     * A reminder level, is a level with a send notification action, its purpose is to remind the customer that his payment is due in a couple of days.
+     * It is the first level of a policy, and a policy can only have one reminder level.
+     * This level is previous to a collection plan, it doesn’t trigger a collection plan.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "reminder")
     private boolean isReminder = Boolean.FALSE;
 
+    /**
+     * A level can be activated or deactivate at any time, it means it is triggered or not within a policy
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "active")
     private boolean isActive = Boolean.TRUE;
 
+    /**
+     * It represents the difference between Today and invoice due date when the invoice is not paid
+     */
     @Column(name = "days_overdue")
     @NotNull
     private Integer daysOverdue;
 
+    /**
+     * If set to TRUE, the level is only triggered when the reason for invoice failure is a soft decline of an automatic payment.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "soft_decline")
     private boolean isSoftDecline = Boolean.FALSE;
 
+    /**
+     * It is a threshold for triggering a dunning level within a policy
+     */
     @Column(name = "min_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal minBalance;
 
+    /**
+     * The currency of the min balance of the dunning level
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "min_balance_currency_id")
     private Currency minBalanceCurrency;
 
+    /**
+     * Charge is specific to each dunning level, it can be either a percentage of the balance or a flat amount.
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "charge_type")
     private DunningLevelChargeTypeEnum chargeType;
 
+    /**
+     * Value of the charge to be applied at the level.
+     *
+     *  ​if DunningLevelChargeType = Percentage, value < 100
+     */
     @Column(name = "charge_value", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal  chargeValue;
 
+    /**
+     * The currency of dunning charge
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_currency_id")
     private Currency chargeCurrency;
 
+    /**
+     * The end of dunning level refers to the last level of a dunning policy
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "end_dunning_level")
     private boolean isEndOfDunningLevel = Boolean.FALSE;
