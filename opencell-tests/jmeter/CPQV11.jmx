@@ -77,7 +77,7 @@
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
-        <stringProp name="TestPlan.comments">20 users marketing connectés sur le catalogue en même temps (création, get)</stringProp>
+        <stringProp name="TestPlan.comments">20 users marketing connectés sur le catalogue en même temps (création,get)</stringProp>
       </ThreadGroup>
       <hashTree>
         <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="AttributeCode" enabled="true">
