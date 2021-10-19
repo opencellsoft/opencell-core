@@ -118,12 +118,11 @@ public class DunningPauseReasons extends AuditableEntity  {
 		this.description = description;
 	}
 
+	public DunningSettings getDunningSettings() {
+		return dunningSettings;
+	}
 
-
-	 
-	 
-	
-	
-	
-	
+	public void setDunningSettings(DunningSettings dunningSettings) {
+		this.dunningSettings = dunningSettings;
+	}
 }

@@ -1,7 +1,7 @@
 package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
 
-import org.meveo.model.dunning.InvoiceDunningStatuses;
+import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -13,6 +13,6 @@ import org.meveo.service.base.PersistenceService;
  *
  */
 @Stateless
-public class InvoiceDunningStatusesService extends PersistenceService<InvoiceDunningStatuses> {
+public class DunningInvoiceStatusService extends PersistenceService<DunningInvoiceStatus> {
 
 }

@@ -11,7 +11,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 /**
  * @author Mbarek-Ay
@@ -139,7 +138,7 @@ public class DunningSettings extends BusinessEntity {
     private List<DunningStopReasons> dunningStopReasons = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceDunningStatuses> invoiceDunningStatuses = new ArrayList<>();
+    private List<DunningInvoiceStatus> dunningStatuses = new ArrayList<>();
 
 
     public DunningModeEnum getDunningMode() {
@@ -254,11 +253,11 @@ public class DunningSettings extends BusinessEntity {
 		this.dunningStopReasons = dunningStopReasons;
 	}
 
-    public List<InvoiceDunningStatuses> getInvoiceDunningStatuses() {
-        return invoiceDunningStatuses;
+    public List<DunningInvoiceStatus> getDunningStatuses() {
+        return dunningStatuses;
     }
 
-    public void setInvoiceDunningStatuses(List<InvoiceDunningStatuses> invoiceDunningStatuses) {
-        this.invoiceDunningStatuses = invoiceDunningStatuses;
+    public void setDunningStatuses(List<DunningInvoiceStatus> dunningStatuses) {
+        this.dunningStatuses = dunningStatuses;
     }
 }

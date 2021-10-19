@@ -22,21 +22,21 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "invoice_dunning_statuses")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "invoice_dunning_statuses_seq")})
-public class InvoiceDunningStatuses extends AuditableEntity  {
+public class DunningInvoiceStatus extends AuditableEntity  {
 	
 	private static final long serialVersionUID = 1L;
 	
 	
 	
 	
-	public InvoiceDunningStatuses() {
+	public DunningInvoiceStatus() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	
 
-	public InvoiceDunningStatuses(@Size(max = 50) String language, @Size(max = 50) String status,
+	public DunningInvoiceStatus(@Size(max = 50) String language, @Size(max = 50) String status,
 			@Size(max = 255) String context, DunningSettings dunningSettings) {
 		super();
 		this.language = language;
