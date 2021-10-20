@@ -297,6 +297,9 @@
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_rule_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_rule_line_seq" startValue="1" />
     </changeSet>
     
      
@@ -14963,6 +14966,101 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
         <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
     </changeSet>
+
+    <changeSet id="INTRD-2444_20211018" author="ZBariki">
+        <createTable tableName="dunning_policy">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_description" type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="interest_for_delay_sequence" type="int4" />
+            <column name="min_balance_trigger" type="float8" defaultValue="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="total_dunning_levels" type="int4" />
+            <column name="include_pay_reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="attach_invoices_to_emails" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="policy_priority" type="int4" />
+            <column name="is_default_policy" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="is_active_policy" type="${type.boolean}" defaultValueNumeric="1" />
+        </createTable>
+        <createTable tableName="dunning_min_balance_trigger_currency">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="min_balance_trigger_currency" type="varchar(255)" />
+        </createTable>
+        <createTable tableName="dunning_determine_level_by">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="determine_level_by" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_min_balance_trigger_currency"
+                                 constraintName="fk_dunning_min_balance_trigger_currency_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_determine_level_by"
+                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <createTable tableName="dunning_policy_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="rule_joint" type="varchar(255)" />
+            <column name="dunning_policy_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_rule"
+                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <createTable tableName="dunning_policy_rule_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_condition_operator" type="varchar(255)" />
+            <column name="policy_condition_target" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_condition_target_value" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_policy_rule_id" type="bigint" />
+            <column name="rule_line_joint" type="varchar(255)" defaultValue="AND"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_rule_id" baseTableName="dunning_policy_rule_line"
+                                 constraintName="fk_dunning_policy_rule_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy_rule"/>
+    </changeSet>
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
@@ -16029,6 +16127,7 @@
             <column name="dunning_level_id" type="bigint" />
             <column name="collection_plan_status_id" type="bigint" />
             <column name="invoice_dunning_statuses_id" type="bigint" />
+            <column name="dunning_policy_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="dunning_level_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"
                                  deferrable="false" initiallyDeferred="false"
@@ -16039,8 +16138,13 @@
         <addForeignKeyConstraint baseColumnNames="invoice_dunning_statuses_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_invoice_dunning_statuses"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="invoice_dunning_statuses" />
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_level"
+                                 constraintName="fk_dunning_policy_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
-    
+    <changeSet id="INTRD-2444_20211019" author="ZBariki" />
+
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
