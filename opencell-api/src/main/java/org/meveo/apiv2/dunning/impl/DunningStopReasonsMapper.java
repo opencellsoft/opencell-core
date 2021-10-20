@@ -15,7 +15,7 @@ public class DunningStopReasonsMapper extends ResourceMapper<org.meveo.apiv2.dun
 				.language(entity.getLanguage())
 				.stopReason(entity.getStopReason())
 				.description(entity.getDescription())
-				.dunningSetting(createResource((entity.getDunningSettings())))
+				.dunningSettings(createResource((entity.getDunningSettings())))
                 .build();
     }
 
@@ -23,10 +23,10 @@ public class DunningStopReasonsMapper extends ResourceMapper<org.meveo.apiv2.dun
     protected DunningStopReasons toEntity(org.meveo.apiv2.dunning.DunningStopReasons resource) {
         var entity = new DunningStopReasons();
         entity.setId(resource.getId());
-        if (resource.getDunningSetting() != null) {
+        if (resource.getDunningSettings() != null) {
             var dunningSettings = new DunningSettings();
-            dunningSettings.setId(resource.getDunningSetting().getId());
-            dunningSettings.setCode(resource.getDunningSetting().getCode());
+            dunningSettings.setId(resource.getDunningSettings().getId());
+            dunningSettings.setCode(resource.getDunningSettings().getCode());
             entity.setDunningSettings(dunningSettings);
         }
         entity.setLanguage(resource.getLanguage());

@@ -5,10 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
@@ -22,6 +26,9 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "invoice_dunning_statuses")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "invoice_dunning_statuses_seq")})
+@NamedQueries({
+		@NamedQuery(name = "DunningInvoiceStatus.findByCodeAndDunningSettingCode", query = "FROM DunningInvoiceStatus d where d.status = :status and d.dunningSettings.code = :dunningSettingsCode") })
+
 public class DunningInvoiceStatus extends AuditableEntity  {
 	
 	private static final long serialVersionUID = 1L;
@@ -58,8 +65,10 @@ public class DunningInvoiceStatus extends AuditableEntity  {
 	/**
 	 * status
 	 */
-	@Column(name = "status", length = 50)
-	@Size(max = 50)
+	@Column(name = "status", nullable = false)
+	@Size(max = 255, min = 1)
+	@NotNull
+	@JsonProperty
 	private String status;
 	
 	

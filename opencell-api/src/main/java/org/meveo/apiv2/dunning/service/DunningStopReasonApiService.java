@@ -20,8 +20,8 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	@Inject
 	private DunningStopReasonsService dunningStopReasonsService;
 	
-	private static final String NO_DUNNING_STOP_REASON_FOUND = "No Dunning stop reason found for id : ";
-	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
+	private static final String NO_DUNNING_STOP_REASON_FOUND = "No Dunning stop reason found for code : ";
+	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the code : ";
 
 	@Override
 	public List<DunningStopReasons> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -69,6 +69,26 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 		return Optional.of(dunningStopReasonUpdate);
 	}
 
+	public Optional<DunningStopReasons> update(String dunningSettingsCode, String stopReason, DunningStopReasons dunningStopReason) {
+		var dunningStopReasonUpdate = findByCodeAndDunningSettingCode(dunningSettingsCode,stopReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + stopReason));
+		if(dunningStopReason.getLanguage() != null){
+			dunningStopReasonUpdate.setLanguage(dunningStopReason.getLanguage());
+		}
+		if(dunningStopReason.getDescription() != null){
+			dunningStopReasonUpdate.setDescription(dunningStopReason.getDescription());
+		}
+		if(dunningStopReason.getStopReason() != null){
+			dunningStopReasonUpdate.setStopReason(dunningStopReason.getStopReason());
+		}
+
+		dunningStopReasonsService.update(dunningStopReasonUpdate);
+		return Optional.of(dunningStopReasonUpdate);
+	}
+
+	private Optional<DunningStopReasons> findByCodeAndDunningSettingCode(String dunningSettingsCode, String stopReason) {
+		return Optional.ofNullable(dunningStopReasonsService.findByCodeAndDunningSettingCode(dunningSettingsCode, stopReason));
+	}
+
 	@Override
 	public Optional<DunningStopReasons> patch(Long id, DunningStopReasons baseEntity) {
 		return empty();
@@ -77,6 +97,12 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	@Override
 	public Optional<DunningStopReasons> delete(Long id) {
 		var dunningStopReason = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
+		dunningStopReasonsService.remove(dunningStopReason);
+		return Optional.ofNullable(dunningStopReason);
+	}
+
+	public Optional<DunningStopReasons> delete(String dunningSettingsCode, String stopReason) {
+		var dunningStopReason = findByCodeAndDunningSettingCode(dunningSettingsCode,stopReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + stopReason));
 		dunningStopReasonsService.remove(dunningStopReason);
 		return Optional.ofNullable(dunningStopReason);
 	}

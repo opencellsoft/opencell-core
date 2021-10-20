@@ -1,6 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
 
+import org.meveo.apiv2.dunning.DunningStopReasons;
 import org.meveo.apiv2.dunning.ImmutableDunningStopReasons;
 import org.meveo.apiv2.dunning.resource.DunningStopReasonResource;
 import org.meveo.apiv2.dunning.service.DunningStopReasonApiService;
@@ -25,8 +26,9 @@ public class DunningStopReasonsResourceImpl implements DunningStopReasonResource
 				.build();
 	}
 
+
 	@Override
-	public Response update(org.meveo.apiv2.dunning.DunningStopReasons entityDto, String dunningSettingsCode, Long id) {
+	public Response update(org.meveo.apiv2.dunning.DunningStopReasons entityDto, Long id) {
 		var updatedEntity = dunningStopReasonApiService.update(id, mapper.toEntity(entityDto)).get();
 		return Response.status(Status.ACCEPTED).entity(toResourceOrderWithLink(mapper.toResource(updatedEntity))).build();
 	}
@@ -42,7 +44,7 @@ public class DunningStopReasonsResourceImpl implements DunningStopReasonResource
 	}
 
 	@Override
-	public Response delete(String dunningSettingsCode, Long id) {
+	public Response delete(Long id) {
 		return Response.ok(toResourceOrderWithLink(mapper.toResource(dunningStopReasonApiService.delete(id).get()))).build();
 	}
 

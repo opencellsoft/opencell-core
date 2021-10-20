@@ -26,7 +26,7 @@ public class DunningInvoiceStatusResourceImpl implements DunningInvoiceStatusRes
 	}
 
 	@Override
-	public Response update(org.meveo.apiv2.dunning.DunningInvoiceStatus entityDto, String dunningSettingsCode, Long id) {
+	public Response update(org.meveo.apiv2.dunning.DunningInvoiceStatus entityDto, Long id) {
 		var updatedEntity = dunningInvoiceStatusApiService.update(id, mapper.toEntity(entityDto)).get();
 		return Response.status(Status.ACCEPTED).entity(toResourceOrderWithLink(mapper.toResource(updatedEntity))).build();
 	}
@@ -42,7 +42,7 @@ public class DunningInvoiceStatusResourceImpl implements DunningInvoiceStatusRes
 	}
 
 	@Override
-	public Response delete(String dunningSettingsCode, Long id) {
+	public Response delete(Long id) {
 		return Response.ok(toResourceOrderWithLink(mapper.toResource(dunningInvoiceStatusApiService.delete(id).get()))).build();
 	}
 

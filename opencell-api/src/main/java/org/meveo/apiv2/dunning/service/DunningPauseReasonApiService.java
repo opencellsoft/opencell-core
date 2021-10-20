@@ -1,8 +1,10 @@
 package org.meveo.apiv2.dunning.service;
 
 import org.assertj.core.util.Lists;
+import org.meveo.apiv2.generic.GenericResource;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPauseReasons;
+import org.meveo.model.dunning.DunningStopReasons;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
 
@@ -68,6 +70,23 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 		return Optional.of(dunningPauseReasonUpdate);
 	}
 
+
+	public Optional<DunningPauseReasons> update(String dunningSettingsCode, String pauseReason, DunningPauseReasons dunningPauseReason) {
+		var dunningPauseReasonUpdate = findByCodeAndDunningSettingCode(dunningSettingsCode,pauseReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_PAUSE_REASON_FOUND + pauseReason));
+		if(dunningPauseReason.getLanguage() != null){
+			dunningPauseReasonUpdate.setLanguage(dunningPauseReason.getLanguage());
+		}
+		if(dunningPauseReason.getDescription() != null){
+			dunningPauseReasonUpdate.setDescription(dunningPauseReason.getDescription());
+		}
+		if(dunningPauseReason.getPauseReason() != null){
+			dunningPauseReasonUpdate.setPauseReason(dunningPauseReason.getPauseReason());
+		}
+
+		dunningPauseReasonsService.update(dunningPauseReasonUpdate);
+		return Optional.of(dunningPauseReasonUpdate);
+	}
+
 	@Override
 	public Optional<DunningPauseReasons> patch(Long id, DunningPauseReasons baseEntity) {
 		return empty();
@@ -84,5 +103,15 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 	public Optional<DunningPauseReasons> findByCode(String code) {
 		return empty();
 	}
-	
+
+	public Optional<DunningPauseReasons> delete(String dunningSettingsCode, String pauseReason) {
+		var dunningPauseReason = findByCodeAndDunningSettingCode(dunningSettingsCode,pauseReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_PAUSE_REASON_FOUND + pauseReason));
+		dunningPauseReasonsService.remove(dunningPauseReason);
+		return Optional.ofNullable(dunningPauseReason);
+
+	}
+
+	private Optional<DunningPauseReasons> findByCodeAndDunningSettingCode(String dunningSettingsCode, String stopReason) {
+		return Optional.ofNullable(dunningPauseReasonsService.findByCodeAndDunningSettingCode(dunningSettingsCode, stopReason));
+	}
 }

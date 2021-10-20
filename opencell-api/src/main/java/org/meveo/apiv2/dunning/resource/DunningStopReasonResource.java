@@ -33,7 +33,7 @@ public interface DunningStopReasonResource {
 	Response create(@Parameter(required = true) DunningStopReasons dunningStopReasons);
 
 	@PUT
-	@Path("/{dunningSettingsCode }/{stopReason}")
+	@Path("/{id}")
 	@Operation(summary = "Update an existing Dunning Stop Reason",
     tags = {"Dunning"},
     description = "Update an existing Dunning Stop Reasons",
@@ -44,11 +44,10 @@ public interface DunningStopReasonResource {
                     description = "new code for dunning Stop Reasons already exist")
     })
 	Response update(@Parameter(required = true) DunningStopReasons dunningStopReasons,
-			@Parameter(required = true, description = "The dunning setting related to the dunning stop reason") @PathParam("dunningSettingsCode") String dunningSettingsCode,
-			@Parameter(required = true, description = "Entity's id to update") @PathParam("stopReason") Long stopReason);
+			@Parameter(required = true, description = "Entity's id to update") @PathParam("id") Long id);
 
 	@DELETE
-	@Path("/{dunningSettingsCode }/{stopReason}")
+	@Path("/{id}")
 	@Operation(summary = "Delete existing Dunning Stop Reason",
     tags = {"Dunning"},
     description = "Delete Existing dunning Stop Reasons",
@@ -58,8 +57,7 @@ public interface DunningStopReasonResource {
             @ApiResponse(responseCode = "404",
                     description = "Dunning Stop Reason with id in the path doesn't exist")
     })
-	Response delete(@Parameter(required = true, description = "The dunning setting related to the dunning stop reason") @PathParam("dunningSettingsCode") String dunningSettingsCode,
-			@Parameter(required = true, description = "id of removed dunning Stop Reasons") @PathParam("stopReason") Long stopReason);
+	Response delete(@Parameter(required = true, description = "Id of removed dunning Stop Reasons") @PathParam("id") Long id);
 	
 	
 }

@@ -32,7 +32,7 @@ public interface DunningPauseReasonResource {
 	Response create(@Parameter(required = true) DunningPauseReasons dunningPauseReasons);
 
 	@PUT
-	@Path("/{dunningSettingsCode }/{pauseReason}")
+	@Path("/{id}")
 	@Operation(summary = "Update an existing Dunning Pause Reason",
     tags = {"Dunning"},
     description = "Update an existing Dunning Pause Reasons",
@@ -43,11 +43,10 @@ public interface DunningPauseReasonResource {
                     description = "new code for dunning Pause Reasons already exist")
     })
 	Response update(@Parameter(required = true) DunningPauseReasons dunningPauseReasons,
-            @Parameter(required = true, description = "The dunning setting related to the dunning pause reason") @PathParam("dunningSettingsCode") String dunningSettingsCode,
-            @Parameter(required = true, description = "Entity's id to update") @PathParam("pauseReason") Long pauseReason);
+            @Parameter(required = true, description = "Entity's id to update") @PathParam("id") Long id);
 
 	@DELETE
-	@Path("/{dunningSettingsCode }/{pauseReason}")
+	@Path("/{id}")
 	@Operation(summary = "Delete existing Dunning Pause Reason",
     tags = {"Dunning"},
     description = "Delete Existing dunning Pause Reasons",
@@ -57,9 +56,7 @@ public interface DunningPauseReasonResource {
             @ApiResponse(responseCode = "404",
                     description = "Dunning Pause Reason with id in the path doesn't exist")
     })
-	Response delete(
-            @Parameter(required = true, description = "The dunning setting related to the dunning pause reason") @PathParam("dunningSettingsCode") String dunningSettingsCode,
-            @Parameter(required = true, description = "id of removed dunning Pause Reasons") @PathParam("pauseReason") Long pauseReason);
+	Response delete(@Parameter(required = true, description = "Id of removed dunning Pause Reasons") @PathParam("id") Long id);
 	
 	
 }

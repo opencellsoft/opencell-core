@@ -4,6 +4,7 @@ import org.assertj.core.util.Lists;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.model.dunning.DunningInvoiceStatus;
+import org.meveo.model.dunning.DunningPauseReasons;
 import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
@@ -22,8 +23,8 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	@Inject
 	private DunningInvoiceStatusService dunningInvoiceStatusService;
 	
-	private static final String NO_DUNNING_INVOICE_STATUS_FOUND = "No Dunning invoice status wa found for id : ";
-	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
+	private static final String NO_DUNNING_INVOICE_STATUS_FOUND = "No Dunning invoice status wa found for code : ";
+	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the code : ";
 
 	@Override
 	public List<DunningInvoiceStatus> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -71,6 +72,22 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 		return Optional.of(dunningInvoiceStatusUpdate);
 	}
 
+	public Optional<DunningInvoiceStatus> update(String dunningSettingsCode, String status, DunningInvoiceStatus dunningInvoiceStatus) {
+		var dunningInvoiceStatusUpdate = findByCodeAndDunningSettingCode(dunningSettingsCode, status).orElseThrow(() -> new BadRequestException(NO_DUNNING_INVOICE_STATUS_FOUND + status));
+		if(dunningInvoiceStatus.getLanguage() != null){
+			dunningInvoiceStatusUpdate.setLanguage(dunningInvoiceStatus.getLanguage());
+		}
+		if(dunningInvoiceStatus.getContext() != null){
+			dunningInvoiceStatusUpdate.setContext(dunningInvoiceStatus.getContext());
+		}
+		if(dunningInvoiceStatus.getStatus() != null){
+			dunningInvoiceStatusUpdate.setStatus(dunningInvoiceStatus.getStatus());
+		}
+
+		dunningInvoiceStatusService.update(dunningInvoiceStatusUpdate);
+		return Optional.of(dunningInvoiceStatusUpdate);
+	}
+
 	@Override
 	public Optional<DunningInvoiceStatus> patch(Long id, DunningInvoiceStatus baseEntity) {
 		return empty();
@@ -83,9 +100,18 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 		return Optional.ofNullable(dunningInvoiceStatus);
 	}
 
+	public Optional<DunningInvoiceStatus> delete(String dunningSettingsCode, String status) {
+		var dunningInvoiceStatus = findByCodeAndDunningSettingCode(dunningSettingsCode, status).orElseThrow(() -> new BadRequestException(NO_DUNNING_INVOICE_STATUS_FOUND + status));
+		dunningInvoiceStatusService.remove(dunningInvoiceStatus);
+		return Optional.ofNullable(dunningInvoiceStatus);
+	}
+
 	@Override
 	public Optional<DunningInvoiceStatus> findByCode(String code) {
 		return empty();
 	}
 
+	private Optional<DunningInvoiceStatus> findByCodeAndDunningSettingCode(String dunningSettingsCode, String status) {
+		return Optional.ofNullable(dunningInvoiceStatusService.findByCodeAndDunningSettingCode(dunningSettingsCode, status));
+	}
 }

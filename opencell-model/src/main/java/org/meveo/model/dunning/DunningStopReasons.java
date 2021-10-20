@@ -5,11 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
@@ -23,6 +26,8 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "dunning_stop_reasons")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_stop_reasons_seq")})
+@NamedQueries({
+		@NamedQuery(name = "DunningStopReasons.findByCodeAndDunningSettingCode", query = "FROM DunningStopReasons d where d.stopReason = :stopReason and d.dunningSettings.code = :dunningSettingsCode") })
 public class DunningStopReasons extends AuditableEntity  {
 	
 	private static final long serialVersionUID = 1L;
@@ -62,8 +67,10 @@ public class DunningStopReasons extends AuditableEntity  {
 	/**
 	 * stop reason 
 	 */
-	@Column(name = "stop_reason", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "stop_reason", nullable = false)
+	@Size(max = 255, min = 1)
+	@NotNull
+	@JsonProperty
 	private String stopReason;
 	
 	

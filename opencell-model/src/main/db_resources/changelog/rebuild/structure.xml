@@ -14613,7 +14613,9 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-            <column name="pause_reason" type="varchar(1000)" />
+             <column name="pause_reason" type="varchar(255)">
+                 <constraints nullable="false" />
+             </column>
             <column name="description" type="varchar(255)" /> 
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
@@ -14637,7 +14639,9 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-            <column name="stop_reason" type="varchar(1000)" />
+             <column name="stop_reason" type="varchar(255)">
+                 <constraints nullable="false" />
+             </column>
             <column name="description" type="varchar(255)" /> 
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
@@ -14661,7 +14665,9 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-            <column name="status" type="varchar(50)" />
+            <column name="status" type="varchar(255)" >
+                <constraints nullable="false" />
+            </column>
             <column name="context" type="varchar(255)" /> 
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
@@ -14686,8 +14692,10 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-            <column name="status" type="varchar(50)" />
-            <column name="context" type="varchar(255)" /> 
+            <column name="status" type="varchar(255)" />
+             <column name="context" type="varchar(255)">
+                 <constraints nullable="false" />
+             </column>
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>

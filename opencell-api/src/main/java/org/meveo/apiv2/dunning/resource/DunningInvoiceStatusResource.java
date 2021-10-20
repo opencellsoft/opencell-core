@@ -32,7 +32,7 @@ public interface DunningInvoiceStatusResource {
 	Response create(@Parameter(required = true) DunningInvoiceStatus  dunningInvoiceStatus );
 
 	@PUT
-	@Path("/{dunningSettingsCode }/{status}")
+	@Path("/{id}")
 	@Operation(summary = "Update an existing Dunning Invoice status ",
     tags = {"Dunning"},
     description = "Update an existing Dunning Invoice status",
@@ -43,11 +43,10 @@ public interface DunningInvoiceStatusResource {
                     description = "new code for dunning Invoice status already exist")
     })
 	Response update(@Parameter(required = true) DunningInvoiceStatus  dunningInvoiceStatus ,
-            @Parameter(required = true, description = "The dunning setting related to the dunning invoice status ") @PathParam("dunningSettingsCode") String dunningSettingsCode,
-            @Parameter(required = true, description = "Entity's id to update") @PathParam("status") Long id);
+            @Parameter(required = true, description = "Entity's id to update") @PathParam("id") Long id);
 
 	@DELETE
-	@Path("/{dunningSettingsCode }/{status}")
+	@Path("/{id}")
 	@Operation(summary = "Delete existing Dunning Invoice status ",
     tags = {"Dunning"},
     description = "Delete Existing dunning Invoice status",
@@ -57,9 +56,7 @@ public interface DunningInvoiceStatusResource {
             @ApiResponse(responseCode = "404",
                     description = "Dunning Invoice status  with id in the path doesn't exist")
     })
-	Response delete(
-            @Parameter(required = true, description = "The dunning setting related to the dunning invoice status ") @PathParam("dunningSettingsCode") String dunningSettingsCode,
-            @Parameter(required = true, description = "id of removed dunning Invoice status") @PathParam("status") Long id);
+	Response delete(@Parameter(required = true, description = "id of removed dunning Invoice status") @PathParam("id") Long id);
 	
 	
 }

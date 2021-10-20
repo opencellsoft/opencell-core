@@ -18,7 +18,7 @@ public interface DunningPauseReasons extends Resource {
 	String getLanguage();
 
     @Schema(description = "The pause reason")
-    @Nullable
+    @Nonnull
     String getPauseReason();
 
     @Schema(description = "The pause reason's description")
@@ -27,5 +27,5 @@ public interface DunningPauseReasons extends Resource {
 
     @Schema(description = "The dunning settings associated to pause reason")
     @Nonnull
-	Resource getDunningSetting();
+	Resource getDunningSettings();
 }

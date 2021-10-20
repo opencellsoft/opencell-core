@@ -34,7 +34,10 @@ import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningInvoiceStatusResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
 import org.meveo.apiv2.finance.impl.ReportingResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -102,7 +105,10 @@ public class GenericOpencellRestful extends Application {
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
 				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class,
-				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class, DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class, StandardReportResourceImpl.class )
+				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
+                DunningCollectionManagementResourceImpl.class,
+                CollectionPlanStatusResourceImpl.class, StandardReportResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class,
+                DunningInvoiceStatusResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);

@@ -18,7 +18,7 @@ public interface DunningInvoiceStatus extends Resource {
 	String getLanguage();
 
     @Schema(description = "The invoice status")
-    @Nullable
+    @Nonnull
     String getStatus();
 
     @Schema(description = "The invoice status's description")
@@ -27,5 +27,5 @@ public interface DunningInvoiceStatus extends Resource {
 
     @Schema(description = "The dunning settings associated to invoice status")
     @Nonnull
-	Resource getDunningSetting();
+	Resource getDunningSettings();
 }
