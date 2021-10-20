@@ -80,6 +80,7 @@ import java.util.*;
 import java.util.Calendar;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.meveo.commons.utils.StringUtils.isNotBlank;
 
 /**
@@ -2205,6 +2206,15 @@ public class SubscriptionApi extends BaseApi {
 
             subscriptionService.updateNoCheck(currentSubscription);
             subscriptionService.updateNoCheck(patchedSubscription);
+
+            for (ServiceInstance si : new ArrayList<>(emptyIfNull(patchedSubscription.getServiceInstances()))) {
+                if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                    si.setSubscriptionDate(newEffectiveDate);
+                    serviceInstanceService.updateNoCheck(si);
+                }
+            }
+            //refresh patchedSubscription
+            subscriptionService.refresh(patchedSubscription);
         }
 
         subscriptionService.activateInstantiatedService(patchedSubscription);
