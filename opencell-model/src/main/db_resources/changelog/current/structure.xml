@@ -9644,7 +9644,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="dunning_action_id"  type="bigint"/>
             <column name="action_notification_template"  type="varchar(200)"/>
         </createTable>
-        <createTable tableName="ar_dunning_level">
+        <createTable tableName="dunning_level">
             <column name="level_id" type="bigint" />
             <column name="related_levels" type="varchar(255)" />
         </createTable>
@@ -9898,4 +9898,9 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
+
+    <changeSet id="#INTRD-2322-20211020" author="ZBariki">
+        <renameTable newTableName="ar_dunning_level" oldTableName="dunning_level" />
+    </changeSet>
+
 </databaseChangeLog>
