@@ -20,7 +20,7 @@ package org.meveo.model.billing;
 public enum InstanceStatusEnum {
 
     ACTIVE(1, "accountStatusEnum.active"), INACTIVE(1, "accountStatusEnum.inactive"), CANCELED(2, "accountStatusEnum.canceled"), TERMINATED(3, "accountStatusEnum.terminated"), SUSPENDED(4,
-            "accountStatusEnum.suspended"), CLOSED(4, "accountStatusEnum.closed");
+            "accountStatusEnum.suspended"), CLOSED(4, "accountStatusEnum.closed") , PENDING(4, "accountStatusEnum.pending");
 
     private Integer id;
 
