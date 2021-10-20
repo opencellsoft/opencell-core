@@ -37,6 +37,7 @@ import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
 import org.meveo.apiv2.finance.impl.ReportingResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
@@ -107,7 +108,8 @@ public class GenericOpencellRestful extends Application {
 				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class,
 				DunningSettingsResourceImpl.class, DunningLevelResourceImpl.class ,DunningActionImpl.class,
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
-				DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class, StandardReportResourceImpl.class, MediationResourceImpl.class)
+				DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class,
+                StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);

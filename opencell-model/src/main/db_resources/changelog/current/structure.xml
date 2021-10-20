@@ -9947,4 +9947,10 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="INTRD-2366_20211021" author="AbdelkaderBouazza">
         <dropColumn tableName="ar_dunning_action" columnName="related_levels"/>
     </changeSet>
+
+    <changeSet id="INTRD-2445_20211021" author="ZBariki">
+        <addUniqueConstraint columnNames="policy_name" constraintName="uk_dp_dunning_policy_name"
+                         deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_policy" />
+    </changeSet>
+
 </databaseChangeLog>
