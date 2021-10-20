@@ -9765,7 +9765,7 @@ public class OrderAdvancement extends ModuleScript {
         <createSequence sequenceName="dunning_policy_level_seq" startValue="1" />
         <createTable tableName="dunning_policy_level">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_level_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_level_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
