@@ -9637,8 +9637,7 @@ public class OrderAdvancement extends ModuleScript {
         <addColumn tableName="quote_offer" >
             <column name="delivery_date" type="datetime" />
         </addColumn>
-    </changeSet>
-
+    </changeSet>   
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
         <createTable tableName="dunning_action_notification_template">
@@ -9715,7 +9714,6 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_invoice_dunning_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses" referencedColumnNames="id" />
     </changeSet>
-
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
@@ -9900,7 +9898,8 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
-    <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza">
+    
+     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza">
        <renameColumn tableName="ar_dunning_action" oldColumnName="action_name" newColumnName="code"/>
         <renameColumn tableName="ar_dunning_action" oldColumnName="action_description" newColumnName="description"/>
         <dropColumn tableName="ar_dunning_action" columnName="action_notification_template"/>
@@ -9910,5 +9909,19 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="action_notification_template_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_email_template"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
+    </changeSet>
+    
+     <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay">
+     <addColumn tableName="cpq_invoice_line">
+            <column name="quote_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+                                 
+       <addColumn tableName="cpq_invoice_line">
+         <column name="order_offer_id" type="bigint" />
+     </addColumn>
+     <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />                        
     </changeSet>
 </databaseChangeLog>

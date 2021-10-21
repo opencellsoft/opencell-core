@@ -7,6 +7,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.payments.ActionTypeEnum;
 import org.meveo.model.payments.DunningAction;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -17,7 +18,7 @@ import javax.ws.rs.BadRequestException;
 import java.util.Arrays;
 
 @Stateless
-public class DunningActionService  extends PersistenceService<DunningAction> {
+public class DunningActionService  extends BusinessService<DunningAction> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
