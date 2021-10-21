@@ -58,6 +58,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.orderOfferId = orderOffer.getId();
 		this.commercialOrderId = orderOffer.getOrder()!=null?orderOffer.getOrder().getId():null;
 		this.offerTemplateCode = orderOffer.getOfferTemplate()!=null?orderOffer.getOfferTemplate().getCode():null;
+		this.deliveryDate = orderOffer.getDeliveryDate();
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
