@@ -9630,10 +9630,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="action_name" type="varchar(255)" >
+            <column name="code" type="varchar(255)" >
                 <constraints nullable="false"/>
             </column>
-            <column name="action_description" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
             <column name="is_action_active" type="${type.boolean}" defaultValueBoolean="true"/>
             <column name="action_type" type="varchar(255)" >
                 <constraints nullable="false"/>
@@ -9644,7 +9644,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="action_channel" type="varchar(255)"/>
             <column name="related_levels" type="varchar(255)"/>
             <column name="script_instance_id" type="bigint"/>
-            <column name="action_notification_template" type="varchar(255)"/>
+            <column name="action_notification_template_id" type="bigint"/>
             <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueBoolean="true"/>
             <column name="attach_due_invoices" type="${type.boolean}"  defaultValueBoolean="false"/>
         </createTable>
@@ -9667,7 +9667,7 @@ public class OrderAdvancement extends ModuleScript {
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
 
         <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="collection_plan_statuses" referencedColumnNames="id" />
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
 
         <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
@@ -9688,6 +9688,15 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza">
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-3"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2021-10-19 12:42:21.000000" />
+            <column name="code" value="DUNNING_ACTION"/>
+            <column name="description"  value="dunning action"/>
+        </insert>
     </changeSet>
    
 </databaseChangeLog>
