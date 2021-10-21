@@ -97,7 +97,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 			}
 			baseEntity.setDunningActions(baseEntity.getDunningActions().stream().map(action -> dunningActionService.findByCode(action.getCode())).collect(Collectors.toList()));
 		}
-		
+
 		dunningLevelService.create(baseEntity);
 		return baseEntity;
 	}
