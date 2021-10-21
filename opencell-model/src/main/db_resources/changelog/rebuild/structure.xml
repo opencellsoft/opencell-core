@@ -10110,6 +10110,8 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+              <column name="quote_offer_id" type="bigint"/>
+              <column name="order_offer_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -14065,6 +14067,16 @@
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
+    
+    <changeSet id="rebuild-str-fk-540-1639" author="Mbarek-Ay">
+     <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+    </changeSet> 
+    
+     <changeSet id="rebuild-str-fk-540-1640" author="Mbarek-Ay">
+     <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+           onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
+      </changeSet>                      
     
     <!-- end fk -->
 

@@ -50,6 +50,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
  * @author Tarik F.
@@ -237,6 +238,15 @@ public class InvoiceLine extends AuditableEntity {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "cpq_quote_id")
     private CpqQuote quote;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_offer_id")
+	private QuoteOffer quoteOffer;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_offer_id")
+	private OrderOffer orderOffer;
 
 	public InvoiceLine() {
 	}
@@ -546,6 +556,26 @@ public class InvoiceLine extends AuditableEntity {
 	public void setQuote(CpqQuote quote) {
 		this.quote = quote;
 	}
+
+	public QuoteOffer getQuoteOffer() {
+		return quoteOffer;
+	}
+
+	public void setQuoteOffer(QuoteOffer quoteOffer) {
+		this.quoteOffer = quoteOffer;
+	}
+
+	public OrderOffer getOrderOffer() {
+		return orderOffer;
+	}
+
+	public void setOrderOffer(OrderOffer orderOffer) {
+		this.orderOffer = orderOffer;
+	}
+	
+	
+	
+	
 	
 	
 }
