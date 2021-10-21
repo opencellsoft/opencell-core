@@ -1244,8 +1244,9 @@ public class CpqQuoteApi extends BaseApi {
             if(a.getRecurrencePeriodicity()!=null) {
             	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
             }
-
+            if(!PriceLevelEnum.OFFER.equals(level)) {
             quotePriceService.create(quotePrice);
+            }
             log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
 
             return quotePrice;
@@ -1332,6 +1333,7 @@ public class CpqQuoteApi extends BaseApi {
         .filter(Optional::isPresent)
         .map(price -> {
             QuotePrice quotePrice = price.get();
+            quotePriceService.create(quotePrice);
             pricesDTO.add(new PriceDTO(quotePrice));
             return pricesDTO;
         }).collect(Collectors.toList());
