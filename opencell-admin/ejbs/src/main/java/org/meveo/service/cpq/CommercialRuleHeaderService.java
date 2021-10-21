@@ -380,18 +380,18 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     private Optional<QuoteAttribute> getQuoteAttributeToReplace(QuoteProduct quoteProduct, String attributeToReplaceCode) {
         return quoteProduct.getProductVersion().getAttributes()
                                         .stream()
-                                        .filter(attribute -> attribute.getCode().equals(attributeToReplaceCode))
+                                        .filter(attribute -> attribute.getAttribute().getCode().equals(attributeToReplaceCode))
                                         .map(attribute -> {
                                             Optional<QuoteAttribute> matchedAttribute = quoteProduct.getQuoteAttributes()
                                                     .stream()
-                                                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(attribute.getCode()))
+                                                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(attribute.getAttribute().getCode()))
                                                     .findFirst();
 
                                             if (matchedAttribute.isPresent())
                                                 return matchedAttribute.get();
                                             else {
                                                 QuoteAttribute quoteAttribute = new QuoteAttribute();
-                                                quoteAttribute.setAttribute(attribute);
+                                                quoteAttribute.setAttribute(attribute.getAttribute());
                                                 quoteAttribute.setQuoteProduct(quoteProduct);
                                                 quoteAttributeService.create(quoteAttribute);
                                                 quoteProduct.getQuoteAttributes().add(quoteAttribute);
