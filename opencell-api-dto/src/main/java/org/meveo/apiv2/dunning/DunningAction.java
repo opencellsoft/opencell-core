@@ -1,5 +1,6 @@
 package org.meveo.apiv2.dunning;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -9,6 +10,7 @@ import org.meveo.model.payments.ActionTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Map;
 
 @Value.Immutable
@@ -31,9 +33,11 @@ public interface DunningAction {
     String getActionChannel();
 
     @Nullable
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String,Long> getScript();
 
     @Nullable
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String,Long> getActionNotificationTemplate();
 
     @Value.Default default boolean getAttachOverdueInvoices(){return false;}
@@ -62,4 +66,24 @@ public interface DunningAction {
         dunningActionEntity.setAttachDueInvoices(getAttachDueInvoices());
         return dunningActionEntity;
     }
+
+    default ImmutableDunningAction toDunningAction(org.meveo.model.payments.DunningAction dunningAction) {
+        ImmutableDunningAction.Builder immutableDunningAction = ImmutableDunningAction.builder()
+                .code(dunningAction.getCode())
+                .description(dunningAction.getDescription())
+                .actionType(dunningAction.getActionType().name())
+                .actionMode(dunningAction.getActionMode().name())
+                .actionChannel(dunningAction.getActionChannel().name())
+                .attachOverdueInvoices(dunningAction.isAttachOverdueInvoices())
+                .attachDueInvoices(dunningAction.isAttachDueInvoices());
+
+        if(dunningAction.getActionNotificationTemplate() != null){
+            immutableDunningAction.actionNotificationTemplate(Collections.singletonMap("id", dunningAction.getActionNotificationTemplate().getId()));
+        }
+        if(dunningAction.getScriptInstance() != null){
+            immutableDunningAction.script(Collections.singletonMap("id", dunningAction.getScriptInstance().getId()));
+        }
+        return immutableDunningAction.build();
+    }
+
 }
