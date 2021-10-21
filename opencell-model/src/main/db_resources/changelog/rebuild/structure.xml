@@ -14964,7 +14964,9 @@
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_meveo_script_instance"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-        <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
+        <addForeignKeyConstraint baseColumnNames="action_notification_template_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_email_template"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
     </changeSet>
 
     <changeSet id="INTRD-2444_20211018-rebuild" author="ZBariki">
