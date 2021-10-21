@@ -8166,7 +8166,7 @@
     <changeSet id="1589_20210930" author="YoussefIZEM" />
      <changeSet id="INTRD-2143_20211006" author="TarikFA." />
     
-    <changeSet id="INTRD-2143_20211006_build" author="TarikFA.">
+    <changeSet id="INTRD_1985_20210923_data" author="TarikFA.">
     
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -8225,7 +8225,7 @@
     
     </changeSet>
     
-    <changeSet id="INTRD_2290_20211015_build" author="TarikFA.">
+    <changeSet id="INTRD_2290_20211015" author="TarikFA.">
     	<insert tableName="dunning_settings">
     		<column name="id" valueSequenceNext="dunning_settings_seq" />
     		<column name="code" value="DUN_DEF"/>
@@ -8562,7 +8562,6 @@
     	</insert>
     
     </changeSet>
-    <changeSet id="INTRD_2290_20211015" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

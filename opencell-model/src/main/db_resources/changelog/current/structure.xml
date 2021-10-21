@@ -9638,6 +9638,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="delivery_date" type="datetime" />
         </addColumn>
     </changeSet>   
+    
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
         <createTable tableName="dunning_action_notification_template">
@@ -9714,6 +9715,7 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_invoice_dunning_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses" referencedColumnNames="id" />
     </changeSet>
+
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
