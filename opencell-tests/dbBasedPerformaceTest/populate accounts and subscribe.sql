@@ -114,10 +114,11 @@ BEGIN
 	
 		-- Remove customers exceeding the number needed
 	    delete from crm_customer where id >= (var_first_customer_id + param_max_customers);
+
+	    select setval('account_entity_seq', (select max(id)+1 from crm_customer), false) into var_foo;
 	  
 	END IF;
 
-	select setval('account_entity_seq', (select max(id)+1 from crm_customer), false) into var_foo;
 
 	-- "Customer account"
 
