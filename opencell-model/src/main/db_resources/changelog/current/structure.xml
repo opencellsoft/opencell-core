@@ -9899,6 +9899,18 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
     
+     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza">
+       <renameColumn tableName="ar_dunning_action" oldColumnName="action_name" newColumnName="code"/>
+        <renameColumn tableName="ar_dunning_action" oldColumnName="action_description" newColumnName="description"/>
+        <dropColumn tableName="ar_dunning_action" columnName="action_notification_template"/>
+        <addColumn tableName="ar_dunning_action">
+            <column name="action_notification_template" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="action_notification_template_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_email_template"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
+    </changeSet>
+    
      <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay">
      <addColumn tableName="cpq_invoice_line">
             <column name="quote_offer_id" type="bigint" />
