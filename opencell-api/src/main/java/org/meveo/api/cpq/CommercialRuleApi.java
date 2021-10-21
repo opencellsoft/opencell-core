@@ -27,6 +27,8 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.RuleTypeEnum;
+import org.meveo.model.cpq.enums.ScopeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
@@ -221,6 +223,9 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		}
 		if(dto.getDisabled()!=null)
 			commercialRuleHeader.setDisabled(dto.getDisabled());
+		if(dto.getRuleType() == RuleTypeEnum.REPLACEMENT){
+			commercialRuleHeader.setScopeType(dto.getScope() != null ? dto.getScope() : ScopeTypeEnum.QUOTE_OFFER);
+		}
 		
 		populateCommercialRuleItems(dto,commercialRuleHeader);
 	}

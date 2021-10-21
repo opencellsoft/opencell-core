@@ -8688,6 +8688,7 @@
             <column name="updater" type="varchar(100)" />
 
             <column name="rule_type" type="varchar(50)" />
+            <column name="scope_type" type="varchar(25)" />
             <column name="offer_template_id" type="bigint" />
             <column name="product_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
@@ -15859,6 +15860,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="INTRD-2046_20210927" author="Mbarek-Ay"/>
     <changeSet id="INTRD-2252_20211006" author="TarikFA." />
     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
+    <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
