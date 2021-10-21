@@ -14943,10 +14943,10 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="action_name" type="varchar(255)" >
+            <column name="code" type="varchar(255)" >
                 <constraints nullable="false"/>
             </column>
-            <column name="action_description" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
             <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="action_type" type="varchar(255)" >
                 <constraints nullable="false"/>
@@ -14957,14 +14957,16 @@
             <column name="action_channel" type="varchar(255)"/>
             <column name="related_levels" type="varchar(255)"/>
             <column name="script_instance_id" type="bigint"/>
-            <column name="action_notification_template" type="varchar(255)"/>
+            <column name="action_notification_template_id" type="bigint"/>
             <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_meveo_script_instance"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-        <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
+        <addForeignKeyConstraint baseColumnNames="action_notification_template_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_email_template"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
     </changeSet>
 
     <changeSet id="INTRD-2444_20211018-rebuild" author="ZBariki">
@@ -16153,4 +16155,8 @@
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza"/>
+    <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza"/>
+    <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza"/>
 </databaseChangeLog>
