@@ -9898,4 +9898,18 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
+    
+     <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay">
+     <addColumn tableName="cpq_invoice_line">
+            <column name="quote_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+                                 
+       <addColumn tableName="cpq_invoice_line">
+         <column name="order_offer_id" type="bigint" />
+     </addColumn>
+     <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />                        
+    </changeSet>
 </databaseChangeLog>

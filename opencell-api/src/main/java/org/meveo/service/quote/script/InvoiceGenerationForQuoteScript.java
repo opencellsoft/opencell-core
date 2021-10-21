@@ -99,7 +99,7 @@ public class InvoiceGenerationForQuoteScript extends ModuleScript {
     }
 
     private void createInvoiceLine(CpqQuote quote, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        invoiceLinesService.createInvoiceLine(quote, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), orderProduct.getOrderOffer().getOfferTemplate(),amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+        invoiceLinesService.createInvoiceLine(quote, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), orderProduct.getOrderOffer().getOfferTemplate(),orderProduct.getOrderOffer(),amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
     }
     
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
