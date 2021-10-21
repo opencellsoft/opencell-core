@@ -158,7 +158,7 @@ public class MediationJob extends Job {
             if (!file.exists()) {
                 continue;
             }
-            String fileName = file.getName();
+
             mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), readerCode, parserCode, mappingConf, recordName);
 
             if (oneFilePerJob) {

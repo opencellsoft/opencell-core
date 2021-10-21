@@ -22,12 +22,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.AccessDeniedException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
@@ -39,6 +41,14 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class CDRService extends PersistenceService<CDR> {
+    
+    private boolean persistCDR = false;
+
+    @PostConstruct
+    private void init() {
+        persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
+
+    }
 
 	@Override
 	public void create(CDR cdr) throws BusinessException {
@@ -167,5 +177,20 @@ public class CDRService extends PersistenceService<CDR> {
     @SuppressWarnings("unchecked")
     public List<CDR> getCDRsToReprocess() { 
         return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
+    }
+    
+    /**
+     * Save the cdr if the configuration property mediation.persistCDR is true.
+     *
+     * @param cdr the cdr
+     */
+    public void createOrUpdateCdr(CDR cdr) {
+        if(cdr != null && persistCDR) {
+            if(cdr.getId() == null) {
+                create(cdr);
+            } else {
+                update(cdr);
+            }                       
+        }
     }
 }
