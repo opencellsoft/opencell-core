@@ -3,15 +3,11 @@ package org.meveo.model.dunning;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.payments.DunningAction;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

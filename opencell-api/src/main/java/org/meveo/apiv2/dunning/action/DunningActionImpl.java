@@ -1,10 +1,15 @@
 package org.meveo.apiv2.dunning.action;
 
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.dunning.DunningAction;
+import org.meveo.apiv2.dunning.ImmutableDunningAction;
 import org.meveo.service.payments.impl.DunningActionService;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class DunningActionImpl implements DunningActionResource{
 
@@ -12,8 +17,55 @@ public class DunningActionImpl implements DunningActionResource{
     private DunningActionService dunningActionService;
 
     @Override
+    public Response getDunningAction(String code) {
+        if(code == null || code.isBlank()){
+            throw new InvalidParameterException("dunning action code is required.");
+        }
+        org.meveo.model.dunning.DunningAction dunningAction = dunningActionService.findByCode(code, Arrays.asList("relatedLevels"));
+        if(dunningAction == null) {
+            throw new EntityDoesNotExistsException("dunning action with code "+code+" does not exist.");
+        }
+        return Response.ok()
+                    .entity(ImmutableDunningAction.builder().build().toDunningAction(dunningAction)).build();
+    }
+
+    @Override
     public Response createDunningAction(DunningAction dunningAction) {
         dunningActionService.create(dunningAction.toEntity());
         return Response.ok().build();
     }
+
+    @Override
+    public Response updateDunningAction(Long dunningActionId, DunningAction dunningAction) {
+        if(dunningActionId == null){
+            throw new InvalidParameterException("dunning action id is required.");
+        }
+        org.meveo.model.dunning.DunningAction dunningActionToUpdate = dunningActionService.findById(dunningActionId, Arrays.asList("relatedLevels"));
+        if(dunningActionToUpdate == null) {
+            throw new EntityDoesNotExistsException("dunning action with id "+dunningActionId+" does not exist.");
+        }
+        org.meveo.model.dunning.DunningAction newDunningAction = dunningAction.toEntity();
+        if(newDunningAction.getCode() != null){
+
+        }
+        updatePropertyIfNotNull(newDunningAction.getCode(), code -> dunningActionToUpdate.setCode(code));
+        updatePropertyIfNotNull(newDunningAction.getDescription(), description -> dunningActionToUpdate.setDescription(description));
+        updatePropertyIfNotNull(newDunningAction.getActionChannel(), actionChannelEnum -> dunningActionToUpdate.setActionChannel(actionChannelEnum));
+        updatePropertyIfNotNull(newDunningAction.getActionType(), actionTypeEnum -> dunningActionToUpdate.setActionType(actionTypeEnum));
+        updatePropertyIfNotNull(newDunningAction.getActionMode(), actionModeEnum -> dunningActionToUpdate.setActionMode(actionModeEnum));
+        updatePropertyIfNotNull(newDunningAction.getRelatedLevels(), relatedLevels -> dunningActionToUpdate.setRelatedLevels(relatedLevels));
+        updatePropertyIfNotNull(newDunningAction.getScriptInstance(), scriptInstance -> dunningActionToUpdate.setScriptInstance(scriptInstance));
+        updatePropertyIfNotNull(newDunningAction.getActionNotificationTemplate(),
+                actionNotificationTemplate -> dunningActionToUpdate.setActionNotificationTemplate(actionNotificationTemplate));
+        dunningActionService.update(dunningActionToUpdate);
+        return Response.ok().build();
+    }
+
+    public <T> void updatePropertyIfNotNull(T dunningActionProperty, Consumer<T> consumer){
+        if(dunningActionProperty != null){
+            consumer.accept(dunningActionProperty);
+        }
+    }
+
+
 }
