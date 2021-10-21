@@ -14923,7 +14923,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
                                  
     </changeSet>
-    <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
+    <changeSet id="#INTRD-2364-create_data_model_build" author="AbdelkaderBouazza">
         <createTable tableName="dunning_action_notification_template">
             <column name="dunning_action_id"  type="bigint"/>
             <column name="action_notification_template"  type="varchar(200)"/>
@@ -14967,7 +14967,7 @@
         <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
     </changeSet>
 
-    <changeSet id="INTRD-2444_20211018" author="ZBariki">
+    <changeSet id="INTRD-2444_20211018-rebuild" author="ZBariki">
         <createTable tableName="dunning_policy">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_pkey" />
@@ -16061,6 +16061,10 @@
 	<changeSet id="INTRD-2252_20211006" author="TarikFA." />
 	<changeSet id="#2374_20211012" author="HatimOUDAD"/>
 	<changeSet id="INTRD-2412_20211015" author="MohammedELAZZOUZI"/>
+	<changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza" />
+	<changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza" />
+	<changeSet id="INTRD-2444_20211018" author="ZBariki" />
+	
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
