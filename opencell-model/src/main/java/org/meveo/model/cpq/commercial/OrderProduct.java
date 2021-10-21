@@ -4,6 +4,7 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -85,6 +88,11 @@ public class OrderProduct extends AuditableCFEntity {
    	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_product_id")
    	private QuoteProduct quoteProduct;
+   	
+    /** Delivery timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
 	
 	
 	public void update(OrderProduct other) {
@@ -97,6 +105,7 @@ public class OrderProduct extends AuditableCFEntity {
 		this.orderAttributes = other.orderAttributes;
         this.discountPlan=other.getDiscountPlan();
         this.quoteProduct=other.getQuoteProduct();
+        this.deliveryDate=other.deliveryDate;
     }
 	
 	
@@ -232,8 +241,16 @@ public class OrderProduct extends AuditableCFEntity {
 		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(order, other.order)
 				&& Objects.equals(orderOffer, other.orderOffer) && Objects.equals(orderServiceCommercial, other.orderServiceCommercial)  && Objects.equals(discountPlan, other.discountPlan);
+	}
+
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	} 
-	
-	
-	
+		
 }

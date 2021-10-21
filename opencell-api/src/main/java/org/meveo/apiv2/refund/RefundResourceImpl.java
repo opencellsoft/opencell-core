@@ -1,5 +1,6 @@
 package org.meveo.apiv2.refund;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -15,6 +16,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.payment.RefundApi;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -61,7 +63,11 @@ public class RefundResourceImpl implements RefundResource{
         if(sctRefund.getAoToRefund() != null && !sctRefund.getAoToRefund().isEmpty()){
         	validateIban(sctRefund.getIBAN());
             HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());
-            customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"))
+            CustomerAccount customerAccount = customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"));
+            if(customerAccountService.customerAccountBalanceDue(customerAccount, null).compareTo(BigDecimal.ZERO)<1){
+                throw new BusinessApiException("refund is impossible : the customer balance is debit");
+            }
+            customerAccount
                     .getAccountOperations().stream()
                     .filter(accountOperation -> aoIds.contains(accountOperation.getId()) 
                     		&& OperationCategoryEnum.CREDIT.equals(accountOperation.getTransactionCategory()))

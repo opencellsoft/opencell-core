@@ -37,6 +37,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
     public AgedReceivable toResource(AgedReceivableDto agedReceivableDto) {
         return ImmutableAgedReceivable.builder().customerAccountCode(agedReceivableDto.getCustomerAccountCode())
         		.customerAccountName(agedReceivableDto.getCustomerAccountName())
+        		.customerAccountDescription(agedReceivableDto.getCustomerAccountDescription())
         		.dunningLevel(agedReceivableDto.getDunningLevel())
                .notYetDue(agedReceivableDto.getNotYetDue())
                .sum_1_30(agedReceivableDto.getSum1To30())
@@ -78,7 +79,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 											.add((BigDecimal)agedList[5]));
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[6]);
 			agedReceivableDto.setCustomerAccountName(agedList[7]==null?null:getName((Name) agedList[7]));
-			agedReceivableDto.setDueDate(agedList[8]==null?null:((Date) agedList[8]));
+			agedReceivableDto.setCustomerAccountDescription((String) agedList[8]);
+			agedReceivableDto.setDueDate(agedList[9]==null?null:((Date) agedList[9]));
 			
 			dtoList.add(agedReceivableDto);
 		} 

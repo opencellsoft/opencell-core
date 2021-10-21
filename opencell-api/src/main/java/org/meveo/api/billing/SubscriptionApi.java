@@ -106,6 +106,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
@@ -616,7 +617,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
-
+        
         activateServices(activateServicesDto.getServicesToActivateDto(), subscription, activateServicesDto.getOrderNumber(), activateServicesDto.getOrderItemId(), activateServicesDto.getOrderItemAction());
     }
 
@@ -828,7 +829,11 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        			serviceInstanceService.serviceActivation(serviceInstance);
+        		    if (serviceInstance.getDeliveryDate().after(new Date())) {
+        				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
+        			}else {
+        				serviceInstanceService.serviceActivation(serviceInstance);
+        			}
         		} catch (BusinessException e) {
         			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
         			throw e;
@@ -960,6 +965,9 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstanceDto.getAttributeCode(), Attribute.class));
                 attributeInstance.setServiceInstance(serviceInstance);
                 attributeInstance.setSubscription(subscription);
+                Auditable auditable = new Auditable();
+                auditable.setCreated(new Date());
+                attributeInstance.setAuditable(auditable);
                 serviceInstance.addAttributeInstance(attributeInstance);
             }
         }
@@ -2659,6 +2667,11 @@ public class SubscriptionApi extends BaseApi {
 	            throw e;
 	        }
     	}
+		if (subscription.getSubscriptionDate().after(new Date())) {
+			subscription.setStatus(SubscriptionStatusEnum.PENDING);
+		}else {
+			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+		}
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
 
@@ -2946,7 +2959,7 @@ public class SubscriptionApi extends BaseApi {
                 	})
                 .collect(Collectors.toList());
 
-        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes);
+        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null);
 
     }
 

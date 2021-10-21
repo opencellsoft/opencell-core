@@ -317,9 +317,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param reportQuery report query to execute
      * @param targetEntity target entity
      * @param currentUser current user
+     * @param emails 
      */
-    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification) {
-        launchAndForget(reportQuery, targetEntity, currentUser, sendNotification);
+    public void executeAsync(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification, List<String> emails) {
+        launchAndForget(reportQuery, targetEntity, currentUser, sendNotification, emails);
     }
 
     /**
@@ -328,15 +329,21 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @param reportQuery query to execute
      * @param targetEntity target entity
      * @param currentUser current user email to be used for notification
+     * @param emails 
      */
     @Asynchronous
-    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification) {
+    public void launchAndForget(ReportQuery reportQuery, Class<?> targetEntity, MeveoUser currentUser, boolean sendNotification, List<String> emails) {
         Date startDate = new Date();
         try {
             Future<QueryExecutionResult> asyncResult = executeReportQueryAndSaveResult(reportQuery, targetEntity, startDate);
             QueryExecutionResult executionResult = asyncResult.get();
             if(executionResult != null && sendNotification) {
                 notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
+                        executionResult.getStartDate(), executionResult.getExecutionDuration(),
+                        executionResult.getLineCount(), null);
+            }
+            for(String email : emails) {
+            	notifyUser(reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
                         executionResult.getStartDate(), executionResult.getExecutionDuration(),
                         executionResult.getLineCount(), null);
             }
@@ -470,7 +477,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                     propertyDescriptor.getWriteMethod().invoke(item, implementation);
                 }
             } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                log.warn("Error initLazyLoadedValues() for field : {}", field.getName());
             }
         }
     }

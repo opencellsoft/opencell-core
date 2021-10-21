@@ -138,7 +138,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 								var oneShotCharge = (OneShotChargeTemplate) templateCharge;
 								if(oneShotCharge.getOneShotChargeTemplateType() != OneShotChargeTemplateTypeEnum.OTHER)
 									return true;
-							}
+							}else
+								return true;
 						}else
 							return true;
 					}
@@ -150,7 +151,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     }
 	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) throws BusinessException {
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
-			throw new BusinessException("Can not validate order with status different then DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
+			throw new BusinessException("Can not validate order with status different than DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
 		}
 		
 		List<OrderOffer> validOffers = validateOffers(order.getOffers());
@@ -168,8 +169,12 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscription.setUserAccount(order.getUserAccount());
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
-			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-			subscription.setSubscriptionDate(order.getOrderDate());
+			subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
+			if (subscription.getSubscriptionDate().after(new Date())) {
+				subscription.setStatus(SubscriptionStatusEnum.PENDING);
+			}else {
+				subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+			}
 			subscription.setEndAgreementDate(null);
 			subscription.setRenewed(true);
 			subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
@@ -184,7 +189,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				if(product.getDiscountPlan()!=null) {
 					discountPlans.add(product.getDiscountPlan());
 				}
-				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes());
+				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product);
 			}
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
@@ -207,7 +212,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         
 	}
 
-	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes) {
+	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
@@ -216,6 +221,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
+		serviceInstance.setDeliveryDate(getServiceDeliveryDate(subscription.getOrder(), subscription.getOrderOffer(), orderProduct));
 
 		serviceInstance.setSubscription(subscription);
 
@@ -247,6 +253,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
 				recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			}
+			if (serviceInstance.getDeliveryDate().after(new Date())) {
+				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
+			}
 			subscription.addServiceInstance(serviceInstance);
 	}
 
@@ -258,5 +267,29 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			commercialOrder = super.update(commercialOrder);
 		}
 		return commercialOrder;
+	}
+	
+	public Date getSubscriptionDeliveryDate(CommercialOrder order, OrderOffer offer) {
+		if (offer.getDeliveryDate() != null) {
+			return offer.getDeliveryDate();
+		}else if (order.getDeliveryDate() != null) {
+			return order.getDeliveryDate();
+		}else {
+			return order.getOrderDate();
+		}
+	}
+	
+	public Date getServiceDeliveryDate(CommercialOrder order, OrderOffer offer, OrderProduct product) {
+		
+		if (product != null && product.getDeliveryDate() != null) {
+			return product.getDeliveryDate();
+		}
+		if (offer.getDeliveryDate() != null) {
+			return offer.getDeliveryDate();
+		}else if (order.getDeliveryDate() != null) {
+			return order.getDeliveryDate();
+		}else {
+			return order.getOrderDate();
+		}
 	}
 }

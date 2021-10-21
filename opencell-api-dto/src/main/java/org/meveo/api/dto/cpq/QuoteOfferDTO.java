@@ -20,6 +20,7 @@ package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,7 +31,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
@@ -40,9 +40,9 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.meveo.model.quote.QuoteVersion;
 
 /**
  * DTO to create or update a quoteOffer
@@ -140,6 +140,10 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	/** Discount plan code */
 	@Schema(description = "the position of the quote item in GUI")
 	private Integer sequence;
+	
+	/** Delivery date */
+	@Schema(description = "the delivery date")
+	private Date deliveryDate;
    
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer) {
@@ -159,6 +163,7 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 		sequence=quoteOffer.getSequence();
 		code = quoteOffer.getCode();
 		description = quoteOffer.getDescription();
+		deliveryDate = quoteOffer.getDeliveryDate();
 		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -219,6 +224,7 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 			quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
 			quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
 			quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
+			quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
 			return Optional.of(quotePrice);
 		}
 		return pricesPerType.get(key).stream().reduce((a, b) -> {
@@ -238,6 +244,7 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 			if(a.getRecurrencePeriodicity()!=null) {
 				quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
 			}
+			quotePrice.setChargeTemplate(a.getChargeTemplate());
 			return quotePrice;
 		});
 	}
@@ -415,13 +422,12 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
 	
-	
-    
-    
-    
-    
-    
-    
    
 }

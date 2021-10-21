@@ -62,8 +62,8 @@ public class CommercialOrderDto extends BaseEntityDto {
 	@Schema(description = "date of the order, must not be empty")
 	private Date orderDate;
 	@JsonSerialize(using = CustomDateSerializer.class)
-	@Schema(description = "date of resiliation of the order")
-	private Date realisationDate;
+	@Schema(description = "date of delivery of the order")
+	private Date deliveryDate;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	@Schema(description = "date begin of the customer service")
 	private Date customerServiceBegin;
@@ -105,7 +105,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 		this.orderProgress = order.getOrderProgress();
 		this.progressDate = order.getProgressDate();
 		this.orderDate = order.getOrderDate();
-		this.realisationDate = order.getRealisationDate();
+		this.deliveryDate = order.getDeliveryDate();
 		this.customerServiceBegin = order.getCustomerServiceBegin();
 		this.customerServiceDuration = order.getCustomerServiceDuration();
 		this.externalReference = order.getExternalReference();
@@ -264,16 +264,16 @@ public class CommercialOrderDto extends BaseEntityDto {
 		this.orderDate = orderDate;
 	}
 	/**
-	 * @return the realisationDate
+	 * @return the deliveryDate
 	 */
-	public Date getRealisationDate() {
-		return realisationDate;
+	public Date getDeliveryDate() {
+		return deliveryDate;
 	}
 	/**
-	 * @param realisationDate the realisationDate to set
+	 * @param deliveryDate the deliveryDate to set
 	 */
-	public void setRealisationDate(Date realisationDate) {
-		this.realisationDate = realisationDate;
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 	/**
 	 * @return the customerServiceBegin

@@ -41,18 +41,16 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, Map<String, Object> attributes) throws BusinessException {
 		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
-		if(chargeTemplate!=null) {
-			productCharges.add(chargeTemplate);
-		}else {
+		List<ArticleMappingLine> articleMappingLines = null;
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
+		if(chargeTemplate==null) {
 			productCharges.addAll(product.getProductCharges().stream()
 					.map(pc -> pc.getChargeTemplate())
 					.collect(toList()));
+			articleMappingLines = articleMappingLines.stream()
+					.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
+					.collect(toList());;
 		}
-		List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductCode(product)
-				.stream()
-				.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
-				.collect(toList());
-		
 
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
@@ -137,16 +135,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
                    attributes.put(attributeValue.getAttribute().getCode(), value);
                }
            }
-	       if(serviceInstance != null && serviceInstance.getProductVersion() == null) {
-    		   return null;
-    	   }
            Optional<AccountingArticle> accountingArticle = Optional.empty();
            try {
-           	if(serviceInstance != null) {
-				accountingArticle = getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargeInstance.getChargeTemplate(),attributes);
-           	}
-           } catch(BusinessException e) {
-           		throw new MeveoApiException(e.getMessage());
+        	   accountingArticle = getAccountingArticle(serviceInstance != null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(),attributes);
+           }catch(BusinessException e) {
+           	throw new MeveoApiException(e.getMessage());
            }
            return accountingArticle.isPresent() ? accountingArticle.get() : null;
 	}

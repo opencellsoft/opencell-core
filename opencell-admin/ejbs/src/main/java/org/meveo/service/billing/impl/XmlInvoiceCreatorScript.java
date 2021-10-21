@@ -228,7 +228,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             File xmlFile = new File(fullXmlFilePath);
             StreamResult result = new StreamResult(xmlFile);
             trans.transform(source, result);
-            log.info("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
+            log.info("XML file '{}' produced for invoice {}", fullXmlFilePath, invoice.getInvoiceNumberOrTemporaryNumber());
             return xmlFile;
         } catch (TransformerException e) {
             throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumberOrTemporaryNumber(), e);
@@ -258,6 +258,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
+        rtBillingProcess = rtBillingProcess && !(invoice.getInvoiceLines()!=null && invoice.getInvoiceLines().size()>0);
         Element invoiceTag = rtBillingProcess ? createInvoiceSection(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder)
                 : createInvoiceSectionIL(doc, invoice, isVirtual, isInvoiceAdjustment, docBuilder);
         doc.appendChild(invoiceTag);
@@ -1022,9 +1023,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
         Element categoriesTag = doc.createElement("categories");
+        Element categoryTag=null;
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
-            Element categoryTag = createDetailsUAInvoiceCategorySection(doc, invoice, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
-                    invoiceConfiguration);
+        	if(categoryInvoiceAgregate.getInvoiceCategory()!=null) {
+        		categoryTag = createDetailsUAInvoiceCategorySection(doc, invoice, categoryInvoiceAgregate, ratedTransactions, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode,
+        				invoiceConfiguration);
+        	}
             if (categoryTag != null) {
                 categoriesTag.appendChild(categoryTag);
             }
@@ -1945,7 +1949,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         WalletInstance wallet = subCatInvoiceAgregate.getWallet();
         Long walletId = wallet != null ? wallet.getId() : null;
         if (isVirtual) {
-            ratedTransactions = subCatInvoiceAgregate.getRatedtransactionsToAssociate();
+            ratedTransactions = (List<RatedTransaction>)subCatInvoiceAgregate.getInvoiceablesToAssociate();
         }
         String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
         if (invoiceSubCat.getDescriptionI18n() != null && invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode) != null) {

@@ -47,7 +47,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         Date maxDate = findMaxSubAccountingPeriod();
 
         LocalDateTime startDateTime = maxDate == null ? LocalDateTime.now() : maxDate.toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    .atZone(ZoneId.systemDefault()).plusSeconds(1).toLocalDateTime();
         LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDate);
 	}
@@ -67,13 +67,15 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type, LocalDateTime startDateTime, LocalDateTime endDate) {
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
+		int number = 1;
 		LocalDate now = startDateTime == null ? LocalDate.now() : startDateTime.toLocalDate();
 		int currentYear = now.getYear();
 		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
 		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
 		while (!endDatePeriod.isAfter(endDate)) {
 			if (!endDatePeriod.isBefore(now.atTime(LocalTime.MAX))) {
-				createSubAccPeriod(ap, startDatePeriod, endDatePeriod);
+				createSubAccPeriod(ap, startDatePeriod, endDatePeriod, number);
+				number ++;
 			}
 			//next period
 			startDatePeriod = endDatePeriod.plusDays(1).toLocalDate().atStartOfDay();
@@ -81,18 +83,19 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 	}
 
-	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate) {
+	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate, int number) {
 		SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
 		subAccountingPeriod.setAccountingPeriod(ap);
 		subAccountingPeriod.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 		subAccountingPeriod.setEndDate(Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+		subAccountingPeriod.setNumber(number);
 		create(subAccountingPeriod);
 	}
 
-	public SubAccountingPeriod findByNumber(Integer number) {
+	public SubAccountingPeriod findByNumber(Integer number, String fiscalYear) {
 		try {
 			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findByNumber")
-					.setParameter("number", number).getSingleResult();
+					.setParameter("number", number).setParameter("fiscalYear", fiscalYear).getSingleResult();
 		} catch (NoResultException e) {
 			log.debug("No {} of SubAccountingPeriodYear {} found", getEntityClass().getSimpleName(), number);
 			return null;
@@ -108,6 +111,18 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 			return null;
 		}
     }
+
+	public SubAccountingPeriod findNextOpenSubAccountingPeriod(Date accountingDate) {
+		try {
+			return (SubAccountingPeriod) getEntityManager().createNamedQuery("SubAccountingPeriod.findNextOpenSubAP")
+					.setParameter("accountingDate", accountingDate)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No Open SubAccountingPeriod found after {}", accountingDate);
+			return null;
+		}
+	}
 	
 	public void updateSubAccountingAllUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {

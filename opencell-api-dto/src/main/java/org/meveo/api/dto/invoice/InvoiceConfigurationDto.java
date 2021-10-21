@@ -120,12 +120,12 @@ public class InvoiceConfigurationDto implements Serializable {
         displayBillingCycle = invoiceConfiguration.isDisplayBillingCycle();
         displayOrders = invoiceConfiguration.isDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
-        displayWalletOperations=invoiceConfiguration.isDisplayWalletOperations();
-        defaultInvoiceSubcategoryCode = invoiceConfiguration.getDefaultInvoiceSubCategory().getCode();
-        defaultGenericArticleCode = invoiceConfiguration.getDefaultGenericAccountingArticle().getCode();
-        defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode();
-        defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode();
-        defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode();
+        displayWalletOperations = invoiceConfiguration.isDisplayWalletOperations();
+        defaultInvoiceSubcategoryCode = invoiceConfiguration.getDefaultInvoiceSubCategory() != null ? invoiceConfiguration.getDefaultInvoiceSubCategory().getCode() : null;
+        defaultGenericArticleCode = invoiceConfiguration.getDefaultGenericAccountingArticle() != null ? invoiceConfiguration.getDefaultGenericAccountingArticle().getCode() : null;
+        defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle() != null ? invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode() : null;
+        defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle() != null ? invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode() : null;
+        defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle() != null ? invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode() : null;
     }
 
     /**

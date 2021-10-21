@@ -115,7 +115,7 @@ public class Attribute extends EnableBusinessCFEntity{
     private List<Attribute> assignedAttributes = new ArrayList<>();
     
     @Column(name = "unit_nb_decimal")
-    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
+    protected Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
 
 
 	@ManyToMany(mappedBy = "attributes")
@@ -130,6 +130,10 @@ public class Attribute extends EnableBusinessCFEntity{
     @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id")
     private List<OfferTemplateAttribute> offerTemplateAttribute = new ArrayList<>();
+    
+	@Enumerated(EnumType.STRING)
+	@Column(name = "attribute_category")
+    private AttributeCategoryEnum attributeCategory;
 
     public Attribute(){
 	}
@@ -137,7 +141,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	public Attribute(Long id) {
 		this.id = id;
 	}
-
 
 	/**
 	 * @return the priority
@@ -256,14 +259,14 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * @return the unitNbDecimal
 	 */
-	public int getUnitNbDecimal() {
+	public Integer getUnitNbDecimal() {
 		return unitNbDecimal;
 	}
 
 	/**
 	 * @param unitNbDecimal the unitNbDecimal to set
 	 */
-	public void setUnitNbDecimal(int unitNbDecimal) {
+	public void setUnitNbDecimal(Integer unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
 	}
 
@@ -316,5 +319,19 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setOfferTemplateAttribute(List<OfferTemplateAttribute> offerTemplateAttribute) {
 		this.offerTemplateAttribute = offerTemplateAttribute;
+	}
+
+	/**
+	 * @return the attributeCategory
+	 */
+	public AttributeCategoryEnum getAttributeCategory() {
+		return attributeCategory;
+	}
+
+	/**
+	 * @param attributeCategory the attributeCategory to set
+	 */
+	public void setAttributeCategory(AttributeCategoryEnum attributeCategory) {
+		this.attributeCategory = attributeCategory;
 	}
 }

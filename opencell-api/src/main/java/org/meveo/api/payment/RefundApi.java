@@ -221,9 +221,6 @@ public class RefundApi extends BaseApi {
         // case card payment
         if (!StringUtils.isBlank(cardPaymentRequestDto.getCardNumber())) {
             useCard = true;
-            if (StringUtils.isBlank(cardPaymentRequestDto.getCvv())) {
-                missingParameters.add("cvv");
-            }
             if (StringUtils.isBlank(cardPaymentRequestDto.getExpiryDate()) || cardPaymentRequestDto.getExpiryDate().length() != 4
                     || !org.apache.commons.lang3.StringUtils.isNumeric(cardPaymentRequestDto.getExpiryDate())) {
 
@@ -235,8 +232,7 @@ public class RefundApi extends BaseApi {
             if (StringUtils.isBlank(cardPaymentRequestDto.getCardType())) {
                 missingParameters.add("cardType");
             }
-        } else {
-        	missingParameters.add("cardNumber");
+            
         }
         if (cardPaymentRequestDto.isToMatch()) {
             if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
@@ -244,17 +240,12 @@ public class RefundApi extends BaseApi {
             }
         }
 
+        handleMissingParameters();
+        
         CustomerAccount customerAccount = customerAccountService.findByCode(cardPaymentRequestDto.getCustomerAccountCode());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, cardPaymentRequestDto.getCustomerAccountCode());
         }
-
-        PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
-        if (preferedMethod != null && PaymentMethodEnum.CARD != preferedMethod) {
-            throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
-        }
-        
-        handleMissingParameters();
 
         PaymentResponseDto doPaymentResponseDto = null;
         if (useCard) {
@@ -263,6 +254,11 @@ public class RefundApi extends BaseApi {
                 cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
                 cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
         } else {
+        	
+        	 PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
+             if (preferedMethod != null && PaymentMethodEnum.CARD != preferedMethod) {
+                 throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
+             }
             doPaymentResponseDto = paymentService.refundByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
                 cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
         }

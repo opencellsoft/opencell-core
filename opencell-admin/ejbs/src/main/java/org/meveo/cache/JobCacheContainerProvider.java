@@ -423,7 +423,13 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     private JobExecutionStatus computeCacheWithRetry(CacheKeyLong cacheKey, SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction, long delay, final long times) {
 
         try {
-            return runningJobsCache.compute(cacheKey, remappingFunction);
+
+            JobExecutionStatus jobExecutionStatusOld = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+            JobExecutionStatus jobExecutionStatusNew = remappingFunction.apply(cacheKey, jobExecutionStatusOld);
+
+            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, jobExecutionStatusNew);
+
+            return jobExecutionStatusNew;
 
         } catch (CacheException e) {
             log.error(" computeCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);

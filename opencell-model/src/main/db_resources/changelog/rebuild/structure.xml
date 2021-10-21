@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet author="AndriusKarpavicius"  id="rebuild_pg_operators" dbms="postgresql">
+    <changeSet author="AndriusKarpavicius"  id="rebuild_pg_operators" dbms="postgresql" failOnError="false">
     	<sql>CREATE OPERATOR ^|(
 			  PROCEDURE = jsonb_exists_any,
 			  LEFTARG = jsonb,
@@ -34,13 +34,7 @@
     
     <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
     If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
-    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql">
-        <sql>create extension "uuid-ossp"</sql>
-    </changeSet>
-
-    <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
-    If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
-    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql">
+    <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql" failOnError="false">
         <sql>create extension "uuid-ossp"</sql>
     </changeSet>
 
@@ -302,6 +296,10 @@
         <createSequence sequenceName="dunning_collection_management_seq" startValue="1" />
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
+        <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_rule_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_rule_line_seq" startValue="1" />
     </changeSet>
     
      
@@ -3251,6 +3249,7 @@
             <column name="quote_product_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
             <column name="reactivation_date" type="datetime" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -8823,6 +8822,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
 
@@ -9148,6 +9148,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9177,6 +9178,7 @@
             <column name="priority" type="int4" defaultValueNumeric="0"/>
             <column name="attribute_type" type="varchar(100)" />
             <column name="unit_nb_decimal" type="int4" />
+            <column name="attribute_category" type="varchar(255)"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-458" author="NabilOUACHI">
@@ -9502,9 +9504,7 @@
             <column name="creator" type="varchar(50)"/>
             <column name="updater" type="varchar(50)"/>
             <column name="updated" type="datetime"/>
-            <column name="article_mapping_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="article_mapping_id" type="bigint" />
             <column name="article_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -9765,6 +9765,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
             <column name="quote_product_id" type="bigint"/>
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
@@ -9830,6 +9831,7 @@
             <column name="quote_offer_id" type="bigint"/>
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
+            <column name="delivery_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-482" author="NabilOUACHI">
@@ -10430,6 +10432,14 @@
             <column name="aggregate_id_f" type="bigint" />
             <column name="invoice_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
+            <column name="unit_amount_without_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_with_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_tax" type="numeric(23, 12)" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="amount_tax" type="numeric(23, 12)" />            
+            <column name="tax_id" type="bigint" />
+            <column name="tax_percent" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     
@@ -14217,8 +14227,6 @@
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
         <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
-        <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
         <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
         <sql>CREATE INDEX billing_invoice_billing_account_id ON ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
         <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
@@ -14666,7 +14674,8 @@
                                  constraintName="fk_dunning_settings_collection_plan_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
-                                 
+        <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
          <createTable tableName="invoice_dunning_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
@@ -14738,7 +14747,23 @@
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries"
                                  constraintName="fk_dunning_settings_payment_retries_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                                                                                                                         
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
+        <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_pause_reasons_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_payment_retries_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries" referencedColumnNames="id" />
+
+        <addForeignKeyConstraint constraintName="fk_dunning_stop_reasons_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+
     </changeSet>
 
     <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
@@ -14858,8 +14883,11 @@
     	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id" 
     							 referencedTableName="dunning_settings" 
     							 baseColumnNames="dunning_settings_id" 
-    							 baseTableName="collection_plan_status" 
+    							 baseTableName="collection_plan_status"
     							 referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="collection_plan_status" referencedColumnNames="id" />
+
     </changeSet>
 
     <changeSet id="INTRD-1901_20210920_build" author="TarikFA.">
@@ -14895,7 +14923,144 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
                                  
     </changeSet>
+    <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
+        <createTable tableName="dunning_action_notification_template">
+            <column name="dunning_action_id"  type="bigint"/>
+            <column name="action_notification_template"  type="varchar(200)"/>
+        </createTable>
+        <createTable tableName="ar_dunning_level">
+            <column name="level_id" type="bigint" />
+            <column name="related_levels" type="varchar(255)" />
+        </createTable>
+        <createTable tableName="ar_dunning_action">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_action_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="action_name" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_description" type="varchar(255)" />
+            <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="action_type" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_mode" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_channel" type="varchar(255)"/>
+            <column name="related_levels" type="varchar(255)"/>
+            <column name="script_instance_id" type="bigint"/>
+            <column name="action_notification_template" type="varchar(255)"/>
+            <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_meveo_script_instance"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+        <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
+    </changeSet>
 
+    <changeSet id="INTRD-2444_20211018" author="ZBariki">
+        <createTable tableName="dunning_policy">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_description" type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="interest_for_delay_sequence" type="int4" />
+            <column name="min_balance_trigger" type="float8" defaultValue="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="total_dunning_levels" type="int4" />
+            <column name="include_pay_reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="attach_invoices_to_emails" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="policy_priority" type="int4" />
+            <column name="is_default_policy" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="is_active_policy" type="${type.boolean}" defaultValueNumeric="1" />
+        </createTable>
+        <createTable tableName="dunning_min_balance_trigger_currency">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="min_balance_trigger_currency" type="varchar(255)" />
+        </createTable>
+        <createTable tableName="dunning_determine_level_by">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="determine_level_by" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_min_balance_trigger_currency"
+                                 constraintName="fk_dunning_min_balance_trigger_currency_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_determine_level_by"
+                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <createTable tableName="dunning_policy_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="rule_joint" type="varchar(255)" />
+            <column name="dunning_policy_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_rule"
+                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <createTable tableName="dunning_policy_rule_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_condition_operator" type="varchar(255)" />
+            <column name="policy_condition_target" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_condition_target_value" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_policy_rule_id" type="bigint" />
+            <column name="rule_line_joint" type="varchar(255)" defaultValue="AND"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_rule_id" baseTableName="dunning_policy_rule_line"
+                                 constraintName="fk_dunning_policy_rule_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy_rule"/>
+    </changeSet>
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
@@ -15750,156 +15915,84 @@
 
     <changeSet id="540-103-add-swagger-docs-to-All-ChargeTemplates" author="TarikFA."></changeSet>
 
-
     <changeSet id="#540-100-20201225" author="TarikFA"></changeSet>
-
     <changeSet id="20201230_pricematrix" author="NabilOuachi"></changeSet>
-
     <changeSet id="20201230-ticket5870" author="NabilOUACHI"></changeSet>
-
     <changeSet id="540-112-20210107" author="TarikF"></changeSet>
     <changeSet id="20210113" author="TarikF"></changeSet>
-
     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-attribute_tag"></changeSet>
-
     <changeSet id="540-139-20012020" author="NabilOUACHI"></changeSet>
     <changeSet id="#20210121-540-128" author="TarikFA"></changeSet>
     <changeSet id="#20210122-540-128" author="TarikFA"></changeSet>
-
     <changeSet id="#20210127-540-190" author="TarikFA"></changeSet>
-
     <changeSet id="Invoice_lines_job_20200114" author="ZBariki"></changeSet>
     <changeSet id="#5916_20210128" author="MohammedELAZZOUZI"></changeSet>
-
     <changeSet id="#5937_20210204" author="TarikFA"></changeSet>
-
     <changeSet id="#214_20210203" author="NabilOUACHI"></changeSet>
-
     <changeSet id="20210204_540" author="TarikFA"></changeSet>
     <changeSet id="Invoice_lines_job_202001145" author="ZBariki"></changeSet>
     <changeSet id="Invoicing_job_20210205_45" author="ZBariki"></changeSet>
     <changeSet id="#20210205_540_223" author="TarikFA"></changeSet>
-
     <changeSet id="#5938_20210205" author="MohammedELAZZOUZI"></changeSet>
-
     <changeSet id="#20210209_540177" author="TarikFA"></changeSet>
-
     <changeSet id="#20210215-248" author="NabilOUACHI"></changeSet>
-
     <changeSet id="#20210212_540238" author="TarikFA"></changeSet>
-
     <changeSet id="#5950_20210210" author="MohammedELAZZOUZI"></changeSet>
 
-
     <changeSet id="#246_20210212" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#248_20210215" author="NabilOuachi"></changeSet>
-
     <changeSet id="#20200215-247" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210217_260" author="TarikFA"></changeSet>
-
     <changeSet id="#5952_20210210" author="ZBariki"></changeSet>
-
     <changeSet id="#268_20210219_cpq_structure" author="Mbarek-Ay"></changeSet>
-
-
     <changeSet id="#222_20210219" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#270_20210222" author="Mbarek-Ay"></changeSet>
-
-
-
-
-
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-
     <changeSet id="#20210222_540_269" author="TarikFA."></changeSet>
-
     <changeSet id="#20210123_540_280" author="TarikFA."></changeSet>
-
-
     <changeSet   id="#20210123_540_281" author="TarikFA."></changeSet>
-
     <changeSet id="#20210224_5868" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210222_907" author="ZBariki"></changeSet>
-
     <changeSet id="#20210302_540" author="TarikFA."></changeSet>
-
     <changeSet id="#20210303_540305" author="TarikFA."></changeSet>
-
     <changeSet id="#20210304_540320" author="TarikFA."></changeSet>
-
-
     <changeSet id="#20210304-312" author="Mbarek-Ay"></changeSet>
-
-
     <changeSet id="#20210310-342" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210315-329" author="Mbarek-Ay"></changeSet>
-
-
     <changeSet id="#20210316-356" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210316-356-2" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210317_M540_16" author="TarikFA."></changeSet>
-
     <changeSet id="#2020317-342" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210322_377" author="TarikFA."></changeSet>
-
     <changeSet id="#20210323_380" author="TarikFA."></changeSet>
-
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
-
     <changeSet id="#20210323-382" author="Mbarek-Ay"></changeSet>
     <changeSet id="#20220325_360" author="TarikFA."></changeSet>
     <changeSet id="#20210329_399" author="TarikFA."></changeSet>
     <changeSet id="#20210401_402" author="TarikFA."></changeSet>
 
-    <changeSet id="#20210406_opencell-portal-593" author="TarikFA."></changeSet>
-
-
-
-
-
-    <changeSet id="rebuild-str-fk_6012_20210323" author="MohamedAliHammal"></changeSet>
-    <changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI"></changeSet>
-
-    <changeSet id="#20210415-435" author="Mbarek-Ay"></changeSet>
-
-    <changeSet id="#20210416_441" author="TarikFA."></changeSet>
-
-    <changeSet id="#470_20210422" author="Mbarek-Ay"></changeSet>
-    
-    <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
-    
-	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
-	</changeSet>
-
-    <changeSet id="#5937_20210428" author="Mbarek-Ay"></changeSet>
-    <changeSet id="#5595_540498_20210430" author="TarikFA."></changeSet>
-
+    <changeSet id="#20210406_opencell-portal-593" author="TarikFA."/>
+    <changeSet id="rebuild-str-fk_6012_20210323" author="MohamedAliHammal"/>
+    <changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI"/>
+    <changeSet id="#20210415-435" author="Mbarek-Ay"/>
+    <changeSet id="#20210416_441" author="TarikFA."/>
+    <changeSet id="#470_20210422" author="Mbarek-Ay"/>    
+    <changeSet id="#446_20210427" author="Mbarek-Ay"/>    
+	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid"/>
+    <changeSet id="#5937_20210428" author="Mbarek-Ay"/>
+    <changeSet id="#5595_540498_20210430" author="TarikFA." />
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
 	<changeSet id="#5595_540499_20210430" author="TarikFA." />
 	<changeSet id="#5595_540504_20210503" author="TarikFA." />
     <changeSet id="#6076_20210504" author="Zbariki" />
-    <changeSet id="#5595_20210506" author="NabilOuachi"></changeSet>
-    <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
+    <changeSet id="#5595_20210506" author="NabilOuachi"/>
+    <changeSet id="#5595_20210512" author="RachidAityaazza"/>
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
     <changeSet id="#5257_20210519" author="AndriusKarpavicius"/>
-
-    <changeSet id="#533_20210526" author="NabilOuachi">
-    </changeSet>
-    <changeSet id="#5869_20210521" author="NabilOuachi">
-    </changeSet>
-    
+    <changeSet id="#533_20210526" author="NabilOuachi"/>
+    <changeSet id="#5869_20210521" author="NabilOuachi"/>    
     <changeSet id="#5595_540582_20210528" author="TarikFA." />
-    
     <changeSet id="#6147_20210530" author="anasseh" />
-    
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#559_20210603" author="TarikFA." />
@@ -15937,7 +16030,6 @@
 	<changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-1441_20210728" author="TarikFA." />
 	<changeSet id="#INTRD-1461_20210820" author="MohammedELAZZOUZI" />
-	
 	<changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius"/>
@@ -15964,8 +16056,95 @@
     <changeSet id="INTRD-1925_20210922" author="TarikFA." />
     <changeSet id="INTRD_1794_20210917" author="TarikFA." />
     <changeSet id="#INTRD-2184_20211004" author="MohamedSTITANE"/>
-    
-    
+    <changeSet id="#6117_20210622" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-1275_20211011" author="anasseh"/>
+	<changeSet id="INTRD-2252_20211006" author="TarikFA." />
+	<changeSet id="#2374_20211012" author="HatimOUDAD"/>
+	<changeSet id="INTRD-2412_20211015" author="MohammedELAZZOUZI"/>
+    <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
+        <createSequence sequenceName="dunning_level_seq" startValue="1" />
+        <createTable tableName="dunning_level">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_level_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="active" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="days_overdue" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="soft_decline" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="min_balance" type="numeric(23, 12)" />
+            <column name="min_balance_currency_id" type="bigint" />
+            <column name="charge_type" type="varchar(255)" />
+            <column name="charge_value" type="numeric(23, 12)" />
+            <column name="charge_currency_id" type="bigint" />
+            <column name="end_dunning_level" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="min_balance_currency_id" baseTableName="dunning_level" constraintName="fk_dunning_level_min_balance_currency"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+        <addForeignKeyConstraint baseColumnNames="charge_currency_id" baseTableName="dunning_level" constraintName="fk_dunning_level_charge_currency"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+
+        <createTable tableName="dunning_level_dunning_action">
+            <column name="dunning_level_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_action_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="dunning_level_id, dunning_action_id" constraintName="dunning_level_dunning_action_pkey" tableName="dunning_level_dunning_action" />
+
+
+        <createSequence sequenceName="dunning_policy_level_seq" startValue="1" />
+        <createTable tableName="dunning_policy_level">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_level_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="sequence" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="dunning_level_id" type="bigint" />
+            <column name="collection_plan_status_id" type="bigint" />
+            <column name="invoice_dunning_statuses_id" type="bigint" />
+            <column name="dunning_policy_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_level_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
+        <addForeignKeyConstraint baseColumnNames="collection_plan_status_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_collection_plan_status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="collection_plan_status" />
+        <addForeignKeyConstraint baseColumnNames="invoice_dunning_statuses_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_invoice_dunning_statuses"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="invoice_dunning_statuses" />
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_level"
+                                 constraintName="fk_dunning_policy_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+    </changeSet>
+    <changeSet id="INTRD-2444_20211019" author="ZBariki" />
+
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

@@ -162,7 +162,6 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id"),
         @NamedQuery(name = "WalletOperation.listOpenWOsToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' AND o.billingAccount=:billingAccount") })
 
-
 @NamedNativeQueries({
         @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTable", query = "update billing_wallet_operation wo set status='TREATED', updated=now(), rated_transaction_id=pending.rated_transaction_id from billing_wallet_operation_pending pending where status='OPEN' and wo.id=pending.id"),
         @NamedNativeQuery(name = "WalletOperation.deletePendingTable", query = "delete from billing_wallet_operation_pending") })

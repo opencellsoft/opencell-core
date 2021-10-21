@@ -50,18 +50,10 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         PricePlanMatrixColumn pricePlanMatrixColumn = new PricePlanMatrixColumn();
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
-        if (attribute.getAttributeType() != AttributeTypeEnum.DATE && attribute.getAttributeType() != AttributeTypeEnum.NUMERIC 
-        		&& attribute.getAttributeType() != AttributeTypeEnum.INTEGER && attribute.getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
-        	pricePlanMatrixColumn.setRange(false);
-		}else {
-        	pricePlanMatrixColumn.setRange(dtoData.getRange());
-		}
         pricePlanMatrixColumn.setType(attribute.getAttributeType().getColumnType(dtoData.getRange()));
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn, pricePlanMatrixVersion);
 
-
         pricePlanMatrixColumnService.create(pricePlanMatrixColumn);
-
         return pricePlanMatrixColumn;
     }
 
@@ -72,12 +64,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn,pricePlanMatrixVersion);
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
-        if (attribute.getAttributeType() != AttributeTypeEnum.DATE && attribute.getAttributeType() != AttributeTypeEnum.NUMERIC 
-        		&& attribute.getAttributeType() != AttributeTypeEnum.INTEGER && attribute.getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
-        	pricePlanMatrixColumn.setRange(false);
-		}else {
-        	pricePlanMatrixColumn.setRange(dtoData.getRange());
-		}
+
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
     }
 
@@ -115,14 +102,19 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         pricePlanMatrixColumn.setCode(dtoData.getCode());
         pricePlanMatrixColumn.setElValue(dtoData.getElValue());
         pricePlanMatrixColumn.setPosition(dtoData.getPosition());
-        if(dtoData.getRange() != null)
-        	pricePlanMatrixColumn.setRange(dtoData.getRange());
+        Attribute attribute = pricePlanMatrixColumn.getAttribute();
+        if (attribute != null && attribute.getAttributeType() != AttributeTypeEnum.DATE && attribute.getAttributeType() != AttributeTypeEnum.NUMERIC 
+                && attribute.getAttributeType() != AttributeTypeEnum.INTEGER && attribute.getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
+            pricePlanMatrixColumn.setRange(false);
+        } else {
+            pricePlanMatrixColumn.setRange(dtoData.getRange());
+        }
     }
     
-    private PricePlanMatrixVersion getPricePlanMatrixVersion(String plnaMatrixCode, int currentPricePlanMatrixVersion) {
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(plnaMatrixCode, currentPricePlanMatrixVersion);
+    private PricePlanMatrixVersion getPricePlanMatrixVersion(String planMatrixCode, int currentPricePlanMatrixVersion) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(planMatrixCode, currentPricePlanMatrixVersion);
         if(pricePlanMatrixVersion == null){
-            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, plnaMatrixCode, "pricePlanMatrixCode", ""+currentPricePlanMatrixVersion, "pricePlanMatrixVersion");
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, planMatrixCode, "pricePlanMatrixCode", ""+currentPricePlanMatrixVersion, "pricePlanMatrixVersion");
         }
         return pricePlanMatrixVersion;
     }
