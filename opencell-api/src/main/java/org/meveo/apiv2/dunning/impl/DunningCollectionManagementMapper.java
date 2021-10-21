@@ -12,11 +12,11 @@ public class DunningCollectionManagementMapper extends ResourceMapper<org.meveo.
 		return ImmutableDunningCollectionManagement.builder()
 				.id(entity.getId())
 				.agentEmailItem(entity.getAgentEmailItem())
-				.emailCollectionAgency(entity.getEmailCollectionAgency())
+				.collectionAgency(entity.getCollectionAgency())
 				.agentLastNameItem(entity.getAgentLastNameItem())
 				.agentFirstNameItem(entity.getAgentFirstNameItem())
 				.dunningSettings(createResource(entity.getDunningSettings()))
-				.includeCollectionAgency(entity.isIncludeCollectionAgency())
+				.external(entity.isExternal())
 				.build();
 		
 	}
@@ -31,10 +31,10 @@ public class DunningCollectionManagementMapper extends ResourceMapper<org.meveo.
 			entity.setDunningSettings(dunnigSetting);
 		}
 		entity.setAgentEmailItem(resource.getAgentEmailItem());
-		entity.setEmailCollectionAgency(resource.getEmailCollectionAgency());
+		entity.setCollectionAgency(resource.getCollectionAgency());
 		entity.setAgentLastNameItem(resource.getAgentLastNameItem());
 		entity.setAgentFirstNameItem(resource.getAgentFirstNameItem());
-		entity.setIncludeCollectionAgency(resource.getIncludeCollectionAgency());
+		entity.setExternal(resource.getExternal());
 		entity.setId(resource.getId());
 		return entity;
 	}

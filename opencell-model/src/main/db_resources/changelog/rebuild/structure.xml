@@ -14723,8 +14723,8 @@
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-             <column name="include_collection_agency" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="email_collection_agency" type="varchar(100)" />
+             <column name="external" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="collection_agency" type="varchar(100)" />
             <column name="agent_first_name_item" type="varchar(100)" />
             <column name="agent_last_name_item" type="varchar(100)" />
             <column name="agent_email_item" type="varchar(100)" />
@@ -16161,14 +16161,15 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
+
     <changeSet id="INTRD-2444_20211019" author="ZBariki" />
-
-	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
-    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
-		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
-    </changeSet>
-
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza"/>
+    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA" />
+
+    <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
+    </changeSet>
 </databaseChangeLog>
