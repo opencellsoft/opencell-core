@@ -2,6 +2,8 @@ package org.meveo.model.dunning;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,6 +15,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Mbarek-Ay
@@ -26,24 +30,15 @@ import org.meveo.model.AuditableEntity;
 public class DunningCollectionPlanStatuses extends AuditableEntity  {
 	
 	private static final long serialVersionUID = 1L;
-	
-	
-	
-	
-	
-	
+
 	
 	public DunningCollectionPlanStatuses() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
-	
 
-
-	public DunningCollectionPlanStatuses(@Size(max = 50) String language, @Size(max = 50) String status,
-			@Size(max = 255) String context, DunningSettings dunningSettings) {
+	public DunningCollectionPlanStatuses(@Size(max = 50) TradingLanguage language, @Size(max = 50) String status,
+			@Size(max = 255) DunningCollectionPlanStatusContextEnum context, DunningSettings dunningSettings) {
 		super();
 		this.language = language;
 		this.status = status;
@@ -51,35 +46,31 @@ public class DunningCollectionPlanStatuses extends AuditableEntity  {
 		this.dunningSettings = dunningSettings;
 	}
 
-
-
-
-
 	/**
-	 *language code
+	 *language
 	 */
-	@Column(name = "language", length = 50)
-	@Size(max = 50)
-	private String language;
-	
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
+	@NotNull
+	private TradingLanguage language;
+
 	/**
 	 * status
 	 */
 	@Column(name = "status", length = 50)
 	@Size(max = 50)
+	@NotNull
 	private String status;
-	
-	
-	 
+
   	/**
 	 *context 
 	 */
 	@Column(name = "context", length = 255)
 	@Size(max = 255)
-	private String context;
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private DunningCollectionPlanStatusContextEnum context;
 
-	 
 	/**
 	 * dunning settings associated to the entity
 	 */
@@ -88,67 +79,33 @@ public class DunningCollectionPlanStatuses extends AuditableEntity  {
 	@NotNull
 	private DunningSettings dunningSettings;
 
-
-
-
-
-
-
-	public String getLanguage() {
+	public TradingLanguage getLanguage() {
 		return language;
 	}
 
-
-
-
-
-	public void setLanguage(String language) {
+	public void setLanguage(TradingLanguage language) {
 		this.language = language;
 	}
-
-
-
-
 
 	public String getStatus() {
 		return status;
 	}
 
-
-
-
-
 	public void setStatus(String status) {
 		this.status = status;
 	}
 
-
-
-
-
-	public String getContext() {
+	public DunningCollectionPlanStatusContextEnum getContext() {
 		return context;
 	}
 
-
-
-
-
-	public void setContext(String context) {
+	public void setContext(DunningCollectionPlanStatusContextEnum context) {
 		this.context = context;
 	}
-
-
-
-
 
 	public DunningSettings getDunningSettings() {
 		return dunningSettings;
 	}
-
-
-
-
 
 	public void setDunningSettings(DunningSettings dunningSettings) {
 		this.dunningSettings = dunningSettings;

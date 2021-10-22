@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
 public interface DunningPauseReasons extends Resource {
 
     @Schema(description = "The language code")
-    @Nullable
-	String getLanguage();
+    @Nonnull
+    Resource getLanguage();
 
     @Schema(description = "The pause reason")
     @Nonnull

@@ -46,7 +46,7 @@ public class DunningStopReasonApiServiceTest {
     @Before
     public void setup() {
 		dunningStopReasons = new org.meveo.model.dunning.DunningStopReasons();
-		dunningStopReasons.setLanguage("Language");
+		//dunningStopReasons.setLanguage("Language");
 		dunningStopReasons.setDescription("Description");
 		dunningStopReasons.setStopReason("Stop reason");
     }
@@ -71,7 +71,7 @@ public class DunningStopReasonApiServiceTest {
     @Test
     public void shouldUpdateExitingDunningStopReason() {
     	when(dunningStopReasonsService.findById(anyLong())).thenReturn(dunningStopReasons);
-    	var updateDunning = new org.meveo.model.dunning.DunningStopReasons("Lang", "Stop reason", "Description",null);
+    	var updateDunning = new org.meveo.model.dunning.DunningStopReasons(null, "Stop reason", "Description",null);
     	when(dunningStopReasonsService.update(any())).thenReturn(updateDunning);
 
 		dunningStopReasonApiService.update(1L, dunningStopReasons);

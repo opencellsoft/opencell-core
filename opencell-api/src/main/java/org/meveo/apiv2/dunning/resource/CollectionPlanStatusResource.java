@@ -9,11 +9,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.meveo.apiv2.dunning.CollectionPlanStatus;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningCollectionPlanStatuses;
 
 @Path("/dunning/collectionPlanStatus")
 @Produces({"application/json"})
@@ -30,7 +30,7 @@ public interface CollectionPlanStatusResource {
             @ApiResponse(responseCode = "404",
                     description = "Dunning with the same code exist")
     }) 
-	Response create(@Parameter(required = true) CollectionPlanStatus collectionPlanStatus);
+	Response create(@Parameter(required = true) DunningCollectionPlanStatus collectionPlanStatus);
 	
 	
 	
@@ -45,7 +45,7 @@ public interface CollectionPlanStatusResource {
             @ApiResponse(responseCode = "404",
                     description = "Collection with dunning code parameter and status doesn't exist")
     }) 
-	Response update(@Parameter(required = true) CollectionPlanStatus collectionPlanStatus, 
+	Response update(@Parameter(required = true) DunningCollectionPlanStatus collectionPlanStatus,
 						@PathParam("dunningSettingsCode") String dunningSettingsCode, 
 						@PathParam("status") String status);
 	

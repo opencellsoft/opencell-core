@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 public interface DunningStopReasons extends Resource {
 
     @Schema(description = "The language code")
-    @Nullable
-	String getLanguage();
+    @Nonnull
+    Resource getLanguage();
 
     @Schema(description = "The stop reason")
     @Nonnull

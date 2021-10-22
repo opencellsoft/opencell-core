@@ -14613,9 +14613,7 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-             <column name="pause_reason" type="varchar(255)">
-                 <constraints nullable="false" />
-             </column>
+            <column name="pause_reason" type="varchar(1000)" />
             <column name="description" type="varchar(255)" /> 
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
@@ -14639,9 +14637,7 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-             <column name="stop_reason" type="varchar(255)">
-                 <constraints nullable="false" />
-             </column>
+            <column name="stop_reason" type="varchar(1000)" />
             <column name="description" type="varchar(255)" /> 
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
@@ -14665,9 +14661,7 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-            <column name="status" type="varchar(255)" >
-                <constraints nullable="false" />
-            </column>
+            <column name="status" type="varchar(50)" />
             <column name="context" type="varchar(255)" /> 
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
@@ -14692,10 +14686,8 @@
             </column>
             
             <column name="language" type="varchar(50)" />
-            <column name="status" type="varchar(255)" />
-             <column name="context" type="varchar(255)">
-                 <constraints nullable="false" />
-             </column>
+            <column name="status" type="varchar(50)" />
+            <column name="context" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -14970,6 +14962,64 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
         <addPrimaryKey columnNames="dunning_action_id, action_notification_template" constraintName="dunning_action_notification_template_pkey" tableName="dunning_action_notification_template" />
+    </changeSet>
+    <changeSet id="INTRD-2547-2480-2482-2478_20211021-rebuild" author="khalidHORRI">
+        <modifyDataType columnName="pause_reason" newDataType="varchar(255)" tableName="dunning_pause_reasons"/>
+        <modifyDataType columnName="stop_reason" newDataType="varchar(255)" tableName="dunning_stop_reasons"/>
+        <modifyDataType columnName="status" newDataType="varchar(255)" tableName="invoice_dunning_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="pause_reason" tableName="dunning_pause_reasons"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="stop_reason" tableName="dunning_stop_reasons"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="status" tableName="invoice_dunning_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="context" tableName="invoice_dunning_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="status" tableName="dunning_collection_plan_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="context" tableName="dunning_collection_plan_statuses"/>
+        <dropColumn columnName="language" tableName="dunning_pause_reasons" />
+        <dropColumn columnName="language" tableName="dunning_stop_reasons" />
+        <dropColumn columnName="language" tableName="invoice_dunning_statuses" />
+        <dropColumn columnName="language" tableName="dunning_collection_plan_statuses" />
+        <addColumn tableName="dunning_pause_reasons">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="dunning_stop_reasons">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="invoice_dunning_statuses">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="dunning_collection_plan_statuses">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addUniqueConstraint  columnNames="pause_reason, dunning_settings_id, language_id" tableName="dunning_pause_reasons"/>
+        <addUniqueConstraint  columnNames="stop_reason, dunning_settings_id, language_id" tableName="dunning_stop_reasons"/>
+        <addForeignKeyConstraint baseTableName="dunning_pause_reasons"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_dunning_pause_reasons_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="dunning_stop_reasons"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_dunning_stop_reasons_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="invoice_dunning_statuses"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_invoice_dunning_statuses_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="dunning_collection_plan_statuses"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_dunning_collection_plan_statuses_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+
     </changeSet>
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->

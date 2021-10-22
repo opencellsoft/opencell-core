@@ -16,6 +16,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Mbarek-Ay
@@ -44,7 +46,7 @@ public class DunningPauseReasons extends AuditableEntity  {
  
 
 
-	public DunningPauseReasons(@Size(max = 50) String language, @Size(max = 1000) String pauseReason,
+	public DunningPauseReasons(@Size(max = 50) TradingLanguage language, @Size(max = 1000) String pauseReason,
 			@Size(max = 255) String description) {
 		super();
 		this.language = language;
@@ -55,11 +57,12 @@ public class DunningPauseReasons extends AuditableEntity  {
 
 
 	/**
-	 * language code
+	 *language
 	 */
-	@Column(name = "language", length = 50)
-	@Size(max = 50)
-	private String language;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
+	@NotNull
+	private TradingLanguage language;
 	
 	
 	/**
@@ -68,7 +71,6 @@ public class DunningPauseReasons extends AuditableEntity  {
 	@Column(name = "pause_reason", nullable = false)
 	@Size(max = 255, min = 1)
 	@NotNull
-	@JsonProperty
 	private String pauseReason;
 	
 	
@@ -92,13 +94,13 @@ public class DunningPauseReasons extends AuditableEntity  {
 
 
 
-	public String getLanguage() {
+	public TradingLanguage getLanguage() {
 		return language;
 	}
 
 
 
-	public void setLanguage(String language) {
+	public void setLanguage(TradingLanguage language) {
 		this.language = language;
 	}
 

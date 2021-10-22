@@ -41,7 +41,7 @@ public class DunningPauseReasonApiServiceTest {
     @Before
     public void setup() {
 		dunningPauseReasons = new DunningPauseReasons();
-		dunningPauseReasons.setLanguage("Language");
+		//dunningPauseReasons.setLanguage("Language");
 		dunningPauseReasons.setDescription("Description");
 		dunningPauseReasons.setPauseReason("Pause reason");
     }
@@ -66,7 +66,7 @@ public class DunningPauseReasonApiServiceTest {
     @Test
     public void shouldUpdateExitingDunningPauseReason() {
     	when(dunningPauseReasonsService.findById(anyLong())).thenReturn(dunningPauseReasons);
-    	var updateDunning = new DunningPauseReasons("Lang", "Pause reason", "Description");
+    	var updateDunning = new DunningPauseReasons(null, "Pause reason", "Description");
     	when(dunningPauseReasonsService.update(any())).thenReturn(updateDunning);
 
 		dunningPauseReasonApiService.update(1L, dunningPauseReasons);

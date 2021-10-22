@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.dunning.service.DunningInvoiceStatusApiService;
+import org.meveo.model.dunning.DunningInvoiceStatusContextEnum;
 import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.service.payments.impl.DunningSettingsService;
@@ -41,8 +42,8 @@ public class DunningInvoiceStatusApiServiceTest {
     @Before
     public void setup() {
 		dunningInvoiceStatus = new DunningInvoiceStatus();
-		dunningInvoiceStatus.setLanguage("Language");
-		dunningInvoiceStatus.setContext("Context");
+		//dunningInvoiceStatus.setLanguage("Language");
+		dunningInvoiceStatus.setContext(DunningInvoiceStatusContextEnum.ACTIVE_DUNNING);
 		dunningInvoiceStatus.setStatus("Status");
     }
     
@@ -66,7 +67,7 @@ public class DunningInvoiceStatusApiServiceTest {
     @Test
     public void shouldUpdateExitingDunningInvoiceStatus() {
     	when(dunningInvoiceStatusService.findById(anyLong())).thenReturn(dunningInvoiceStatus);
-    	var updateDunning = new DunningInvoiceStatus("Lang", "Status", "Context",null);
+    	var updateDunning = new DunningInvoiceStatus(null, "Status", DunningInvoiceStatusContextEnum.ACTIVE_DUNNING,null);
     	when(dunningInvoiceStatusService.update(any())).thenReturn(updateDunning);
 
 		dunningInvoiceStatusApiService.update(1L, dunningInvoiceStatus);
