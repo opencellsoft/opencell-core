@@ -27,8 +27,9 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Override
     public Response createDunningAction(DunningAction dunningAction) {
-        dunningActionService.create(dunningAction.toEntity());
-        return Response.ok().build();
+        org.meveo.model.dunning.DunningAction dunningActionToCreate = dunningAction.toEntity();
+        dunningActionService.create(dunningActionToCreate);
+        return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Action successfully created\"},\"id\":"+dunningActionToCreate.getId()+"} ").build();
     }
 
     @Override
