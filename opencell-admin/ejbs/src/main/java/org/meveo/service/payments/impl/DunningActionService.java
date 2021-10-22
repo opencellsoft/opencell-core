@@ -1,7 +1,5 @@
 package org.meveo.service.payments.impl;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -11,9 +9,7 @@ import org.meveo.model.payments.ActionTypeEnum;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.BaseEntityService;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 
