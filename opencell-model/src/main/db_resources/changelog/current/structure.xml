@@ -8154,37 +8154,37 @@ public class OrderAdvancement extends ModuleScript {
 
 
 		<sql>DELETE FROM ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (
-								SELECT id FROM crm_custom_field_tmpl 
+								SELECT id FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess');</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'New', 'NEW' FROM crm_custom_field_tmpl 
+								SELECT id, 'New', 'NEW' FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Draft', 'DRAFT' FROM crm_custom_field_tmpl 
+								SELECT id, 'Draft', 'DRAFT' FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Canceled', 'CANCELED' FROM crm_custom_field_tmpl 
+								SELECT id, 'Canceled', 'CANCELED' FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Suspect', 'SUSPECT' FROM crm_custom_field_tmpl 
+								SELECT id, 'Suspect', 'SUSPECT' FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Validated', 'VALIDATED' FROM crm_custom_field_tmpl 
+								SELECT id, 'Validated', 'VALIDATED' FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Rejected', 'REJECTED' FROM crm_custom_field_tmpl 
+								SELECT id, 'Rejected', 'REJECTED' FROM crm_custom_field_tmpl
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
     	
     </changeSet>
@@ -8453,7 +8453,7 @@ public class OrderAdvancement extends ModuleScript {
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
 -->
-    
+
     <changeSet id="#6168_20210624" author="HatimOUDAD">
         <addColumn tableName="com_meveo_instance">
             <column name="client_id" type="varchar(60)" />
@@ -8485,7 +8485,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="reactivation_date" type="datetime" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" failOnError="false">
     	<createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createTable tableName="query_scheduler">
@@ -8520,7 +8520,7 @@ public class OrderAdvancement extends ModuleScript {
             referencedColumnNames="id" referencedTableName="cust_query" />
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="query_scheduler" constraintName="fk_job_instance_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="meveo_job_instance" />
-        
+
         <createSequence sequenceName="query_result_seq" startValue="1" />
         <createTable tableName="query_scheduler_users">
 			<column name="query_scheduler_id" type="bigint">
@@ -8535,16 +8535,16 @@ public class OrderAdvancement extends ModuleScript {
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="query_scheduler_users" constraintName="fk_user_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
         						onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-        						
-        						
+
+
         <createTable tableName="query_scheduler_emails">
             <column name="query_scheduler_id"  type="bigint"/>
             <column name="emails"  type="varchar(100)"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_emails" constraintName="fk_query_scheduler_emails" deferrable="false"
-            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="query_scheduler" />						
-        
-        <createSequence sequenceName="query_execution_result_seq" startValue="1" />					
+            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="query_scheduler" />
+
+        <createSequence sequenceName="query_execution_result_seq" startValue="1" />
         <createTable tableName="query_execution_result">
         <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="query_result_pkey" />
@@ -8575,7 +8575,7 @@ public class OrderAdvancement extends ModuleScript {
             referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="cust_query" />
-    </changeSet>  
+    </changeSet>
     <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay" failOnError="false">
         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
         <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
@@ -8584,7 +8584,7 @@ public class OrderAdvancement extends ModuleScript {
         <createSequence sequenceName="invoice_dunning_statuses_seq" startValue="1" />
         <createSequence sequenceName="dunning_collection_management_seq" startValue="1" />
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
-         
+
         <createTable tableName="dunning_settings">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_settings_pkey" />
@@ -8616,7 +8616,7 @@ public class OrderAdvancement extends ModuleScript {
                                  constraintName="fk_dunning_settings_accounting_article_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_article"/>
-                                 
+
          <createTable tableName="dunning_pause_reasons">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_pause_reasons_pkey" />
@@ -8628,10 +8628,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="pause_reason" type="varchar(1000)" />
-            <column name="description" type="varchar(255)" /> 
+            <column name="description" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -8640,7 +8640,7 @@ public class OrderAdvancement extends ModuleScript {
                                  constraintName="fk_dunning_settings_pause_reasons_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
-                                 
+
          <createTable tableName="dunning_stop_reasons">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_stop_reasons_pkey" />
@@ -8652,10 +8652,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="stop_reason" type="varchar(1000)" />
-            <column name="description" type="varchar(255)" /> 
+            <column name="description" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -8663,8 +8663,8 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_stop_reasons"
                                  constraintName="fk_dunning_settings_stop_reasons_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>   
-                                 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
         <createTable tableName="dunning_collection_plan_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_plan_statuses_pkey" />
@@ -8676,10 +8676,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="status" type="varchar(50)" />
-            <column name="context" type="varchar(255)" /> 
+            <column name="context" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -8688,7 +8688,7 @@ public class OrderAdvancement extends ModuleScript {
                                  constraintName="fk_dunning_settings_collection_plan_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
-                                 
+
          <createTable tableName="invoice_dunning_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
@@ -8700,10 +8700,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="status" type="varchar(50)" />
-            <column name="context" type="varchar(255)" /> 
+            <column name="context" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -8711,8 +8711,8 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses"
                                  constraintName="fk_dunning_settings_invoice_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/> 
-                                 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
          <createTable tableName="dunning_collection_management">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_management_pkey" />
@@ -8736,8 +8736,8 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management"
                                  constraintName="fk_dunning_settings_collection_management_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/> 
-                                 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
        <createTable tableName="dunning_payment_retries">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey" />
@@ -8760,27 +8760,27 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries"
                                  constraintName="fk_dunning_settings_payment_retries_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                            
- 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
  	</changeSet>
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
         <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius">
         <renameColumn tableName="cat_offer_template_category" oldColumnName="level" newColumnName="order_level"/>
         <renameColumn tableName="adm_notif_webhooks" oldColumnName="password" newColumnName="pswd"/>
         <renameColumn tableName="ar_customer_account" oldColumnName="password" newColumnName="pswd"/>
         <renameColumn tableName="com_sender_config" oldColumnName="password" newColumnName="pswd"/>
-    </changeSet>    
-    
+    </changeSet>
+
     <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (drop) -->
     <changeSet id="#INTRD-828-drop-view" author="AbdelmounaimAkadid">
     	<dropView viewName="billing_wallet_operation_period"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-828_20210824" author="AndriusKarpavicius" dbms="postgresql">
         <sql>alter table account_entity alter column cf_values type jsonb using cf_values::jsonb</sql>
         <sql>alter table adm_notification alter column cf_values type jsonb using cf_values::jsonb</sql>
@@ -8852,8 +8852,8 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table ord_quote alter column cf_values type jsonb using cf_values::jsonb</sql>
         <sql>alter table quote_offer alter column cf_values type jsonb using cf_values::jsonb</sql>
         <sql>alter table wf_generic_workflow alter column cf_values type jsonb using cf_values::jsonb</sql>
-    </changeSet> 
-    
+    </changeSet>
+
     <changeSet id="#INTRD-828_20210902" author="AbdelmounaimAkadid" dbms="postgresql">
         <sql>alter table report_query alter column filters type jsonb using filters::jsonb</sql>
         <sql>alter table billing_billing_run alter column filters type jsonb using filters::jsonb</sql>
@@ -8902,7 +8902,7 @@ public class OrderAdvancement extends ModuleScript {
        	<sql>alter table billing_billing_run alter column compute_dates_validation SET DEFAULT 0</sql>
        	<sql>alter table dwh_report_extract_execution alter column status type ${type.boolean} using status::${type.boolean}</sql>
    	</changeSet>
-    
+
     <changeSet id="#INTRD-828_20210824-accum" author="AndriusKarpavicius">
         <sql>alter table account_entity drop column cf_values_accum</sql>
         <sql>alter table adm_notification drop column cf_values_accum</sql>
@@ -8975,7 +8975,7 @@ public class OrderAdvancement extends ModuleScript {
         <sql>alter table quote_offer drop column cf_values_accum</sql>
         <sql>alter table wf_generic_workflow drop column cf_values_accum</sql>
     </changeSet>
-    
+
     <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql">
     	<createView viewName="billing_wallet_operation_period">
@@ -8992,8 +8992,8 @@ public class OrderAdvancement extends ModuleScript {
             WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
-    
-    
+
+
     <changeSet id="#INTRD-264_20210714" author="HatimOUDAD">
     	<addColumn tableName="query_scheduler">
            <column name="code" type="varchar(255)"/>
@@ -9010,7 +9010,7 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-1441_20210728" author="TarikFA.">
     	<createTable tableName="cpq_quote_media">
     		<column name="quote_id" type="bigint" />
@@ -9033,19 +9033,19 @@ public class OrderAdvancement extends ModuleScript {
     	 <dropColumn tableName="cpq_attribute">
             <column name="sequence"/>
         </dropColumn>
-        
+
         <addColumn tableName="cpq_attribute_instance">
         	<column name="boolean_value" type="${type.boolean}" />
         </addColumn>
-        
+
         <addColumn tableName="cpq_order_attribute">
         	<column name="boolean_value" type="${type.boolean}" />
         </addColumn>
-        
+
         <addColumn tableName="cpq_quote_attribute">
         	<column name="boolean_value" type="${type.boolean}" />
         </addColumn>
-        
+
         <addColumn tableName="cpq_price_plan_matrix_value">
         	<column name="boolean_value" type="${type.boolean}" />
         </addColumn>
@@ -9071,7 +9071,7 @@ public class OrderAdvancement extends ModuleScript {
         <sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
         <sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ALTER COLUMN id TYPE int8 USING id::int8;</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-754_20210727" author="AmineBENAICHA">
         <addColumn tableName="meveo_job_instance">
             <column name="query_scheduler_id" type="bigint" />
@@ -9079,7 +9079,7 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
     </changeSet>
-    
+
     <changeSet id="INTRD-1221_20210803" author="TarikFA.">
     	<update tableName="cpq_quote_price">
     		<column name="price_type" value="ONE_SHOT_SUBSCRIPTION" />
@@ -9134,7 +9134,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="sub_accounting_period_progress" type="varchar(255)"/>
             <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
         </createTable>
-        
+
         <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
         <createTable tableName="sub_accounting_period">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -9186,7 +9186,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            
+
         </createTable>
         <addColumn tableName="ar_occ_template">
             <column name="journal_id" type="bigint" />
@@ -9219,9 +9219,9 @@ public class OrderAdvancement extends ModuleScript {
     	<addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="int4"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
     </changeSet>
-    
+
      <changeSet id="#INTRD-1365-12082021" author="Mbarek-Ay">
-        <addDefaultValue  tableName="cpq_quote_price" columnName="price_over_charged" defaultValueNumeric="0" /> 
+        <addDefaultValue  tableName="cpq_quote_price" columnName="price_over_charged" defaultValueNumeric="0" />
     </changeSet>
 
     <changeSet id="#INTRD-1396_20210812" author="ZBariki">
@@ -9256,7 +9256,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD_1609_20210902" author="TarikFA.">
     	<addColumn tableName="accounting_period">
     		<column name="force_option" type="varchar(50)" />
@@ -9323,12 +9323,12 @@ public class OrderAdvancement extends ModuleScript {
      <dropForeignKeyConstraint baseTableName="cpq_quote" constraintName="fk__ord_quote__cat_discount_plan"/> 
      <dropForeignKeyConstraint baseTableName="cpq_quote" constraintName="fk_cpq_quote_contract_id"/>  
      <dropTable tableName="cpq_quote_media"/>
-		
-		
+
+
    </changeSet>
     <changeSet id="#INTRD-1654_20210902" author="AndriusKarpavicius">
 	   <dropColumn tableName="billing_cycle" columnName="due_date_delay_el_sp"/>
-       <dropColumn tableName="billing_cycle" columnName="invoice_type_el_sp"/>       
+       <dropColumn tableName="billing_cycle" columnName="invoice_type_el_sp"/>
        <dropColumn tableName="billing_service_instance" columnName="minimum_amount_el_sp"/>
        <dropColumn tableName="billing_service_instance" columnName="minimum_label_el_sp"/>
        <dropColumn tableName="cat_service_template" columnName="minimum_amount_el_sp"/>
@@ -9362,7 +9362,7 @@ public class OrderAdvancement extends ModuleScript {
        <dropColumn tableName="cat_discount_plan_item" columnName="discount_value_el_sp"/>
        <dropColumn tableName="cat_charge_template" columnName="filter_el_sp"/>
        <dropColumn tableName="cat_charge_template" columnName="tax_class_el_sp"/>
-       <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>        
+       <dropColumn tableName="cat_calendar" columnName="init_date_el_sp"/>
     </changeSet>
 
      <changeSet author="TarikFA." id="INTRD_1687_20210906">
@@ -9414,14 +9414,14 @@ public class OrderAdvancement extends ModuleScript {
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
 
-    
+
     <changeSet id="INTRD_1629_20210914" author="TarikFA.">
-    
+
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="collection_plan_status"/>
         </preConditions>
-        
-    	
+
+
 	    <createSequence sequenceName="collection_plan_status_seq"/>
 	    	<createTable tableName="collection_plan_status">
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -9441,25 +9441,25 @@ public class OrderAdvancement extends ModuleScript {
 	            </column>
 	            <column name="context" type="varchar(255)" />
 	    	</createTable>
-	    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id" 
-	    							 referencedTableName="dunning_settings" 
-	    							 baseColumnNames="dunning_settings_id" 
-	    							 baseTableName="collection_plan_status" 
+	    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id"
+	    							 referencedTableName="dunning_settings"
+	    							 baseColumnNames="dunning_settings_id"
+	    							 baseTableName="collection_plan_status"
 	    							 referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-1707_20210917" author="AbdelkaderBouazza">
         <addColumn tableName="ar_account_operation">
             <column name="operation_action" type="varchar(255)"/>
         </addColumn>
     </changeSet>
-	
+
     <changeSet id="INTRD_1782_20210913" author="TarikFA.">
     	<addColumn tableName="cpq_product_version_attributes">
     		<column name="mandatorwith_el" type="varchar(255)"/>
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD_1794_20210917" author="TarikFA.">
     	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
     			<columnExists tableName="cpq_product_version_attributes" columnName="mandatory"/>
@@ -9470,7 +9470,7 @@ public class OrderAdvancement extends ModuleScript {
     		<column name="display" />
     	</dropColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD-1901_20210920" author="TarikFA.">
     	<createSequence sequenceName="offer_template_attribute_seq"/>
     	<createTable tableName="offer_template_attribute">
@@ -9487,15 +9487,15 @@ public class OrderAdvancement extends ModuleScript {
             </column>
             <column name="sequence" type="INT4" defaultValue="0" />
     	</createTable>
-    	
+
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-                                 
+
         <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_offer_template_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
-                                 
+
     </changeSet>
-    
+
     <changeSet id="INTRD-1924_20210922" author="TarikFA.">
     	<addColumn tableName="cpq_product_version_attributes">
             <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
@@ -9509,7 +9509,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD-1925_20210922" author="TarikFA.">
     	<addColumn tableName="offer_template_attribute">
             <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
@@ -9522,7 +9522,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_pattern" type="varchar(2000)" />
             <column name="validation_label" type="varchar(255)" />
     	</addColumn>
-		
+
 		<dropColumn tableName="cpq_attribute">
 			<column name="mandatory"/>
 			<column name="read_only"/>
@@ -9531,7 +9531,7 @@ public class OrderAdvancement extends ModuleScript {
 			<column name="validation_pattern"/>
 			<column name="validation_label"/>
 		</dropColumn>
-		    	
+
     </changeSet>
    <changeSet id="INTRD_1985_20210923" author="TarikFA.">
    		<addColumn tableName="quote_offer">
@@ -9539,7 +9539,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="description" type="varchar(255)" />
    		</addColumn>
    		<addUniqueConstraint columnNames="code, quote_version_id" tableName="quote_offer"/>
-    
+
    		<addColumn tableName="cpq_order_offer">
 			<column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
@@ -9547,19 +9547,19 @@ public class OrderAdvancement extends ModuleScript {
    		<addUniqueConstraint columnNames="code, order_id" tableName="cpq_order_offer"/>
    </changeSet>
    
-    
+
     <changeSet id="#INTRD-1692_20210906" author="AndriusKarpavicius">
         <addColumn tableName="billing_wallet_operation">
             <column name="user_account_id" type="bigint" />
             <column name="billing_account_id" type="bigint" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-1692_20210906-pg" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_wallet_operation set user_account_id = wi.user_account_id from ${db.schema.adapted}billing_wallet wi where wallet_id=wi.id and wallet_id is not null</sql>
         <sql>update ${db.schema.adapted}billing_wallet_operation set billing_account_id = ua.billing_account_id from ${db.schema.adapted}billing_user_account ua where user_account_id=ua.id and user_account_id is not null</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-1692_20210907" author="AndriusKarpavicius">
         <createTable tableName="billing_wallet_operation_pending" >
             <column name="id" type="bigint">
@@ -9568,28 +9568,28 @@ public class OrderAdvancement extends ModuleScript {
             <column name="rated_transaction_id" type="bigint" />
         </createTable>
     </changeSet>
-        
+
     <changeSet id="#INTRD-1692_20210908" author="AndriusKarpavicius">
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="500"/>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code='batchSize'</sql>
     </changeSet>
-    
-    
+
+
     <changeSet id="#INTRD-754_20210915" author="AndriusKarpavicius" dbms="postgresql">
         <dropForeignKeyConstraint baseTableName="meveo_job_instance" constraintName="fk_query_scheduler_id"/>
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
-        <dropForeignKeyConstraint baseTableName="query_scheduler_users" constraintName="fk_query_scheduler_id"/>        
+        <dropForeignKeyConstraint baseTableName="query_scheduler_users" constraintName="fk_query_scheduler_id"/>
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_usr_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />        
-        
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
+
     </changeSet>
-    
+
     <changeSet id="#INTRD-1994_20210923" author="AndriusKarpavicius">
         <alterSequence sequenceName="rating_edr_seq" incrementBy="500"/>
         <alterSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
     </changeSet>
-    
+
      <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay">
      <addColumn tableName="cpq_invoice_line">
             <column name="cpq_quote_id" type="bigint" />
@@ -9620,7 +9620,7 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="#INTRD-1275_20211011" author="anasseh">
     	<sql>update  ${db.schema.adapted}ar_account_operation set status ='POSTED' where status is null;</sql>
         <sql>update  ${db.schema.adapted}ar_account_operation set accounting_date =created where accounting_date is null;</sql>
-    </changeSet> 
+    </changeSet>
 	<changeSet id="#2374_20211012" author="HatimOUDAD">
         <addColumn tableName="billing_service_instance" >
             <column name="delivery_date" type="datetime" />
@@ -9637,14 +9637,14 @@ public class OrderAdvancement extends ModuleScript {
         <addColumn tableName="quote_offer" >
             <column name="delivery_date" type="datetime" />
         </addColumn>
-    </changeSet>   
+    </changeSet>
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza">
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
         <createTable tableName="dunning_action_notification_template">
             <column name="dunning_action_id"  type="bigint"/>
             <column name="action_notification_template"  type="varchar(200)"/>
         </createTable>
-        <createTable tableName="dunning_level">
+        <createTable tableName="ar_dunning_level">
             <column name="level_id" type="bigint" />
             <column name="related_levels" type="varchar(255)" />
         </createTable>
@@ -9689,7 +9689,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
-    
+
     <changeSet id="INTRD-2252_20211006" author="TarikFA.">
     	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
     </changeSet>
@@ -9713,6 +9713,235 @@ public class OrderAdvancement extends ModuleScript {
 
         <addForeignKeyConstraint constraintName="fk_invoice_dunning_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
+        <createSequence sequenceName="dunning_level_seq" startValue="1" />
+        <createTable tableName="dunning_level">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_level_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="active" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="days_overdue" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="soft_decline" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="min_balance" type="numeric(23, 12)" />
+            <column name="min_balance_currency_id" type="bigint" />
+            <column name="charge_type" type="varchar(255)" />
+            <column name="charge_value" type="numeric(23, 12)" />
+            <column name="charge_currency_id" type="bigint" />
+            <column name="end_dunning_level" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="min_balance_currency_id" baseTableName="dunning_level" constraintName="fk_dunning_level_min_balance_currency"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+        <addForeignKeyConstraint baseColumnNames="charge_currency_id" baseTableName="dunning_level" constraintName="fk_dunning_level_charge_currency"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+
+        <createTable tableName="dunning_level_dunning_action">
+            <column name="dunning_level_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_action_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="dunning_level_id, dunning_action_id" constraintName="dunning_level_dunning_action_pkey" tableName="dunning_level_dunning_action" />
+
+
+        <createSequence sequenceName="dunning_policy_level_seq" startValue="1" />
+        <createTable tableName="dunning_policy_level">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_level_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="sequence" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="dunning_level_id" type="bigint" />
+            <column name="collection_plan_status_id" type="bigint" />
+            <column name="invoice_dunning_statuses_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_level_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
+        <addForeignKeyConstraint baseColumnNames="collection_plan_status_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_collection_plan_status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="collection_plan_status" />
+        <addForeignKeyConstraint baseColumnNames="invoice_dunning_statuses_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_invoice_dunning_statuses"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="invoice_dunning_statuses" />
+    </changeSet>
+
+    <changeSet id="INTRD-2444_20211018" author="ZBariki">
+        <createSequence sequenceName="dunning_policy_seq" startValue="1" />
+        <createTable tableName="dunning_policy">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_description" type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="interest_for_delay_sequence" type="int4" />
+            <column name="min_balance_trigger" type="float8" defaultValue="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="total_dunning_levels" type="int4" />
+            <column name="include_pay_reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="attach_invoices_to_emails" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="policy_priority" type="int4" />
+            <column name="is_default_policy" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="is_active_policy" type="${type.boolean}" defaultValueNumeric="1" />
+        </createTable>
+        <createTable tableName="dunning_min_balance_trigger_currency">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="min_balance_trigger_currency" type="varchar(255)" />
+        </createTable>
+        <createTable tableName="dunning_determine_level_by">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="determine_level_by" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_min_balance_trigger_currency"
+                                 constraintName="fk_dunning_min_balance_trigger_currency_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_determine_level_by"
+                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <createSequence sequenceName="dunning_policy_rule_seq" startValue="1" />
+        <createTable tableName="dunning_policy_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="rule_joint" type="varchar(255)" />
+            <column name="dunning_policy_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_rule"
+                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+        <createSequence sequenceName="dunning_policy_rule_line_seq" startValue="1" />
+        <createTable tableName="dunning_policy_rule_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_condition_operator" type="varchar(255)" />
+            <column name="policy_condition_target" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_condition_target_value" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_policy_rule_id" type="bigint" />
+            <column name="rule_line_joint" type="varchar(255)" defaultValue="AND"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_rule_id" baseTableName="dunning_policy_rule_line"
+                                 constraintName="fk_dunning_policy_rule_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy_rule"/>
+    </changeSet>
+    <changeSet id="INTRD-2444_20211019" author="ZBariki">
+        <addColumn tableName="dunning_policy_level">
+            <column name="dunning_policy_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_level"
+                                 constraintName="fk_dunning_policy_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
+    </changeSet>
+
+     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza">
+       <renameColumn tableName="ar_dunning_action" oldColumnName="action_name" newColumnName="code"/>
+        <renameColumn tableName="ar_dunning_action" oldColumnName="action_description" newColumnName="description"/>
+        <dropColumn tableName="ar_dunning_action" columnName="action_notification_template"/>
+        <addColumn tableName="ar_dunning_action">
+            <column name="action_notification_template" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="action_notification_template_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_email_template"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
+    </changeSet>
+
+    <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay">
+     <addColumn tableName="cpq_invoice_line">
+            <column name="quote_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+
+       <addColumn tableName="cpq_invoice_line">
+         <column name="order_offer_id" type="bigint" />
+     </addColumn>
+     <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
+
+    <changeSet id="INTRD-2535_20211021" author="NabilOuachi">
+        <addColumn tableName="cpq_commercial_rule_header">
+            <column name="scope_type" type="varchar(25)" />
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza">
+        <dropColumn tableName="ar_dunning_action" columnName="action_notification_template"/>
+        <addColumn tableName="ar_dunning_action">
+            <column name="action_notification_template_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA">
+	    <renameColumn tableName="dunning_collection_management" newColumnName="external" oldColumnName="include_collection_agency" />
+	    <renameColumn tableName="dunning_collection_management" newColumnName="collection_agency" oldColumnName="email_collection_agency" />
     </changeSet>
     <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
         <modifyDataType columnName="pause_reason" newDataType="varchar(255)" tableName="dunning_pause_reasons"/>
@@ -9772,5 +10001,4 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id"/>
 
     </changeSet>
-   
 </databaseChangeLog>

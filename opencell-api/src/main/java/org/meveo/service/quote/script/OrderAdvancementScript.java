@@ -195,7 +195,7 @@ OrderAdvancementScript extends ModuleScript {
     }
 
     private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), orderProduct.getOrderOffer().getOfferTemplate(), amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), orderProduct.getOrderOffer().getOfferTemplate(),orderProduct.getOrderOffer(), amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
     }
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {

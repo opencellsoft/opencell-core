@@ -24,7 +24,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;

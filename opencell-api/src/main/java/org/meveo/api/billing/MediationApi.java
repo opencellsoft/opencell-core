@@ -131,7 +131,7 @@ public class MediationApi extends BaseApi {
                 if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, cdr.getRejectReason());
                     cdr.setStatus(CDRStatusEnum.ERROR);
-                    createOrUpdateCdr(cdr);
+                    cdrService.createOrUpdateCdr(cdr);
                     errors.add(new CdrErrorDto(cdrLine, cdr.getRejectReason()));
                 } else {
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
@@ -146,7 +146,7 @@ public class MediationApi extends BaseApi {
                     log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
                 }
                 cdr.setStatus(CDRStatusEnum.ERROR);
-                createOrUpdateCdr(cdr);
+                cdrService.createOrUpdateCdr(cdr);
                 errors.add(new CdrErrorDto(cdrLine,errorReason));
             }
         }
@@ -431,21 +431,5 @@ public class MediationApi extends BaseApi {
                 log.error("Failed to notify of rejected CDR {}", cdr, e);
             }
         }
-    }
-    
-    /**
-     * Save the cdr if the configuration property mediation.persistCDR is true.
-     *
-     * @param cdr the cdr
-     */
-    private void createOrUpdateCdr(CDR cdr) {
-        boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
-        if(cdr != null && persistCDR) {
-            if(cdr.getId() == null) {
-                cdrService.create(cdr);
-            } else {
-                cdrService.update(cdr);
-            }                       
-        }
-    }
+    } 
 }

@@ -115,7 +115,7 @@ public class Attribute extends EnableBusinessCFEntity{
     private List<Attribute> assignedAttributes = new ArrayList<>();
     
     @Column(name = "unit_nb_decimal")
-    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
+    protected Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
 
 
 	@ManyToMany(mappedBy = "attributes")
@@ -259,14 +259,14 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * @return the unitNbDecimal
 	 */
-	public int getUnitNbDecimal() {
+	public Integer getUnitNbDecimal() {
 		return unitNbDecimal;
 	}
 
 	/**
 	 * @param unitNbDecimal the unitNbDecimal to set
 	 */
-	public void setUnitNbDecimal(int unitNbDecimal) {
+	public void setUnitNbDecimal(Integer unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
 	}
 

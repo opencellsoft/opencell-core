@@ -63,6 +63,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -206,7 +207,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
- public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+ public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, OrderOffer orderOffer,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         
     	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -215,6 +216,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setProductVersion(productVersion);
         invoiceLine.setOrderLot(orderLot);
         invoiceLine.setOfferTemplate(offerTemplate);
+        invoiceLine.setOrderOffer(orderOffer);
+        invoiceLine.setQuoteOffer(orderOffer.getQuoteOffer());
         if (entityToInvoice instanceof CpqQuote) {
         entityToInvoice = cpqQuoteService.retrieveIfNotManaged((CpqQuote) entityToInvoice);
         CpqQuote quote =((CpqQuote) entityToInvoice);

@@ -19,11 +19,11 @@ public interface DunningCollectionManagement extends Resource {
 	Resource getDunningSettings();
 
     @Schema(description = "include collection agency")
-	boolean getIncludeCollectionAgency();
+	boolean getExternal();
 
     @Schema(description = "indicate email collection agency")
     @Nullable
-	String getEmailCollectionAgency();
+	String getCollectionAgency();
 
     @Schema(description = "")
     @Nullable

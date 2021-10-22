@@ -14,8 +14,6 @@ import org.meveo.model.dunning.DunningSettings;
 import org.meveo.service.payments.impl.DunningCollectionManagementService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
-import com.lowagie.text.xml.simpleparser.EntitiesToSymbol;
-
 public class DunningCollectionManagementApiService implements ApiService<DunningCollectionManagement> {
 	
 	@Inject
@@ -84,14 +82,14 @@ public class DunningCollectionManagementApiService implements ApiService<Dunning
 		var existingDunningCollection = dunningCollectionManagementService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
 		if(existingDunningCollection == null)
 			throw new BadRequestException(String.format(NO_DUNNING_COLLECTION_FOUND, dunningCode, agentEmailItem));
-		if(!Strings.isEmpty(baseEntity.getEmailCollectionAgency()))
-			existingDunningCollection.setEmailCollectionAgency(baseEntity.getEmailCollectionAgency());
+		if(!Strings.isEmpty(baseEntity.getCollectionAgency()))
+			existingDunningCollection.setCollectionAgency(baseEntity.getCollectionAgency());
 		if(!Strings.isEmpty(baseEntity.getAgentFirstNameItem()))
 			existingDunningCollection.setAgentFirstNameItem(baseEntity.getAgentFirstNameItem());
 		if(!Strings.isEmpty(baseEntity.getAgentLastNameItem()))
 			existingDunningCollection.setAgentLastNameItem(baseEntity.getAgentLastNameItem());
 		
-		existingDunningCollection.setIncludeCollectionAgency(baseEntity.isIncludeCollectionAgency());
+		existingDunningCollection.setExternal(baseEntity.isExternal());
 		dunningCollectionManagementService.update(existingDunningCollection);
 		return existingDunningCollection;
 		

@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -31,8 +32,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	private ProductApi productApi;
 	@Inject
 	private ProductLineApi productLineApi;  
-	
-	
+ 
 	@Override
 	public Response createProduct(ProductDto productDto) {
 		GetProductDtoResponse result = new GetProductDtoResponse();
@@ -205,11 +205,14 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response duplicateProduct(String productCode, boolean duplicateHierarchy, boolean preserveCode) { 
 		GetProductDtoResponse result = new GetProductDtoResponse();
 		try {
-			result = new GetProductDtoResponse(productApi.duplicateProduct(productCode, duplicateHierarchy, preserveCode));
-			return Response.ok(result).build();
+			Product p=productApi.duplicateProduct(productCode, duplicateHierarchy, preserveCode);  
+			result = new GetProductDtoResponse(p);
 		} catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
+		}catch (Exception e) {
+			  log.error("Failed to duplicate product:", e);
 		}
+		 return Response.ok(result).build();
 	}
 
 	@Override
