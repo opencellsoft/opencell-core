@@ -24,9 +24,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 @Stateless
@@ -36,11 +34,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-    @Inject
-    private PricePlanMatrixValueService pricePlanMatrixValueService;
-    @Inject
-    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
-    
     @Inject
     protected ResourceBundle resourceMessages;
 
@@ -77,7 +70,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     @Override
     public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix();
-        int currentVersion = pricePlanMatrixVersionDto.getVersion();
+        int currentVersion = pricePlanMatrixVersionDto.getVersion() == 0 ? 1 : pricePlanMatrixVersionDto.getVersion();
         String pricePlanMatrixCode = pricePlanMatrixVersionDto.getPricePlanMatrixCode();
 
         if (StringUtils.isBlank(isMatrix)) {
@@ -123,7 +116,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         			.stream()
 					.filter(ppmv -> pricePlanMatrixVersion.getId() == null ||  pricePlanMatrixVersion.getId() != ppmv.getId())
 					.forEach(ppmv -> {
-			        	if(ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
+			        	if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
 			        		var formatter = new SimpleDateFormat("dd/MM/yyyy");
 			        		String from = ppmv.getValidity() != null && ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
 			        		String to = ppmv.getValidity() != null && ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
