@@ -1448,12 +1448,8 @@ public class CpqQuoteApi extends BaseApi {
                     } catch (RatingException e) {
                         log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
                                 e.getRejectionReason());
-                        throw e; // e.getBusinessException();
+                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode(),e); // e.getBusinessException();
 
-                    } catch (BusinessException e) {
-                        log.error("Failed to apply a subscription charge {}: {}", subscriptionCharge, e.getMessage(),
-                                e);
-                        throw e;
                     }
                 }
 
@@ -1475,11 +1471,8 @@ public class CpqQuoteApi extends BaseApi {
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
-                        throw e; // e.getBusinessException();
+                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
 
-                    } catch (BusinessException e) {
-                        log.error("Failed to apply a recurring charge {}: {}", recurringCharge, e.getMessage(), e);
-                        throw e;
                     }
                 }
             }
