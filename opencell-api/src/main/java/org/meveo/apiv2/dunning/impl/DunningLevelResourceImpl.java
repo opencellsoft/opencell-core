@@ -29,4 +29,14 @@ public class DunningLevelResourceImpl implements DunningLevelResource {
 		return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, updated.getId()).build()).entity(mapper.toResource(updated)).build();
 	}
 
+	@Override
+	public Response delete(Long dunningLevelId) {
+		return Response.ok().entity(mapper.toResource(dunningLevelApiService.delete(dunningLevelId).get())).build();
+	}
+	
+	@Override
+	public Response findByCode(String dunningLevelCode) {
+		return Response.ok().entity(mapper.toResource(dunningLevelApiService.findByCode(dunningLevelCode).get())).build();
+	}
+
 }

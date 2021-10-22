@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.service;
 import static java.util.Optional.empty;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,28 +39,34 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 
-	@Override
-	public List<DunningLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return Lists.emptyList();
-	}
-
-	@Override
-	public Long getCount(String filter) {
-		return null;
-	}
-
+	
 	@Override
 	public Optional<DunningLevel> findById(Long id) {
-		return Optional.ofNullable(dunningLevelService.findById(id));
+		return Optional.ofNullable(dunningLevelService.findById(id, Arrays.asList("minBalanceCurrency", "chargeCurrency", "dunningActions")));
 	}
 
 	@Override
+	public Optional<DunningLevel> findByCode(String code) {
+		DunningLevel dunningLevel = dunningLevelService.findByCode(code, Arrays.asList("minBalanceCurrency", "chargeCurrency", "dunningActions"));
+		if (dunningLevel == null) {
+			throw new EntityDoesNotExistsException(DunningLevel.class, code);
+		}
+		return Optional.of(dunningLevel);
+	}
+
+	@Override
+	public Optional<DunningLevel> delete(Long id) {
+		DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
+		dunningLevelService.remove(dunningLevel);
+		return Optional.ofNullable(dunningLevel);
+	}
+	
+	@Override
 	public DunningLevel create(DunningLevel newDunningLevel) {
-		
 		if (dunningLevelService.findByCode(newDunningLevel.getCode()) != null) {
 			throw new EntityAlreadyExistsException(DunningLevel.class, newDunningLevel.getCode());
 		}
-		
+
 		setDefaultValues(newDunningLevel);
 		validateParameters(newDunningLevel);
 		dunningLevelService.create(newDunningLevel);
@@ -69,7 +76,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	@Override
 	public Optional<DunningLevel> update(Long id, DunningLevel dunningLevel) {
 		DunningLevel dunningLevelToUpdate = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
-		
+
 		if (StringUtils.isNotBlank(dunningLevel.getCode())) {
 			if (dunningLevelService.findByCode(dunningLevel.getCode()) != null) {
 				throw new EntityAlreadyExistsException(DunningLevel.class, dunningLevel.getCode());
@@ -115,14 +122,14 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		if (dunningLevel.getDunningActions() != null) {
 			dunningLevelToUpdate.setDunningActions(dunningLevel.getDunningActions());
 		}
-        
+
 		validateParameters(dunningLevelToUpdate);
 		dunningLevelToUpdate = dunningLevelService.update(dunningLevelToUpdate);
 		return Optional.of(dunningLevelToUpdate);
 	}
 
 	private void validateParameters(DunningLevel baseEntity) {
-		
+
 		if (StringUtils.isBlank(baseEntity.getCode())) {
 			throw new MissingParameterException("code");
 		}
@@ -132,7 +139,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		if (baseEntity.getMinBalanceCurrency() != null) {
 			Currency currency = null;
 			Long currencyId = baseEntity.getMinBalanceCurrency().getId();
-			if(currencyId != null) {
+			if (currencyId != null) {
 				currency = findCurrencyByIdOrByCode(currencyId, null).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyId));
 			} else {
 				String currencyCode = baseEntity.getMinBalanceCurrency() == null ? null : baseEntity.getMinBalanceCurrency().getCurrencyCode();
@@ -144,7 +151,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		if (baseEntity.getChargeCurrency() != null) {
 			Currency currency = null;
 			Long currencyId = baseEntity.getChargeCurrency().getId();
-			if(currencyId != null) {
+			if (currencyId != null) {
 				currency = findCurrencyByIdOrByCode(currencyId, null).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyId));
 			} else {
 				String currencyCode = baseEntity.getChargeCurrency() == null ? null : baseEntity.getChargeCurrency().getCurrencyCode();
@@ -152,22 +159,22 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 			}
 			baseEntity.setChargeCurrency(currency);
 		}
-		
+
 		String chargeCurrencyCode = baseEntity.getChargeCurrency() == null ? null : baseEntity.getChargeCurrency().getCurrencyCode();
 		if (chargeCurrencyCode != null) {
 			Currency chargeCurrency = currencyService.findByCode(chargeCurrencyCode);
-			if(chargeCurrency == null) {
+			if (chargeCurrency == null) {
 				throw new EntityDoesNotExistsException(Currency.class, chargeCurrencyCode);
 			}
 			baseEntity.setChargeCurrency(chargeCurrency);
 		}
-		
+
 		if (baseEntity.getChargeValue() != null) {
 			if (baseEntity.getChargeType() == DunningLevelChargeTypeEnum.PERCENTAGE && HUNDRED.compareTo(baseEntity.getChargeValue()) < 0) {
 				throw new InvalidParameterException("dunningLevelChargeValue shoud be less than or equal to 100");
 			}
 		}
-		
+
 		if (baseEntity.getDaysOverdue() != null) {
 			if (baseEntity.isReminder() && baseEntity.getDaysOverdue() > 0) {
 				throw new InvalidParameterException("dunningLevelDaysOverdue shoud be negative");
@@ -184,7 +191,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 			baseEntity.setDunningActions(baseEntity.getDunningActions().stream().map(action -> dunningActionService.findByCode(action.getCode())).collect(Collectors.toList()));
 		}
 	}
-	
+
 	private void setDefaultValues(DunningLevel newDunningLevel) {
 		if (newDunningLevel.isActive() == null) {
 			newDunningLevel.setActive(Boolean.TRUE);
@@ -211,20 +218,20 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		}
 		return Optional.ofNullable(currencyService.findByCode(code));
 	}
-	
+
 	@Override
 	public Optional<DunningLevel> patch(Long id, DunningLevel baseEntity) {
 		return empty();
 	}
-
+	
 	@Override
-	public Optional<DunningLevel> delete(Long id) {
-		return empty();
+	public List<DunningLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+		return Lists.emptyList();
 	}
 
 	@Override
-	public Optional<DunningLevel> findByCode(String code) {
-		return empty();
+	public Long getCount(String filter) {
+		return null;
 	}
 
 }
