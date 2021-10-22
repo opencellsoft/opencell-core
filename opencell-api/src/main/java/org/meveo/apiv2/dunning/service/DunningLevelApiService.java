@@ -176,7 +176,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 				throw new InvalidParameterException("dunningLevelDaysOverdue shoud be positive");
 			}
 		}
-		if (!(baseEntity.getDunningActions() instanceof PersistentCollection)) {
+		if (baseEntity.getDunningActions() != null && !(baseEntity.getDunningActions() instanceof PersistentCollection)) {
 			Optional<DunningAction> unfoundAction = baseEntity.getDunningActions().stream().filter(action -> dunningActionService.findByCode(action.getCode()) == null).findFirst();
 			if (unfoundAction.isPresent()) {
 				throw new EntityDoesNotExistsException(DunningAction.class, unfoundAction.get().getCode());
