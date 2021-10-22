@@ -49,7 +49,7 @@ public class DunningActionImpl implements DunningActionResource{
         updatePropertyIfNotNull(newDunningAction.getActionNotificationTemplate(),
                 actionNotificationTemplate -> dunningActionToUpdate.setActionNotificationTemplate(actionNotificationTemplate));
         dunningActionService.update(dunningActionToUpdate);
-        return Response.ok().build();
+        return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\"}}").build();
     }
 
     @Override
