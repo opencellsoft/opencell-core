@@ -1,4 +1,4 @@
-package org.meveo.model.payments;
+package org.meveo.model.dunning;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -6,6 +6,10 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.payments.ActionChannelEnum;
+import org.meveo.model.payments.ActionModeEnum;
+import org.meveo.model.payments.ActionTypeEnum;
+import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
 import javax.persistence.*;
@@ -33,11 +37,10 @@ public class DunningAction extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private ActionChannelEnum actionChannel = ActionChannelEnum.EMAIL;
 
-    @ElementCollection(targetClass = DunningLevelEnum.class)
-    @CollectionTable(name = "ar_dunning_level", joinColumns = @JoinColumn(name = "level_id"))
-    @Enumerated(EnumType.STRING)
-    @Column(name = "related_levels")
-    private List<DunningLevelEnum> relatedLevels;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"))
+    private List<DunningLevel> relatedLevels;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
@@ -87,11 +90,11 @@ public class DunningAction extends BusinessEntity {
         this.actionChannel = actionChannel;
     }
 
-    public List<DunningLevelEnum> getRelatedLevels() {
+    public List<DunningLevel> getRelatedLevels() {
         return relatedLevels;
     }
 
-    public void setRelatedLevels(List<DunningLevelEnum> relatedLevels) {
+    public void setRelatedLevels(List<DunningLevel> relatedLevels) {
         this.relatedLevels = relatedLevels;
     }
 

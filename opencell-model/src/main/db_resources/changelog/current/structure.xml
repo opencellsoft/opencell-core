@@ -9910,7 +9910,7 @@ public class OrderAdvancement extends ModuleScript {
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
     </changeSet>
-    
+
     <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay">
      <addColumn tableName="cpq_invoice_line">
             <column name="quote_offer_id" type="bigint" />
@@ -9938,9 +9938,13 @@ public class OrderAdvancement extends ModuleScript {
             <column name="action_notification_template_id" type="bigint"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA">
 	    <renameColumn tableName="dunning_collection_management" newColumnName="external" oldColumnName="include_collection_agency" />
 	    <renameColumn tableName="dunning_collection_management" newColumnName="collection_agency" oldColumnName="email_collection_agency" />
+    </changeSet>
+
+    <changeSet id="INTRD-2366_20211021" author="AbdelkaderBouazza">
+        <dropColumn tableName="ar_dunning_action" columnName="related_levels"/>
     </changeSet>
 </databaseChangeLog>
