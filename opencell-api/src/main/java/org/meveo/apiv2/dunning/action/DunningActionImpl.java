@@ -1,7 +1,6 @@
 package org.meveo.apiv2.dunning.action;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.dunning.DunningAction;
 import org.meveo.apiv2.dunning.ImmutableDunningAction;
 import org.meveo.service.payments.impl.DunningActionService;
@@ -18,9 +17,6 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Override
     public Response getDunningAction(String code) {
-        if(code == null || code.isBlank()){
-            throw new InvalidParameterException("dunning action code is required.");
-        }
         org.meveo.model.dunning.DunningAction dunningAction = dunningActionService.findByCode(code, Arrays.asList("relatedLevels"));
         if(dunningAction == null) {
             throw new EntityDoesNotExistsException("dunning action with code "+code+" does not exist.");
@@ -37,17 +33,11 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Override
     public Response updateDunningAction(Long dunningActionId, DunningAction dunningAction) {
-        if(dunningActionId == null){
-            throw new InvalidParameterException("dunning action id is required.");
-        }
         org.meveo.model.dunning.DunningAction dunningActionToUpdate = dunningActionService.findById(dunningActionId, Arrays.asList("relatedLevels"));
         if(dunningActionToUpdate == null) {
             throw new EntityDoesNotExistsException("dunning action with id "+dunningActionId+" does not exist.");
         }
         org.meveo.model.dunning.DunningAction newDunningAction = dunningAction.toEntity();
-        if(newDunningAction.getCode() != null){
-
-        }
         updatePropertyIfNotNull(newDunningAction.getCode(), code -> dunningActionToUpdate.setCode(code));
         updatePropertyIfNotNull(newDunningAction.getDescription(), description -> dunningActionToUpdate.setDescription(description));
         updatePropertyIfNotNull(newDunningAction.getActionChannel(), actionChannelEnum -> dunningActionToUpdate.setActionChannel(actionChannelEnum));
@@ -58,6 +48,16 @@ public class DunningActionImpl implements DunningActionResource{
         updatePropertyIfNotNull(newDunningAction.getActionNotificationTemplate(),
                 actionNotificationTemplate -> dunningActionToUpdate.setActionNotificationTemplate(actionNotificationTemplate));
         dunningActionService.update(dunningActionToUpdate);
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response deleteDunningAction(Long dunningActionId) {
+        org.meveo.model.dunning.DunningAction dunningActionToDelete = dunningActionService.findById(dunningActionId);
+        if(dunningActionToDelete == null) {
+            throw new EntityDoesNotExistsException("dunning action with id "+dunningActionId+" does not exist.");
+        }
+        dunningActionService.remove(dunningActionId);
         return Response.ok().build();
     }
 

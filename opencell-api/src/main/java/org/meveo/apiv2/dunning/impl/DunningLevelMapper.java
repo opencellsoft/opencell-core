@@ -10,9 +10,9 @@ import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.dunning.ImmutableDunningLevel;
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
-import org.meveo.model.payments.DunningAction;
 
 public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningLevel, DunningLevel> {
 
