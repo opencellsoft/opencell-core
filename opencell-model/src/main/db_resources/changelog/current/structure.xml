@@ -9931,4 +9931,9 @@ public class OrderAdvancement extends ModuleScript {
             <column name="action_notification_template_id" type="bigint"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA">
+	    <renameColumn tableName="dunning_collection_management" newColumnName="external" oldColumnName="include_collection_agency" />
+	    <renameColumn tableName="dunning_collection_management" newColumnName="collection_agency" oldColumnName="email_collection_agency" />
+    </changeSet>
 </databaseChangeLog>
