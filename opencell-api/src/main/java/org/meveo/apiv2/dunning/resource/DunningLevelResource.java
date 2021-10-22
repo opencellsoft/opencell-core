@@ -4,6 +4,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
@@ -25,10 +26,10 @@ public interface DunningLevelResource {
 	Response create(@Parameter(required = true) DunningLevel dunningLevel);
 
 	@PUT
-	@Path("/{dunningId}")
+	@Path("/{dunningLevelId}")
 	@Operation(summary = "Update an existing Dunning Level", tags = { "Dunning" }, description = "Update a dunning level", responses = {
 			@ApiResponse(responseCode = "200", description = "dunning level successfully updated"),
 			@ApiResponse(responseCode = "404", description = "dunning level successfully updated"),
 			@ApiResponse(responseCode = "400", description = "dunning level with given code does not exist") })
-	Response update(@Parameter(required = true) DunningLevel dunningLevel);
+	Response update(@Parameter(required = true) DunningLevel dunningLevel, @PathParam("dunningLevelId") Long dunningLevelCode);
 }

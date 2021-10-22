@@ -23,31 +23,25 @@ public interface DunningLevel extends Resource {
 	@Schema(description = "dunning level description")
 	String getDescription();
 
+	@Nullable
 	@JsonProperty("isReminderLevel")
 	@Schema(description = "Is a reminder level")
-	@Value.Default
-	default boolean isReminderLevel() {
-		return false;
-	}
+	Boolean isReminderLevel();
 
+	@Nullable
 	@JsonProperty("isActiveLevel")
 	@Schema(description = "Is an active level")
-	@Value.Default
-	default boolean isActiveLevel() {
-		return true;
-	}
+	Boolean isActiveLevel();
 
 	@Nullable
 	@JsonProperty("dunningLevelDaysOverdue")
 	@Schema(description = "Days overdue")
 	Integer getDunningLevelDaysOverdue();
 
+	@Nullable
 	@JsonProperty("isSoftDeclineLevel")
 	@Schema(description = "Soft decline")
-	@Value.Default
-	default boolean isSoftDeclineLevel() {
-		return false;
-	}
+	Boolean isSoftDeclineLevel();
 
 	@Nullable
 	@JsonProperty("dunningLevelMinBalance")
@@ -57,10 +51,7 @@ public interface DunningLevel extends Resource {
 	@Nullable
 	@JsonProperty("dunningLevelMinBalanceCurrency")
 	@Schema(description = "Dunning level currency")
-	@Value.Default
-	default String getDunningLevelMinBalanceCurrency() {
-		return "EUR";
-	}
+	String getDunningLevelMinBalanceCurrency();
 
 	@Nullable
 	@JsonProperty("dunningLevelChargeType")
@@ -77,12 +68,10 @@ public interface DunningLevel extends Resource {
 	@Schema(description = "Dunning level charge currency")
 	String getDunningLevelChargeCurrency();
 
+	@Nullable
 	@JsonProperty("isEndOfDunningLevel")
 	@Schema(description = "End of dunning level")
-	@Value.Default
-	default boolean isEndOfDunningLevel() {
-		return false;
-	}
+	Boolean isEndOfDunningLevel();
 
 	@Nullable
 	@Schema(description = "Dunning level actions")
