@@ -77,7 +77,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	public Optional<DunningLevel> update(Long id, DunningLevel dunningLevel) {
 		DunningLevel dunningLevelToUpdate = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
 
-		if (StringUtils.isNotBlank(dunningLevel.getCode())) {
+		if (StringUtils.isNotBlank(dunningLevel.getCode()) && !dunningLevel.getCode().equals(dunningLevelToUpdate.getCode())) {
 			if (dunningLevelService.findByCode(dunningLevel.getCode()) != null) {
 				throw new EntityAlreadyExistsException(DunningLevel.class, dunningLevel.getCode());
 			}
@@ -124,7 +124,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		}
 
 		validateParameters(dunningLevelToUpdate);
-		dunningLevelToUpdate = dunningLevelService.update(dunningLevelToUpdate);
+		dunningLevelService.update(dunningLevelToUpdate);
 		return Optional.of(dunningLevelToUpdate);
 	}
 
