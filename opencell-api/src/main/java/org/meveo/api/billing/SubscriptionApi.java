@@ -2409,6 +2409,13 @@ public class SubscriptionApi extends BaseApi {
 
             subscriptionService.updateNoCheck(currentSubscription);
             subscriptionService.updateNoCheck(patchedSubscription);
+
+            for (ServiceInstance si : patchedSubscription.getServiceInstances()) {
+                if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                    // save of SI will be done by its activation
+                    si.setSubscriptionDate(newEffectiveDate);
+                }
+            }
         }
 
         subscriptionService.activateInstantiatedService(patchedSubscription);
@@ -2996,7 +3003,7 @@ public class SubscriptionApi extends BaseApi {
 
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
-                	OrderAttribute orderAttribute = new OrderAttribute(); 
+                	OrderAttribute orderAttribute = new OrderAttribute();
                 	if(ai.getOrderAttributeCode()!=null) {
                     Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
                     orderAttribute.setAttribute(attribute);
@@ -3005,7 +3012,7 @@ public class SubscriptionApi extends BaseApi {
                     orderAttribute.setDateValue(ai.getDateValue());
                 	}
                     return orderAttribute;
-                	
+
                 	})
                 .collect(Collectors.toList());
 
