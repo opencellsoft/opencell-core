@@ -8,23 +8,24 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.cpq.DuplicatePricePlanVersionRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListPricePlanMatrixVersionResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 @Stateless
 public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersion, PricePlanMatrixVersionDto> {
@@ -34,9 +35,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
     @Inject
-    private PricePlanMatrixValueService pricePlanMatrixValueService;
-    @Inject
-    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+    protected ResourceBundle resourceMessages;
 
     @Override
     public PricePlanMatrixVersion create(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException, BusinessException {
@@ -71,7 +70,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     @Override
     public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix();
-        int currentVersion = pricePlanMatrixVersionDto.getVersion();
+        int currentVersion = pricePlanMatrixVersionDto.getVersion() == 0 ? 1 : pricePlanMatrixVersionDto.getVersion();
         String pricePlanMatrixCode = pricePlanMatrixVersionDto.getPricePlanMatrixCode();
 
         if (StringUtils.isBlank(isMatrix)) {
@@ -117,7 +116,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         			.stream()
 					.filter(ppmv -> pricePlanMatrixVersion.getId() == null ||  pricePlanMatrixVersion.getId() != ppmv.getId())
 					.forEach(ppmv -> {
-			        	if(ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
+			        	if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
 			        		var formatter = new SimpleDateFormat("dd/MM/yyyy");
 			        		String from = ppmv.getValidity() != null && ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
 			        		String to = ppmv.getValidity() != null && ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
@@ -156,13 +155,37 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
     }
 
-    public GetPricePlanVersionResponseDto duplicateProductVersion(String pricePlanMatrixCode, int currentVersion) {
-
+    public GetPricePlanVersionResponseDto duplicatePricePlanMatrixVersion(DuplicatePricePlanVersionRequestDto postData) {
         try {
-            PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
+        	if (StringUtils.isBlank(postData.getPricePlanMatrixCode())) {
+                  missingParameters.add("pricePlanMatrixCode");
+              }
+              if (StringUtils.isBlank(postData.getPricePlanMatrixVersion())) {
+                  missingParameters.add("pricePlanMatrixVersion");
+              }
+              if (!StringUtils.isBlank(postData.getValidity())) {
+            	  DatePeriod validity=postData.getValidity();
+            	  if(StringUtils.isBlank(validity.getFrom()))
+                  missingParameters.add("from");
+            	  if(StringUtils.isBlank(validity.getTo()))
+                   missingParameters.add("to");
+              }
+              handleMissingParameters();
+        	
+            PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(postData.getPricePlanMatrixCode(), postData.getPricePlanMatrixVersion());
             if (pricePlanMatrixVersion == null) {
-                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
+                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, postData.getPricePlanMatrixCode(), "pricePlanMatrixCode", "" + postData.getPricePlanMatrixVersion(), "currentVersion");
             }
+            PricePlanMatrix pricePlanMatrix =  pricePlanMatrixVersion.getPricePlanMatrix(); 
+            pricePlanMatrix.getVersions()
+			.stream()
+			.filter(ppmv -> pricePlanMatrixVersion.getId() == null ||  pricePlanMatrixVersion.getId() != ppmv.getId())
+			.forEach(ppmv -> {
+            if(ppmv.getValidity().isCorrespondsToPeriod(postData.getValidity(), false)) {
+        		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
+        	}
+			 }); 
+            pricePlanMatrixVersion.setValidity(postData.getValidity());
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, false, null));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);

@@ -139,17 +139,17 @@ public class AttributeDTO extends EnableBusinessDto {
         attributeType=attribute.getAttributeType();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
         this.setDisabled(attribute.isDisabled());
-        if (attribute.getAssignedAttributes()!=null) {
+        if (!attribute.getAssignedAttributes().isEmpty()) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
         		assignedAttributeCodes.add(attr.getCode());
         	}
         }
-		if(attribute.getGroupedAttributes() != null){
+		if(attribute.getGroupedAttributes()!=null && !attribute.getGroupedAttributes().isEmpty()){
 			this.groupedAttributes = attribute.getGroupedAttributes().stream()
 					.map(ga -> new GroupedAttributeDto(ga))
 					.collect(Collectors.toList());
 		}
-		if(attribute.getTags() != null){
+		if(!attribute.getTags().isEmpty()){
 			this.tagCodes = attribute.getTags().stream()
 								.map(tag -> tag.getCode())
 								.collect(Collectors.toList());
