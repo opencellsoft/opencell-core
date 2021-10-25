@@ -1,12 +1,15 @@
 package org.meveo.apiv2.dunning.impl;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.meveo.apiv2.dunning.ImmutableDunningLevel;
 import org.meveo.apiv2.dunning.resource.DunningLevelResource;
 import org.meveo.apiv2.dunning.service.DunningLevelApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.model.dunning.DunningLevel;
 
 public class DunningLevelResourceImpl implements DunningLevelResource {
 
@@ -29,4 +32,23 @@ public class DunningLevelResourceImpl implements DunningLevelResource {
 		return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, updated.getId()).build()).entity(mapper.toResource(updated)).build();
 	}
 
+	@Override
+	public Response delete(Long dunningLevelId) {
+		Optional<DunningLevel> dunningLevel = dunningLevelApiService.delete(dunningLevelId);
+		ResponseBuilder response = Response.ok();
+		if( dunningLevel.isPresent()) {
+			response.entity(mapper.toResource(dunningLevel.get()));
+		}
+		return response.build();
+	}
+	
+	@Override
+	public Response findByCode(String dunningLevelCode) {
+		Optional<DunningLevel> dunningLevel = dunningLevelApiService.findByCode(dunningLevelCode);
+		ResponseBuilder response = Response.ok();
+		if( dunningLevel.isPresent()) {
+			response.entity(mapper.toResource(dunningLevel.get()));
+		}
+		return response.build();
+	}
 }
