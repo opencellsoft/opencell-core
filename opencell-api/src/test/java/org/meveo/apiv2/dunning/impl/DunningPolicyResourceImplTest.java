@@ -1,5 +1,13 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Arrays.asList;
+import static java.util.Optional.of;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,21 +21,13 @@ import org.meveo.model.dunning.CollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.InvoiceDunningStatuses;
-import org.meveo.service.dunning.DunningLevelService;
 import org.meveo.service.payments.impl.CollectionPlanStatusService;
+import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.InvoiceDunningStatusesService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Response;
-
-import static java.util.Arrays.asList;
-import static java.util.Optional.of;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningPolicyResourceImplTest {

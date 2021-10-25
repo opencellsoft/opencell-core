@@ -3,14 +3,15 @@ package org.meveo.apiv2.dunning.service;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.service.dunning.DunningPolicyService;
+import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import java.util.List;
-import java.util.Optional;
+
+import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.service.payments.impl.DunningPolicyService;
 
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 

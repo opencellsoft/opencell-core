@@ -1,4 +1,4 @@
-package org.meveo.service.dunning;
+package org.meveo.service.payments.impl;
 
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.service.base.PersistenceService;

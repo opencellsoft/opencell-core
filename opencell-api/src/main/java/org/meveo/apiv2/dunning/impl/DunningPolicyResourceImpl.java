@@ -1,5 +1,9 @@
 package org.meveo.apiv2.dunning.impl;
 
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
+
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
@@ -9,13 +13,9 @@ import org.meveo.model.dunning.CollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.InvoiceDunningStatuses;
-import org.meveo.service.dunning.DunningLevelService;
 import org.meveo.service.payments.impl.CollectionPlanStatusService;
+import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.InvoiceDunningStatusesService;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Response;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
