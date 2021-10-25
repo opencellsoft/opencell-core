@@ -1,18 +1,14 @@
 package org.meveo.apiv2.dunning.impl;
 
-import static java.util.Collections.emptyList;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.collection.spi.PersistentCollection;
-import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.dunning.ImmutableDunningLevel;
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
-import org.meveo.model.payments.DunningAction;
 
 public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningLevel, DunningLevel> {
 
@@ -27,23 +23,23 @@ public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.D
 				.dunningLevelDaysOverdue(entity.getDaysOverdue())
 				.isSoftDeclineLevel(entity.isSoftDecline())
 				.dunningLevelMinBalance(entity.getMinBalance())
-				.dunningLevelMinBalanceCurrency(entity.getMinBalanceCurrency() == null || entity.getMinBalanceCurrency() instanceof HibernateProxy ? "" : entity.getMinBalanceCurrency().getCurrencyCode())
+				.dunningLevelMinBalanceCurrency(entity.getMinBalanceCurrency() == null ? null : entity.getMinBalanceCurrency().getCurrencyCode())
 				.dunningLevelChargeType(entity.getChargeType() == null ? null : entity.getChargeType().name())
 				.dunningLevelChargeValue(entity.getChargeValue())
-				.dunningLevelChargeCurrency(entity.getChargeCurrency() == null || entity.getChargeCurrency() instanceof HibernateProxy ? "" : entity.getChargeCurrency().getCurrencyCode())
+				.dunningLevelChargeCurrency(entity.getChargeCurrency() == null ? null : entity.getChargeCurrency().getCurrencyCode())
 				.isEndOfDunningLevel(entity.isEndOfDunningLevel())
 				.dunningActions(getDunningActionsCodes(entity))
 				.build();
     }
 
-	List<String> getDunningActionsCodes(DunningLevel entity) {
-		if (entity == null || entity.getDunningActions() == null ||  entity.getDunningActions() instanceof PersistentCollection) {
+	private List<String> getDunningActionsCodes(DunningLevel entity) {
+		if (entity == null || entity.getDunningActions() == null) {
 			return null;
 		}
 		return entity.getDunningActions().stream().map(dunningAction -> dunningAction.getCode()).collect(Collectors.toList());
 	}
 
-	List<DunningAction> getDunningActionsFromCodes(List<String> actionsCodes) {
+	private List<DunningAction> getDunningActionsFromCodes(List<String> actionsCodes) {
 		if (actionsCodes == null || actionsCodes.isEmpty()) {
 			return null;
 		}

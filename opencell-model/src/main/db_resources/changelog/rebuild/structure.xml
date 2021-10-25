@@ -14818,6 +14818,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="accounting_period_year" type="varchar(20)" />
+            <column name="start_date" type="datetime"><constraints nullable="false" unique="true"/></column>
             <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
             <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="status" type="varchar(255)"/>
@@ -14977,7 +14978,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="action_channel" type="varchar(255)"/>
-            <column name="related_levels" type="varchar(255)"/>
             <column name="script_instance_id" type="bigint"/>
             <column name="action_notification_template_id" type="bigint"/>
             <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
@@ -15004,7 +15004,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="policy_name" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_dp_dunning_policy_name" />
             </column>
             <column name="policy_description" type="varchar(2000)">
                 <constraints nullable="false" />
@@ -16143,8 +16143,6 @@
 	<changeSet id="INTRD-2252_20211006" author="TarikFA." />
 	<changeSet id="#2374_20211012" author="HatimOUDAD"/>
 	<changeSet id="INTRD-2412_20211015" author="MohammedELAZZOUZI"/>
-	<changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza" />
-	<changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza" />
 	<changeSet id="INTRD-2444_20211018" author="ZBariki" />
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
 
@@ -16236,7 +16234,11 @@
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA" />
-
+    <changeSet id="INTRD-2366_20211021" author="AbdelkaderBouazza"/>
+    <changeSet id="INTRD-2445_20211021" author="ZBariki" />
+    <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
+    
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

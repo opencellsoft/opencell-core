@@ -39,6 +39,7 @@ import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningInvoiceStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPaymentRetryResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
@@ -100,15 +101,19 @@ public class GenericOpencellRestful extends Application {
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class,
 				NotYetImplementedResource.class, NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
-				MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class, EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class,
-                EntityDoesNotExistsExceptionMapper.class, OpenApiResource.class, DocumentResourceImpl.class, GenericJacksonProvider.class, ProductResourceImpl.class,
-                OrderItemResourceImpl.class, OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class, ReportingResourceImpl.class,
-                ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
-                DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
-                BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class, DunningSettingsResourceImpl.class,
-                DunningLevelResourceImpl.class, DunningActionImpl.class, QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class,
-                AccountReceivableResourceImpl.class, DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class, StandardReportResourceImpl.class,
-                MediationResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
+				MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
+				EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class,
+                EntityDoesNotExistsExceptionMapper.class,
+                OpenApiResource.class, DocumentResourceImpl.class,
+				GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
+				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class, ReportingResourceImpl.class,
+				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
+				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
+				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class,
+				DunningSettingsResourceImpl.class, DunningLevelResourceImpl.class ,DunningActionImpl.class,
+				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
+				DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class,
+                StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
                 DunningPaymentRetryResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {

@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,8 @@ import java.util.List;
 @Table(name = "dunning_policy")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_policy_seq")})
+@NamedQueries({
+        @NamedQuery(name = "DunningPolicy.findByName", query = "SELECT dp FROM DunningPolicy dp where dp.policyName=:policyName")})
 public class DunningPolicy extends AuditableEntity {
 
     @Column(name = "policy_name")
@@ -26,11 +29,11 @@ public class DunningPolicy extends AuditableEntity {
     private String policyDescription;
 
     @Column(name = "interest_for_delay_sequence")
-    private int interestForDelaySequence;
+    private Integer interestForDelaySequence;
 
     @Column(name = "min_balance_trigger")
     @NotNull
-    private double minBalanceTrigger;
+    private Double minBalanceTrigger;
 
     @ElementCollection(fetch = LAZY)
     @CollectionTable(name = "dunning_min_balance_trigger_currency", joinColumns = @JoinColumn(name = "id"))
@@ -47,7 +50,7 @@ public class DunningPolicy extends AuditableEntity {
     private boolean includeDueInvoicesInThreshold;
 
     @Column(name = "total_dunning_levels")
-    private int totalDunningLevels;
+    private Integer totalDunningLevels;
 
     @Column(name = "include_pay_reminder")
     @Type(type = "numeric_boolean")
@@ -58,9 +61,10 @@ public class DunningPolicy extends AuditableEntity {
     private boolean attachInvoicesToEmails;
 
     @Column(name = "policy_priority")
-    private int policyPriority;
+    private Integer policyPriority;
 
     @Column(name = "is_default_policy")
+    @Type(type = "numeric_boolean")
     private boolean isDefaultPolicy;
 
     @Column(name = "is_active_policy")
