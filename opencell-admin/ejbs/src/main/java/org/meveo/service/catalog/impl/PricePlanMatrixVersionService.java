@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
@@ -76,7 +76,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
     
     public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
-    	
         if(endingDate!=null && endingDate.after(new Date())) {
         	throw new ValidationException("ending date must not be greater than today");
         }
@@ -257,4 +256,41 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     		});
     	}*/
     }
+
+
+	/**
+	 * @param pricePlanMatrixCode
+	 * @param pricePlanMatrixVersion
+	 * @return
+	 */
+	public Map<String, List<Long>> getUsedEntities(String pricePlanMatrixCode, int version) {
+		Map<String, List<Long>> result = new TreeMap<String, List<Long>>();
+		PricePlanMatrixVersion pricePlanMatrixVersion = findByPricePlanAndVersion(pricePlanMatrixCode, version);
+		if(pricePlanMatrixVersion==null) {
+			throw new BusinessException("pricePlanMatrix with code '"+pricePlanMatrixCode+"' and version '"+version+"' not found.");
+		}
+		
+		if(pricePlanMatrixVersion.getValidity().getTo()==null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
+			String eventCode = pricePlanMatrixVersion.getPricePlanMatrix().getEventCode();
+	
+			 List<Long> subscriptionsIds = this.getEntityManager()
+	                 .createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class)
+	                 .setParameter("eventCode", eventCode)
+	                 .getResultList();
+			 result.put("subscriptions", subscriptionsIds);
+			 
+			 List<Long> quotesIds = this.getEntityManager()
+	                 .createNamedQuery("CpqQuote.getQuoteIdsUsingCharge", Long.class)
+	                 .setParameter("eventCode", eventCode)
+	                 .getResultList();
+			 result.put("quotes", quotesIds);
+			 
+			 List<Long> ordersIds = this.getEntityManager()
+	                 .createNamedQuery("CommercialOrder.getOrderIdsUsingCharge", Long.class)
+	                 .setParameter("eventCode", eventCode)
+	                 .getResultList();
+			 result.put("orders", ordersIds);
+		}
+		return result;
+	}
 }

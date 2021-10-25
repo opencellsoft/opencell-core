@@ -4,7 +4,7 @@
     <changeSet id="#4140_08042019" author="hznibar">
 			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
 	</changeSet>
-	
+
 	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
 		<addColumn tableName="dwh_report_extract">
             <column name="output_dir" type="varchar(255)" />
@@ -9971,6 +9971,13 @@ public class OrderAdvancement extends ModuleScript {
                                  constraintName="dunning_action_dunning_level_pkey_const" referencedTableName="ar_dunning_action"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    	<changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
+		<sql>update cpq_price_plan_version  ppv set version = id where ppv.ppm_id in
+				(select d.ppm_id from (select count(*), version, ppm_id from cpq_price_plan_version
+				group by version, ppm_id having count(*)>1) as d)</sql>
+	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+	</changeSet>
 
         
     <changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius">
