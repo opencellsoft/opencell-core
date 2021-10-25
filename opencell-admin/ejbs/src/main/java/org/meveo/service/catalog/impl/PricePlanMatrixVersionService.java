@@ -1,5 +1,6 @@
 package org.meveo.service.catalog.impl;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.transaction.Transactional.TxType;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
@@ -72,6 +74,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         update(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
     }
+    
+    public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
+    	
+        if(endingDate!=null && endingDate.after(new Date())) {
+        	throw new ValidationException("ending date must not be greater than today");
+        }
+        pricePlanMatrixVersion.getValidity().setTo(endingDate);
+        update(pricePlanMatrixVersion);
+        return pricePlanMatrixVersion;
+    }
 
     public void removePriceMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
         if(!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
@@ -97,7 +109,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
     	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
     	
-    	this.detach(pricePlanMatrixVersion);
+    	//this.detach(pricePlanMatrixVersion);
     	
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
         if(!setNewVersion) {
@@ -162,7 +174,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     		
     		for (PricePlanMatrixColumn ppmc : columns) {
 				
-        		pricePlanMatrixColumnService.detach(ppmc);
+        		//pricePlanMatrixColumnService.detach(ppmc);
         		
         		var duplicatePricePlanMatrixColumn = new PricePlanMatrixColumn(ppmc);
         		if(ppmc.getProduct() != null) {
@@ -188,7 +200,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     		lines.forEach(ppml -> {
     			ppml.getPricePlanMatrixValues().size();
 
-    			pricePlanMatrixLineService.detach(ppml);
+    			//pricePlanMatrixLineService.detach(ppml);
     			
     			var duplicateLine = new PricePlanMatrixLine(ppml);
     			duplicateLine.setPricePlanMatrixVersion(entity);

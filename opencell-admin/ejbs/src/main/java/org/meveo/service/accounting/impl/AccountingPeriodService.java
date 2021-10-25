@@ -209,4 +209,16 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			return false;
 		}
 	}
+
+	public AccountingPeriod findOpenAccountingPeriodByDate(Date date) {
+        try {
+            return getEntityManager().createNamedQuery("AccountingPeriod.findOpenAPByDate", entityClass)
+                    .setParameter("date", date)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of AccountingPeriodYear {} found", getEntityClass().getSimpleName(), date);
+            return null;
+        }
+    }
 }

@@ -31,7 +31,8 @@ public enum MeveoJobCategoryEnum implements JobCategoryEnum {
     UTILS(7, "jobCategoryEnum.utils"),
     MEDIATION(8, "jobCategoryEnum.mediation"),
     PAYMENT(9, "jobCategoryEnum.payment"),
-    REPORTING_QUERY(10, "jobCategoryEnum.reporting_query");
+    REPORTING_QUERY(10, "jobCategoryEnum.reporting_query"),
+    ACCOUNTING(11, "jobCategoryEnum.accounting");
 
     private Integer id;
     private String label;

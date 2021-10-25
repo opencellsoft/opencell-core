@@ -28,7 +28,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -45,8 +44,6 @@ import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -117,15 +114,6 @@ public class MediationJobBean extends BaseJobBean {
 
     /** The report. */
     String report;
-
-    boolean persistCDR;
-
-    @PostConstruct
-    private void init() {
-        ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
-
-        persistCDR = "true".equals(paramBean.getProperty("mediation.persistCDR", "false"));
-    }
 
     /**
      * Process a single file.
@@ -211,7 +199,6 @@ public class MediationJobBean extends BaseJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
-            int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobInstance.getJobSpeed().getUpdateNb() * nbThreads.intValue() / 2 : jobInstance.getJobSpeed().getUpdateNb();
 
             ICdrReader cdrReaderFinal = cdrReader;
             ICdrParser cdrParserFinal = cdrParser;
@@ -412,22 +399,6 @@ public class MediationJobBean extends BaseJobBean {
         return e;
     }
 
-    /**
-     * Save the cdr if the configuration property mediation.persistCDR is true.
-     *
-     * @param cdr the cdr
-     */
-    private void createOrUpdateCdr(CDR cdr) {
-
-        if (cdr != null && persistCDR) {
-            if (cdr.getId() == null) {
-                cdrService.create(cdr);
-            } else {
-                cdrService.update(cdr);
-            }
-        }
-    }
-
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void processCDRs(List<CDR> cdrs, JobExecutionResultImpl jobExecutionResult, ICdrParser cdrParserFinal, PrintWriter outputFileWriter, PrintWriter rejectFileWriter, String fileName, boolean isDuplicateCheckOn,
@@ -443,7 +414,7 @@ public class MediationJobBean extends BaseJobBean {
                     jobExecutionResult.registerError("file=" + fileName + ", line=" + cdr.getLine() + ": " + cdr.getRejectReason());
                     cdr.setStatus(CDRStatusEnum.ERROR);
                     rejectededCdrEventProducer.fire(cdr);
-                    createOrUpdateCdr(cdr);
+                    cdrService.createOrUpdateCdr(cdr);
                     
                 } else {
 
@@ -485,7 +456,7 @@ public class MediationJobBean extends BaseJobBean {
                 cdr.setRejectReason(e.getMessage());
 
                 rejectededCdrEventProducer.fire(cdr);
-                createOrUpdateCdr(cdr);
+                cdrService.createOrUpdateCdr(cdr);
             }
 
             // It is not known in advance of a number of records in a file, so total count is being updated with each record

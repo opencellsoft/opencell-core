@@ -1,6 +1,7 @@
 package org.meveo.api.dto.cpq.order;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -34,6 +35,10 @@ public class OrderOfferDto extends BaseEntityDto {
     private List<OrderProductDto> orderProducts = new ArrayList<OrderProductDto>();
      
     private List<OrderAttributeDto> orderAttributes =new ArrayList<OrderAttributeDto>();
+    
+    /** The delivery date. */
+	@Schema(description = "The delivery date") 
+    private Date deliveryDate;
 	
 	public OrderOfferDto() {
 	}
@@ -45,7 +50,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.orderOfferId = orderOffer.getId();
 		this.commercialOrderId = orderOffer.getOrder().getId();
 		this.offerTemplateCode = orderOffer.getOfferTemplate().getCode();
-		
+		this.deliveryDate = orderOffer.getDeliveryDate();
 	}
  
 
@@ -53,6 +58,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.orderOfferId = orderOffer.getId();
 		this.commercialOrderId = orderOffer.getOrder()!=null?orderOffer.getOrder().getId():null;
 		this.offerTemplateCode = orderOffer.getOfferTemplate()!=null?orderOffer.getOfferTemplate().getCode():null;
+		this.deliveryDate = orderOffer.getDeliveryDate();
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
@@ -166,14 +172,17 @@ public class OrderOfferDto extends BaseEntityDto {
 	public void setDiscountPlanCode(String discountPlanCode) {
 		this.discountPlanCode = discountPlanCode;
 	}
+
+
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
  
-	
-	
-
-
-
-
-	
-	
-	
 }
