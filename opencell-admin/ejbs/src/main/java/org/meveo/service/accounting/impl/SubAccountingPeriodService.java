@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -223,4 +225,24 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 			log.error("Unable to delete sub accounting period for the accounting period id {}", sapId);
 		}
 	}
+	
+	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate) {
+        try {
+            return (List<SubAccountingPeriod>) getEntityManager()
+                    .createNamedQuery("SubAccountingPeriod.findByAPAndEndDate", entityClass)
+                    .setParameter("apId", accountingPeriod.getId())
+                    .setParameter("endDate", endDate)
+                    .getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
+            return new ArrayList<>();
+        }
+    }
+
+    public int closeSubAccountingPeriods(List<Long> ids) {
+        return getEntityManager()
+        .createNamedQuery("SubAccountingPeriod.closeSubAccountingPeriods")
+        .setParameter("ids", ids)
+        .executeUpdate();
+    }
 }
