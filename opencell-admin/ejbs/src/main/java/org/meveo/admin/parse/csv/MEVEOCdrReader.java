@@ -122,7 +122,8 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             cdr.setRejectReasonException(e);
 
         } finally {
-            cdr.setSource(line);
+            // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
+            //cdr.setSource(line);
             cdr.setLine(line);
             cdr.setOriginBatch(batchName);
             cdr.setOriginRecord(getOriginRecord(line));

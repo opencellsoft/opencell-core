@@ -679,15 +679,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         // Apply one-shot refunds
         if (terminationReason.isReimburseOneshots()) {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
-                log.info("Reimbursing the subscription charge {}", oneShotChargeInstance.getId());
+                if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.CLOSED) {
+                    log.info("Reimbursing the subscription charge {}", oneShotChargeInstance.getId());
 
-                // oneShotChargeInstanceService.oneShotChargeApplication(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), null,
-                // terminationDate, oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstance.getQuantity().negate(),
-                // oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getDescription(),
-                // orderNumber, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.REIMBURSMENT);
-                oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber, ChargeApplicationModeEnum.REIMBURSMENT);
-                oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-                oneShotChargeInstanceService.update(oneShotChargeInstance);
+                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber, ChargeApplicationModeEnum.REIMBURSMENT);
+                    oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+                }
             }
         }
 
