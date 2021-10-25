@@ -285,6 +285,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
             throws BusinessException {
 
+        if (subscription.getStatus()==SubscriptionStatusEnum.RESILIATED || subscription.getStatus()==SubscriptionStatusEnum.CANCELED ||subscription.getStatus()==SubscriptionStatusEnum.CLOSED ) {
+            return subscription;
+        }
+        
         if (terminationDate == null) {
             terminationDate = new Date();
         }
