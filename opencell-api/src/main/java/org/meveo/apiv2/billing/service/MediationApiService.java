@@ -1,7 +1,7 @@
 package org.meveo.apiv2.billing.service;
 
 import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.PROCESS_ALL;
-import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.ROLL_BACK_ON_ERROR;
+import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.ROLLBACK_ON_ERROR;
 import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.STOP_ON_FIRST_FAIL;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class MediationApiService {
                 if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr.getLine(), cdr.getRejectReason());
 
-                    if (mode == ROLL_BACK_ON_ERROR) {
+                    if (mode == ROLLBACK_ON_ERROR) {
                         throw cdr.getRejectReasonException();
                     }
 
@@ -143,7 +143,7 @@ public class MediationApiService {
     }
 
     private void checkRollBackMode(RegisterCdrListModeEnum mode, Exception e) {
-        if (mode == ROLL_BACK_ON_ERROR) {
+        if (mode == ROLLBACK_ON_ERROR) {
             if (e instanceof BusinessException) {
                 throw (BusinessException) e;
             } else {
