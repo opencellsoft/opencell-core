@@ -3,15 +3,11 @@ package org.meveo.model.dunning;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.payments.DunningAction;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -44,14 +40,14 @@ public class DunningLevel extends BusinessEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "reminder")
-    private boolean isReminder = Boolean.FALSE;
+    private Boolean isReminder = Boolean.FALSE;
 
     /**
      * A level can be activated or deactivate at any time, it means it is triggered or not within a policy
      */
     @Type(type = "numeric_boolean")
     @Column(name = "active")
-    private boolean isActive = Boolean.TRUE;
+    private Boolean isActive = Boolean.TRUE;
 
     /**
      * It represents the difference between Today and invoice due date when the invoice is not paid
@@ -65,7 +61,7 @@ public class DunningLevel extends BusinessEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "soft_decline")
-    private boolean isSoftDecline = Boolean.FALSE;
+    private Boolean isSoftDecline = Boolean.FALSE;
 
     /**
      * It is a threshold for triggering a dunning level within a policy
@@ -107,7 +103,7 @@ public class DunningLevel extends BusinessEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "end_dunning_level")
-    private boolean isEndOfDunningLevel = Boolean.FALSE;
+    private Boolean isEndOfDunningLevel = Boolean.FALSE;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"))
@@ -116,19 +112,19 @@ public class DunningLevel extends BusinessEntity {
     @OneToMany(mappedBy = "dunningLevel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyLevel> relatedPolicies;
 
-    public boolean isReminder() {
+    public Boolean isReminder() {
         return isReminder;
     }
 
-    public void setReminder(boolean reminder) {
+    public void setReminder(Boolean reminder) {
         isReminder = reminder;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 
@@ -140,11 +136,11 @@ public class DunningLevel extends BusinessEntity {
         this.daysOverdue = daysOverdue;
     }
 
-    public boolean isSoftDecline() {
+    public Boolean isSoftDecline() {
         return isSoftDecline;
     }
 
-    public void setSoftDecline(boolean softDecline) {
+    public void setSoftDecline(Boolean softDecline) {
         isSoftDecline = softDecline;
     }
 
@@ -188,11 +184,11 @@ public class DunningLevel extends BusinessEntity {
         this.chargeCurrency = chargeCurrency;
     }
 
-    public boolean isEndOfDunningLevel() {
+    public Boolean isEndOfDunningLevel() {
         return isEndOfDunningLevel;
     }
 
-    public void setEndOfDunningLevel(boolean endOfDunningLevel) {
+    public void setEndOfDunningLevel(Boolean endOfDunningLevel) {
         isEndOfDunningLevel = endOfDunningLevel;
     }
 

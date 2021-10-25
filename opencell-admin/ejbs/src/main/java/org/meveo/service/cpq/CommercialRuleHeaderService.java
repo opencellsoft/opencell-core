@@ -3,6 +3,7 @@ package org.meveo.service.cpq;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -29,6 +30,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
+import org.meveo.model.cpq.enums.ScopeTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
@@ -38,6 +40,8 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+
+import static java.util.Collections.singletonList;
 
 /**
  * @author Tarik FAKHOURI.
@@ -339,10 +343,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .forEach(
                         commercialRuleHeader -> {
                             log.info("about to apply replacement rule: " + commercialRuleHeader.getCode());
-                            Optional<QuoteAttribute> attributeToReplace = quoteProduct.getQuoteAttributes()
-                                    .stream()
-                                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleHeader.getTargetAttribute().getCode()))
-                                    .findFirst();
+                            Optional<QuoteAttribute> attributeToReplace = getQuoteAttributeToReplace(quoteProduct, commercialRuleHeader.getTargetAttribute().getCode());
+
                             if (attributeToReplace.isPresent()) {
                                 List<CommercialRuleItem> commercialRuleItems = commercialRuleHeader.getCommercialRuleItems();
                                 if (!commercialRuleItems.isEmpty()) {
@@ -356,7 +358,9 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                         if (commercialRuleLines.size() > 1) {
                                             log.warn("the replacement commercial rule " + commercialRuleHeader.getCode() + " has more than one source line");
                                         }
-                                        processReplacement(quoteVersion.getQuoteOffers(), attributeToReplace.get(), commercialRuleLines.get(0), commercialRuleHeader.getCode());
+
+                                        List<QuoteOffer> quoteOffers = isOfferScope(commercialRuleHeader.getScopeType()) ? singletonList(quoteProduct.getQuoteOffer()) : quoteVersion.getQuoteOffers();
+                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialRuleLines.get(0), commercialRuleHeader.getCode());
                                     } else if(commercialRuleHeader.getTargetAttributeValue() != null){
                                         overrideBySourceAttributeValue(attributeToReplace.get(), commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeader.getCode());
                                     }
@@ -367,6 +371,35 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                             }
                         }
                 );
+    }
+
+    private boolean isOfferScope(ScopeTypeEnum scopeType) {
+        return scopeType == null || scopeType == ScopeTypeEnum.QUOTE_OFFER;
+    }
+
+    private Optional<QuoteAttribute> getQuoteAttributeToReplace(QuoteProduct quoteProduct, String attributeToReplaceCode) {
+        return quoteProduct.getProductVersion().getAttributes()
+                                        .stream()
+                                        .filter(attribute -> attribute.getAttribute().getCode().equals(attributeToReplaceCode))
+                                        .map(attribute -> {
+                                            Optional<QuoteAttribute> matchedAttribute = quoteProduct.getQuoteAttributes()
+                                                    .stream()
+                                                    .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(attribute.getAttribute().getCode()))
+                                                    .findFirst();
+
+                                            if (matchedAttribute.isPresent())
+                                                return matchedAttribute.get();
+                                            else {
+                                                QuoteAttribute quoteAttribute = new QuoteAttribute();
+                                                quoteAttribute.setAttribute(attribute.getAttribute());
+                                                quoteAttribute.setQuoteProduct(quoteProduct);
+                                                quoteAttributeService.create(quoteAttribute);
+                                                quoteProduct.getQuoteAttributes().add(quoteAttribute);
+                                                return quoteAttribute;
+                                            }
+
+                                        })
+                                        .findAny();
     }
 
     private void processReplacement(List<QuoteOffer> quoteOffers, QuoteAttribute attributeToReplace, CommercialRuleLine commercialRuleLine, String commercialRuleHeaderCode) {

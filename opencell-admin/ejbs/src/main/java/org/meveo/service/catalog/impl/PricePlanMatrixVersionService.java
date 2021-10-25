@@ -1,5 +1,6 @@
 package org.meveo.service.catalog.impl;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.transaction.Transactional.TxType;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
@@ -69,6 +71,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             log.warn("the pricePlanMatrix with pricePlanMatrix code={} and version={}, it must be DRAFT status.", ppmCode, version);
             throw new BusinessException(String.format(STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED,pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
+        update(pricePlanMatrixVersion);
+        return pricePlanMatrixVersion;
+    }
+    
+    public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
+    	
+        if(endingDate!=null && endingDate.after(new Date())) {
+        	throw new ValidationException("ending date must not be greater than today");
+        }
+        pricePlanMatrixVersion.getValidity().setTo(endingDate);
         update(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
     }
