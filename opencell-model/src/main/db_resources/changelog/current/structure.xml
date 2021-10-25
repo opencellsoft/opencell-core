@@ -9954,10 +9954,14 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA">
-        <addColumn tableName="accounting_period">
-            <column name="start_date" type="datetime">
-            	<constraints nullable="false" unique="true"/>
-            </column>
+        <addColumn tableName="accounting_period" >
+            <column name="start_date" type="datetime" />
         </addColumn>
+        <sql>
+    		update ${db.schema.adapted}accounting_period set start_date = created
+        </sql>
+        <addDefaultValue tableName="accounting_period" columnName="start_date" defaultValueDate="${db.current.time}" />
+        <addUniqueConstraint columnNames="start_date" constraintName="uk_ap_start_date" deferrable="false" disabled="false" initiallyDeferred="false" tableName="accounting_period" />
     </changeSet>
+
 </databaseChangeLog>
