@@ -8749,10 +8749,19 @@ public class OrderAdvancement extends ModuleScript {
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="payment_method" type="varchar(100)" />
+           <column name="payment_method" type="varchar(100)" >
+               <constraints nullable="false" />
+           </column>
             <column name="psp" type="varchar(255)" />
-            <column name="num_pay_retries" type="int4" />
-            <column name="pay_retry_frequency_unit" type="varchar(255)" />
+           <column name="num_pay_retries" type="int4" >
+               <constraints nullable="false" />
+           </column>
+           <column name="pay_retry_frequency_unit" type="varchar(255)" >
+               <constraints nullable="false" />
+           </column>
+           <column name="pay_retry_frequency" type="int4" >
+               <constraints nullable="false" />
+           </column>
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>

@@ -5,6 +5,7 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.model.dunning.DunningPauseReasons;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
@@ -17,14 +18,17 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 
 public class DunningInvoiceStatusApiService implements ApiService<DunningInvoiceStatus> {
-	
+
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
 	private DunningInvoiceStatusService dunningInvoiceStatusService;
-	
+	@Inject
+	private TradingLanguageService tradingLanguageService;
+
 	private static final String NO_DUNNING_INVOICE_STATUS_FOUND = "No Dunning invoice status wa found for code : ";
 	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the code : ";
+	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
 	public List<DunningInvoiceStatus> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -44,12 +48,19 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	@Override
 	public DunningInvoiceStatus create(DunningInvoiceStatus dunningInvoiceStatus) {
 
-		if(dunningInvoiceStatus.getDunningSettings() != null && dunningInvoiceStatus.getDunningSettings().getId() != null) {
+		if (dunningInvoiceStatus.getDunningSettings() != null && dunningInvoiceStatus.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningInvoiceStatus.getDunningSettings().getId());
-			if(dunningSettings == null) {
+			if (dunningSettings == null) {
 				throw new BadRequestException(NO_DUNNING_SETTING_FOUND + dunningInvoiceStatus.getDunningSettings().getId());
 			}
 			dunningInvoiceStatus.setDunningSettings(dunningSettings);
+		}
+		if (dunningInvoiceStatus.getLanguage() != null && dunningInvoiceStatus.getLanguage().getId() != null) {
+			var language = tradingLanguageService.findById(dunningInvoiceStatus.getLanguage().getId());
+			if (language == null) {
+				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningInvoiceStatus.getLanguage().getId());
+			}
+			dunningInvoiceStatus.setLanguage(language);
 		}
 		dunningInvoiceStatusService.create(dunningInvoiceStatus);
 		return dunningInvoiceStatus;
@@ -58,14 +69,18 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	@Override
 	public Optional<DunningInvoiceStatus> update(Long id, DunningInvoiceStatus dunningInvoiceStatus) {
 		var dunningInvoiceStatusUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_INVOICE_STATUS_FOUND + id));
-		if(dunningInvoiceStatus.getLanguage() != null){
-			dunningInvoiceStatusUpdate.setLanguage(dunningInvoiceStatus.getLanguage());
-		}
-		if(dunningInvoiceStatus.getContext() != null){
+		if (dunningInvoiceStatus.getContext() != null) {
 			dunningInvoiceStatusUpdate.setContext(dunningInvoiceStatus.getContext());
 		}
-		if(dunningInvoiceStatus.getStatus() != null){
+		if (dunningInvoiceStatus.getStatus() != null) {
 			dunningInvoiceStatusUpdate.setStatus(dunningInvoiceStatus.getStatus());
+		}
+		if (dunningInvoiceStatus.getLanguage() != null && dunningInvoiceStatus.getLanguage().getId() != null) {
+			var language = tradingLanguageService.findById(dunningInvoiceStatus.getLanguage().getId());
+			if (language == null) {
+				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningInvoiceStatus.getLanguage().getId());
+			}
+			dunningInvoiceStatus.setLanguage(language);
 		}
 
 		dunningInvoiceStatusService.update(dunningInvoiceStatusUpdate);
@@ -74,9 +89,6 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 
 	public Optional<DunningInvoiceStatus> update(String dunningSettingsCode, String status, DunningInvoiceStatus dunningInvoiceStatus) {
 		var dunningInvoiceStatusUpdate = findByCodeAndDunningSettingCode(dunningSettingsCode, status).orElseThrow(() -> new BadRequestException(NO_DUNNING_INVOICE_STATUS_FOUND + status));
-		if(dunningInvoiceStatus.getLanguage() != null){
-			dunningInvoiceStatusUpdate.setLanguage(dunningInvoiceStatus.getLanguage());
-		}
 		if(dunningInvoiceStatus.getContext() != null){
 			dunningInvoiceStatusUpdate.setContext(dunningInvoiceStatus.getContext());
 		}

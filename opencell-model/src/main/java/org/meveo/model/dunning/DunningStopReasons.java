@@ -73,7 +73,7 @@ public class DunningStopReasons extends AuditableEntity  {
 	 * dunning settings associated to the entity
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "dunning_settings_id",nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "dunning_settings_id", nullable = false, referencedColumnName = "id")
 	@NotNull
 	private DunningSettings dunningSettings;
 

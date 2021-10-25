@@ -1,7 +1,7 @@
 package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
 
-import org.meveo.model.dunning.DunningPaymentRetries;
+import org.meveo.model.dunning.DunningPaymentRetry;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -13,6 +13,6 @@ import org.meveo.service.base.PersistenceService;
  *
  */
 @Stateless
-public class DunningPaymentRetriesService extends PersistenceService<DunningPaymentRetries> {
+public class DunningPaymentRetriesService extends PersistenceService<DunningPaymentRetry> {
 
 }

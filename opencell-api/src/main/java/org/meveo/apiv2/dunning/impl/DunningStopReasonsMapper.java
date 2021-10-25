@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.impl;
 
 import org.meveo.apiv2.dunning.ImmutableDunningStopReasons;
 import org.meveo.apiv2.generic.ResourceMapper;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningStopReasons;
@@ -11,12 +12,8 @@ public class DunningStopReasonsMapper extends ResourceMapper<org.meveo.apiv2.dun
 
 	@Override
 	protected org.meveo.apiv2.dunning.DunningStopReasons toResource(DunningStopReasons entity) {
-		return ImmutableDunningStopReasons.builder()
-				.id(entity.getId())
-				.language(createResource(entity.getLanguage()))
-				.stopReason(entity.getStopReason())
-				.description(entity.getDescription())
-				.dunningSettings(createResource((entity.getDunningSettings())))
+		return ImmutableDunningStopReasons.builder().id(entity.getId()).language(createResource(entity.getLanguage())).stopReason(entity.getStopReason())
+                .description(entity.getDescription()).dunningSettings(createResource((AuditableEntity) entity.getDunningSettings()))
                 .build();
     }
 

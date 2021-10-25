@@ -5,6 +5,7 @@ import org.meveo.apiv2.generic.GenericResource;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPauseReasons;
 import org.meveo.model.dunning.DunningStopReasons;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
 
@@ -16,14 +17,17 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 
 public class DunningPauseReasonApiService implements ApiService<DunningPauseReasons> {
-	
+
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
 	private DunningPauseReasonsService dunningPauseReasonsService;
-	
+	@Inject
+	private TradingLanguageService tradingLanguageService;
+
 	private static final String NO_DUNNING_PAUSE_REASON_FOUND = "No Dunning pause reason found for id : ";
 	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
+	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
 	public List<DunningPauseReasons> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -43,11 +47,19 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 	@Override
 	public DunningPauseReasons create(DunningPauseReasons dunningPauseReason) {
 
-		if(dunningPauseReason.getDunningSettings() != null && dunningPauseReason.getDunningSettings().getId() != null) {
+		if (dunningPauseReason.getDunningSettings() != null && dunningPauseReason.getDunningSettings().getId() != null) {
 			var DunningSettings = dunningSettingsService.findById(dunningPauseReason.getDunningSettings().getId());
-			if(DunningSettings == null)
+			if (DunningSettings == null) {
 				throw new BadRequestException(NO_DUNNING_SETTING_FOUND + dunningPauseReason.getDunningSettings().getId());
+			}
 			dunningPauseReason.setDunningSettings(DunningSettings);
+		}
+		if (dunningPauseReason.getLanguage() != null && dunningPauseReason.getLanguage().getId() != null) {
+			var language = tradingLanguageService.findById(dunningPauseReason.getLanguage().getId());
+			if (language == null) {
+				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningPauseReason.getLanguage().getId());
+			}
+			dunningPauseReason.setLanguage(language);
 		}
 		dunningPauseReasonsService.create(dunningPauseReason);
 		return dunningPauseReason;
@@ -56,16 +68,19 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 	@Override
 	public Optional<DunningPauseReasons> update(Long id, DunningPauseReasons dunningPauseReason) {
 		var dunningPauseReasonUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_PAUSE_REASON_FOUND + id));
-		if(dunningPauseReason.getLanguage() != null){
-			dunningPauseReasonUpdate.setLanguage(dunningPauseReason.getLanguage());
-		}
-		if(dunningPauseReason.getDescription() != null){
+		if (dunningPauseReason.getDescription() != null) {
 			dunningPauseReasonUpdate.setDescription(dunningPauseReason.getDescription());
 		}
-		if(dunningPauseReason.getPauseReason() != null){
+		if (dunningPauseReason.getPauseReason() != null) {
 			dunningPauseReasonUpdate.setPauseReason(dunningPauseReason.getPauseReason());
 		}
-
+		if (dunningPauseReason.getLanguage() != null && dunningPauseReason.getLanguage().getId() != null) {
+			var language = tradingLanguageService.findById(dunningPauseReason.getLanguage().getId());
+			if (language == null) {
+				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningPauseReason.getLanguage().getId());
+			}
+			dunningPauseReason.setLanguage(language);
+		}
 		dunningPauseReasonsService.update(dunningPauseReasonUpdate);
 		return Optional.of(dunningPauseReasonUpdate);
 	}
@@ -73,9 +88,6 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 
 	public Optional<DunningPauseReasons> update(String dunningSettingsCode, String pauseReason, DunningPauseReasons dunningPauseReason) {
 		var dunningPauseReasonUpdate = findByCodeAndDunningSettingCode(dunningSettingsCode,pauseReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_PAUSE_REASON_FOUND + pauseReason));
-		if(dunningPauseReason.getLanguage() != null){
-			dunningPauseReasonUpdate.setLanguage(dunningPauseReason.getLanguage());
-		}
 		if(dunningPauseReason.getDescription() != null){
 			dunningPauseReasonUpdate.setDescription(dunningPauseReason.getDescription());
 		}

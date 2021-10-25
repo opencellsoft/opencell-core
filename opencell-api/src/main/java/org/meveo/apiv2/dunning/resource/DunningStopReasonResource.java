@@ -15,7 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-@Path("/dunning/dunningStopReason")
+@Path("/dunning/stopReason")
 @Produces({"application/json"})
 @Consumes({"application/json"})
 public interface DunningStopReasonResource {

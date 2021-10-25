@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.service;
 import org.assertj.core.util.Lists;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningStopReasons;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.meveo.service.payments.impl.DunningStopReasonsService;
 
@@ -14,14 +15,18 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 
 public class DunningStopReasonApiService implements ApiService<DunningStopReasons> {
-	
+
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
 	private DunningStopReasonsService dunningStopReasonsService;
-	
-	private static final String NO_DUNNING_STOP_REASON_FOUND = "No Dunning stop reason found for code : ";
-	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the code : ";
+
+	@Inject
+	private TradingLanguageService tradingLanguageService;
+
+	private static final String NO_DUNNING_STOP_REASON_FOUND = "No Dunning stop reason found for id : ";
+	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
+	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
 	public List<DunningStopReasons> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -41,12 +46,19 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	@Override
 	public DunningStopReasons create(DunningStopReasons dunningStopReason) {
 
-		if(dunningStopReason.getDunningSettings() != null && dunningStopReason.getDunningSettings().getId() != null) {
+		if (dunningStopReason.getDunningSettings() != null && dunningStopReason.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningStopReason.getDunningSettings().getId());
-			if(dunningSettings == null) {
+			if (dunningSettings == null) {
 				throw new BadRequestException(NO_DUNNING_SETTING_FOUND + dunningStopReason.getDunningSettings().getId());
 			}
 			dunningStopReason.setDunningSettings(dunningSettings);
+		}
+		if (dunningStopReason.getLanguage() != null && dunningStopReason.getLanguage().getId() != null) {
+			var language = tradingLanguageService.findById(dunningStopReason.getLanguage().getId());
+			if (language == null) {
+				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningStopReason.getLanguage().getId());
+			}
+			dunningStopReason.setLanguage(language);
 		}
 		dunningStopReasonsService.create(dunningStopReason);
 		return dunningStopReason;
@@ -55,33 +67,20 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	@Override
 	public Optional<DunningStopReasons> update(Long id, DunningStopReasons dunningStopReason) {
 		var dunningStopReasonUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
-		if(dunningStopReason.getLanguage() != null){
-			dunningStopReasonUpdate.setLanguage(dunningStopReason.getLanguage());
-		}
-		if(dunningStopReason.getDescription() != null){
+		if (dunningStopReason.getDescription() != null) {
 			dunningStopReasonUpdate.setDescription(dunningStopReason.getDescription());
 		}
-		if(dunningStopReason.getStopReason() != null){
+		if (dunningStopReason.getStopReason() != null) {
 			dunningStopReasonUpdate.setStopReason(dunningStopReason.getStopReason());
 		}
-
-		dunningStopReasonsService.update(dunningStopReasonUpdate);
-		return Optional.of(dunningStopReasonUpdate);
-	}
-
-	public Optional<DunningStopReasons> update(String dunningSettingsCode, String stopReason, DunningStopReasons dunningStopReason) {
-		var dunningStopReasonUpdate = findByCodeAndDunningSettingCode(dunningSettingsCode,stopReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + stopReason));
-		if(dunningStopReason.getLanguage() != null){
-			dunningStopReasonUpdate.setLanguage(dunningStopReason.getLanguage());
+		if (dunningStopReason.getLanguage() != null && dunningStopReason.getLanguage().getId() != null) {
+			var language = tradingLanguageService.findById(dunningStopReason.getLanguage().getId());
+			if (language == null) {
+				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningStopReason.getLanguage().getId());
+			}
+			dunningStopReasonUpdate.setLanguage(language);
 		}
-		if(dunningStopReason.getDescription() != null){
-			dunningStopReasonUpdate.setDescription(dunningStopReason.getDescription());
-		}
-		if(dunningStopReason.getStopReason() != null){
-			dunningStopReasonUpdate.setStopReason(dunningStopReason.getStopReason());
-		}
-
-		dunningStopReasonsService.update(dunningStopReasonUpdate);
+		dunningStopReasonUpdate = dunningStopReasonsService.update(dunningStopReasonUpdate);
 		return Optional.of(dunningStopReasonUpdate);
 	}
 

@@ -14738,23 +14738,32 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
-       <createTable tableName="dunning_payment_retries">
+        <createTable tableName="dunning_payment_retries">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey"/>
             </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="version" type="int4"/>
             <column name="created" type="datetime">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
-            <column name="payment_method" type="varchar(100)" />
-            <column name="psp" type="varchar(255)" />
-            <column name="num_pay_retries" type="int4" />
-            <column name="pay_retry_frequency_unit" type="varchar(255)" />
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
+            <column name="payment_method" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="psp" type="varchar(255)"/>
+            <column name="num_pay_retries" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_retry_frequency_unit" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_retry_frequency" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dunning_settings_id" type="bigint">
+                <constraints nullable="false"/>
             </column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries"
