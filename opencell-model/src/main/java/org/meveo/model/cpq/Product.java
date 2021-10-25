@@ -2,7 +2,6 @@ package org.meveo.model.cpq;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -73,6 +72,7 @@ import org.meveo.model.crm.CustomerBrand;
         @Parameter(name = "sequence_name", value = "cpq_product_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id"),
+		@NamedQuery(name = "Product.findByChargeCode", query = "select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode"),
 		@NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
 })
 public class Product extends ServiceCharge {

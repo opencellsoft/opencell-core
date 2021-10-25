@@ -69,14 +69,14 @@ public class JsonGenericMapperTest {
     @Test
     public void should_toJson_return_the_id_of_requested_entity_when_param_is_an_instance_of_base_entity() {
         // Given
-        JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().withNestedEntities(new HashSet<>(Arrays.asList("accountType","addressbook"))).build();
+        JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().withNestedEntities(new HashSet<>(Arrays.asList("addressbook"))).build();
         IEntity param = buildCustomerMock(55);
         // When
         HashSet<String> fields = new HashSet<>();
-        fields.addAll(Arrays.asList("code", "id", "defaultLevel", "accountType", "addressbook", "addressbook.id"));
+        fields.addAll(Arrays.asList("code", "id", "defaultLevel", "addressbook", "addressbook.id"));
         String expected = jsonGenericMapper.toJson(fields, Customer.class, ImmutableGenericPaginatedResource.builder().addData(param).total(1L).limit(100L).offset(0L).build());
         // Then
-        assertThat(expected).isEqualTo("{\"total\":1,\"limit\":100,\"offset\":0,\"data\":[{\"id\":55,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":55}}]}");
+        assertThat(expected).isEqualTo("{\"total\":1,\"limit\":100,\"offset\":0,\"data\":[{\"id\":55,\"defaultLevel\":true,\"addressbook\":{\"id\":55}}]}");
     }
 
     @Test

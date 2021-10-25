@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,12 +37,17 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
 
 /**
  * Contact information
@@ -53,21 +57,91 @@ import org.meveo.model.intcrm.AddressBook;
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "com_contact")
-@DiscriminatorValue(value = "ACCT_CTACT")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "com_contact_seq"), })
-public class Contact extends AccountEntity implements ISearchable {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "com_contact_seq"), })
+public class Contact extends BusinessCFEntity implements ISearchable {
 
     private static final long serialVersionUID = 3772773449495155646L;
 
-    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Contact.class.getAnnotation(DiscriminatorValue.class)).value();
+    /**
+     * External reference 1
+     */
+    @Column(name = "external_ref_1", length = 255)
+    @Size(max = 255)
+    protected String externalRef1;
 
     /**
-     * Email address
+     * External reference 2
      */
-    @Column(name = "email", length = 255)
+    @Column(name = "external_ref_2", length = 255)
     @Size(max = 255)
-    private String email;
+    protected String externalRef2;
+
+    /**
+     * Account name information
+     */
+    @Embedded
+    protected Name name;
+
+    /**
+     * Account address information
+     */
+    @Embedded
+    protected Address address;
+
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
+    @Type(type = "numeric_boolean")
+    @Column(name = "default_level")
+    protected Boolean defaultLevel = true;
+
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
+    @Column(name = "provider_contact", length = 255)
+    @Size(max = 255)
+    protected String providerContact;
+
+    /**
+     * Primary contact
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "primary_contact")
+    protected ProviderContact primaryContact;
+
+    /**
+     * Job title
+     */
+    @Column(name = "job_title", length = 255)
+    private String jobTitle;
+
+    /**
+     * Contact information
+     */
+    @Embedded
+    private ContactInformation contactInformation;
+
+    /**
+     * VAT number
+     */
+    @Column(name = "vat_no", length = 100)
+    private String vatNo;
+
+    /**
+     * Registration number
+     */
+    @Column(name = "registration_no", length = 100)
+    private String registrationNo;
+
+    @Column(name = "company")
+    @Type(type = "numeric_boolean")
+    protected Boolean isCompany = Boolean.FALSE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "legal_entity_type_id")
+    protected Title legalEntityType;
 
     /**
      * Assistant's name
@@ -93,23 +167,9 @@ public class Contact extends AccountEntity implements ISearchable {
     /**
      * Company
      */
-    @Column(name = "company", length = 200)
+    @Column(name = "company_name", length = 200)
     @Size(max = 200)
     private String company;
-
-    /**
-     * Mobile phone number
-     */
-    @Column(name = "mobile", length = 15)
-    @Size(max = 15)
-    private String mobile;
-
-    /**
-     * Phone number
-     */
-    @Column(name = "phone", length = 15)
-    @Size(max = 15)
-    private String phone;
 
     /**
      * Website URL
@@ -169,7 +229,7 @@ public class Contact extends AccountEntity implements ISearchable {
     /**
      * Messages send
      */
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact", cascade = CascadeType.ALL)
     private List<Message> messages;
 
     /**
@@ -182,22 +242,10 @@ public class Contact extends AccountEntity implements ISearchable {
     /**
      * Tags
      */
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "com_contact_tag", joinColumns = @JoinColumn(name = "contact_id"))
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
-
-    public Contact() {
-        accountType = ACCOUNT_TYPE;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getAssistantName() {
         return assistantName;
@@ -229,22 +277,6 @@ public class Contact extends AccountEntity implements ISearchable {
 
     public void setCompany(String company) {
         this.company = company;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getWebsiteUrl() {
@@ -335,7 +367,126 @@ public class Contact extends AccountEntity implements ISearchable {
         this.tags = tags;
     }
 
-    public String toString() {
-        return this.getName().toString() + " code:" + this.getCode();
+    public String getExternalRef1() {
+        return externalRef1;
     }
+
+    public void setExternalRef1(String externalRef1) {
+        this.externalRef1 = externalRef1;
+    }
+
+    public String getExternalRef2() {
+        return externalRef2;
+    }
+
+    public void setExternalRef2(String externalRef2) {
+        this.externalRef2 = externalRef2;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public void setName(Name name) {
+        this.name = name;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public ProviderContact getPrimaryContact() {
+        return primaryContact;
+    }
+
+    public void setPrimaryContact(ProviderContact primaryContact) {
+        this.primaryContact = primaryContact;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public void anonymize(String code) {
+        if (name != null) {
+            name.anonymize(code);
+        }
+        if (address != null) {
+            address.anonymize(code);
+        }
+        getContactInformationNullSafe().anonymize(code);
+    }
+
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
+    }
+
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    /**
+     * Instantiate contactInformation field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record will be updated in DB
+     * 
+     * @return ContactInformation value or instantiated ContactInformation field value
+     */
+    public ContactInformation getContactInformationNullSafe() {
+        if (contactInformation == null) {
+            contactInformation = new ContactInformation();
+        }
+        return contactInformation;
+    }
+
+    public ContactInformation getContactInformation() {
+        return contactInformation;
+    }
+
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+
+    /**
+     * @return the isCompany
+     */
+    public Boolean getIsCompany() {
+        return isCompany;
+    }
+
+    /**
+     * @param isCompany the isCompany to set
+     */
+    public void setIsCompany(Boolean isCompany) {
+        this.isCompany = isCompany;
+    }
+
+    /**
+     * @return the legalEntityType
+     */
+    public Title getLegalEntityType() {
+        return legalEntityType;
+    }
+
+    /**
+     * @param legalEntityType the legalEntityType to set
+     */
+    public void setLegalEntityType(Title legalEntityType) {
+        this.legalEntityType = legalEntityType;
+    }
+
 }

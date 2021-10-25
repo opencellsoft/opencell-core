@@ -1,7 +1,6 @@
 package org.meveo.model.cpq;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -44,6 +45,10 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
+@NamedQueries({
+    @NamedQuery(name = "CpqQuote.getQuoteIdsUsingCharge", query = "select qp.quote.id from QuoteProduct qp where qp.quote.status not in('CANCELLED','ACCEPTED','REJECTED') and qp.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)")
+    })
+
 public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 
 	/**

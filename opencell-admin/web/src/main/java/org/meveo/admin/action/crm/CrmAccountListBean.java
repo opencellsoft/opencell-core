@@ -23,11 +23,6 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CrmAccountService;
 
@@ -79,18 +74,18 @@ public class CrmAccountListBean extends BaseBean<AccountEntity> {
      * @return view uri
      */
     public String getView(String type) {
-        if (type.equals(Customer.ACCOUNT_TYPE)) {
+        if (type.equals(CustomerTreeBean.CUSTOMER_KEY)) {
             return "/pages/crm/customers/customerDetail.xhtml";
-        } else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+        } else if (type.equals(CustomerTreeBean.CUSTOMER_ACCOUNT_KEY)) {
             return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
         }
-        if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+        if (type.equals(CustomerTreeBean.BILLING_ACCOUNT_KEY)) {
             return "/pages/billing/billingAccounts/billingAccountDetail.xhtml";
         }
-        if(type.equals(Seller.ACCOUNT_TYPE)) {
+        if(type.equals(CustomerTreeBean.SELLER_KEY)) {
         	return "/pages/admin/sellers/sellerDetail.xhml";
         }
-        if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+        if (type.equals(CustomerTreeBean.USER_ACCOUNT_KEY)) {
             return "/pages/billing/userAccounts/userAccountDetail.xhtml";
         } else {
             return "/pages/crm/customers/customerDetail.xhtml";

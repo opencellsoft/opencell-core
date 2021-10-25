@@ -18,31 +18,41 @@
 
 package org.meveo.api.crm;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.account.AccountEntityApi;
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -51,14 +61,6 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -66,7 +68,7 @@ import java.util.List;
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class ContactApi extends AccountEntityApi {
+public class ContactApi extends BaseApi {
 
     @Inject
     ContactService contactService;
@@ -75,7 +77,10 @@ public class ContactApi extends AccountEntityApi {
     SellerService sellerService;
 
     @Inject
-    TitleService titleService;
+    private TitleService titleService;
+
+    @Inject
+    private CountryService countryService;
 
     @Inject
     AddressBookService addressBookService;
@@ -106,18 +111,18 @@ public class ContactApi extends AccountEntityApi {
             }
         }
 
-        if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("email");
+        if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("email or code");
             // missingParameters.add("code");
-        } else if (StringUtils.isBlank(postData.getEmail())) {
+        } else if (postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) {
             missingParameters.add("email");
         }
 
         handleMissingParameters();
 
         String code = null;
-        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-            code = postData.getEmail();
+        if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
+            code = postData.getContactInformation().getEmail();
         } else {
             code = postData.getCode();
         }
@@ -129,9 +134,8 @@ public class ContactApi extends AccountEntityApi {
 
         contact = new Contact();
 
-        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-            postData.setCode(postData.getEmail());
-            postData.setEmail(postData.getEmail());
+        if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(postData.getContactInformation().getEmail());
         }
 
         dtoToEntity(contact, postData);
@@ -143,15 +147,15 @@ public class ContactApi extends AccountEntityApi {
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+        if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("email or code");
         }
 
         handleMissingParameters();
 
         String code = null;
-        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-            code = postData.getEmail();
+        if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
+            code = postData.getContactInformation().getEmail();
         } else {
             code = postData.getCode();
         }
@@ -177,17 +181,8 @@ public class ContactApi extends AccountEntityApi {
 
         boolean isNew = contact.getId() == null;
 
-        updateAccount(contact, postData);
+        updateAccount(contact, postData, true);
 
-        if (postData.getEmail() != null) {
-            contact.setEmail(StringUtils.isBlank(postData.getEmail()) ? null : postData.getEmail());
-        }
-        if (postData.getMobile() != null) {
-            contact.setMobile(StringUtils.isBlank(postData.getMobile()) ? null : postData.getMobile());
-        }
-        if (postData.getPhone() != null) {
-            contact.setPhone(StringUtils.isBlank(postData.getPhone()) ? null : postData.getPhone());
-        }
         if (postData.getAssistantName() != null) {
             contact.setAssistantName(StringUtils.isBlank(postData.getAssistantName()) ? null : postData.getAssistantName());
         }
@@ -236,6 +231,132 @@ public class ContactApi extends AccountEntityApi {
         }
     }
 
+    public void updateAccount(Contact contact, ContactDto postData, boolean checkCustomFields) throws MeveoApiException {
+
+        boolean isNew = contact.getId() == null;
+        if (isNew) {
+            contact.setCode(postData.getCode());
+        } else if (!StringUtils.isBlank(postData.getUpdatedCode())) {
+            contact.setCode(postData.getUpdatedCode());
+        }
+
+        if (postData.getAddress() != null) {
+            Address address = contact.getAddress() == null ? new Address() : contact.getAddress();
+
+            if (postData.getAddress().getAddress1() != null) {
+                address.setAddress1(StringUtils.isEmpty(postData.getAddress().getAddress1()) ? null : postData.getAddress().getAddress1());
+            }
+            if (postData.getAddress().getAddress2() != null) {
+                address.setAddress2(StringUtils.isEmpty(postData.getAddress().getAddress2()) ? null : postData.getAddress().getAddress2());
+            }
+            if (postData.getAddress().getAddress3() != null) {
+                address.setAddress3(StringUtils.isEmpty(postData.getAddress().getAddress3()) ? null : postData.getAddress().getAddress3());
+            }
+            if (postData.getAddress().getAddress4() != null) {
+                address.setAddress4(StringUtils.isEmpty(postData.getAddress().getAddress4()) ? null : postData.getAddress().getAddress4());
+            }
+            if (postData.getAddress().getAddress5() != null) {
+                address.setAddress5(StringUtils.isEmpty(postData.getAddress().getAddress5()) ? null : postData.getAddress().getAddress5());
+            }
+            if (postData.getAddress().getZipCode() != null) {
+                address.setZipCode(StringUtils.isEmpty(postData.getAddress().getZipCode()) ? null : postData.getAddress().getZipCode());
+            }
+            if (postData.getAddress().getCity() != null) {
+                address.setCity(StringUtils.isEmpty(postData.getAddress().getCity()) ? null : postData.getAddress().getCity());
+            }
+
+            if (postData.getAddress().getCountry() != null) {
+                if (StringUtils.isBlank(postData.getAddress().getCountry())) {
+                    address.setCountry(null);
+                } else {
+                    Country country = countryService.findByCode(postData.getAddress().getCountry());
+                    if (country == null) {
+                        throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+                    } else {
+                        address.setCountry(country);
+                    }
+                }
+            }
+
+            if (postData.getAddress().getState() != null) {
+                address.setState(StringUtils.isEmpty(postData.getAddress().getState()) ? null : postData.getAddress().getState());
+            }
+
+            contact.setAddress(address);
+        }
+
+        if (postData.getName() != null) {
+
+            // All name attributes are empty - remove name field alltogether
+            if ((postData.getName().getTitle() != null && StringUtils.isEmpty(postData.getName().getTitle())) && (postData.getName().getFirstName() != null && StringUtils.isEmpty(postData.getName().getFirstName()))
+                    && (postData.getName().getLastName() != null && StringUtils.isEmpty(postData.getName().getLastName()))) {
+                contact.setName(null);
+
+            } else {
+                Name name = contact.getName() == null ? new Name() : contact.getName();
+
+                if (postData.getName().getFirstName() != null) {
+                    name.setFirstName(StringUtils.isEmpty(postData.getName().getFirstName()) ? null : postData.getName().getFirstName());
+                }
+                if (postData.getName().getLastName() != null) {
+                    name.setLastName(StringUtils.isEmpty(postData.getName().getLastName()) ? null : postData.getName().getLastName());
+                }
+                if (postData.getName().getTitle() != null) {
+                    if (StringUtils.isBlank(postData.getName().getTitle())) {
+                        name.setTitle(null);
+                    } else {
+                        Title title = titleService.findByCode(postData.getName().getTitle());
+                        if (title == null) {
+                            throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
+                        } else {
+                            name.setTitle(title);
+                        }
+                    }
+                }
+
+                contact.setName(name);
+            }
+        }
+
+        if (postData.getDescription() != null) {
+            contact.setDescription(StringUtils.isEmpty(postData.getDescription()) ? null : postData.getDescription());
+        }
+        if (postData.getExternalRef1() != null) {
+            contact.setExternalRef1(StringUtils.isEmpty(postData.getExternalRef1()) ? null : postData.getExternalRef1());
+        }
+        if (postData.getExternalRef2() != null) {
+            contact.setExternalRef2(StringUtils.isEmpty(postData.getExternalRef2()) ? null : postData.getExternalRef2());
+        }
+        if (postData.getJobTitle() != null) {
+            contact.setJobTitle(StringUtils.isEmpty(postData.getJobTitle()) ? null : postData.getJobTitle());
+        }
+        if (postData.getVatNo() != null) {
+            contact.setVatNo(StringUtils.isEmpty(postData.getVatNo()) ? null : postData.getVatNo());
+        }
+        if (postData.getRegistrationNo() != null) {
+            contact.setRegistrationNo(StringUtils.isEmpty(postData.getRegistrationNo()) ? null : postData.getRegistrationNo());
+        }
+
+        if (postData.getContactInformation() != null) {
+            if (contact.getContactInformation() == null) {
+                contact.setContactInformation(new ContactInformation());
+            }
+            if (postData.getContactInformation().getEmail() != null) {
+                contact.getContactInformation().setEmail(StringUtils.isEmpty(postData.getContactInformation().getEmail()) ? null : postData.getContactInformation().getEmail());
+            }
+            if (postData.getContactInformation().getPhone() != null) {
+                contact.getContactInformation().setPhone(StringUtils.isEmpty(postData.getContactInformation().getPhone()) ? null : postData.getContactInformation().getPhone());
+            }
+            if (postData.getContactInformation().getMobile() != null) {
+                contact.getContactInformation().setMobile(StringUtils.isEmpty(postData.getContactInformation().getMobile()) ? null : postData.getContactInformation().getMobile());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+                contact.getContactInformation().setFax(postData.getContactInformation().getFax());
+            }
+        }
+
+    }
+
     public Contact createOrUpdate(ContactDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getName().getFirstName())) {
             missingParameters.add("firstName");
@@ -245,16 +366,16 @@ public class ContactApi extends AccountEntityApi {
             missingParameters.add("lastName");
         }
 
-        if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("email");
+        if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("email or code");
             // missingParameters.add("code");
         }
 
         handleMissingParameters();
 
         String code = null;
-        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-            code = postData.getEmail();
+        if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
+            code = postData.getContactInformation().getEmail();
         } else {
             code = postData.getCode();
         }
@@ -297,19 +418,19 @@ public class ContactApi extends AccountEntityApi {
         return contactDto;
     }
 
-	public ContactsResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
-		ContactsResponseDto result = new ContactsResponseDto();
-		result.setPaging( pagingAndFiltering );
+    public ContactsResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
+        ContactsResponseDto result = new ContactsResponseDto();
+        result.setPaging(pagingAndFiltering);
 
-		List<Contact> contacts = contactService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
-		if (contacts != null) {
-			for (Contact contact : contacts) {
-				result.getContacts().getContact().add(new ContactDto(contact));
-			}
-		}
+        List<Contact> contacts = contactService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
+        if (contacts != null) {
+            for (Contact contact : contacts) {
+                result.getContacts().getContact().add(new ContactDto(contact));
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
@@ -364,7 +485,8 @@ public class ContactApi extends AccountEntityApi {
             if (StringUtils.isBlank(contact.getName().getLastName())) {
                 missingParameters.add("lastName");
             }
-            if (StringUtils.isBlank(contact.getEmail()) && StringUtils.isBlank(contact.getCode())) {
+
+            if ((contact.getContactInformation() == null || StringUtils.isBlank(contact.getContactInformation().getEmail())) && StringUtils.isBlank(contact.getCode())) {
                 missingParameters.add("email");
                 missingParameters.add("code");
             }

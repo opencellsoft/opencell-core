@@ -19,12 +19,15 @@
 package org.meveo.api.rest.catalog.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.catalog.PricePlanMatrixColumnApi;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
@@ -394,6 +397,18 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	        }
 
 	        return Response.ok(result).build();
+	}
+
+	@Override
+	public Response checkIfUsed(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
+		Map<String,List<Long>> result = new TreeMap<String, List<Long>>();
+        try {
+        	result = pricePlanApi.checkIfUsed(pricePlanMatrixCode, pricePlanMatrixVersion);
+        } catch (Exception e) {
+            processException(e, new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage()));
+        }
+
+        return Response.ok(result).build();
 	}
 
 

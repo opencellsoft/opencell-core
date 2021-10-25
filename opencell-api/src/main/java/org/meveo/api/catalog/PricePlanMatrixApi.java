@@ -20,6 +20,7 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -103,9 +104,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    private ProductService productService;
 
     @Inject
     private QuoteProductService quoteProductService;
@@ -587,4 +585,13 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode);
     	return new PricePlanMatrixDto(pricePlanMatrixService.findById(duplicate.getId()), null);
     }
+
+	/**
+	 * @param pricePlanMatrixCode
+	 * @param pricePlanMatrixVersion
+	 * @return
+	 */
+	public Map<String, List<Long>> checkIfUsed(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
+		return pricePlanMatrixVersionService.getUsedEntities(pricePlanMatrixCode, pricePlanMatrixVersion);
+	}
 }
