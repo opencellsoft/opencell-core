@@ -35,6 +35,9 @@ public class DunningActionService  extends BusinessService<DunningAction> {
         validateScriptInstance(dunningAction);
         validateActionNotificationTemplate(dunningAction);
         validateDunningLevel(dunningAction);
+        if(ActionTypeEnum.SEND_NOTIFICATION.equals(dunningAction.getActionType()) && dunningAction.getActionChannel() == null){
+            throw new BusinessApiException("the action channel is required, when ActionType is of type Send Notification.");
+        }
         super.create(dunningAction);
     }
 
