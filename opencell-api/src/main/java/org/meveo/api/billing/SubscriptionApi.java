@@ -2207,14 +2207,12 @@ public class SubscriptionApi extends BaseApi {
             subscriptionService.updateNoCheck(currentSubscription);
             subscriptionService.updateNoCheck(patchedSubscription);
 
-            for (ServiceInstance si : new ArrayList<>(emptyIfNull(patchedSubscription.getServiceInstances()))) {
+            for (ServiceInstance si : patchedSubscription.getServiceInstances()) {
                 if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                    // save of SI will be done by its activation
                     si.setSubscriptionDate(newEffectiveDate);
-                    serviceInstanceService.updateNoCheck(si);
                 }
             }
-            //refresh patchedSubscription
-            subscriptionService.refresh(patchedSubscription);
         }
 
         subscriptionService.activateInstantiatedService(patchedSubscription);
