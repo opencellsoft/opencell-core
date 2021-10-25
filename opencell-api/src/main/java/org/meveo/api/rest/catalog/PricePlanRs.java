@@ -461,4 +461,17 @@ public interface PricePlanRs extends IBaseRs {
     Response duplicatePricePlan(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
     							@Parameter(description = "The price plan matrix new code", required = true) @QueryParam("pricePlanMatrixNewCode") String pricePlanMatrixNewCode,
     							@Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+    
+    @GET
+    @Path("{pricePlanMatrixCode}/pricePlanVersions/{pricePlanMatrixVersion}/checkIfUsed")
+    @Operation(summary = "Check if the current price plan version is used",
+            tags = { "Price Plan" },
+            description ="Check if the current price plan version is used in a draft quote, not completed/validated order, or in a subscription",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response checkIfUsed(@Parameter(description = "The price plan matrix code", required = true) @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+    		@Parameter(description = "The price plan matrix version", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+
 }
