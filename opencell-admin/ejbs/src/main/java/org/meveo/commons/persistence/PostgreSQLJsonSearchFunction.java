@@ -20,6 +20,7 @@ package org.meveo.commons.persistence;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.QueryException;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.spi.Mapping;
@@ -35,18 +36,23 @@ public class PostgreSQLJsonSearchFunction implements SQLFunction {
         if (args.size() < 2) {
             throw new IllegalArgumentException("The function parseJson requires at least 2 arguments");
         }
+        String customFieldPosition = "0";
         String entityColumnName = (String) args.get(0);
         String customFieldName = (String) args.get(1);
         String customFieldValueProperty = getValuePropertyName();
         if (args.size() > 2) {
             customFieldValueProperty = (String) args.get(2);
         }
-        String fragment = entityColumnName + "::json ->'" + customFieldName + "'->0->>'" + customFieldValueProperty + "'";
+        if (args.size() > 4) {
+            customFieldPosition = (String) args.get(4);
+        }
+        String fragment = entityColumnName + "::json ->'" + customFieldName + "'->"+customFieldPosition+"->>'" + customFieldValueProperty + "'";
 
         if (args.size() > 3) {
             String castType = (String) args.get(3);
-            fragment = "(" + fragment + ")::" + castType;
-
+            if(StringUtils.isNotBlank(castType) && ! "null".equalsIgnoreCase(castType)) {
+                fragment = "(" + fragment + ")::" + castType;
+            }
         } else if (getCastType() != null) {
             fragment = "(" + fragment + ")::" + getCastType();
         }
