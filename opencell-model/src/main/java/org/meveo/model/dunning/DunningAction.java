@@ -3,13 +3,11 @@ package org.meveo.model.dunning;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
-import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
 import javax.persistence.*;
@@ -38,8 +36,8 @@ public class DunningAction extends BusinessEntity {
     private ActionChannelEnum actionChannel = ActionChannelEnum.EMAIL;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"))
+    @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"))
     private List<DunningLevel> relatedLevels;
 
     @ManyToOne(fetch = FetchType.LAZY)

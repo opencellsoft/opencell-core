@@ -16125,7 +16125,12 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="dunning_level_id, dunning_action_id" constraintName="dunning_level_dunning_action_pkey" tableName="dunning_level_dunning_action" />
-
+        <addForeignKeyConstraint baseTableName="dunning_level_dunning_action" baseColumnNames="dunning_level_id"
+                                 constraintName="dunning_level_dunning_action_pkey_const" referencedTableName="dunning_level"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="dunning_level_dunning_action" baseColumnNames="dunning_action_id"
+                                 constraintName="dunning_action_dunning_level_pkey_const" referencedTableName="ar_dunning_action"
+                                 referencedColumnNames="id"/>
 
         <createSequence sequenceName="dunning_policy_level_seq" startValue="1" />
         <createTable tableName="dunning_policy_level">
@@ -16170,8 +16175,8 @@
     <changeSet id="INTRD-2366_20211021" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2445_20211021" author="ZBariki" />
     <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
-    
-    
+    <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza"/>
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
