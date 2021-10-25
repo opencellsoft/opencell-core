@@ -9963,6 +9963,14 @@ public class OrderAdvancement extends ModuleScript {
         <addDefaultValue tableName="accounting_period" columnName="start_date" defaultValueDate="${db.current.time}" />
         <addUniqueConstraint columnNames="start_date" constraintName="uk_ap_start_date" deferrable="false" disabled="false" initiallyDeferred="false" tableName="accounting_period" />
     </changeSet>
+    <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza">
+        <addForeignKeyConstraint baseTableName="dunning_level_dunning_action" baseColumnNames="dunning_level_id"
+                                 constraintName="dunning_level_dunning_action_pkey_const" referencedTableName="dunning_level"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="dunning_level_dunning_action" baseColumnNames="dunning_action_id"
+                                 constraintName="dunning_action_dunning_level_pkey_const" referencedTableName="ar_dunning_action"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
         
     <changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius">
