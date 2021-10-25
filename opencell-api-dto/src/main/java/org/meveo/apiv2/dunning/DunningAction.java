@@ -61,9 +61,15 @@ public interface DunningAction {
         org.meveo.model.dunning.DunningAction dunningActionEntity = new org.meveo.model.dunning.DunningAction();
         dunningActionEntity.setCode(getCode());
         dunningActionEntity.setDescription(getDescription());
-        dunningActionEntity.setActionType(ActionTypeEnum.valueOf(getActionType()));
-        dunningActionEntity.setActionMode(ActionModeEnum.valueOf(getActionMode()));
-        dunningActionEntity.setActionChannel(ActionChannelEnum.valueOf(getActionChannel()));
+        if (getActionType() != null && !getActionType().isBlank()) {
+            dunningActionEntity.setActionType(ActionTypeEnum.valueOf(getActionType()));
+        }
+        if (getActionMode() != null && !getActionMode().isBlank()) {
+            dunningActionEntity.setActionMode(ActionModeEnum.valueOf(getActionMode()));
+        }
+        if (getActionChannel() != null && !getActionChannel().isBlank()) {
+            dunningActionEntity.setActionChannel(ActionChannelEnum.valueOf(getActionChannel()));
+        }
         if (getScript() != null) {
             ScriptInstance scriptInstance = new ScriptInstance();
             scriptInstance.setId(getScript().get("id"));

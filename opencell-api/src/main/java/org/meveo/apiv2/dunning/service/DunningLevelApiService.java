@@ -24,7 +24,7 @@ import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.payments.impl.DunningActionService;
-import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.DunningLevelServicecc;
 
 public class DunningLevelApiService implements ApiService<DunningLevel> {
 
@@ -32,7 +32,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	private CurrencyService currencyService;
 
 	@Inject
-	private DunningLevelService dunningLevelService;
+	private DunningLevelServicecc dunningLevelService;
 
 	@Inject
 	private DunningActionService dunningActionService;
