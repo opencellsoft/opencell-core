@@ -174,7 +174,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     		
     		for (PricePlanMatrixColumn ppmc : columns) {
 				
-        		pricePlanMatrixColumnService.detach(ppmc);
+        		//pricePlanMatrixColumnService.detach(ppmc);
         		
         		var duplicatePricePlanMatrixColumn = new PricePlanMatrixColumn(ppmc);
         		if(ppmc.getProduct() != null) {
@@ -200,7 +200,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     		lines.forEach(ppml -> {
     			ppml.getPricePlanMatrixValues().size();
 
-    			pricePlanMatrixLineService.detach(ppml);
+    			//pricePlanMatrixLineService.detach(ppml);
     			
     			var duplicateLine = new PricePlanMatrixLine(ppml);
     			duplicateLine.setPricePlanMatrixVersion(entity);
