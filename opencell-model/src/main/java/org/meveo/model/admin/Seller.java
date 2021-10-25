@@ -72,12 +72,10 @@ import org.meveo.model.payments.PaymentGateway;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "Seller", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
-@DiscriminatorValue(value = "ACCT_S")
 @Table(name = "crm_seller")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
 public class Seller extends AccountEntity implements IWFEntity {
 
-    public static final String ACCOUNT_TYPE = Seller.class.getAnnotation(DiscriminatorValue.class).value();
     private static final long serialVersionUID = 1L;
 
     /**
@@ -150,10 +148,6 @@ public class Seller extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_ledger_id")
     private GeneralLedger generalLedger;
-
-    public Seller() {
-        accountType = ACCOUNT_TYPE;
-    }
 
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;

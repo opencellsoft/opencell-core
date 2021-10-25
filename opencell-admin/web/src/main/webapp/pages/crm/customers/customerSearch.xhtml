@@ -34,7 +34,7 @@
 
         <hftl:dataList backingBean="#{customerSearchBean}" label="#{messages['customerSearch.title']}" exportToXml="false">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" editView="#{customerSearchBean.getView(entity['accountType'])}" propagateConversation="false"
-                objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}" />
+                objectIdParamName="#{customerSearchBean.getIdParameterName(entity.getAccountType())}" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
             <hftl:column label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
             <hftl:column label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />

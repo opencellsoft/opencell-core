@@ -96,8 +96,6 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent") })
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
-    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -361,12 +359,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @JoinTable(name = "cpq_billing_account_tags", joinColumns = @JoinColumn(name = "billing_account_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<>();
 
-    /**
-     * Corresponding to minimum invoice AccountingArticle
-     */
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "minimum_article_id")
-    private AccountingArticle minimumArticle;
 
     @Transient
     private List<InvoiceLine> minInvoiceLines;
@@ -378,10 +370,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
-
-	public BillingAccount() {
-        accountType = ACCOUNT_TYPE;
-    }
 
     public List<UserAccount> getUsersAccounts() {
         return usersAccounts;
@@ -817,15 +805,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 		BillingAccount other = (BillingAccount) obj;
 		return Objects.equals(id, other.id);
 	}
-
-
-    public AccountingArticle getMinimumArticle() {
-        return minimumArticle;
-    }
-
-    public void setMinimumArticle(AccountingArticle minimumArticle) {
-        this.minimumArticle = minimumArticle;
-    }
 
     @Override
     public List<InvoiceLine> getMinInvoiceLines() {
