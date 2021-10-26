@@ -159,7 +159,9 @@ public class ContactService extends BusinessService<Contact> {
 				messages.add(message);
 
 				c.setName(new Name(title, firstName, lastName));
-				c.setEmail(email);
+                if (email != null) {
+                    c.getContactInformationNullSafe().setEmail(email);
+                }
 				c.setCode(email);
 				c.setPosition(position);
 				c.setCompany(company);

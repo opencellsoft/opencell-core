@@ -463,12 +463,12 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			mq.setCode("CHURN");
 			mq.setActive(true);
 			mq.setDescription("Churn");
-			mq.setSqlQuery("WITH acc_new AS (SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id"
+			mq.setSqlQuery("WITH acc_new AS (SELECT count(ua.id) as nb FROM billing_user_account ua"
 					+ " WHERE ua.subscription_date >= '#{date}' AND ua.subscription_date < '#{nextDate}'"
 					+ " AND (ua.termination_date IS NULL OR ua.termination_date >= '#{nextDate}') ), acc_end AS ("
-					+ " SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.termination_date >= ' #{date}'"
+					+ " SELECT count(ua.id) as nb FROM billing_user_account ua WHERE ua.termination_date >= ' #{date}'"
 					+ " AND ua.termination_date < '#{nextDate}' ), acc_period AS ("
-					+ " SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date < '#{date}'"
+					+ " SELECT count(ua.id) as nb FROM billing_user_account ua WHERE ua.subscription_date < '#{date}'"
 					+ " AND (ua.termination_date IS NULL  OR ua.termination_date>='#{nextDate}') " + ") SELECT"
 					+ " CASE WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2)<>0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2) ELSE 0"
 					+ " END as churn FROM acc_new ,acc_end,acc_period");
