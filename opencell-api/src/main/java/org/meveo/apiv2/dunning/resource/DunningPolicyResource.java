@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningPolicy;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/dunning/dunningPolicy")
@@ -33,4 +30,17 @@ public interface DunningPolicyResource {
                             description = "DunningLevel creation is failed")
             })
     Response create(@Parameter(description = "Dunning policy to create", required = true) DunningPolicy dunningPolicy);
+
+    @PUT
+    @Path("/{dunningPolicyId}")
+    @Operation(summary = "update Dunning policy",
+            tags = {"Dunning"},
+            description = "update Dunning policy",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Dunning policy successfully updated"),
+            })
+    Response update(@Parameter(description = "Dunning policy id", required = true)
+                    @PathParam("dunningPolicyId") Long dunningPolicyId,
+    @Parameter(description = "dunning policy to update", required = true) DunningPolicy dunningPolicy);
 }

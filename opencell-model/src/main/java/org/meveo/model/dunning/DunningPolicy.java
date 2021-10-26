@@ -1,12 +1,12 @@
 package org.meveo.model.dunning;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,7 +40,7 @@ public class DunningPolicy extends AuditableEntity {
     @Column(name = "min_balance_trigger_currency")
     private List<String> minBalanceTriggerCurrency;
 
-    @ElementCollection(fetch = LAZY)
+    @ElementCollection(fetch = EAGER)
     @CollectionTable(name = "dunning_determine_level_by", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "determine_level_by")
     private List<String> determineLevelBy;
@@ -71,7 +71,7 @@ public class DunningPolicy extends AuditableEntity {
     @Type(type = "numeric_boolean")
     private boolean isActivePolicy;
 
-    @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY)
+    @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyLevel> dunningLevels;
 
     @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY)

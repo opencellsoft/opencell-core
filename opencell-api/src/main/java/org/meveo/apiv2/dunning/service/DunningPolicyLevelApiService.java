@@ -1,27 +1,18 @@
 package org.meveo.apiv2.dunning.service;
 
-import java.util.List;
-import java.util.Optional;
+import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.service.payments.impl.DunningPolicyLevelService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-
-import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.dunning.DunningPolicyLevel;
-import org.meveo.service.payments.impl.DunningLevelService;
-import org.meveo.service.payments.impl.DunningPolicyLevelService;
-import org.meveo.service.payments.impl.DunningInvoiceStatusService;
+import java.util.List;
+import java.util.Optional;
 
 public class DunningPolicyLevelApiService implements ApiService<DunningPolicyLevel> {
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
-
-    @Inject
-    private DunningLevelService dunningLevelService;
-
-    @Inject
-    private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Override
     public List<DunningPolicyLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {
