@@ -25,6 +25,12 @@ public interface AccountingPeriod extends Resource{
 	@Nullable
 	String getFiscalYear();
 	
+	@Schema(description = "Indicate the start date")
+    @Nullable
+    default Date getStartDate() {
+	    return new Date();
+	}
+
 	@Schema(description = "Indicate the end date")
 	@Nullable
 	Date getEndDate();
