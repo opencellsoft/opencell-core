@@ -84,7 +84,6 @@ import java.util.Calendar;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.meveo.commons.utils.StringUtils.isNotBlank;
 
 /**
