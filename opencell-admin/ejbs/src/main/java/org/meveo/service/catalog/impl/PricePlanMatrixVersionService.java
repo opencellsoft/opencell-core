@@ -313,7 +313,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	 */
 	private PricePlanMatrixVersion update(PricePlanMatrixVersion entity, String auditAction) {
 		final PricePlanMatrixVersion ppmv = super.update(entity);
-		update(ppmv, auditAction);
+		logAction(ppmv, auditAction);
 		return ppmv;
 	}
 	
