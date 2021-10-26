@@ -1,21 +1,22 @@
 package org.meveo.apiv2.dunning.impl;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Response;
+import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
-import org.meveo.model.dunning.CollectionPlanStatus;
-import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicyLevel;
-import org.meveo.model.dunning.DunningInvoiceStatus;
-import org.meveo.service.payments.impl.CollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningLevelService;
-import org.meveo.service.payments.impl.DunningInvoiceStatusService;
+import org.meveo.service.payments.impl.DunningPolicyLevelService;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
@@ -23,20 +24,16 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     private DunningPolicyApiService dunningPolicyApiService;
 
     @Inject
-    private DunningLevelService dunningLevelService;
-
-    @Inject
-    private DunningInvoiceStatusService invoiceDunningStatusesService;
-
-    @Inject
-    private CollectionPlanStatusService collectionPlanStatusService;
-
-    @Inject
     private DunningPolicyLevelApiService policyLevelApiService;
+
+    @Inject
+    private DunningPolicyLevelService dunningPolicyLevelService;
 
     private final DunningPolicyMapper mapper = new DunningPolicyMapper();
 
     private final DunningPolicyLevelMapper policyLevelMapper = new DunningPolicyLevelMapper();
+
+    private DunningPolicyLevelMapper dunningPolicyLevelMapper = new DunningPolicyLevelMapper();
 
     @Override
     public Response create(DunningPolicy dunningPolicy) {
@@ -54,64 +51,72 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         }
         org.meveo.model.dunning.DunningPolicy entity = mapper.toEntity(dunningPolicy);
         org.meveo.model.dunning.DunningPolicy savedEntity = dunningPolicyApiService.create(entity);
+        if (dunningPolicy.getDunningLevels() != null) {
+            entity.setDunningLevels(dunningPolicy.getDunningLevels()
+                    .stream()
+                    .map(dunningPolicyLevelMapper::toEntity)
+                    .collect(Collectors.toList()));
+        }
+        int totalDunningLevels = 0;
+        int countReminderLevels = 0;
+        int countEndOfDunningLevel = 0;
+        int highestSequence = (dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty())
+                ? dunningPolicy.getDunningLevels().get(0).getSequence() : 0;
         for (org.meveo.apiv2.dunning.DunningPolicyLevel dunningPolicyLevel : dunningPolicy.getDunningLevels()) {
             DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
             dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
-            int totalDunningLevels = 0;
-            int countReminderLevels = 0;
-            int countEndOfDunningLevel = 0;
-            int highestSequence = (dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty())
-                    ? dunningPolicy.getDunningLevels().get(0).getSequence() : 0;
-            DunningLevel dunningLevel = dunningLevelService.refreshOrRetrieve(dunningPolicyLevelEntity.getDunningLevel());
-            DunningInvoiceStatus invoiceDunningStatuses = invoiceDunningStatusesService.refreshOrRetrieve(dunningPolicyLevelEntity.getInvoiceDunningStatuses());
-            CollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.refreshOrRetrieve(dunningPolicyLevelEntity.getCollectionPlanStatus());
-            if(dunningLevel == null) {
-                throw new BadRequestException("Policy level creation fails dunning level does not exists");
-            }
-            if(invoiceDunningStatuses == null) {
-                throw new BadRequestException("Policy level creation fails invoice dunning statuses does not exists");
-            }
-            dunningPolicyLevelEntity.setDunningLevel(dunningLevel);
-            dunningPolicyLevelEntity.setInvoiceDunningStatuses(invoiceDunningStatuses);
-            dunningPolicyLevelEntity.setCollectionPlanStatus(collectionPlanStatus);
-            if(!dunningLevel.isReminder()) {
+            dunningPolicyApiService.refreshPolicyLevel(dunningPolicyLevelEntity);
+            if (!dunningPolicyLevelEntity.getDunningLevel().isReminder()) {
                 totalDunningLevels++;
             } else {
                 countReminderLevels++;
             }
-            if(dunningLevel.isEndOfDunningLevel()) {
-                if(!dunningPolicyLevelEntity.getCollectionPlanStatus().getContext().equals("Failed Dunning")
-                        && !dunningPolicyLevelEntity.getInvoiceDunningStatuses().getContext().equals("Failed Dunning")) {
+            if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
+                if (!dunningPolicyLevelEntity.getCollectionPlanStatus().getContext().equals("Failed dunning")
+                        && !dunningPolicyLevelEntity.getInvoiceDunningStatuses().getContext().equals(FAILED_DUNNING)) {
                     throw new BadRequestException("Dunning level creation fails");
                 }
-                if(dunningPolicyLevelEntity.getSequence() < highestSequence) {
+                if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
                     throw new BadRequestException("sequence must be high");
                 }
                 highestSequence = dunningPolicyLevelEntity.getSequence();
                 countEndOfDunningLevel++;
             }
-            if(!dunningLevel.isEndOfDunningLevel() && !dunningLevel.isReminder()) {
-                if(!dunningPolicyLevelEntity.getCollectionPlanStatus().getContext().equals("Active")
-                        && !dunningPolicyLevelEntity.getInvoiceDunningStatuses().getContext().equals("Active Dunning")) {
-                    throw new BadRequestException("Dunning level creation fails");
-                }
-            }
-            if(totalDunningLevels == 0) {
-                throw new BadRequestException("Policy should have at least one dunning level other the reminder level");
-            }
-            if (countReminderLevels > 1) {
-                throw new BadRequestException("There is already a Reminder level for this policy, remove the existing level to select a new one.");
-            }
-            if (countEndOfDunningLevel > 1) {
-                throw new BadRequestException("A policy can have only 1 level with isEndOfDunningLevel = TRUE");
-            }
+            dunningPolicyApiService.validateActiveDunning(dunningPolicyLevelEntity);
             policyLevelApiService.create(dunningPolicyLevelEntity);
-            savedEntity.setTotalDunningLevels(totalDunningLevels);
-            dunningPolicyApiService.updateTotalLevels(savedEntity);
         }
+        dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
+        savedEntity.setTotalDunningLevels(totalDunningLevels);
+        dunningPolicyApiService.updateTotalLevels(savedEntity);
         return Response.created(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
                 .build())
                 .entity(entity.getId())
+                .build();
+    }
+
+    @Override
+    public Response update(Long dunningPolicyId, DunningPolicy dunningPolicy) {
+        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyApiService.findById(dunningPolicyId)
+                .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits"));
+        List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
+        if (dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty()) {
+            entity.setDunningLevels(null);
+            for (org.meveo.apiv2.dunning.DunningPolicyLevel dunningPolicyLevel : dunningPolicy.getDunningLevels()) {
+                DunningPolicyLevel policyLevel = new DunningPolicyLevel();
+                policyLevel.setId(dunningPolicyLevel.getId());
+                DunningPolicyLevel level = dunningPolicyLevelService.refreshOrRetrieve(policyLevel);
+                if (level != null) {
+                    dunningPolicyLevelList.add(level);
+                }
+            }
+        }
+        if (!dunningPolicyLevelList.isEmpty()) {
+            entity.setDunningLevels(dunningPolicyLevelList);
+        }
+        dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity));
+        return Response
+                .ok(org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
+                .entity(mapper.toResource(entity))
                 .build();
     }
 }

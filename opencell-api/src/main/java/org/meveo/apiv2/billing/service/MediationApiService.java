@@ -75,15 +75,17 @@ public class MediationApiService {
                 }
                 if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr.getLine(), cdr.getRejectReason());
-
+                    
+                    fail++;
+                    cdrService.createOrUpdateCdr(cdr);
+                    cdrListResult.getErrors().add(new CdrError(cdr.getRejectReasonException().getClass().getSimpleName(), cdr.getRejectReason(), cdr.getLine()));
+                }
+                if (fail > 0) {
                     if (mode == ROLLBACK_ON_ERROR) {
                         throw cdr.getRejectReasonException();
                     }
 
-                    fail++;
-                    cdrService.createOrUpdateCdr(cdr);
-                    cdrListResult.getErrors().add(new CdrError(cdr.getRejectReasonException().getClass().getSimpleName(), cdr.getRejectReason(), cdr.getLine()));
-
+                    
                     if (mode == STOP_ON_FIRST_FAIL) {
                         break;
                     }

@@ -6488,7 +6488,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="version" valueNumeric="1"/>
 			<column name="language_id" value="-2"/>
 			<column name="stop_reason" value="Entreprise dépose le bilan"/>
-			<column name="description" value="L’entreprise a débuter une procédure de dépôt de bilan. Renvoi au dept comptable"/>
+			<column name="description" value="L’entreprise a débuté une procédure de dépôt de bilan. Renvoi au dept comptable"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_stop_reasons">
