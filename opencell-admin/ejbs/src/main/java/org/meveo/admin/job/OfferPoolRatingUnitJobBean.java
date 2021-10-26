@@ -115,6 +115,8 @@ public class OfferPoolRatingUnitJobBean {
                 }
                 offerAgenciesCountersMap.put(agencyCounterKey, 0D);
             } else {
+                walletOperation.setParameter2("DEDUCTED_FROM_POOL");
+                walletOperationService.update(walletOperation);
                 offerAgenciesCountersMap.put(agencyCounterKey, newAgencyCounter.doubleValue());
             }
 
