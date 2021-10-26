@@ -763,8 +763,33 @@ public interface SubscriptionRs extends IBaseRs {
 				)}
 	)
     ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
-    
-    /**
+
+	/**
+	 * Activate the patched version of a given Subscription.
+	 *
+	 * @param subscriptionCode subscription code
+	 * @param updateEffectiveDate should update effective date or not
+	 * @param newEffectiveDate new effective date
+	 * @return Request processing status
+	 */
+	@POST
+	@Path("/activatePatchedSubscription")
+	@Operation(
+			summary=" Activate the patched version of a given Subscription. ",
+			description=" Activate the patched version of a given Subscription. ",
+			operationId="    POST_Patched_Subscription_activate",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus activatePatchedSubscription(String subscriptionCode, @QueryParam("updateEffectiveDate") Boolean updateEffectiveDate, @QueryParam("newEffectiveDate") @RestDateParam Date newEffectiveDate);
+
+	/**
      * Activate a given Subscription.
      * 
      * @param putData containing subscription code
