@@ -90,7 +90,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 			}
 		}
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
-
+        final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
+		if(validity!=null) {
+        	Date from = validity.getFrom();
+        	Date to = validity.getTo();
+			if(from!=null && to!=null && to.before(from)) {
+        		throw new ValidationException("incorrect validity period (from:"+from+" to: "+to+")");
+        	}
+        }
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
 
         if (pricePlanMatrixVersion == null) {
@@ -98,7 +105,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
         } else {
         	if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
-        		final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
 				if(validity==null || validity.getTo()==null) {
         			throw new ValidationException("ending date must not be null to update a published pricePlanMatrixVersion ");
         		} else if(validity.getTo().after(new Date())) {
