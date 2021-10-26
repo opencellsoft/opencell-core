@@ -10,7 +10,7 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
-import org.meveo.service.payments.impl.InvoiceDunningStatusesService;
+import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 
 public class DunningPolicyLevelApiService implements ApiService<DunningPolicyLevel> {
 
@@ -21,7 +21,7 @@ public class DunningPolicyLevelApiService implements ApiService<DunningPolicyLev
     private DunningLevelService dunningLevelService;
 
     @Inject
-    private InvoiceDunningStatusesService invoiceDunningStatusesService;
+    private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Override
     public List<DunningPolicyLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {

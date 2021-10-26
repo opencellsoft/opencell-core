@@ -10,14 +10,14 @@ import javax.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.dunning.CollectionPlanStatus;
-import org.meveo.service.payments.impl.CollectionPlanStatusService;
+import org.meveo.model.dunning.DunningCollectionPlanStatuses;
+import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
-public class CollectionPlanStatusApiService implements ApiService<CollectionPlanStatus> {
+public class CollectionPlanStatusApiService implements ApiService<DunningCollectionPlanStatuses> {
 	
 	@Inject
-	private CollectionPlanStatusService collectionPlanStatusService;
+	private DunningCollectionPlanStatusService dunningCollectionPlanStatusService;
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 
@@ -26,7 +26,7 @@ public class CollectionPlanStatusApiService implements ApiService<CollectionPlan
 	private static final String NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING = "No Collection Plan Status found for code : %s, and status : %s";
 	
 	@Override
-	public List<CollectionPlanStatus> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+	public List<DunningCollectionPlanStatuses> list(Long offset, Long limit, String sort, String orderBy, String filter) {
 		return Collections.emptyList();
 	}
 	
@@ -35,66 +35,66 @@ public class CollectionPlanStatusApiService implements ApiService<CollectionPlan
 		return null;
 	}
 	@Override
-	public Optional<CollectionPlanStatus> findById(Long id) {
-		return Optional.ofNullable(collectionPlanStatusService.findById(id));
+	public Optional<DunningCollectionPlanStatuses> findById(Long id) {
+		return Optional.ofNullable(dunningCollectionPlanStatusService.findById(id));
 	}
 	@Override
-	public CollectionPlanStatus create(CollectionPlanStatus collectionPlan) {
+	public DunningCollectionPlanStatuses create(DunningCollectionPlanStatuses collectionPlan) {
 		if(collectionPlan.getDunningSettings() != null && collectionPlan.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(collectionPlan.getDunningSettings().getId());
 			if(dunningSettings == null)
 				throw new BadRequestException(String.format(NO_DUNNING_FOUND , "id", + collectionPlan.getDunningSettings().getId())); 
-			var collectionPlanExist = collectionPlanStatusService.findByDunningCodeAndStatus(dunningSettings.getCode(), collectionPlan.getStatus());
+			var collectionPlanExist = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettings.getCode(), collectionPlan.getStatus());
 			if(collectionPlanExist != null) {
 				throw new BadRequestException("Collection plan already exist with id : " + dunningSettings.getId() + " and status : " + collectionPlan.getStatus()); 
 			}
 			collectionPlan.setDunningSettings(dunningSettings);
 		}
-		collectionPlanStatusService.create(collectionPlan);
+		dunningCollectionPlanStatusService.create(collectionPlan);
 		return collectionPlan;
 	}
 	@Override
-	public Optional<CollectionPlanStatus> update(Long id, CollectionPlanStatus baseEntity) {
+	public Optional<DunningCollectionPlanStatuses> update(Long id, DunningCollectionPlanStatuses baseEntity) {
 		throw new BadRequestException("Please use method that take dunning code and status to update the collection plan");
 	}
 	
 	@Transactional
-	public CollectionPlanStatus update(String dunningSettingCode, String status, CollectionPlanStatus baseEntity) {
-		var collectionPlan = collectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
+	public DunningCollectionPlanStatuses update(String dunningSettingCode, String status, DunningCollectionPlanStatuses baseEntity) {
+		var collectionPlan = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
 		if(collectionPlan == null)
 			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status)); 
-		if(!Strings.isEmpty(baseEntity.getContext()))
+		if(baseEntity.getContext() != null)
 			collectionPlan.setContext(baseEntity.getContext());
-		if(baseEntity.getLanguage() != null && !baseEntity.getLanguage().isEmpty()) {
-			collectionPlan.getLanguage().clear();
-			collectionPlan.getLanguage().putAll(baseEntity.getLanguage());
+		if(baseEntity.getLanguage() != null ) {
+			collectionPlan.setLanguage(baseEntity.getLanguage());
+
 		}
 		if(!Strings.isEmpty(baseEntity.getStatus()))
 			collectionPlan.setStatus(baseEntity.getStatus());
-		return collectionPlanStatusService.update(collectionPlan);
+		return dunningCollectionPlanStatusService.update(collectionPlan);
 	}
 	@Override
-	public Optional<CollectionPlanStatus> patch(Long id, CollectionPlanStatus baseEntity) {
+	public Optional<DunningCollectionPlanStatuses> patch(Long id, DunningCollectionPlanStatuses baseEntity) {
 		return Optional.empty();
 	}
 	@Override
-	public Optional<CollectionPlanStatus> delete(Long id) {
-		var collectionPlan = collectionPlanStatusService.findById(id);
+	public Optional<DunningCollectionPlanStatuses> delete(Long id) {
+		var collectionPlan = dunningCollectionPlanStatusService.findById(id);
 		if(collectionPlan == null)
 			throw new BadRequestException(NO_COLLECTION_PLAN_STATUS_FOUND + id); 
-		collectionPlanStatusService.remove(collectionPlan);
+		dunningCollectionPlanStatusService.remove(collectionPlan);
 		return Optional.of(collectionPlan);
 	}
 	
-	public CollectionPlanStatus delete(String dunningSettingCode, String status) {
-		var collectionPlan = collectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
+	public DunningCollectionPlanStatuses delete(String dunningSettingCode, String status) {
+		var collectionPlan = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
 		if(collectionPlan == null)
 			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status)); 
-		collectionPlanStatusService.remove(collectionPlan);
+		dunningCollectionPlanStatusService.remove(collectionPlan);
 		return collectionPlan;
 	}
 	@Override
-	public Optional<CollectionPlanStatus> findByCode(String code) {
+	public Optional<DunningCollectionPlanStatuses> findByCode(String code) {
 		return Optional.empty();
 	}
 	
