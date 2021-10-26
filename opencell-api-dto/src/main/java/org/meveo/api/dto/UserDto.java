@@ -36,6 +36,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -122,6 +124,10 @@ public class UserDto extends AuditableEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+
+    /** Is required roles. */
+    @Schema(description = "Is required roles")
+    private boolean isRequiredRoles = true;
 
     /**
      * Instantiates a new user dto.
@@ -420,8 +426,16 @@ public class UserDto extends AuditableEntityDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+    
+    public boolean isRequiredRoles() {
+		return isRequiredRoles;
+	}
 
-    @Override
+	public void setRequiredRoles(boolean isRequiredRoles) {
+		this.isRequiredRoles = isRequiredRoles;
+	}
+
+	@Override
     public String toString() {
         return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel="
                 + userLevel + ", securedEntities=" + securedEntities + " ]";
