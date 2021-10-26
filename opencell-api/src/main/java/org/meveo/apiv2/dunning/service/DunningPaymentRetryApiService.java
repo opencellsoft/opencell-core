@@ -1,6 +1,8 @@
 package org.meveo.apiv2.dunning.service;
 
 import org.assertj.core.util.Lists;
+import org.hibernate.exception.ConstraintViolationException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPaymentRetry;
 import org.meveo.service.payments.impl.DunningPaymentRetriesService;
@@ -19,6 +21,8 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 	private DunningSettingsService dunningSettingsService;
 	@Inject
 	private DunningPaymentRetriesService dunningPaymentRetriesService;
+	@Inject
+	protected ResourceBundle resourceMessages;
 
 	private static final String NO_DUNNING_STOP_REASON_FOUND = "No Dunning payment retry found for id : ";
 	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
@@ -48,12 +52,25 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 			}
 			dunningPaymentRetry.setDunningSettings(dunningSettings);
 		}
+		DunningPaymentRetry dunningPaymentRetryAlreadyExist = dunningPaymentRetriesService.findByPaymentMethodAndPsp(dunningPaymentRetry);
+		if (dunningPaymentRetryAlreadyExist != null) {
+			throw new BadRequestException(
+					resourceMessages.getString("error.dunningPaymentRetries.duplication", dunningPaymentRetry.getPaymentMethod(), dunningPaymentRetry.getPsp()));
+
+		}
 		dunningPaymentRetriesService.create(dunningPaymentRetry);
 		return dunningPaymentRetry;
 	}
 
 	@Override
 	public Optional<DunningPaymentRetry> update(Long id, DunningPaymentRetry dunningPaymentRetry) {
+		if (dunningPaymentRetry.getDunningSettings() != null && dunningPaymentRetry.getDunningSettings().getId() != null) {
+			var dunningSettings = dunningSettingsService.findById(dunningPaymentRetry.getDunningSettings().getId());
+			if (dunningSettings == null) {
+				throw new BadRequestException(NO_DUNNING_SETTING_FOUND + dunningPaymentRetry.getDunningSettings().getId());
+			}
+			dunningPaymentRetry.setDunningSettings(dunningSettings);
+		}
 		var dunningPaymentRetryUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
 		if (dunningPaymentRetry.getPaymentMethod() != null) {
 			dunningPaymentRetryUpdate.setPaymentMethod(dunningPaymentRetry.getPaymentMethod());
@@ -70,7 +87,12 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 		if (dunningPaymentRetry.getPayRetryFrequency() != null) {
 			dunningPaymentRetryUpdate.setPayRetryFrequency(dunningPaymentRetry.getPayRetryFrequency());
 		}
+		DunningPaymentRetry dunningPaymentRetryAlreadyExist = dunningPaymentRetriesService.findByPaymentMethodAndPsp(dunningPaymentRetry);
+		if (dunningPaymentRetryAlreadyExist != null && !dunningPaymentRetryAlreadyExist.getId().equals(dunningPaymentRetryUpdate.getId())) {
+			throw new BadRequestException(
+					resourceMessages.getString("error.dunningPaymentRetries.duplication", dunningPaymentRetry.getPaymentMethod(), dunningPaymentRetry.getPsp()));
 
+		}
 		dunningPaymentRetriesService.update(dunningPaymentRetryUpdate);
 		return Optional.of(dunningPaymentRetryUpdate);
 	}

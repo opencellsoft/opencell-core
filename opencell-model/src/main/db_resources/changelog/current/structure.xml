@@ -9988,6 +9988,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <addUniqueConstraint  columnNames="pause_reason, dunning_settings_id, language_id" tableName="dunning_pause_reasons"/>
         <addUniqueConstraint  columnNames="stop_reason, dunning_settings_id, language_id" tableName="dunning_stop_reasons"/>
+        <addUniqueConstraint columnNames="payment_method, psp" tableName="dunning_payment_retries"/>
         <addForeignKeyConstraint baseTableName="dunning_pause_reasons"
                                  baseColumnNames="language_id"
                                  constraintName="fk_dunning_pause_reasons_trading_language"

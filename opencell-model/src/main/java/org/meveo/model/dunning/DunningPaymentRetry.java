@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -26,7 +28,9 @@ import org.meveo.model.payments.PaymentMethodEnum;
 @Entity
 @Table(name = "dunning_payment_retries")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "dunning_payment_retries_seq")})
+		@Parameter(name = "sequence_name", value = "dunning_payment_retries_seq") })
+@NamedQueries({ @NamedQuery(name = "DunningPaymentRetry.findByPaymentMethodAndPsp", query = "FROM DunningPaymentRetry d where d.paymentMethod = :paymentMethod and d.psp = :psp") })
+
 public class DunningPaymentRetry extends AuditableEntity  {
 	
 	private static final long serialVersionUID = 1L;
@@ -58,7 +62,6 @@ public class DunningPaymentRetry extends AuditableEntity  {
 	 * Payment method
 	 */
 	@Column(name = "payment_method", length = 100)
-	@Size(max = 100)
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private PaymentMethodEnum paymentMethod;
@@ -84,7 +87,6 @@ public class DunningPaymentRetry extends AuditableEntity  {
 	 * payment retry frequency unit
 	 */
 	@Column(name = "pay_retry_frequency_unit",length = 255)
-	@Size(max = 255)
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private PayRetryFrequencyUnitEnum payRetryFrequencyUnit;

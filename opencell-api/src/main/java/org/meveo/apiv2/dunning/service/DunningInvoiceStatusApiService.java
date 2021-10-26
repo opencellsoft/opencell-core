@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.service;
 import org.assertj.core.util.Lists;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningInvoiceStatus;
+import org.meveo.model.dunning.DunningInvoiceStatusContextEnum;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 import org.meveo.service.payments.impl.DunningSettingsService;
@@ -70,12 +71,16 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	}
 
 	private boolean isValidDunningInvoiceStatus(DunningInvoiceStatus dunningInvoiceStatus, String action) {
-		List<DunningInvoiceStatus> DunningInvoiceStatusList = dunningInvoiceStatusService.findByStatusAndLanguage(dunningInvoiceStatus);
-		if ("create".equals(action)) {
-			return DunningInvoiceStatusList.isEmpty();
-		} else {
-			return DunningInvoiceStatusList.size() <= 1;
+		if (dunningInvoiceStatus.getContext().equals(DunningInvoiceStatusContextEnum.PAUSED_DUNNING) || dunningInvoiceStatus.getContext()
+				.equals(DunningInvoiceStatusContextEnum.STOPPED_DUNNING) || dunningInvoiceStatus.getContext().equals(DunningInvoiceStatusContextEnum.EXCLUDED_FROM_DUNNING)) {
+			List<DunningInvoiceStatus> dunningInvoiceStatusList = dunningInvoiceStatusService.findByStatusAndLanguage(dunningInvoiceStatus);
+			if ("create".equals(action)) {
+				return dunningInvoiceStatusList.isEmpty();
+			} else {
+				return dunningInvoiceStatusList.size() <= 1;
+			}
 		}
+		return true;
 	}
 
 	@Override
