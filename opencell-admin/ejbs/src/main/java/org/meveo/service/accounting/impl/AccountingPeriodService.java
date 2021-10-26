@@ -32,23 +32,26 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
 	}
 
-	public AccountingPeriod update(AccountingPeriod entity, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
-		return updateAccountingPeriod(entity, endDateInput, isUseSubAccountingPeriods, subAccountingPeriodType);
+	public AccountingPeriod update(AccountingPeriod entity, Date startDateInput, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
+		return updateAccountingPeriod(entity, startDateInput, endDateInput, isUseSubAccountingPeriods, subAccountingPeriodType);
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
 
 		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType());
 		if(entity.getAccountingPeriodYear()==null) {
-			entity.setAccountingPeriodYear(getAccountingPeriodYear(null, entity.getEndDate()));
+			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);
 		return entity;
 	}
 
-	public AccountingPeriod updateAccountingPeriod(AccountingPeriod entity, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
-		if (endDateInput !=null && entity.getEndDate().compareTo(endDateInput) != 0) {
+	public AccountingPeriod updateAccountingPeriod(AccountingPeriod entity, Date startDateInput, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
+	    if (startDateInput !=null && entity.getStartDate().compareTo(startDateInput) != 0) {
+            throw new ValidationException("Once the start date is set, it CANNOT be modified");
+        }
+	    if (endDateInput !=null && entity.getEndDate().compareTo(endDateInput) != 0) {
 			throw new ValidationException("Once the end date is set, it CANNOT be modified");
 		}
 		if (entity.isUseSubAccountingCycles() && !Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
@@ -115,7 +118,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		final Date endDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
 		nextAP.setEndDate(endDate);
 		
-		final Date startDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusNanos(1).toInstant());
+		final Date startDate = Date.from(openAccountingPeriod.getStartDate().toInstant().atZone(ZoneId.systemDefault()).plusNanos(1).toInstant());
 		
 		nextAP.setAccountingPeriodYear(getAccountingPeriodYear(startDate,endDate));
 		nextAP.setUseSubAccountingCycles(openAccountingPeriod.isUseSubAccountingCycles());
