@@ -2355,7 +2355,14 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        subscriptionService.activateInstantiatedService(subscription);
+            currentSubscription.setToValidity(newEffectiveDate);
+            patchedSubscription.setFromValidity(newEffectiveDate);
+
+            subscriptionService.updateNoCheck(currentSubscription);
+            subscriptionService.updateNoCheck(patchedSubscription);
+        }
+
+        subscriptionService.activateInstantiatedService(patchedSubscription);
     }
 
     public void cancelSubscriptionRenewal(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
