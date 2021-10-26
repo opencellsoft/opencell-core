@@ -18,12 +18,13 @@ import org.meveo.apiv2.dunning.ImmutableDunningPolicyLevel;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.model.dunning.CollectionPlanStatus;
+import org.meveo.model.dunning.DunningInvoiceStatusContextEnum;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.InvoiceDunningStatuses;
+import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.service.payments.impl.CollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningLevelService;
-import org.meveo.service.payments.impl.InvoiceDunningStatusesService;
+import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -43,7 +44,7 @@ public class DunningPolicyResourceImplTest {
     private DunningLevelService dunningLevelService;
 
     @Mock
-    private InvoiceDunningStatusesService invoiceDunningStatusesService;
+    private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Mock
     private CollectionPlanStatusService collectionPlanStatusService;
@@ -70,14 +71,14 @@ public class DunningPolicyResourceImplTest {
         collectionPlanStatus.setContext("Failed Dunning");
         collectionPlanStatus.setStatus("Failed Dunning");
 
-        InvoiceDunningStatuses invoiceDunningStatuses = new InvoiceDunningStatuses();
+        DunningInvoiceStatus invoiceDunningStatuses = new DunningInvoiceStatus();
         invoiceDunningStatuses.setId(1L);
-        invoiceDunningStatuses.setContext("Failed Dunning");
+        invoiceDunningStatuses.setContext(DunningInvoiceStatusContextEnum.ACTIVE_DUNNING);
         invoiceDunningStatuses.setStatus("Failed Dunning");
 
         //when(dunningPolicyApiService.findByName(Mockito.anyString())).thenReturn(of(dunningPolicy));
         when(dunningLevelService.refreshOrRetrieve(any(DunningLevel.class))).thenReturn(dunningLevel);
-        when(invoiceDunningStatusesService.refreshOrRetrieve(any(InvoiceDunningStatuses.class))).thenReturn(invoiceDunningStatuses);
+        when(invoiceDunningStatusesService.refreshOrRetrieve(any(DunningInvoiceStatus.class))).thenReturn(invoiceDunningStatuses);
         when(collectionPlanStatusService.refreshOrRetrieve(any(CollectionPlanStatus.class))).thenReturn(collectionPlanStatus);
         when(dunningPolicyApiService.updateTotalLevels(any())).thenReturn(of(dunningPolicy));
         when(dunningPolicyApiService.create(any())).thenReturn(dunningPolicy);

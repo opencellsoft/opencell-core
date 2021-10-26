@@ -1119,6 +1119,13 @@
 
             <column name="currency_id" valueNumeric="5" />
         </insert>
+    </changeSet>
+    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM billing_trading_language WHERE id=-1;
+            </sqlCheck>
+        </preConditions>
         <insert tableName="billing_trading_language">
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />

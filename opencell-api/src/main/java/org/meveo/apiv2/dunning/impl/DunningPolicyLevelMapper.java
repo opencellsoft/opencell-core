@@ -3,8 +3,9 @@ package org.meveo.apiv2.dunning.impl;
 import org.meveo.apiv2.dunning.DunningPolicyLevel;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.dunning.CollectionPlanStatus;
+import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.model.dunning.DunningLevel;
-import org.meveo.model.dunning.InvoiceDunningStatuses;
+
 
 public class DunningPolicyLevelMapper extends ResourceMapper<DunningPolicyLevel, org.meveo.model.dunning.DunningPolicyLevel> {
 
@@ -19,7 +20,7 @@ public class DunningPolicyLevelMapper extends ResourceMapper<DunningPolicyLevel,
         entity.setSequence(resource.getSequence());
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(resource.getDunningLevelId());
-        InvoiceDunningStatuses invoiceDunningStatuses = new InvoiceDunningStatuses();
+        DunningInvoiceStatus invoiceDunningStatuses = new DunningInvoiceStatus();
         invoiceDunningStatuses.setId(resource.getInvoiceDunningStatusesId());
         CollectionPlanStatus collectionPlanStatus = new CollectionPlanStatus();
         collectionPlanStatus.setId(resource.getCollectionPlanStatusId());

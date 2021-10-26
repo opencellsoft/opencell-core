@@ -11,7 +11,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 /**
  * @author Mbarek-Ay
@@ -130,16 +129,16 @@ public class DunningSettings extends BusinessEntity {
     private List<DunningCollectionPlanStatuses> dunningCollectionPlanStatuses = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DunningPauseReasons> dunningPauseReasons = new ArrayList<>();
+    private List<DunningPauseReason> dunningPauseReasons = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DunningPaymentRetries> dunningPaymentRetries = new ArrayList<>();
+    private List<DunningPaymentRetry> dunningPaymentRetries = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DunningStopReasons> dunningStopReasons = new ArrayList<>();
+    private List<DunningStopReason> dunningStopReasons = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceDunningStatuses> invoiceDunningStatuses = new ArrayList<>();
+    private List<DunningInvoiceStatus> dunningStatuses = new ArrayList<>();
 
 
     public DunningModeEnum getDunningMode() {
@@ -223,42 +222,42 @@ public class DunningSettings extends BusinessEntity {
     }
 
     public List<DunningCollectionPlanStatuses> getDunningCollectionPlanStatuses() {
-		return dunningCollectionPlanStatuses;
-	}
-
-	public void setDunningCollectionPlanStatuses(List<DunningCollectionPlanStatuses> dunningCollectionPlanStatuses) {
-		this.dunningCollectionPlanStatuses = dunningCollectionPlanStatuses;
-	}
-
-	public List<DunningPauseReasons> getDunningPauseReasons() {
-		return dunningPauseReasons;
-	}
-
-	public void setDunningPauseReasons(List<DunningPauseReasons> dunningPauseReasons) {
-		this.dunningPauseReasons = dunningPauseReasons;
-	}
-
-	public List<DunningPaymentRetries> getDunningPaymentRetries() {
-		return dunningPaymentRetries;
-	}
-
-	public void setDunningPaymentRetries(List<DunningPaymentRetries> dunningPaymentRetries) {
-		this.dunningPaymentRetries = dunningPaymentRetries;
-	}
-
-	public List<DunningStopReasons> getDunningStopReasons() {
-		return dunningStopReasons;
-	}
-
-	public void setDunningStopReasons(List<DunningStopReasons> dunningStopReasons) {
-		this.dunningStopReasons = dunningStopReasons;
-	}
-
-    public List<InvoiceDunningStatuses> getInvoiceDunningStatuses() {
-        return invoiceDunningStatuses;
+        return dunningCollectionPlanStatuses;
     }
 
-    public void setInvoiceDunningStatuses(List<InvoiceDunningStatuses> invoiceDunningStatuses) {
-        this.invoiceDunningStatuses = invoiceDunningStatuses;
+    public void setDunningCollectionPlanStatuses(List<DunningCollectionPlanStatuses> dunningCollectionPlanStatuses) {
+        this.dunningCollectionPlanStatuses = dunningCollectionPlanStatuses;
+    }
+
+    public List<DunningPauseReason> getDunningPauseReasons() {
+        return dunningPauseReasons;
+    }
+
+    public void setDunningPauseReasons(List<DunningPauseReason> dunningPauseReasons) {
+        this.dunningPauseReasons = dunningPauseReasons;
+    }
+
+    public List<DunningPaymentRetry> getDunningPaymentRetries() {
+        return dunningPaymentRetries;
+    }
+
+    public void setDunningPaymentRetries(List<DunningPaymentRetry> dunningPaymentRetries) {
+        this.dunningPaymentRetries = dunningPaymentRetries;
+    }
+
+    public List<DunningStopReason> getDunningStopReasons() {
+        return dunningStopReasons;
+    }
+
+    public void setDunningStopReasons(List<DunningStopReason> dunningStopReasons) {
+        this.dunningStopReasons = dunningStopReasons;
+    }
+
+    public List<DunningInvoiceStatus> getDunningStatuses() {
+        return dunningStatuses;
+    }
+
+    public void setDunningStatuses(List<DunningInvoiceStatus> dunningStatuses) {
+        this.dunningStatuses = dunningStatuses;
     }
 }

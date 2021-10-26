@@ -5,14 +5,19 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Mbarek-Ay
@@ -22,45 +27,41 @@ import org.meveo.model.AuditableEntity;
 @Entity
 @Table(name = "dunning_pause_reasons")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "dunning_pause_reasons_seq")})
-public class DunningPauseReasons extends AuditableEntity  {
-	
+		@Parameter(name = "sequence_name", value = "dunning_pause_reasons_seq") })
+@NamedQueries({
+		@NamedQuery(name = "DunningPauseReasons.findByCodeAndDunningSettingCode", query = "FROM DunningPauseReason d where d.pauseReason = :pauseReason and d.dunningSettings.code = :dunningSettingsCode") })
+
+public class DunningPauseReason extends AuditableEntity {
+
 	private static final long serialVersionUID = 1L;
-	
-	
-	
-	
-	
-	public DunningPauseReasons() {
+
+	public DunningPauseReason() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
- 
 
-
-	public DunningPauseReasons(@Size(max = 50) String language, @Size(max = 1000) String pauseReason,
-			@Size(max = 255) String description) {
+	public DunningPauseReason(@Size(max = 50) TradingLanguage language, @Size(max = 1000) String pauseReason, @Size(max = 255) String description) {
 		super();
 		this.language = language;
 		this.pauseReason = pauseReason;
 		this.description = description;
 	}
 
-
-
 	/**
-	 * language code
+	 *language
 	 */
-	@Column(name = "language", length = 50)
-	@Size(max = 50)
-	private String language;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
+	@NotNull
+	private TradingLanguage language;
 	
 	
 	/**
 	 * pause reason 
 	 */
-	@Column(name = "pause_reason", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "pause_reason", nullable = false)
+	@Size(max = 255, min = 1)
+	@NotNull
 	private String pauseReason;
 	
 	
@@ -84,13 +85,13 @@ public class DunningPauseReasons extends AuditableEntity  {
 
 
 
-	public String getLanguage() {
+	public TradingLanguage getLanguage() {
 		return language;
 	}
 
 
 
-	public void setLanguage(String language) {
+	public void setLanguage(TradingLanguage language) {
 		this.language = language;
 	}
 
@@ -118,12 +119,11 @@ public class DunningPauseReasons extends AuditableEntity  {
 		this.description = description;
 	}
 
+	public DunningSettings getDunningSettings() {
+		return dunningSettings;
+	}
 
-
-	 
-	 
-	
-	
-	
-	
+	public void setDunningSettings(DunningSettings dunningSettings) {
+		this.dunningSettings = dunningSettings;
+	}
 }

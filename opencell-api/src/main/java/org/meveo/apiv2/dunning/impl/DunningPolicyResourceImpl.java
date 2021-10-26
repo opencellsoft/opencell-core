@@ -12,10 +12,10 @@ import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.model.dunning.CollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicyLevel;
-import org.meveo.model.dunning.InvoiceDunningStatuses;
+import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.service.payments.impl.CollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningLevelService;
-import org.meveo.service.payments.impl.InvoiceDunningStatusesService;
+import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
@@ -26,7 +26,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     private DunningLevelService dunningLevelService;
 
     @Inject
-    private InvoiceDunningStatusesService invoiceDunningStatusesService;
+    private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Inject
     private CollectionPlanStatusService collectionPlanStatusService;
@@ -63,10 +63,8 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             int highestSequence = (dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty())
                     ? dunningPolicy.getDunningLevels().get(0).getSequence() : 0;
             DunningLevel dunningLevel = dunningLevelService.refreshOrRetrieve(dunningPolicyLevelEntity.getDunningLevel());
-            InvoiceDunningStatuses invoiceDunningStatuses =
-                    invoiceDunningStatusesService.refreshOrRetrieve(dunningPolicyLevelEntity.getInvoiceDunningStatuses());
-            CollectionPlanStatus collectionPlanStatus =
-                    collectionPlanStatusService.refreshOrRetrieve(dunningPolicyLevelEntity.getCollectionPlanStatus());
+            DunningInvoiceStatus invoiceDunningStatuses = invoiceDunningStatusesService.refreshOrRetrieve(dunningPolicyLevelEntity.getInvoiceDunningStatuses());
+            CollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.refreshOrRetrieve(dunningPolicyLevelEntity.getCollectionPlanStatus());
             if(dunningLevel == null) {
                 throw new BadRequestException("Policy level creation fails dunning level does not exists");
             }

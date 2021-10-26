@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-	
+
     <changeSet author="AndriusKarpavicius"  id="rebuild_pg_operators" dbms="postgresql" failOnError="false">
     	<sql>CREATE OPERATOR ^|(
 			  PROCEDURE = jsonb_exists_any,
@@ -20,18 +20,18 @@
 			   FUNCTION 6  gin_triconsistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal);
 			   </sql>
     </changeSet>
-    
-    <changeSet author="AndriusKarpavicius"  id="rebuild_oracle_functions" dbms="oracle">    
+
+    <changeSet author="AndriusKarpavicius"  id="rebuild_oracle_functions" dbms="oracle">
         <createProcedure>
-           CREATE OR REPLACE FUNCTION now RETURN TIMESTAMP 
-           IS           
-           BEGIN   
+           CREATE OR REPLACE FUNCTION now RETURN TIMESTAMP
+           IS
+           BEGIN
            RETURN (sysdate);
            END;
-    
+
         </createProcedure>
     </changeSet>
-    
+
     <!-- Postgres has support for universally unique identifiers (UUIDs) as a column data type via uuid.
     If you have a UUID column, you may need to generate a UUID. This requires the uuid-ossp module. -->
     <changeSet author="MohamedSTITANE"  id="rebuild_pg_extension" dbms="postgresql" failOnError="false">
@@ -2057,7 +2057,7 @@
             <column name="check_threshold" type="varchar(25)"/>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
-                        
+
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -2102,7 +2102,7 @@
             <column name="minimum_label_el" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />     
+            <column name="legal_entity_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-150">
@@ -2433,7 +2433,7 @@
             </column>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
-                        
+
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -2478,7 +2478,7 @@
             <column name="minimum_label_el" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />     
+            <column name="legal_entity_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -3153,7 +3153,7 @@
     	</modifySql>
     	<modifySql dbms="oracle">
         	<append value=" PARTITION BY LIST ( status ) ( PARTITION billing_rated_transaction_open VALUES ( 'OPEN' ), PARTITION billing_rated_transaction_other VALUES ( DEFAULT )) ENABLE ROW MOVEMENT"/>
-    	</modifySql>    	
+    	</modifySql>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-185-pk">
         	<addPrimaryKey columnNames="id,status" constraintName="billing_rated_transaction_pkey" tableName="billing_rated_transaction" />
@@ -3536,7 +3536,7 @@
             <column name="termin_reason_id" type="bigint" />
             <column name="wallet_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
-            
+
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -3581,7 +3581,7 @@
             <column name="minimum_label_el" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />     
+            <column name="legal_entity_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-201">
@@ -4502,7 +4502,7 @@
             <column name="website_url" type="varchar(255)" />
             <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="address_book_id" type="bigint" />
-            
+
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -4540,7 +4540,7 @@
             <column name="vat_no" type="varchar(100)" />
             <column name="registration_no" type="varchar(100)" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />     
+            <column name="legal_entity_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -4841,7 +4841,7 @@
             <column name="check_threshold" type="varchar(25)"/>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
-            
+
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -4886,7 +4886,7 @@
             <column name="minimum_label_el" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />            
+            <column name="legal_entity_type_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -5113,7 +5113,7 @@
             <column name="legal_text" type="${type.text}" />
             <column name="legal_type" type="varchar(255)" />
             <column name="general_ledger_id" type="bigint" />
-            
+
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -5157,8 +5157,8 @@
             <column name="minimum_label_el" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="legal_entity_type_id" type="bigint" />          
-            <column name="minimum_article_id" type="bigint" />  
+            <column name="legal_entity_type_id" type="bigint" />
+            <column name="minimum_article_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -10566,7 +10566,7 @@
 
         <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
     </changeSet>
-    
+
      <changeSet id="rebuild-str-tbl-500" author="AndriusKarpavicius" dbms="oracle">
         <sql>alter table CRM_SELLER modify cf_values check (cf_values is json)</sql>
         <sql>alter table CRM_CUSTOMER modify cf_values check (cf_values is json)</sql>
@@ -10641,7 +10641,7 @@
         <sql>alter table ORD_ORDER_ITEM modify cf_values check (cf_values is json)</sql>
         <sql>alter table ORD_QUOTE modify cf_values check (cf_values is json)</sql>
         <sql>alter table QUOTE_OFFER modify cf_values check (cf_values is json)</sql>
-        <sql>alter table WF_GENERIC_WORKFLOW modify cf_values check (cf_values is json)</sql>         
+        <sql>alter table WF_GENERIC_WORKFLOW modify cf_values check (cf_values is json)</sql>
     </changeSet>
 
     <changeSet id="rebuild-str-tbl-429" author="AndriusKarpavicius">
@@ -10657,13 +10657,13 @@
             <column name="unit_amount_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="amount_with_tax" type="numeric(23, 12)" />
-            <column name="amount_tax" type="numeric(23, 12)" />            
+            <column name="amount_tax" type="numeric(23, 12)" />
             <column name="tax_id" type="bigint" />
             <column name="tax_percent" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
-    
-    <changeSet id="rebuild-str-tbl-430" author="AndriusKarpavicius">  
+
+    <changeSet id="rebuild-str-tbl-430" author="AndriusKarpavicius">
         <createTable tableName="billing_wallet_operation_pending" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wo_pending_pk"/>
@@ -10671,7 +10671,7 @@
             <column name="rated_transaction_id" type="bigint" />
         </createTable>
     </changeSet>
-    
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -14406,12 +14406,12 @@
         <addForeignKeyConstraint constraintName="fk_billing_previous_subscription_id" referencedTableName="billing_subscription"
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
-    
+
       <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
-    
+
     <changeSet id="rebuild-str-fk-540-1639" author="Mbarek-Ay">
      <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
@@ -14478,29 +14478,29 @@
         <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
         <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
         <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
-        
+
         <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
         <sql>CREATE INDEX crm_customer_bam_id_index ON ${db.schema.adapted}crm_customer(bam_id);</sql>
         <sql>CREATE INDEX ar_customer_account_bam_id_index ON ${db.schema.adapted}ar_customer_account(bam_id);</sql>
         <sql>CREATE INDEX billing_billing_account_bam_id_index ON ${db.schema.adapted}billing_billing_account(bam_id);</sql>
         <sql>CREATE INDEX billing_user_account_bam_id_index ON ${db.schema.adapted}billing_user_account(bam_id);</sql>
-        
+
         <sql>CREATE INDEX crm_seller_title_id_index ON ${db.schema.adapted}crm_seller(title_id);</sql>
         <sql>CREATE INDEX crm_customer_title_id_index ON ${db.schema.adapted}crm_customer(title_id);</sql>
         <sql>CREATE INDEX ar_customer_account_title_id_index ON ${db.schema.adapted}ar_customer_account(title_id);</sql>
         <sql>CREATE INDEX billing_billing_account_title_id_index ON ${db.schema.adapted}billing_billing_account(title_id);</sql>
         <sql>CREATE INDEX billing_user_account_title_id_index ON ${db.schema.adapted}billing_user_account(title_id);</sql>
         <sql>CREATE INDEX com_contact_title_id_index ON ${db.schema.adapted}com_contact(title_id);</sql>
-        
+
         <sql>CREATE INDEX crm_seller_primary_contact_index ON ${db.schema.adapted}crm_seller(primary_contact);</sql>
         <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(primary_contact);</sql>
         <sql>CREATE INDEX ar_customer_account_primary_contact_index ON ${db.schema.adapted}ar_customer_account(primary_contact);</sql>
         <sql>CREATE INDEX billing_billing_account_primary_contact_index ON ${db.schema.adapted}billing_billing_account(primary_contact);</sql>
         <sql>CREATE INDEX billing_user_account_primary_contact_index ON ${db.schema.adapted}billing_user_account(primary_contact);</sql>
         <sql>CREATE INDEX com_contact_primary_contact_index ON ${db.schema.adapted}com_contact(primary_contact);</sql>
-        
+
         <sql>CREATE INDEX crm_customer_cust_category_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
-        
+
         <sql>CREATE INDEX ord_quote_version_index ON ${db.schema.adapted}ord_quote(version);</sql>
         <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema.adapted}billing_invoice(version);</sql>
         <sql>CREATE INDEX ord_order_payment_index ON ${db.schema.adapted}ord_order(payment_method_id);</sql>
@@ -14565,14 +14565,14 @@
         <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(lower(code));</sql>
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(lower(code));</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(lower(code));</sql>
-        
+
         <sql>CREATE INDEX seller_upper_code ON ${db.schema.adapted}crm_seller(UPPER(code));</sql>
         <sql>CREATE INDEX customer_upper_code ON ${db.schema.adapted}crm_customer(UPPER(code));</sql>
         <sql>CREATE INDEX ca_upper_code ON ${db.schema.adapted}ar_customer_account(UPPER(code));</sql>
         <sql>CREATE INDEX ba_upper_code ON ${db.schema.adapted}billing_billing_account(UPPER(code));</sql>
         <sql>CREATE INDEX ua_upper_code ON ${db.schema.adapted}billing_user_account(UPPER(code));</sql>
-        <sql>CREATE INDEX com_contact_upper_code ON ${db.schema.adapted}com_contact(UPPER(code));</sql>        
-        
+        <sql>CREATE INDEX com_contact_upper_code ON ${db.schema.adapted}com_contact(UPPER(code));</sql>
+
         <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei((lower(cet_code)),(lower(code)));</sql>
         <sql>CREATE UNIQUE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX adm_file_format_code_index ON ${db.schema.adapted}adm_file_format(lower(code))</sql>
@@ -14646,7 +14646,7 @@
         <sql>CREATE INDEX ca_code ON ${db.schema.adapted}ar_customer_account(code);</sql>
         <sql>CREATE INDEX ba_code ON ${db.schema.adapted}billing_billing_account(code);</sql>
         <sql>CREATE INDEX ua_code ON ${db.schema.adapted}billing_user_account(code);</sql>
-        <sql>CREATE INDEX com_contact_code ON ${db.schema.adapted}com_contact(code);</sql>        
+        <sql>CREATE INDEX com_contact_code ON ${db.schema.adapted}com_contact(code);</sql>
         <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema.adapted}cat_offer_template(code);</sql>
         <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema.adapted}cat_service_template(code);</sql>
         <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema.adapted}cat_charge_template(code);</sql>
@@ -14783,9 +14783,9 @@
                                  referencedColumnNames="id" referencedTableName="report_query"/>
 
     </changeSet>
-    
+
     <changeSet id="#INTRD-682_20210707-rebuild" author="HatimOUDAD">
-    	
+
         <createTable tableName="query_scheduler">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="query_scheduler_pkey" />
@@ -14823,7 +14823,7 @@
             referencedColumnNames="id" referencedTableName="meveo_job_instance" />
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
         	referencedColumnNames="id" referencedTableName="query_scheduler" />
-        
+
         <createTable tableName="query_scheduler_users">
 			<column name="query_scheduler_id" type="bigint">
                 <constraints nullable="false" />
@@ -14837,16 +14837,16 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="query_scheduler_users" constraintName="fk_user_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
         						onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-        						
-        						
+
+
         <createTable tableName="query_scheduler_emails">
             <column name="query_scheduler_id"  type="bigint"/>
             <column name="emails"  type="varchar(100)"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_emails" constraintName="fk_query_scheduler_emails" deferrable="false"
-            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="query_scheduler" />						
-        
-        			
+            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="query_scheduler" />
+
+
         <createTable tableName="query_execution_result">
         <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="query_result_pkey" />
@@ -14878,9 +14878,9 @@
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-634_20210706-rebuild" author="Mbarek-Ay">
-    
+
         <createTable tableName="dunning_settings">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_settings_pkey" />
@@ -14912,7 +14912,7 @@
                                  constraintName="fk_dunning_settings_accounting_article_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_article"/>
-                                 
+
          <createTable tableName="dunning_pause_reasons">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_pause_reasons_pkey" />
@@ -14924,10 +14924,10 @@
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="pause_reason" type="varchar(1000)" />
-            <column name="description" type="varchar(255)" /> 
+            <column name="description" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -14936,7 +14936,7 @@
                                  constraintName="fk_dunning_settings_pause_reasons_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
-                                 
+
          <createTable tableName="dunning_stop_reasons">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_stop_reasons_pkey" />
@@ -14948,10 +14948,10 @@
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="stop_reason" type="varchar(1000)" />
-            <column name="description" type="varchar(255)" /> 
+            <column name="description" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -14959,8 +14959,8 @@
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_stop_reasons"
                                  constraintName="fk_dunning_settings_stop_reasons_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>   
-                                 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
         <createTable tableName="dunning_collection_plan_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_plan_statuses_pkey" />
@@ -14972,10 +14972,10 @@
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="status" type="varchar(50)" />
-            <column name="context" type="varchar(255)" /> 
+            <column name="context" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -14997,10 +14997,10 @@
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="language" type="varchar(50)" />
             <column name="status" type="varchar(50)" />
-            <column name="context" type="varchar(255)" /> 
+            <column name="context" type="varchar(255)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -15008,8 +15008,8 @@
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses"
                                  constraintName="fk_dunning_settings_invoice_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/> 
-                                 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
          <createTable tableName="dunning_collection_management">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_management_pkey" />
@@ -15033,31 +15033,40 @@
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management"
                                  constraintName="fk_dunning_settings_collection_management_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/> 
-                                 
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+
        <createTable tableName="dunning_payment_retries">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey"/>
             </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="version" type="int4"/>
             <column name="created" type="datetime">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
-            <column name="payment_method" type="varchar(100)" />
-            <column name="psp" type="varchar(255)" />
-            <column name="num_pay_retries" type="int4" />
-            <column name="pay_retry_frequency_unit" type="varchar(255)" />
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
+            <column name="payment_method" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="psp" type="varchar(255)"/>
+            <column name="num_pay_retries" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_retry_frequency_unit" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_retry_frequency" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dunning_settings_id" type="bigint">
+                <constraints nullable="false"/>
             </column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries"
                                  constraintName="fk_dunning_settings_payment_retries_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                                                                                                                         
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
         <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
@@ -15093,7 +15102,7 @@
 	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 	                                 referencedColumnNames="id" referencedTableName="cpq_media"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-1291_20210804-rebuild" author="HatimOUDAD">
     	<createSequence sequenceName="accounting_period_seq" startValue="1" />
         <createTable tableName="accounting_period">
@@ -15122,7 +15131,7 @@
         </createTable>
         <addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="varchar(20)"/>
         <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
-        
+
         <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
         <createTable tableName="sub_accounting_period">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -15147,9 +15156,9 @@
         <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="accounting_period" />
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-1313_20210809-rebuild" author="HatimOUDAD">
-    	
+
         <createTable tableName="journal">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="journal_pkey" />
@@ -15163,12 +15172,12 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            
+
         </createTable>
        <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_occ_template" constraintName="fk_journal_template_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="journal" />
         <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_account_operation" constraintName="fk_journal_account_operation_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="journal" /> 
+            referencedColumnNames="id" referencedTableName="journal" />
     </changeSet>
 
     <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
@@ -15191,10 +15200,10 @@
             </column>
             <column name="context" type="varchar(255)" />
     	</createTable>
-    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id" 
-    							 referencedTableName="dunning_settings" 
-    							 baseColumnNames="dunning_settings_id" 
-    							 baseTableName="collection_plan_status" 
+    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id"
+    							 referencedTableName="dunning_settings"
+    							 baseColumnNames="dunning_settings_id"
+    							 baseTableName="collection_plan_status"
     							 referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="collection_plan_status" referencedColumnNames="id" />
@@ -15226,13 +15235,13 @@
             <column name="validation_pattern" type="varchar(2000)" />
             <column name="validation_label" type="varchar(255)" />
     	</createTable>
-    	
+
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-                                 
+
         <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_offer_template_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
-                                 
+
     </changeSet>
     <changeSet id="#INTRD-2364-create_data_model_build" author="AbdelkaderBouazza">
         <createTable tableName="dunning_action_notification_template">
@@ -15372,6 +15381,65 @@
                                  constraintName="fk_dunning_policy_rule_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_policy_rule"/>
+    </changeSet>
+    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+        <modifyDataType columnName="pause_reason" newDataType="varchar(255)" tableName="dunning_pause_reasons"/>
+        <modifyDataType columnName="stop_reason" newDataType="varchar(255)" tableName="dunning_stop_reasons"/>
+        <modifyDataType columnName="status" newDataType="varchar(255)" tableName="invoice_dunning_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="pause_reason" tableName="dunning_pause_reasons"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="stop_reason" tableName="dunning_stop_reasons"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="status" tableName="invoice_dunning_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="context" tableName="invoice_dunning_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="status" tableName="dunning_collection_plan_statuses"/>
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="context" tableName="dunning_collection_plan_statuses"/>
+        <dropColumn columnName="language" tableName="dunning_pause_reasons"/>
+        <dropColumn columnName="language" tableName="dunning_stop_reasons" />
+        <dropColumn columnName="language" tableName="invoice_dunning_statuses" />
+        <dropColumn columnName="language" tableName="dunning_collection_plan_statuses" />
+        <addColumn tableName="dunning_pause_reasons">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="dunning_stop_reasons">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="invoice_dunning_statuses">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="dunning_collection_plan_statuses">
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addUniqueConstraint  columnNames="pause_reason, dunning_settings_id, language_id" tableName="dunning_pause_reasons"/>
+        <addUniqueConstraint  columnNames="stop_reason, dunning_settings_id, language_id" tableName="dunning_stop_reasons"/>
+        <addUniqueConstraint columnNames="payment_method, psp" tableName="dunning_payment_retries"/>
+        <addForeignKeyConstraint baseTableName="dunning_pause_reasons"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_dunning_pause_reasons_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="dunning_stop_reasons"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_dunning_stop_reasons_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="invoice_dunning_statuses"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_invoice_dunning_statuses_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="dunning_collection_plan_statuses"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_dunning_collection_plan_statuses_trading_language"
+                                 referencedTableName="billing_trading_language"
+                                 referencedColumnNames="id"/>
+
     </changeSet>
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
@@ -16288,8 +16356,8 @@
     <changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI"/>
     <changeSet id="#20210415-435" author="Mbarek-Ay"/>
     <changeSet id="#20210416_441" author="TarikFA."/>
-    <changeSet id="#470_20210422" author="Mbarek-Ay"/>    
-    <changeSet id="#446_20210427" author="Mbarek-Ay"/>    
+    <changeSet id="#470_20210422" author="Mbarek-Ay"/>
+    <changeSet id="#446_20210427" author="Mbarek-Ay"/>
 	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid"/>
     <changeSet id="#5937_20210428" author="Mbarek-Ay"/>
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
@@ -16302,7 +16370,7 @@
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
     <changeSet id="#5257_20210519" author="AndriusKarpavicius"/>
     <changeSet id="#533_20210526" author="NabilOuachi"/>
-    <changeSet id="#5869_20210521" author="NabilOuachi"/>    
+    <changeSet id="#5869_20210521" author="NabilOuachi"/>
     <changeSet id="#5595_540582_20210528" author="TarikFA." />
     <changeSet id="#6147_20210530" author="anasseh" />
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
@@ -16380,7 +16448,7 @@
     <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_20211018-reports" author="AndriusKarpavicius"/>
-    
+
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
@@ -16478,15 +16546,15 @@
     <changeSet id="INTRD-2445_20211021" author="ZBariki" />
     <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
     <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza"/>
-    
+
     
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
-    
+
     <changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
 	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
 	</changeSet>
-	
+
 </databaseChangeLog>
