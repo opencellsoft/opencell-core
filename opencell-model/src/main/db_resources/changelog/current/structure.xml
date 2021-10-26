@@ -9962,32 +9962,40 @@ public class OrderAdvancement extends ModuleScript {
         <addNotNullConstraint columnDataType="varchar(255)" columnName="context" tableName="invoice_dunning_statuses"/>
         <addNotNullConstraint columnDataType="varchar(255)" columnName="status" tableName="dunning_collection_plan_statuses"/>
         <addNotNullConstraint columnDataType="varchar(255)" columnName="context" tableName="dunning_collection_plan_statuses"/>
-        <dropColumn columnName="language" tableName="dunning_pause_reasons" />
-        <dropColumn columnName="language" tableName="dunning_stop_reasons" />
-        <dropColumn columnName="language" tableName="invoice_dunning_statuses" />
-        <dropColumn columnName="language" tableName="dunning_collection_plan_statuses" />
+        <dropColumn columnName="language" tableName="dunning_pause_reasons"/>
+        <dropColumn columnName="language" tableName="dunning_stop_reasons"/>
+        <dropColumn columnName="language" tableName="invoice_dunning_statuses"/>
+        <dropColumn columnName="language" tableName="dunning_collection_plan_statuses"/>
         <addColumn tableName="dunning_pause_reasons">
-            <column name="language_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="language_id" type="bigint"/>
         </addColumn>
+        <sql>
+            update ${db.schema.adapted}dunning_pause_reasons set language_id = -1
+        </sql>
+        <addNotNullConstraint columnName="language_id" tableName="dunning_pause_reasons"/>
         <addColumn tableName="dunning_stop_reasons">
-            <column name="language_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="language_id" type="bigint"/>
         </addColumn>
+        <sql>
+            update ${db.schema.adapted}dunning_stop_reasons set language_id = -1
+        </sql>
+        <addNotNullConstraint columnName="language_id" tableName="dunning_stop_reasons"/>
         <addColumn tableName="invoice_dunning_statuses">
-            <column name="language_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="language_id" type="bigint"/>
         </addColumn>
+        <sql>
+            update ${db.schema.adapted}invoice_dunning_statuses set language_id = -1
+        </sql>
+        <addNotNullConstraint columnName="language_id" tableName="invoice_dunning_statuses"/>
         <addColumn tableName="dunning_collection_plan_statuses">
-            <column name="language_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="language_id" type="bigint"/>
         </addColumn>
-        <addUniqueConstraint  columnNames="pause_reason, dunning_settings_id, language_id" tableName="dunning_pause_reasons"/>
-        <addUniqueConstraint  columnNames="stop_reason, dunning_settings_id, language_id" tableName="dunning_stop_reasons"/>
+        <sql>
+            update ${db.schema.adapted}dunning_collection_plan_statuses set language_id = -1
+        </sql>
+        <addNotNullConstraint columnName="language_id" tableName="dunning_collection_plan_statuses"/>
+        <addUniqueConstraint columnNames="pause_reason, dunning_settings_id, language_id" tableName="dunning_pause_reasons"/>
+        <addUniqueConstraint columnNames="stop_reason, dunning_settings_id, language_id" tableName="dunning_stop_reasons"/>
         <addUniqueConstraint columnNames="payment_method, psp" tableName="dunning_payment_retries"/>
         <addForeignKeyConstraint baseTableName="dunning_pause_reasons"
                                  baseColumnNames="language_id"
