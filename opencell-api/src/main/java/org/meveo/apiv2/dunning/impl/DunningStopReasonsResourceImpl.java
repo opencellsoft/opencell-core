@@ -1,8 +1,8 @@
 package org.meveo.apiv2.dunning.impl;
 
 
-import org.meveo.apiv2.dunning.DunningStopReasons;
-import org.meveo.apiv2.dunning.ImmutableDunningStopReasons;
+import org.meveo.apiv2.dunning.DunningStopReason;
+import org.meveo.apiv2.dunning.ImmutableDunningStopReason;
 import org.meveo.apiv2.dunning.resource.DunningStopReasonResource;
 import org.meveo.apiv2.dunning.service.DunningStopReasonApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
@@ -16,31 +16,25 @@ public class DunningStopReasonsResourceImpl implements DunningStopReasonResource
 	@Inject
 	private DunningStopReasonApiService dunningStopReasonApiService;
 	private DunningStopReasonsMapper mapper = new DunningStopReasonsMapper();
-	
+
 	@Override
-	public Response create(org.meveo.apiv2.dunning.DunningStopReasons dunningStopReasons) {
-		var entity = mapper.toEntity(dunningStopReasons);
+	public Response create(DunningStopReason dunningStopReason) {
+		var entity = mapper.toEntity(dunningStopReason);
 		var savedEntity = dunningStopReasonApiService.create(entity);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(DunningStopReasonResource.class, savedEntity.getId()).build())
-				.entity(toResourceOrderWithLink(mapper.toResource(savedEntity)))
-				.build();
+				.entity(toResourceOrderWithLink(mapper.toResource(savedEntity))).build();
 	}
 
-
 	@Override
-	public Response update(org.meveo.apiv2.dunning.DunningStopReasons entityDto, Long id) {
+	public Response update(DunningStopReason entityDto, Long id) {
 		var updatedEntity = dunningStopReasonApiService.update(id, mapper.toEntity(entityDto)).get();
 		return Response.status(Status.ACCEPTED).entity(toResourceOrderWithLink(mapper.toResource(updatedEntity))).build();
 	}
-	
-	private org.meveo.apiv2.dunning.DunningStopReasons toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningStopReasons entityDto) {
-		return ImmutableDunningStopReasons.copyOf(entityDto)
-				.withLinks(
-						new LinkGenerator.SelfLinkGenerator(DunningStopReasonResource.class)
-											.withId(entityDto.getId())
-				                            .withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction()
-				                            .build()
-						);
+
+	private DunningStopReason toResourceOrderWithLink(DunningStopReason entityDto) {
+		return ImmutableDunningStopReason.copyOf(entityDto).withLinks(
+				new LinkGenerator.SelfLinkGenerator(DunningStopReasonResource.class).withId(entityDto.getId()).withGetAction().withPostAction().withPutAction().withPatchAction()
+						.withDeleteAction().build());
 	}
 
 	@Override

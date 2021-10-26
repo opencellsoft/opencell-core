@@ -2,7 +2,7 @@ package org.meveo.apiv2.dunning.service;
 
 import org.assertj.core.util.Lists;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.dunning.DunningStopReasons;
+import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.meveo.service.payments.impl.DunningStopReasonsService;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static java.util.Optional.empty;
 
-public class DunningStopReasonApiService implements ApiService<DunningStopReasons> {
+public class DunningStopReasonApiService implements ApiService<DunningStopReason> {
 
 	@Inject
 	private DunningSettingsService dunningSettingsService;
@@ -29,7 +29,7 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
-	public List<DunningStopReasons> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+	public List<DunningStopReason> list(Long offset, Long limit, String sort, String orderBy, String filter) {
 		return Lists.emptyList();
 	}
 
@@ -39,12 +39,12 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	}
 
 	@Override
-	public Optional<DunningStopReasons> findById(Long id) {
+	public Optional<DunningStopReason> findById(Long id) {
 		return Optional.ofNullable(dunningStopReasonsService.findById(id));
 	}
 
 	@Override
-	public DunningStopReasons create(DunningStopReasons dunningStopReason) {
+	public DunningStopReason create(DunningStopReason dunningStopReason) {
 
 		if (dunningStopReason.getDunningSettings() != null && dunningStopReason.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningStopReason.getDunningSettings().getId());
@@ -65,7 +65,7 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 	}
 
 	@Override
-	public Optional<DunningStopReasons> update(Long id, DunningStopReasons dunningStopReason) {
+	public Optional<DunningStopReason> update(Long id, DunningStopReason dunningStopReason) {
 		var dunningStopReasonUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
 		if (dunningStopReason.getDescription() != null) {
 			dunningStopReasonUpdate.setDescription(dunningStopReason.getDescription());
@@ -84,30 +84,31 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 		return Optional.of(dunningStopReasonUpdate);
 	}
 
-	private Optional<DunningStopReasons> findByCodeAndDunningSettingCode(String dunningSettingsCode, String stopReason) {
+	private Optional<DunningStopReason> findByCodeAndDunningSettingCode(String dunningSettingsCode, String stopReason) {
 		return Optional.ofNullable(dunningStopReasonsService.findByCodeAndDunningSettingCode(dunningSettingsCode, stopReason));
 	}
 
 	@Override
-	public Optional<DunningStopReasons> patch(Long id, DunningStopReasons baseEntity) {
+	public Optional<DunningStopReason> patch(Long id, DunningStopReason baseEntity) {
 		return empty();
 	}
 
 	@Override
-	public Optional<DunningStopReasons> delete(Long id) {
+	public Optional<DunningStopReason> delete(Long id) {
 		var dunningStopReason = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
 		dunningStopReasonsService.remove(dunningStopReason);
 		return Optional.ofNullable(dunningStopReason);
 	}
 
-	public Optional<DunningStopReasons> delete(String dunningSettingsCode, String stopReason) {
-		var dunningStopReason = findByCodeAndDunningSettingCode(dunningSettingsCode,stopReason).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + stopReason));
+	public Optional<DunningStopReason> delete(String dunningSettingsCode, String stopReason) {
+		var dunningStopReason = findByCodeAndDunningSettingCode(dunningSettingsCode, stopReason)
+				.orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + stopReason));
 		dunningStopReasonsService.remove(dunningStopReason);
 		return Optional.ofNullable(dunningStopReason);
 	}
 
 	@Override
-	public Optional<DunningStopReasons> findByCode(String code) {
+	public Optional<DunningStopReason> findByCode(String code) {
 		return empty();
 	}
 

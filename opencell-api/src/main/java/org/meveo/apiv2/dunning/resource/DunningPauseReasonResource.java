@@ -3,7 +3,7 @@ package org.meveo.apiv2.dunning.resource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.dunning.DunningPauseReasons;
+import org.meveo.apiv2.dunning.DunningPauseReason;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,30 +20,17 @@ import javax.ws.rs.core.Response;
 public interface DunningPauseReasonResource {
 
 	@POST
-	@Operation(summary = "Create new Dunning Pause Reason",
-    tags = {"Dunning"},
-    description = "Create new Dunning Pause Reason",
-    responses = {
-            @ApiResponse(responseCode = "200",
-                   description = "dunning Pause Reason successfully created"),
-            @ApiResponse(responseCode = "404",
-                    description = "Dunning Pause Reason with the same code exist")
-    })
-	Response create(@Parameter(required = true) DunningPauseReasons dunningPauseReasons);
+	@Operation(summary = "Create new Dunning Pause Reason", tags = { "Dunning" }, description = "Create new Dunning Pause Reason", responses = {
+			@ApiResponse(responseCode = "200", description = "dunning Pause Reason successfully created"),
+			@ApiResponse(responseCode = "404", description = "Dunning Pause Reason with the same code exist") })
+	Response create(@Parameter(required = true) DunningPauseReason dunningPauseReason);
 
 	@PUT
 	@Path("/{id}")
-	@Operation(summary = "Update an existing Dunning Pause Reason",
-    tags = {"Dunning"},
-    description = "Update an existing Dunning Pause Reasons",
-    responses = {
-            @ApiResponse(responseCode = "200",
-                   description = "dunning Pause Reasons successfully updated"),
-            @ApiResponse(responseCode = "404",
-                    description = "new code for dunning Pause Reasons already exist")
-    })
-	Response update(@Parameter(required = true) DunningPauseReasons dunningPauseReasons,
-            @Parameter(required = true, description = "Entity's id to update") @PathParam("id") Long id);
+	@Operation(summary = "Update an existing Dunning Pause Reason", tags = { "Dunning" }, description = "Update an existing Dunning Pause Reasons", responses = {
+			@ApiResponse(responseCode = "200", description = "dunning Pause Reasons successfully updated"),
+			@ApiResponse(responseCode = "404", description = "new code for dunning Pause Reasons already exist") })
+	Response update(@Parameter(required = true) DunningPauseReason dunningPauseReason, @Parameter(required = true, description = "Entity's id to update") @PathParam("id") Long id);
 
 	@DELETE
 	@Path("/{id}")

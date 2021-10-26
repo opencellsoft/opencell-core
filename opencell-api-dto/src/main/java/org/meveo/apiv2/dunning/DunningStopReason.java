@@ -10,22 +10,22 @@ import javax.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableDunningPauseReasons.class)
-public interface DunningPauseReasons extends Resource {
+@JsonDeserialize(as = ImmutableDunningStopReason.class)
+public interface DunningStopReason extends Resource {
 
     @Schema(description = "The language code")
     @Nonnull
     Resource getLanguage();
 
-    @Schema(description = "The pause reason")
+    @Schema(description = "The stop reason")
     @Nonnull
-    String getPauseReason();
+    String getStopReason();
 
-    @Schema(description = "The pause reason's description")
+    @Schema(description = "The stop reason's description")
     @Nullable
     String getDescription();
 
-    @Schema(description = "The dunning settings associated to pause reason")
+    @Schema(description = "The dunning settings associated to stop reason")
     @Nonnull
 	Resource getDunningSettings();
 }

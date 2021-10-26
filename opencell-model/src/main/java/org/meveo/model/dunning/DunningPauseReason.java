@@ -27,34 +27,25 @@ import org.meveo.model.billing.TradingLanguage;
 @Entity
 @Table(name = "dunning_pause_reasons")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "dunning_pause_reasons_seq")})
+		@Parameter(name = "sequence_name", value = "dunning_pause_reasons_seq") })
 @NamedQueries({
-		@NamedQuery(name = "DunningPauseReasons.findByCodeAndDunningSettingCode", query = "FROM DunningPauseReasons d where d.pauseReason = :pauseReason and d.dunningSettings.code = :dunningSettingsCode") })
+		@NamedQuery(name = "DunningPauseReasons.findByCodeAndDunningSettingCode", query = "FROM DunningPauseReason d where d.pauseReason = :pauseReason and d.dunningSettings.code = :dunningSettingsCode") })
 
-public class DunningPauseReasons extends AuditableEntity  {
-	
+public class DunningPauseReason extends AuditableEntity {
+
 	private static final long serialVersionUID = 1L;
-	
-	
-	
-	
-	
-	public DunningPauseReasons() {
+
+	public DunningPauseReason() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
- 
 
-
-	public DunningPauseReasons(@Size(max = 50) TradingLanguage language, @Size(max = 1000) String pauseReason,
-			@Size(max = 255) String description) {
+	public DunningPauseReason(@Size(max = 50) TradingLanguage language, @Size(max = 1000) String pauseReason, @Size(max = 255) String description) {
 		super();
 		this.language = language;
 		this.pauseReason = pauseReason;
 		this.description = description;
 	}
-
-
 
 	/**
 	 *language

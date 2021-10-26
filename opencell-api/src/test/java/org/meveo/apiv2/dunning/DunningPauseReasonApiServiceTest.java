@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.dunning.service.DunningPauseReasonApiService;
 import org.meveo.model.dunning.DunningSettings;
-import org.meveo.model.dunning.DunningPauseReasons;
+import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningPauseReasonApiServiceTest {
-	
+
 	@Spy
 	@InjectMocks
 	private DunningPauseReasonApiService dunningPauseReasonApiService;
@@ -36,50 +36,50 @@ public class DunningPauseReasonApiServiceTest {
 	@Mock
 	private DunningPauseReasonsService dunningPauseReasonsService;
 
-	 private DunningPauseReasons dunningPauseReasons;
+	private DunningPauseReason dunningPauseReason;
 
-    @Before
-    public void setup() {
-		dunningPauseReasons = new DunningPauseReasons();
+	@Before
+	public void setup() {
+		dunningPauseReason = new DunningPauseReason();
 		//dunningPauseReasons.setLanguage("Language");
-		dunningPauseReasons.setDescription("Description");
-		dunningPauseReasons.setPauseReason("Pause reason");
-    }
-    
-    @Test
+		dunningPauseReason.setDescription("Description");
+		dunningPauseReason.setPauseReason("Pause reason");
+	}
+
+	@Test
     public void shouldCreateNewDunningSettings() {
-    	doNothing().when(dunningPauseReasonsService).create(any());
-		dunningPauseReasonApiService.create(dunningPauseReasons);
-    	verify(dunningPauseReasonsService, times(1)).create(any());
-    }
+		doNothing().when(dunningPauseReasonsService).create(any());
+		dunningPauseReasonApiService.create(dunningPauseReason);
+		verify(dunningPauseReasonsService, times(1)).create(any());
+	}
 
 	@Test(expected = BadRequestException.class)
 	public void shouldReturnBadRequestWhenNoDunningSettingExist() {
 		DunningSettings dunningSettings = new DunningSettings();
 		dunningSettings.setId(-1L);
-		dunningPauseReasons.setDunningSettings(dunningSettings);
+		dunningPauseReason.setDunningSettings(dunningSettings);
 		when(dunningSettingsService.findById(anyLong())).thenReturn(null);
-		dunningPauseReasonApiService.create(dunningPauseReasons);
+		dunningPauseReasonApiService.create(dunningPauseReason);
 
 	}
     
     @Test
     public void shouldUpdateExitingDunningPauseReason() {
-    	when(dunningPauseReasonsService.findById(anyLong())).thenReturn(dunningPauseReasons);
-    	var updateDunning = new DunningPauseReasons(null, "Pause reason", "Description");
-    	when(dunningPauseReasonsService.update(any())).thenReturn(updateDunning);
+		when(dunningPauseReasonsService.findById(anyLong())).thenReturn(dunningPauseReason);
+		var updateDunning = new DunningPauseReason(null, "Pause reason", "Description");
+		when(dunningPauseReasonsService.update(any())).thenReturn(updateDunning);
 
-		dunningPauseReasonApiService.update(1L, dunningPauseReasons);
-        assertEquals("Assert pause reason", "Pause reason", updateDunning.getPauseReason());
-    }
+		dunningPauseReasonApiService.update(1L, dunningPauseReason);
+		assertEquals("Assert pause reason", "Pause reason", updateDunning.getPauseReason());
+	}
     
 
     @Test(expected = BadRequestException.class)
     public void shouldReturnBadRequestWhenUpdateExitingDunningSetting() {
-    	when(dunningPauseReasonsService.findById(anyLong())).thenReturn(null);
-		dunningPauseReasonApiService.update(1L, dunningPauseReasons);
-    	
-    }
+		when(dunningPauseReasonsService.findById(anyLong())).thenReturn(null);
+		dunningPauseReasonApiService.update(1L, dunningPauseReason);
+
+	}
     
 
     @Test(expected = BadRequestException.class)
@@ -91,10 +91,10 @@ public class DunningPauseReasonApiServiceTest {
 
     @Test
     public void shouldReturnDeletingExitingDunningSetting() {
-    	when(dunningPauseReasonsService.findById(anyLong())).thenReturn(dunningPauseReasons);
-    	doNothing().when(dunningPauseReasonsService).remove(dunningPauseReasons);
+		when(dunningPauseReasonsService.findById(anyLong())).thenReturn(dunningPauseReason);
+		doNothing().when(dunningPauseReasonsService).remove(dunningPauseReason);
 		dunningPauseReasonApiService.delete(1L);
-    }
+	}
 
     
     

@@ -3,8 +3,6 @@ package org.meveo.apiv2.dunning.service;
 import org.assertj.core.util.Lists;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningInvoiceStatus;
-import org.meveo.model.dunning.DunningInvoiceStatus;
-import org.meveo.model.dunning.DunningPauseReasons;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 import org.meveo.service.payments.impl.DunningSettingsService;
@@ -26,8 +24,8 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	@Inject
 	private TradingLanguageService tradingLanguageService;
 
-	private static final String NO_DUNNING_INVOICE_STATUS_FOUND = "No Dunning invoice status wa found for code : ";
-	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the code : ";
+	private static final String NO_DUNNING_INVOICE_STATUS_FOUND = "No Dunning invoice status wa found for id : ";
+	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
 	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
@@ -47,6 +45,11 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 
 	@Override
 	public DunningInvoiceStatus create(DunningInvoiceStatus dunningInvoiceStatus) {
+		if (!isValidDunningInvoiceStatus(dunningInvoiceStatus, "create")) {
+			throw new BadRequestException(
+					"The status " + dunningInvoiceStatus.getStatus() + " already exists for the context " + dunningInvoiceStatus.getContext() + " and the language "
+							+ dunningInvoiceStatus.getLanguage().getId());
+		}
 
 		if (dunningInvoiceStatus.getDunningSettings() != null && dunningInvoiceStatus.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningInvoiceStatus.getDunningSettings().getId());
@@ -66,8 +69,22 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 		return dunningInvoiceStatus;
 	}
 
+	private boolean isValidDunningInvoiceStatus(DunningInvoiceStatus dunningInvoiceStatus, String action) {
+		List<DunningInvoiceStatus> DunningInvoiceStatusList = dunningInvoiceStatusService.findByStatusAndLanguage(dunningInvoiceStatus);
+		if ("create".equals(action)) {
+			return DunningInvoiceStatusList.isEmpty();
+		} else {
+			return DunningInvoiceStatusList.size() <= 1;
+		}
+	}
+
 	@Override
 	public Optional<DunningInvoiceStatus> update(Long id, DunningInvoiceStatus dunningInvoiceStatus) {
+		if (!isValidDunningInvoiceStatus(dunningInvoiceStatus, "update")) {
+			throw new BadRequestException(
+					"The status " + dunningInvoiceStatus.getStatus() + " already exists for the context " + dunningInvoiceStatus.getContext() + " and the language "
+							+ dunningInvoiceStatus.getLanguage().getId());
+		}
 		var dunningInvoiceStatusUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_INVOICE_STATUS_FOUND + id));
 		if (dunningInvoiceStatus.getContext() != null) {
 			dunningInvoiceStatusUpdate.setContext(dunningInvoiceStatus.getContext());

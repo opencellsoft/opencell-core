@@ -31,7 +31,8 @@ import org.meveo.model.billing.TradingLanguage;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "invoice_dunning_statuses_seq")})
 @NamedQueries({
-		@NamedQuery(name = "DunningInvoiceStatus.findByCodeAndDunningSettingCode", query = "FROM DunningInvoiceStatus d where d.status = :status and d.dunningSettings.code = :dunningSettingsCode") })
+		@NamedQuery(name = "DunningInvoiceStatus.findByCodeAndDunningSettingCode", query = "FROM DunningInvoiceStatus d where d.status = :status and d.dunningSettings.code = :dunningSettingsCode"),
+		@NamedQuery(name = "DunningInvoiceStatus.findByStatusAndLanguage", query = "FROM DunningInvoiceStatus d where d.status = :status and d.language.id = :languageId and d.context IN ('PAUSED_DUNNING','STOPPED_DUNNING','EXCLUDED_FROM_DUNNING')") })
 
 public class DunningInvoiceStatus extends AuditableEntity  {
 	
@@ -82,7 +83,6 @@ public class DunningInvoiceStatus extends AuditableEntity  {
 	 *context 
 	 */
 	@Column(name = "context", length = 255)
-	@Size(max = 255)
 	@Enumerated(EnumType.STRING)
 	private DunningInvoiceStatusContextEnum context;
 
