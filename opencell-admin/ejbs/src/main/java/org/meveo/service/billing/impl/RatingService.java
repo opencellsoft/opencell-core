@@ -583,7 +583,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     				PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
     				PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
     				if(ppmVersion!=null) {
-    					PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, chargeInstance);
+    					PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, bareWalletOperation);
     					unitPriceWithoutTaxOverridden=pricePlanMatrixLine.getPricetWithoutTax();
     				} 
 
@@ -634,7 +634,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                             }
                         }
                     } else {
-                        PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation.getChargeInstance());
+                        PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                         if(pricePlanMatrixLine!=null) {
                         unitPriceWithoutTaxOverridden = pricePlanMatrixLine.getPricetWithoutTax();
                         }

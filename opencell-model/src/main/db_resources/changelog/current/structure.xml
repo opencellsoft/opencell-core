@@ -11142,5 +11142,16 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>id=-13</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
+    	<update tableName="cpq_attribute">            
+    		<column name="attribute_category" value="REGULAR"></column>
+            <where>attribute_category is null</where>
+    	</update>
+    	<addColumn tableName="cpq_attribute">
+    		<column name="el_value" type="varchar(255)"/>
+    	</addColumn>
+    	<addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
+    </changeSet>
 
 </databaseChangeLog>

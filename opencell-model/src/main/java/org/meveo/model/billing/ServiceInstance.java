@@ -75,6 +75,7 @@ import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -1246,6 +1247,13 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+	
+	public Date getActivationDate() {
+		if(InstanceStatusEnum.ACTIVE.equals(status)) {
+			return statusDate;
+		}
+		return null;
 	}
     
 }

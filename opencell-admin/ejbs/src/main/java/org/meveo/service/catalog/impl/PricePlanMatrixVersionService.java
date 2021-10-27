@@ -17,7 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
@@ -159,8 +159,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return result.isEmpty()?null:result.get(0);
     }
     
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) throws BusinessException {
-    	return pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance);
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws BusinessException {
+    	return pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, walletOperation);
     }
     
 
@@ -328,7 +328,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		auditLog.setEntity("PricePlanMatrixVersion");
 		auditLog.setOrigin(ppmv.getPricePlanMatrix().getCode()+"_"+ppmv.getCurrentVersion());
 		auditLog.setAction(action); 
-		auditLog.setParameters("user "+currentUser.getUserName()+" "+action+" the price plan version "+ppmv.getVersion());
+		auditLog.setParameters("user "+currentUser.getUserName()+" "+action+" the price plan version "+ppmv.getCurrentVersion());
 		auditLogService.create(auditLog);
 	}
 }
