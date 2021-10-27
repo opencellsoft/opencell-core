@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
@@ -48,7 +47,42 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
     @Column(name = "boolean_value")
     protected Boolean booleanValue; 
 
-    public Attribute getAttribute() {
+    /**
+	 * @param attribute
+	 * @param value
+	 */
+	public AttributeValue(Attribute attribute, Object value) {
+		this.attribute=attribute;
+		if(attribute!=null) {
+			switch (attribute.getAttributeType()) {
+			case BOOLEAN:
+				if(value instanceof Boolean) {
+					this.booleanValue=(Boolean)value;
+				}
+				break;
+			case DATE:
+				if(value instanceof Date) {
+					this.dateValue=(Date)value;
+				}
+				break;
+			case NUMERIC:
+				if(value instanceof Number) {
+					this.doubleValue=((Number)value).doubleValue();
+				}
+				break;
+			default:
+				this.stringValue = value.toString();
+				break;
+			}
+		}
+	}
+	
+	public AttributeValue() {
+		super();
+	}
+	
+
+	public Attribute getAttribute() {
         return attribute;
     }
 

@@ -280,16 +280,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 	
 	public Date getServiceDeliveryDate(CommercialOrder order, OrderOffer offer, OrderProduct product) {
-		
 		if (product != null && product.getDeliveryDate() != null) {
 			return product.getDeliveryDate();
 		}
-		if (offer.getDeliveryDate() != null) {
+		if (offer != null && offer.getDeliveryDate() != null) {
 			return offer.getDeliveryDate();
-		}else if (order.getDeliveryDate() != null) {
+		}else if (order != null && order.getDeliveryDate() != null) {
 			return order.getDeliveryDate();
 		}else {
-			return order.getOrderDate();
+			return new Date();
 		}
 	}
 }

@@ -63,7 +63,6 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -619,6 +618,8 @@ public class ValueExpressionWrapper {
     public static Map<Object, Object> completeContext(String el, Map<Object, Object> contextMap, Object... parameters) {
 
         ChargeInstance chargeInstance = null;
+        WalletOperation walletOperation = null;
+        EDR edr = null;
         ServiceInstance serviceInstance = null;
         Subscription subscription = null;
         UserAccount userAccount = null;
@@ -648,6 +649,9 @@ public class ValueExpressionWrapper {
 
             for (String elVariableName : elVariableNames) {
                 contextMap.put(elVariableName, parameter);
+            }
+            if (parameter instanceof WalletOperation) {
+            	walletOperation = (WalletOperation) parameter;
             }
             if (parameter instanceof ChargeInstance) {
                 chargeInstance = (ChargeInstance) parameter;
@@ -709,6 +713,27 @@ public class ValueExpressionWrapper {
         if (el.contains(VAR_SERVICE_INSTANCE) && !contextMap.containsKey(VAR_SERVICE_INSTANCE) && chargeInstance != null) {
             serviceInstance = chargeInstance.getServiceInstance();
             contextMap.put(VAR_SERVICE_INSTANCE, serviceInstance);
+        }
+        if (el.contains(VAR_SERVICE_INSTANCE) && !contextMap.containsKey(VAR_SERVICE_INSTANCE) && walletOperation != null) {
+            serviceInstance = walletOperation.getServiceInstance();
+            contextMap.put(VAR_SERVICE_INSTANCE, serviceInstance);
+        }
+        if (el.contains(VAR_CHARGE_INSTANCE) && !contextMap.containsKey(VAR_CHARGE_INSTANCE) && walletOperation != null) {
+            chargeInstance = walletOperation.getChargeInstance();
+            contextMap.put(VAR_CHARGE_INSTANCE, chargeInstance);
+        }
+        if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && walletOperation != null) {
+            chargeInstance = walletOperation.getChargeInstance();
+            quote =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
+            contextMap.put(VAR_CPQ_QUOTE, quote);
+        }
+        if (el.contains(VAR_EDR) && !contextMap.containsKey(VAR_EDR) && walletOperation != null) {
+            edr = walletOperation.getEdr();
+            contextMap.put(VAR_EDR, edr);
+        }
+        if (el.contains(VAR_SUBSCRIPTION) && !contextMap.containsKey(VAR_SUBSCRIPTION) && walletOperation != null) {
+            subscription = walletOperation.getSubscription();
+            contextMap.put(VAR_SUBSCRIPTION, subscription);
         }
         if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && chargeInstance != null) {
             quote =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
