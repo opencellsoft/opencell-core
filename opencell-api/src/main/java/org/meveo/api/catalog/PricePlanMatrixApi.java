@@ -30,10 +30,8 @@ import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -49,9 +47,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
@@ -65,7 +61,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.ContractItemService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -497,37 +492,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return pricePlanDtos;
-    }
-
-    private PricePlanMatrixVersion loadPublishedMatrixVersion(String ppmCode, Integer ppmVersion) {
-        PricePlanMatrixVersion ppm = pricePlanMatrixVersionService.findByPricePlanAndVersion(ppmCode, ppmVersion);
-        if(ppm == null)
-            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, "ppmCode", ppmCode, "version", ppmVersion.toString());
-        if(ppm.getStatus() != VersionStatusEnum.PUBLISHED)
-            throw new BusinessApiException("Price Plan Matrix: (code: " + ppmCode + ", version: " + ppmVersion + ") is not published");
-        return ppm;
-    }
-
-    public PricePlanMatrixLineDto loadPrices(String ppmCode, int version, String chargeInstanceCode) {
-        if (StringUtils.isBlank(ppmCode)) {
-            missingParameters.add("ppmCode");
-        }
-        if (StringUtils.isBlank(version)) {
-            missingParameters.add("ppmVersion");
-        }
-        if (StringUtils.isBlank(chargeInstanceCode)) {
-            missingParameters.add("chargeInstanceCode");
-        }
-        handleMissingParameters();
-
-        PricePlanMatrixVersion pricePlanMatrixVersion = loadPublishedMatrixVersion(ppmCode, version);
-
-        ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, chargeInstanceCode, ChargeInstance.class);
-        try {
-        	return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
-        }catch(BusinessException e) {
-        	throw new MeveoApiException(e.getMessage());
-        }
     }
 
     public PricePlanMatrixesResponseDto list(PagingAndFiltering pagingAndFiltering) {
