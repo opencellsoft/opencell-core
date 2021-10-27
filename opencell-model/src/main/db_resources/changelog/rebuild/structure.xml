@@ -9572,6 +9572,7 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
+             <column name="offer_id" type="int8" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -16456,6 +16457,7 @@
     <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_20211018-reports" author="AndriusKarpavicius"/>
+    <changeSet id="INTRD-2645_20211026" author="Mbarek-Ay"/>
 
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
         <createSequence sequenceName="dunning_level_seq" startValue="1" />

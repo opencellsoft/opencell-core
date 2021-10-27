@@ -11142,5 +11142,13 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>id=-13</where>
         </update>
     </changeSet>
+    
+    <changeSet id="INTRD-2645_20211026" author="Mbarek-Ay">
+     <addColumn tableName="cpq_quote_price">
+            <column name="offer_id" type="int8" />
+        </addColumn> 
+    </changeSet>
+    
+    
 
 </databaseChangeLog>
