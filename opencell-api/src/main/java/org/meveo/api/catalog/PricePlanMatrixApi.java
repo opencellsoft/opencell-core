@@ -499,32 +499,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanDtos;
     }
 
-    public List<PricePlanMatrixLineDto> loadPrices(String ppmCode, int version, Long quoteProductId){
-
-        if (StringUtils.isBlank(ppmCode)) {
-            missingParameters.add("ppmCode");
-        }
-        if (StringUtils.isBlank(version)) {
-            missingParameters.add("ppmVersion");
-        }
-        if (StringUtils.isBlank(quoteProductId)) {
-            missingParameters.add("quoteProductId");
-        }
-        handleMissingParameters();
-
-        PricePlanMatrixVersion ppmVersion = loadPublishedMatrixVersion(ppmCode, version);
-
-        QuoteProduct quoteProduct = quoteProductService.findById(quoteProductId);
-        if(quoteProduct == null)
-            throw new EntityDoesNotExistsException(QuoteProduct.class, quoteProductId);
-
-        try {
-        	return pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct);
-        }catch(BusinessException e) {
-        	throw new MeveoApiException(e.getMessage());
-        }
-    }
-
     private PricePlanMatrixVersion loadPublishedMatrixVersion(String ppmCode, Integer ppmVersion) {
         PricePlanMatrixVersion ppm = pricePlanMatrixVersionService.findByPricePlanAndVersion(ppmCode, ppmVersion);
         if(ppm == null)

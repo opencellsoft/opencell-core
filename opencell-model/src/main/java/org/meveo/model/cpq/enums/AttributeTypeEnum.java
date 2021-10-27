@@ -1,13 +1,11 @@
 package org.meveo.model.cpq.enums;
 
-import org.apache.commons.lang3.math.Fraction;
-import org.meveo.model.catalog.ColumnTypeEnum;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.cpq.AttributeValue;
 
 /**
  * 

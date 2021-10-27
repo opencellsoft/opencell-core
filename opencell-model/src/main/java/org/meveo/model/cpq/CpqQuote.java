@@ -532,5 +532,11 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 		this.minInvoiceLines=invoiceLines;
 	}
 
+	public Date getValidationDate() {
+		if(QuoteStatusEnum.ACCEPTED.equals(status)) {
+			return statusDate;
+		}
+		return null;
+	}
 	
 }

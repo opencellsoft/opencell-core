@@ -20,9 +20,14 @@ package org.meveo.model.billing;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1164,6 +1169,36 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
+	}
+	
+	public Date getRenewalDate() {
+		if(getSubscriptionDate()==null) {
+			return null;
+		}
+		Calendar calendar = new GregorianCalendar();
+        calendar.setTime(getSubscriptionDate());
+		if(getSubscriptionRenewal()!=null) {
+            calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+		}
+		return calendar.getTime();
+	}
+	
+	public int getSubscriptionMonthsAge() {
+	    return calculateAge(ChronoUnit.MONTHS);
+	}
+	
+	public int getSubscriptionDaysAge() {
+		return calculateAge(ChronoUnit.DAYS);
+	}
+
+	public int calculateAge(final ChronoUnit unit) {
+		if(getSubscriptionDate()==null) {
+			return 0;
+		}
+		Date now = new Date();
+		YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneOffset.UTC));
+	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneOffset.UTC));
+		return Math.toIntExact(m1.until(m2, unit));
 	}
 	
 }

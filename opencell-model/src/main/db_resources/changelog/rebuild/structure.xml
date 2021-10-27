@@ -16567,5 +16567,14 @@
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
 
-
+    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
+    	<update tableName="cpq_attribute">            
+    		<column name="attribute_category" value="REGULAR"></column>
+            <where>attribute_category is null</where>
+    	</update>
+    	<addColumn tableName="cpq_attribute">
+    		<column name="el_value" type="varchar(255)"/>
+    	</addColumn>
+    	<addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
+    </changeSet>
 </databaseChangeLog>
