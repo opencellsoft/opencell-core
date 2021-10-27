@@ -121,11 +121,22 @@ public class InvoiceConfigurationDto implements Serializable {
         displayOrders = invoiceConfiguration.isDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
         displayWalletOperations=invoiceConfiguration.isDisplayWalletOperations();
-        defaultInvoiceSubcategoryCode = invoiceConfiguration.getDefaultInvoiceSubCategory().getCode();
-        defaultGenericArticleCode = invoiceConfiguration.getDefaultGenericAccountingArticle().getCode();
-        defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode();
-        defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode();
-        defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode();
+
+        if (invoiceConfiguration.getDefaultInvoiceSubCategory() != null) {
+            defaultInvoiceSubcategoryCode = invoiceConfiguration.getDefaultInvoiceSubCategory().getCode();
+        }
+        if (invoiceConfiguration.getDefaultGenericAccountingArticle() != null) {
+            defaultGenericArticleCode = invoiceConfiguration.getDefaultGenericAccountingArticle().getCode();
+        }
+        if (invoiceConfiguration.getDefaultDiscountAccountingArticle() != null) {
+            defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode();
+        }
+        if (invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle() != null) {
+            defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode();
+        }
+        if (invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle() != null) {
+            defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode();
+        }
     }
 
     /**
