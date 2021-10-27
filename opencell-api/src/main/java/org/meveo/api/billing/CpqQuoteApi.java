@@ -1299,6 +1299,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setQuoteArticleLine(quoteArticleLine);
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
             quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
+            quotePrice.setQuoteOffer(quoteOffer);
             if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
                 RecurringChargeTemplate recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
 

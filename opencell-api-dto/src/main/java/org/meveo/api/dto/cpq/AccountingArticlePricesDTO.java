@@ -105,7 +105,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	            List<PriceDTO> prices = pricesPerType
 	                    .keySet()
 	                    .stream()
-	                    .map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), null, PriceLevelEnum.PRODUCT))
+	                    .map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), quoteArticleline.getQuoteProduct()!=null?quoteArticleline.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
 	                    .filter(Optional::isPresent)
 	                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
