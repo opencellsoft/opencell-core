@@ -29,7 +29,7 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
 	        	var productVersionAttributeOptional = findMandatoryByProductVersion(attributeInstance, attributeInstance.getServiceInstance().getProductVersion());
 	        	var productVersionAttribute = productVersionAttributeOptional.get();
 	        	if(productVersionAttributeOptional.isPresent()) {
-	        		super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(), attributeInstance, 
+	        		super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(), attributeInstance,
 	        				productVersionAttribute.getMandatoryWithEl(), null, null, 
 	        									attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
 	        									attributeInstance.getServiceInstance());
@@ -37,11 +37,11 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     		}
     		if(attributeInstance.getSubscription() != null 
     				&& attributeInstance.getSubscription().getOffer() != null) {
-	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(attributeInstance, attributeInstance.getSubscription().getOffer());
-	        	var productVersionAttribute = offerTemplatMandatoryEl.get();
-			if(offerTemplatMandatoryEl.isPresent()) {
+	    		var offerTemplateMandatoryEl = findMandatoryByOfferTemplate(attributeInstance, attributeInstance.getSubscription().getOffer());
+	        	var productVersionAttribute = offerTemplateMandatoryEl.orElse(null);
+			if(offerTemplateMandatoryEl.isPresent()) {
 				super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),attributeInstance,  
-						offerTemplatMandatoryEl.get().getMandatoryWithEl(), null, null, 
+						offerTemplateMandatoryEl.get().getMandatoryWithEl(), null, null,
 						attributeInstance.getSubscription() != null ?  attributeInstance.getSubscription().getOrder() : null,
 						attributeInstance.getServiceInstance());
 	    		}
