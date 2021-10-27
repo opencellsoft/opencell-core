@@ -27,32 +27,21 @@ import org.meveo.model.billing.TradingLanguage;
 @Table(name = "dunning_collection_plan_statuses")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_collection_plan_statuses_seq")})
-public class DunningCollectionPlanStatuses extends AuditableEntity  {
-	
+public class DunningCollectionPlanStatuses extends AuditableEntity {
+
 	private static final long serialVersionUID = 1L;
 
-	
 	public DunningCollectionPlanStatuses() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public DunningCollectionPlanStatuses(@Size(max = 50) TradingLanguage language, @Size(max = 50) String status,
-			@Size(max = 255) DunningCollectionPlanStatusContextEnum context, DunningSettings dunningSettings) {
+	public DunningCollectionPlanStatuses(@Size(max = 50) String status, @Size(max = 255) DunningCollectionPlanStatusContextEnum context, DunningSettings dunningSettings) {
 		super();
-		this.language = language;
 		this.status = status;
 		this.context = context;
 		this.dunningSettings = dunningSettings;
 	}
-
-	/**
-	 *language
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
-	@NotNull
-	private TradingLanguage language;
 
 	/**
 	 * status
@@ -79,13 +68,6 @@ public class DunningCollectionPlanStatuses extends AuditableEntity  {
 	@NotNull
 	private DunningSettings dunningSettings;
 
-	public TradingLanguage getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(TradingLanguage language) {
-		this.language = language;
-	}
 
 	public String getStatus() {
 		return status;

@@ -66,7 +66,7 @@ public class DunningStopReasonApiServiceTest {
     @Test
     public void shouldUpdateExitingDunningStopReason() {
 		when(dunningStopReasonsService.findById(anyLong())).thenReturn(dunningStopReason);
-		var updateDunning = new DunningStopReason(null, "Stop reason", "Description", null);
+		var updateDunning = new DunningStopReason("Stop reason", "Description", null);
 		when(dunningStopReasonsService.update(any())).thenReturn(updateDunning);
 
 		dunningStopReasonApiService.update(1L, dunningStopReason);

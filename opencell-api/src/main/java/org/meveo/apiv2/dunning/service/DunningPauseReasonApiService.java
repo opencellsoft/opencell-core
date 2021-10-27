@@ -25,7 +25,6 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 
 	private static final String NO_DUNNING_PAUSE_REASON_FOUND = "No Dunning pause reason found for id : ";
 	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
-	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
 	public List<DunningPauseReason> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -52,13 +51,6 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 			}
 			dunningPauseReason.setDunningSettings(DunningSettings);
 		}
-		if (dunningPauseReason.getLanguage() != null && dunningPauseReason.getLanguage().getId() != null) {
-			var language = tradingLanguageService.findById(dunningPauseReason.getLanguage().getId());
-			if (language == null) {
-				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningPauseReason.getLanguage().getId());
-			}
-			dunningPauseReason.setLanguage(language);
-		}
 		dunningPauseReasonsService.create(dunningPauseReason);
 		return dunningPauseReason;
 	}
@@ -71,13 +63,6 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 		}
 		if (dunningPauseReason.getPauseReason() != null) {
 			dunningPauseReasonUpdate.setPauseReason(dunningPauseReason.getPauseReason());
-		}
-		if (dunningPauseReason.getLanguage() != null && dunningPauseReason.getLanguage().getId() != null) {
-			var language = tradingLanguageService.findById(dunningPauseReason.getLanguage().getId());
-			if (language == null) {
-				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningPauseReason.getLanguage().getId());
-			}
-			dunningPauseReasonUpdate.setLanguage(language);
 		}
 		dunningPauseReasonsService.update(dunningPauseReasonUpdate);
 		return Optional.of(dunningPauseReasonUpdate);

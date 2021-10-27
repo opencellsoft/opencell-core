@@ -27,7 +27,6 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 
 	private static final String NO_DUNNING_INVOICE_STATUS_FOUND = "No Dunning invoice status wa found for id : ";
 	private static final String NO_DUNNING_SETTING_FOUND = "No Dunning settings was found for the id : ";
-	private static final String NO_LANGUAGE_FOUND = "No Trading language was found for the id : ";
 
 	@Override
 	public List<DunningInvoiceStatus> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -47,9 +46,7 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	@Override
 	public DunningInvoiceStatus create(DunningInvoiceStatus dunningInvoiceStatus) {
 		if (!isValidDunningInvoiceStatus(dunningInvoiceStatus, "create")) {
-			throw new BadRequestException(
-					"The status " + dunningInvoiceStatus.getStatus() + " already exists for the context " + dunningInvoiceStatus.getContext() + " and the language "
-							+ dunningInvoiceStatus.getLanguage().getId());
+			throw new BadRequestException("The status " + dunningInvoiceStatus.getStatus() + " already exists for the context " + dunningInvoiceStatus.getContext());
 		}
 
 		if (dunningInvoiceStatus.getDunningSettings() != null && dunningInvoiceStatus.getDunningSettings().getId() != null) {
@@ -58,13 +55,6 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 				throw new BadRequestException(NO_DUNNING_SETTING_FOUND + dunningInvoiceStatus.getDunningSettings().getId());
 			}
 			dunningInvoiceStatus.setDunningSettings(dunningSettings);
-		}
-		if (dunningInvoiceStatus.getLanguage() != null && dunningInvoiceStatus.getLanguage().getId() != null) {
-			var language = tradingLanguageService.findById(dunningInvoiceStatus.getLanguage().getId());
-			if (language == null) {
-				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningInvoiceStatus.getLanguage().getId());
-			}
-			dunningInvoiceStatus.setLanguage(language);
 		}
 		dunningInvoiceStatusService.create(dunningInvoiceStatus);
 		return dunningInvoiceStatus;
@@ -86,9 +76,7 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 	@Override
 	public Optional<DunningInvoiceStatus> update(Long id, DunningInvoiceStatus dunningInvoiceStatus) {
 		if (!isValidDunningInvoiceStatus(dunningInvoiceStatus, "update")) {
-			throw new BadRequestException(
-					"The status " + dunningInvoiceStatus.getStatus() + " already exists for the context " + dunningInvoiceStatus.getContext() + " and the language "
-							+ dunningInvoiceStatus.getLanguage().getId());
+			throw new BadRequestException("The status " + dunningInvoiceStatus.getStatus() + " already exists for the context " + dunningInvoiceStatus.getContext());
 		}
 		var dunningInvoiceStatusUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_INVOICE_STATUS_FOUND + id));
 		if (dunningInvoiceStatus.getContext() != null) {
@@ -96,13 +84,6 @@ public class DunningInvoiceStatusApiService implements ApiService<DunningInvoice
 		}
 		if (dunningInvoiceStatus.getStatus() != null) {
 			dunningInvoiceStatusUpdate.setStatus(dunningInvoiceStatus.getStatus());
-		}
-		if (dunningInvoiceStatus.getLanguage() != null && dunningInvoiceStatus.getLanguage().getId() != null) {
-			var language = tradingLanguageService.findById(dunningInvoiceStatus.getLanguage().getId());
-			if (language == null) {
-				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningInvoiceStatus.getLanguage().getId());
-			}
-			dunningInvoiceStatus.setLanguage(language);
 		}
 
 		dunningInvoiceStatusService.update(dunningInvoiceStatusUpdate);

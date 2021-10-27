@@ -14,10 +14,6 @@ import javax.annotation.Nullable;
 @JsonDeserialize(as = ImmutableDunningInvoiceStatus.class)
 public interface DunningInvoiceStatus extends Resource {
 
-    @Schema(description = "The language code")
-    @Nonnull
-    Resource getLanguage();
-
     @Schema(description = "The invoice status")
     @Nonnull
     String getStatus();

@@ -15451,21 +15451,21 @@
 
     </changeSet>
     <!-- end procedure -->
-   <!-- keep this always as the last changeSet to remove all rebuild logs -->
-	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
-        <delete tableName="DATABASECHANGELOG" />
+    <!-- keep this always as the last changeSet to remove all rebuild logs -->
+    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
+        <delete tableName="DATABASECHANGELOG"/>
     </changeSet>
 
-    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
-    	<sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
 
         <sql>create table ${db.schema.adapted}billing_wallet_operation_open partition of ${db.schema.adapted}billing_wallet_operation for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_wallet_operation_other partition of ${db.schema.adapted}billing_wallet_operation default</sql>
 
-        <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_open partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
-   	</changeSet>
+    </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -16547,24 +16547,26 @@
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
 
-    <changeSet id="INTRD-2444_20211019" author="ZBariki" />
+    <changeSet id="INTRD-2444_20211019" author="ZBariki"/>
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza"/>
-    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA" />
+    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA"/>
     <changeSet id="INTRD-2366_20211021" author="AbdelkaderBouazza"/>
-    <changeSet id="INTRD-2445_20211021" author="ZBariki" />
-    <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
+    <changeSet id="INTRD-2445_20211021" author="ZBariki"/>
+    <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA"/>
     <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza"/>
+    <changeSet id="INTRD-2679_20211027" author="khalidHORRI"/>
 
-    
-	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+
+    <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
-		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'
+        </sql>
     </changeSet>
 
     <changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
-	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
-	</changeSet>
+        <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version"/>
+    </changeSet>
 
 </databaseChangeLog>

@@ -12,8 +12,8 @@ public class DunningPauseReasonsMapper extends ResourceMapper<org.meveo.apiv2.du
 
     @Override
     protected org.meveo.apiv2.dunning.DunningPauseReason toResource(DunningPauseReason entity) {
-        return ImmutableDunningPauseReason.builder().id(entity.getId()).language(createResource(entity.getLanguage())).pauseReason(entity.getPauseReason())
-                .description(entity.getDescription()).dunningSettings(createResource((AuditableEntity) entity.getDunningSettings())).build();
+        return ImmutableDunningPauseReason.builder().id(entity.getId()).pauseReason(entity.getPauseReason()).description(entity.getDescription())
+                .dunningSettings(createResource((AuditableEntity) entity.getDunningSettings())).build();
     }
 
     @Override
@@ -24,10 +24,6 @@ public class DunningPauseReasonsMapper extends ResourceMapper<org.meveo.apiv2.du
         dunningSettings.setId(resource.getDunningSettings().getId());
         dunningSettings.setCode(resource.getDunningSettings().getCode());
         entity.setDunningSettings(dunningSettings);
-        resource.getLanguage();
-        var tradingLanguage = new TradingLanguage();
-        tradingLanguage.setId(resource.getLanguage().getId());
-        entity.setLanguage(tradingLanguage);
         entity.setDescription(resource.getDescription());
         entity.setPauseReason(resource.getPauseReason());
         return entity;

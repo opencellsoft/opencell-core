@@ -37,24 +37,15 @@ public class DunningStopReason extends AuditableEntity {
 		super();
 	}
 
-	public DunningStopReason(@Size(max = 50) TradingLanguage language, String stopReason, String description, DunningSettings dunningSettings) {
+	public DunningStopReason(String stopReason, String description, DunningSettings dunningSettings) {
 		super();
-		this.language = language;
 		this.stopReason = stopReason;
 		this.description = description;
 		this.dunningSettings = dunningSettings;
 	}
 
 	/**
-	 *language
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
-	@NotNull
-	private TradingLanguage language;
-
-	/**
-	 * stop reason 
+	 * stop reason
 	 */
 	@Column(name = "stop_reason", nullable = false)
 	@Size(max = 255, min = 1)
@@ -75,14 +66,6 @@ public class DunningStopReason extends AuditableEntity {
 	@JoinColumn(name = "dunning_settings_id", nullable = false, referencedColumnName = "id")
 	@NotNull
 	private DunningSettings dunningSettings;
-
-	public TradingLanguage getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(TradingLanguage language) {
-		this.language = language;
-	}
 
 	public String getStopReason() {
 		return stopReason;

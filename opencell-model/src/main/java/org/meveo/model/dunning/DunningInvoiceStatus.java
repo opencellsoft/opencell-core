@@ -32,42 +32,24 @@ import org.meveo.model.billing.TradingLanguage;
         @Parameter(name = "sequence_name", value = "invoice_dunning_statuses_seq")})
 @NamedQueries({
 		@NamedQuery(name = "DunningInvoiceStatus.findByCodeAndDunningSettingCode", query = "FROM DunningInvoiceStatus d where d.status = :status and d.dunningSettings.code = :dunningSettingsCode"),
-		@NamedQuery(name = "DunningInvoiceStatus.findByStatusAndLanguage", query = "FROM DunningInvoiceStatus d where d.status = :status and d.language.id = :languageId and d.context IN ('PAUSED_DUNNING','STOPPED_DUNNING','EXCLUDED_FROM_DUNNING')") })
+		@NamedQuery(name = "DunningInvoiceStatus.findByStatusAndLanguage", query = "FROM DunningInvoiceStatus d where d.status = :status and d.context IN ('PAUSED_DUNNING','STOPPED_DUNNING','EXCLUDED_FROM_DUNNING')") })
 
-public class DunningInvoiceStatus extends AuditableEntity  {
-	
+public class DunningInvoiceStatus extends AuditableEntity {
+
 	private static final long serialVersionUID = 1L;
-	
-	
-	
-	
+
 	public DunningInvoiceStatus() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	
-
-	public DunningInvoiceStatus(@Size(max = 50) TradingLanguage language, @Size(max = 50) String status,
-			@Size(max = 255) DunningInvoiceStatusContextEnum context, DunningSettings dunningSettings) {
+	public DunningInvoiceStatus(@Size(max = 50) String status, @Size(max = 255) DunningInvoiceStatusContextEnum context, DunningSettings dunningSettings) {
 		super();
-		this.language = language;
 		this.status = status;
 		this.context = context;
 		this.dunningSettings = dunningSettings;
 	}
 
-
-
-	/**
-	 *language
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
-	@NotNull
-	private TradingLanguage language;
-	
-	
 	/**
 	 * status
 	 */
@@ -93,21 +75,7 @@ public class DunningInvoiceStatus extends AuditableEntity  {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "dunning_settings_id")
 	private DunningSettings dunningSettings;
-
-
-
-
-	public TradingLanguage getLanguage() {
-		return language;
-	}
-
-
-
-	public void setLanguage(TradingLanguage language) {
-		this.language = language;
-	}
-
-
+	
 
 	public String getStatus() {
 		return status;

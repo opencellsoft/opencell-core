@@ -13,10 +13,6 @@ import javax.annotation.Nullable;
 @JsonDeserialize(as = ImmutableDunningStopReason.class)
 public interface DunningStopReason extends Resource {
 
-    @Schema(description = "The language code")
-    @Nonnull
-    Resource getLanguage();
-
     @Schema(description = "The stop reason")
     @Nonnull
     String getStopReason();

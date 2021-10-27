@@ -31,6 +31,6 @@ public class DunningInvoiceStatusService extends PersistenceService<DunningInvoi
 
     public List<DunningInvoiceStatus> findByStatusAndLanguage(DunningInvoiceStatus dunningInvoiceStatus) {
         return getEntityManager().createNamedQuery("DunningInvoiceStatus.findByStatusAndLanguage", DunningInvoiceStatus.class)
-                .setParameter("status", dunningInvoiceStatus.getStatus()).setParameter("languageId", dunningInvoiceStatus.getLanguage().getId()).getResultList();
+                .setParameter("status", dunningInvoiceStatus.getStatus()).getResultList();
     }
 }
