@@ -75,7 +75,9 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PaymentS
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PersonalName;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.ThreeDSecure;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.ThreeDSecureBase;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.ThreeDSecureData;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.CreatePayoutRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.PayoutResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.CardPayoutMethodSpecificInput;
@@ -463,6 +465,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        ThreeDSecure threeDSecure = new ThreeDSecure();
+        ThreeDSecureData threeDSecureData = new ThreeDSecureData();
+        threeDSecureData.setAcsTransactionId(cardPaymentMethod.getToken3DsId());
+        threeDSecure.setPriorThreeDSecureData(threeDSecureData);
+        cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);
         cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
 
@@ -553,7 +560,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			body.setAmountOfMoney(amountOfMoney);
 			body.setCardPayoutMethodSpecificInput(cardPayoutMethodSpecificInput);
 			body.setReferences(references);
-			//body.setCustomer(customer);	
+			body.setCustomer(customer);	
 			getClient();
 			log.info("REQUEST:"+marshaller.marshal(body));
 			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
@@ -654,12 +661,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			threeDSecure.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
 			cardPaymentMethodSpecificInputBase.setThreeDSecure(threeDSecure);
 
-			CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();					
-			cardRecurrenceDetails.setRecurringPaymentSequenceIndicator( paramBean().getProperty("ingenico.HostedCheckout.RecurringPaymentSequenceIndicator", "NULL"));			
+			CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();	
+			cardRecurrenceDetails.setRecurringPaymentSequenceIndicator(paramBean().getProperty("ingenico.HostedCheckout.RecurringPaymentSequenceIndicator", ""));			
 			cardPaymentMethodSpecificInputBase.setRecurring(cardRecurrenceDetails);
 
 			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileRequestor", "CIT"));
-			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileSequenceIndicator( paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileSequenceIndicator", "FIRST"));
+			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileSequenceIndicator(paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileSequenceIndicator", "first"));
 
 			
 			CreateHostedCheckoutRequest body = new CreateHostedCheckoutRequest();

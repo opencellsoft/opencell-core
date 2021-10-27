@@ -42,9 +42,9 @@ import org.meveo.model.ObservableEntity;
 
 /**
  * Payment method
- * 
+ * @author anasseh
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 9.X
  */
 @Entity
 @ObservableEntity
@@ -133,6 +133,12 @@ public abstract class PaymentMethod extends EnableEntity {
      */
     @Column(name = "token_id")
     private String tokenId;
+    
+    /**
+     * Token 3DS identifier
+     */
+    @Column(name = "token_3ds_id")
+    private String token3DsId;
 
     /**
      * Add to deal with payment method auditing
@@ -312,4 +318,13 @@ public abstract class PaymentMethod extends EnableEntity {
         return true;
     }
 
+	public String getToken3DsId() {
+		return token3DsId;
+	}
+
+	public void setToken3DsId(String token3DsId) {
+		this.token3DsId = token3DsId;
+	}
+
+    
 }
