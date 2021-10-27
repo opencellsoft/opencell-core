@@ -389,6 +389,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteProduct.setDiscountPlan(discountPlan);
                 quoteProduct.setQuote(quoteOffer.getQuoteVersion() != null ? quoteOffer.getQuoteVersion().getQuote() : null);
                 quoteProduct.setQuoteVersion(quoteOffer.getQuoteVersion());
+                quoteProduct.setDeliveryDate(quoteProductDTO.getDeliveryDate());
                 populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
                 quoteProductService.create(quoteProduct);
                 newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
@@ -791,11 +792,13 @@ public class CpqQuoteApi extends BaseApi {
         quoteOffer.setSequence(quoteOfferDto.getSequence());
         quoteOffer.setCode(quoteOfferDto.getCode());
         quoteOffer.setDescription(quoteOfferDto.getDescription());
+        quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
         populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
         quoteOfferService.create(quoteOffer);
         quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
         quoteOfferDto.setCode(quoteOffer.getCode());
         quoteOfferDto.setDescription(quoteOffer.getDescription());
+        quoteOfferDto.setDeliveryDate(quoteOffer.getDeliveryDate());
         newPopulateProduct(quoteOfferDto, quoteOffer);
         newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
 
