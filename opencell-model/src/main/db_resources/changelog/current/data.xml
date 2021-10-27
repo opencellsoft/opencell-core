@@ -6367,7 +6367,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
         </insert>
     </changeSet>
 
-	<changeSet id="INTRD_2290_20211015" author="TarikFA.">
+	<changeSet id="INTRD_2290_20211015_build" author="TarikFA.">
 		<insert tableName="dunning_settings">
 			<column name="id" valueSequenceNext="dunning_settings_seq" />
 			<column name="code" value="DUN_DEF"/>

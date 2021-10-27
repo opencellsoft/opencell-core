@@ -9952,7 +9952,7 @@ public class OrderAdvancement extends ModuleScript {
 	    <renameColumn tableName="dunning_collection_management" newColumnName="external" oldColumnName="include_collection_agency" />
 	    <renameColumn tableName="dunning_collection_management" newColumnName="collection_agency" oldColumnName="email_collection_agency" />
     </changeSet>
-    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
         <modifyDataType columnName="pause_reason" newDataType="varchar(255)" tableName="dunning_pause_reasons"/>
         <modifyDataType columnName="stop_reason" newDataType="varchar(255)" tableName="dunning_stop_reasons"/>
         <modifyDataType columnName="status" newDataType="varchar(255)" tableName="invoice_dunning_statuses"/>
