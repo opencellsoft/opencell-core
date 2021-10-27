@@ -56,6 +56,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         CustomerListResponse result = new CustomerListResponse();
 
         try {
+            calculateBalances = calculateBalances != null ? calculateBalances : false;
             result.setCustomers(accountHierarchyApi.find(accountHierarchyDto, calculateBalances));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
