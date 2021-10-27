@@ -73,6 +73,8 @@ public class PriceDTO extends BaseEntityDto {
     private String taxCategory;
     private String taxCode;
     
+    private Long offerId;
+    
     private CustomFieldsDto customFields;
     
     
@@ -89,6 +91,7 @@ public class PriceDTO extends BaseEntityDto {
 	    amountWithtax=quotePrice.getAmountWithTax();
 		amountWithoutTax=quotePrice.getAmountWithoutTax();
 		amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
+		offerId=quotePrice.getOfferId();
 		
 
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
@@ -234,6 +237,14 @@ public class PriceDTO extends BaseEntityDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+	public Long getOfferId() {
+		return offerId;
+	}
+	public void setOfferId(Long offerId) {
+		this.offerId = offerId;
+	}
+	
+	
 
 	
 	

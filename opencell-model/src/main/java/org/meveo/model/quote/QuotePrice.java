@@ -60,6 +60,7 @@ public class QuotePrice extends AuditableEntity {
 		this.recurrenceDuration = copy.recurrenceDuration;
 		this.recurrencePeriodicity = copy.recurrencePeriodicity;
 		this.chargeTemplate = copy.chargeTemplate;
+		this.offerId=copy.offerId;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -118,6 +119,10 @@ public class QuotePrice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_offer_id")
 	private QuoteOffer quoteOffer;
+	
+	
+	@Column(name = "Offer_id")
+	private Long offerId;
 	
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
@@ -246,6 +251,18 @@ public class QuotePrice extends AuditableEntity {
 	public void setQuoteOffer(QuoteOffer quoteOffer) {
 		this.quoteOffer = quoteOffer;
 	}
+
+	public Long getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(Long offerId) {
+		this.offerId = offerId;
+	}
+	
+	
+	
+	
 
 	
 	
