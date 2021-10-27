@@ -1432,33 +1432,24 @@ public class CpqQuoteApi extends BaseApi {
                     }
                 }
                 Optional<AccountingArticle> accountingArticle = Optional.empty();
-                try {
-                	accountingArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
-                }catch(BusinessException e) {
-                	throw new MeveoApiException(e.getMessage());
-                }
-                if (!accountingArticle.isPresent())
-                    throw new MeveoApiException("No accounting article found for product code: " + serviceInstance.getProductVersion().getProduct().getCode() + " and attributes: " + attributes.toString());
-                // Add subscription charges
+                 var errorMsg="No accounting article found for product code: " + serviceInstance.getProductVersion().getProduct().getCode() +" and attributes: " + attributes.toString();
+              // Add subscription charges
                 for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                     try {
                         WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription,
                                 subscriptionCharge, serviceInstance.getSubscriptionDate(),
                                 serviceInstance.getQuantity());
                         if (wo != null) {
-                            wo.setAccountingArticle(accountingArticle.get());
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes)
+                                    .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+subscriptionCharge.getChargeTemplate())));
                             walletOperations.add(wo);
                         }
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
                                 e.getRejectionReason());
-                        throw e; // e.getBusinessException();
+                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode(),e); // e.getBusinessException();
 
-                    } catch (BusinessException e) {
-                        log.error("Failed to apply a subscription charge {}: {}", subscriptionCharge, e.getMessage(),
-                                e);
-                        throw e;
                     }
                 }
 
@@ -1471,7 +1462,8 @@ public class CpqQuoteApi extends BaseApi {
                                 .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
                         if (walletOps != null && !walletOps.isEmpty()) {
                             for (WalletOperation wo : walletOps) {
-                                wo.setAccountingArticle(accountingArticle.get());
+                            	 wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes)
+                                         .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+recurringCharge.getChargeTemplate())));
                                 walletOperations.add(wo);
                             }
 
@@ -1479,11 +1471,8 @@ public class CpqQuoteApi extends BaseApi {
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
-                        throw e; // e.getBusinessException();
+                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
 
-                    } catch (BusinessException e) {
-                        log.error("Failed to apply a recurring charge {}: {}", recurringCharge, e.getMessage(), e);
-                        throw e;
                     }
                 }
             }
