@@ -3,13 +3,34 @@ package org.meveo.apiv2.dunning.impl;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.apiv2.dunning.DunningPolicy;
+import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
 import org.meveo.apiv2.ordering.ResourceMapper;
+
+import java.util.stream.Collectors;
 
 public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo.model.dunning.DunningPolicy> {
 
+    private final DunningPolicyLevelMapper policyLevelMapper = new DunningPolicyLevelMapper();
     @Override
     protected DunningPolicy toResource(org.meveo.model.dunning.DunningPolicy entity) {
-        return null;
+        return ImmutableDunningPolicy.builder()
+                .id(entity.getId())
+                .isDefaultPolicy(entity.getDefaultPolicy())
+                .isActivePolicy(entity.getActivePolicy())
+                .policyName(entity.getPolicyName())
+                .policyDescription(entity.getPolicyDescription())
+                .minBalanceTrigger(entity.getMinBalanceTrigger())
+                .policyPriority(entity.getPolicyPriority())
+                .interestForDelaySequence(entity.getInterestForDelaySequence())
+                .isIncludeDueInvoicesInThreshold(entity.getIncludeDueInvoicesInThreshold())
+                .isAttachInvoicesToEmails(entity.getAttachInvoicesToEmails())
+                .isIncludePayReminder(entity.getIncludePayReminder())
+                .determineLevelBy(entity.getDetermineLevelBy())
+                .minBalanceTriggerCurrency(entity.getDetermineLevelBy())
+                .dunningLevels(entity.getDunningLevels().stream()
+                        .map(dunningPolicyLevel ->  policyLevelMapper.toResource(dunningPolicyLevel))
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Override
