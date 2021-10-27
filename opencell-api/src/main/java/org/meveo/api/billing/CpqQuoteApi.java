@@ -1228,7 +1228,6 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
-            quotePrice.setOfferId(quoteOffer!=null?quoteOffer.getOfferTemplate().getId():accountingArticlePrice.getOfferId());
             quotePriceService.create(quotePrice);
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
@@ -1245,7 +1244,6 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
-            quotePrice.setOfferId(a.getOfferId());
             if(a.getRecurrenceDuration()!=null) {
             	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
             }
@@ -1307,7 +1305,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setQuoteArticleLine(quoteArticleLine);
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
             quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
-            quotePrice.setOfferId(quoteOffer.getOfferTemplate().getId());
+            quotePrice.setQuoteOffer(quoteOffer);
             if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
                 RecurringChargeTemplate recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
 
@@ -1811,7 +1809,6 @@ public class CpqQuoteApi extends BaseApi {
                         discountQuotePrice.setQuoteArticleLine(quoteArticleLine);
                         discountQuotePrice.setQuoteVersion(quoteVersion);
                         discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
-                        discountQuotePrice.setOfferId(quotePrice.getOfferId());
                         if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
                             RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) quotePrice.getChargeTemplate();
                             Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth(), quoteOffer, quoteproduct));
