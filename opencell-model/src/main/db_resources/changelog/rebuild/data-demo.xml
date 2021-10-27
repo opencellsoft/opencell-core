@@ -1120,29 +1120,7 @@
             <column name="currency_id" valueNumeric="5" />
         </insert>
     </changeSet>
-    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM billing_trading_language WHERE id=-1;
-            </sqlCheck>
-        </preConditions>
-        <insert tableName="billing_trading_language">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="2015-03-19 00:04:19.152" />
-            <column name="pr_description" value="English" />
-            <column name="language_id" valueNumeric="2" />
-        </insert>
-        <insert tableName="billing_trading_language">
-            <column name="id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="2015-03-19 00:04:19.174" />
-            <column name="pr_description" value="French" />
-            <column name="language_id" valueNumeric="12" />
-        </insert>
-    </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceCategoriesDEMO">
 
         <insert tableName="billing_invoice_cat">
