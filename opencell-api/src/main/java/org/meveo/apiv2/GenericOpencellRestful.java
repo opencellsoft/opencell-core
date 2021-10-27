@@ -40,6 +40,7 @@ import org.meveo.apiv2.generic.exception.IllegalArgumentExceptionMapper;
 import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
 import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
+import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
@@ -85,7 +86,7 @@ public class GenericOpencellRestful extends Application {
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, BusinessExceptionMapper.class,
-                InvoicingResourceImpl.class, QuoteOfferResourceImpl.class)
+                InvoicingResourceImpl.class, QuoteOfferResourceImpl.class, FileUploadResourceImpl.class)
                 .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
