@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -17,8 +18,13 @@ import org.meveo.service.cpq.QuoteAttributeService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.quote.QuoteOfferService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QuoteOfferApiService {
+
+	/** Logger. */
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Inject	private QuoteOfferService quoteOfferService;
 	@Inject	private QuoteVersionService quoteVersionService;
@@ -45,20 +51,27 @@ public class QuoteOfferApiService {
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
 		
-		var duplicate = new QuoteOffer(quoteOffer);
-		duplicate.setQuoteVersion(quoteVersion);
-		duplicate.setSequence(quoteOffer.getSequence());
-		duplicate.setDeliveryDate(quoteOffer.getDeliveryDate());
+		QuoteOffer duplicate = null;
 		
-		quoteOfferService.detach(quoteOffer);
-		
-		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
-		duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
-		
-		quoteOfferService.create(duplicate);
-		
-		duplicateQuoteProduct(duplicate, quoteProducts);
-		duplicateQuoteAttribute(null, duplicate, quoteAttributes);
+		try {
+			duplicate = (QuoteOffer) BeanUtils.cloneBean(quoteOffer);
+			duplicate.setId(null);
+			duplicate.setQuoteVersion(quoteVersion);
+			duplicate.setSequence(quoteOffer.getSequence());
+			duplicate.setDeliveryDate(quoteOffer.getDeliveryDate());
+			
+			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
+			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
+			
+			quoteOfferService.create(duplicate);
+			
+			duplicateQuoteProduct(duplicate, quoteProducts);
+			duplicateQuoteAttribute(null, duplicate, quoteAttributes);
+
+		} catch (Exception e) {
+            log.error("Error when trying to cloneBean quoteOffer : ", e);
+        }
+
 		return duplicate;
 	}
 	
