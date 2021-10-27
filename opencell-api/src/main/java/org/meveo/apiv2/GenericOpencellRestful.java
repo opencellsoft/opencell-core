@@ -60,6 +60,8 @@ import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.exception.UnprocessableEntityExceptionMapper;
 import org.meveo.apiv2.generic.exception.ValidationExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
+import org.meveo.apiv2.media.file.upload.FileUploadResource;
+import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
@@ -114,7 +116,7 @@ public class GenericOpencellRestful extends Application {
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
 				DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class,
                 StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
-                DunningPaymentRetryResourceImpl.class)
+                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);

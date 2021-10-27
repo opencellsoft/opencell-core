@@ -140,7 +140,13 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> delete(Long id) {
-        return empty();
+        DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
+        if(dunningPolicy != null) {
+            dunningPolicyService.remove(id);
+            return of(dunningPolicy);
+        } else {
+            return empty();
+        }
     }
 
     @Override

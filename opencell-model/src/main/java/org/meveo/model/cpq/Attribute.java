@@ -37,6 +37,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.validation.constraint.AttributeTypeValidation;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -44,6 +45,7 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
  */
 @Entity
 @Cacheable
+@AttributeTypeValidation
 @CustomFieldEntity(cftCodePrefix = "Attribute")
 @Table(name = "cpq_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

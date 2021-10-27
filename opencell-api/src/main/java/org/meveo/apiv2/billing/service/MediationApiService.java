@@ -81,16 +81,14 @@ public class MediationApiService {
                     cdrListResult.getErrors().add(new CdrError(cdr.getRejectReasonException().getClass().getSimpleName(), cdr.getRejectReason(), cdr.getLine()));
                 }
                 if (fail > 0) {
-                    if (mode == ROLLBACK_ON_ERROR) {
-                        throw cdr.getRejectReasonException();
+                    if (mode == PROCESS_ALL) {
+                        continue;
                     }
-
-                    
                     if (mode == STOP_ON_FIRST_FAIL) {
                         break;
                     }
-                    if (mode == PROCESS_ALL) {
-                        continue;
+                    if (mode == ROLLBACK_ON_ERROR) {
+                        throw cdr.getRejectReasonException();
                     }
                 }
 
