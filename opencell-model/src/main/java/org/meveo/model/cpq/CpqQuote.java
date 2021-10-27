@@ -533,7 +533,7 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 	}
 
 	public Date getValidationDate() {
-		if(QuoteStatusEnum.ACCEPTED.equals(status)) {
+		if(QuoteStatusEnum.ACCEPTED.toString().equals(status)) {
 			return statusDate;
 		}
 		return null;
