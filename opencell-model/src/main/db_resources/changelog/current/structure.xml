@@ -9320,11 +9320,5 @@ public class OrderAdvancement extends ModuleScript {
             <column name="scope_type" type="varchar(25)" />
         </addColumn>
     </changeSet>
-    
-    <changeSet id="INTRD-2645_20211026" author="Mbarek-Ay">
-     <addColumn tableName="cpq_quote_price">
-            <column name="offer_id" type="int8" />
-        </addColumn> 
-    </changeSet>
 
 </databaseChangeLog>
