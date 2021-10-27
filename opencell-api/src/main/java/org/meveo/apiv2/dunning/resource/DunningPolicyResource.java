@@ -39,8 +39,24 @@ public interface DunningPolicyResource {
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "Dunning policy successfully updated"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Dunning policy does not exits")
             })
     Response update(@Parameter(description = "Dunning policy id", required = true)
                     @PathParam("dunningPolicyId") Long dunningPolicyId,
     @Parameter(description = "dunning policy to update", required = true) DunningPolicy dunningPolicy);
+
+    @DELETE
+    @Path("/{dunningPolicyId}")
+    @Operation(summary = "delete a dunning policy",
+            tags = {"Dunning"},
+            description = "delete dunning policy",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Dunning policy successfully deleted"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Dunning policy does not exits")
+            })
+    Response delete(@Parameter(description = "Dunning policy id", required = true)
+                    @PathParam("dunningPolicyId") Long dunningPolicyId);
 }
