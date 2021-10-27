@@ -323,10 +323,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	 */
 	private void logAction(PricePlanMatrixVersion ppmv, String action) {
 		AuditLog auditLog = new AuditLog();
-		auditLog.setActor(currentUser.getUserName());
+		auditLog.setActor(currentUser.getFullNameOrUserName());
 		auditLog.setCreated(new Date());
 		auditLog.setEntity("PricePlanMatrixVersion");
-		auditLog.setOrigin(ppmv.getPricePlanMatrix().getCode());
+		auditLog.setOrigin(ppmv.getPricePlanMatrix().getCode()+"_"+ppmv.getVersion());
 		auditLog.setAction(action); 
 		auditLog.setParameters("user "+currentUser.getUserName()+" "+action+" the price plan version "+ppmv.getVersion());
 		auditLogService.create(auditLog);
