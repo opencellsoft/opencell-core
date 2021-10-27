@@ -119,6 +119,9 @@ public class QuotePrice extends AuditableEntity {
 	@JoinColumn(name = "quote_offer_id")
 	private QuoteOffer quoteOffer;
 	
+	@Column(name = "offer_id")
+	private Long offerId;
+	
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
 	}
@@ -246,6 +249,16 @@ public class QuotePrice extends AuditableEntity {
 	public void setQuoteOffer(QuoteOffer quoteOffer) {
 		this.quoteOffer = quoteOffer;
 	}
+
+	public Long getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(Long offerId) {
+		this.offerId = offerId;
+	}
+	
+	
 
 	
 	
