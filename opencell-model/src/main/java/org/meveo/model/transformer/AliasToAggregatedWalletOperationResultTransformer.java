@@ -93,7 +93,9 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
                     }
                 }
             }
-            populateCustomField(result, setterCustomField, cfValues);
+            if (setterCustomField != null) {
+                populateCustomField(result, setterCustomField, cfValues);
+            }
         } catch (InstantiationException e) {
             throw new RuntimeException("Could not instantiate resultclass: " + resultClass.getName(), e);
         } catch (IllegalAccessException | NoSuchFieldException e) {
