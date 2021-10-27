@@ -612,7 +612,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 recurringChargeInstance.getCode(), recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), chargeToDateOnTermination, terminationReason.getCode());
 
             // Effective termination date was moved to the future - to the end of agreement
-            if (chargeToDateOnTermination.after(chargedToDate)) {
+            // chargedToDate is null means that charge was never charged
+            if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
                     recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
 
