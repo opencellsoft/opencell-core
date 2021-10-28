@@ -42,8 +42,9 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 	public DunningCollectionPlanStatuses create(DunningCollectionPlanStatuses collectionPlan) {
 		if(collectionPlan.getDunningSettings() != null && collectionPlan.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(collectionPlan.getDunningSettings().getId());
-			if(dunningSettings == null)
-				throw new BadRequestException(String.format(NO_DUNNING_FOUND , "id", + collectionPlan.getDunningSettings().getId())); 
+			if(dunningSettings == null) {
+				throw new BadRequestException(String.format(NO_DUNNING_FOUND , "id", + collectionPlan.getDunningSettings().getId()));
+			}
 			var collectionPlanExist = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettings.getCode(), collectionPlan.getStatus());
 			if(collectionPlanExist != null) {
 				throw new BadRequestException("Collection plan already exist with id : " + dunningSettings.getId() + " and status : " + collectionPlan.getStatus()); 
@@ -61,16 +62,15 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 	@Transactional
 	public DunningCollectionPlanStatuses update(String dunningSettingCode, String status, DunningCollectionPlanStatuses baseEntity) {
 		var collectionPlan = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
-		if(collectionPlan == null)
-			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status)); 
-		if(baseEntity.getContext() != null)
-			collectionPlan.setContext(baseEntity.getContext());
-		if(baseEntity.getLanguage() != null ) {
-			collectionPlan.setLanguage(baseEntity.getLanguage());
-
+		if(collectionPlan == null) {
+			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status));
 		}
-		if(!Strings.isEmpty(baseEntity.getStatus()))
+		if(baseEntity.getContext() != null) {
+			collectionPlan.setContext(baseEntity.getContext());
+		}
+		if(!Strings.isEmpty(baseEntity.getStatus())) {
 			collectionPlan.setStatus(baseEntity.getStatus());
+		}
 		return dunningCollectionPlanStatusService.update(collectionPlan);
 	}
 	@Override
@@ -80,16 +80,18 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 	@Override
 	public Optional<DunningCollectionPlanStatuses> delete(Long id) {
 		var collectionPlan = dunningCollectionPlanStatusService.findById(id);
-		if(collectionPlan == null)
-			throw new BadRequestException(NO_COLLECTION_PLAN_STATUS_FOUND + id); 
+		if(collectionPlan == null) {
+			throw new BadRequestException(NO_COLLECTION_PLAN_STATUS_FOUND + id);
+		}
 		dunningCollectionPlanStatusService.remove(collectionPlan);
 		return Optional.of(collectionPlan);
 	}
 	
 	public DunningCollectionPlanStatuses delete(String dunningSettingCode, String status) {
 		var collectionPlan = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
-		if(collectionPlan == null)
-			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status)); 
+		if(collectionPlan == null) {
+			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status));
+		}
 		dunningCollectionPlanStatusService.remove(collectionPlan);
 		return collectionPlan;
 	}

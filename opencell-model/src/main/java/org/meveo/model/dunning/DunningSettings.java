@@ -138,7 +138,7 @@ public class DunningSettings extends BusinessEntity {
     private List<DunningStopReason> dunningStopReasons = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DunningInvoiceStatus> dunningStatuses = new ArrayList<>();
+    private List<DunningInvoiceStatus> dunningInvoiceStatuses = new ArrayList<>();
 
 
     public DunningModeEnum getDunningMode() {
@@ -253,11 +253,11 @@ public class DunningSettings extends BusinessEntity {
         this.dunningStopReasons = dunningStopReasons;
     }
 
-    public List<DunningInvoiceStatus> getDunningStatuses() {
-        return dunningStatuses;
+    public List<DunningInvoiceStatus> getDunningInvoiceStatuses() {
+        return dunningInvoiceStatuses;
     }
 
-    public void setDunningStatuses(List<DunningInvoiceStatus> dunningStatuses) {
-        this.dunningStatuses = dunningStatuses;
+    public void setDunningInvoiceStatuses(List<DunningInvoiceStatus> dunningStatuses) {
+        this.dunningInvoiceStatuses = dunningStatuses;
     }
 }

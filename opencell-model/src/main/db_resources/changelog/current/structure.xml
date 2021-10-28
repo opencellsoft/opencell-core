@@ -11162,5 +11162,13 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="com_message_template" constraintName="fk_language_message_template" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
 	</changeSet>
+    <changeSet id="INTRD-2679_20211027" author="khalidHORRI">
+        <dropColumn columnName="language_id" tableName="dunning_pause_reasons"/>
+        <dropColumn columnName="language_id" tableName="dunning_stop_reasons"/>
+        <dropColumn columnName="language_id" tableName="invoice_dunning_statuses"/>
+        <dropColumn columnName="language_id" tableName="dunning_collection_plan_statuses"/>
+        <addUniqueConstraint columnNames="pause_reason, dunning_settings_id" tableName="dunning_pause_reasons"/>
+        <addUniqueConstraint columnNames="stop_reason, dunning_settings_id" tableName="dunning_stop_reasons"/>
+    </changeSet>
 
 </databaseChangeLog>

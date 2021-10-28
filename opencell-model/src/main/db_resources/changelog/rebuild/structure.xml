@@ -15456,21 +15456,21 @@
 
     </changeSet>
     <!-- end procedure -->
-   <!-- keep this always as the last changeSet to remove all rebuild logs -->
-	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
-        <delete tableName="DATABASECHANGELOG" />
+    <!-- keep this always as the last changeSet to remove all rebuild logs -->
+    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
+        <delete tableName="DATABASECHANGELOG"/>
     </changeSet>
 
-    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
-    	<sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
 
         <sql>create table ${db.schema.adapted}billing_wallet_operation_open partition of ${db.schema.adapted}billing_wallet_operation for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_wallet_operation_other partition of ${db.schema.adapted}billing_wallet_operation default</sql>
 
-        <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_open partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
-   	</changeSet>
+    </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -16560,27 +16560,27 @@
     <changeSet id="INTRD-2445_20211021" author="ZBariki" />
     <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
     <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza"/>
-   	<changeSet id="INTRD-2498_20211019" author="Mbarek-Ay" />
+    <changeSet id="INTRD-2679_20211027" author="khalidHORRI"/>
+    <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay" />
    	<changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza" />
    	
    	<changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
 	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
 	</changeSet>
-	<changeSet id="INTRD-2548_20211027" author="YoussefIZEM" />
-    
-	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
-    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
-		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
+    <changeSet id="INTRD-2548_20211027" author="YoussefIZEM" />
+    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
+        <update tableName="cpq_attribute">
+            <column name="attribute_category" value="REGULAR"></column>
+            <where>attribute_category is null</where>
+        </update>
+        <addColumn tableName="cpq_attribute">
+            <column name="el_value" type="varchar(255)"/>
+        </addColumn>
+        <addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
     </changeSet>
 
-    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
-    	<update tableName="cpq_attribute">            
-    		<column name="attribute_category" value="REGULAR"></column>
-            <where>attribute_category is null</where>
-    	</update>
-    	<addColumn tableName="cpq_attribute">
-    		<column name="el_value" type="varchar(255)"/>
-    	</addColumn>
-    	<addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
+    <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
 </databaseChangeLog>

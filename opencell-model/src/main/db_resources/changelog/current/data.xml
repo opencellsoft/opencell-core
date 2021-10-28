@@ -6417,7 +6417,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="pause_reason" value="5 jours (ouvrés) avant paiement"/>
 			<column name="description" value="Client demande 5 jours (ouvrés) avant de payer"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
@@ -6427,17 +6426,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="pause_reason" value="5 business days before payment"/>
-			<column name="description" value="Client asks for a 5 business days delay before proceeding to payment"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_pause_reasons">
-			<column name="id" valueSequenceNext="dunning_pause_reasons_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="pause_reason" value="10 jours (ouvrés) avant paiement"/>
 			<column name="description" value="Client demande 10 jours (ouvrés) avant de payer"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
@@ -6448,30 +6436,8 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="pause_reason" value="10 business days before payment"/>
-			<column name="description" value="Client asks for a 10 business days delay before proceeding to payment"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-
-		</insert>
-		<insert tableName="dunning_pause_reasons">
-			<column name="id" valueSequenceNext="dunning_pause_reasons_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="pause_reason" value="30 jours (ouvrés) avant paiement"/>
 			<column name="description" value="Client demande 30 jours (ouvrés) avant de payer"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_pause_reasons">
-			<column name="id" valueSequenceNext="dunning_pause_reasons_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="pause_reason" value="30 business days before payment"/>
-			<column name="description" value="Client asks for a 30 business days delay before proceeding to payment"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_stop_reasons">
@@ -6479,39 +6445,17 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
 			<column name="stop_reason" value="Client conteste la facture" />
 			<column name="description" value="Client conteste la facture. Dept comptable reprend la suite" />
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
 		</insert>
 		<insert tableName="dunning_stop_reasons">
-			<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-1" />
-			<column name="stop_reason" value="Client disputes invoice" />
-			<column name="description" value="Client disputes the invoice. Accounting dept in charge" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="dunning_stop_reasons">
-			<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
-			<column name="stop_reason" value="Client insolvable" />
-			<column name="description" value=" Client se déclare insolvable. Renvoi au dept comptale" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="dunning_stop_reasons">
 			<column name="id" valueSequenceNext="dunning_stop_reasons_seq"/>
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="stop_reason" value="Insolvent client"/>
-			<column name="description" value="Client let’s us know she/he is insolvent. Accounting dept to follow-up"/>
+			<column name="stop_reason" value="Client insolvable"/>
+			<column name="description" value="Client se déclare insolvable. Renvoi au dept comptale"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_stop_reasons">
@@ -6519,19 +6463,8 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="stop_reason" value="Entreprise dépose le bilan"/>
 			<column name="description" value="L’entreprise a débuté une procédure de dépôt de bilan. Renvoi au dept comptable"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_stop_reasons">
-			<column name="id" valueSequenceNext="dunning_stop_reasons_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="stop_reason" value="Company has declared bankruptcy"/>
-			<column name="description" value="The client company has initiated a bankruptcy procedure. Finance dept will follow-up"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="invoice_dunning_statuses">
@@ -6539,7 +6472,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
 			<column name="status" value="Pause" />
 			<column name="context" value="Relance en pause" />
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
@@ -6549,17 +6481,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-1" />
-			<column name="status" value="Pause" />
-			<column name="context" value="Paused dunning" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
 			<column name="status" value="Stop" />
 			<column name="context" value="Relance arrêtée" />
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
@@ -6569,17 +6490,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-1" />
-			<column name="status" value="Stop" />
-			<column name="context" value="Stopped dunning" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
 			<column name="status" value="Succès" />
 			<column name="context" value="Relance réussie" />
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
@@ -6589,17 +6499,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-1" />
-			<column name="status" value="Success" />
-			<column name="context" value="Successful dunning" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
 			<column name="status" value="Echec" />
 			<column name="context" value="Relance non aboutie" />
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
@@ -6609,29 +6508,8 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-1" />
-			<column name="status" value="Failed" />
-			<column name="context" value="Failed dunning" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-2" />
 			<column name="status" value="Actif" />
 			<column name="context" value="En cours" />
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="version" valueNumeric="1" />
-			<column name="language_id" value="-1" />
-			<column name="status" value="Active" />
-			<column name="context" value="Active" />
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq" />
 		</insert>
 
@@ -6640,7 +6518,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="status" value="Pause"/>
 			<column name="context" value="PAUSED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
@@ -6650,17 +6527,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="status" value="Pause"/>
-			<column name="context" value="PAUSED_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_collection_plan_statuses">
-			<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="status" value="Stop"/>
 			<column name="context" value="STOPPED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
@@ -6670,17 +6536,6 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="status" value="Stop"/>
-			<column name="context" value="STOPPED_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_collection_plan_statuses">
-			<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="status" value="Succès"/>
 			<column name="context" value="SUCCESSFUL_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
@@ -6690,19 +6545,8 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="status" value="Success"/>
-			<column name="context" value="SUCCESSFUL_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_collection_plan_statuses">
-			<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="status" value="Echec"/>
-			<column name="context" value="FAILD_DUNNING"/>
+			<column name="context" value="FAILED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -6710,28 +6554,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="created" valueDate="${db.current.time}"/>
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="status" value="Failed"/>
-			<column name="context" value="FAILD_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_collection_plan_statuses">
-			<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-2"/>
 			<column name="status" value="Actif"/>
-			<column name="context" value="ACTIVE_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="dunning_collection_plan_statuses">
-			<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="language_id" value="-1"/>
-			<column name="status" value="Active"/>
 			<column name="context" value="ACTIVE_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>

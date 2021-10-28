@@ -53,13 +53,7 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 			}
 			dunningStopReason.setDunningSettings(dunningSettings);
 		}
-		if (dunningStopReason.getLanguage() != null && dunningStopReason.getLanguage().getId() != null) {
-			var language = tradingLanguageService.findById(dunningStopReason.getLanguage().getId());
-			if (language == null) {
-				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningStopReason.getLanguage().getId());
-			}
-			dunningStopReason.setLanguage(language);
-		}
+
 		dunningStopReasonsService.create(dunningStopReason);
 		return dunningStopReason;
 	}
@@ -72,13 +66,6 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 		}
 		if (dunningStopReason.getStopReason() != null) {
 			dunningStopReasonUpdate.setStopReason(dunningStopReason.getStopReason());
-		}
-		if (dunningStopReason.getLanguage() != null && dunningStopReason.getLanguage().getId() != null) {
-			var language = tradingLanguageService.findById(dunningStopReason.getLanguage().getId());
-			if (language == null) {
-				throw new BadRequestException(NO_LANGUAGE_FOUND + dunningStopReason.getLanguage().getId());
-			}
-			dunningStopReasonUpdate.setLanguage(language);
 		}
 		dunningStopReasonUpdate = dunningStopReasonsService.update(dunningStopReasonUpdate);
 		return Optional.of(dunningStopReasonUpdate);

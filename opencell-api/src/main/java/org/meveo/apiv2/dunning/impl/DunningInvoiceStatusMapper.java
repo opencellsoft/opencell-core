@@ -12,9 +12,8 @@ public class DunningInvoiceStatusMapper extends ResourceMapper<org.meveo.apiv2.d
 
 	@Override
 	protected org.meveo.apiv2.dunning.DunningInvoiceStatus toResource(DunningInvoiceStatus entity) {
-		return ImmutableDunningInvoiceStatus.builder().id(entity.getId()).language(createResource(entity.getLanguage())).context(entity.getContext()).status(entity.getStatus())
-                .dunningSettings(createResource((AuditableEntity) entity.getDunningSettings()))
-                .build();
+        return ImmutableDunningInvoiceStatus.builder().id(entity.getId()).context(entity.getContext()).status(entity.getStatus())
+                .dunningSettings(createResource((AuditableEntity) entity.getDunningSettings())).build();
     }
 
     @Override
@@ -26,10 +25,6 @@ public class DunningInvoiceStatusMapper extends ResourceMapper<org.meveo.apiv2.d
         dunningSettings.setId(resource.getDunningSettings().getId());
         dunningSettings.setCode(resource.getDunningSettings().getCode());
         entity.setDunningSettings(dunningSettings);
-        resource.getLanguage();
-        var tradingLanguage = new TradingLanguage();
-        tradingLanguage.setId(resource.getLanguage().getId());
-        entity.setLanguage(tradingLanguage);
         entity.setStatus(resource.getStatus());
         entity.setContext(resource.getContext());
         return entity;
