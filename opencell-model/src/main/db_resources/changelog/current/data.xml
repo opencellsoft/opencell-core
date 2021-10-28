@@ -7058,5 +7058,16 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
             </column>
         </insert>
     </changeSet>
+
+	<changeSet author="AbdelkaderBouazza" id="INTRD-2698-20211028">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="DUNNING_ACTION" />
+			<column name="description" value="dunning action" />
+		</insert>
+	</changeSet>
 	
 </databaseChangeLog>
