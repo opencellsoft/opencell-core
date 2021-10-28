@@ -199,7 +199,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             PricePlanMatrix pricePlanMatrix =  pricePlanMatrixVersion.getPricePlanMatrix(); 
             pricePlanMatrix.getVersions()
 			.stream()
-			.filter(ppmv -> pricePlanMatrixVersion.getId() == null ||  pricePlanMatrixVersion.getId() != ppmv.getId())
 			.forEach(ppmv -> {
             if(ppmv.getValidity().isCorrespondsToPeriod(postData.getValidity(), false)) {
         		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
