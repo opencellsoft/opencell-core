@@ -66,7 +66,7 @@ public class DunningPauseReasonApiServiceTest {
     @Test
     public void shouldUpdateExitingDunningPauseReason() {
 		when(dunningPauseReasonsService.findById(anyLong())).thenReturn(dunningPauseReason);
-		var updateDunning = new DunningPauseReason(null, "Pause reason", "Description");
+		var updateDunning = new DunningPauseReason("Pause reason", "Description");
 		when(dunningPauseReasonsService.update(any())).thenReturn(updateDunning);
 
 		dunningPauseReasonApiService.update(1L, dunningPauseReason);

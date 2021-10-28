@@ -4,12 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -21,6 +16,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "dunning_policy_level")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_policy_level_seq")})
+@NamedQueries({
+        @NamedQuery(name = "DunningPolicyLevel.findDunningPolicyLevels", query = "SELECT dpl FROM DunningPolicyLevel dpl where dpl.dunningPolicy.id=:policyId")})
 public class DunningPolicyLevel extends AuditableEntity {
 
     /**

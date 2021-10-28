@@ -66,13 +66,13 @@ public class DunningInvoiceStatusApiServiceTest {
     
     @Test
     public void shouldUpdateExitingDunningInvoiceStatus() {
-    	when(dunningInvoiceStatusService.findById(anyLong())).thenReturn(dunningInvoiceStatus);
-    	var updateDunning = new DunningInvoiceStatus(null, "Status", DunningInvoiceStatusContextEnum.ACTIVE_DUNNING,null);
-    	when(dunningInvoiceStatusService.update(any())).thenReturn(updateDunning);
+		when(dunningInvoiceStatusService.findById(anyLong())).thenReturn(dunningInvoiceStatus);
+		var updateDunning = new DunningInvoiceStatus("Status", DunningInvoiceStatusContextEnum.ACTIVE_DUNNING, null);
+		when(dunningInvoiceStatusService.update(any())).thenReturn(updateDunning);
 
 		dunningInvoiceStatusApiService.update(1L, dunningInvoiceStatus);
-        assertEquals("Assert status", "Status", updateDunning.getStatus());
-    }
+		assertEquals("Assert status", "Status", updateDunning.getStatus());
+	}
     
 
     @Test(expected = BadRequestException.class)

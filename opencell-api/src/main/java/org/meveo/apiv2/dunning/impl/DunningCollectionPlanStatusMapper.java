@@ -15,7 +15,6 @@ public class DunningCollectionPlanStatusMapper extends ResourceMapper<org.meveo.
 				.id(entity.getId())
 				.dunningSettings(createResource(entity.getDunningSettings()))
 				.context(entity.getContext())
-				.language(createResource(entity.getLanguage()))
 				.status(entity.getStatus())
 				.build();
 		
@@ -31,10 +30,6 @@ public class DunningCollectionPlanStatusMapper extends ResourceMapper<org.meveo.
 		entity.setDunningSettings(dunningSetting);
 		entity.setId(resource.getId());
 		entity.setContext(resource.getContext());
-		resource.getLanguage();
-		var tradingLanguage = new TradingLanguage();
-		tradingLanguage.setId(resource.getLanguage().getId());
-		entity.setLanguage(tradingLanguage);
 		entity.setStatus(resource.getStatus());
 		return entity;
 	}

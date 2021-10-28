@@ -21,7 +21,6 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +52,7 @@ import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -117,7 +117,6 @@ import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -283,7 +282,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         	offerTemplate.setOfferModel(loadEntityByCode(offerTemplateService, postData.getOfferModelCode(), OfferTemplate.class));
         }
 
-        offerTemplate.setOfferChangeRestricted(postData.isOfferChangeRestricted());
+        offerTemplate.setIsOfferChangeRestricted(postData.isOfferChangeRestricted());
 
         if(postData.getAllowedOfferChange() != null && !postData.getAllowedOfferChange().isEmpty()){
             List<OfferTemplate> allowedOffers = new ArrayList<>();

@@ -2,13 +2,16 @@ package org.meveo.api.cpq;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
 
 import org.apache.logging.log4j.util.Strings;
+import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
@@ -20,6 +23,7 @@ import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -27,6 +31,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
@@ -92,27 +97,42 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		attribute.setDisabled(postData.isDisabled() == null ? false : postData.isDisabled());
-        populateCustomFields(postData.getCustomFields(), attribute, true);
+		populateCustomFields(postData.getCustomFields(), attribute, true);
+		validateAttribute(attribute);
 		attributeService.create(attribute);
-		processTags(postData,attribute);
-		processAssignedAttributes(postData,attribute);
-		processMedias(postData,attribute);
+		processTags(postData, attribute);
+		processAssignedAttributes(postData, attribute);
+		processMedias(postData, attribute);
 		return attribute;
 	}
-	
+
+	public void validateAttribute(Attribute attribute) throws MeveoApiException {
+		if (attribute.getAttributeType() != null && attribute.getAttributeType().equals(AttributeTypeEnum.LIST_MULTIPLE_NUMERIC)) {
+			if (attribute.getAllowedValues() == null || attribute.getAllowedValues().isEmpty()) {
+				return;
+			}
+			for (String value : attribute.getAllowedValues()) {
+				if (!value.matches("\\d+")) {
+					throw new MeveoApiException(value + " is not a valid number");
+				}
+			}
+		}
+
+	}
+
 	private void processTags(AttributeDTO postData, Attribute attribute) {
-		List<String> tagCodes = postData.getTagCodes(); 
-		if(tagCodes != null && !tagCodes.isEmpty()){
-			Set<Tag> tags=new HashSet<Tag>();
-			for(String code:tagCodes) {
-				Tag tag=tagService.findByCode(code);
-				if(tag == null) { 
-					throw new EntityDoesNotExistsException(Tag.class,code);
+		List<String> tagCodes = postData.getTagCodes();
+		if (tagCodes != null && !tagCodes.isEmpty()) {
+			Set<Tag> tags = new HashSet<Tag>();
+			for (String code : tagCodes) {
+				Tag tag = tagService.findByCode(code);
+				if (tag == null) {
+					throw new EntityDoesNotExistsException(Tag.class, code);
 				}
 				tags.add(tag);
 			}
 			attribute.setTags(new ArrayList<>(tags));
-		}else {
+		} else {
 			attribute.getTags().clear();
 		}
 	} 
@@ -135,21 +155,22 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		}
 	
 	private void processAssignedAttributes(AttributeDTO postData, Attribute attribute) {
-		List<String> assignedAttrCodes = postData.getAssignedAttributeCodes(); 
-		if(assignedAttrCodes != null && !assignedAttrCodes.isEmpty()){
-			Set<Attribute> assignedAttributes=new HashSet<Attribute>();
-			for(String code:assignedAttrCodes) {
-				Attribute attr=attributeService.findByCode(code);
-				if(attr == null) { 
-					throw new EntityDoesNotExistsException(Attribute.class,code);
-				} 
+		List<String> assignedAttrCodes = postData.getAssignedAttributeCodes();
+		if (assignedAttrCodes != null && !assignedAttrCodes.isEmpty()) {
+			Set<Attribute> assignedAttributes = new HashSet<Attribute>();
+			for (String code : assignedAttrCodes) {
+				Attribute attr = attributeService.findByCode(code);
+				if (attr == null) {
+					throw new EntityDoesNotExistsException(Attribute.class, code);
+				}
 				attr.setParentAttribute(attribute);
 				assignedAttributes.add(attr);
 			}
 			attribute.getAssignedAttributes().addAll(assignedAttributes);
-		}else{
-			if(!attribute.getAssignedAttributes().isEmpty())
-			attributeService.updateParentAttribute(attribute.getId());
+		} else {
+			if (!attribute.getAssignedAttributes().isEmpty()) {
+				attributeService.updateParentAttribute(attribute.getId());
+			}
 		}
 	}
 	
@@ -188,48 +209,50 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
-		
+
 		Attribute attribute = attributeService.findByCode(code);
 		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
-		} 
-		ChargeTemplateDto chargeTemplateDto=null;
-		Set<ChargeTemplateDto> chargeTemplateDtos=new HashSet<ChargeTemplateDto>();
-		for(ChargeTemplate charge : attribute.getChargeTemplates()) {
-			chargeTemplateDto=new ChargeTemplateDto(charge,entityToDtoConverter.getCustomFieldsDTO(charge));
+		}
+		ChargeTemplateDto chargeTemplateDto = null;
+		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<ChargeTemplateDto>();
+		for (ChargeTemplate charge : attribute.getChargeTemplates()) {
+			chargeTemplateDto = new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge));
 			chargeTemplateDtos.add(chargeTemplateDto);
 		}
-		TagDto tagDto=null;
-		List<TagDto> tagDtos=new ArrayList<TagDto>();
-		for(Tag tag : attribute.getTags()) {
-			tagDto=new TagDto(tag);
+		TagDto tagDto = null;
+		List<TagDto> tagDtos = new ArrayList<TagDto>();
+		for (Tag tag : attribute.getTags()) {
+			tagDto = new TagDto(tag);
 			tagDtos.add(tagDto);
 		}
-		
-		AttributeDTO attributeDto=null;
-		List<AttributeDTO> assignedAttributes=new ArrayList<AttributeDTO>();
-		for(Attribute attr : attribute.getAssignedAttributes()) {
-			attributeDto=new AttributeDTO(attr);
+
+		AttributeDTO attributeDto = null;
+		List<AttributeDTO> assignedAttributes = new ArrayList<AttributeDTO>();
+		for (Attribute attr : attribute.getAssignedAttributes()) {
+			attributeDto = new AttributeDTO(attr);
 			assignedAttributes.add(attributeDto);
 		}
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes,true); 
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute, chargeTemplateDtos, tagDtos, assignedAttributes, true);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
 		return result;
 	}
 
+	@Override
 	public void remove(String code) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
-		Attribute attribute=attributeService.findByCode(code);
-		if (attribute== null) {
+		Attribute attribute = attributeService.findByCode(code);
+		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		}
 		attributeService.remove(attribute);
 
-	} 
+	}
 
+	@Override
 	public Attribute createOrUpdate(AttributeDTO postData) throws MeveoApiException, BusinessException {
 		if (attributeService.findByCode(postData.getCode()) != null) {
 			return update(postData);
@@ -237,38 +260,32 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			return create(postData);
 		}
 	}
-	
-	
-	
-	public GetProductDtoResponse listPost(String productCode,String currentProductVersion,OfferContextDTO offerContextDto) { 
-		if(Strings.isEmpty(productCode)) {
+
+	public GetProductDtoResponse listPost(String productCode, String currentProductVersion, OfferContextDTO offerContextDto) {
+		if (Strings.isEmpty(productCode)) {
 			missingParameters.add("productCode");
-		} 
-		if(Strings.isEmpty(currentProductVersion)) {
+		}
+		if (Strings.isEmpty(currentProductVersion)) {
 			missingParameters.add("currentProductVersion");
-		} 
+		}
 
 		Product product = productService.findByCode(productCode);
-		if(product==null) {
-			throw new EntityDoesNotExistsException(Product.class,productCode);
+		if (product == null) {
+			throw new EntityDoesNotExistsException(Product.class, productCode);
 		}
-		ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode,Integer.parseInt(currentProductVersion));
-		if(productVersion==null) {
-			throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentProductVersion,"currentVersion");
+		ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode, Integer.parseInt(currentProductVersion));
+		if (productVersion == null) {
+			throw new EntityDoesNotExistsException(ProductVersion.class, productCode, "productCode", "" + currentProductVersion, "currentVersion");
 		}
-       GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,true);
-		getProductVersionResponse.getAttributes()
-				.stream()
-				.forEach(
-						att -> {
-							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
-							if (sourceRules != null && !sourceRules.isEmpty()) {
-								att.setRuled(true);
-							}
-						}
-				);
-		
-		GetProductDtoResponse result = new GetProductDtoResponse(product);   
+		GetProductVersionResponse getProductVersionResponse = new GetProductVersionResponse(productVersion, true, true);
+		getProductVersionResponse.getAttributes().stream().forEach(att -> {
+			List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
+			if (sourceRules != null && !sourceRules.isEmpty()) {
+				att.setRuled(true);
+			}
+		});
+
+		GetProductDtoResponse result = new GetProductDtoResponse(product);
 		result.setCurrentProductVersion(getProductVersionResponse);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(product));
 		return result;

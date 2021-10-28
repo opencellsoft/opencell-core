@@ -879,12 +879,38 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return getActiveOrLastUpdated(subscriptions);
     }
 
+    public Subscription getLastVersionSubscriptionForPatch(String subCode) {
+        TypedQuery<Subscription> query = getEntityManager()
+                .createQuery("select s from Subscription s "
+                        + "left join fetch s.offer o "
+                        + "left join fetch o.allowedOffersChange a "
+                        + "where lower(s.code)=:code "
+                        + "and (s.validity is null or s.validity.to is null) "
+                        + "order by s.validity.to desc", entityClass)
+                .setParameter("code", subCode.toLowerCase())
+                .setMaxResults(1);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), subCode);
+            return null;
+        }
+    }
+    
     public Subscription getLastVersionSubscription(String subCode) {
-        List<Subscription> subscriptions = findListByCode(subCode);
-        return subscriptions.stream()
-                .filter(s -> s.getValidity() == null || s.getValidity().getTo() == null)
-                .findFirst()
-                .orElse(null);
+        TypedQuery<Subscription> query = getEntityManager()
+                .createQuery("select s from Subscription s "
+                        + "where lower(s.code)=:code "
+                        + "and (s.validity is null or s.validity.to is null) "
+                        + "order by s.validity.to desc", entityClass)
+                .setParameter("code", subCode.toLowerCase())
+                .setMaxResults(1);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), subCode);
+            return null;
+        }
     }
 
     private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {

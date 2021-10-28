@@ -374,16 +374,4 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	        return Response.ok(result).build();
 	}
 
-	@Override
-	public Response checkIfUsed(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
-		Map<String,List<Long>> result = new TreeMap<String, List<Long>>();
-        try {
-        	result = pricePlanApi.checkIfUsed(pricePlanMatrixCode, pricePlanMatrixVersion);
-        } catch (Exception e) {
-            processException(e, new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage()));
-        }
-
-        return Response.ok(result).build();
-	}
-
 }

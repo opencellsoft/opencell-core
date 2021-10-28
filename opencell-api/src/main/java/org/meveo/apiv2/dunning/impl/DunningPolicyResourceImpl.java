@@ -3,7 +3,9 @@ package org.meveo.apiv2.dunning.impl;
 import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
 import org.meveo.apiv2.dunning.DunningPolicy;
+import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
+import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
@@ -129,5 +131,22 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 .status("SUCCESS")
                 .message("Dunning policy with name " + dunningPolicy.getPolicyName() + " is successfully deleted")
                 .build()).build();
+    }
+
+    @Override
+    public Response findByName(String dunningPolicyName) {
+        return Response
+                .ok(toResourceOrderWithLink(mapper.toResource(dunningPolicyApiService.findByName(dunningPolicyName).get())))
+                .build();
+    }
+
+    private org.meveo.apiv2.dunning.DunningPolicy toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningPolicy dunningPolicy) {
+        return ImmutableDunningPolicy.copyOf(dunningPolicy)
+                .withLinks(
+                        new LinkGenerator.SelfLinkGenerator(DunningPolicyResource.class)
+                                .withId(dunningPolicy.getId())
+                                .withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction()
+                                .build()
+                );
     }
 }

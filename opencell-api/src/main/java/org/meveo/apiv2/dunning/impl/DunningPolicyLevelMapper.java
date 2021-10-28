@@ -1,17 +1,22 @@
 package org.meveo.apiv2.dunning.impl;
 
 import org.meveo.apiv2.dunning.DunningPolicyLevel;
+import org.meveo.apiv2.dunning.ImmutableDunningPolicyLevel;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.dunning.CollectionPlanStatus;
 import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.model.dunning.DunningLevel;
 
-
 public class DunningPolicyLevelMapper extends ResourceMapper<DunningPolicyLevel, org.meveo.model.dunning.DunningPolicyLevel> {
 
     @Override
     protected DunningPolicyLevel toResource(org.meveo.model.dunning.DunningPolicyLevel entity) {
-        return null;
+        return ImmutableDunningPolicyLevel.builder()
+                .dunningLevelId(entity.getDunningLevel().getId())
+                .invoiceDunningStatusesId(entity.getInvoiceDunningStatuses().getId())
+                .collectionPlanStatusId(entity.getCollectionPlanStatus().getId())
+                .sequence(entity.getSequence())
+                .build();
     }
 
     @Override

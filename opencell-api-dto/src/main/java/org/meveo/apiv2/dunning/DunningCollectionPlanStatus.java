@@ -23,10 +23,6 @@ public interface DunningCollectionPlanStatus extends Resource {
     @Nonnull
 	Resource  getDunningSettings();
 
-    @Schema(description = "indacte language used in the collection")
-    @Nonnull
-    Resource getLanguage();
-
     @Schema(description = "indicate the status used in the collection")
     @Nonnull
     String getStatus();

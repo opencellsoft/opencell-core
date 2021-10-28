@@ -10,15 +10,13 @@ import java.util.List;
 import java.util.Optional;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.*;
-import org.meveo.service.payments.impl.CollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningInvoiceStatusService;
-import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.*;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.service.payments.impl.DunningPolicyService;
 
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
@@ -33,6 +31,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Inject
     private CollectionPlanStatusService collectionPlanStatusService;
+
+    @Inject
+    private DunningPolicyLevelService dunningPolicyLevelService;
 
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
@@ -54,7 +55,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
         dunningPolicyService.create(dunningPolicy);
-        return findByName(dunningPolicy.getPolicyName()).get();
+        return findByCode(dunningPolicy.getPolicyName()).get();
     }
 
     @Override
@@ -151,12 +152,19 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> findByCode(String code) {
-        return empty();
+        try {
+            DunningPolicy dunningPolicy = dunningPolicyService.findByName(code);
+            return of(dunningPolicy);
+        } catch (Exception exception) {
+            throw new BadRequestException(exception.getMessage());
+        }
     }
 
     public Optional<DunningPolicy> findByName(String policyName) {
         try {
-            return of(dunningPolicyService.findByName(policyName));
+            DunningPolicy dunningPolicy = dunningPolicyService.findByName(policyName);
+            dunningPolicy.setDunningLevels(dunningPolicyLevelService.findByPolicyID(dunningPolicy.getId()));
+            return of(dunningPolicy);
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage());
         }

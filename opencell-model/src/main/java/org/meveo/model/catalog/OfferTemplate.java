@@ -51,7 +51,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
@@ -177,7 +176,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "status_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date statusDate;
-
 
 
     @Type(type = "numeric_boolean")
@@ -553,12 +551,18 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
                 .anyMatch(off -> off.getProduct().getCode().equals(productCode));
     }
 
-    public Boolean getOfferChangeRestricted() {
+    /**
+     * @return the isOfferChangeRestricted
+     */
+    public Boolean getIsOfferChangeRestricted() {
         return isOfferChangeRestricted;
     }
 
-    public void setOfferChangeRestricted(Boolean offerChangeRestricted) {
-        isOfferChangeRestricted = offerChangeRestricted;
+    /**
+     * @param isOfferChangeRestricted the isOfferChangeRestricted to set
+     */
+    public void setIsOfferChangeRestricted(Boolean isOfferChangeRestricted) {
+        this.isOfferChangeRestricted = isOfferChangeRestricted;
     }
 
     public List<OfferTemplate> getAllowedOffersChange() {

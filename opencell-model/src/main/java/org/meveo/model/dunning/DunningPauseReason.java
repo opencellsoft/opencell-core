@@ -40,24 +40,14 @@ public class DunningPauseReason extends AuditableEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DunningPauseReason(@Size(max = 50) TradingLanguage language, @Size(max = 1000) String pauseReason, @Size(max = 255) String description) {
+	public DunningPauseReason(@Size(max = 1000) String pauseReason, @Size(max = 255) String description) {
 		super();
-		this.language = language;
 		this.pauseReason = pauseReason;
 		this.description = description;
 	}
 
 	/**
-	 *language
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "language_id",nullable = false, referencedColumnName = "id")
-	@NotNull
-	private TradingLanguage language;
-	
-	
-	/**
-	 * pause reason 
+	 * pause reason
 	 */
 	@Column(name = "pause_reason", nullable = false)
 	@Size(max = 255, min = 1)
@@ -81,21 +71,6 @@ public class DunningPauseReason extends AuditableEntity {
 	@JoinColumn(name = "dunning_settings_id",nullable = false, referencedColumnName = "id")
 	@NotNull
 	private DunningSettings dunningSettings;
-
-
-
-
-	public TradingLanguage getLanguage() {
-		return language;
-	}
-
-
-
-	public void setLanguage(TradingLanguage language) {
-		this.language = language;
-	}
-
-
 
 	public String getPauseReason() {
 		return pauseReason;
