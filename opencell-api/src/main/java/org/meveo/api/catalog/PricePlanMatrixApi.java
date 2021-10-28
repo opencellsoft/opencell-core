@@ -524,12 +524,4 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     	return new PricePlanMatrixDto(pricePlanMatrixService.findById(duplicate.getId()), null);
     }
 
-	/**
-	 * @param pricePlanMatrixCode
-	 * @param pricePlanMatrixVersion
-	 * @return
-	 */
-	public Map<String, List<Long>> checkIfUsed(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
-		return pricePlanMatrixVersionService.getUsedEntities(pricePlanMatrixCode, pricePlanMatrixVersion);
-	}
 }
