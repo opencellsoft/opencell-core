@@ -1,0 +1,36 @@
+package org.meveo.apiv2.catalog.resource;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.meveo.apiv2.models.ApiException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+@Path("/pricePlans")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public interface PricePlanResource {
+
+	@GET
+	@Path("/{pricePlanMatrixCode}/pricePlanVersions/{pricePlanMatrixVersion}/checkIfUsed")
+	@Operation(summary = "Check if the current price plan version is used", 
+	tags = { "Price Plan" }, description = "Check if the current price plan version is used in a draft quote, not completed/validated order, or in a subscription", 
+	responses = {	@ApiResponse(responseCode = "200", description = "The price plan version use successfully loaded"),
+					@ApiResponse(responseCode = "400", description = "Internal error"),
+					@ApiResponse(responseCode = "404", description = "Price plan version not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
+
+	Response getDiscountPlanItem(
+			@Parameter(description = "code of the price plan ", required = true) @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+			@Parameter(description = "version of the pricePlanVersion", required = true) @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+
+}
