@@ -328,7 +328,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		final Date date = new Date();
 		auditLog.setCreated(date);
 		auditLog.setEntity("PricePlanMatrixVersion");
-		final String origin = ppmv.getPricePlanMatrix().getCode()+"_"+ppmv.getCurrentVersion();
+		final String origin = ppmv.getPricePlanMatrix().getCode()+"."+ppmv.getCurrentVersion();
 		auditLog.setOrigin(origin);
 		auditLog.setAction(action); 
 		auditLog.setParameters("user "+currentUser.getUserName()+" apply "+action+" on "+DateUtils.formatAsDate(date)+" to the price plan version "+origin+". "+ppmv.getStatusChangeLog());
