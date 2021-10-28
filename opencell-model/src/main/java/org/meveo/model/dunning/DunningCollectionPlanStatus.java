@@ -21,22 +21,21 @@ import org.meveo.model.billing.TradingLanguage;
 /**
  * @author Mbarek-Ay
  * @version 11.0
- *
  */
 @Entity
 @Table(name = "dunning_collection_plan_statuses")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "dunning_collection_plan_statuses_seq")})
-public class DunningCollectionPlanStatuses extends AuditableEntity {
+		@Parameter(name = "sequence_name", value = "dunning_collection_plan_statuses_seq") })
+public class DunningCollectionPlanStatus extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	public DunningCollectionPlanStatuses() {
+	public DunningCollectionPlanStatus() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public DunningCollectionPlanStatuses(@Size(max = 50) String status, @Size(max = 255) DunningCollectionPlanStatusContextEnum context, DunningSettings dunningSettings) {
+	public DunningCollectionPlanStatus(@Size(max = 50) String status, DunningCollectionPlanStatusContextEnum context, DunningSettings dunningSettings) {
 		super();
 		this.status = status;
 		this.context = context;
@@ -55,7 +54,6 @@ public class DunningCollectionPlanStatuses extends AuditableEntity {
 	 *context 
 	 */
 	@Column(name = "context", length = 255)
-	@Size(max = 255)
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private DunningCollectionPlanStatusContextEnum context;
