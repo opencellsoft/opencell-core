@@ -19,12 +19,16 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeCategoryEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 @Stateless
 public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatrixLine> {
@@ -147,16 +151,15 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     public List<PricePlanMatrixLine> loadMatchedLinesForProductQuote(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, Long productQuoteId) throws BusinessException{
-        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues);
+        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, null);
         if (matchedPrices.isEmpty()) {
             throw new BusinessApiException("No price match with quote product id: " + productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
         }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority())
             throw new BusinessException("Many prices lines with the same priority match with quote product id: "+ productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
         return List.of(matchedPrices.get(0));
     }
-
-    public PricePlanMatrixLine loadMatchedLinesForServiceInstance(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, String serviceInstanceCode) throws BusinessException {
-        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues);
+    public PricePlanMatrixLine loadMatchedLinesForServiceInstance(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, String serviceInstanceCode, WalletOperation walletOperation) throws BusinessException {
+        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, walletOperation);
         if (matchedPrices.isEmpty()) {
             throw new BusinessApiException("No price match with service instance code: " + serviceInstanceCode + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
         }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority())
@@ -164,8 +167,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return matchedPrices.get(0);
     }
 
-    private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) {
+    private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
+    	addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
         if(attributeValues.isEmpty()) {
             return priceLines.stream()
                     .filter(PricePlanMatrixLine::isDefaultLine)
@@ -179,7 +183,29 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         }
     }
 
-    public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
+    /**
+	 * @param businessAttributes 
+     * @param attributeValues
+     * @param walletOperation 
+	 * @param product 
+	 */
+	private void addBusinessAttributeValues(List<Attribute> businessAttributes, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
+		businessAttributes.stream().forEach(attribute->attributeValues.add(getBusinessAttributeValue(attribute, walletOperation)));
+	}
+
+	/**
+	 * @param attribute
+	 * @param walletOperation 
+	 * @param product 
+	 * @return
+	 */
+	private AttributeValue getBusinessAttributeValue(Attribute attribute, WalletOperation op) {
+		Object value=ValueExpressionWrapper.evaluateExpression(attribute.getElValue(), Object.class, op);
+		AttributeValue<AttributeValue> attributeValue= new AttributeValue<AttributeValue>(attribute, value);
+		return attributeValue;
+	}
+
+	public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
         for (PricePlanMatrixLine l : linesToRemove) {
             remove(findById(l.getId()));
         }

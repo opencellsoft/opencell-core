@@ -9959,7 +9959,7 @@ public class OrderAdvancement extends ModuleScript {
 	    <renameColumn tableName="dunning_collection_management" newColumnName="external" oldColumnName="include_collection_agency" />
 	    <renameColumn tableName="dunning_collection_management" newColumnName="collection_agency" oldColumnName="email_collection_agency" />
     </changeSet>
-    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
         <modifyDataType columnName="pause_reason" newDataType="varchar(255)" tableName="dunning_pause_reasons"/>
         <modifyDataType columnName="stop_reason" newDataType="varchar(255)" tableName="dunning_stop_reasons"/>
         <modifyDataType columnName="status" newDataType="varchar(255)" tableName="invoice_dunning_statuses"/>
@@ -11142,13 +11142,22 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>id=-13</where>
         </update>
     </changeSet>
-
+    
     <changeSet id="INTRD-2645_20211026" author="Mbarek-Ay">
-        <addColumn tableName="cpq_quote_price">
-            <column name="offer_id" type="int8"/>
-        </addColumn>
+     <addColumn tableName="cpq_quote_price">
+            <column name="offer_id" type="int8" />
+        </addColumn> 
     </changeSet>
-
+    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
+        <update tableName="cpq_attribute">
+            <column name="attribute_category" value="REGULAR"></column>
+            <where>attribute_category is null</where>
+        </update>
+        <addColumn tableName="cpq_attribute">
+            <column name="el_value" type="varchar(255)"/>
+        </addColumn>
+        <addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
+    </changeSet>
     <changeSet id="INTRD-2679_20211027" author="khalidHORRI">
         <dropColumn columnName="language_id" tableName="dunning_pause_reasons"/>
         <dropColumn columnName="language_id" tableName="dunning_stop_reasons"/>
@@ -11157,6 +11166,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <addUniqueConstraint columnNames="pause_reason, dunning_settings_id" tableName="dunning_pause_reasons"/>
         <addUniqueConstraint columnNames="stop_reason, dunning_settings_id" tableName="dunning_stop_reasons"/>
     </changeSet>
-
+    
 
 </databaseChangeLog>

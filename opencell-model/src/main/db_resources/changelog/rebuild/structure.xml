@@ -9572,7 +9572,6 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
-             <column name="offer_id" type="int8" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -16453,11 +16452,10 @@
 	<changeSet id="INTRD-2444_20211018" author="ZBariki" />
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-2421_20211012-pg" author="AndriusKarpavicius" dbms="postresql"/>
+    <changeSet id="#INTRD-2421_20211012-pg" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_20211018-reports" author="AndriusKarpavicius"/>
-    <changeSet id="INTRD-2645_20211026" author="Mbarek-Ay"/>
 
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
@@ -16557,16 +16555,27 @@
     <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA"/>
     <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2679_20211027" author="khalidHORRI"/>
+    <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay"/>
+    <changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza"/>
 
+    <changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
+        <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version"/>
+    </changeSet>
+    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
+        <update tableName="cpq_attribute">
+            <column name="attribute_category" value="REGULAR"></column>
+            <where>attribute_category is null</where>
+        </update>
+        <addColumn tableName="cpq_attribute">
+            <column name="el_value" type="varchar(255)"/>
+        </addColumn>
+        <addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
+    </changeSet>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'
         </sql>
-    </changeSet>
-
-    <changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
-        <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version"/>
     </changeSet>
 
 </databaseChangeLog>
