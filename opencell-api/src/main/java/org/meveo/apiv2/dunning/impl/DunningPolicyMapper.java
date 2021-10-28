@@ -13,7 +13,7 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
     private final DunningPolicyLevelMapper policyLevelMapper = new DunningPolicyLevelMapper();
     @Override
     protected DunningPolicy toResource(org.meveo.model.dunning.DunningPolicy entity) {
-        return ImmutableDunningPolicy.builder()
+        ImmutableDunningPolicy.Builder builder = ImmutableDunningPolicy.builder()
                 .id(entity.getId())
                 .isDefaultPolicy(entity.getDefaultPolicy())
                 .isActivePolicy(entity.getActivePolicy())
@@ -26,11 +26,13 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
                 .isAttachInvoicesToEmails(entity.getAttachInvoicesToEmails())
                 .isIncludePayReminder(entity.getIncludePayReminder())
                 .determineLevelBy(entity.getDetermineLevelBy())
-                .minBalanceTriggerCurrency(entity.getDetermineLevelBy())
-                .dunningLevels(entity.getDunningLevels().stream()
-                        .map(dunningPolicyLevel ->  policyLevelMapper.toResource(dunningPolicyLevel))
-                        .collect(Collectors.toList()))
-                .build();
+                .minBalanceTriggerCurrency(entity.getDetermineLevelBy());
+        if (entity.getDunningLevels() != null) {
+            builder.dunningLevels(entity.getDunningLevels().stream()
+                    .map(dunningPolicyLevel ->  policyLevelMapper.toResource(dunningPolicyLevel))
+                    .collect(Collectors.toList()));
+        }
+        return builder.build();
     }
 
     @Override
