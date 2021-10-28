@@ -8433,12 +8433,7 @@
     
     </changeSet>
     
-    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
-    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
-        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
-    </changeSet>
-
-	<changeSet author="AbdelkaderBouazza" id="INTRD-2698-20211028">
+    <changeSet author="AbdelkaderBouazza" id="INTRD-2698-20211028">
 		<insert tableName="meveo_script_instance_cat">
 			<column name="id" valueNumeric="-2" />
 			<column name="version" valueNumeric="0" />
@@ -8448,4 +8443,11 @@
 			<column name="description" value="dunning action" />
 		</insert>
 	</changeSet>
+    
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
+    </changeSet>
+
+	
 </databaseChangeLog>
