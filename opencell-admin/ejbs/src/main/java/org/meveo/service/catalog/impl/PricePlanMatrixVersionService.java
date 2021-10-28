@@ -23,6 +23,7 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.cpq.ProductService;
@@ -324,11 +325,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	private void logAction(PricePlanMatrixVersion ppmv, String action) {
 		AuditLog auditLog = new AuditLog();
 		auditLog.setActor(currentUser.getFullNameOrUserName());
-		auditLog.setCreated(new Date());
+		final Date date = new Date();
+		auditLog.setCreated(date);
 		auditLog.setEntity("PricePlanMatrixVersion");
-		auditLog.setOrigin(ppmv.getPricePlanMatrix().getCode()+"_"+ppmv.getCurrentVersion());
+		final String origin = ppmv.getPricePlanMatrix().getCode()+"."+ppmv.getCurrentVersion();
+		auditLog.setOrigin(origin);
 		auditLog.setAction(action); 
-		auditLog.setParameters("user "+currentUser.getUserName()+" "+action+" the price plan version "+ppmv.getCurrentVersion());
+		auditLog.setParameters("user "+currentUser.getUserName()+" apply "+action+" on "+DateUtils.formatAsDate(date)+" to the price plan version "+origin+". "+ppmv.getStatusChangeLog());
 		auditLogService.create(auditLog);
 	}
 }

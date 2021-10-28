@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -83,8 +84,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 		this.version = 1;
 	}
 
-
-
 	@Column(name = "current_version", nullable = false)
     private int currentVersion;
 
@@ -140,6 +139,9 @@ public class PricePlanMatrixVersion extends AuditableEntity {
      * @param status the status to set
      */
     public void setStatus(VersionStatusEnum status) {
+    	if(getId()!=null) {
+    		setStatusChangeLog(", status changed from "+this.status+" to "+status+".");
+    	}
         this.status = status;
     }
     /**
@@ -254,6 +256,23 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
-    
+	
+	@Transient
+	private String statusChangeLog="";
+	
+	/**
+	 * @return the statusChangeLog
+	 */
+	public String getStatusChangeLog() {
+		return statusChangeLog;
+	}
+
+	/**
+	 * @param statusChangeLog the statusChangeLog to set
+	 */
+	public void setStatusChangeLog(String statusChangeLog) {
+		this.statusChangeLog = statusChangeLog;
+	}
+
     
 }
