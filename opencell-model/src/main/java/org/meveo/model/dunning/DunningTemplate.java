@@ -78,4 +78,30 @@ public class DunningTemplate extends EmailTemplate {
 	public void setDunningActions(List<DunningAction> dunningActions) {
 		this.dunningActions = dunningActions;
 	}
+	
+	@Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof DunningTemplate)) {
+            return false;
+        }
+
+        DunningTemplate other = (DunningTemplate) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (getCode() == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!getCode().equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
+
 }
