@@ -27,7 +27,7 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     		if(attributeInstance.getServiceInstance() != null 
     				&& attributeInstance.getServiceInstance().getProductVersion() != null) {
 	        	var productVersionAttributeOptional = findMandatoryByProductVersion(attributeInstance, attributeInstance.getServiceInstance().getProductVersion());
-	        	var productVersionAttribute = productVersionAttributeOptional.get();
+	        	var productVersionAttribute = productVersionAttributeOptional.orElse(null);
 	        	if(productVersionAttributeOptional.isPresent()) {
 	        		super.evaluateMandatoryEl(	productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(), attributeInstance,
 	        				productVersionAttribute.getMandatoryWithEl(), null, null, 

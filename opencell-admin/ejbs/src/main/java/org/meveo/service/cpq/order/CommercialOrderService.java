@@ -189,7 +189,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				if(product.getDiscountPlan()!=null) {
 					discountPlans.add(product.getDiscountPlan());
 				}
-				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product);
+				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
 			}
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
@@ -212,7 +212,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         
 	}
 
-	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct) {
+	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
@@ -221,7 +221,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
-		serviceInstance.setDeliveryDate(getServiceDeliveryDate(subscription.getOrder(), subscription.getOrderOffer(), orderProduct));
+		if (deliveryDate != null) {
+			serviceInstance.setDeliveryDate(deliveryDate);
+		} else {
+			serviceInstance.setDeliveryDate(getServiceDeliveryDate(subscription.getOrder(), subscription.getOrderOffer(), orderProduct));
+		}
 
 		serviceInstance.setSubscription(subscription);
 
