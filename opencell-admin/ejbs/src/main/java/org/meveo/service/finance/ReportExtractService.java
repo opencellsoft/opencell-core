@@ -179,6 +179,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
             resultList = readGeneratedFile(resultContext.get("DIR") +"\\"+ resultContext.get("FILENAME"), ofNullable(entity.getSeparator()).orElse(";"));
+            splitFileCSVinMultiFileCSVByMaxLine(resultContext.get("DIR") +"\\", resultContext.get("FILENAME") + "", entity.getMaximumLine().intValue());
             reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
         }
@@ -422,6 +423,47 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         return records;
     }
 
+    private void splitFileCSVinMultiFileCSVByMaxLine(String pathIn, String filenamein, int maxLinePerFile) {
+        int counter = 0;
+        int fileSufix = 0;
+        String[] path = filenamein.split("\\.");
+        String path0 = path[0];
+        String path1 = path[1];
+        String fileSufixStr = format("%04d", ++fileSufix);
+        String filename = new StringBuilder(path0).append("_").append(fileSufixStr).append(".").append(path1).toString();    	
+		File file = new File(pathIn + filename);
+		
+    	try (BufferedReader br = new BufferedReader(new FileReader(pathIn + filenamein))) {
+    		String lineStr;
+    		String header = br.readLine();    		
+    		if (header!=null) {
+    			FileWriter fileWriter = new FileWriter(file, true);
+    			fileWriter.write(header);
+        		while ((lineStr = br.readLine()) != null) {
+        			if (counter < maxLinePerFile) {    				
+        				counter++;    				
+        				fileWriter.write(lineStr);
+        				fileWriter.write("\n");
+        			}else{
+        				counter = 1;
+        				fileWriter.close();
+        		        fileSufixStr = format("%04d", ++fileSufix);
+        				filename = new StringBuilder(path0).append("_").append(fileSufixStr).append(".").append(path1).toString();
+        				file = new File(pathIn + filename);
+        				file.createNewFile();
+        				fileWriter = new FileWriter(file, true);
+        				fileWriter.write(header);
+        				fileWriter.write(lineStr);
+        				fileWriter.write("\n");
+        			}
+        		}
+        		fileWriter.close();
+    		}    		
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    }    
+    
     private void generateEmptyReport(String filename, StringBuilder sbDir, ReportExtractResultTypeEnum reportType) {
         if(reportType.equals(ReportExtractResultTypeEnum.HTML) && FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
                 filename = FileUtils.changeExtension(filename, ".html");
