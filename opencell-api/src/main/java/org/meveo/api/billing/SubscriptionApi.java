@@ -38,6 +38,7 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -2839,7 +2840,7 @@ public class SubscriptionApi extends BaseApi {
         }
         handleMissingParameters();
 
-        Subscription lastVersionSubscription = subscriptionService.getLastVersionSubscription(code);
+        Subscription lastVersionSubscription = subscriptionService.getLastVersionSubscriptionForPatch(code);
 
         if (lastVersionSubscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, code);
@@ -2860,10 +2861,10 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (isNotBlank(subscriptionPatchDto.getOfferTemplate()) && !subscriptionPatchDto.getOfferTemplate().toLowerCase().equals(lastVersionSubscription.getOffer().getCode().toLowerCase())) {
-            if((lastVersionSubscription.getOffer().getOfferChangeRestricted() != null && lastVersionSubscription.getOffer().getOfferChangeRestricted())
-                    || lastVersionSubscription.getOffer().getAllowedOffersChange().stream().noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))
+            if(BooleanUtils.isTrue(lastVersionSubscription.getOffer().getIsOfferChangeRestricted()) && lastVersionSubscription.getOffer().getAllowedOffersChange()
+                                                         .stream()
+                                                         .noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))) {
 
-            ){
                 throw new InvalidParameterException(String.format("Offer change from %s to %s is not allowed", lastVersionSubscription.getOffer().getCode(), subscriptionPatchDto.getOfferTemplate()));
             }
         }
