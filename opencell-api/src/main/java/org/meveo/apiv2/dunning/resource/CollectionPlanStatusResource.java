@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStatus;
-import org.meveo.model.dunning.DunningCollectionPlanStatuses;
 
 @Path("/dunning/collectionPlanStatus")
 @Produces({"application/json"})

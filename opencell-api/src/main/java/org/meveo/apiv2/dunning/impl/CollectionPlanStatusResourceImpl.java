@@ -9,7 +9,6 @@ import org.meveo.apiv2.dunning.resource.CollectionPlanStatusResource;
 import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.dunning.service.CollectionPlanStatusApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
-import org.meveo.model.dunning.DunningCollectionPlanStatuses;
 
 public class CollectionPlanStatusResourceImpl implements CollectionPlanStatusResource {
 

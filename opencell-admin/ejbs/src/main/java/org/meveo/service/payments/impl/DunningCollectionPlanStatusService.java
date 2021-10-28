@@ -6,8 +6,7 @@ import javax.persistence.Query;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.dunning.CollectionPlanStatus;
-import org.meveo.model.dunning.DunningCollectionPlanStatuses;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.service.base.PersistenceService;
 
 import java.util.Arrays;
@@ -15,37 +14,36 @@ import java.util.Arrays;
 /**
  * Service implementation to manage DunningCollectionPlanStatuses entity.
  * It extends {@link PersistenceService} class
- * 
+ *
  * @author Mbarek-Ay
  * @version 11.0
- *
  */
 @Stateless
-public class DunningCollectionPlanStatusService extends PersistenceService<DunningCollectionPlanStatuses> {
-    public DunningCollectionPlanStatuses findByDunningCodeAndStatus(String dunningSettingCode, String status) {
+public class DunningCollectionPlanStatusService extends PersistenceService<DunningCollectionPlanStatus> {
+    public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, String status) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", Arrays.asList("dunningSettings"));
         queryBuilder.addCriterion("a.dunningSettings.code", "=", dunningSettingCode, false);
         queryBuilder.addCriterion("a.status", "=", status, false);
         Query query = queryBuilder.getQuery(getEntityManager());
         try {
-            return (DunningCollectionPlanStatuses) query.getSingleResult();
-        }catch(NoResultException e) {
+            return (DunningCollectionPlanStatus) query.getSingleResult();
+        } catch (NoResultException e) {
             return null;
-        }catch(NonUniqueResultException e) {
+        } catch (NonUniqueResultException e) {
             throw new BadRequestException("No unique Collection Plan Status");
         }
     }
 
 
-    public DunningCollectionPlanStatuses findByDunningCode(String dunningSettingCode) {
+    public DunningCollectionPlanStatus findByDunningCode(String dunningSettingCode) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", Arrays.asList("dunningSettings"));
         queryBuilder.addCriterion("a.dunningSettings.code", "=", dunningSettingCode, false);
         Query query = queryBuilder.getQuery(getEntityManager());
         try {
-            return (DunningCollectionPlanStatuses) query.getSingleResult();
-        }catch(NoResultException e) {
+            return (DunningCollectionPlanStatus) query.getSingleResult();
+        } catch (NoResultException e) {
             return null;
-        }catch(NonUniqueResultException e) {
+        } catch (NonUniqueResultException e) {
             throw new BadRequestException("No unique Collection Plan Status");
         }
     }
