@@ -361,6 +361,39 @@
         	<column name="description" value="EDR numeric parameter 5"></column>
         </insert>
     </changeSet>
+    
+    
+    <changeSet id="#NTRD-2413_20211028_Business_attributes_add_el" author="MohammedELAZZOUZI">
+		<update tableName="cpq_attribute"><column name="el_value">${serviceInstance.getActivationDate()}</column><where>id=-1</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${serviceInstance.getQuantity()}</column><where>id=-2</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getEventDate()}</column><where>id=-3</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getQuantity()}</column><where>id=-4</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${sub.getRenewalDate()}</column><where>id=-5</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${serviceInstance.getDeliveryDate()}</column><where>id=-6</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${quote.getValidationDate()}</column><where>id=-7</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${quote.getValidationDate()}</column><where>id=-8</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${sub.getSubscriptionMonthsAge()}</column><where>id=-9</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${sub.getSubscriptionDaysAge()}</column><where>id=-10</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter1()}</column><where>id=-11</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter2()}</column><where>id=-12</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter3()}</column><where>id=-13</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter4()}</column><where>id=-14</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter5()}</column><where>id=-15</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter6()}</column><where>id=-16</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter7()}</column><where>id=-17</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter8()}</column><where>id=-18</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter9()}</column><where>id=-19</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDateParam1()}</column><where>id=-21</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDateParam2()}</column><where>id=-22</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDateParam3()}</column><where>id=-23</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDateParam4()}</column><where>id=-24</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDateParam5()}</column><where>id=-25</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDecimalParam1()}</column><where>id=-31</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDecimalParam2()}</column><where>id=-32</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDecimalParam3()}</column><where>id=-33</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDecimalParam4()}</column><where>id=-34</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${edr.getDecimalParam5()}</column><where>id=-35</where></update>
+    </changeSet>
 	
 	<changeSet id="#4092_20190415 - Add SelfCare Settings" author="EdwardPLegaspi">
 		<insert tableName="adm_permission">
@@ -6367,7 +6400,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
         </insert>
     </changeSet>
 
-	<changeSet id="INTRD_2290_20211015" author="TarikFA.">
+	<changeSet id="INTRD_2290_20211015_build" author="TarikFA.">
 		<insert tableName="dunning_settings">
 			<column name="id" valueSequenceNext="dunning_settings_seq" />
 			<column name="code" value="DUN_DEF"/>

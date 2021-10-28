@@ -61,8 +61,11 @@ public class Attribute extends EnableBusinessCFEntity{
     @JoinColumn(name = "parent_id")
     private Attribute parentAttribute;
 	 
-	
-    
+    /**
+     * expression language used in 'business attributes' to define attribute value.
+     */
+    @Column(name = "el_value", length = 255)
+    private String elValue;
     
     /**
      * The lower number, the higher the priority is
@@ -133,7 +136,7 @@ public class Attribute extends EnableBusinessCFEntity{
     
 	@Enumerated(EnumType.STRING)
 	@Column(name = "attribute_category")
-    private AttributeCategoryEnum attributeCategory;
+    private AttributeCategoryEnum attributeCategory = AttributeCategoryEnum.REGULAR;
 
     public Attribute(){
 	}
@@ -333,5 +336,19 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setAttributeCategory(AttributeCategoryEnum attributeCategory) {
 		this.attributeCategory = attributeCategory;
+	}
+
+	/**
+	 * @return the elValue
+	 */
+	public String getElValue() {
+		return elValue;
+	}
+
+	/**
+	 * @param elValue the elValue to set
+	 */
+	public void setElValue(String elValue) {
+		this.elValue = elValue;
 	}
 }

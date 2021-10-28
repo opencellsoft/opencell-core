@@ -76,7 +76,7 @@ public class DunningActionService  extends BusinessService<DunningAction> {
                 if(scriptInstance == null){
                     throw new EntityDoesNotExistsException("script instance with id :"+ dunningActionScriptInstance.getId()+" does not exist.");
                 }
-                if(scriptInstance.getScriptInstanceCategory() != null && !"DUNNING_ACTION".equals(scriptInstance.getScriptInstanceCategory().getCode())){
+                if(scriptInstance.getScriptInstanceCategory() == null || !"DUNNING_ACTION".equals(scriptInstance.getScriptInstanceCategory().getCode())){
                     throw new BusinessApiException("invalid script instance provided, please provide a script instance with DunningAction Category");
                 }
                 dunningAction.setScriptInstance(scriptInstance);

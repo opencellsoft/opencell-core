@@ -8776,6 +8776,13 @@ public class OrderAdvancement extends ModuleScript {
         <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
         </addColumn>
+        <!-- recreate view billing_wallet_operation_period that depends on billing_wallet_operation -->
+        <dropView viewName="billing_wallet_operation_period"/>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
     </changeSet>
     
     <changeSet id="#INTRD-828_20210817" author="AndriusKarpavicius">
@@ -9952,7 +9959,7 @@ public class OrderAdvancement extends ModuleScript {
 	    <renameColumn tableName="dunning_collection_management" newColumnName="external" oldColumnName="include_collection_agency" />
 	    <renameColumn tableName="dunning_collection_management" newColumnName="collection_agency" oldColumnName="email_collection_agency" />
     </changeSet>
-    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+    <changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
         <modifyDataType columnName="pause_reason" newDataType="varchar(255)" tableName="dunning_pause_reasons"/>
         <modifyDataType columnName="stop_reason" newDataType="varchar(255)" tableName="dunning_stop_reasons"/>
         <modifyDataType columnName="status" newDataType="varchar(255)" tableName="invoice_dunning_statuses"/>
@@ -11134,6 +11141,17 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
             <where>id=-13</where>
         </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
+    	<update tableName="cpq_attribute">            
+    		<column name="attribute_category" value="REGULAR"></column>
+            <where>attribute_category is null</where>
+    	</update>
+    	<addColumn tableName="cpq_attribute">
+    		<column name="el_value" type="varchar(255)"/>
+    	</addColumn>
+    	<addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
     </changeSet>
 
 </databaseChangeLog>

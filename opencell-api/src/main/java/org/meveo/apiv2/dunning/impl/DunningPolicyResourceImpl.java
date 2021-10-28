@@ -7,6 +7,7 @@ import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 
@@ -88,7 +89,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
         savedEntity.setTotalDunningLevels(totalDunningLevels);
         dunningPolicyApiService.updateTotalLevels(savedEntity);
-        return Response.created(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
+        return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
                 .build())
                 .entity(entity.getId())
                 .build();
@@ -118,5 +119,15 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 .ok(org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
                 .entity(mapper.toResource(entity))
                 .build();
+    }
+
+    @Override
+    public Response delete(Long dunningPolicyId) {
+        org.meveo.model.dunning.DunningPolicy dunningPolicy = dunningPolicyApiService.delete(dunningPolicyId)
+                .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exists"));
+        return Response.ok(ImmutableSuccessResponse.builder()
+                .status("SUCCESS")
+                .message("Dunning policy with name " + dunningPolicy.getPolicyName() + " is successfully deleted")
+                .build()).build();
     }
 }
