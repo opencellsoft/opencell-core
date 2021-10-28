@@ -59,4 +59,19 @@ public interface DunningPolicyResource {
             })
     Response delete(@Parameter(description = "Dunning policy id", required = true)
                     @PathParam("dunningPolicyId") Long dunningPolicyId);
+
+
+    @GET
+    @Path("/{dunningPolicyName}")
+    @Operation(summary = "Find dunning policy",
+            tags = {"Dunning"},
+            description = "Find dunning policy",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Dunning policy successfully retrieved"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Dunning policy does not exits")
+            })
+    Response findByName(@Parameter(description = "Dunning policy name", required = true)
+                    @PathParam("dunningPolicyName") String dunningPolicyName);
 }
