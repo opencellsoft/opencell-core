@@ -4623,7 +4623,13 @@
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+
+			<column name="channel" type="varchar(255)" />
+			<column name="trading_language_id" type="bigint" />
+			<column name="is_active" type="${type.boolean}" defaultValueNumeric="1" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="com_message_template" constraintName="fk_language_message_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-237">
         <createTable tableName="com_msg_tmpl_variable">
@@ -16452,7 +16458,7 @@
 	<changeSet id="INTRD-2444_20211018" author="ZBariki" />
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-2421_20211012-pg" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-2421_20211012-pg" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_20211018-reports" author="AndriusKarpavicius"/>
@@ -16545,22 +16551,23 @@
                                  referencedColumnNames="id" referencedTableName="dunning_policy"/>
     </changeSet>
 
-    <changeSet id="INTRD-2444_20211019" author="ZBariki"/>
+    <changeSet id="INTRD-2444_20211019" author="ZBariki" />
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211021" author="AbdelkaderBouazza"/>
-    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA"/>
+    <changeSet id="INTRD-2529_20211021" author="AmineBENAICHA" />
     <changeSet id="INTRD-2366_20211021" author="AbdelkaderBouazza"/>
-    <changeSet id="INTRD-2445_20211021" author="ZBariki"/>
-    <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA"/>
+    <changeSet id="INTRD-2445_20211021" author="ZBariki" />
+    <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
     <changeSet id="#INTRD-2628-20211025" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2679_20211027" author="khalidHORRI"/>
-    <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay"/>
-    <changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza"/>
-
-    <changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
-        <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version"/>
-    </changeSet>
+    <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay" />
+   	<changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza" />
+   	
+   	<changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
+	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+	</changeSet>
+    <changeSet id="INTRD-2548_20211027" author="YoussefIZEM" />
     <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
         <update tableName="cpq_attribute">
             <column name="attribute_category" value="REGULAR"></column>
@@ -16574,8 +16581,6 @@
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
-        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'
-        </sql>
+		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
-
 </databaseChangeLog>
