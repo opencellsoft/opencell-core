@@ -79,6 +79,11 @@ public class DunningTemplate extends EmailTemplate {
 		this.dunningActions = dunningActions;
 	}
 	
+    @Override
+    public int hashCode() {
+        return 961 + ("DunningTemplate" + code).hashCode();
+    }
+    
 	@Override
     public boolean equals(Object obj) {
 
@@ -94,11 +99,11 @@ public class DunningTemplate extends EmailTemplate {
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        if (getCode() == null) {
+        if (code == null) {
             if (other.getCode() != null) {
                 return false;
             }
-        } else if (!getCode().equals(other.getCode())) {
+        } else if (!code.equals(other.getCode())) {
             return false;
         }
         return true;
