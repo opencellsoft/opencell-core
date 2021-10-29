@@ -76,9 +76,10 @@ public class InvoiceMapperTest {
 						field.set(instance, value);
 					}
 				}
-			} else {
-				System.out.println("WARNING: NO CONSTRUCTOR FOR "+clazz);
-			}
+			} 
+//			else {
+//				System.out.println("WARNING: NO CONSTRUCTOR FOR "+clazz);
+//			}
 		}
 		return instance;
 	}

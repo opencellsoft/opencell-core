@@ -51,14 +51,13 @@ public class GenericTest {
     }
 
     private void writerOfferAndMethod() {
-        for (Method m : OfferTemplateService.class.getMethods()) {
-            System.out.println(m.getParameterTypes());
-        }
+//        for (Method m : OfferTemplateService.class.getMethods()) {
+//            System.out.println(m.getParameterTypes());
+//        }
     }
 
     private void testGetMethod() {
         for (Method m : OfferTemplateService.class.getMethods()) {
-            System.out.println(m.getName() + " " + m.getParameterTypes().length + " " + ReflectionUtils.isMethodImplemented(OfferTemplateService.class, m.getName(), m.getParameterTypes()));
             // System.out.println(m.getName() + " " +
             // ReflectionUtils.isMethodOverrriden(m));
             // clazz.getMethod(name).getDeclaringClass().equals(clazz);
@@ -80,12 +79,12 @@ public class GenericTest {
     private void writeAllClassesAndMethods() {
         AuditConfigurationProvider x = new AuditConfigurationProvider();
         List<Class<?>> y = x.getServiceClasses();
-        for (Class a : y) {
-            System.out.println(a.getName());
-            for (Method m : a.getMethods()) {
-                System.out.println(m.toString());
-            }
-        }
+//        for (Class a : y) {
+//            System.out.println(a.getName());
+//            for (Method m : a.getMethods()) {
+//                System.out.println(m.toString());
+//            }
+//        }
     }
 
 }

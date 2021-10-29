@@ -149,21 +149,17 @@ public class ExportTest {
 
         writer.endNode();
 
-        System.out.println(buffer.toString());
-
         // ObjectOutputStream oos = xstream.createObjectOutputStream(writer);
         // oos.writeObject(customer);
         // oos.writeObject(custAccount);
         // oos.writeObject(custAccount2);
         // oos.close();
-        //
-        // System.out.println(buffer.toString());
 
         HierarchicalStreamReader reader = new XppReader(new StringReader(buffer.toString()));
 
         String rootNode = reader.getNodeName();
         if (rootNode.equals("meveoExport")) {
-            System.out.println("Version " + reader.getAttribute("version"));
+            String version =  reader.getAttribute("version");
         }
 
         while (reader.hasMoreChildren()) {
@@ -197,7 +193,7 @@ public class ExportTest {
 
             Object obj = xstream.unmarshal(reader);
             if (obj instanceof CustomerAccount) {
-                System.out.println("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
+            	String objectIs = obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer();
 
             } else if (obj instanceof Customer) {
                 if (((Customer) obj).getCode().equals("Customer_1")) {
@@ -205,7 +201,7 @@ public class ExportTest {
                 }
 
             } else {
-                System.out.println("Object is " + obj.toString());
+                String objectIs = obj.toString();
             }
             reader.moveUp();
         }
