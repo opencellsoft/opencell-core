@@ -12,6 +12,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -22,6 +23,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,6 +169,9 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             try {
                 accountingArticleService.remove(accountingArticle.get());
             } catch (Exception e) {
+            	if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+            		throw new DeleteReferencedEntityException(AccountingArticle.class, id);
+    			}
                 throw new BadRequestException(e);
             }
         }
@@ -179,7 +184,11 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if(accountingArticle.isPresent()) {
             try {
                 accountingArticleService.remove(accountingArticle.get());
+                accountingArticleService.commit();
             } catch (Exception e) {
+            	if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+            		throw new DeleteReferencedEntityException(AccountingArticle.class, code);
+    			}
                 throw new BadRequestException(e);
             }
         }
