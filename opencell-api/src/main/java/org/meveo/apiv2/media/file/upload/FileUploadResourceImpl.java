@@ -27,7 +27,7 @@ public class FileUploadResourceImpl implements FileUploadResource {
             Path savedFilePath = Path.of(saveTo.toString(), file.getFileName());
             Files.write(savedFilePath, file.getData());
             return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"media file successfully uploaded\"}," +
-                    "\"URL\": \"/opencell/files/"+savedFilePath.subpath(3,savedFilePath.getNameCount())+"\"} ").build();
+                    "\"URL\": \"/opencell/files/media/"+savedFilePath.subpath(3,savedFilePath.getNameCount())+"\"} ").build();
         } catch (IOException e) {
             throw new BadRequestException("there was an issue during file creation!");
         }
