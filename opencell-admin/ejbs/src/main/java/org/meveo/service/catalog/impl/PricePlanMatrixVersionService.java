@@ -208,7 +208,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	columnsId.forEach((key, value) -> {
     		var ppmv = pricePlanMatrixValueService.findByPricePlanMatrixColumn(key);
     		ppmv.forEach(tmpValue -> {
-        		pricePlanMatrixValueService.detach(tmpValue);
         		tmpValue.setPricePlanMatrixColumn(value);
         		pricePlanMatrixValues.add(tmpValue);
     		});
