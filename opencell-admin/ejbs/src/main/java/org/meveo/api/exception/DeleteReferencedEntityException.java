@@ -42,6 +42,10 @@ public class DeleteReferencedEntityException extends MeveoApiException {
         setErrorCode(MeveoApiErrorCodeEnum.DELETE_REFERENCED_ENTITY_EXCEPTION);
     }
 
+    public DeleteReferencedEntityException(Class<?> clazz, Long id) {
+        super(clazz.getSimpleName() + " with id=" + id + " is referenced.");
+        setErrorCode(MeveoApiErrorCodeEnum.DELETE_REFERENCED_ENTITY_EXCEPTION);
+    }
     /**
      * Stacktrace is not of interest here
      */
