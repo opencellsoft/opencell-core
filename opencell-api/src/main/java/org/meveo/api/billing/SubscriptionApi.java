@@ -2549,7 +2549,8 @@ public class SubscriptionApi extends BaseApi {
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
     	if(serviceInstanceDtos != null) {
     		serviceInstanceDtos.forEach(serviceInstanceDto -> {
-    			var serviceInstance = loadEntityByCode(serviceInstanceService, serviceInstanceDto.getCode(), ServiceInstance.class);
+    			var serviceInstance =
+                        serviceInstanceService.findByCodeAndCodeSubscriptionId(serviceInstanceDto.getCode(), subscription);
     			serviceInstance.getAttributeInstances().clear();
     			if(serviceInstanceDto.getAttributeInstances() != null) {
     				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {

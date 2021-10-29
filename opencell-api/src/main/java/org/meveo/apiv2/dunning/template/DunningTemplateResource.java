@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningTemplate;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/dunning/dunningtemplate")
@@ -31,4 +28,22 @@ public interface DunningTemplateResource {
                             description = "Dunning Template creation is failed")
             })
     Response createDunningTemplate(@Parameter(required = true, description = "dunning Template") DunningTemplate dunningTemplate);
+
+    @DELETE
+    @Path("/{dunningTemplateId}")
+    @Operation(summary = "Delete a Dunning Template",
+            tags = {"DunningAction"},
+            description = "Delete a Dunning Template",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning Template successfully deleted"),
+                    @ApiResponse(responseCode = "404",
+                            description = "a related entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Dunning Template creation is failed")
+            })
+    Response deleteDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
+
 }
