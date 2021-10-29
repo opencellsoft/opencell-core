@@ -176,7 +176,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             if (!StringUtils.isBlank(entity.getFilenameFormat())) {
                 context.put(ReportExtractScript.FILENAME, filename);
             }
-
+            context.put(ReportExtractScript.LINE_COUNT, entity.getMaximumLine().intValue());
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
             resultList = readGeneratedFile(resultContext.get("DIR") +"\\"+ resultContext.get("FILENAME"), ofNullable(entity.getSeparator()).orElse(";"));
             splitFileCSVinMultiFileCSVByMaxLine(resultContext.get("DIR") +"\\", resultContext.get("FILENAME") + "", entity.getMaximumLine().intValue());
