@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
@@ -46,7 +48,7 @@ import junit.framework.Assert;
  * @lastModifiedVersion 7.0
  */
 public class ExportTest {
-	
+	@Inject
 	private Logger log;
 
     private Map<ExportTemplate, XStream> xstreams = new HashMap<ExportTemplate, XStream>();
