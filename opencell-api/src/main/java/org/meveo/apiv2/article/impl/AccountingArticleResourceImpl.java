@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
@@ -88,6 +89,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	}
 
 	@Override
+	@Transactional
 	public Response delete(String accountingArticleCode, Request request) {
 		ActionStatus result = new ActionStatus();
 		result.setJson(null);

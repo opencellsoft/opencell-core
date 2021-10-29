@@ -245,7 +245,9 @@ public class UserApi extends BaseApi {
             user.setName(name);
         }
         if (isUsersManager) {
-            user.setRoles(roles);
+        	if(roles.size() > 0) {
+                user.setRoles(roles);
+        	}
             user.setSecuredEntities(securedEntities);
         }
         user.setUserLevel(userHierarchyLevel);
