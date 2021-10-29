@@ -32,16 +32,17 @@ import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.MediationResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
+import org.meveo.apiv2.catalog.resource.PricePlanMatrixResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningInvoiceStatusResourceImpl;
-import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
-import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPaymentRetryResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
 import org.meveo.apiv2.dunning.template.DunningTemplateResourceImpl;
@@ -62,7 +63,6 @@ import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.exception.UnprocessableEntityExceptionMapper;
 import org.meveo.apiv2.generic.exception.ValidationExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
-import org.meveo.apiv2.media.file.upload.FileUploadResource;
 import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
@@ -118,7 +118,7 @@ public class GenericOpencellRestful extends Application {
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
 				DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class,
                 StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
-                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class)
+                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
