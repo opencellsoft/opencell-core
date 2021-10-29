@@ -31,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
@@ -354,7 +355,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return A best matched Tax mapping
      */
     public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
-
+    	if(seller == null)
+    		throw new BusinessException("Seller is mandatory for finding a tax mapping");
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 
