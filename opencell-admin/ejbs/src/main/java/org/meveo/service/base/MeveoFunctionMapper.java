@@ -1985,18 +1985,19 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(attributInstance.get().getDoubleValue()!=null) {
 				return attributInstance.get().getDoubleValue(); 
 				}
-				
+				break;
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
 			case EXPRESSION_LANGUAGE :
 			case TEXT:	
 				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
 					return attributInstance.get().getStringValue();  
-				}							
+				}	
+				break;
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  
-				}
+				}break;
 			default:
 				break;  
 			}
