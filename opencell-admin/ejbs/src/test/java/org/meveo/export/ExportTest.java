@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jfree.util.Log;
 import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.slf4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -46,6 +46,8 @@ import junit.framework.Assert;
  * @lastModifiedVersion 7.0
  */
 public class ExportTest {
+	
+	private Logger log;
 
     private Map<ExportTemplate, XStream> xstreams = new HashMap<ExportTemplate, XStream>();
 
@@ -160,7 +162,7 @@ public class ExportTest {
 
         String rootNode = reader.getNodeName();
         if (rootNode.equals("meveoExport")) {
-        	Log.info("Version : " + reader.getAttribute("version"));
+        	log.info("Version : " + reader.getAttribute("version"));
         }
 
         while (reader.hasMoreChildren()) {
@@ -194,7 +196,7 @@ public class ExportTest {
 
             Object obj = xstream.unmarshal(reader);
             if (obj instanceof CustomerAccount) {
-            	Log.info("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
+            	log.info("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
 
             } else if (obj instanceof Customer) {
                 if (((Customer) obj).getCode().equals("Customer_1")) {
@@ -202,7 +204,7 @@ public class ExportTest {
                 }
 
             } else {
-            	Log.info("Object is " + obj.toString());
+            	log.info("Object is " + obj.toString());
             }
             reader.moveUp();
         }
