@@ -325,5 +325,138 @@
         }
       }
     ]
+  },
+  {
+    "entityName": "CpqQuote",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "billableAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "billableAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "CommercialOrder",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "billingAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "billingAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "entityName": "Invoice",
+        "configs": [
+          {
+            "method": "find",
+            "securedBusinessEntityConfig": {
+              "securedMethodConfig": {
+                "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+              },
+              "filterResultsConfig": {
+                "itemPropertiesToFilter": [
+                  {
+                    "property": "seller",
+                    "entityClass": "org.meveo.model.admin.Seller"
+                  },
+                  {
+                    "property": "billingAccount",
+                    "entityClass": "org.meveo.model.billing.BillingAccount"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "method": "list",
+            "securedBusinessEntityConfig": {
+              "securedMethodConfig": {
+                "resultFilter": "org.meveo.api.security.filter.ListFilter"
+              },
+              "filterResultsConfig": {
+                "itemPropertiesToFilter": [
+                  {
+                    "property": "seller",
+                    "entityClass": "org.meveo.model.admin.Seller"
+                  },
+                  {
+                    "property": "billingAccount",
+                    "entityClass": "org.meveo.model.billing.BillingAccount"
+                  }
+                ]
+              }
+            }
+          }
+    ]
   }
 ]
