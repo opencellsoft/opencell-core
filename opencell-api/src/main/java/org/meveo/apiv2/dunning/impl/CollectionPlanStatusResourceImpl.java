@@ -25,19 +25,14 @@ public class CollectionPlanStatusResourceImpl implements CollectionPlanStatusRes
 	}
 	
 	@Override
-	public Response update(DunningCollectionPlanStatus collectionPlanStatus, String dunningSettingsCode, String status) {
-		var entity = collectionPlanStatusApiService.update(dunningSettingsCode, status, mapper.toEntity(collectionPlanStatus));
-		return Response.created(LinkGenerator.getUriBuilderFromResource(CollectionPlanStatusResource.class, entity.getId()).build())
-				.entity(toResourceOrderWithLink(mapper.toResource(entity)))
-				.build();
+	public Response update(DunningCollectionPlanStatus collectionPlanStatus, Long id) {
+		var entity = collectionPlanStatusApiService.update(id, mapper.toEntity(collectionPlanStatus)).get();
+		return Response.status(Response.Status.ACCEPTED).entity(toResourceOrderWithLink(mapper.toResource(entity))).build();
 	}
-	
+
 	@Override
-	public Response delete(String dunningSettingsCode, String status) {
-		var entity = collectionPlanStatusApiService.delete(dunningSettingsCode, status);
-		return Response.created(LinkGenerator.getUriBuilderFromResource(CollectionPlanStatusResource.class, entity.getId()).build())
-				.entity(toResourceOrderWithLink(mapper.toResource(entity)))
-				.build();
+	public Response delete(Long id) {
+		return Response.ok(toResourceOrderWithLink(mapper.toResource(collectionPlanStatusApiService.delete(id).get()))).build();
 	}
 
 	
