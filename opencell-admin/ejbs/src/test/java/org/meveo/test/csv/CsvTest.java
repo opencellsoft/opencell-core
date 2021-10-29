@@ -70,6 +70,10 @@ public class CsvTest {
 		// read from file
 		try (Reader reader = new FileReader(file)) {
 			MappingIterator<OfferTemplateCategory> mi = oReader.readValues(reader);
+			while (mi.hasNext()) {
+				log.info(mi.next().toString());
+			}
+			
 		}
 	}
 

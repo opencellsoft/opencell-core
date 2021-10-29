@@ -102,8 +102,8 @@ public class CommonStepDefinition implements En {
                 if (actionStatus.getMessage() == null)
                     actionStatus.setMessage("");
             } catch (Exception jpe) {
-                //System.out.println("DEBUG - Error parsing");
-                //System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
+                System.out.println("DEBUG - Error parsing");
+                System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
             }
             base.setResponse(
                     new ApiResponse(response.extract().statusCode(), actionStatus, response.extract().jsonPath()));
@@ -156,8 +156,8 @@ public class CommonStepDefinition implements En {
                         if (actionStatus.getMessage() == null)
                             actionStatus.setMessage("");
                     } catch (Exception jpe) {
-                        //System.out.println("DEBUG - Error parsing");
-                        //System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
+                        System.out.println("DEBUG - Error parsing");
+                        System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
                     }
                     base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus,
                             response.extract().jsonPath()));

@@ -1466,7 +1466,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
            return ois.readObject(); 
         }
         catch(Exception e) {
-           throw(e);
+        	log.error("Exception in ObjectCloner : ",e);
+        	throw(e);
         }
         finally {
            oos.close();

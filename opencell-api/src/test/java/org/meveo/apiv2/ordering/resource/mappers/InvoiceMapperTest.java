@@ -39,6 +39,8 @@ import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.Invoice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InvoiceMapperTest {
 
@@ -46,6 +48,8 @@ public class InvoiceMapperTest {
 
 	private InvoiceMapper invoiceMapper = new InvoiceMapper();
  
+	protected Logger log = LoggerFactory.getLogger(getClass());
+	
 	public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
 		T instance = null;
 		if(Resource.class.isAssignableFrom(clazz)) {
@@ -76,10 +80,9 @@ public class InvoiceMapperTest {
 						field.set(instance, value);
 					}
 				}
-			} 
-//			else {
-//				System.out.println("WARNING: NO CONSTRUCTOR FOR "+clazz);
-//			}
+			} else {
+				log.warn("WARNING: NO CONSTRUCTOR FOR "+clazz);
+			}
 		}
 		return instance;
 	}
