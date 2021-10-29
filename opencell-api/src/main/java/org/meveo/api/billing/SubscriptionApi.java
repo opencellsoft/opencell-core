@@ -2563,7 +2563,7 @@ public class SubscriptionApi extends BaseApi {
     						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
     					}
     					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<>(attributeInstanceDto.getAssignedAttributeValueIds()));
     						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
     					}
     					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
@@ -2576,6 +2576,10 @@ public class SubscriptionApi extends BaseApi {
     					serviceInstance.getAttributeInstances().add(attributeInstance);
     				});
     			}
+    			if (!serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+    			    serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+    			    serviceInstanceService.update(serviceInstance);
+                }
     		});
     	}
     }
@@ -3026,7 +3030,7 @@ public class SubscriptionApi extends BaseApi {
                 	})
                 .collect(Collectors.toList());
 
-        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null);
+        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null, productDto.getDeliveryDate());
 
     }
 
