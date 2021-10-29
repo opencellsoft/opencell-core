@@ -14,7 +14,7 @@ public class MediaFile {
     @PartType(MediaType.APPLICATION_OCTET_STREAM)
     private byte[] data;
 
-    @FormParam("fileName")
+    @FormParam("filename")
     @PartType(MediaType.TEXT_PLAIN)
     private String fileName;
 
