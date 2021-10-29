@@ -2,6 +2,7 @@ package org.meveo.apiv2.dunning.impl;
 
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlanStatus;
 import org.meveo.apiv2.generic.ResourceMapper;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningSettings;
 
@@ -9,8 +10,8 @@ public class DunningCollectionPlanStatusMapper extends ResourceMapper<org.meveo.
 
 	@Override
 	protected org.meveo.apiv2.dunning.DunningCollectionPlanStatus toResource(DunningCollectionPlanStatus entity) {
-		return ImmutableDunningCollectionPlanStatus.builder().id(entity.getId()).dunningSettings(createResource(entity.getDunningSettings())).context(entity.getContext())
-				.status(entity.getStatus()).build();
+		return ImmutableDunningCollectionPlanStatus.builder().id(entity.getId()).dunningSettings(createResource((AuditableEntity) entity.getDunningSettings()))
+				.context(entity.getContext()).status(entity.getStatus()).build();
 
 	}
 

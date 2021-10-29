@@ -59,14 +59,9 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 
 	@Override
 	public Optional<DunningCollectionPlanStatus> update(Long id, DunningCollectionPlanStatus baseEntity) {
-		throw new BadRequestException("Please use method that take dunning code and status to update the collection plan");
-	}
-
-	@Transactional
-	public DunningCollectionPlanStatus update(String dunningSettingCode, String status, DunningCollectionPlanStatus baseEntity) {
-		var collectionPlan = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
+		var collectionPlan = dunningCollectionPlanStatusService.findById(id);
 		if (collectionPlan == null) {
-			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status));
+			throw new BadRequestException(NO_COLLECTION_PLAN_STATUS_FOUND + id);
 		}
 		if (baseEntity.getContext() != null) {
 			collectionPlan.setContext(baseEntity.getContext());
@@ -74,7 +69,8 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 		if (!Strings.isEmpty(baseEntity.getStatus())) {
 			collectionPlan.setStatus(baseEntity.getStatus());
 		}
-		return dunningCollectionPlanStatusService.update(collectionPlan);
+		dunningCollectionPlanStatusService.update(collectionPlan);
+		return Optional.of(collectionPlan);
 	}
 
 	@Override
