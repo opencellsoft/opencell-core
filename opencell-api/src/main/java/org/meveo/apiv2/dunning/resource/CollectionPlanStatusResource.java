@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStatus;
-import org.meveo.model.dunning.DunningCollectionPlanStatuses;
 
 @Path("/dunning/collectionPlanStatus")
 @Produces({"application/json"})
@@ -35,32 +34,19 @@ public interface CollectionPlanStatusResource {
 	
 	
 	@PUT
-	@Path("/{dunningSettingsCode}/{status}")
-	@Operation(summary = "Update an existing Collection plan status",
-    tags = {"Collection Plan Status"},
-    description = "Update new collection plan status without its dunning settings",
-    responses = {
-            @ApiResponse(responseCode = "200",
-                   description = "collection plan status successfully updated"),
-            @ApiResponse(responseCode = "404",
-                    description = "Collection with dunning code parameter and status doesn't exist")
-    }) 
-	Response update(@Parameter(required = true) DunningCollectionPlanStatus collectionPlanStatus,
-						@PathParam("dunningSettingsCode") String dunningSettingsCode, 
-						@PathParam("status") String status);
-	
+	@Path("/{id}")
+	@Operation(summary = "Update an existing Collection plan status", tags = {
+			"Collection Plan Status" }, description = "Update new collection plan status without its dunning settings", responses = {
+			@ApiResponse(responseCode = "200", description = "collection plan status successfully updated"),
+			@ApiResponse(responseCode = "404", description = "Collection with dunning code parameter and status doesn't exist") })
+	Response update(@Parameter(required = true) DunningCollectionPlanStatus collectionPlanStatus, @PathParam("id") Long id);
 
 	@DELETE
-	@Path("/{dunningSettingsCode}/{status}")
-	@Operation(summary = "Delete an existing Collection plan status",
-    tags = {"Collection Plan Status"},
-    description = "Delete new collection plan status without its dunning settings",
-    responses = {
-            @ApiResponse(responseCode = "200",
-                   description = "collection plan status successfully deleted"),
-            @ApiResponse(responseCode = "404",
-                    description = "Collection with dunning code parameter and status doesn't exist")
-    }) 
-	Response delete(@PathParam("dunningSettingsCode") String dunningSettingsCode, @PathParam("status") String status);
+	@Path("/{id}")
+	@Operation(summary = "Delete an existing Collection plan status", tags = {
+			"Collection Plan Status" }, description = "Delete new collection plan status without its dunning settings", responses = {
+			@ApiResponse(responseCode = "200", description = "collection plan status successfully deleted"),
+			@ApiResponse(responseCode = "404", description = "Collection with dunning code parameter and status doesn't exist") })
+	Response delete(@PathParam("id") Long id);
 	
 }

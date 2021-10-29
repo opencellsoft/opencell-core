@@ -1,28 +1,23 @@
 package org.meveo.apiv2.dunning.impl;
 
-import org.meveo.apiv2.dunning.DunningCollectionPlanStatus;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlanStatus;
 import org.meveo.apiv2.generic.ResourceMapper;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.dunning.DunningCollectionPlanStatuses;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningSettings;
 
-public class DunningCollectionPlanStatusMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningCollectionPlanStatus, DunningCollectionPlanStatuses> {
+public class DunningCollectionPlanStatusMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningCollectionPlanStatus, DunningCollectionPlanStatus> {
 
 	@Override
-	protected DunningCollectionPlanStatus toResource(DunningCollectionPlanStatuses entity) {
-		return ImmutableDunningCollectionPlanStatus.builder()
-				.id(entity.getId())
-				.dunningSettings(createResource(entity.getDunningSettings()))
-				.context(entity.getContext())
-				.status(entity.getStatus())
-				.build();
-		
+	protected org.meveo.apiv2.dunning.DunningCollectionPlanStatus toResource(DunningCollectionPlanStatus entity) {
+		return ImmutableDunningCollectionPlanStatus.builder().id(entity.getId()).dunningSettings(createResource((AuditableEntity) entity.getDunningSettings()))
+				.context(entity.getContext()).status(entity.getStatus()).build();
+
 	}
 
 	@Override
-	protected DunningCollectionPlanStatuses toEntity(DunningCollectionPlanStatus resource) {
-		var entity = new DunningCollectionPlanStatuses();
+	protected DunningCollectionPlanStatus toEntity(org.meveo.apiv2.dunning.DunningCollectionPlanStatus resource) {
+		var entity = new DunningCollectionPlanStatus();
 		resource.getDunningSettings();
 		var dunningSetting = new DunningSettings();
 		dunningSetting.setId(resource.getDunningSettings().getId());

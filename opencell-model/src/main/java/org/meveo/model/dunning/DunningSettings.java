@@ -126,7 +126,7 @@ public class DunningSettings extends BusinessEntity {
     private List<CollectionPlanStatus> collectionPlanStatus = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DunningCollectionPlanStatuses> dunningCollectionPlanStatuses = new ArrayList<>();
+    private List<DunningCollectionPlanStatus> dunningCollectionPlanStatuses = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPauseReason> dunningPauseReasons = new ArrayList<>();
@@ -221,11 +221,11 @@ public class DunningSettings extends BusinessEntity {
         this.collectionPlanStatus = collectionPlanStatus;
     }
 
-    public List<DunningCollectionPlanStatuses> getDunningCollectionPlanStatuses() {
+    public List<DunningCollectionPlanStatus> getDunningCollectionPlanStatuses() {
         return dunningCollectionPlanStatuses;
     }
 
-    public void setDunningCollectionPlanStatuses(List<DunningCollectionPlanStatuses> dunningCollectionPlanStatuses) {
+    public void setDunningCollectionPlanStatuses(List<DunningCollectionPlanStatus> dunningCollectionPlanStatuses) {
         this.dunningCollectionPlanStatuses = dunningCollectionPlanStatuses;
     }
 
