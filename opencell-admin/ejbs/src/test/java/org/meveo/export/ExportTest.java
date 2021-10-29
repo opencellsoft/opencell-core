@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jfree.util.Log;
 import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
@@ -159,7 +160,7 @@ public class ExportTest {
 
         String rootNode = reader.getNodeName();
         if (rootNode.equals("meveoExport")) {
-            String version =  reader.getAttribute("version");
+        	Log.info("Version : " + reader.getAttribute("version"));
         }
 
         while (reader.hasMoreChildren()) {
@@ -193,7 +194,7 @@ public class ExportTest {
 
             Object obj = xstream.unmarshal(reader);
             if (obj instanceof CustomerAccount) {
-            	String objectIs = obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer();
+            	Log.info("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
 
             } else if (obj instanceof Customer) {
                 if (((Customer) obj).getCode().equals("Customer_1")) {
@@ -201,7 +202,7 @@ public class ExportTest {
                 }
 
             } else {
-                String objectIs = obj.toString();
+            	Log.info("Object is " + obj.toString());
             }
             reader.moveUp();
         }
