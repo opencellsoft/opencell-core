@@ -65,6 +65,26 @@ public class CommercialRuleLineService extends PersistenceService<CommercialRule
 	} 
 	
 	@SuppressWarnings("unchecked")
+	public List<Long> getSourceOfferAttributeRules(String attributeCode,String offerCode) throws BusinessException{
+		Attribute attribute=attributeService.findByCode(attributeCode);
+		String queryName="CommercialRuleLine.getSourceAttributeRules";
+		if(attribute == null) { 
+			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
+		}
+		if(!StringUtils.isEmpty(offerCode)) { 
+			queryName="CommercialRuleLine.getSourceOfferAttributeRules";
+		}
+		Query query = getEntityManager().createNamedQuery(queryName)
+				.setParameter("attributeCode", attributeCode);
+		if(!StringUtils.isEmpty(offerCode)) { 
+			query.setParameter("offerCode", offerCode);
+		}
+				
+		List<Long> commercialRules=(List<Long>)query.getResultList();
+		return commercialRules;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<Long> getSourceProductRules(String offerCode,String productCode,Integer currentVersion) throws BusinessException{
 		String queryName="CommercialRuleLine.getSourceProductRules";
 		if(!StringUtils.isEmpty(offerCode)) {

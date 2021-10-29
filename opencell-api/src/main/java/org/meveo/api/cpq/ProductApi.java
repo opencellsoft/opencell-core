@@ -1003,10 +1003,13 @@ public class ProductApi extends BaseApi {
                     commercialRuleCodes.add(rule.getCode());
                 }
                 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
-                attributeDto.setRuled(true);
                 boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), rule -> true);
                 //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                 attributeDto.setSelectable(isSelectable);
+            }
+            List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getCode(), offerCode);
+            if (sourceRules != null && !sourceRules.isEmpty()) {
+                attributeDto.setRuled(true);
             }
         }
 
