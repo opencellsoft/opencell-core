@@ -11,6 +11,7 @@ import javax.persistence.FlushModeType;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -199,6 +200,9 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             try {
                 accountingArticleService.remove(accountingArticle.get());
             } catch (Exception e) {
+            	if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+            		throw new DeleteReferencedEntityException(AccountingArticle.class, id);
+    			}
                 throw new BadRequestException(e);
             }
         }
@@ -211,7 +215,11 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if (accountingArticle.isPresent()) {
             try {
                 accountingArticleService.remove(accountingArticle.get());
+                accountingArticleService.commit();
             } catch (Exception e) {
+            	if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+            		throw new DeleteReferencedEntityException(AccountingArticle.class, code);
+    			}
                 throw new BadRequestException(e);
             }
         }
