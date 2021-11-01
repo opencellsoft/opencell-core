@@ -82,6 +82,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.payout.CreatePayoutRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.PayoutResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.CardPayoutMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutCustomer;
+import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutDetails;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutReferences;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
@@ -106,7 +107,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     
     /** The payment gateway. */
     private PaymentGateway paymentGateway = null; 
-    
+        
     /** The client. */
     private  Client client = null;
     
@@ -257,6 +258,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     	try {
             
             CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
+            getClient();
+            log.info("doPayment REQUEST :"+marshaller.marshal(body));
             
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
             
@@ -448,7 +451,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     
     private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
-    	if("true".equals(paramBean().getProperty("ingenico.CreatePayment.use3DSecure", "false"))) {
+    	if("true".equals(paramBean().getProperty("ingenico.CreatePayment.use3DSecure", "true"))) {
     		return getCardTokenInput3dSecure(cardPaymentMethod);
     	}
     	return getCardTokenInputDefault(cardPaymentMethod);
@@ -476,10 +479,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());        
 
         cardPaymentMethodSpecificInput.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileRequestor", "MIT"));
-        cardPaymentMethodSpecificInput.setUnscheduledCardOnFileSequenceIndicator(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileSequenceIndicator", "SUBSEQUENT"));
+        cardPaymentMethodSpecificInput.setUnscheduledCardOnFileSequenceIndicator(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileSequenceIndicator", "subsequent"));
         
         CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();					
-		cardRecurrenceDetails.setRecurringPaymentSequenceIndicator( paramBean().getProperty("ingenico.CreatePayment.RecurringPaymentSequenceIndicator", "NULL"));			
+		cardRecurrenceDetails.setRecurringPaymentSequenceIndicator( paramBean().getProperty("ingenico.CreatePayment.RecurringPaymentSequenceIndicator", "null"));			
 		cardPaymentMethodSpecificInput.setRecurring(cardRecurrenceDetails);
 		
 		
@@ -555,12 +558,16 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CardPayoutMethodSpecificInput cardPayoutMethodSpecificInput = new CardPayoutMethodSpecificInput();
 			cardPayoutMethodSpecificInput.setToken(paymentToken.getTokenId());
 			cardPayoutMethodSpecificInput.setPaymentProductId(paymentToken.getCardType().getId());
+			
+			PayoutDetails payoutDetails = new PayoutDetails();
+			payoutDetails.setAmountOfMoney(amountOfMoney);
+			payoutDetails.setCustomer(customer);
+			payoutDetails.setReferences(references);
 
-			CreatePayoutRequest body = new CreatePayoutRequest();
-			body.setAmountOfMoney(amountOfMoney);
-			body.setCardPayoutMethodSpecificInput(cardPayoutMethodSpecificInput);
-			body.setReferences(references);
-			body.setCustomer(customer);	
+			CreatePayoutRequest body = new CreatePayoutRequest();			
+			body.setCardPayoutMethodSpecificInput(cardPayoutMethodSpecificInput);			
+			body.setPayoutDetails(payoutDetails);
+			
 			getClient();
 			log.info("REQUEST:"+marshaller.marshal(body));
 			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
@@ -656,7 +663,6 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
 			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
 			cardPaymentMethodSpecificInputBase.setTokenize(true);
-			cardPaymentMethodSpecificInputBase.setPaymentProductId(1);
 
 			ThreeDSecureBase threeDSecure = new ThreeDSecureBase();
 			threeDSecure.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
@@ -691,10 +697,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
-
+   
 	@Override
 	public String createInvoice(Invoice invoice) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }
