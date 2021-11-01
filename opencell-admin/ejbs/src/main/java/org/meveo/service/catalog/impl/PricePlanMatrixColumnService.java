@@ -89,7 +89,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		
 		PricePlanMatrixLinesDto pricePlanMatrixLinesDto = new PricePlanMatrixLinesDto();
 		pricePlanMatrixLinesDto.setPricePlanMatrixCode(pricePlanMatrixCode);
-		pricePlanMatrixLinesDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getVersion());
+		pricePlanMatrixLinesDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
 		pricePlanMatrixLinesDto.setPricePlanMatrixLines(pricePlanMatrixLines);
 		return pricePlanMatrixLinesDto;
 	}
@@ -190,7 +190,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 				
 			}
 			pricePlanMatrixLineDto.setPricePlanMatrixCode(pricePlanMatrixCode);
-			pricePlanMatrixLineDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getVersion());
+			pricePlanMatrixLineDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
 			pricePlanMatrixLineDto.setPricePlanMatrixValues(PricePlanMatrixValueDtoList);
 			pricePlanMatrixLines.add(pricePlanMatrixLineDto);
 		}

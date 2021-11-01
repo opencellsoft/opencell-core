@@ -72,7 +72,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     @Override
     public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix();
-        int currentVersion = pricePlanMatrixVersionDto.getVersion() == 0 ? 1 : pricePlanMatrixVersionDto.getVersion();
         String pricePlanMatrixCode = pricePlanMatrixVersionDto.getPricePlanMatrixCode();
 
         if (StringUtils.isBlank(isMatrix)) {
@@ -98,7 +97,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         		throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
         	}
         }
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionDto.getVersion()==null ? null: pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
 
         if (pricePlanMatrixVersion == null) {
             pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
