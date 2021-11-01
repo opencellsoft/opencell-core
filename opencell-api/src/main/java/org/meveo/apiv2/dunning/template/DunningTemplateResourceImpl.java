@@ -30,4 +30,16 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Template successfully deleted\"},\"id\": "+dunningTemplateId+"} ")
                 .build();
     }
+
+    @Override
+    public Response duplicateDunningTemplate(Long dunningTemplateId) {
+        org.meveo.model.dunning.DunningTemplate dunningTemplate = dunningTemplateService.findById(dunningTemplateId);
+        if(dunningTemplate == null) {
+            throw new EntityDoesNotExistsException("dunning Template with id "+dunningTemplateId+" does not exist.");
+        }
+        dunningTemplateService.duplicate(dunningTemplate);
+        return Response.ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Template successfully duplicated\"},\"id\": "+dunningTemplate.getId()+"} ")
+                .build();
+    }
 }
