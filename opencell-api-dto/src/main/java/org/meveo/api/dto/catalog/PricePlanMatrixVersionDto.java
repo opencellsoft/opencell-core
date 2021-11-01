@@ -35,7 +35,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     private VersionStatusEnum statusEnum;
     
     @Schema(description = "the current version of price plan matrix")
-    protected int version;
+    protected Integer version;
     
     @Schema(description = "The status date. it set automatically when the status change")
     private Date statusDate;
@@ -111,11 +111,11 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         this.statusEnum = statusEnum;
     }
 
-    public int getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
