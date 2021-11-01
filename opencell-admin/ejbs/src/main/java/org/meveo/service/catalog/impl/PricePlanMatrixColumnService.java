@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
@@ -101,7 +102,12 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		for(int i = 0; i < firstLine.length; i++) {
 			String column = firstLine[i].split("\\(")[0];
 			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("pricetWithoutTax"))) {
-				PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion).get(0);
+				List<PricePlanMatrixColumn> PricePlanMatrixColumnList = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion);
+				if (PricePlanMatrixColumnList.isEmpty()) {
+					throw new NotFoundException(
+			                "PricePlanMatrixColumn with code= "+column+" does not exists");
+				}
+				PricePlanMatrixColumn pricePlanMatrixColumn = PricePlanMatrixColumnList.get(0);
 				ColumnTypeEnum columnType;
 				if (column.contains("|")) {
 					 columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(true);
