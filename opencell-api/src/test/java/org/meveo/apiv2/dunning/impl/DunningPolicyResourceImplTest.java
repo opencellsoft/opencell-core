@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.dunning.DunningPolicyLevel;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
+import org.meveo.apiv2.dunning.ImmutableDunningPolicyInput;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicyLevel;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
@@ -145,7 +146,7 @@ public class DunningPolicyResourceImplTest {
                 .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
-        org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
+        org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()
                 .policyName("policyNAme")
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)
@@ -164,7 +165,7 @@ public class DunningPolicyResourceImplTest {
                 .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
-        org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
+        org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()
                 .policyName("policyNAme")
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)

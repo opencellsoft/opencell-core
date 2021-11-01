@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningPolicy;
+import org.meveo.apiv2.dunning.DunningPolicyInput;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -44,7 +45,7 @@ public interface DunningPolicyResource {
             })
     Response update(@Parameter(description = "Dunning policy id", required = true)
                     @PathParam("dunningPolicyId") Long dunningPolicyId,
-    @Parameter(description = "dunning policy to update", required = true) DunningPolicy dunningPolicy);
+    @Parameter(description = "dunning policy to update", required = true) DunningPolicyInput dunningPolicy);
 
     @DELETE
     @Path("/{dunningPolicyId}")

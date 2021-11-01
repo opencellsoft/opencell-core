@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.impl;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.apiv2.dunning.DunningPolicy;
+import org.meveo.apiv2.dunning.DunningPolicyInput;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
 import org.meveo.apiv2.ordering.ResourceMapper;
 
@@ -54,24 +55,36 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         return entity;
     }
 
-    public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicy resource,
-                                                                org.meveo.model.dunning.DunningPolicy toUpdate) {
-        ofNullable(resource.getPolicyName()).ifPresent(policyName -> toUpdate.setPolicyName(policyName));
-        ofNullable(resource.getPolicyDescription()).ifPresent(description -> toUpdate.setPolicyDescription(description));
-        ofNullable(resource.isActivePolicy()).ifPresent(activePolicy -> toUpdate.setActivePolicy(activePolicy));
-        ofNullable(resource.isDefaultPolicy()).ifPresent(defaultPolicy -> toUpdate.setDefaultPolicy(defaultPolicy));
+    public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicyInput resource,
+                                                                org.meveo.model.dunning.DunningPolicy toUpdate, StringBuilder fieldToUpdate) {
+        ofNullable(resource.getPolicyName()).ifPresent(policyName -> {
+            toUpdate.setPolicyName(policyName);
+            fieldToUpdate.append("policyName;"); });
+        ofNullable(resource.getPolicyDescription()).ifPresent(description
+                -> { toUpdate.setPolicyDescription(description); fieldToUpdate.append("policyDescription;"); });
+        ofNullable(resource.isActivePolicy()).ifPresent(activePolicy
+                -> { toUpdate.setActivePolicy(activePolicy); fieldToUpdate.append("activePolicy;"); });
+        ofNullable(resource.isDefaultPolicy()).ifPresent(defaultPolicy -> {
+            toUpdate.setDefaultPolicy(defaultPolicy); fieldToUpdate.append("defaultPolicy;");});
         ofNullable(resource.isAttachInvoicesToEmails())
-                .ifPresent(attachInvoicesToEmails -> toUpdate.setAttachInvoicesToEmails(attachInvoicesToEmails));
+                .ifPresent(attachInvoicesToEmails -> {
+                    toUpdate.setAttachInvoicesToEmails(attachInvoicesToEmails); fieldToUpdate.append("attachInvoicesToEmails;");});
         ofNullable(resource.isIncludeDueInvoicesInThreshold())
-                .ifPresent(includeDueInvoices -> toUpdate.setIncludeDueInvoicesInThreshold(includeDueInvoices));
+                .ifPresent(includeDueInvoices -> {
+                    toUpdate.setIncludeDueInvoicesInThreshold(includeDueInvoices); fieldToUpdate.append("includeDueInvoicesInThreshold;"); });
         ofNullable(resource.isIncludePayReminder())
-                .ifPresent(includePayReminder -> toUpdate.setIncludePayReminder(includePayReminder));
+                .ifPresent(includePayReminder -> {
+                    toUpdate.setIncludePayReminder(includePayReminder); fieldToUpdate.append("includePayReminder;"); });
         ofNullable(resource.getInterestForDelaySequence())
-                .ifPresent(interestForDelaySequence -> toUpdate.setInterestForDelaySequence(interestForDelaySequence));
-        ofNullable(resource.getMinBalanceTrigger()).ifPresent(minBalance -> toUpdate.setMinBalanceTrigger(minBalance));
-        ofNullable(resource.getDetermineLevelBy()).ifPresent(determineLevelBy -> toUpdate.setDetermineLevelBy(determineLevelBy));
+                .ifPresent(interestForDelaySequence -> {
+                    toUpdate.setInterestForDelaySequence(interestForDelaySequence); fieldToUpdate.append("interestForDelaySequence;"); });
+        ofNullable(resource.getMinBalanceTrigger()).ifPresent(minBalance -> {
+            toUpdate.setMinBalanceTrigger(minBalance); fieldToUpdate.append("minBalanceTrigger;"); });
+        ofNullable(resource.getDetermineLevelBy()).ifPresent(determineLevelBy -> {
+            toUpdate.setDetermineLevelBy(determineLevelBy); fieldToUpdate.append("determineLevelBy;"); });
         ofNullable(resource.getMinBalanceTriggerCurrency())
-                .ifPresent(minBalanceTrigger -> toUpdate.setMinBalanceTriggerCurrency(minBalanceTrigger));
+                .ifPresent(minBalanceTrigger -> {
+                    toUpdate.setMinBalanceTriggerCurrency(minBalanceTrigger); fieldToUpdate.append("minBalanceTriggerCurrency;"); });
         return toUpdate;
     }
 }
