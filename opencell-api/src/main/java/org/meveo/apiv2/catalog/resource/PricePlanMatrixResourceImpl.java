@@ -2,6 +2,7 @@ package org.meveo.apiv2.catalog.resource;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
@@ -32,6 +33,9 @@ public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
 	public Response importPricePlanMatrixLines(PricePlanMLinesDTO pricePlanMLinesDTO) {
 		String data = new String(pricePlanMLinesDTO.getData());
 		PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMLinesDTO.getPricePlanMatrixCode(), pricePlanMLinesDTO.getPricePlanMatrixVersion());
+		if (pricePlanMatrixVersion == null) {
+			throw new NotFoundException("pricePlanMatrixVersion not found with code"+pricePlanMLinesDTO.getPricePlanMatrixCode()+"and version"+pricePlanMLinesDTO.getPricePlanMatrixVersion());
+		}
 		PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixApiService.updatePricePlanMatrixLines(pricePlanMLinesDTO, data, pricePlanMatrixVersion);
 		pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMLinesDTO.getPricePlanMatrixCode(), pricePlanMLinesDTO.getPricePlanMatrixVersion(), pricePlanMatrixLinesDto);
 		

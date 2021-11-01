@@ -140,7 +140,6 @@ public class QuoteMapperTest {
         QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion);
 
         String xmlQuoteRepresentation = xmlQuoteFormatter.format(quoteXmlDto);
-        System.out.println(xmlQuoteRepresentation);
     }
 
     @Test

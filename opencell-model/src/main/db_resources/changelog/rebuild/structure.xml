@@ -9221,6 +9221,7 @@
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
         </createTable>
+        <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
 
     <changeSet id="rebuild-str-tbl-448" author="TarikF">
@@ -9398,7 +9399,10 @@
             <column name="priority" type="int4" defaultValueNumeric="0"/>
             <column name="attribute_type" type="varchar(100)" />
             <column name="unit_nb_decimal" type="int4" />
-            <column name="attribute_category" type="varchar(255)"/>
+            <column name="attribute_category" type="varchar(255)">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="el_value" type="varchar(255)"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-458" author="NabilOUACHI">
@@ -16572,20 +16576,7 @@
     <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay" />
    	<changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza" />
    	
-   	<changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
-	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
-	</changeSet>
     <changeSet id="INTRD-2548_20211027" author="YoussefIZEM" />
-    <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI">
-        <update tableName="cpq_attribute">
-            <column name="attribute_category" value="REGULAR"></column>
-            <where>attribute_category is null</where>
-        </update>
-        <addColumn tableName="cpq_attribute">
-            <column name="el_value" type="varchar(255)"/>
-        </addColumn>
-        <addNotNullConstraint tableName="cpq_attribute" columnName="attribute_category"/>
-    </changeSet>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
