@@ -6,14 +6,20 @@ import static java.util.Optional.of;
 import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.ACTIVE_DUNNING;
 import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import org.hibernate.Hibernate;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.dunning.*;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.*;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.model.dunning.DunningPolicy;
@@ -35,6 +41,13 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
 
+    @Inject
+    private AuditLogService auditLogService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
     @Override
@@ -55,6 +68,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
         dunningPolicyService.create(dunningPolicy);
+        trackOperation("CREATE", new Date(), null);
         return findByCode(dunningPolicy.getPolicyName()).get();
     }
 
@@ -63,9 +77,10 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         int countReminderLevels = 0;
         int countEndOfDunningLevel = 0;
         int totalDunningLevels = 0;
-        int highestSequence = (dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty())
+        int highestSequence = (Hibernate.isInitialized(dunningPolicy.getDunningLevels())
+                && dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty())
                 ? dunningPolicy.getDunningLevels().get(0).getSequence() : 0;
-        if (dunningPolicy.getDunningLevels() != null) {
+        if (Hibernate.isInitialized(dunningPolicy.getDunningLevels()) && dunningPolicy.getDunningLevels() != null) {
             for (DunningPolicyLevel policyLevel : dunningPolicy.getDunningLevels()) {
                 refreshPolicyLevel(policyLevel);
                 if (policyLevel.getDunningLevel().isReminder()) {
@@ -92,7 +107,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
             dunningPolicy.setTotalDunningLevels(totalDunningLevels);
         }
-        return of(dunningPolicyService.update(dunningPolicy));
+        DunningPolicy updatedDunningPolicy = dunningPolicyService.update(dunningPolicy);
+        return of(updatedDunningPolicy);
     }
 
     public DunningPolicyLevel refreshPolicyLevel(DunningPolicyLevel policyLevel) {
@@ -106,6 +122,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         }
         if (invoiceDunningStatuses == null) {
             throw new BadRequestException("Policy level creation fails invoice dunning statuses does not exists");
+        }
+        if (collectionPlanStatus == null) {
+            throw new BadRequestException("Policy level creation fails collection plan status does not exists");
         }
         policyLevel.setDunningLevel(dunningLevel);
         policyLevel.setInvoiceDunningStatuses(invoiceDunningStatuses);
@@ -144,6 +163,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
         if(dunningPolicy != null) {
             dunningPolicyService.remove(id);
+            trackOperation("DELETE", new Date(), null);
             return of(dunningPolicy);
         } else {
             return empty();
@@ -172,5 +192,17 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     public Optional<DunningPolicy> updateTotalLevels(DunningPolicy dunningPolicy) {
         return of(dunningPolicyService.update(dunningPolicy));
+    }
+
+    public AuditLog trackOperation(String operationType, Date operationDate, String updatedField) {
+        AuditLog auditLog = new AuditLog();
+        auditLog.setEntity(DunningPolicy.class.getSimpleName());
+        auditLog.setCreated(operationDate);
+        auditLog.setActor(currentUser.getUserName());
+        auditLog.setAction(operationType);
+        auditLog.setParameters(updatedField);
+        auditLog.setOrigin("API");
+        auditLogService.create(auditLog);
+        return auditLog;
     }
 }
