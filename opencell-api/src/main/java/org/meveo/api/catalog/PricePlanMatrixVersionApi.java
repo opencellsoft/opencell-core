@@ -190,12 +190,15 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
              }
              
              if(from==null){
-            	 pricePlanMatrixVersion = pricePlanMatrixVersionService.getLastPricePlanMatrixtVersion(pricePlanMatrixCode);
+            	 pricePlanMatrixVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrixCode);
+            	 if (pricePlanMatrixVersion == null) {
+            		throw new MeveoApiException("At least one version must be published");
+                 }
             	 Date endDate=pricePlanMatrixVersion.getValidity().getTo();
             	 if(endDate==null) {
             		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
             	 }
-            	 from=DateUtils.addDays(endDate,1);
+            	 from=endDate;
              }
              
             DatePeriod validity=new DatePeriod(from, to);
