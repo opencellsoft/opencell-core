@@ -15,7 +15,7 @@ public interface DunningTemplateResource {
     @POST
     @Path("/")
     @Operation(summary = "Create a new Dunning Template",
-            tags = {"DunningAction"},
+            tags = {"DunningTemplate"},
             description = "Create a new Dunning Template",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -32,7 +32,7 @@ public interface DunningTemplateResource {
     @DELETE
     @Path("/{dunningTemplateId}")
     @Operation(summary = "Delete a Dunning Template",
-            tags = {"DunningAction"},
+            tags = {"DunningTemplate"},
             description = "Delete a Dunning Template",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -45,5 +45,22 @@ public interface DunningTemplateResource {
                             description = "Dunning Template creation is failed")
             })
     Response deleteDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
+
+    @POST
+    @Path("/{dunningTemplateId}/duplication")
+    @Operation(summary = "duplicate a Dunning Template",
+            tags = {"DunningTemplate"},
+            description = "duplicate a Dunning Template",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning Template successfully duplicated"),
+                    @ApiResponse(responseCode = "404",
+                            description = "a related entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Dunning Template creation is failed")
+            })
+    Response duplicateDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
 
 }

@@ -40,4 +40,11 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
         }
         super.create(template);
     }
+
+    public void duplicate(DunningTemplate template) {
+        detach(template);
+        template.setId(null);
+        template.setCode(template.getCode() + " - copy");
+        super.create(template);
+    }
 }
