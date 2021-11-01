@@ -56,142 +56,132 @@ import org.slf4j.Logger;
 @Stateless
 public class GenericWorkflowJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+	@Inject
+	private Logger log;
 
-    @Inject
-    private GenericWorkflowService genericWorkflowService;
+	@Inject
+	private GenericWorkflowService genericWorkflowService;
 
-    @Inject
-    private WorkflowInstanceService workflowInstanceService;
+	@Inject
+	private WorkflowInstanceService workflowInstanceService;
 
-    @Inject
-    private GenericWorkflowAsync genericWorkflowAsync;
+	@Inject
+	private GenericWorkflowAsync genericWorkflowAsync;
 
-    @Inject
-    private FilterService filterService;
+	@Inject
+	private FilterService filterService;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+	@Inject
+	@CurrentUser
+	protected MeveoUser currentUser;
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running with parameter={}", jobInstance.getParametres());
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+		log.debug("Running with parameter={}", jobInstance.getParametres());
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+		Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
+		if (nbRuns == -1) {
+			nbRuns = (long) Runtime.getRuntime().availableProcessors();
+		}
+		Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        try {
+		try {
 
-            String genericWfCode = null;
-            try {
-                genericWfCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "gwfJob_generic_wf")).getCode();
-            } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
+			String genericWfCode = null;
+			try {
+				genericWfCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "gwfJob_generic_wf")).getCode();
+			} catch (Exception e) {
+				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+			}
 
-            GenericWorkflow genericWf = genericWorkflowService.findByCode(genericWfCode);
-            if (genericWf == null) {
-                throw new BusinessException(String.format("No Workflow found with code = [%s]", genericWfCode));
-            }
+			GenericWorkflow genericWf = genericWorkflowService.findByCode(genericWfCode);
+			if (genericWf == null) {
+				throw new BusinessException(String.format("No Workflow found with code = [%s]", genericWfCode));
+			}
 
-            if (!genericWf.isActive()) {
-                log.debug("The workflow " + genericWfCode + " is disabled, the job will exit.");
-                return;
-            }
-            
-            // Create wf instances for entities without WF
-            List<BusinessEntity> entitiesWithoutWFInstance = workflowInstanceService.findEntitiesForWorkflow(genericWf, true);
-            for (BusinessEntity entity : entitiesWithoutWFInstance) {
-                workflowInstanceService.create(entity, genericWf);
-            }
-            
-            Filter wfFilter = genericWf.getFilter();
-            Filter filter = null;
-            if(wfFilter!=null) {
-            	filter = filterService.findById(wfFilter.getId());
-            }
-            
-            List<BusinessEntity> entities = null;
-            if (filter != null) {
-            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
-            } else {
-            	entities = workflowInstanceService.findEntitiesForWorkflow(genericWf, false);
-            }
+			if (!genericWf.isActive()) {
+				log.debug("The workflow " + genericWfCode + " is disabled, the job will exit.");
+				return;
+			}
 
-            List<WorkflowInstance> wfInstances = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances")).getWfInstances();
+			// Create wf instances for entities without WF
+			List<BusinessEntity> entitiesWithoutWFInstance = workflowInstanceService.findEntitiesForWorkflow(genericWf, true);
+			for (BusinessEntity entity : entitiesWithoutWFInstance) {
+				workflowInstanceService.create(entity, genericWf);
+			}
 
-            if (genericWf.getId() != null) {
-                genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
-            }
-            
-            Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x->x.getId(), x->x));
-            
-            log.info("wfInstances size : {}", wfInstances.size());
-            
-            SubListCreator subListCreator = new SubListCreator(wfInstances, nbRuns.intValue());
-            List<Map<Long, List<Object>>> subMaps = new ArrayList();
-            while (subListCreator.isHasNext()) {
-            	Map<Long, List<Object>> wfInstancesFiltered = new TreeMap();
-            	List<WorkflowInstance> nextWorkSet = (List<WorkflowInstance>) subListCreator.getNextWorkSet();
-            	log.info("nextWorkSet size : {}", nextWorkSet.size());
-				for (WorkflowInstance workflowInstance : nextWorkSet ){
-                    Long entityInstanceId = workflowInstance.getEntityInstanceId();
+			Filter wfFilter = genericWf.getFilter();
+			Filter filter = null;
+			if (wfFilter != null) {
+				filter = filterService.findById(wfFilter.getId());
+			}
+
+			List<BusinessEntity> entities = null;
+			if (filter != null) {
+				entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+			} else {
+				entities = workflowInstanceService.findEntitiesForWorkflow(genericWf, false);
+			}
+
+			List<WorkflowInstance> wfInstances = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances")).getWfInstances();
+
+			if (genericWf.getId() != null) {
+				genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
+			}
+
+			Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x -> x.getId(), x -> x));
+			SubListCreator subListCreator = new SubListCreator(wfInstances, nbRuns.intValue());
+			List<Map<Long, List<Object>>> subMaps = new ArrayList();
+			while (subListCreator.isHasNext()) {
+				Map<Long, List<Object>> wfInstancesFiltered = new TreeMap();
+				List<WorkflowInstance> nextWorkSet = (List<WorkflowInstance>) subListCreator.getNextWorkSet();
+				for (WorkflowInstance workflowInstance : nextWorkSet) {
+					Long entityInstanceId = workflowInstance.getEntityInstanceId();
 					if (entityInstanceId != null) {
-                        BusinessEntity businessEntity = mapFilteredEntities.get(entityInstanceId);
-    					if(businessEntity != null) {
-                            wfInstancesFiltered.put(entityInstanceId, Arrays.asList(businessEntity,workflowInstance));
-                        }
-                    }
-                }
-				log.info("wfInstancesFiltered size : {}", wfInstancesFiltered.size());
-            	subMaps.add(wfInstancesFiltered);
-            }
-            
-            log.info("subMaps size : {}", subMaps.size());
-            log.debug("wfInstances:" + wfInstances.size());
-            result.setNbItemsToProcess(wfInstances.size());
+						BusinessEntity businessEntity = mapFilteredEntities.get(entityInstanceId);
+						if (businessEntity != null) {
+							wfInstancesFiltered.put(entityInstanceId, Arrays.asList(businessEntity, workflowInstance));
+						}
+					}
+				}
+				subMaps.add(wfInstancesFiltered);
+			}
 
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
+			result.setNbItemsToProcess(wfInstances.size());
 
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            for(Map<Long, List<Object>> map:subMaps) {
-                futures.add(genericWorkflowAsync.launchAndForget(map, genericWf, result, lastCurrentUser));
+			List<Future<String>> futures = new ArrayList<Future<String>>();
 
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
+			MeveoUser lastCurrentUser = currentUser.unProxy();
+			for (Map<Long, List<Object>> map : subMaps) {
+				futures.add(genericWorkflowAsync.launchAndForget(map, genericWf, result, lastCurrentUser));
 
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
+				if (subListCreator.isHasNext()) {
+					try {
+						Thread.sleep(waitingMillis.longValue());
+					} catch (InterruptedException e) {
+						log.error("", e);
+					}
+				}
+			}
+			// Wait for all async methods to finish
+			for (Future<String> future : futures) {
+				try {
+					future.get();
 
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Failed to run generic workflow job", e);
-            result.registerError(e.getMessage());
-        }
-    }
+				} catch (InterruptedException e) {
+					// It was cancelled from outside - no interest
+
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					result.registerError(cause.getMessage());
+					log.error("Failed to execute async method", cause);
+				}
+			}
+		} catch (Exception e) {
+			log.error("Failed to run generic workflow job", e);
+			result.registerError(e.getMessage());
+		}
+	}
 }
