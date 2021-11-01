@@ -706,7 +706,7 @@ public class CommercialOrderApi extends BaseApi {
 			 orderAttribute = orderAttributeService.findById(orderAttributeDTO.getOrderAttributeId());
 		 } 
 		 if(orderAttribute == null) { 
-			 orderAttribute= populateOrderAttribute(orderAttributeDTO, orderProduct, null, orderOffer);
+			 orderAttribute = populateOrderAttribute(orderAttributeDTO, orderProduct, null, orderOffer);
 			 orderAttributeService.create(orderAttribute);
 		 }
 		 if(orderProduct != null && orderAttribute.getOrderProduct() != null && orderProduct.getId() != orderAttribute.getOrderProduct().getId()) {
@@ -835,35 +835,38 @@ public class CommercialOrderApi extends BaseApi {
         }
     }
 	
-	private OrderAttribute 	populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct  orderProduct, List<ProductVersionAttribute> productVersionAttributes,OrderOffer orderOffer) {
+	private OrderAttribute 	populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct orderProduct, List<ProductVersionAttribute> productVersionAttributes, OrderOffer orderOffer) {
         if (Strings.isEmpty( orderAttributeDTO.getOrderAttributeCode())) {
             missingParameters.add("orderAttributeCode");
-        handleMissingParameters();
+            handleMissingParameters();
         }
-        Attribute attribute=null;
+        Attribute attribute = null;
         if(!StringUtils.isBlank(orderAttributeDTO.getOrderAttributeCode())) {
-	         attribute = attributeService.findByCode(orderAttributeDTO.getOrderAttributeCode());
+	        attribute = attributeService.findByCode(orderAttributeDTO.getOrderAttributeCode());
 	        if (attribute == null) {
 	            throw new EntityDoesNotExistsException(Attribute.class, orderAttributeDTO.getOrderAttributeCode());
 	        }
         }
-        List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
-        if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
-            throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+        if (productVersionAttributes != null) {
+            List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
+            if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
+                throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+            }
         }
-        CommercialOrder commercialOrder =null;
+        
+        CommercialOrder commercialOrder = null;
     	if(!StringUtils.isBlank(orderAttributeDTO.getCommercialOrderId())) {
-         commercialOrder = commercialOrderService.findById(orderAttributeDTO.getCommercialOrderId());
-		if (commercialOrder == null) {
-			throw new EntityDoesNotExistsException(CommercialOrder.class, orderAttributeDTO.getCommercialOrderId());
-		}
+            commercialOrder = commercialOrderService.findById(orderAttributeDTO.getCommercialOrderId());
+    		if (commercialOrder == null) {
+    			throw new EntityDoesNotExistsException(CommercialOrder.class, orderAttributeDTO.getCommercialOrderId());
+    		}
     	}
-		OrderLot orderLot=null;
+		OrderLot orderLot = null;
 		if(!StringUtils.isBlank(orderAttributeDTO.getOrderLotCode())) {
-		 orderLot=orderLotService.findByCode(orderAttributeDTO.getOrderLotCode());
-		if(orderLot == null) { 
-			throw new EntityDoesNotExistsException(OrderLot.class,orderAttributeDTO.getOrderLotCode());
-		}
+    		orderLot=orderLotService.findByCode(orderAttributeDTO.getOrderLotCode());
+    		if(orderLot == null) { 
+    			throw new EntityDoesNotExistsException(OrderLot.class,orderAttributeDTO.getOrderLotCode());
+    		}
 		} 
         OrderAttribute orderAttribute = new OrderAttribute();
         orderAttribute.setAttribute(attribute);
@@ -873,14 +876,14 @@ public class CommercialOrderApi extends BaseApi {
         orderAttribute.setDoubleValue(orderAttributeDTO.getDoubleValue());
         orderAttribute.setDateValue(orderAttributeDTO.getDateValue());
         orderAttribute.updateAudit(currentUser);
-        if(orderProduct!=null ) {
+        if(orderProduct != null) {
             orderProduct.getOrderAttributes().add(orderAttribute);
             orderAttribute.setOrderProduct(orderProduct);
         }
-        if(orderOffer!=null) {
-        orderAttribute.setOrderOffer(orderOffer);
+        if(orderOffer != null) {
+            orderAttribute.setOrderOffer(orderOffer);
         }
-        if(!orderAttributeDTO.getLinkedOrderAttribute().isEmpty()){
+        if(!orderAttributeDTO.getLinkedOrderAttribute().isEmpty()) {
             List<OrderAttribute> linkedOrderAttributes = orderAttributeDTO.getLinkedOrderAttribute()
                     .stream()
                     .map(dto -> {
