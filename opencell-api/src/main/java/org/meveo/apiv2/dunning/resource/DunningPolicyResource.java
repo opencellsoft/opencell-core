@@ -75,4 +75,18 @@ public interface DunningPolicyResource {
             })
     Response findByName(@Parameter(description = "Dunning policy name", required = true)
                     @PathParam("dunningPolicyName") String dunningPolicyName);
+
+    @PUT
+    @Path("/archive/{dunningPolicyId}")
+    @Operation(summary = "Archive dunning policy",
+            tags = {"Dunning"},
+            description = "Archive dunning policy",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning policy successfully archived"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Dunning policy does not exist")
+            })
+    Response archive(@Parameter(description = "Dunning policy id", required = true)
+                     @PathParam("dunningPolicyId") Long dunningPolicyId);
 }
