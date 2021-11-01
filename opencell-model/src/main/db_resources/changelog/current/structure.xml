@@ -10055,11 +10055,14 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id"/>
     </changeSet>
     
-    	<changeSet id="INTRD-2580" author="Mohammed_ElAzzouzi">
-		<sql>update cpq_price_plan_version  ppv set version = id where ppv.ppm_id in
-				(select d.ppm_id from (select count(*), version, ppm_id from cpq_price_plan_version
-				group by version, ppm_id having count(*)>1) as d)</sql>
-	    <addUniqueConstraint columnNames="version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+    <changeSet id="INTRD-2511-1_20211029" author="Mohammed_ElAzzouzi" failOnError="false">
+    	<dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC" />
+    </changeSet>
+    <changeSet id="INTRD-2511-2_20211029" author="Mohammed_ElAzzouzi">
+		<sql>update cpq_price_plan_version ppv set current_version = id where ppv.ppm_id in
+				(select d.ppm_id from (select count(*), current_version, ppm_id from cpq_price_plan_version
+				group by current_version, ppm_id having count(*)>1) as d)</sql>
+	    <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
 	</changeSet>
 
 	<changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius">

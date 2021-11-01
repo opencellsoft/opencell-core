@@ -40,6 +40,7 @@ import org.meveo.model.cpq.tags.Tag;
 @NamedQueries({  
 	@NamedQuery(name = "CommercialRuleLine.getSourceAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode"),
 	@NamedQuery(name = "CommercialRuleLine.getSourceProductAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceProduct.code=:productCode"),
+	@NamedQuery(name = "CommercialRuleLine.getSourceOfferAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceOfferTemplate.code=:offerCode"),
 	@NamedQuery(name = "CommercialRuleLine.getSourceProductRules", query = "select c.id from CommercialRuleLine c where c.sourceProduct.code=:productCode"),
 	@NamedQuery(name = "CommercialRuleLine.getSourceProductRulesWithOffer", query = "select c.id from CommercialRuleLine c where c.sourceOfferTemplate.code=:offerCode and c.sourceProduct.code=:productCode"),
 	@NamedQuery(name = "CommercialRuleLine.getSourceGroupedAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceGroupedAttributes.code=:groupedAttributeCode and c.sourceProduct.code=:productCode")

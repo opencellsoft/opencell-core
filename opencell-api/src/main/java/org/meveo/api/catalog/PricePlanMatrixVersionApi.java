@@ -95,7 +95,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         	Date from = validity.getFrom();
         	Date to = validity.getTo();
 			if(from!=null && to!=null && to.before(from)) {
-        		throw new InvalidParameterException("incorrect validity period (from:"+from+" to: "+to+")");
+        		throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
         	}
         }
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
