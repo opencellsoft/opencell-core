@@ -29,7 +29,7 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
                 .determineLevelBy(entity.getDetermineLevelBy())
                 .minBalanceTriggerCurrency(entity.getDetermineLevelBy());
         if (entity.getDunningLevels() != null) {
-            builder.dunningLevels(entity.getDunningLevels().stream()
+            builder.dunningPolicyLevels(entity.getDunningLevels().stream()
                     .map(dunningPolicyLevel ->  policyLevelMapper.toResource(dunningPolicyLevel))
                     .collect(Collectors.toList()));
         }

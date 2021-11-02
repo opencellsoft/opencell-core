@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Hibernate;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.dunning.*;
@@ -53,6 +54,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     private MeveoUser currentUser;
 
     private final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    @Inject
+    private DunningPolicyRuleService dunningPolicyRuleService;
 
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
@@ -229,5 +233,17 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         dunningPolicy.setActivePolicy(FALSE);
         trackOperation("archive", new Date(), "isActive", dunningPolicy.getPolicyName());
         return of(dunningPolicyService.update(dunningPolicy));
+    }
+    public Optional<DunningPolicyRule> removePolicyRule(Long id) {
+        DunningPolicyRule dunningPolicyRule = dunningPolicyRuleService.findById(id);
+        if(dunningPolicyRule == null) {
+            return empty();
+        }
+        try {
+            dunningPolicyRuleService.remove(dunningPolicyRule);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
+        return of(dunningPolicyRule);
     }
 }

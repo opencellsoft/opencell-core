@@ -89,4 +89,17 @@ public interface DunningPolicyResource {
             })
     Response archive(@Parameter(description = "Dunning policy id", required = true)
                      @PathParam("dunningPolicyId") Long dunningPolicyId);
+    @DELETE
+    @Path("/policyRule/{policyRuleID}")
+    @Operation(summary = "Remove policy rule",
+            tags = {"PolicyRule"},
+            description = "Remove policy rule",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Policy rule successfully removed"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Policy rule does not exits")
+            })
+    Response removePolicyRule(@Parameter(description = "Policy rule id", required = true)
+                        @PathParam("policyRuleID") Long policyRuleID);
 }

@@ -69,7 +69,7 @@ public interface DunningPolicyInput extends Resource {
 
     @Schema(description = "Dunning policy levels")
     @Nullable
-    List<DunningPolicyLevel> getDunningLevels();
+    List<DunningPolicyLevel> getDunningPolicyLevels();
 
     @Schema(description = "Dunning policy rules")
     @Nullable
