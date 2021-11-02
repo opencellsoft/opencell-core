@@ -4,15 +4,7 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.billing.TradingLanguage;
@@ -23,6 +15,11 @@ import org.meveo.model.payments.ActionChannelEnum;
 
 @Entity
 @DiscriminatorValue("DUNNING_MEDIA")
+@NamedQueries(@NamedQuery(name = "DunningTemplate.isDunningTemplatedRelatedToAnActiveDunningLevel",
+        query = "SELECT dt FROM DunningTemplate dt " +
+                "JOIN DunningAction da ON da.actionNotificationTemplate.id = :templateId "+
+                "JOIN DunningLevel dl ON dl MEMBER OF da.relatedLevels "+
+                "WHERE dt.id=:templateId AND dl.isActive=true " ))
 public class DunningTemplate extends EmailTemplate {
 
 	private static final long serialVersionUID = 5950324976559109922L;
