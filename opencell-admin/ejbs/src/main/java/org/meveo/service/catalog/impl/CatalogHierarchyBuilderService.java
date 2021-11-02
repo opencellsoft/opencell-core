@@ -216,7 +216,9 @@ public class CatalogHierarchyBuilderService {
         			mediaService.create(newMedia);
         		}
         		productAttribute = productVersionAttributeService.refreshOrRetrieve(productAttribute);
-                entity.getAttributes().add(productAttribute);
+        		ProductVersionAttribute prodVersionAttribute=new ProductVersionAttribute(productAttribute,entity);
+        		productVersionAttributeService.create(prodVersionAttribute);
+                entity.getAttributes().add(prodVersionAttribute);
 			}
         }
         
@@ -267,12 +269,12 @@ public class CatalogHierarchyBuilderService {
         	});
     		
     		var tagList = new ArrayList<>(tmpProductVersion.getTags());
-    		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
+    		var attributList = new ArrayList<>(tmpProductVersion.getAttributes());
     		var groupedAttribute = new ArrayList<>(tmpProductVersion.getGroupedAttributes());
 
     		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
     		productVersionService.create(newProductVersion);    		
-			duplicateProductVersion(newProductVersion, serviceList, tagList, groupedAttribute, newProductVersion.getId() + "_");			
+			duplicateProductVersion(newProductVersion, attributList, tagList, groupedAttribute, newProductVersion.getId() + "_");			
 			entity.getProductVersions().add(newProductVersion);
     	}
     	if(discountPlans != null) {
