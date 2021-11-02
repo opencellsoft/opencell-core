@@ -1,15 +1,16 @@
 package org.meveo.apiv2.dunning.impl;
 
-import org.meveo.apiv2.dunning.ImmutableDunningCollectionManagement;
+import org.meveo.apiv2.dunning.DunningAgentInput;
+import org.meveo.apiv2.dunning.ImmutableDunningAgentInput;
 import org.meveo.apiv2.generic.ResourceMapper;
-import org.meveo.model.dunning.DunningCollectionManagement;
+import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningSettings;
 
-public class DunningCollectionManagementMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningCollectionManagement, DunningCollectionManagement> {
+public class DunningAgentMapper extends ResourceMapper<DunningAgentInput, DunningAgent> {
 
 	@Override
-	protected org.meveo.apiv2.dunning.DunningCollectionManagement toResource(DunningCollectionManagement entity) {
-		return ImmutableDunningCollectionManagement.builder()
+	protected DunningAgentInput toResource(DunningAgent entity) {
+		return ImmutableDunningAgentInput.builder()
 				.id(entity.getId())
 				.agentEmailItem(entity.getAgentEmailItem())
 				.collectionAgency(entity.getCollectionAgency())
@@ -22,8 +23,8 @@ public class DunningCollectionManagementMapper extends ResourceMapper<org.meveo.
 	}
 
 	@Override
-	protected DunningCollectionManagement toEntity(org.meveo.apiv2.dunning.DunningCollectionManagement resource) {
-		var entity = new DunningCollectionManagement();
+	protected DunningAgent toEntity(DunningAgentInput resource) {
+		var entity = new DunningAgent();
 		if(resource.getDunningSettings() != null) {
 			var dunnigSetting = new DunningSettings();
 			dunnigSetting.setId(resource.getDunningSettings().getId());
