@@ -1,5 +1,6 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static org.meveo.apiv2.ordering.common.LinkGenerator.*;
 import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
 import org.meveo.apiv2.dunning.DunningPolicy;
@@ -121,10 +122,10 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         }
         org.meveo.model.dunning.DunningPolicy policy =
                 dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedField)).get();
-        dunningPolicyApiService.trackOperation("UPDATE", new Date(), updatedField.toString());
+        dunningPolicyApiService.trackOperation("update", new Date(), updatedField.toString(), policy.getPolicyName());
         return Response
-                .ok(org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
-                .entity(mapper.toResource(policy))
+                .ok(getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
+                .entity(mapper.toResource(entity))
                 .build();
     }
 
@@ -142,6 +143,16 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     public Response findByName(String dunningPolicyName) {
         return Response
                 .ok(toResourceOrderWithLink(mapper.toResource(dunningPolicyApiService.findByName(dunningPolicyName).get())))
+                .build();
+    }
+
+    @Override
+    public Response archive(Long dunningPolicyId) {
+        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyApiService.findById(dunningPolicyId)
+                .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits"));
+        return Response
+                .ok(getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
+                .entity(mapper.toResource(dunningPolicyApiService.archiveDunningPolicy(entity).get()))
                 .build();
     }
 

@@ -1,11 +1,14 @@
 package org.meveo.apiv2.dunning.service;
 
+import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.ACTIVE_DUNNING;
 import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,7 @@ import org.meveo.service.payments.impl.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.model.dunning.DunningPolicy;
 
@@ -46,7 +50,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Inject
     @CurrentUser
-    protected MeveoUser currentUser;
+    private MeveoUser currentUser;
+
+    private final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
@@ -62,13 +68,17 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> findById(Long id) {
+        DunningPolicy dunningPolicy = dunningPolicyService.findById(id, fetchFields);
+        if(dunningPolicy == null) {
+            throw new NotFoundException("Dunning policy with id  " + id + " does not exits");
+        }
         return of(dunningPolicyService.findById(id, fetchFields));
     }
 
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
         dunningPolicyService.create(dunningPolicy);
-        trackOperation("CREATE", new Date(), null);
+        trackOperation("create", new Date(), null, dunningPolicy.getPolicyName());
         return findByCode(dunningPolicy.getPolicyName()).get();
     }
 
@@ -163,7 +173,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
         if(dunningPolicy != null) {
             dunningPolicyService.remove(id);
-            trackOperation("DELETE", new Date(), null);
+            trackOperation("delete", new Date(), null, dunningPolicy.getPolicyName());
             return of(dunningPolicy);
         } else {
             return empty();
@@ -194,15 +204,30 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         return of(dunningPolicyService.update(dunningPolicy));
     }
 
-    public AuditLog trackOperation(String operationType, Date operationDate, String updatedField) {
+    public AuditLog trackOperation(String operationType, Date operationDate, String updatedField, String dunningPolicyCode) {
         AuditLog auditLog = new AuditLog();
         auditLog.setEntity(DunningPolicy.class.getSimpleName());
         auditLog.setCreated(operationDate);
         auditLog.setActor(currentUser.getUserName());
         auditLog.setAction(operationType);
-        auditLog.setParameters(updatedField);
-        auditLog.setOrigin("API");
+        StringBuilder parameters = new StringBuilder();
+        parameters.append("user ")
+                .append(currentUser.getUserName())
+                .append(" apply ")
+                .append(operationType)
+                .append(" on ")
+                .append(formatter.format(operationDate))
+                .append(" to the dunning policy ")
+                .append(dunningPolicyCode);
+        auditLog.setParameters(parameters.toString());
+        auditLog.setOrigin(dunningPolicyCode);
         auditLogService.create(auditLog);
         return auditLog;
+    }
+
+    public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
+        dunningPolicy.setActivePolicy(FALSE);
+        trackOperation("archive", new Date(), "isActive", dunningPolicy.getPolicyName());
+        return of(dunningPolicyService.update(dunningPolicy));
     }
 }
