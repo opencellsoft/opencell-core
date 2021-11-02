@@ -83,7 +83,23 @@ public class ProductVersionAttribute extends BaseEntity {
    
    public ProductVersionAttribute(){
    }
-   /**
+   
+   
+   public ProductVersionAttribute(ProductVersionAttribute copy,ProductVersion productVersion) { 
+	this.productVersion = productVersion;
+	this.attribute = copy.getAttribute();
+	this.mandatoryWithEl = copy.getMandatoryWithEl();
+	this.mandatory = copy.isMandatory();
+	this.display = copy.isDisplay();
+	this.readOnly = copy.readOnly;
+	this.defaultValue = copy.getDefaultValue();
+	this.validationType = copy.getValidationType();
+	this.validationPattern = copy.getValidationPattern();
+	this.validationLabel = copy.getValidationLabel();
+}
+
+
+/**
     * @return the productVersion
     */
    public ProductVersion getProductVersion() {
