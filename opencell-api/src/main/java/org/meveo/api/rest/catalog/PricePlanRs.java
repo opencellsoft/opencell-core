@@ -31,10 +31,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.DatePeriodDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
-import org.meveo.api.dto.cpq.DuplicatePricePlanVersionRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
@@ -288,7 +288,12 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "404", description = "the price plan version with price plan code and current version in param does not exist "),
                     @ApiResponse(responseCode = "409", description = "Warning : Unable to confirm - An other period is overlapping.")
             })
-    Response duplicatePricePlanVersion(DuplicatePricePlanVersionRequestDto duplicatePPVersionRequest);
+    Response duplicatePricePlanVersion(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+			   @Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion,DatePeriodDto validity);
+
+
+/**
+    
     
     /**
      * Create a new price plan matrix column

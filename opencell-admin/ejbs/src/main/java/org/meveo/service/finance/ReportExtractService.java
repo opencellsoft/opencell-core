@@ -182,12 +182,11 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             if (!StringUtils.isBlank(entity.getFilenameFormat())) {
                 context.put(ReportExtractScript.FILENAME, filename);
             }
-
+            context.put(ReportExtractScript.LINE_COUNT, entity.getMaximumLine().intValue());
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
             List<Map<String, Object>> resultList = readGeneratedFile(resultContext.get("DIR") + "\\" + resultContext.get("FILENAME"), ofNullable(entity.getFileSeparator()).orElse(";"));
             reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
-
             if (entity.getCustomTableCode() != null && resultList != null && !resultList.isEmpty()) {
                 storeDataInCT(entity.getCustomTableCode(), resultList, entity.isAccumulate());
             }
@@ -432,7 +431,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         }
         return records;
     }
-
+    
     private void generateEmptyReport(String filename, StringBuilder sbDir, ReportExtractResultTypeEnum reportType) {
         if (reportType.equals(ReportExtractResultTypeEnum.HTML) && FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
             filename = FileUtils.changeExtension(filename, ".html");

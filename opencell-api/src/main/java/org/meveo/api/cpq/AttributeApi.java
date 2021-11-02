@@ -18,6 +18,7 @@ import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -226,7 +227,15 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (attribute== null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		}
-		attributeService.remove(attribute);
+		try {
+			attributeService.remove(attribute);
+			attributeService.commit();
+		}catch(Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(Attribute.class, code);
+			}
+			throw new MeveoApiException(e.getMessage());
+		}
 
 	} 
 
