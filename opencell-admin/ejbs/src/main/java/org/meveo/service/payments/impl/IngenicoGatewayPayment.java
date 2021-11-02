@@ -472,9 +472,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         ThreeDSecureData threeDSecureData = new ThreeDSecureData();
         threeDSecureData.setAcsTransactionId(cardPaymentMethod.getToken3DsId());
         threeDSecure.setPriorThreeDSecureData(threeDSecureData);
+        threeDSecure.setSkipAuthentication(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.SkipAuthentication", "false"))));
         cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);
         cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
-        cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
+        cardPaymentMethodSpecificInput.setIsRecurring(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.IsRecurring", "false"))));
+        cardPaymentMethodSpecificInput.setRequiresApproval(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.RequiresApproval", "true"))));
 
         cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());        
 

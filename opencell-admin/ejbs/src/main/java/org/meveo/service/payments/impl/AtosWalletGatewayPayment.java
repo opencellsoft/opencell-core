@@ -321,6 +321,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         request.setInterfaceVersion(interfaceVersion);
         request.setKeyVersion(paymentGateway.getWebhooksKeyId());
         request.setTransactionReference(System.currentTimeMillis() + "CA" + paymentMethod.getCustomerAccount().getId());
+        request.setSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 
         // Needed for backward compatibility purpose, in 5.X version, the merchant wallet ID is the customer account ID
         // Starting at 9.X version, the merchant wallet ID match the token ID of payment method
