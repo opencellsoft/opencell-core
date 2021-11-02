@@ -25,7 +25,7 @@ public interface DunningTemplateResource {
                     @ApiResponse(responseCode = "412",
                             description = "Missing parameters"),
                     @ApiResponse(responseCode = "400",
-                            description = "Dunning Template creation is failed")
+                            description = "Dunning Template creation failed")
             })
     Response createDunningTemplate(@Parameter(required = true, description = "dunning Template") DunningTemplate dunningTemplate);
 
@@ -42,7 +42,7 @@ public interface DunningTemplateResource {
                     @ApiResponse(responseCode = "412",
                             description = "Missing parameters"),
                     @ApiResponse(responseCode = "400",
-                            description = "Dunning Template creation is failed")
+                            description = "Dunning Template deletion failed")
             })
     Response deleteDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
 
@@ -59,8 +59,26 @@ public interface DunningTemplateResource {
                     @ApiResponse(responseCode = "412",
                             description = "Missing parameters"),
                     @ApiResponse(responseCode = "400",
-                            description = "Dunning Template creation is failed")
+                            description = "Dunning Template duplication failed")
             })
     Response duplicateDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
+
+    @PUT
+    @Path("/{dunningTemplateId}")
+    @Operation(summary = "update a Dunning Template",
+            tags = {"DunningTemplate"},
+            description = "update a Dunning Template",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning Template successfully updated"),
+                    @ApiResponse(responseCode = "404",
+                            description = "a related entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Dunning Template update failed")
+            })
+    Response updateDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId,
+                                   @Parameter(required = true, description = "dunning Template") DunningTemplate dunningTemplate);
 
 }
