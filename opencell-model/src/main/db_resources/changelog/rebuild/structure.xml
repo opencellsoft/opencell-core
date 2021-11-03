@@ -6773,6 +6773,7 @@
             <column name="month_expiration" type="INT4" />
             <column name="year_expiration" type="INT4" />
             <column name="token_id" type="VARCHAR(60)" />
+            <column name="token_3ds_id" type="varchar(250)"/>
             <column name="alias" type="VARCHAR(256)" />
             <column name="is_default" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="card_number" type="VARCHAR(16)" />
@@ -15959,6 +15960,7 @@
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
+    <changeSet id="#2333_20211021" author="anasseh"/>
 
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 

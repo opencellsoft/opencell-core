@@ -9711,5 +9711,11 @@ public class OrderAdvancement extends ModuleScript {
             <column name="scope_type" type="varchar(25)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#2333_20211021" author="anasseh">
+        <addColumn tableName="ar_payment_token">
+            <column name="token_3ds_id" type="varchar(250)"/>
+   		</addColumn>
+    </changeSet>
 
 </databaseChangeLog>
