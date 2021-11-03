@@ -1,21 +1,23 @@
 package org.meveo.apiv2.dunning;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -46,7 +48,10 @@ public interface DunningAction {
     @Nullable
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Long> getActionNotificationTemplate();
-
+    
+    @Nullable
+    Long getAssignedTo();
+    
     @Value.Default
     default boolean getAttachOverdueInvoices() {
         return false;
@@ -75,11 +80,10 @@ public interface DunningAction {
             scriptInstance.setId(getScript().get("id"));
             dunningActionEntity.setScriptInstance(scriptInstance);
         }
-
-        if (getActionNotificationTemplate() != null) {
-            EmailTemplate emailTemplate = new EmailTemplate();
-            emailTemplate.setId(getActionNotificationTemplate().get("id"));
-            dunningActionEntity.setActionNotificationTemplate(emailTemplate);
+        if (getAssignedTo() != null) {
+            DunningAgent dunningAgent = new DunningAgent();
+            dunningAgent.setId(getAssignedTo());
+            dunningActionEntity.setAssignedTo(dunningAgent);
         }
 
         if (getRelatedLevels() != null && !getRelatedLevels().isEmpty()) {
@@ -91,6 +95,13 @@ public interface DunningAction {
                     })
                     .collect(Collectors.toList()));
         }
+
+        if (getActionNotificationTemplate() != null) {
+            EmailTemplate emailTemplate = new EmailTemplate();
+            emailTemplate.setId(getActionNotificationTemplate().get("id"));
+            dunningActionEntity.setActionNotificationTemplate(emailTemplate);
+        }
+
         dunningActionEntity.setAttachOverdueInvoices(getAttachOverdueInvoices());
         dunningActionEntity.setAttachDueInvoices(getAttachDueInvoices());
         return dunningActionEntity;
@@ -105,6 +116,10 @@ public interface DunningAction {
                 .actionChannel(dunningAction.getActionChannel().name())
                 .attachOverdueInvoices(dunningAction.isAttachOverdueInvoices())
                 .attachDueInvoices(dunningAction.isAttachDueInvoices());
+                
+        if (dunningAction.getAssignedTo() != null) {
+            immutableDunningAction.assignedTo(dunningAction.getAssignedTo().getId());
+        }
 
         if (dunningAction.getActionNotificationTemplate() != null) {
             immutableDunningAction.actionNotificationTemplate(Collections.singletonMap("id", dunningAction.getActionNotificationTemplate().getId()));

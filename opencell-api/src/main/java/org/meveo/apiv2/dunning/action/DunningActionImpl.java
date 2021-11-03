@@ -1,14 +1,15 @@
 package org.meveo.apiv2.dunning.action;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.dunning.DunningAction;
 import org.meveo.apiv2.dunning.ImmutableDunningAction;
 import org.meveo.service.payments.impl.DunningActionService;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.function.Consumer;
 
 public class DunningActionImpl implements DunningActionResource{
 
@@ -46,8 +47,8 @@ public class DunningActionImpl implements DunningActionResource{
         updatePropertyIfNotNull(newDunningAction.getActionMode(), actionModeEnum -> dunningActionToUpdate.setActionMode(actionModeEnum));
         updatePropertyIfNotNull(newDunningAction.getRelatedLevels(), relatedLevels -> dunningActionToUpdate.setRelatedLevels(relatedLevels));
         updatePropertyIfNotNull(newDunningAction.getScriptInstance(), scriptInstance -> dunningActionToUpdate.setScriptInstance(scriptInstance));
-        updatePropertyIfNotNull(newDunningAction.getActionNotificationTemplate(),
-                actionNotificationTemplate -> dunningActionToUpdate.setActionNotificationTemplate(actionNotificationTemplate));
+        updatePropertyIfNotNull(newDunningAction.getActionNotificationTemplate(), actionNotificationTemplate -> dunningActionToUpdate.setActionNotificationTemplate(actionNotificationTemplate));
+        updatePropertyIfNotNull(newDunningAction.getAssignedTo(), assignedTo -> dunningActionToUpdate.setAssignedTo(assignedTo));
         dunningActionService.update(dunningActionToUpdate);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\"}}").build();
     }

@@ -11,29 +11,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableDunningCollectionManagement.class)
-public interface DunningCollectionManagement extends Resource {
+@JsonDeserialize(as = ImmutableDunningAgentInput.class)
+public interface DunningAgentInput extends Resource {
 
     @Schema(description = "indicate dunning settings")
     @Nullable
-	Resource getDunningSettings();
+    Resource getDunningSettings();
 
     @Schema(description = "include collection agency")
-	boolean getExternal();
+    boolean getExternal();
 
     @Schema(description = "indicate email collection agency")
     @Nullable
-	String getCollectionAgency();
+    String getCollectionAgency();
 
     @Schema(description = "")
     @Nullable
-	String getAgentFirstNameItem();
+    String getAgentFirstNameItem();
 
     @Schema(description = "")
     @Nullable
-	String getAgentLastNameItem();
+    String getAgentLastNameItem();
 
     @Schema(description = "")
     @Nullable
-	String getAgentEmailItem();
+    String getAgentEmailItem();
 }
