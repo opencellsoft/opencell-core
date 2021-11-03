@@ -96,7 +96,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     @Transactional(value = TxType.REQUIRED)
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, boolean setNewVersion, String pricePlanMatrixNewCode) {
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, String pricePlanMatrixNewCode) {
     	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
     	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
     	
@@ -106,13 +106,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if(validity!=null) {
          duplicate.setValidity(validity);	
         }
-        if(!setNewVersion) {
             String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
             Integer lastVersion = getLastVersion(ppmCode);
             duplicate.setCurrentVersion(lastVersion + 1);
-        }else {
-        	 duplicate.setCurrentVersion(1);
-        }
+        
         try {
             this.create(duplicate);
         }catch(BusinessException e) {
