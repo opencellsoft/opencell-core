@@ -83,6 +83,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
@@ -258,7 +259,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createRatedTransactionsInBatch(List<WalletOperation> walletOperations) throws BusinessException {
-
+        // Get identical CF fields between WalletOperation and RatedTransaction
+        Set<String> rtCustomFieldTemplates = customFieldTemplateService.findByAppliesTo("RatedTransaction").keySet();
+        Set<String> woCustomFieldTemplates = customFieldTemplateService.findByAppliesTo("WalletOperation").keySet();
+        rtCustomFieldTemplates.retainAll(woCustomFieldTemplates);
+        
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
         boolean isESEnabled = elasticClient.isEnabled(new RatedTransaction());
@@ -271,8 +276,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 em.flush();
                 em.clear();
             }
+            //Copy identical CF Values from WalletOperation to RatedTransaction
+            CustomFieldValues cfValuesForRT = new CustomFieldValues();
+            rtCustomFieldTemplates.forEach(cfCode -> cfValuesForRT.setValue(cfCode, walletOperation.getCfValue(cfCode)));
+            walletOperation.setCfValuesForRT(cfValuesForRT);
             RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-
+            
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 
             em.persist(ratedTransaction);

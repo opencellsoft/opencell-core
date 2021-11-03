@@ -510,6 +510,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private CustomFieldValues cfValues;
 
     /**
+     * Custom field values to duplicate in RT
+     */
+    @Transient
+    private CustomFieldValues cfValuesForRT;
+    
+    /**
      * Accumulated custom field values in JSON format
      */
     @Type(type = "cfjson")
@@ -1488,5 +1494,21 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public String toString() {
         return String.format("id=%s, op date=%s, period=%s-%s, quantity=%s, unitAmount=%s, amount=%s", id, DateUtils.formatAsDate(operationDate), DateUtils.formatAsDate(startDate), DateUtils.formatAsDate(endDate),
             quantity, unitAmountWithoutTax, amountWithoutTax);
+    }
+
+    /**
+     * set CF Values For RT
+     * @param cfValuesForRT CF Values to duplicate in RT
+     */
+    public void setCfValuesForRT(CustomFieldValues cfValuesForRT) {
+        this.cfValuesForRT = cfValuesForRT;
+    }
+    
+    /**
+     * Get CF Values to duplicate in RT
+     * @return CF Values
+     */
+    public CustomFieldValues getCfValuesForRT() {
+        return cfValuesForRT;
     }
 }
