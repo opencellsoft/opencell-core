@@ -146,6 +146,12 @@ public abstract class PaymentMethod extends EnableCFEntity {
      */
     @Column(name = "token_id")
     private String tokenId;
+    
+    /**
+     * Token 3DS identifier
+     */
+    @Column(name = "token_3ds_id")
+    private String token3DsId;
 
     /**
      * Document identifier
@@ -280,6 +286,15 @@ public abstract class PaymentMethod extends EnableCFEntity {
         this.referenceDocument = referenceDocument;
     }
     
+	public String getToken3DsId() {
+		return token3DsId;
+	}
+
+	public void setToken3DsId(String token3DsId) {
+		this.token3DsId = token3DsId;
+	}
+	
+    
     public void anonymize(String code) {
         setInfo1(code);
         setInfo2(code);
@@ -287,6 +302,7 @@ public abstract class PaymentMethod extends EnableCFEntity {
         setInfo4(code);
         setInfo5(code);
         setTokenId(code);
+        setToken3DsId(code);
         setUserId(code);
     }
 

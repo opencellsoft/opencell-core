@@ -9,6 +9,7 @@ public class WalletOrderRequest extends BaseRequest {
     private String orderChannel;
     private String paymentMeanId;
     private String transactionReference;
+    private String schemeTransactionIdentifier;
 
     public String getTransactionReference() {
         return transactionReference;
@@ -57,4 +58,13 @@ public class WalletOrderRequest extends BaseRequest {
     public void setPaymentMeanId(String paymentMeanId) {
         this.paymentMeanId = paymentMeanId;
     }
+
+	public String getSchemeTransactionIdentifier() {
+		return schemeTransactionIdentifier;
+	}
+
+	public void setSchemeTransactionIdentifier(String schemeTransactionIdentifier) {
+		this.schemeTransactionIdentifier = schemeTransactionIdentifier;
+	}
+    
 }
