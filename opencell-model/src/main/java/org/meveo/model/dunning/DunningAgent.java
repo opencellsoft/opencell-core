@@ -21,7 +21,7 @@ import org.meveo.model.AuditableEntity;
 @Entity
 @Table(name = "dunning_agent")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "dunning_collection_management_seq") })
+        @Parameter(name = "sequence_name", value = "dunning_agent_seq") })
 public class DunningAgent extends AuditableEntity {
 
     private static final long serialVersionUID = -2094816912162086909L;
