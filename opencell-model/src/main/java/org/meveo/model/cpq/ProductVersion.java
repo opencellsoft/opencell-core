@@ -164,6 +164,7 @@ public class ProductVersion extends AuditableEntity{
 		this.setTags(new HashSet<>());
 		this.setAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());
+		this.setLongDescription(copy.getLongDescription());
 		this.setValidity(copy.getValidity()); 
 	}
 
