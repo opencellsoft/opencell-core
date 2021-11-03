@@ -1,5 +1,18 @@
 package org.meveo.model.dunning;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -10,14 +23,13 @@ import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
-import javax.persistence.*;
-import java.util.List;
-
 @Entity
 @Table(name = "ar_dunning_action")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_dunning_action_seq"), })
 public class DunningAction extends BusinessEntity {
+
+    private static final long serialVersionUID = -3093051277357043210L;
 
     @Type(type = "numeric_boolean")
     @Column(name = "is_action_active")
@@ -36,8 +48,7 @@ public class DunningAction extends BusinessEntity {
     private ActionChannelEnum actionChannel = ActionChannelEnum.EMAIL;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"))
+    @JoinTable(name = "dunning_level_dunning_action", joinColumns = @JoinColumn(name = "dunning_action_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "dunning_level_id", referencedColumnName = "id"))
     private List<DunningLevel> relatedLevels;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,6 +66,10 @@ public class DunningAction extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "attach_due_invoices")
     private boolean attachDueInvoices = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_agent_id")
+    private DunningAgent assignedTo;
 
     public boolean isActiveAction() {
         return isActiveAction;
@@ -126,5 +141,13 @@ public class DunningAction extends BusinessEntity {
 
     public void setAttachDueInvoices(boolean attachDueInvoices) {
         this.attachDueInvoices = attachDueInvoices;
+    }
+
+    public DunningAgent getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(DunningAgent assignedTo) {
+        this.assignedTo = assignedTo;
     }
 }

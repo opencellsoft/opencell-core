@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningPolicy;
+import org.meveo.apiv2.dunning.DunningPolicyInput;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -44,7 +45,7 @@ public interface DunningPolicyResource {
             })
     Response update(@Parameter(description = "Dunning policy id", required = true)
                     @PathParam("dunningPolicyId") Long dunningPolicyId,
-    @Parameter(description = "dunning policy to update", required = true) DunningPolicy dunningPolicy);
+    @Parameter(description = "dunning policy to update", required = true) DunningPolicyInput dunningPolicy);
 
     @DELETE
     @Path("/{dunningPolicyId}")
@@ -74,4 +75,18 @@ public interface DunningPolicyResource {
             })
     Response findByName(@Parameter(description = "Dunning policy name", required = true)
                     @PathParam("dunningPolicyName") String dunningPolicyName);
+
+    @PUT
+    @Path("/archive/{dunningPolicyId}")
+    @Operation(summary = "Archive dunning policy",
+            tags = {"Dunning"},
+            description = "Archive dunning policy",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning policy successfully archived"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Dunning policy does not exist")
+            })
+    Response archive(@Parameter(description = "Dunning policy id", required = true)
+                     @PathParam("dunningPolicyId") Long dunningPolicyId);
 }

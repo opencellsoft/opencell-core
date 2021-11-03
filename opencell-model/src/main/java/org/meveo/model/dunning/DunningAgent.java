@@ -19,19 +19,19 @@ import org.meveo.model.AuditableEntity;
  *
  */
 @Entity
-@Table(name = "dunning_collection_management")
+@Table(name = "dunning_agent")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_collection_management_seq") })
-public class DunningCollectionManagement extends AuditableEntity {
+public class DunningAgent extends AuditableEntity {
 
     private static final long serialVersionUID = -2094816912162086909L;
 
-    public DunningCollectionManagement() {
+    public DunningAgent() {
         super();
     }
 
-    public DunningCollectionManagement(boolean external, @Size(max = 100) String collectionAgency, @Size(max = 100) String agentFirstNameItem,
-            @Size(max = 100) String agentLastNameItem, @Size(max = 100) String agentEmailItem, DunningSettings dunningSettings) {
+    public DunningAgent(boolean external, @Size(max = 100) String collectionAgency, @Size(max = 100) String agentFirstNameItem, @Size(max = 100) String agentLastNameItem,
+            @Size(max = 100) String agentEmailItem, DunningSettings dunningSettings) {
         super();
         this.external = external;
         this.collectionAgency = collectionAgency;

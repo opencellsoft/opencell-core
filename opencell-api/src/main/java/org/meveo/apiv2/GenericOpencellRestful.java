@@ -37,7 +37,7 @@ import org.meveo.apiv2.catalog.resource.PricePlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
-import org.meveo.apiv2.dunning.impl.DunningCollectionManagementResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningAgentResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningInvoiceStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
@@ -116,7 +116,7 @@ public class GenericOpencellRestful extends Application {
 				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class,
 				DunningSettingsResourceImpl.class, DunningLevelResourceImpl.class ,DunningActionImpl.class,
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
-				DunningCollectionManagementResourceImpl.class, CollectionPlanStatusResourceImpl.class,
+				DunningAgentResourceImpl.class, CollectionPlanStatusResourceImpl.class,
                 StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
                 DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class)
 		        .collect(Collectors.toSet());

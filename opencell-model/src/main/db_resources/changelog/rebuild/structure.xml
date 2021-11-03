@@ -293,7 +293,7 @@
         <createSequence sequenceName="dunning_stop_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_collection_plan_statuses_seq" startValue="1" />
         <createSequence sequenceName="invoice_dunning_statuses_seq" startValue="1" />
-        <createSequence sequenceName="dunning_collection_management_seq" startValue="1" />
+        <createSequence sequenceName="dunning_agent_seq" startValue="1" />
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
@@ -15024,9 +15024,9 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
-         <createTable tableName="dunning_collection_management">
+         <createTable tableName="dunning_agent">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_management_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_agent_pkey" />
             </column>
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
@@ -15044,7 +15044,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management"
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
                                  constraintName="fk_dunning_settings_collection_management_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
@@ -15082,8 +15082,8 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
-        <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_dunning_agent_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
 
         <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
@@ -15095,7 +15095,7 @@
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries" referencedColumnNames="id" />
 
         <addForeignKeyConstraint constraintName="fk_dunning_stop_reasons_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
 
     </changeSet>
 
@@ -16575,8 +16575,8 @@
     <changeSet id="INTRD-2679_20211027" author="khalidHORRI"/>
     <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay" />
    	<changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza" />
-   	
     <changeSet id="INTRD-2548_20211027" author="YoussefIZEM" />
+    <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

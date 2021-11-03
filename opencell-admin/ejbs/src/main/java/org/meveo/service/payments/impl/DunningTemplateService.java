@@ -11,6 +11,8 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Query;
+import java.util.List;
 
 @Stateless
 public class DunningTemplateService extends BusinessService<DunningTemplate> {
@@ -20,7 +22,12 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
 
     @Override
     public void create(DunningTemplate template) throws BusinessException {
-        if (template.getCode() == null || findByCode(template.getCode()) != null) {
+        validate(template);
+        super.create(template);
+    }
+
+    private void validate(DunningTemplate template) {
+        if(isCodeNullOrAlreadyUsed(template)){
             throw new BusinessApiException("code should be not null or already used by another template.");
         }
         if (template.getLanguage() == null) {
@@ -28,7 +35,7 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
         }else{
             TradingLanguage tradingLanguage = tradingLanguageService.findById(template.getLanguage().getId());
             if(tradingLanguage == null){
-                throw new EntityDoesNotExistsException("Language with id"+template.getLanguage().getId()+" does not exists.");
+                throw new EntityDoesNotExistsException("Language with id"+ template.getLanguage().getId()+" does not exists.");
             }
             template.setLanguage(tradingLanguage);
         }
@@ -38,6 +45,38 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
         if (ActionChannelEnum.EMAIL.equals(template.getChannel()) && (template.getSubject() == null || template.getSubject().isBlank())) {
             throw new BusinessApiException("subject is mandatory when template channel is of type EMAIL.");
         }
+    }
+
+    private boolean isCodeNullOrAlreadyUsed(DunningTemplate template) {
+        if (template.getCode() == null) {
+            return true;
+        }else{
+            DunningTemplate foundTemplate = findByCode(template.getCode());
+            if(foundTemplate != null && !foundTemplate.getId().equals(template.getId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void duplicate(DunningTemplate template) {
+        detach(template);
+        template.setId(null);
+        template.setCode(template.getCode() + " - copy");
         super.create(template);
+    }
+
+    @Override
+    public DunningTemplate update(DunningTemplate template) throws BusinessException {
+        validate(template);
+        if(!template.isActive()){
+            Query query = getEntityManager().createNamedQuery("DunningTemplate.isDunningTemplatedRelatedToAnActiveDunningLevel");
+            query.setParameter("templateId", template.getId());
+            List resultList = query.setMaxResults(1).getResultList();
+            if(!resultList.isEmpty()){
+                throw new BusinessApiException("error de-activating a template related to an active dunning level.");
+            }
+        }
+        return super.update(template);
     }
 }

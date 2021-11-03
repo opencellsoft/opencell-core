@@ -1,6 +1,8 @@
 package org.meveo.apiv2.dunning.service;
 
+import static java.lang.Boolean.FALSE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.dunning.*;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningInvoiceStatusService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 import org.meveo.service.payments.impl.CollectionPlanStatusService;
@@ -40,6 +44,12 @@ public class DunningPolicyApiServiceTest {
 
     @Mock
     private CollectionPlanStatusService collectionPlanStatusService;
+
+    @Mock
+    private MeveoUser currentUser;
+
+    @Mock
+    private AuditLogService auditLogService;
 
     private DunningPolicy dunningPolicy = new DunningPolicy();
 
@@ -94,13 +104,26 @@ public class DunningPolicyApiServiceTest {
                 .thenReturn(invoiceDunningStatuses);
         when(collectionPlanStatusService.refreshOrRetrieve(any(CollectionPlanStatus.class)))
                 .thenReturn(collectionPlanStatus);
+        when(currentUser.getUserName()).thenReturn("opencell.admin");
     }
 
     @Test
     public void shouldUpdateDunningPolicy() {
         Optional<DunningPolicy> dunningPolicyUpdated = dunningPolicyApiService.update(1L, dunningPolicy);
-        Assert.assertTrue(dunningPolicyUpdated.isPresent());
+        assertTrue(dunningPolicyUpdated.isPresent());
         DunningPolicy dunningPolicy1 = dunningPolicyUpdated.get();
         assertEquals(1, dunningPolicy1.getTotalDunningLevels().intValue());
+    }
+
+    @Test
+    public void shouldArchiveDunningPolicy() {
+        DunningPolicy policy = new DunningPolicy();
+        policy.setActivePolicy(FALSE);
+        policy.setId(1L);
+        when(dunningPolicyService.update(any())).thenReturn(policy);
+        Optional<DunningPolicy> dunningPolicyArchived = dunningPolicyApiService.archiveDunningPolicy(dunningPolicy);
+        assertTrue(dunningPolicyArchived.isPresent());
+        DunningPolicy dunningPolicy1 = dunningPolicyArchived.get();
+        assertEquals(FALSE, dunningPolicy1.getActivePolicy());
     }
 }
