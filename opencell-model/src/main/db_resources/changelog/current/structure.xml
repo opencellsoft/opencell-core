@@ -4040,5 +4040,9 @@ END $$;]]>
     	<sql>update  ${db.schema.adapted}ar_account_operation set status ='POSTED' where status is null;</sql>
         <sql>update  ${db.schema.adapted}ar_account_operation set accounting_date =created where accounting_date is null;</sql>
     </changeSet>
-
+    <changeSet id="#2333_20211021" author="anasseh">
+        <addColumn tableName="ar_payment_token">
+            <column name="token_3ds_id" type="varchar(250)"/>
+    </addColumn>
+    </changeSet>
 </databaseChangeLog>
