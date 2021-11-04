@@ -82,7 +82,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldCreateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .dunningPolicyName("policyNAme")
                 .sequence(1)
                 .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
@@ -122,7 +121,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldFailWhileCreatingDunningPolicyIfDunningLevelDoesNotExits() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .dunningPolicyName("policyNAme")
                 .sequence(1)
                 .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)

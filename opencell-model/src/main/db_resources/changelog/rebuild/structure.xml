@@ -15698,7 +15698,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="dunning_policy_rule_id" type="bigint" />
-            <column name="rule_line_joint" type="varchar(255)" defaultValue="AND"/>
+            <column name="rule_line_joint" type="varchar(255)" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="dunning_policy_rule_id" baseTableName="dunning_policy_rule_line"
                                  constraintName="fk_dunning_policy_rule_id" deferrable="false"
@@ -16800,6 +16800,7 @@
     <changeSet id="#2333_20211021" author="anasseh"/>
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
     <changeSet id="INTRD-30_2021114" author="ZBariki" />
+    <changeSet id="INTRD-2449_2021114" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
+import org.meveo.apiv2.dunning.DunningPolicyRules;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -89,6 +90,7 @@ public interface DunningPolicyResource {
             })
     Response archive(@Parameter(description = "Dunning policy id", required = true)
                      @PathParam("dunningPolicyId") Long dunningPolicyId);
+
     @DELETE
     @Path("/policyRule/{policyRuleID}")
     @Operation(summary = "Remove policy rule",
@@ -102,4 +104,19 @@ public interface DunningPolicyResource {
             })
     Response removePolicyRule(@Parameter(description = "Policy rule id", required = true)
                         @PathParam("policyRuleID") Long policyRuleID);
+
+    @POST
+    @Path("/addRules/{dunningPolicyId}")
+    @Operation(summary = "Add policy rule",
+            tags = {"PolicyRule"},
+            description = "Add policy rule",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Policy rule successfully added"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Either first policy rule ruleJoint is not null or first policy rule line ruleJoint is not null")
+            })
+    Response addPolicyRule(@Parameter(description = "Dunning policy id", required = true)
+                           @PathParam("dunningPolicyId") Long dunningPolicyId,
+                           @Parameter(description = "Policy rules", required = true) DunningPolicyRules policyRules);
 }

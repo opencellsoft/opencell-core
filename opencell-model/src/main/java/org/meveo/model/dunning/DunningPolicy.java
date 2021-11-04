@@ -72,7 +72,7 @@ public class DunningPolicy extends AuditableEntity {
     @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyLevel> dunningLevels;
 
-    @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY)
+    @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyRule> dunningPolicyRules;
 
     public String getPolicyName() {

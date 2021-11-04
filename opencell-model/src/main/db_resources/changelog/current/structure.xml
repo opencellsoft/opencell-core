@@ -11226,4 +11226,8 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id" referencedTableName="adm_currency"/>
     </changeSet>
 
+    <changeSet id="INTRD-2449_2021114" author="ZBariki">
+        <dropDefaultValue columnName="rule_line_joint" tableName="dunning_policy_rule_line"/>
+    </changeSet>
+
 </databaseChangeLog>
