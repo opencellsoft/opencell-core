@@ -8,6 +8,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -18,19 +19,26 @@ public class FileUploadResourceImpl implements FileUploadResource {
 
     @Override
     public Response uploadFile(MediaFile file) {
-        file.getFileName();
         Path saveTo = resolePath(file.getLevel());
         try {
             if(Files.notExists(saveTo)){
                 (new File(saveTo.toUri())).mkdirs();
             }
             Path savedFilePath = Path.of(saveTo.toString(), file.getFileName());
-            Files.write(savedFilePath, file.getData());
+            byte[] data = file.getData() != null ? file.getData() : downloadFile(file.getFileUrl());
+            Files.write(savedFilePath, data);
             return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"media file successfully uploaded\"}," +
                     "\"URL\": \"/opencell/files/"+savedFilePath.subpath(3,savedFilePath.getNameCount())+"\"} ").build();
         } catch (IOException e) {
-            throw new BadRequestException("there was an issue during file creation!");
+            throw new BadRequestException("there was an issue during file creation : " + e.getCause());
         }
+    }
+
+    private byte[] downloadFile(URL fileUrl) throws IOException {
+        if(fileUrl == null){
+            throw new BadRequestException("there was an issue during file creation : no file or URL was provided");
+        }
+        return fileUrl.openStream().readAllBytes();
     }
 
     private Path resolePath(MediaFile.LevelEnum level) {
