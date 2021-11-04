@@ -814,11 +814,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			        										return result;
 			        									}).collect(Collectors.toSet()); 
 		    									getProductVersionResponse.setAttributes(attributes);
-                                            Set<GroupedAttributeDto> groupedAttributeDtos = attributes
-                                                    .stream()
-                                                    .map(att -> att.getGroupedAttributes())
-                                                    .flatMap(Collection::stream)
-                                                    .collect(Collectors.toSet());
+                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
+                                                        .stream()
+                                                        .map(GroupedAttributeDto::new)
+                                                        .collect(Collectors.toSet());
                                             getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
         									}
         								productDTO.setCurrentProductVersion(getProductVersionResponse);
