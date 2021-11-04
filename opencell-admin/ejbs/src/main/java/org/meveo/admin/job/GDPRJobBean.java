@@ -18,40 +18,29 @@
 
 package org.meveo.admin.job;
 
-import org.meveo.admin.async.GDPRJobAsync;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.dwh.GdprConfiguration;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.order.Order;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.order.OrderService;
-import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+
+import org.hibernate.Session;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.dwh.GdprConfiguration;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -59,131 +48,417 @@ import java.util.concurrent.Future;
 @Stateless
 public class GDPRJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
+    private static final long serialVersionUID = -6589293878357797288L;
 
-	@Inject
-	@CurrentUser
-	private MeveoUser currentUser;
+    @Inject
+    private Logger log;
 
-	@Inject
-	@ApplicationProvider
-	private Provider appProvider;
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
 
-	@Inject
-	private ProviderService providerService;
+    @Inject
+    private SubscriptionService subscriptionService;
 
-	@Inject
-	private SubscriptionService subscriptionService;
+    @EJB
+    private GDPRJobBean thisNewTx;
 
-	@Inject
-	private OrderService orderService;
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl result, String parameter) {
 
-	@Inject
-	private InvoiceService invoiceService;
+        GdprConfiguration gdprConfiguration = appProvider.getGdprConfiguration();
 
-	@Inject
-	private AccountOperationService accountOperationService;
+        if (gdprConfiguration == null) {
+            result.addReport("GDPR Config isn't set yet");
+            return;
+        }
 
-	@Inject
-	private CustomerService customerService;
+        try {
+            if (gdprConfiguration.isDeleteSubscription()) {
+                long count = thisNewTx.removeSubscriptions(gdprConfiguration);
+                result.addReport("Subscriptions: " + count);
+                result.addNbItemsCorrectlyProcessed(count);
+                result.addNbItemsToProcess(count);
+                jobExecutionResultService.persistResult(result);
+            }
 
-	@Inject
-	private GDPRJobAsync gdprJobAsync;
+            if (gdprConfiguration.isDeleteOrder()) {
+                long count = thisNewTx.removeOrders(gdprConfiguration);
+                result.addReport("Orders: " + count);
+                result.addNbItemsCorrectlyProcessed(count);
+                result.addNbItemsToProcess(count);
+                jobExecutionResultService.persistResult(result);
+            }
 
-	@JpaAmpNewTx
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter) {
+            if (gdprConfiguration.isDeleteInvoice()) {
+                long count = thisNewTx.removeInvoices(gdprConfiguration);
+                result.addReport("Invoices: " + count);
+                result.addNbItemsCorrectlyProcessed(count);
+                result.addNbItemsToProcess(count);
+                jobExecutionResultService.persistResult(result);
+            }
 
-		GdprConfiguration gdprConfiguration = providerService.getEntityManager()
-				.createQuery("Select p.gdprConfiguration From Provider p Where p.id=:providerId", GdprConfiguration.class)
-				.setParameter("providerId", appProvider.getId())
-				.getResultList().stream().findFirst().orElse(null);
+            if (gdprConfiguration.isDeleteAccounting() || gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
+                long count = thisNewTx.removeAccountOperations(gdprConfiguration);
+                result.addReport("Account operations: " + count);
+                result.addNbItemsCorrectlyProcessed(count);
+                result.addNbItemsToProcess(count);
+                jobExecutionResultService.persistResult(result);
+            }
 
-		if (gdprConfiguration == null) {
-			log.warn("No GDPR Config found for provider[id={}], so no items will be processed!", appProvider.getId() );
-			result.addReport("GDPR Config isn't yet set");
-			return;
-		}
+            if (gdprConfiguration.isDeleteCustomerProspect()) {
+                long count = thisNewTx.removeCustomers(gdprConfiguration);
+                result.addReport("Customers: " + count);
+                result.addNbItemsCorrectlyProcessed(count);
+                result.addNbItemsToProcess(count);
+                jobExecutionResultService.persistResult(result);
+            }
 
-		Map<String, Future<int[]>> futures = new HashMap<>();
-		try {
-			if (gdprConfiguration.isDeleteSubscription()) {
-				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveSubscriptionLife());
-				log.info("Found {} inactive subscriptions", inactiveSubscriptions.size());
-				if (!inactiveSubscriptions.isEmpty()) {
-					futures.put("inactive subscriptions", gdprJobAsync.subscriptionBulkDelete(inactiveSubscriptions));
-				}
-			}
+        } catch (Exception e) {
+            log.error("Failed to run GDPR data erasure job", e);
+            result.registerError(e.getMessage());
+        }
+    }
 
-			if (gdprConfiguration.isDeleteOrder()) {
-				List<Order> inactiveOrders = orderService.listInactiveOrders(gdprConfiguration.getInactiveOrderLife());
-				log.info("Found {} inactive orders", inactiveOrders.size());
-				if (!inactiveOrders.isEmpty()) {
-					futures.put("inactive orders", gdprJobAsync.orderBulkDelete(inactiveOrders));
-				}
-			}
+    /**
+     * Remove inactive subscriptions
+     *
+     * @param gdprConfiguration GDPR configuration
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public long removeSubscriptions(GdprConfiguration gdprConfiguration) {
 
-			if (gdprConfiguration.isDeleteInvoice()) {
-				List<Invoice> inactiveInvoices = invoiceService.listInactiveInvoice(gdprConfiguration.getInvoiceLife());
-				log.info("Found {} inactive invoices", inactiveInvoices.size());
-				if (!inactiveInvoices.isEmpty()) {
-					futures.put("inactive invoices", gdprJobAsync.invoiceBulkDelete(inactiveInvoices));
-				}
-			}
+        final long[] recordCount = new long[] { 0L };
 
-			if (gdprConfiguration.isDeleteAccounting()) {
-				List<AccountOperation> inactiveAccountOps = accountOperationService.listInactiveAccountOperations(gdprConfiguration.getAccountingLife());
-				log.info("Found {} inactive accountOperations", inactiveAccountOps.size());
-				if (!inactiveAccountOps.isEmpty()) {
-					futures.put("inactive accountOperations", gdprJobAsync.accountOperationBulkDelete(inactiveAccountOps));
-				}
-			}
+        Session hibernateSession = subscriptionService.getEntityManager().unwrap(Session.class);
 
-			if (gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
-				List<AccountOperation> unpaidAccountOperations = accountOperationService.listUnpaidAccountOperations(gdprConfiguration.getAoCheckUnpaidLife());
-				log.info("Found {} unpaid accountOperations", unpaidAccountOperations.size());
-				if (!unpaidAccountOperations.isEmpty()) {
-					futures.put("unpaid accountOperations", gdprJobAsync.accountOperationBulkDelete(unpaidAccountOperations));
-				}
-			}
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
-			if(gdprConfiguration.isDeleteCustomerProspect()) {
-				List<Customer> oldCustomerProspects = customerService.listInactiveProspect(gdprConfiguration.getCustomerProspectLife());
-				log.info("Found {} old customer prospects", oldCustomerProspects.size());
-				if (!oldCustomerProspects.isEmpty()) {
-					futures.put("old prospects", gdprJobAsync.customerBulkDelete(oldCustomerProspects));
-				}
-			}
+            @Override
+            public void execute(Connection connection) throws SQLException {
 
-			for (Map.Entry<String, Future<int[]>> entryFuture: futures.entrySet()) {
-				try {
-					String entity = entryFuture.getKey();
-					int[] asyncResult = entryFuture.getValue().get();
-					result.addNbItemsCorrectlyProcessed(asyncResult[0]);
-					result.addNbItemsProcessedWithError(asyncResult[1]);
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("drop materialized view if exists mview_gdpr_subscriptions");
+                    statement
+                        .execute("create materialized view mview_gdpr_subscriptions (id) as (select id from billing_subscription s where s.status not in ('CREATED', 'ACTIVE') and s.subscription_date<=now() - interval '"
+                                + gdprConfiguration.getInactiveSubscriptionLife() + " year')");
+                    // statement.execute("create index mview_gdpr_subscriptions_pk on mview_gdpr_subscriptions (id)");
 
-					result.addReport(String.format("%s=>[Items OKs=%d, Items KO=%d]", entity, asyncResult[0], asyncResult[1]));
-				} catch (InterruptedException | CancellationException e) {
-					// It was cancelled from outside - no interest
-				} catch (ExecutionException e) {
-					Throwable cause = e.getCause();
-					if(result != null) {
-						result.registerError(cause.getMessage());
-						result.addReport(cause.getMessage());
-					}
-					log.error("Failed to execute async method", cause);
-				}
-			}
-			if (result.getNbItemsProcessedWithError() > 0) {
-				result.addReport("Please check logs for more details about KO items");
-			}
-			// TODO: check for mailing
-			
-		} catch (Exception e) {
-			log.error("Failed to run GDPR data erasure job", e);
-			result.registerError(e.getMessage());
-		}
-	}
+                    ResultSet resultset = statement.executeQuery("select count(*) from mview_gdpr_subscriptions");
+                    resultset.next();
+                    recordCount[0] = resultset.getLong(1);
+
+                    if (resultset.getLong(1) > 0L) {
+
+                        statement
+                            .execute("update billing_rated_transaction set service_instance_id=null, subscription_id=null, charge_instance_id=null where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("update cpq_invoice_line set subscription_id=null where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("update billing_invoice set subscription_id=null where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("update ord_order_item set subscription_id=null where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("update billing_subscription set next_version=null where next_version in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("update billing_subscription set previous_version=null where previous_version in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_wallet_operation where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_reservation where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from ar_matching_amount where account_operation_id in (select id from ar_account_operation where subscription_id in (select id from mview_gdpr_subscriptions))");
+                        statement.execute("delete from ar_account_operation where subscription_id in (select id from mview_gdpr_subscriptions)");
+
+                        statement.execute("delete from billing_chrginst_wallet where chrg_instance_id in (select ci.id from billing_charge_instance ci join mview_gdpr_subscriptions gs on ci.subscription_id=gs.id)");
+                        statement.execute("delete from billing_charge_instance where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_service_instance where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_product_instance where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from medina_access where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from rating_cdr where header_edr_id in (select id from rating_edr where subscription_id in (select id from mview_gdpr_subscriptions))");
+                        statement.execute("delete from rating_edr where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_counter where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_discount_plan_instance where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from dunning_document where billing_subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from cpq_attribute_instance where subscription_id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from billing_subscription where id in (select id from mview_gdpr_subscriptions)");
+                        statement.execute("delete from audit_field_changes_history where entity_class='org.meveo.model.billing.Subscription' and id in (select id from mview_gdpr_subscriptions)");
+
+                    }
+
+                    statement.execute("drop materialized view if exists mview_gdpr_subscriptions");
+
+                } catch (Exception e) {
+                    log.error("Failed to remove subscriptions in GDPR", e);
+                    throw new BusinessException(e);
+                }
+            }
+        });
+        return recordCount[0];
+    }
+
+    /**
+     * Remove old orders
+     *
+     * @param gdprConfiguration GDPR configuration
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public long removeOrders(GdprConfiguration gdprConfiguration) {
+
+        final long[] recordCount = new long[] { 0L };
+
+        Session hibernateSession = subscriptionService.getEntityManager().unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("drop materialized view if exists mview_gdpr_orders");
+                    statement.execute("create materialized view mview_gdpr_orders (id) as (select id from ord_order o where o.order_date<=now() - interval '" + gdprConfiguration.getInactiveOrderLife() + " year')");
+                    statement.execute("create index IF NOT EXISTS mview_gdpr_orders_pk on mview_gdpr_orders (id)");
+
+                    ResultSet resultset = statement.executeQuery("select count(*) from mview_gdpr_orders");
+                    resultset.next();
+                    recordCount[0] = resultset.getLong(1);
+
+                    if (resultset.getLong(1) > 0L) {
+
+                        statement.execute("update billing_invoice set order_id=null where order_id in (select id from mview_gdpr_orders)");
+
+                        statement.execute("delete from order_article_line where order_id in (select id from cpq_commercial_order where order_parent_id in (select id from mview_gdpr_orders))");
+                        statement.execute("delete from cpq_order_lot where order_id in (select id from cpq_commercial_order where order_parent_id in (select id from mview_gdpr_orders))");
+                        statement.execute("delete from cpq_order_offer where order_id in (select id from cpq_commercial_order where order_parent_id in (select id from mview_gdpr_orders))");
+                        statement.execute("delete from cpq_order_product where order_id in (select id from cpq_commercial_order where order_parent_id in (select id from mview_gdpr_orders))");
+                        statement.execute("delete from cpq_commercial_order where order_parent_id in (select id from mview_gdpr_orders)");
+
+                        statement.execute("drop materialized view if exists mview_gdpr_payment_token");
+                        statement.execute("create materialized view mview_gdpr_payment_token (id) as (select payment_method_id from ord_order o join mview_gdpr_orders go on o.id=go.id)");
+                        statement.execute("create index IF NOT EXISTS mview_gdpr_payment_token_pk on mview_gdpr_payment_token (id)");
+
+                        statement.execute("delete from ord_order_history where order_item_id in (select id from ord_order_item where order_id in (select id from mview_gdpr_orders))");
+                        statement.execute("delete from ord_item_offerings where order_item_id in (select id from ord_order_item where order_id in (select id from mview_gdpr_orders))");
+                        statement.execute("delete from ord_order_item where order_id in (select id from mview_gdpr_orders)");
+                        statement.execute("delete from ord_order where id in (select id from mview_gdpr_orders)");
+
+                        statement.execute("delete from ar_payment_token where id in (select id from mview_gdpr_payment_token)");
+                        statement.execute("drop materialized view if exists mview_gdpr_payment_token");
+
+                    }
+
+                    statement.execute("drop materialized view if exists mview_gdpr_orders");
+
+                } catch (Exception e) {
+                    log.error("Failed to remove orders in GDPR", e);
+                    throw new BusinessException(e);
+                }
+            }
+        });
+        return recordCount[0];
+    }
+
+    /**
+     * Remove old invoices
+     *
+     * @param gdprConfiguration GDPR configuration
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public long removeInvoices(GdprConfiguration gdprConfiguration) {
+
+        final long[] recordCount = new long[] { 0L };
+
+        Session hibernateSession = subscriptionService.getEntityManager().unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("drop materialized view if exists mview_gdpr_invoices");
+                    statement.execute("create materialized view mview_gdpr_invoices (id) as (select id from billing_invoice i where i.invoice_date<=now() - interval '" + gdprConfiguration.getInvoiceLife() + " year')");
+                    statement.execute("create index IF NOT EXISTS mview_gdpr_invoices_pk on mview_gdpr_invoices (id)");
+
+                    ResultSet resultset = statement.executeQuery("select count(*) from mview_gdpr_invoices");
+                    resultset.next();
+                    recordCount[0] = resultset.getLong(1);
+
+                    if (resultset.getLong(1) > 0L) {
+
+                        statement.execute("update billing_invoice set recorded_invoice_id=null where id in (select id from mview_gdpr_invoices)");
+
+                        statement.execute(
+                            "delete from billing_wallet_operation where status<>'OPEN' and rated_transaction_id in (select id from billing_rated_transaction where invoice_id in (select id from mview_gdpr_invoices))");
+                        statement.execute("delete from billing_rated_transaction  where status<>'OPEN' and invoice_id in (select id from mview_gdpr_invoices)");
+
+                        statement.execute(
+                            "delete from ar_matching_amount where account_operation_id in (select id from ar_account_operation where transaction_type='IC' and recorded_invoice_id in (select id from ar_account_operation where transaction_type='I' and invoice_id in (select id from mview_gdpr_invoices)))");
+                        statement.execute(
+                            "delete from ar_account_operation where transaction_type='IC' and recorded_invoice_id in (select id from ar_account_operation where transaction_type='I' and invoice_id in (select id from mview_gdpr_invoices))");
+
+                        statement.execute(
+                            "delete from ar_matching_amount where account_operation_id in (select id from ar_account_operation where transaction_type='I' and invoice_id in (select id from mview_gdpr_invoices))");
+                        statement.execute("delete from ar_account_operation where transaction_type='I' and invoice_id in (select id from mview_gdpr_invoices)");
+
+                        statement.execute("delete from cpq_invoice_line where invoice_id in (select id from mview_gdpr_invoices)");
+
+                        statement.execute("delete from billing_invoice_agregate where type='F' and invoice_id in (select id from mview_gdpr_invoices)");
+                        statement.execute("delete from billing_invoice_agregate where invoice_id in (select id from mview_gdpr_invoices)");
+                        statement.execute("delete from billing_invoice where id in (select id from mview_gdpr_invoices)");
+
+                    }
+
+                    statement.execute("drop materialized view if exists mview_gdpr_invoices");
+
+                } catch (Exception e) {
+                    log.error("Failed to remove invoices in GDPR", e);
+                    throw new BusinessException(e);
+                }
+            }
+        });
+        return recordCount[0];
+    }
+
+    /**
+     * Remove old or old and unpaid account operations
+     *
+     * @param gdprConfiguration GDPR configuration
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public long removeAccountOperations(GdprConfiguration gdprConfiguration) {
+
+        final long[] recordCount = new long[] { 0L };
+
+        Session hibernateSession = subscriptionService.getEntityManager().unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                String where = null;
+                if (gdprConfiguration.isDeleteAccounting()) {
+                    where = "(ao.transaction_date<=now() - interval '" + gdprConfiguration.getAccountingLife() + " year')";
+                }
+                if (gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
+                    where = (where != null ? where + " or " : "") + "(ao.transaction_date<=now() - interval '" + gdprConfiguration.getAoCheckUnpaidLife()
+                            + " year' and matching_status='O' and transaction_type in ('I','OCC'))";
+                }
+
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("drop materialized view if exists mview_gdpr_aos");
+                    statement.execute("create materialized view mview_gdpr_aos (id) as (select id from ar_account_operation ao where " + where + ")");
+                    statement.execute("create index IF NOT EXISTS mview_gdpr_aos_pk on mview_gdpr_aos (id)");
+
+                    ResultSet resultset = statement.executeQuery("select count(*) from mview_gdpr_aos");
+                    resultset.next();
+                    recordCount[0] = resultset.getLong(1);
+
+                    if (resultset.getLong(1) > 0L) {
+
+                        statement.execute("update billing_invoice set recorded_invoice_id=null where recorded_invoice_id in (select id from mview_gdpr_aos)");
+
+                        statement.execute(
+                            "delete from ar_matching_amount where account_operation_id in (select id from ar_account_operation where transaction_type='IC' and recorded_invoice_id in (select id from mview_gdpr_aos))");
+                        statement.execute("delete from ar_account_operation where transaction_type='IC' and recorded_invoice_id in (select id from mview_gdpr_aos)");
+
+                        statement.execute("delete from ar_matching_amount where account_operation_id in (select id from mview_gdpr_aos)");
+                        statement.execute("delete from ar_account_operation where id in (select id from mview_gdpr_aos)");
+                    }
+
+                    statement.execute("drop materialized view if exists mview_gdpr_aos");
+
+                } catch (Exception e) {
+                    log.error("Failed to remove Account operations in GDPR", e);
+                    throw new BusinessException(e);
+                }
+            }
+        });
+        return recordCount[0];
+    }
+
+    /**
+     * Remove old or old and unpaid account operations
+     *
+     * @param gdprConfiguration GDPR configuration
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public long removeCustomers(GdprConfiguration gdprConfiguration) {
+
+        final long[] recordCount = new long[] { 0L };
+
+        Session hibernateSession = subscriptionService.getEntityManager().unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("drop materialized view if exists mview_gdpr_customers");
+                    statement.execute(
+                        "create materialized view mview_gdpr_customers (id) as (select c.id from crm_customer c left join ar_customer_account ca on ca.customer_id=c.id left join billing_billing_account ba on ba.customer_account_id=ca.id left join billing_user_account ua on ua.billing_account_id=ba.id left join billing_invoice i on i.billing_account_id=ba.id left join billing_subscription sub on sub.user_account_id=ua.id where sub.id is null and i.id is null and c.created<=now() - interval '"
+                                + gdprConfiguration.getCustomerProspectLife() + " year')");
+                    statement.execute("create index IF NOT EXISTS mview_gdpr_aos_pk on mview_gdpr_customers (id)");
+
+                    ResultSet resultset = statement.executeQuery("select count(*) from mview_gdpr_customers");
+                    resultset.next();
+                    recordCount[0] = resultset.getLong(1);
+
+                    if (resultset.getLong(1) > 0L) {
+
+                        statement.execute("update crm_customer set minimum_target_account_id=null where id in (select id from mview_gdpr_customers)");
+                        statement.execute(
+                            "update billing_user_account set wallet_id=null where billing_account_id in (select ba.id from billing_billing_account ba join ar_customer_account ca on ba.customer_account_id=ca.id join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+
+                        statement.execute(
+                            "delete from billing_wallet where user_account_id in (select ua.id from billing_user_account ua join billing_billing_account ba on ua.billing_account_id=ba.id join ar_customer_account ca on ba.customer_account_id=ca.id join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+
+                        statement.execute(
+                            "delete from billing_user_account where billing_account_id in (select ba.id from billing_billing_account ba join ar_customer_account ca on ba.customer_account_id=ca.id join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+
+                        statement.execute(
+                            "delete from billing_discount_plan_instance where id in (select ba.id from billing_billing_account ba join ar_customer_account ca on ba.customer_account_id=ca.id join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+
+                        statement.execute("drop materialized view if exists mview_gdpr_payment_token");
+                        statement.execute(
+                            "create materialized view mview_gdpr_payment_token (id) as (select ba.payment_method_id from billing_billing_account ba join ar_customer_account ca on ba.customer_account_id=ca.id join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+                        statement.execute("create index IF NOT EXISTS mview_gdpr_payment_token_pk on mview_gdpr_payment_token (id)");
+                        statement.execute("delete from billing_billing_account where customer_account_id in (select ca.id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+                        statement.execute("delete from ar_payment_token where id in (select id from mview_gdpr_payment_token)");
+                        statement.execute("drop materialized view if exists mview_gdpr_payment_token");
+
+                        statement.execute(
+                            "delete from com_message where contact_id in (select com.id from com_contact com join ar_customer_account ca on com.address_book_id=ca.crm_address_book_id join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+                        statement.execute("delete from com_contact where address_book_id in (select ca.crm_address_book_id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+                        statement.execute("delete from crm_address_book where id in (select ca.crm_address_book_id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+                        statement.execute("delete from ar_payment_token where customer_account_id in (select ca.id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+
+                        statement.execute(
+                            "delete from ar_matching_amount where account_operation_id in (select id from ar_account_operation where customer_account_id in (select ca.id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id))");
+                        statement.execute("delete from ar_account_operation where customer_account_id in (select ca.id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+                        statement.execute("delete from dunning_document where customer_account_id in (select ca.id from ar_customer_account ca join mview_gdpr_customers gc on ca.customer_id=gc.id)");
+
+                        statement.execute("delete from ar_customer_account where customer_id in (select id from mview_gdpr_customers)");
+
+                        statement.execute(
+                            "delete from com_message where contact_id in (select com.id from com_contact com join crm_customer c on com.address_book_id=c.address_book_id join mview_gdpr_customers gc on c.id=gc.id)");
+                        statement.execute("delete from com_contact where address_book_id in (select c.address_book_id from crm_customer c join mview_gdpr_customers gc on c.id=gc.id)");
+                        statement.execute("delete from crm_address_book where id in (select c.address_book_id from crm_customer c join mview_gdpr_customers gc on c.id=gc.id)");
+
+                        statement.execute("delete from crm_additional_details where id in (select c.additional_details_id from crm_customer c join mview_gdpr_customers gc on c.id=gc.id)");
+
+                        statement.execute("delete from crm_customer where id in (select id from mview_gdpr_customers)");
+                    }
+
+                    statement.execute("drop materialized view if exists mview_gdpr_customers");
+
+                } catch (Exception e) {
+                    log.error("Failed to remove customers in GDPR", e);
+                    throw new BusinessException(e);
+                }
+            }
+        });
+        return recordCount[0];
+    }
+
 }
