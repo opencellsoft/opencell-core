@@ -468,7 +468,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 prorateFirstPeriodFromDate = period.getFrom();
                 if (period.getFrom().before(applyChargeFromDate)) {
 
-                    boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() != null && recurringChargeTemplate.getSubscriptionProrata();
+                    boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() != null && recurringChargeTemplate.getSubscriptionProrata() && !isVirtual;
                     if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
                         prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate,
                             chargeInstance);
