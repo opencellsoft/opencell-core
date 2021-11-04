@@ -19,6 +19,9 @@ public class Offer {
 	private String code;
 	@XmlElement
 	private String description; 
+	@XmlElement
+	private String name;
+	
 	 private List<Attribute> attributes;
 	 private List<Product> products;
 	private CustomFieldsDto customFields;
@@ -30,7 +33,7 @@ public class Offer {
 		super();
 		this.code = quoteOffer.getOfferTemplate().getCode();
 		this.description = quoteOffer.getOfferTemplate().getDescription();
-		
+		this.name=quoteOffer.getOfferTemplate().getName();
 		this.customFields = customFields;
 	}
 	
@@ -94,6 +97,16 @@ public class Offer {
 
 	public void setProducts(List<Product> products) {
 		this.products = products;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	
