@@ -148,14 +148,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Recorded invoice
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
 
     /**
      * Invoice aggregates
      */
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<InvoiceAgregate> invoiceAgregates = new LinkedList<>();
 
     /**

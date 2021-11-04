@@ -387,7 +387,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Wallet operation that rerates this wallet operation
      */
-    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reratedwalletoperation_id")
     private WalletOperation reratedWalletOperation;
 

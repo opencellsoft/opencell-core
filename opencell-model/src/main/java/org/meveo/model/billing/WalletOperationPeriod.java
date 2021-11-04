@@ -286,7 +286,7 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Rerated wallet operation
      */
-    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
+    @OneToOne(fetch = FetchType.LAZY)
     private WalletOperationPeriod reratedWalletOperation;
 
     /**

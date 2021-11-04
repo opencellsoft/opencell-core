@@ -437,7 +437,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Subcategory invoice aggregate that Rated transaction was invoiced under
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aggregate_id_f")
     private SubCategoryInvoiceAgregate invoiceAgregateF;
 

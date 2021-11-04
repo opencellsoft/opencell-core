@@ -232,7 +232,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     private OneShotChargeTemplate minimumChargeTemplate;
 
     /** The order histories. */
-    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<OrderHistory> orderHistories;
 
     /** Service renewal configuration. */
@@ -301,7 +301,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "initial_renewal")
     private String initialServiceRenewal;
 
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "serviceInstance", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**

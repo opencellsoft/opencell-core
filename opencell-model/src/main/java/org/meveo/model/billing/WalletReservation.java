@@ -41,7 +41,7 @@ public class WalletReservation extends WalletOperation {
     /**
      * Prepaid consumption reservation
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 

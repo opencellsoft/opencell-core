@@ -17,7 +17,6 @@
  */
 package org.meveo.model.payments;
 
-import static javax.persistence.FetchType.LAZY;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -58,7 +57,6 @@ import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -124,34 +122,28 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@JoinColumn(name = "credit_category_id")
 	private CreditCategory creditCategory;
 
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	/**
 	 * Child billing accounts
 	 */
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
 	private List<BillingAccount> billingAccounts = new ArrayList<>();
 
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	/**
 	 * Account operations associated with a Customer account
 	 */
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
 	private List<AccountOperation> accountOperations = new ArrayList<>();
 
 	/**
 	 * List of ca's dunning docs
 	 */
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
 	List<DunningDocument> dunningDocuments = new ArrayList<>();
 
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	/**
 	 * Dunning actions associated with a Customer account
 	 */
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
 	private List<ActionDunning> actionDunnings = new ArrayList<>();
 
 	/**
