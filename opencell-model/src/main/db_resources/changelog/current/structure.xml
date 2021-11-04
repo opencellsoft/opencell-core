@@ -11198,5 +11198,84 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="token_3ds_id" type="varchar(250)"/>
    		</addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-2764-20211104" author="HatimOUDAD">
+        
+        <createSequence sequenceName="dunning_collection_plan_seq" startValue="1" />
+        <createTable tableName="dunning_collection_plan">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_plan_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+            <column name="collection_plan_billing_account_id" type="bigint" />
+            <column name="collection_plan_payment_method_id" type="bigint" />
+            <column name="collection_plan_pause_reason_id" type="bigint" />
+            <column name="collection_plan_stop_reason_id" type="bigint" />
+            <column name="collection_plan_related_policy_id" type="bigint" />
+            <column name="collection_plan_current_dunning_id" type="bigint" />
+            
+            <column name="collection_plan_current_dunning_level_sequence" type="int4" />
+            <column name="collection_plan_start_date" type="datetime" />
+            <column name="collection_plan_days_open" type="int4" />
+             <column name="collection_plan_close_date" type="datetime" />
+            
+            <column name="collection_plan_status_id" type="bigint" />
+            
+            <column name="collection_plan_last_update" type="datetime" />
+            <column name="collection_plan_paused_until_date" type="datetime" />
+            
+            <column name="collection_plan_assigned_agent_id" type="bigint" />
+            
+            <column name="collection_plan_total_balance" type="numeric(23, 12)"/>
+            <column name="collection_plan_aged_balance" type="numeric(23, 12)"/>
+            <column name="collection_plan_due_balance" type="numeric(23, 12)"/>
+            <column name="collection_plan_disputed_balance" type="numeric(23, 12)"/>
+            
+            <column name="retry_payment_on_resume_date" type="${type.boolean}" defaultValueNumeric="0"/>
+            
+            
+        </createTable>
+        
+        
+        <addForeignKeyConstraint baseColumnNames="collection_plan_billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="collection_plan_payment_method_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_payment_method"
+        						 deferrable="false" initiallyDeferred="false"
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
+        						 
+		<addForeignKeyConstraint baseColumnNames="collection_plan_pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
+        						 deferrable="false" initiallyDeferred="false"
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" /> 
+        						        
+        <addForeignKeyConstraint baseColumnNames="collection_plan_stop_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_stop_reason"
+        						 deferrable="false" initiallyDeferred="false"
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_stop_reasons" /> 
+        						 
+        <addForeignKeyConstraint baseColumnNames="collection_plan_related_policy_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_related_policy"
+        						 deferrable="false" initiallyDeferred="false"
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" />
+        						 
+       	<addForeignKeyConstraint baseColumnNames="collection_plan_current_dunning_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_current_dunning"
+        						 deferrable="false" initiallyDeferred="false"
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />    
+        
+        <addForeignKeyConstraint baseColumnNames="collection_plan_status_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_plan_status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="collection_plan_status" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="collection_plan_assigned_agent_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_assigned_agent"
+        						 deferrable="false" initiallyDeferred="false"
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" /> 
+        
+    </changeSet>
 
 </databaseChangeLog>
