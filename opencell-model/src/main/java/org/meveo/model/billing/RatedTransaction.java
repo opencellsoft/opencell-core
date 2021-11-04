@@ -681,7 +681,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.unityDescription = walletOperation.getInputUnitDescription();
         this.ratingUnitDescription = walletOperation.getRatingUnitDescription();
         this.sortIndex = walletOperation.getSortIndex();
-        this.cfValues = walletOperation.getCfValuesForRT();
     }
 
     public WalletInstance getWallet() {
