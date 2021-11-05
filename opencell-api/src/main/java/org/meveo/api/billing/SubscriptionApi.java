@@ -2224,7 +2224,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptions.size() == 0) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         } else if (subscriptions.size() == 1) {
-            subscriptionService.activateInstantiatedService(subscriptions.get(1));
+            subscriptionService.activateInstantiatedService(subscriptions.get(0));
         } else {
             // so in this case, practically subscriptions list contains
             // the current last one sub valid on subscriptionValidityDate,
