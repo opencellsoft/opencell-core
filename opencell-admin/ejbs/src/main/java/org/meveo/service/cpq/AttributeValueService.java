@@ -42,7 +42,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
         AttributeTypeEnum attributeType = attributeValue.getAttribute().getAttributeType();
         String value;
         if (AttributeTypeEnum.NUMERIC.equals(attributeType)) {
-            value = attributeValue.getDoubleValue().toString();
+            value = attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue().toString() : attributeValue.getStringValue();
         } else {
             if (AttributeTypeEnum.DATE.equals(attributeType)) {
                 value = attributeValue.getDateValue().toString();
