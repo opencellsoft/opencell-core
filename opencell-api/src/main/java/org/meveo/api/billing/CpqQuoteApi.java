@@ -100,7 +100,9 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -1500,7 +1502,7 @@ public class CpqQuoteApi extends BaseApi {
         subscription.setSeller(seller);
 
         subscription.setOffer(quoteOffer.getOfferTemplate());
-        subscription.setSubscriptionDate(new Date());
+        subscription.setSubscriptionDate(getSubscriptionDeliveryDate(quoteOffer.getQuoteVersion().getQuote(), quoteOffer));
         subscription.setEndAgreementDate(null);
 
         if (billableAccount.getUsersAccounts().isEmpty())
@@ -1882,5 +1884,15 @@ public class CpqQuoteApi extends BaseApi {
     	}
     	return null;
     }
+    
+    public Date getSubscriptionDeliveryDate(CpqQuote quote, QuoteOffer offer) {
+		if (offer.getDeliveryDate() != null) {
+			return offer.getDeliveryDate();
+		}else if (quote.getDeliveryDate() != null) {
+			return quote.getDeliveryDate();
+		}else {
+			return quote.getQuoteDate();
+		}
+	}
 
 }

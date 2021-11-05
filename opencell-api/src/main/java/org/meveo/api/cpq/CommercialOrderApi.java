@@ -531,7 +531,7 @@ public class CommercialOrderApi extends BaseApi {
 	
 	
 	public OrderOfferDto createOrderOffer(OrderOfferDto orderOfferDto) throws MeveoApiException, BusinessException {
-
+		OrderOffer orderOffer = new OrderOffer();
 		if (orderOfferDto.getCommercialOrderId()==null) {
 			missingParameters.add("commercialOrderId");
 		}
@@ -550,6 +550,14 @@ public class CommercialOrderApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
 		}
+		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
+			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
+			if (userAccount == null) {
+				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
+			}
+			orderOffer.setUserAccount(userAccount);
+		}
+		
 		DiscountPlan discountPlan=null;
 		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
 		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
@@ -557,7 +565,7 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());	
 		}
 		
-		OrderOffer orderOffer = new OrderOffer();
+		
 		orderOffer.setOrder(commercialOrder);
 		orderOffer.setOfferTemplate(offerTemplate);
 		orderOffer.setDiscountPlan(discountPlan);
@@ -578,31 +586,42 @@ public class CommercialOrderApi extends BaseApi {
     	if (orderOffer == null) {
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
     	}
-    	CommercialOrder commercialOrder=null;
-    	if(orderOfferDto.getCommercialOrderId()!=null) {
-    	 commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
-
-    	if ( commercialOrder== null) {
-    		throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
-    	}
-    	}
-    	OfferTemplate offerTemplate=null;
+    	
+		if (orderOfferDto.getCommercialOrderId() != null) {
+			CommercialOrder commercialOrder=null;
+			commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
+			if (commercialOrder == null) {
+				throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
+			}
+			orderOffer.setOrder(commercialOrder);
+		}
+    	
     	if(!StringUtils.isBlank(orderOfferDto.getOfferTemplateCode())) {
+    		OfferTemplate offerTemplate=null;
     		 offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
         	if (offerTemplate == null) {
         		throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
         	}	
+        	orderOffer.setOfferTemplate(offerTemplate);
     	}
-    	DiscountPlan discountPlan=null;
-		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
-		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
-		if (discountPlan == null)
-			throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());	
+    	
+		if (!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
+			DiscountPlan discountPlan=null;
+			discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());
+			if (discountPlan == null) {
+				throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());
+			}
+			orderOffer.setDiscountPlan(discountPlan);
 		}
-    	 
-    	orderOffer.setOrder(commercialOrder);
-    	orderOffer.setOfferTemplate(offerTemplate);
-    	orderOffer.setDiscountPlan(discountPlan);
+		
+		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
+			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
+			if (userAccount == null) {
+				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
+			}
+			orderOffer.setUserAccount(userAccount);
+		}
+    	
     	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
