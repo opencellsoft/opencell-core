@@ -11210,7 +11210,7 @@ order by date_trunc('month', i.invoice_date) DESC
     
     <changeSet id="INTRD-2868_20211105" author="TarikFA.">
     	<addColumn tableName="crm_provider">
-    		<column name="cdr_deduplicationKey_EL" type="varchar(500)" />
+    		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
     	</addColumn>
     </changeSet>
 

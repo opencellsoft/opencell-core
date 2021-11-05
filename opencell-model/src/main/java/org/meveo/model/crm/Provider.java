@@ -367,7 +367,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
             @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")) })
     private GenericSequence customerNoSequence = new GenericSequence();
 
-    @Column(name = "cdr_deduplicationKey_EL", length = 500)
+    @Column(name = "cdr_deduplicationkey_el", length = 500)
     @Size(max = 500)
     private String cdrDeduplicationKeyEL;
     

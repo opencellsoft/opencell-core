@@ -5071,7 +5071,7 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
-    		<column name="cdr_deduplicationKey_EL" type="varchar(500)" />
+    		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
