@@ -259,6 +259,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "parseDate", MeveoFunctionMapper.class.getMethod("parseDate", String.class, String.class));
 
+            addFunction("mv", "parseNumber", MeveoFunctionMapper.class.getMethod("parseNumber", String.class));
+
             addFunction("mv", "getDate", MeveoFunctionMapper.class.getMethod("getDate", Long.class));
 
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
@@ -1862,6 +1864,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
 
         return getCounterPeriodService().getCounterValueByDate(entity, counterCode, date);
+    }
+
+    public static double parseNumber(String stringNumber){
+        if(StringUtils.isEmpty(stringNumber))
+            return 0.0;
+        return Double.parseDouble(stringNumber);
     }
 
     public static String getLocalizedDescription(IEntity entity, String lang) {
