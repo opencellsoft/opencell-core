@@ -147,6 +147,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                     reportSize = writeAsHtml(filename, reportDir, results, entity);
                 }
                 reportExtractExecutionResult.setLineCount(reportSize);
+                results.close();
             }
 
         } else {
@@ -211,6 +212,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 tableBody.append("</tr>");
                 rowNumber++;
             } while(results.next());
+            
             tableBody.append("</tbody>");
             table.append(tableBody);
 
@@ -260,21 +262,21 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private int writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results) throws BusinessException {
-        FileWriter fileWriter = null;
+ 
         StringBuilder line = new StringBuilder("");
         Object value = null;
         int rowNumber = 0;
         Map<String, Object> row = null;
-        try {
-            File dir = new File(sbDir.toString());
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            File file = new File(sbDir.toString() + File.separator + filename);
-            file.createNewFile();
-            fileWriter = new FileWriter(file);
+        
+        File dir = new File(sbDir.toString());
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(sbDir.toString() + File.separator + filename);
 
-            // get the header
+        try (FileWriter fileWriter = new FileWriter(file);) {
+
+            // Write the header - field names
             Map<String, Object> firstRow = (Map<String, Object>) results.get()[0];
             Iterator ite = firstRow.keySet().iterator();
             while (ite.hasNext()) {
@@ -284,8 +286,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             fileWriter.write(line.toString());
             fileWriter.write(System.lineSeparator());
 
-            line = new StringBuilder("");
+            // Write the data
             do {
+                line = new StringBuilder("");
                 row = (Map<String, Object>) results.get()[0];
                 ite = firstRow.keySet().iterator();
                 while (ite.hasNext()) {
@@ -296,16 +299,20 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 line.deleteCharAt(line.length() - 1);
                 fileWriter.write(line.toString());
                 fileWriter.write(System.lineSeparator());
-                line = new StringBuilder("");
                 rowNumber++;
+
+                if (rowNumber % 5000 == 0) {
+                    fileWriter.flush();
+                }
             } while (results.next());
+
+            fileWriter.flush();
+            
             return rowNumber;
+        
         } catch (Exception e) {
-            log.error("Cannot write report to file: {}", e);
-            throw new BusinessException("Cannot write report to file.");
-        } finally  {
-            IOUtils.closeQuietly(fileWriter);
-        }
+            throw new BusinessException("Cannot write report to file "+file.getAbsolutePath(), e);            
+        } 
     }
 
     @SuppressWarnings("unchecked")
