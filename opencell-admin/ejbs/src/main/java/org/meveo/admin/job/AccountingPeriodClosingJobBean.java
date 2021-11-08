@@ -72,6 +72,7 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
      */
     private Optional<Iterator<SubAccountingPeriod>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
+        boolean isBefore = true;
         Date endDate = new Date();
 
         AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(endDate);
@@ -88,11 +89,14 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
                 if (customLockOption == CustomLockOption.BEFORE_END_OF_SUB_AP_PERIOD) {
                     days *= -1;
                 }
+                else {
+                    isBefore = false;
+                }
                 endDate = DateUtils.addDaysToDate(endDate, days);
             }
         }
 
-        List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, endDate);
+        List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, endDate, isBefore);
         return Optional.of(new SynchronizedIterator<SubAccountingPeriod>(subAccountingPeriods));
     }
 
