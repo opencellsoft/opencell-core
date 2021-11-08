@@ -16699,10 +16699,10 @@
     <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA" />
     <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI" />
     <changeSet id="#2333_20211021" author="anasseh"/>
-    <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
     <changeSet id="INTRD-30_2021114" author="ZBariki" />
     <changeSet id="INTRD-2449_2021114" author="ZBariki" />
-
+    <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
