@@ -35,6 +35,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.quote.QuoteStatusEnum;
 
@@ -205,6 +206,11 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY) 
+	@JoinColumn(name = "user_account_id") 
+	private UserAccount userAccount;
 	 
 	
 	 /**
@@ -525,6 +531,16 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 	@Override
 	public List<InvoiceLine> getMinInvoiceLines() {
 		return minInvoiceLines;
+	}
+	
+	
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
 	}
 
 	@Override
