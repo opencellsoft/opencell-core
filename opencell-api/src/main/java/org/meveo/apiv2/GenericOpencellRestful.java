@@ -23,6 +23,7 @@ import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
 import org.meveo.apiv2.accountreceivable.AccountReceivableResourceImpl;
 import org.meveo.apiv2.accounts.impl.AccountsManagementResourceImpl;
+import org.meveo.apiv2.admin.providers.ProviderResourceImpl;
 import org.meveo.apiv2.article.impl.AccountingArticleResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingResourceImpl;
@@ -119,7 +120,7 @@ public class GenericOpencellRestful extends Application {
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
 				DunningAgentResourceImpl.class, CollectionPlanStatusResourceImpl.class,
                 StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
-                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class, RollbackOnErrorExceptionMapper.class)
+                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class, RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
