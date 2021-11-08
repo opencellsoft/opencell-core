@@ -25,6 +25,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -52,4 +53,17 @@ public class GenericChargeTemplateApi extends BaseApi {
 
         return new ChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
+
+	/**
+	 * @param chargeTemplateCode
+	 * @param status
+	 * @return
+	 */
+	public void updateStatus(String chargeTemplateCode, String status) {
+		ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(chargeTemplateCode);
+		if(chargeTemplate ==null) {
+    		throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
+    	}
+		chargeTemplateService.updateStatus(chargeTemplate, status);
+	}
 }
