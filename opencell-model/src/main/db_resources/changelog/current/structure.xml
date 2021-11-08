@@ -11207,5 +11207,16 @@ order by date_trunc('month', i.invoice_date) DESC
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
    		
     </changeSet>
+    
+    <changeSet id="INTRD-2418_20211105" author="TarikFA.">
+    	<dropForeignKeyConstraint baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_collection_plan_status"/>
+		<addForeignKeyConstraint baseTableName="dunning_policy_level"
+								baseColumnNames="collection_plan_status_id"
+								constraintName="fk_dunning_policy_level_collection_plan_status"
+								deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+								onUpdate="NO ACTION" referencedColumnNames="id"
+								referencedTableName="dunning_collection_plan_statuses" />
+		<dropTable tableName="collection_plan_status"/>
+    </changeSet>
 
 </databaseChangeLog>

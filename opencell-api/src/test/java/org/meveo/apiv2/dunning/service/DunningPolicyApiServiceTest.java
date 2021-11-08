@@ -3,28 +3,33 @@ package org.meveo.apiv2.dunning.service;
 import static java.lang.Boolean.FALSE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.meveo.model.dunning.*;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.DunningInvoiceStatusService;
-import org.meveo.service.payments.impl.DunningPolicyService;
-import org.meveo.service.payments.impl.CollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningLevelService;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningCollectionPlanStatusContextEnum;
+import org.meveo.model.dunning.DunningInvoiceStatus;
+import org.meveo.model.dunning.DunningInvoiceStatusContextEnum;
+import org.meveo.model.dunning.DunningLevel;
+import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
+import org.meveo.service.payments.impl.DunningInvoiceStatusService;
+import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningPolicyApiServiceTest {
@@ -43,7 +48,7 @@ public class DunningPolicyApiServiceTest {
     private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Mock
-    private CollectionPlanStatusService collectionPlanStatusService;
+    private DunningCollectionPlanStatusService collectionPlanStatusService;
 
     @Mock
     private MeveoUser currentUser;
@@ -81,9 +86,9 @@ public class DunningPolicyApiServiceTest {
         invoiceDunningStatuses.setContext(DunningInvoiceStatusContextEnum.FAILED_DUNNING);
         dunningPolicyLevel.setInvoiceDunningStatuses(invoiceDunningStatuses);
 
-        CollectionPlanStatus collectionPlanStatus = new CollectionPlanStatus();
+        DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
         collectionPlanStatus.setId(1L);
-        collectionPlanStatus.setContext("Failed Dunning");
+        collectionPlanStatus.setContext(DunningCollectionPlanStatusContextEnum.FAILED_DUNNING);
         dunningPolicyLevel.setCollectionPlanStatus(collectionPlanStatus);
 
         DunningPolicyLevel dunningPolicyLevel1 = new DunningPolicyLevel();
@@ -102,7 +107,7 @@ public class DunningPolicyApiServiceTest {
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
         when(invoiceDunningStatusesService.refreshOrRetrieve(any(DunningInvoiceStatus.class)))
                 .thenReturn(invoiceDunningStatuses);
-        when(collectionPlanStatusService.refreshOrRetrieve(any(CollectionPlanStatus.class)))
+        when(collectionPlanStatusService.refreshOrRetrieve(any(DunningCollectionPlanStatus.class)))
                 .thenReturn(collectionPlanStatus);
         when(currentUser.getUserName()).thenReturn("opencell.admin");
     }

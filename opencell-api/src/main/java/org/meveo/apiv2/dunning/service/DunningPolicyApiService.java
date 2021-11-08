@@ -13,20 +13,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.Hibernate;
-import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.dunning.*;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.*;
-
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import org.hibernate.Hibernate;
+import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningInvoiceStatus;
+import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
+import org.meveo.service.payments.impl.DunningInvoiceStatusService;
+import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
@@ -40,7 +46,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Inject
-    private CollectionPlanStatusService collectionPlanStatusService;
+    private DunningCollectionPlanStatusService collectionPlanStatusService;
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
@@ -125,7 +131,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         DunningLevel dunningLevel = dunningLevelService.refreshOrRetrieve(policyLevel.getDunningLevel());
         DunningInvoiceStatus invoiceDunningStatuses =
                 invoiceDunningStatusesService.refreshOrRetrieve(policyLevel.getInvoiceDunningStatuses());
-        CollectionPlanStatus collectionPlanStatus =
+        DunningCollectionPlanStatus collectionPlanStatus =
                 collectionPlanStatusService.refreshOrRetrieve(policyLevel.getCollectionPlanStatus());
         if (dunningLevel == null) {
             throw new BadRequestException("Policy level creation fails dunning level does not exists");

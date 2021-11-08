@@ -11060,29 +11060,6 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
-    	<createTable tableName="collection_plan_status">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collection_plan_status" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="dunning_settings_id" type="bigint" />
-            <column name="language" type="${type.json}" />
-            <column name="status" type="varchar(255)"  >
-            	<constraints unique="true"/>
-            </column>
-            <column name="context" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-    	</createTable>
-    </changeSet>
-
     <changeSet id="INTRD-1901_20210920_build" author="TarikFA.">
     	<createTable tableName="offer_template_attribute">
             <column name="id" type="bigint">
@@ -15248,16 +15225,6 @@
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="journal" />
 	
-		<addForeignKeyConstraint
-			constraintName="fk_collection_plan_status_dunning_settings_id"
-			referencedTableName="dunning_settings"
-			baseColumnNames="dunning_settings_id"
-			baseTableName="collection_plan_status" referencedColumnNames="id" />
-		<addForeignKeyConstraint
-			constraintName="fk_collection_plan_status_dunning_settings"
-			referencedTableName="dunning_settings"
-			baseColumnNames="dunning_settings_id"
-			baseTableName="collection_plan_status" referencedColumnNames="id" />
 	
 		<addForeignKeyConstraint
 			baseColumnNames="attribute_id"
@@ -15361,7 +15328,7 @@
 			constraintName="fk_dunning_policy_level_collection_plan_status"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="collection_plan_status" />
+			referencedTableName="dunning_collection_plan_statuses" />
 			
 		<addForeignKeyConstraint
 			baseColumnNames="invoice_dunning_statuses_id"
@@ -16714,6 +16681,7 @@
     <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI" />
     <changeSet id="#2333_20211021" author="anasseh"/>
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
+    <changeSet id="INTRD-2418_20211105" author="TarikFA." />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
