@@ -11198,16 +11198,16 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="token_3ds_id" type="varchar(250)"/>
    		</addColumn>
     </changeSet>
-
+    
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI">
         <addColumn tableName="cpq_order_offer">
             <column name="user_account_id" type="bigint"/>
    		</addColumn>
    		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-
+   		
     </changeSet>
-
+    
     <changeSet id="INTRD-2418_20211105" author="TarikFA.">
     	<dropForeignKeyConstraint baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_collection_plan_status"/>
 		<addForeignKeyConstraint baseTableName="dunning_policy_level"
