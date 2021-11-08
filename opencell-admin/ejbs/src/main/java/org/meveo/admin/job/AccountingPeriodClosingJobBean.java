@@ -72,11 +72,11 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
      */
     private Optional<Iterator<SubAccountingPeriod>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        Date date = new Date();
+        Date endDate = new Date();
 
-        AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(date);
+        AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(endDate);
         if (accountingPeriod == null) {
-            log.warn("No accounting period has been defined for date : {}", date);
+            log.warn("No accounting period has been defined for date : {}", endDate);
             return Optional.of(new SynchronizedIterator<SubAccountingPeriod>(new ArrayList<>()));
         }
 
@@ -84,16 +84,15 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
         if (regularUserLockOption != null && regularUserLockOption == RegularUserLockOption.CUSTOM) {
             Integer days = accountingPeriod.getCustomLockNumberDays();
             CustomLockOption customLockOption = accountingPeriod.getCustomLockOption();
-            Date endDate = accountingPeriod.getEndDate();
-            if (customLockOption != null && endDate != null) {
+            if (customLockOption != null) {
                 if (customLockOption == CustomLockOption.BEFORE_END_OF_SUB_AP_PERIOD) {
                     days *= -1;
                 }
-                date = DateUtils.addDaysToDate(endDate, days);
+                endDate = DateUtils.addDaysToDate(endDate, days);
             }
         }
 
-        List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, date);
+        List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, endDate);
         return Optional.of(new SynchronizedIterator<SubAccountingPeriod>(subAccountingPeriods));
     }
 
