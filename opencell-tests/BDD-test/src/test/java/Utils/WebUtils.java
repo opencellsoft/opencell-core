@@ -1,5 +1,6 @@
 package Utils;
 
+import functional.driver.utils.KeyCloakAuthenticationHook;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 

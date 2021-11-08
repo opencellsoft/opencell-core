@@ -1,6 +1,7 @@
 package Utils;
 
-import Driver.ApiInfo;
+import API.driver.ApiInfo;
+import functional.driver.utils.Constants;
 import org.meveo.util.Inflector;
 
 public class URLFormat {
