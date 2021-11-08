@@ -3810,6 +3810,9 @@
             <column name="description" type="varchar(255)" />
             <column name="amount_editable" type="${type.boolean}" />
             <column name="credit_debit_flag" type="int4" />
+            <column name="status" type="varchar(255)" >
+                <constraints nullable="false" />
+            </column>
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -16672,6 +16675,7 @@
     <changeSet id="INTRD-2449_2021114" author="ZBariki" />
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
     <changeSet id="INTRD-2418_20211105" author="TarikFA." />
+    <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

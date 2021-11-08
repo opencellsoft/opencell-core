@@ -11265,5 +11265,16 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889">
+        <addColumn tableName="cat_charge_template">
+            <column name="status" type="varchar(255)"/>
+        </addColumn>
+    	<update tableName="cat_charge_template">
+	        <column name="status" value="ACTIVE"/>
+	        <where>status is null</where>
+    	</update>
+        <addNotNullConstraint columnName="status" tableName="cat_charge_template"/>
+    </changeSet>
 
 </databaseChangeLog>
