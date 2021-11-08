@@ -1,5 +1,17 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Arrays.asList;
+import static java.util.Optional.of;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,27 +22,17 @@ import org.meveo.apiv2.dunning.ImmutableDunningPolicyInput;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicyLevel;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
-import org.meveo.model.dunning.CollectionPlanStatus;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningCollectionPlanStatusContextEnum;
+import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.model.dunning.DunningInvoiceStatusContextEnum;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.DunningInvoiceStatus;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-import static java.util.Optional.of;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningPolicyResourceImplTest {
@@ -62,9 +64,9 @@ public class DunningPolicyResourceImplTest {
         dunningLevel.setId(1l);
         dunningLevel.setEndOfDunningLevel(Boolean.TRUE);
 
-        CollectionPlanStatus collectionPlanStatus = new CollectionPlanStatus();
+        DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
         collectionPlanStatus.setId(1L);
-        collectionPlanStatus.setContext("Failed Dunning");
+        collectionPlanStatus.setContext(DunningCollectionPlanStatusContextEnum.FAILED_DUNNING);
         collectionPlanStatus.setStatus("Failed Dunning");
 
         DunningInvoiceStatus invoiceDunningStatuses = new DunningInvoiceStatus();
@@ -82,7 +84,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldCreateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .dunningPolicyName("policyNAme")
                 .sequence(1)
                 .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
@@ -92,7 +93,7 @@ public class DunningPolicyResourceImplTest {
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)
                 .minBalanceTrigger(0.5)
-                .dunningLevels(asList(dunningPolicyLevel))
+                .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
         Response response = dunningPolicyResource.create(resource);
 
@@ -111,7 +112,7 @@ public class DunningPolicyResourceImplTest {
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)
                 .minBalanceTrigger(0.5)
-                .dunningLevels(asList(dunningPolicyLevel))
+                .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
         Response response = dunningPolicyResource.create(resource);
 
@@ -122,7 +123,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldFailWhileCreatingDunningPolicyIfDunningLevelDoesNotExits() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .dunningPolicyName("policyNAme")
                 .sequence(1)
                 .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
@@ -132,7 +132,7 @@ public class DunningPolicyResourceImplTest {
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)
                 .minBalanceTrigger(0.5)
-                .dunningLevels(asList(dunningPolicyLevel))
+                .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
         when(dunningPolicyApiService.refreshPolicyLevel(any(org.meveo.model.dunning.DunningPolicyLevel.class)))
                 .thenThrow(new BadRequestException("Policy level creation fails dunning level does not exists"));
@@ -151,7 +151,7 @@ public class DunningPolicyResourceImplTest {
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)
                 .minBalanceTrigger(0.5)
-                .dunningLevels(asList(dunningPolicyLevel))
+                .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
 
         Response response = dunningPolicyResource.update(1L, resource);
@@ -170,7 +170,7 @@ public class DunningPolicyResourceImplTest {
                 .policyDescription("description")
                 .isDefaultPolicy(Boolean.TRUE)
                 .minBalanceTrigger(0.5)
-                .dunningLevels(asList(dunningPolicyLevel))
+                .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
         when(dunningPolicyApiService.findById(1L)).thenReturn(Optional.empty());
         dunningPolicyResource.update(1L, resource);

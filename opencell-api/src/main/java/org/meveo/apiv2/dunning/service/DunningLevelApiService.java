@@ -4,6 +4,7 @@ import static java.util.Optional.empty;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,10 +20,15 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.audit.AuditableFieldService;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningActionService;
 import org.meveo.service.payments.impl.DunningLevelService;
 
@@ -38,6 +44,17 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	private DunningActionService dunningActionService;
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
+	
+	@Inject
+	private AuditLogService auditLogService;
+
+	@Inject
+	@CurrentUser
+	protected MeveoUser currentUser;
+
+	@Inject
+	private AuditableFieldService auditableFieldService;
+
 
 	
 	@Override
@@ -58,6 +75,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	public Optional<DunningLevel> delete(Long id) {
 		DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
 		dunningLevelService.remove(dunningLevel);
+		createAuditLog(DunningLevel.class.getName(), "DELETE", dunningLevel);
 		return Optional.ofNullable(dunningLevel);
 	}
 	
@@ -70,6 +88,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		setDefaultValues(newDunningLevel);
 		validateParameters(newDunningLevel);
 		dunningLevelService.create(newDunningLevel);
+		createAuditLog(DunningLevel.class.getName(), "CREATE", newDunningLevel);
 		return newDunningLevel;
 	}
 
@@ -125,6 +144,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
 		validateParameters(dunningLevelToUpdate);
 		dunningLevelService.update(dunningLevelToUpdate);
+		createAuditLog(DunningLevel.class.getName(), "UPDATE", dunningLevelToUpdate);
 		return Optional.of(dunningLevelToUpdate);
 	}
 
@@ -232,6 +252,18 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	@Override
 	public Long getCount(String filter) {
 		return null;
+	}
+	
+	private void createAuditLog(String entity, String operationType, DunningLevel dunningLevel) {
+	    AuditLog auditLog = new AuditLog();
+	    Date sysDate = new Date();
+	    auditLog.setActor(currentUser.getUserName());
+	    auditLog.setCreated(sysDate);
+	    auditLog.setEntity(entity);
+	    auditLog.setOrigin("API");
+	    auditLog.setAction(operationType);
+	    auditLog.setParameters("user "+currentUser.getUserName()+" apply "+operationType+" on "+sysDate+" to the Dunning level with code "+dunningLevel.getCode());
+	    auditLogService.create(auditLog);
 	}
 
 }

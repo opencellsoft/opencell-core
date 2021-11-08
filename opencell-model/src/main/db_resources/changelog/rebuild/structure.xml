@@ -11060,29 +11060,6 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
-    	<createTable tableName="collection_plan_status">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collection_plan_status" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="dunning_settings_id" type="bigint" />
-            <column name="language" type="${type.json}" />
-            <column name="status" type="varchar(255)"  >
-            	<constraints unique="true"/>
-            </column>
-            <column name="context" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-    	</createTable>
-    </changeSet>
-
     <changeSet id="INTRD-1901_20210920_build" author="TarikFA.">
     	<createTable tableName="offer_template_attribute">
             <column name="id" type="bigint">
@@ -11178,18 +11155,10 @@
             <column name="policy_priority" type="int4" />
             <column name="is_default_policy" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="is_active_policy" type="${type.boolean}" defaultValueNumeric="1" />
-        </createTable>
-        <createTable tableName="dunning_min_balance_trigger_currency">
-            <column name="id" type="bigint">
+            <column name="min_balance_trigger_currency_id" type="bigint"/>
+            <column name="determine_level_by" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="min_balance_trigger_currency" type="varchar(255)" />
-        </createTable>
-        <createTable tableName="dunning_determine_level_by">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="determine_level_by" type="varchar(255)" />
         </createTable>
         
         <createTable tableName="dunning_policy_rule">
@@ -11226,7 +11195,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="dunning_policy_rule_id" type="bigint" />
-            <column name="rule_line_joint" type="varchar(255)" defaultValue="AND"/>
+            <column name="rule_line_joint" type="varchar(255)" />
         </createTable>
     </changeSet>    
     
@@ -15248,16 +15217,6 @@
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="journal" />
 	
-		<addForeignKeyConstraint
-			constraintName="fk_collection_plan_status_dunning_settings_id"
-			referencedTableName="dunning_settings"
-			baseColumnNames="dunning_settings_id"
-			baseTableName="collection_plan_status" referencedColumnNames="id" />
-		<addForeignKeyConstraint
-			constraintName="fk_collection_plan_status_dunning_settings"
-			referencedTableName="dunning_settings"
-			baseColumnNames="dunning_settings_id"
-			baseTableName="collection_plan_status" referencedColumnNames="id" />
 	
 		<addForeignKeyConstraint
 			baseColumnNames="attribute_id"
@@ -15295,18 +15254,6 @@
 			constraintName="fk_dunning_agent" referencedColumnNames="id"
 			referencedTableName="dunning_agent" deferrable="false"
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" />
-	
-		<addForeignKeyConstraint baseColumnNames="id"
-			baseTableName="dunning_min_balance_trigger_currency"
-			constraintName="fk_dunning_min_balance_trigger_currency_id"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="dunning_policy" />
-		<addForeignKeyConstraint baseColumnNames="id"
-			baseTableName="dunning_determine_level_by"
-			constraintName="fk_dunning_determine_level_by_id" deferrable="false"
-			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-			referencedColumnNames="id" referencedTableName="dunning_policy" />
 	
 		<addForeignKeyConstraint
 			baseColumnNames="dunning_policy_id"
@@ -15361,7 +15308,7 @@
 			constraintName="fk_dunning_policy_level_collection_plan_status"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="collection_plan_status" />
+			referencedTableName="dunning_collection_plan_statuses" />
 			
 		<addForeignKeyConstraint
 			baseColumnNames="invoice_dunning_statuses_id"
@@ -15378,7 +15325,13 @@
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="dunning_policy" />
 			
-    </changeSet> 
+    </changeSet>
+    <changeSet id="rebuild-str-fk-540-1641" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="min_balance_trigger_currency_id" baseTableName="dunning_policy"
+                                 constraintName="fk_dunning_min_balance_currency_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="adm_currency"/>
+    </changeSet>
       
     
     <!-- end fk -->
@@ -16713,7 +16666,10 @@
     <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA" />
     <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI" />
     <changeSet id="#2333_20211021" author="anasseh"/>
+    <changeSet id="INTRD-30_2021114" author="ZBariki" />
+    <changeSet id="INTRD-2449_2021114" author="ZBariki" />
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
+    <changeSet id="INTRD-2418_20211105" author="TarikFA." />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

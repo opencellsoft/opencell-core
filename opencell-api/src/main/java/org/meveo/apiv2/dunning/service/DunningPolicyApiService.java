@@ -13,20 +13,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.Hibernate;
-import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.dunning.*;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.*;
-
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import org.hibernate.Hibernate;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
+import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningInvoiceStatus;
+import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
+import org.meveo.service.payments.impl.DunningInvoiceStatusService;
+import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
@@ -40,7 +48,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Inject
-    private CollectionPlanStatusService collectionPlanStatusService;
+    private DunningCollectionPlanStatusService collectionPlanStatusService;
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
@@ -52,9 +60,17 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @CurrentUser
     private MeveoUser currentUser;
 
+    @Inject
+    private DunningPolicyRuleService dunningPolicyRuleService;
+
+    @Inject
+    private DunningPolicyRuleLineService dunningPolicyRuleLineService;
+
     private final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
+
+    private DunningPolicyRuleLineMapper policyRuleLineMapper = new DunningPolicyRuleLineMapper();
 
     @Override
     public List<DunningPolicy> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -77,9 +93,13 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
-        dunningPolicyService.create(dunningPolicy);
-        trackOperation("create", new Date(), null, dunningPolicy.getPolicyName());
-        return findByCode(dunningPolicy.getPolicyName()).get();
+        try {
+            dunningPolicyService.create(dunningPolicy);
+            trackOperation("create", new Date(), null, dunningPolicy.getPolicyName());
+            return findByCode(dunningPolicy.getPolicyName()).get();
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
     }
 
     @Override
@@ -125,7 +145,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         DunningLevel dunningLevel = dunningLevelService.refreshOrRetrieve(policyLevel.getDunningLevel());
         DunningInvoiceStatus invoiceDunningStatuses =
                 invoiceDunningStatusesService.refreshOrRetrieve(policyLevel.getInvoiceDunningStatuses());
-        CollectionPlanStatus collectionPlanStatus =
+        DunningCollectionPlanStatus collectionPlanStatus =
                 collectionPlanStatusService.refreshOrRetrieve(policyLevel.getCollectionPlanStatus());
         if (dunningLevel == null) {
             throw new BadRequestException("Policy level creation fails dunning level does not exists");
@@ -144,7 +164,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     public void validateActiveDunning(DunningPolicyLevel policyLevel) {
         if (!policyLevel.getDunningLevel().isEndOfDunningLevel() && !policyLevel.getDunningLevel().isReminder()) {
-            if (!policyLevel.getCollectionPlanStatus().getContext().equals("Active")
+            if (!policyLevel.getCollectionPlanStatus().getContext().equals("ACTIVE_DUNNING")
                     && !policyLevel.getInvoiceDunningStatuses().getContext().equals(ACTIVE_DUNNING)) {
                 throw new BadRequestException("Dunning level creation fails");
             }
@@ -229,5 +249,41 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         dunningPolicy.setActivePolicy(FALSE);
         trackOperation("archive", new Date(), "isActive", dunningPolicy.getPolicyName());
         return of(dunningPolicyService.update(dunningPolicy));
+    }
+
+    public Optional<DunningPolicyRule> removePolicyRule(Long id) {
+        DunningPolicyRule dunningPolicyRule = dunningPolicyRuleService.findById(id);
+        if(dunningPolicyRule == null) {
+            return empty();
+        }
+        try {
+            dunningPolicyRuleService.remove(dunningPolicyRule);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
+        return of(dunningPolicyRule);
+    }
+
+    public Optional<Long> removePolicyRuleWithPolicyId(Long policyId) {
+        try {
+            List<DunningPolicyRule> dunningPolicyRules = dunningPolicyRuleService.findByDunningPolicy(policyId);
+            for (DunningPolicyRule policyRule : dunningPolicyRules) {
+                dunningPolicyRuleService.remove(policyRule);
+            }
+            return of(policyId);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
+    }
+
+    public Optional<DunningPolicyRule> addPolicyRule(DunningPolicyRule dunningPolicyRule,
+                                                     List<org.meveo.apiv2.dunning.DunningPolicyRuleLine> policyRules) {
+        dunningPolicyRuleService.create(dunningPolicyRule);
+        for (org.meveo.apiv2.dunning.DunningPolicyRuleLine line : policyRules) {
+            org.meveo.model.dunning.DunningPolicyRuleLine dunningPolicyRuleLine = policyRuleLineMapper.toEntity(line);
+            dunningPolicyRuleLine.setDunningPolicyRule(dunningPolicyRule);
+            dunningPolicyRuleLineService.create(dunningPolicyRuleLine);
+        }
+        return of(dunningPolicyRule);
     }
 }
