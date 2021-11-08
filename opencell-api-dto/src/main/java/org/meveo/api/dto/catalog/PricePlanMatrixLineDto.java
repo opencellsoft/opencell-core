@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -26,7 +28,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	private Long ppmLineId;
 
     @Schema(description = "The price without tax")
-    @Nullable
+    @Nonnull
 	private BigDecimal pricetWithoutTax;
 
     @Schema(description = "The price plan matrix code")
