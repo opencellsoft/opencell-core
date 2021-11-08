@@ -11205,7 +11205,48 @@ order by date_trunc('month', i.invoice_date) DESC
    		</addColumn>
    		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-   		
+    </changeSet>
+
+    <changeSet id="INTRD-30_2021114" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="dunning_min_balance_trigger_currency"
+                                  constraintName="fk_dunning_min_balance_trigger_currency_id"/>
+        <dropForeignKeyConstraint baseTableName="dunning_determine_level_by"
+                                  constraintName="fk_dunning_determine_level_by_id"/>
+        <dropTable tableName="dunning_min_balance_trigger_currency"/>
+        <dropTable tableName="dunning_determine_level_by"/>
+        <addColumn tableName="dunning_policy">
+            <column name="min_balance_trigger_currency_id" type="bigint"/>
+            <column name="determine_level_by" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="min_balance_trigger_currency_id" baseTableName="dunning_policy"
+                                 constraintName="fk_dunning_min_balance_currency_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="adm_currency"/>
+    </changeSet>
+
+    <changeSet id="INTRD-2449_2021114" author="ZBariki">
+        <dropDefaultValue columnName="rule_line_joint" tableName="dunning_policy_rule_line"/>
+	</changeSet>
+
+    <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA">
+    	<dropForeignKeyConstraint baseTableName="dunning_collection_management" constraintName="fk_dunning_collection_management_dunning_settings"/>
+	    <dropPrimaryKey constraintName="dunning_collection_management_pkey" tableName="dunning_collection_management"/>
+		<renameTable oldTableName="dunning_collection_management" newTableName="dunning_agent"/>
+		<renameSequence oldSequenceName="dunning_collection_management_seq" newSequenceName="dunning_agent_seq" />
+    	<addPrimaryKey columnNames="id" constraintName="dunning_agent_pkey" tableName="dunning_agent" />
+		<addForeignKeyConstraint constraintName="fk_dunning_agent_dunning_settings" referencedTableName="dunning_settings"
+                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
+
+		<addColumn tableName="ar_dunning_action">
+			<column name="dunning_agent_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_dunning_agent"
+			baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action"
+            referencedColumnNames="id" referencedTableName="dunning_agent"
+			deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION"/>
     </changeSet>
     
     <changeSet id="INTRD-2418_20211105" author="TarikFA.">

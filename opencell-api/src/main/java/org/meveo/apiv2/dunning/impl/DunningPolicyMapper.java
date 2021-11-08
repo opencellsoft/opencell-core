@@ -26,10 +26,9 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
                 .isIncludeDueInvoicesInThreshold(entity.getIncludeDueInvoicesInThreshold())
                 .isAttachInvoicesToEmails(entity.getAttachInvoicesToEmails())
                 .isIncludePayReminder(entity.getIncludePayReminder())
-                .determineLevelBy(entity.getDetermineLevelBy())
-                .minBalanceTriggerCurrency(entity.getDetermineLevelBy());
+                .determineLevelBy(entity.getDetermineLevelBy());
         if (entity.getDunningLevels() != null) {
-            builder.dunningLevels(entity.getDunningLevels().stream()
+            builder.dunningPolicyLevels(entity.getDunningLevels().stream()
                     .map(dunningPolicyLevel ->  policyLevelMapper.toResource(dunningPolicyLevel))
                     .collect(Collectors.toList()));
         }
@@ -43,7 +42,6 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         entity.setPolicyDescription(resource.getPolicyDescription());
         entity.setInterestForDelaySequence(resource.getInterestForDelaySequence());
         entity.setMinBalanceTrigger(resource.getMinBalanceTrigger());
-        entity.setMinBalanceTriggerCurrency(resource.getMinBalanceTriggerCurrency());
         entity.setDetermineLevelBy(resource.getDetermineLevelBy());
         entity.setIncludeDueInvoicesInThreshold(resource.isIncludeDueInvoicesInThreshold());
         entity.setIncludePayReminder(resource.isIncludePayReminder());
@@ -82,9 +80,6 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             toUpdate.setMinBalanceTrigger(minBalance); fieldToUpdate.append("minBalanceTrigger;"); });
         ofNullable(resource.getDetermineLevelBy()).ifPresent(determineLevelBy -> {
             toUpdate.setDetermineLevelBy(determineLevelBy); fieldToUpdate.append("determineLevelBy;"); });
-        ofNullable(resource.getMinBalanceTriggerCurrency())
-                .ifPresent(minBalanceTrigger -> {
-                    toUpdate.setMinBalanceTriggerCurrency(minBalanceTrigger); fieldToUpdate.append("minBalanceTriggerCurrency;"); });
         return toUpdate;
     }
 }

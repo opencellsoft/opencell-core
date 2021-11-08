@@ -20,10 +20,6 @@ public interface DunningPolicyLevel extends Resource {
     @Nullable
     Long getDunningLevelId();
 
-    @Schema(description = "Dunning policy name")
-    @Nullable
-    String getDunningPolicyName();
-
     @Schema(description = "invoice dunning statuses Id")
     @Nullable
     Long getInvoiceDunningStatusesId();
