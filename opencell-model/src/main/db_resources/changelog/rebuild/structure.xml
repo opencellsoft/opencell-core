@@ -5071,6 +5071,8 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
+            <column name="payment_deferral" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">

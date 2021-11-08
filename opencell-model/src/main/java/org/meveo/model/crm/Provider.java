@@ -351,6 +351,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @JoinColumn(name = "gdpr_config_id")
     private GdprConfiguration gdprConfiguration;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "payment_deferral")
+    private boolean paymentDeferral;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "payment_plan")
+    private boolean paymentPlan;
+
     /**
      * RUM number sequence
      */
@@ -727,6 +735,22 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      */
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
+    }
+
+    public boolean isPaymentDeferral() {
+        return paymentDeferral;
+    }
+
+    public void setPaymentDeferral(boolean paymentDeferral) {
+        this.paymentDeferral = paymentDeferral;
+    }
+
+    public boolean isPaymentPlan() {
+        return paymentPlan;
+    }
+
+    public void setPaymentPlan(boolean paymentPlan) {
+        this.paymentPlan = paymentPlan;
     }
 
     public GdprConfiguration getGdprConfiguration() {
