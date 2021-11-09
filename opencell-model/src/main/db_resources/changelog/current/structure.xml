@@ -11259,5 +11259,29 @@ order by date_trunc('month', i.invoice_date) DESC
 								referencedTableName="dunning_collection_plan_statuses" />
 		<dropTable tableName="collection_plan_status"/>
     </changeSet>
+    <changeSet id="#INTRD-2800_04112021" author="AbdelkaderBouazza">
+        <addColumn tableName="crm_provider">
+            <column name="payment_deferral" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889">
+        <addColumn tableName="cat_charge_template">
+            <column name="status" type="varchar(255)"/>
+        </addColumn>
+    	<update tableName="cat_charge_template">
+	        <column name="status" value="ACTIVE"/>
+	        <where>status is null</where>
+    	</update>
+        <addNotNullConstraint columnName="status" tableName="cat_charge_template"/>
+    </changeSet>
 
+	<changeSet id="#INTRD-1419_20211108" author="HHanine">
+	    <addColumn tableName="crm_provider">
+	        <column name="maximum_delay" type="int4" />
+	        <column name="maximum_deferral_per_invoice" type="int4" />
+	    </addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
