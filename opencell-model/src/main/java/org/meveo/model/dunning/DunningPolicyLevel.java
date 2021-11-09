@@ -1,11 +1,18 @@
 package org.meveo.model.dunning;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  *The dunning policy level
@@ -42,7 +49,7 @@ public class DunningPolicyLevel extends AuditableEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collection_plan_status_id", referencedColumnName = "id")
-     private CollectionPlanStatus collectionPlanStatus;
+     private DunningCollectionPlanStatus collectionPlanStatus;
 
     /**
      * The invoice dunning status
@@ -67,11 +74,11 @@ public class DunningPolicyLevel extends AuditableEntity {
         this.dunningLevel = dunningLevel;
     }
 
-    public CollectionPlanStatus getCollectionPlanStatus() {
+    public DunningCollectionPlanStatus getCollectionPlanStatus() {
         return collectionPlanStatus;
     }
 
-    public void setCollectionPlanStatus(CollectionPlanStatus collectionPlanStatus) {
+    public void setCollectionPlanStatus(DunningCollectionPlanStatus collectionPlanStatus) {
         this.collectionPlanStatus = collectionPlanStatus;
     }
 

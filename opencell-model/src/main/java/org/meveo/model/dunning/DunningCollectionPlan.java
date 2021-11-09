@@ -102,7 +102,7 @@ public class DunningCollectionPlan extends AuditableEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collection_plan_status_id", referencedColumnName = "id")
-    private CollectionPlanStatus collectionPlanStatus;
+    private DunningCollectionPlanStatus collectionPlanStatus;
     
     /**
      * The collection plan last update
@@ -302,11 +302,11 @@ public class DunningCollectionPlan extends AuditableEntity {
 		this.retryPaymentOnResumeDate = retryPaymentOnResumeDate;
 	}
 
-	public CollectionPlanStatus getCollectionPlanStatus() {
+	public DunningCollectionPlanStatus getCollectionPlanStatus() {
         return collectionPlanStatus;
     }
 
-    public void setCollectionPlanStatus(CollectionPlanStatus collectionPlanStatus) {
+    public void setCollectionPlanStatus(DunningCollectionPlanStatus collectionPlanStatus) {
         this.collectionPlanStatus = collectionPlanStatus;
     }
 }
