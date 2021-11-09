@@ -229,12 +229,6 @@
                 <artifactId>reflections-maven</artifactId>
                 <version>0.9.8</version>
             </dependency>
-            
-            <dependency>
-                <groupId>com.blackbear</groupId>
-                <artifactId>flatworm</artifactId>
-                <version>3.0.2</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.google.code.gson</groupId>
