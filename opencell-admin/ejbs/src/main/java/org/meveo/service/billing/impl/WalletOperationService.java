@@ -747,6 +747,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
+        if (chargeInstance.getCounter() == null) {
+            return;
+        }
+        
         CounterPeriod counterPeriod = null;
 
         for (WalletOperation wo : walletOperations) {
