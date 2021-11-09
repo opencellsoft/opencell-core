@@ -80,8 +80,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 countReminderLevels++;
             }
             if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
-                if (!dunningPolicyLevelEntity.getCollectionPlanStatus().getContext().equals("Failed dunning")
-                        && !dunningPolicyLevelEntity.getInvoiceDunningStatuses().getContext().equals(FAILED_DUNNING)) {
+                if (!dunningPolicyLevelEntity.getCollectionPlanStatus().getContext().equals("Failed dunning")) {
                     throw new BadRequestException("Dunning level creation fails");
                 }
                 if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
