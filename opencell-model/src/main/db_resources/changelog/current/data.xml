@@ -361,8 +361,11 @@
         	<column name="description" value="EDR numeric parameter 5"></column>
         </insert>
     </changeSet>
-
-
+    
+    <changeSet id="#INTRD-1166_20211110_Business_attributes" author="MohammedELAZZOUZI">
+    	<sql>update cpq_attribute set code = replace(code, ' ', '_') where code like '% %'</sql>
+    </changeSet>
+    
     <changeSet id="#NTRD-2413_20211028_Business_attributes_add_el" author="MohammedELAZZOUZI">
 		<update tableName="cpq_attribute"><column name="el_value">${serviceInstance.getActivationDate()}</column><where>id=-1</where></update>
         <update tableName="cpq_attribute"><column name="el_value">${serviceInstance.getQuantity()}</column><where>id=-2</where></update>
