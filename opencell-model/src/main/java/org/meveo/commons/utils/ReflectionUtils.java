@@ -556,9 +556,7 @@ public class ReflectionUtils {
 					field = c.getDeclaredField(fieldName);
 					found = true;
 				} catch (NoSuchFieldException e) {
-					if (field == null && c.getSuperclass() != null) {
 						c = c.getSuperclass();
-					}
 				}
 			}
 		}
