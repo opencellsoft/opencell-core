@@ -160,6 +160,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	         if (!StringUtils.isBlank(expression)) {
 	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
 	             contextMap.put("quote",quote);
+	             contextMap.put("quoteVersion",quoteVersion);
 	             try {
 	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
 	                 if (value != null) {
@@ -201,6 +202,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	         if (!StringUtils.isBlank(expression)) {
 	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
 	             contextMap.put("quote", quote);
+	             contextMap.put("quoteVersion", quoteVersion);
 	             try {
 	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
 	                 if (value != null) {
