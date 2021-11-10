@@ -44,6 +44,9 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -256,6 +259,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "parseDate", MeveoFunctionMapper.class.getMethod("parseDate", String.class, String.class));
 
+            addFunction("mv", "parseNumber", MeveoFunctionMapper.class.getMethod("parseNumber", String.class));
+
             addFunction("mv", "getDate", MeveoFunctionMapper.class.getMethod("getDate", Long.class));
 
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
@@ -291,6 +296,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCounterValueByDate", MeveoFunctionMapper.class.getMethod("getCounterValueByDate", ICounterEntity.class, String.class, Date.class));
             addFunction("mv", "getLocalizedDescription", MeveoFunctionMapper.class.getMethod("getLocalizedDescription", IEntity.class, String.class));
             addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
+            addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
 
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -1860,6 +1866,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return getCounterPeriodService().getCounterValueByDate(entity, counterCode, date);
     }
 
+    public static double parseNumber(String stringNumber){
+        if(StringUtils.isEmpty(stringNumber))
+            return 0.0;
+        return Double.parseDouble(stringNumber);
+    }
+
     public static String getLocalizedDescription(IEntity entity, String lang) {
         String result = "";
         try {
@@ -1957,6 +1969,43 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(quoteAttribute.get().getDateValue()!=null) {
 					return quoteAttribute.get().getDateValue();  
 				}
+			default:
+				break;  
+			}
+    		}
+    	
+    	return null;
+    }
+    public static Object getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode) { 
+    	Optional<AttributeInstance> attributInstance=null;
+    	Attribute  attribute =getAttributeService().findByCode(attributeCode);
+    	if(attribute == null)
+    		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
+
+    	attributInstance=serviceInstance.getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	
+    	if(attribute.getAttributeType()!=null && attributInstance.isPresent()) {
+    		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributInstance.get().getDoubleValue()!=null) {
+				return attributInstance.get().getDoubleValue(); 
+				}
+				break;
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case EXPRESSION_LANGUAGE :
+			case TEXT:	
+				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
+					return attributInstance.get().getStringValue();  
+				}	
+				break;
+			case DATE:
+				if(attributInstance.get().getDateValue()!=null) {
+					return attributInstance.get().getDateValue();  
+				}break;
 			default:
 				break;  
 			}

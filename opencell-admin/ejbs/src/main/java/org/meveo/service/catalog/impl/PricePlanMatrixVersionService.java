@@ -15,6 +15,9 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
@@ -93,20 +96,20 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     @Transactional(value = TxType.REQUIRED)
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, boolean setNewVersion, String pricePlanMatrixNewCode) {
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, String pricePlanMatrixNewCode) {
     	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
     	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
     	
     	//this.detach(pricePlanMatrixVersion);
     	
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
-        if(!setNewVersion) {
+        if(validity!=null) {
+         duplicate.setValidity(validity);	
+        }
             String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
             Integer lastVersion = getLastVersion(ppmCode);
             duplicate.setCurrentVersion(lastVersion + 1);
-        }else {
-        	 duplicate.setCurrentVersion(1);
-        }
+        
         try {
             this.create(duplicate);
         }catch(BusinessException e) {
@@ -147,7 +150,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     
 
     @SuppressWarnings("unchecked")
-	public PricePlanMatrixVersion getLasPricePlanMatrixtVersion(String ppmCode) {
+	public PricePlanMatrixVersion getLastPricePlanMatrixtVersion(String ppmCode) {
     	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
                 												.setParameter("pricePlanMatrixCode", ppmCode).getResultList();
         return pricesVersions.isEmpty() ? null : pricesVersions.get(0);
@@ -208,7 +211,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	columnsId.forEach((key, value) -> {
     		var ppmv = pricePlanMatrixValueService.findByPricePlanMatrixColumn(key);
     		ppmv.forEach(tmpValue -> {
-        		pricePlanMatrixValueService.detach(tmpValue);
         		tmpValue.setPricePlanMatrixColumn(value);
         		pricePlanMatrixValues.add(tmpValue);
     		});

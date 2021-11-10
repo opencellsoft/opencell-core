@@ -581,7 +581,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     		throw new EntityAlreadyExistsException(PricePlanMatrix.class, pricePlanMatrixNewCode);
     	PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, version);
     	if(ppmv == null) {
-    		ppmv = pricePlanMatrixVersionService.getLasPricePlanMatrixtVersion(pricePlanMatrixCode);
+    		ppmv = pricePlanMatrixVersionService.getLastPricePlanMatrixtVersion(pricePlanMatrixCode);
     		if(ppmv == null)
     			throw new MeveoApiException("No version exist for price plan matrix code : " + pricePlanMatrixCode);
     	}

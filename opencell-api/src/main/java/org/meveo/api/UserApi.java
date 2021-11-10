@@ -95,7 +95,7 @@ public class UserApi extends BaseApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "userLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+        create(postData, postData.isRequiredRoles());
     }
 
     public void create(UserDto postData, boolean isRequiredRoles) throws MeveoApiException, BusinessException {
@@ -245,7 +245,9 @@ public class UserApi extends BaseApi {
             user.setName(name);
         }
         if (isUsersManager) {
-            user.setRoles(roles);
+        	if(roles.size() > 0) {
+                user.setRoles(roles);
+        	}
             user.setSecuredEntities(securedEntities);
         }
         user.setUserLevel(userHierarchyLevel);

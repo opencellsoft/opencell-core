@@ -31,11 +31,11 @@ import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.DatePeriodDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
-import org.meveo.api.dto.cpq.DuplicatePricePlanVersionRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListPricePlanMatrixVersionResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
@@ -247,10 +247,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     }
 
     @Override
-    public Response duplicatePricePlanVersion(DuplicatePricePlanVersionRequestDto postData) {
+    public Response duplicatePricePlanVersion(String pricePlanMatrixCode, int pricePlanMatrixVersion,DatePeriodDto periodDto) {
         GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
         try {
-            result = pricePlanMatrixVersionApi.duplicatePricePlanMatrixVersion(postData);
+            result = pricePlanMatrixVersionApi.duplicateProductVersion(pricePlanMatrixCode, pricePlanMatrixVersion,periodDto);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
             return errorResponse(e, result.getActionStatus());
