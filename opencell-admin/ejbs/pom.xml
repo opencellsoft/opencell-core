@@ -565,11 +565,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.blackbear</groupId>
-            <artifactId>flatworm</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
         </dependency>

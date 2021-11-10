@@ -830,7 +830,7 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        		    if (serviceInstance.getDeliveryDate().after(new Date())) {
+        		    if (serviceInstance.getDeliveryDate() != null && serviceInstance.getDeliveryDate().after(new Date())) {
         				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
         			}else {
         				serviceInstanceService.serviceActivation(serviceInstance);
