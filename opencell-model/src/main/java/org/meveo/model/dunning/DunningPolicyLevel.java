@@ -27,6 +27,8 @@ import org.meveo.model.AuditableEntity;
         @NamedQuery(name = "DunningPolicyLevel.findDunningPolicyLevels", query = "SELECT dpl FROM DunningPolicyLevel dpl where dpl.dunningPolicy.id=:policyId")})
 public class DunningPolicyLevel extends AuditableEntity {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * the sequence.
      */

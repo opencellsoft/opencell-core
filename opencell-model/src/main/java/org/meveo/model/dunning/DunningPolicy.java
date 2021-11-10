@@ -20,6 +20,8 @@ import java.util.List;
         @NamedQuery(name = "DunningPolicy.findByName", query = "SELECT dp FROM DunningPolicy dp where dp.policyName=:policyName")})
 public class DunningPolicy extends AuditableEntity {
 
+    private static final long serialVersionUID = 1L;
+
     @Column(name = "policy_name")
     @NotNull
     private String policyName;

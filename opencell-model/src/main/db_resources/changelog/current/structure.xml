@@ -11357,4 +11357,80 @@ order by date_trunc('month', i.invoice_date) DESC
 	    </addColumn>
 	</changeSet>
 	
+	<changeSet id="#INTRD-2973_20211110" author="AmineBENAICHA">
+		<createSequence sequenceName="dunning_level_instance_seq" startValue="1" />
+	    <createTable tableName="dunning_level_instance">
+	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_level_instance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+			<column name="sequence" type="int4">
+				<constraints nullable="false" />
+			</column>
+			<column name="days_overdue" type="int4" >
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_policy_level_id" type="bigint" />
+            <column name="dunning_collection_plan_id" type="bigint" />
+            <column name="dunning_collection_plan_status_id" type="bigint"/>
+            <column name="level_status" type="varchar(255)" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="dunning_policy_level_id" baseTableName="dunning_level_instance"
+			constraintName="fk_dunning_policy_level" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy_level" />
+
+        <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
+        	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
+
+        <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_status_id" baseTableName="dunning_level_instance"
+        	constraintName="fk_dunning_collection_plan_statuses" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan_statuses" />
+
+		<createSequence sequenceName="dunning_action_instance_seq" startValue="1" />
+		<createTable tableName="dunning_action_instance">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_action_instance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+			<column name="action_type" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="action_mode" type="varchar(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_agent_id" type="bigint" />
+            <column name="action_restult" type="varchar(255)" />
+            <column name="action_status" type="varchar(255)" />
+            <column name="dunning_collection_plan_id" type="bigint" />
+            <column name="dunning_level_instance_id" type="bigint" />
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="dunning_agent_id" baseTableName="dunning_action_instance"
+        	constraintName="fk_dunning_agent" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" />
+            
+        <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_action_instance"
+        	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
+            
+        <addForeignKeyConstraint baseColumnNames="dunning_level_instance_id" baseTableName="dunning_action_instance"
+        	constraintName="fk_dunning_level_instance" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
+	</changeSet>
+	
 </databaseChangeLog>
