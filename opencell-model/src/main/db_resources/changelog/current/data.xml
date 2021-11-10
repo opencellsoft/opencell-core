@@ -7700,5 +7700,186 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 		</insert>
 
 	</changeSet>
+	<changeSet id="INTRD-2849_20211110" author="TarikRabeh">
+		<update tableName="com_message_template">
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+<p>Best regards,</p>
+                ]]>
+			</column>
+			<where>id=-1</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
 
+#{customerAccount.description} / #{customerAccount.name.firstName}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, on #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+<p>You will find a copy of the invoice attached to this letter.</p>
+<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.</p>
+<p>Signature</p>
+<p>Your name and surname</p>
+                ]]>
+			</column>
+			<where>id=-2</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+<p>Best regards,</p>	
+                ]]>
+			</column>
+			<where>id=-3</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are following up on our email dated on the #{dunningCollectionPlan.lastActionDate} where we informed you that invoice #{invoice.invoiceNumber} was overdue for payment since #{invoice.dueDate}. We regret to inform you that we have not yet received payment from you for this matter.</p>
+<p>We ask that you proceed with the payment of the invoice as soon as possible and invite you to contact our customer support if you have any difficulties in paying this invoice.</p>
+<p>You will find a copy of the invoice attached.</p>
+<p>Kind regards,</p>
+                ]]>			
+			</column>
+			<where>id=-4</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br><br>
+#{customerAccount.legalEntityType.code}   #{customerAccount.description}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, on #{day.date}</p> 
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+<p>You will find a copy of the invoice attached to this letter.</p>
+<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards. </p>
+<p>Signature</p>
+<p>Your name and surname</p>
+                ]]>
+			</column>
+			<where>id=-5</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+<p>Bien à vous,</p>
+                ]]>
+			</column>
+			<where>id=-6</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.description} / #{customerAccount.name.firstName}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, le #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+<p>Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+<p>Company Signature</p>
+                ]]>
+			</column>
+			<where>id=-7</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+<p>Bien à vous,</p>
+                ]]>
+			</column>
+			<where>id=-8</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+			<column name="htmlcontent">
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous faisons suite à notre courriel en date du #{dunningCollectionPlan.lastActionDate}  où nous vous informions que votre facture #{invoice.invoiceNumber} était en retard de paiement depuis le #{invoice.dueDate}. Nous sommes dans le regret de vous informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet.</p> 
+<p>Nous vous demandons de procéder au règlement de la facture dans les meilleurs délais et nous invitons à contacter au plus vite notre assistance client si vous éprouvez des difficultés à régler cette facture.</p>
+<p>Vous trouverez à nouveau une copie de la facture en pièce jointe.</p>
+<p>Bien à vous,</p>
+                ]]>
+			</column>
+			<where>id=-9</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber})" />
+			<column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.legalEntityType.code} , #{customerAccount.description}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, le #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+<p>Company Signature</p>
+                ]]>
+			</column>
+			<where>id=-10</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
