@@ -8454,35 +8454,16 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Reminder – Past due invoice#{Invoice.Number} - #{Company.Name}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
                 <![CDATA[
-<p class="MsoNormal" style=""><p class="MsoNormal"><i><span lang="EN-US" style="mso-ascii-font-family:Calibri;
-mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US">Hello #{Title}
-#{CustomerAccount.LastName},</span></i><span lang="EN-US" style="mso-ascii-font-family:Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;
-mso-bidi-font-family:Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US"><o:p></o:p></span></p>
-
-<p class="MsoNormal"><span lang="EN-US" style="mso-ascii-font-family:Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:
-Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class="MsoNormal"><i><span lang="EN-US" style="mso-ascii-font-family:Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:
-Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US">We are reaching out to you in regards of your invoice #{Invoice.Number} and more specifically
-its payment that was due on the #{Invoice.DueDate}. You can find a copy of the invoice attached to this email.</span></i><span lang="EN-US" style="mso-ascii-font-family:
-Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:Calibri;color:black;mso-themecolor:text1;mso-ansi-language:
-EN-US"><o:p></o:p></span></p>
-
-<p class="MsoNormal"><i><span lang="EN-US" style="mso-ascii-font-family:Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:
-Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US">Please make sure to pay the invoice in full as soon as possible. If you have any additional
-question, do not hesitate to contact our services or your point of contact in our company.</span></i><span lang="EN-US" style="mso-ascii-font-family:Calibri;
-mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US"><o:p></o:p></span></p>
-
-<p class="MsoNormal"><span lang="EN-US" style="mso-ascii-font-family:Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:
-Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-
-<p class="MsoNormal"><i><span lang="EN-US" style="mso-ascii-font-family:Calibri;mso-fareast-font-family:Calibri;mso-hansi-font-family:Calibri;mso-bidi-font-family:
-Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US">Best regards,</span></i></p></p>
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+<p>Best regards,</p>
                 ]]>
             </column>
         </insert>
@@ -8495,33 +8476,32 @@ Calibri;color:black;mso-themecolor:text1;mso-ansi-language:EN-US">Best regards,<
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="DunningLetter for Invoice #{Invoice.number}" />
+            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i><span lang="EN-US">#{Compagny.name}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.adress}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.postalcode}; #{Compagny.city}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.phone}</span></i><span lang="EN-US"><br>
-<!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></span><span lang="EN-US"><o:p></o:p></span></p><p class="MsoNormal"><span lang="EN-US" segoe="" ui",="" "sans-serif";"="">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.description} / #{customerAccount.name.firstName}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
 
-</span></p><p class="MsoNormal"><i><span lang="EN-US">#{Contact.client}
-</span></i><span lang="EN-US"> / <i>#{Compagny.client.name}</i></span><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.client.adress}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.client.postalcode}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.client.city}</span></i><span lang="EN-US"><br>
-<!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></span><i><span lang="EN-US"><o:p></o:p></span></i></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">#{Compagny.city}, on #{day.date}</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">#{Title.client},</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">By a first email dated (Date of 1st reminder), then a second one dated
-(Date of 2nd reminder), weaskedyou to proceed to the payment of the invoice</span><i><span lang="EN-US">#{Invoice.number}</span></i><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"=""> for an
-amount of </span><i><span lang="EN-US">#{Invoice.total}</span></i></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">Unless we are mistaken, we regret to say that we have not
-yet received payment of invoice. We therefore ask you to proceed immediately to
-its payment.</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">You will find a copy of the invoice attached to this letter.</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">Please disregard this letter if your payment has been sent to us prior to
-receiving this letter.</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">We remain at your disposal in case of any questions. Please accept,
-Madam / Sir, the assurance of our best regards.</span></p><p class="MsoNormal"><span style="font-family: " segoe="" ui",="" "sans-serif";"="">Signature </span></p><p class="MsoNormal">
-</p><p class="MsoNormal"><span style="font-family: " segoe="" ui",="" "sans-serif";"="">Yourname and surname</span></p><p></p>                ]]>
+<p>#{billingAccount.address.city}, on #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+<p>You will find a copy of the invoice attached to this letter.</p>
+<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.</p>
+<p>Signature</p>
+<p>Your name and surname</p>
+                ]]>
             </column>
         </insert>
         <insert tableName="com_message_template">
@@ -8533,21 +8513,16 @@ Madam / Sir, the assurance of our best regards.</span></p><p class="MsoNormal"><
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Reminder – Past due invoice #{Invoice.Number} - #{Company.Name}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i><span lang="EN-US">Hello #{Title}
-#{CustomerAccount.LastName},</span></i><span lang="EN-US"><o:p></o:p></span></p><p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p><p class="MsoNormal"><i><span lang="EN-US">We are reaching
-out to you in regards of your invoice #{Invoice.Number} and more specifically
-its payment that was due on the #{Invoice.DueDate}. You can find a copy of the
-invoice attached to this email.</span></i><span lang="EN-US"><o:p></o:p></span></p><p class="MsoNormal"><i><span lang="EN-US">Please make
-sure to pay the invoice in full as soon as possible. If you have any additional
-question, do not hesitate to contact our services or your point of contact in our
-company.</span></i><span lang="EN-US"><o:p></o:p></span></p><p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p><p class="MsoNormal">
-</p><p class="MsoNormal"><i><span lang="EN-US">Best regards,</span></i><o:p></o:p></p><p></p>
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+<p>Best regards,</p>	
                 ]]>
             </column>
         </insert>
@@ -8560,20 +8535,18 @@ company.</span></i><span lang="EN-US"><o:p></o:p></span></p><p class="MsoNormal"
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Reminder – Past due invoice #{Invoice.Number} - #{Company.Name}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i><span lang="EN-US">Hello #{Title}
-#{CustomerAccount.LastName},</span></i></p><p class="MsoNormal"><i><span lang="EN-US">We are following up on our email dated on the #{Last.action.date} where we informed
-you that invoice ##{Invoice.Number} was overdue for payment since #{Invoice.DueDate}.
-We regret to inform you that we have not yet received payment from you for this matter.&nbsp;</span></i></p><p class="MsoNormal"><i><span lang="EN-US">We ask that
-you proceed with the payment of the invoice as soon as possible and invite you to contact our customer support if you have any difficulties in paying this
-invoice.</span></i></p><p class="MsoNormal"><i><span lang="EN-US">You will find a copy of the invoice attached.</span></i></p><p class="MsoNormal">
-</p><p class="MsoNormal"><i><span lang="EN-US">Kind regards,&nbsp;</span></i></p><p></p>
-                ]]>
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are following up on our email dated on the #{dunningCollectionPlan.lastActionDate} where we informed you that invoice #{invoice.invoiceNumber} was overdue for payment since #{invoice.dueDate}. We regret to inform you that we have not yet received payment from you for this matter.</p>
+<p>We ask that you proceed with the payment of the invoice as soon as possible and invite you to contact our customer support if you have any difficulties in paying this invoice.</p>
+<p>You will find a copy of the invoice attached.</p>
+<p>Kind regards,</p>
+                ]]>			
             </column>
         </insert>
         <insert tableName="com_message_template">
@@ -8585,30 +8558,32 @@ invoice.</span></i></p><p class="MsoNormal"><i><span lang="EN-US">You will find 
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="DunningLetter for Invoice #{Invoice.number}" />
+            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i><span lang="EN-US">#{Compagny.name}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.adress}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.postalcode}; #{Compagny.city}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.phone}</span></i><span lang="EN-US"><br><!--[if !supportLineBreakNewLine]--><br><!--[endif]--></span><span lang="EN-US"><o:p></o:p></span></p>
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.legalEntityType.code}   #{customerAccount.description}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
 
-<p class="MsoNormal"><i><span lang="EN-US">#{Title.client}
-#{Contact.client} </span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.client.adress}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.client.postalcode}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.client.city}</span></i><span lang="EN-US"><br>
-<!--[if !supportLineBreakNewLine]--><br><!--[endif]--></span><i><span lang="EN-US"><o:p></o:p></span></i></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">#{Compagny.city}, on #{day.date}</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">#{Title.client},</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">By a first email dated (Date of 1st reminder), then a second one dated
-(Date of 2nd reminder), we asked you to proceed to the payment of the invoice&nbsp;</span><i><span lang="EN-US">#{Invoice.number}</span></i><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"=""> for an
-amount of </span><i><span lang="EN-US">#{Invoice.total}</span></i><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"=""><o:p></o:p></span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">Unless we are mistaken, we regret to say that we have not
-yet received payment of invoice. We therefore asky ou to proceed immediately to
-its payment.</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">You will find a copy of the invoice attached to this letter.</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">Please disregard this letter if your payment has been sent to us prior to
-receiving this letter.</span></p><p class="MsoNormal"><span lang="EN-US" style="font-family: " segoe="" ui",="" "sans-serif";"="">We remain at your disposal in case of any questions. Please accept,
-Madam / Sir, the assurance of our best regards.</span></p><p class="MsoNormal"><span style="font-family: " segoe="" ui",="" "sans-serif";"="">Signature </span></p><p class="MsoNormal">
-</p><p class="MsoNormal"><span style="font-family: " segoe="" ui",="" "sans-serif";"="">Yourname and surname</span></p><p></p>                ]]>
+<p>#{billingAccount.address.city}, on #{day.date}</p> 
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+<p>You will find a copy of the invoice attached to this letter.</p>
+<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards. </p>
+<p>Signature</p>
+<p>Your name and surname</p>
+                ]]>
             </column>
         </insert>
         <insert tableName="com_message_template">
@@ -8620,18 +8595,16 @@ Madam / Sir, the assurance of our best regards.</span></p><p class="MsoNormal"><
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="règlement facture #{Invoice.Number} - #{Company.Name}" />
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i>Bonjour #{Title} #{CustomerAccount.LastName},<o:p></o:p></i></p><p class="MsoNormal"><i>&nbsp;</i></p><p class="MsoNormal"><i>Nous vous contactons concernant votre facture #{Invoice.Number}
-qui est en retard de paiement depuis le #{Invoice.DueDate}. Vous trouverez une
-copie de la facture en pièce jointe.<o:p></o:p></i></p><p class="MsoNormal"><i>Merci de procéder au règlement de la facture dans les
-plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de
-prendre contact avec nos services ou votre interlocuteur habituel afin de
-trouver une solution.<o:p></o:p></i></p><p class="MsoNormal"></p><p class="MsoNormal"><i>Bien à vous,</i><o:p></o:p></p><p></p>
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+<p>Bien à vous,</p>
                 ]]>
             </column>
         </insert>
@@ -8644,33 +8617,30 @@ trouver une solution.<o:p></o:p></i></p><p class="MsoNormal"></p><p class="MsoNo
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Lettre de relance pour la facture #{Invoice.number}" />
+            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i><span lang="EN-US">#{Compagny.name}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.adress}</span></i><span lang="EN-US"><br></span><i><span lang="EN-US">#{Compagny.postalcode}; #{Compagny.city}</span></i><span lang="EN-US"><br></span><i><span lang="EN-US">#{Compagny.phone}</span></i><span lang="EN-US"><br><!--[if !supportLineBreakNewLine]--><br><!--[endif]--><o:p></o:p></span></p>
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.description} / #{customerAccount.name.firstName}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
 
-<i><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, &quot;sans-serif&quot;;">#{Contact.client} </span></i><span lang="EN-US" style="font-size:11.0pt;line-height:107%;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;
-mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Arial;
-mso-bidi-theme-font:minor-bidi;mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:AR-SA">&nbsp;/ </span><i><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, &quot;sans-serif&quot;;">#{Compagny.client.name}</span></i><span lang="EN-US" style="font-size:11.0pt;line-height:107%;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;
-mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Arial;
-mso-bidi-theme-font:minor-bidi;mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:AR-SA"><br>
-</span><i><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, &quot;sans-serif&quot;;">#{Compagny.client.adress}</span></i><span lang="EN-US" style="font-size:
-11.0pt;line-height:107%;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Arial;mso-bidi-theme-font:
-minor-bidi;mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:AR-SA"><br>
-</span><i><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, &quot;sans-serif&quot;;">#{Compagny.client.postalcode}</span></i><div><i style="font-size: 10pt;"><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, &quot;sans-serif&quot;;">#{Compagny.client.city}</span></i><p class="MsoNormal"><i><br></i></p><p class="MsoNormal"><i>#{Compagny.city}</i>, le <i>#<a>{day.date}</a></i><br><!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></p><p class="MsoNormal"><i>#{Title.client}</i>,<br><!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></p><p class="MsoNormal">Par un premier courriel en date du (Date de la 1ère relance),
-puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder
-au paiement de la facture <i>#{Invoice.number}</i>) d’un montant de <i>#{Invoice.total}</i>).<br><!--[endif]--></p><p class="MsoNormal">Sauf erreur de notre part, nous sommes au regret de constater
-que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture.
-Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.<br><!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></p><p class="MsoNormal">Vous trouverez en pièce jointe de ce courrier une copie de lafacture en question.</p><p class="MsoNormal">Veuillez ne pas tenir compte de cette lettres si votre règlement
-nous a été adressé avant la réception du présent courrier.<br><!--[if !supportLineBreakNewLine]--><br><!--[endif]--></p><p class="MsoNormal">Nous restons à votre disposition dans
-l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.<br><br><!--[endif]--></p><p class="MsoNormal"><i>Company Signature</i></p><div><div><div id="_com_1" class="msocomtxt" language="JavaScript"><!--[if !supportAnnotations]--></div><!--[endif]--></div></div><p></p></div>
+<p>#{billingAccount.address.city}, le #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+<p>Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+<p>Company Signature</p>
                 ]]>
             </column>
         </insert>
@@ -8683,21 +8653,17 @@ l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assura
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="règlement facture #{Invoice.Number} - #{Company.Name}" />
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style=""></p><p class="MsoNormal"><i><span lang="EN-US">Bonjour #{Title} #{CustomerAccount.LastName},</span></i></p><p class="MsoNormal"><i>Nous vous contactons concernant votre facture #{Invoice.Number}
-qui est en retard de paiement depuis le #{Invoice.DueDate}. Vous trouverez une
-copie de la facture en pièce jointe.<o:p></o:p></i></p><p class="MsoNormal"><i>Merci de procéder au règlement de la facture dans les
-plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de
-prendre contact avec nos services ou votre interlocuteur habituel afin de
-trouver une solution.<o:p></o:p></i></p><p class="MsoNormal"></p><p class="MsoNormal"><i>Bien à vous,</i><o:p></o:p></p><div><div><div id="_com_1" class="msocomtxt" language="JavaScript">
-<!--[if !supportAnnotations]--></div><!--[endif]--></div></div><p></p>
-                ]]>
-            </column>
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+<p>Bien à vous,</p>
+                ]]>            </column>
         </insert>
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
@@ -8708,19 +8674,17 @@ trouver une solution.<o:p></o:p></i></p><p class="MsoNormal"></p><p class="MsoNo
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="règlement facture #{Invoice.Number} - #{Company.Name}" />
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style="font-style: normal;"></p><p class="MsoNormal"><i><span lang="EN-US">Bonjour #{Title} #{CustomerAccount.LastName},<o:p></o:p></span></i></p><p class="MsoNormal"><br></p><p class="MsoNormal"><span style="font-style: italic;">Nous faisons suite à notre courriel en date du#</span><a style=""><span style="font-style: italic;">{Last.action.date}</span>&nbsp;</a><i>où
-nous vous informions que votre facture #{Invoice.Number}était en retard de paiement depuis le #{Invoice.DueDate}. Nous sommes dans le regret de vous
-informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet. <o:p></o:p></i></p><p class="MsoNormal"><i>Nous vous demandons de procéder au règlement de la
-facture dans les meilleurs délais et nous invitons à contacter au plus vite notre assistance client si vous éprouvez des difficultés à régler cette
-facture.<o:p></o:p></i></p><p class="MsoNormal"><i>Vous trouverez à nouveau une copie de la facture en pièce jointe.<o:p></o:p></i></p><p class="MsoNormal"><i>Bien à vous,</i></p><div><div><div id="_com_1" class="msocomtxt" language="JavaScript"><p class="MsoNormal"><!--[endif]--></p>
-<!--[if !supportAnnotations]--></div><!--[endif]--></div></div><div style="font-style: normal;"><div><div id="_com_1" class="msocomtxt" language="JavaScript"><p class="MsoNormal"><!--[endif]--></p><!--[if !supportAnnotations]--></div>
-<!--[endif]--></div></div><div style="font-style: normal;"><div><div id="_com_1" class="msocomtxt" language="JavaScript"><!--[if !supportAnnotations]--></div><!--[endif]--></div></div><p style="font-style: normal;"></p>
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous faisons suite à notre courriel en date du #{dunningCollectionPlan.lastActionDate}  où nous vous informions que votre facture #{invoice.invoiceNumber} était en retard de paiement depuis le #{invoice.dueDate}. Nous sommes dans le regret de vous informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet.</p> 
+<p>Nous vous demandons de procéder au règlement de la facture dans les meilleurs délais et nous invitons à contacter au plus vite notre assistance client si vous éprouvez des difficultés à régler cette facture.</p>
+<p>Vous trouverez à nouveau une copie de la facture en pièce jointe.</p>
+<p>Bien à vous,</p>
                 ]]>
             </column>
         </insert>
@@ -8733,34 +8697,30 @@ facture.<o:p></o:p></i></p><p class="MsoNormal"><i>Vous trouverez à nouveau une
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Lettre de relance pour la facture #{Invoice.number})" />
+            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
-                <![CDATA[
-<p class="MsoNormal" style="font-weight: normal; font-style: normal;"></p><p class="MsoNormal" style="font-weight: normal;"><i><span lang="EN-US">#{Compagny.name}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.adress}</span></i><span lang="EN-US"><br></span><i><span lang="EN-US">#{Compagny.postalcode}; #{Compagny.city}</span></i><span lang="EN-US"><br>
-</span><i><span lang="EN-US">#{Compagny.phone}</span></i><span lang="EN-US"><br><!--[if !supportLineBreakNewLine]--><br><!--[endif]--><o:p></o:p></span></p>
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.legalEntityType.code} , #{customerAccount.description}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
 
-<i style=""><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, "sans-serif";">#{client.title} , #{Contact.client}
-</span></i><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, "sans-serif";"><br>
-</span><i style=""><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, "sans-serif";">#{Compagny.client.adress}</span></i><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, "sans-serif";"><br>
-</span><i style=""><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, "sans-serif";">#{Compagny.client.postalcode}</span></i><div style=""><i style="font-size: 10pt;"><span lang="EN-US" style="font-size: 11pt; line-height: 107%; font-family: Calibri, "sans-serif";">#{Compagny.client.city}</span></i><p class="MsoNormal" style="font-weight: normal;"><i><br></i></p><p class="MsoNormal" style="font-weight: normal;"><i>#{Compagny.city}</i>, le <i>#{day.date}</i><br>
-<!--[if !supportLineBreakNewLine]--><br><!--[endif]--></p><p class="MsoNormal" style="font-weight: normal;"><i>#{Title.client}</i>,<br><!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></p><p class="MsoNormal" style="font-weight: normal;">Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de
-procéder au paiement de la facture <i>#{Invoice.number}</i>) d’un montant de <i>#{Invoice.total}</i>).<br><!--[endif]--></p><p class="MsoNormal" style="font-weight: normal;">Sauf erreur de notre part, nous sommes au regret de constater
-que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture.
-Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.<br>
-<!--[if !supportLineBreakNewLine]--><br><!--[endif]--></p><p class="MsoNormal" style="font-weight: normal;">Vous trouverez en pièce jointe de ce courrier une copie de la
-facture en question.</p><p class="MsoNormal" style="font-weight: normal;">Veuillez ne pas tenir compte de cette lettre si votre règlement
-nous a été adressé avant la réception du présent courrier.<br><!--[if !supportLineBreakNewLine]--><br>
-<!--[endif]--></p><p class="MsoNormal" style="font-weight: normal;">Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos
-salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[endif]--></p><p class="MsoNormal" style="font-weight: normal;">
-</p><p class="MsoNormal" style="font-weight: normal;"><i>Company Signature<o:p></o:p></i></p><div style="font-weight: normal;"><div><div id="_com_1" class="msocomtxt" language="JavaScript"><p class="MsoNormal"><!--[endif]--></p>
-<!--[if !supportAnnotations]--></div><!--[endif]--></div></div><div style="font-weight: normal; font-style: normal;"><div><div id="_com_1" class="msocomtxt" language="JavaScript"><p class="MsoNormal"><!--[endif]--></p><!--[if !supportAnnotations]--></div>
-<!--[endif]--></div></div><div style="font-weight: normal; font-style: normal;"><div><div id="_com_1" class="msocomtxt" language="JavaScript">
-<!--[if !supportAnnotations]--></div><!--[endif]--></div></div><p style="font-weight: normal; font-style: normal;"></p></div>
+<p>#{billingAccount.address.city}, le #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+<p>Company Signature</p>
                 ]]>
             </column>
         </insert>
@@ -9605,5 +9565,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
+
+	<changeSet id="INTRD-2849_20211110" author="TarikRabeh"></changeSet>
 
 </databaseChangeLog>
