@@ -6,9 +6,12 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.dunning.DunningAction;
 import org.meveo.apiv2.dunning.ImmutableDunningAction;
+import org.meveo.model.payments.ActionChannelEnum;
+import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.service.payments.impl.DunningActionService;
 
 public class DunningActionImpl implements DunningActionResource{
@@ -42,7 +45,17 @@ public class DunningActionImpl implements DunningActionResource{
         org.meveo.model.dunning.DunningAction newDunningAction = dunningAction.toEntity();
         updatePropertyIfNotNull(newDunningAction.getCode(), code -> dunningActionToUpdate.setCode(code));
         updatePropertyIfNotNull(newDunningAction.getDescription(), description -> dunningActionToUpdate.setDescription(description));
-        updatePropertyIfNotNull(newDunningAction.getActionChannel(), actionChannelEnum -> dunningActionToUpdate.setActionChannel(actionChannelEnum));
+        
+        
+        if(ActionModeEnum.AUTOMATIC.equals(newDunningAction.getActionMode())) {
+        	if(newDunningAction.getActionChannel() != null && !ActionChannelEnum.EMAIL.equals(newDunningAction.getActionChannel())) {
+                throw new BusinessApiException("The only action channel for the automatic mode is Email.");
+        	}    	
+        	dunningActionToUpdate.setActionChannel(ActionChannelEnum.EMAIL);
+    	}else{
+            updatePropertyIfNotNull(newDunningAction.getActionChannel(), actionChannelEnum -> dunningActionToUpdate.setActionChannel(actionChannelEnum));
+        }
+        
         updatePropertyIfNotNull(newDunningAction.getActionType(), actionTypeEnum -> dunningActionToUpdate.setActionType(actionTypeEnum));
         updatePropertyIfNotNull(newDunningAction.getActionMode(), actionModeEnum -> dunningActionToUpdate.setActionMode(actionModeEnum));
         updatePropertyIfNotNull(newDunningAction.getRelatedLevels(), relatedLevels -> dunningActionToUpdate.setRelatedLevels(relatedLevels));
