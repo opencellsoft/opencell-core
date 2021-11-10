@@ -7721,7 +7721,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 #{billingAccount.address.address1}<br>
 #{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
 #{billingAccount.contactInformation.phone}<br>
-
+<br>
 #{customerAccount.description} / #{customerAccount.name.firstName}<br>
 #{customerAccount.address.address1}<br>
 #{customerAccount.address.zipCode}<br>
@@ -7773,7 +7773,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 #{billingAccount.address.address1}<br>
 #{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
 #{billingAccount.contactInformation.phone}<br>
-<br><br>
+<br>
 #{customerAccount.legalEntityType.code}   #{customerAccount.description}<br>
 #{customerAccount.address.address1}<br>
 #{customerAccount.address.zipCode}<br>
