@@ -6,7 +6,7 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
 /**
- * Service implementation to manage DunningCollectionManagement entity.
+ * Service implementation to manage DunningAgent entity.
  * It extends {@link PersistenceService} class
  * 
  * @author Mbarek-Ay

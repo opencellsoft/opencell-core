@@ -23,7 +23,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
-import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
 import org.meveo.commons.utils.EjbUtils;
@@ -224,11 +223,8 @@ public class FlatFileValidator {
             if (configurationTemplate.indexOf("<beanio") >= 0) {
                 fileParser = new FileParserBeanio();
             }
-            if (configurationTemplate.indexOf("<file-format>") >= 0) {
-                fileParser = new FileParserFlatworm();
-            }
             if (fileParser == null) {
-                throw new BusinessException("Check your configuration template, only flatworm or beanio are allowed");
+                throw new BusinessException("Check your configuration template, only beanio is allowed");
             }
         }
         return fileParser;

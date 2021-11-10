@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.dunning.DunningTemplate;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/dunning/dunningtemplate")
@@ -18,7 +15,7 @@ public interface DunningTemplateResource {
     @POST
     @Path("/")
     @Operation(summary = "Create a new Dunning Template",
-            tags = {"DunningAction"},
+            tags = {"DunningTemplate"},
             description = "Create a new Dunning Template",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -28,7 +25,60 @@ public interface DunningTemplateResource {
                     @ApiResponse(responseCode = "412",
                             description = "Missing parameters"),
                     @ApiResponse(responseCode = "400",
-                            description = "Dunning Template creation is failed")
+                            description = "Dunning Template creation failed")
             })
     Response createDunningTemplate(@Parameter(required = true, description = "dunning Template") DunningTemplate dunningTemplate);
+
+    @DELETE
+    @Path("/{dunningTemplateId}")
+    @Operation(summary = "Delete a Dunning Template",
+            tags = {"DunningTemplate"},
+            description = "Delete a Dunning Template",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning Template successfully deleted"),
+                    @ApiResponse(responseCode = "404",
+                            description = "a related entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Dunning Template deletion failed")
+            })
+    Response deleteDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
+
+    @POST
+    @Path("/{dunningTemplateId}/duplication")
+    @Operation(summary = "duplicate a Dunning Template",
+            tags = {"DunningTemplate"},
+            description = "duplicate a Dunning Template",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning Template successfully duplicated"),
+                    @ApiResponse(responseCode = "404",
+                            description = "a related entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Dunning Template duplication failed")
+            })
+    Response duplicateDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId);
+
+    @PUT
+    @Path("/{dunningTemplateId}")
+    @Operation(summary = "update a Dunning Template",
+            tags = {"DunningTemplate"},
+            description = "update a Dunning Template",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning Template successfully updated"),
+                    @ApiResponse(responseCode = "404",
+                            description = "a related entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Dunning Template update failed")
+            })
+    Response updateDunningTemplate(@Parameter(required = true, description = "dunning Template id") @PathParam("dunningTemplateId") Long dunningTemplateId,
+                                   @Parameter(required = true, description = "dunning Template") DunningTemplate dunningTemplate);
+
 }

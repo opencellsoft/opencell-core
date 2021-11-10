@@ -4,7 +4,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -17,22 +27,19 @@ import org.meveo.model.article.AccountingArticle;
  * @version 11.0
  */
 @Entity
-@Table(name = "dunning_settings", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
+@Table(name = "dunning_settings", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "dunning_settings_seq")})
+        @Parameter(name = "sequence_name", value = "dunning_settings_seq") })
 public class DunningSettings extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
-
 
     public DunningSettings() {
         super();
     }
 
-
-    public DunningSettings(DunningModeEnum dunningMode, Integer maxDunningLevels, int maxDaysOutstanding,
-                           boolean allowInterestForDelay, BigDecimal interestForDelayRate, boolean allowDunningCharges,
-                           boolean applyDunningChargeFxExchangeRate, AccountingArticle accountingArticle) {
+    public DunningSettings(DunningModeEnum dunningMode, Integer maxDunningLevels, int maxDaysOutstanding, boolean allowInterestForDelay, BigDecimal interestForDelayRate,
+            boolean allowDunningCharges, boolean applyDunningChargeFxExchangeRate, AccountingArticle accountingArticle) {
         super();
         this.dunningMode = dunningMode;
         this.maxDunningLevels = maxDunningLevels;
@@ -57,7 +64,6 @@ public class DunningSettings extends BusinessEntity {
         this.code = copy.code;
     }
 
-
     /**
      * dunning mode
      */
@@ -65,20 +71,17 @@ public class DunningSettings extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private DunningModeEnum dunningMode = DunningModeEnum.CUSTOMER_LEVEL;
 
-
     /**
      * Maximum number of dunning levels
      */
     @Column(name = "max_dunning_levels")
     private Integer maxDunningLevels = 15;
 
-
     /**
      * Maximum days outstanding
      */
     @Column(name = "max_days_outstanding")
     private int maxDaysOutstanding;
-
 
     /**
      * Allow interest for delay
@@ -87,13 +90,11 @@ public class DunningSettings extends BusinessEntity {
     @Column(name = "allow_interest_for_delay")
     private boolean allowInterestForDelay = true;
 
-
     /**
      * Interest for delay
      */
     @Column(name = "interest_for_delay_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal interestForDelayRate;
-
 
     /**
      * Allow dunning charges
@@ -102,14 +103,12 @@ public class DunningSettings extends BusinessEntity {
     @Column(name = "allow_dunning_charges")
     private boolean allowDunningCharges = true;
 
-
     /**
      * apply dunning charge fx exchange_rate
      */
     @Type(type = "numeric_boolean")
     @Column(name = "apply_dunning_charge_fx_exchange_rate")
     private boolean applyDunningChargeFxExchangeRate = true;
-
 
     /**
      * Article code for dunning penalties
@@ -120,7 +119,7 @@ public class DunningSettings extends BusinessEntity {
     private AccountingArticle accountingArticle;
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DunningCollectionManagement> dunningCollectionManagements = new ArrayList<>();
+    private List<DunningAgent> dunningAgents = new ArrayList<>();
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CollectionPlanStatus> collectionPlanStatus = new ArrayList<>();
@@ -139,7 +138,6 @@ public class DunningSettings extends BusinessEntity {
 
     @OneToMany(mappedBy = "dunningSettings", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningInvoiceStatus> dunningInvoiceStatuses = new ArrayList<>();
-
 
     public DunningModeEnum getDunningMode() {
         return dunningMode;
@@ -205,13 +203,13 @@ public class DunningSettings extends BusinessEntity {
         this.accountingArticle = accountingArticle;
     }
 
-	public List<DunningCollectionManagement> getDunningCollectionManagements() {
-		return dunningCollectionManagements;
-	}
+    public List<DunningAgent> getDunningAgents() {
+        return dunningAgents;
+    }
 
-	public void setDunningCollectionManagements(List<DunningCollectionManagement> dunningCollectionManagements) {
-		this.dunningCollectionManagements = dunningCollectionManagements;
-	}
+    public void setDunningAgents(List<DunningAgent> dunningAgents) {
+        this.dunningAgents = dunningAgents;
+    }
 
     public List<CollectionPlanStatus> getCollectionPlanStatus() {
         return collectionPlanStatus;

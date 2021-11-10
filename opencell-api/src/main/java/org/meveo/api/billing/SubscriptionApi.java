@@ -830,7 +830,7 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        		    if (serviceInstance.getDeliveryDate().after(new Date())) {
+        		    if (serviceInstance.getDeliveryDate() != null && serviceInstance.getDeliveryDate().after(new Date())) {
         				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
         			}else {
         				serviceInstanceService.serviceActivation(serviceInstance);
@@ -2359,7 +2359,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptions.size() == 0) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         } else if (subscriptions.size() == 1) {
-            subscriptionService.activateInstantiatedService(subscriptions.get(1));
+            subscriptionService.activateInstantiatedService(subscriptions.get(0));
         } else {
             // so in this case, practically subscriptions list contains
             // the current last one sub valid on subscriptionValidityDate,
@@ -2549,7 +2549,8 @@ public class SubscriptionApi extends BaseApi {
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
     	if(serviceInstanceDtos != null) {
     		serviceInstanceDtos.forEach(serviceInstanceDto -> {
-    			var serviceInstance = loadEntityByCode(serviceInstanceService, serviceInstanceDto.getCode(), ServiceInstance.class);
+    			var serviceInstance =
+                        serviceInstanceService.findByCodeAndCodeSubscriptionId(serviceInstanceDto.getCode(), subscription);
     			serviceInstance.getAttributeInstances().clear();
     			if(serviceInstanceDto.getAttributeInstances() != null) {
     				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {

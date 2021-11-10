@@ -612,7 +612,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 recurringChargeInstance.getCode(), recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), chargeToDateOnTermination, terminationReason.getCode());
 
             // Effective termination date was moved to the future - to the end of agreement
-            if (chargeToDateOnTermination.after(chargedToDate)) {
+            // chargedToDate is null means that charge was never charged
+            if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
                     recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
 
@@ -1136,4 +1137,21 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     }
 
+    /**
+     * Find a service instance by subscription entity id, service instance code
+     *
+     * @param code service instance code
+     * @param subscription subscription
+     * @return the ServiceInstance found
+     */
+    public ServiceInstance findByCodeAndCodeSubscriptionId(String code, Subscription subscription) {
+        try {
+            return (ServiceInstance) getEntityManager().createNamedQuery("ServiceInstance.findByServiceCodeAndSubscriptionId")
+                    .setParameter("code", code)
+                    .setParameter("subscriptionId", subscription.getId())
+                    .getSingleResult();
+        } catch (Exception exception) {
+            throw new BusinessException("No service instance with code " + code + " associated to subscription code : " + subscription.getCode());
+        }
+    }
 }

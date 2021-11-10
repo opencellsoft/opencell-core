@@ -23,7 +23,7 @@ public interface DunningTemplate {
     @Nullable
     String getActionChannel();
 
-    @Value.Default default boolean active(){return false;}
+    @Value.Default default boolean active(){return true;}
 
     @Value.Default default String getType(){
         return "DUNNING";

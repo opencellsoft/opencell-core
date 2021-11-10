@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
-import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ExcelToCsv;
@@ -156,13 +155,10 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
             context.put(filenameVariableName, fileName);
             script.init(context);
             FileParsers parserUsed = getParserType(mappingConf);
-            if (parserUsed == FileParsers.FLATWORM) {
-                fileParser = new FileParserFlatworm();
-
-            } else if (parserUsed == FileParsers.BEANIO) {
+            if (parserUsed == FileParsers.BEANIO) {
                 fileParser = new FileParserBeanio();
             } else {
-                throw new Exception("Check your mapping discriptor, only flatworm or beanio are allowed");
+                throw new Exception("Check your mapping discriptor, only beanio is allowed");
             }
 
             fileParser.setDataFile(currentFile);

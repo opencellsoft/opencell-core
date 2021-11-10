@@ -1364,7 +1364,7 @@ public class InvoiceServiceTest {
                     }
                 }
             } else {
-                System.out.println("WARNING: NO CONSTRUCTOR FOR " + clazz);
+                //System.out.println("WARNING: NO CONSTRUCTOR FOR " + clazz);
             }
         }
         return instance;

@@ -1,23 +1,25 @@
 package org.meveo.service.payments.impl;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.dunning.DunningAction;
+import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.payments.ActionTypeEnum;
-import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Stateless
 public class DunningActionService  extends BusinessService<DunningAction> {
@@ -29,6 +31,9 @@ public class DunningActionService  extends BusinessService<DunningAction> {
 
     @Inject
     private BaseEntityService dunningLevelBusinessService;
+    
+    @Inject
+    private DunningAgentService dunningAgentService;
 
     @Override
     public void create(DunningAction dunningAction) throws BusinessException {
@@ -83,12 +88,24 @@ public class DunningActionService  extends BusinessService<DunningAction> {
             }
         }
     }
+    
+    private void validateAssignedTo(DunningAction dunningAction) {
+        if(dunningAction.getAssignedTo() != null) {
+            Long id = dunningAction.getAssignedTo().getId();
+            DunningAgent dunningAgent = dunningAgentService.findById(id);
+            if(dunningAgent == null){
+                throw new EntityDoesNotExistsException("Dunning agent with id "+ id +" does not exist.");
+            }
+            dunningAction.setAssignedTo(dunningAgent);
+        }
+    }
 
     @Override
     public DunningAction update(DunningAction dunningAction) throws BusinessException {
         validateScriptInstance(dunningAction);
         validateActionNotificationTemplate(dunningAction);
         validateDunningLevel(dunningAction);
+        validateAssignedTo(dunningAction);
         return super.update(dunningAction);
     }
 }
