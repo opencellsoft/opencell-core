@@ -1,16 +1,16 @@
 package org.meveo.apiv2.generic.services;
 
+import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;
 import org.meveo.apiv2.generic.security.interceptor.UserPermissionCheckInterceptor;
 import org.meveo.model.IEntity;
-import org.meveo.service.base.PersistenceService;
-
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import java.util.List;
-
-import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
 
 
 /**
