@@ -1,11 +1,6 @@
 package org.meveo.apiv2.dunning.impl;
 
-import static java.util.Optional.ofNullable;
-import static org.meveo.apiv2.models.ImmutableResource.builder;
-
 import org.meveo.apiv2.dunning.DunningCollectionPlan;
-import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
-import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 
 public class DunningCollectionPlanMapper
@@ -13,7 +8,7 @@ public class DunningCollectionPlanMapper
 
     @Override
     protected DunningCollectionPlan toResource(org.meveo.model.dunning.DunningCollectionPlan entity) {
-        Resource dunningLevel = ofNullable(entity.getCollectionPlanCurrentDunningLevel())
+        /*Resource dunningLevel = ofNullable(entity.getCollectionPlanCurrentDunningLevel())
                 .map(dl -> builder().id(dl.getId()).build())
                 .orElse(null);
         Resource collectionPlanStatus = ofNullable(entity.getCollectionPlanStatus())
@@ -41,7 +36,8 @@ public class DunningCollectionPlanMapper
                 .collectionPlanDisputedBalance(entity.getCollectionPlanDisputedBalance())
                 .retryPaymentOnResumeDate(entity.isRetryPaymentOnResumeDate())
                 .collectionPlanSequence(entity.getCollectionPlanCurrentDunningLevelSequence())
-                .build();
+                .build();*/
+    	return null;
     }
 
     @Override

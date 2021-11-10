@@ -11221,31 +11221,31 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             
+            
+            <column name="collection_plan_related_policy_id" type="bigint" />
+            <column name="initial_collection_plan_id" type="bigint" />
             <column name="collection_plan_billing_account_id" type="bigint" />
-            <column name="collection_plan_payment_method_id" type="bigint" />
+            <column name="collection_plan_related_invoice_id" type="bigint" />
             <column name="collection_plan_pause_reason_id" type="bigint" />
             <column name="collection_plan_stop_reason_id" type="bigint" />
-            <column name="collection_plan_related_policy_id" type="bigint" />
-            <column name="collection_plan_current_dunning_id" type="bigint" />
             
             <column name="collection_plan_current_dunning_level_sequence" type="int4" />
+            
+            
+            
             <column name="collection_plan_start_date" type="datetime" />
             <column name="collection_plan_days_open" type="int4" />
              <column name="collection_plan_close_date" type="datetime" />
             
             <column name="collection_plan_status_id" type="bigint" />
-            
-            <column name="collection_plan_last_update" type="datetime" />
             <column name="collection_plan_paused_until_date" type="datetime" />
-            
-            <column name="collection_plan_assigned_agent_id" type="bigint" />
-            
-            <column name="collection_plan_total_balance" type="numeric(23, 12)"/>
-            <column name="collection_plan_aged_balance" type="numeric(23, 12)"/>
-            <column name="collection_plan_due_balance" type="numeric(23, 12)"/>
-            <column name="collection_plan_disputed_balance" type="numeric(23, 12)"/>
-            
+            <column name="collection_plan_balance" type="numeric(23, 12)"/>
             <column name="retry_payment_on_resume_date" type="${type.boolean}" defaultValueNumeric="0"/>
+            
+            <column name="collection_plan_next_action" type="varchar(255)" />
+            <column name="collection_plan_next_Action_date" type="datetime" />
+            <column name="collection_plan_last_action" type="varchar(255)" />
+            <column name="collection_plan_last_Action_date" type="datetime" />
             
             
         </createTable>
@@ -11254,10 +11254,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="collection_plan_billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-                                 
-        <addForeignKeyConstraint baseColumnNames="collection_plan_payment_method_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_payment_method"
-        						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
         						 
 		<addForeignKeyConstraint baseColumnNames="collection_plan_pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
         						 deferrable="false" initiallyDeferred="false"
@@ -11269,19 +11265,19 @@ order by date_trunc('month', i.invoice_date) DESC
         						 
         <addForeignKeyConstraint baseColumnNames="collection_plan_related_policy_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_related_policy"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" />
-        						 
-       	<addForeignKeyConstraint baseColumnNames="collection_plan_current_dunning_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_current_dunning"
-        						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />    
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" /> 
         
         <addForeignKeyConstraint baseColumnNames="collection_plan_status_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_plan_status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan_statuses" />
                                  
-        <addForeignKeyConstraint baseColumnNames="collection_plan_assigned_agent_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_assigned_agent"
-        						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" /> 
+        <addForeignKeyConstraint baseColumnNames="initial_collection_plan_id" baseTableName="dunning_collection_plan" constraintName="fk_initial_collection_plan"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="collection_plan_related_invoice_id" baseTableName="dunning_collection_plan" constraintName="fk_collection_plan_related_invoice"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />                        
         
     </changeSet>
     <changeSet id="INTRD-30_2021114" author="ZBariki">

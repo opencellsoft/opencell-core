@@ -36,7 +36,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     private DunningCollectionPlan from(DunningCollectionPlan closedCollectionPlan, DunningPolicyLevel policyLevel) {
         DunningCollectionPlan renewedCollectionPlan = new DunningCollectionPlan();
-        renewedCollectionPlan.setCollectionPlanDaysOpen(closedCollectionPlan.getCollectionPlanDaysOpen());
+        /*renewedCollectionPlan.setCollectionPlanDaysOpen(closedCollectionPlan.getCollectionPlanDaysOpen());
         renewedCollectionPlan.setCollectionPlanAgedBalance(closedCollectionPlan.getCollectionPlanAgedBalance());
         renewedCollectionPlan.setCollectionPlanDaysOpen(closedCollectionPlan.getCollectionPlanDaysOpen());
         ofNullable(closedCollectionPlan.getCollectionPlanAssignedAgent())
@@ -57,7 +57,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         renewedCollectionPlan.setCollectionPlanStatus(policyLevel.getCollectionPlanStatus());
         renewedCollectionPlan.setCollectionPlanRelatedPolicy(policyLevel.getDunningPolicy());
         renewedCollectionPlan.setCollectionPlanStartDate(addDaysToDate(closedCollectionPlan.getCollectionPlanStartDate(),
-                policyLevel.getDunningLevel().getDaysOverdue()));
+                policyLevel.getDunningLevel().getDaysOverdue()));*/
         return renewedCollectionPlan;
     }
 }
