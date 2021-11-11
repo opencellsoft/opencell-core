@@ -40,7 +40,6 @@ import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningAgentResourceImpl;
-import org.meveo.apiv2.dunning.impl.DunningInvoiceStatusResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningPaymentRetryResourceImpl;
@@ -119,7 +118,7 @@ public class GenericOpencellRestful extends Application {
 				DunningSettingsResourceImpl.class, DunningLevelResourceImpl.class ,DunningActionImpl.class,
 				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
 				DunningAgentResourceImpl.class, CollectionPlanStatusResourceImpl.class,
-                StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
+                StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class,
                 DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class, RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {

@@ -474,25 +474,44 @@ public class ReflectionUtils {
      *
      * @param c Class to start with
      * @param fieldName Field name
+     * @param trySubclass 
      * @return A field definition
      * @throws SecurityException security excetion
      * @throws NoSuchFieldException no such field exception.
      */
-    public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
+    public static Field getFieldThrowException(Class<?> c, String fieldName, boolean trySubclass) throws NoSuchFieldException {
 
         if (c == null) {
             throw new NoSuchFieldException("No field with name '" + fieldName + "' was found - EntityClass was not resolved");
         }
 
-        Field field = getField(c, fieldName);
+        Field field = getField(c, fieldName, trySubclass);
         if (field == null) {
             throw new NoSuchFieldException("No field with name '" + fieldName + "' was found. EntityClass " + c);
         }
         return field;
     }
+    
+    /**
+     * Get a field from a given class. Fieldname can refer to an immediate field of a class or traverse class relationship hierarchy e.g. customerAccount.customer.seller
+     *
+     * @param c Class to start with
+     * @param fieldName Field name
+     * @return A field definition
+     * @throws SecurityException security excetion
+     * @throws NoSuchFieldException no such field exception.
+     */
+    public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
+    	return getFieldThrowException(c, fieldName, false);
+    }
 
     @SuppressWarnings("rawtypes")
     public static Field getField(Class<?> c, String fieldName) {
+    	return getField(c, fieldName, false);
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public static Field getField(Class<?> c, String fieldName, boolean trySubclass) {
 
         if (c == null || fieldName == null) {
             return null;
@@ -505,7 +524,7 @@ public class ReflectionUtils {
             StringTokenizer tokenizer = new StringTokenizer(fieldName, ".");
             while (tokenizer.hasMoreElements()) {
                 String iterationFieldName = tokenizer.nextToken();
-                field = getField(iterationClazz, iterationFieldName);
+                field = getField(iterationClazz, iterationFieldName, trySubclass);
                 if (field != null) {
                 	if(Collection.class.isAssignableFrom(field.getType())){
                 		iterationClazz = getFieldGenericsType(field);
@@ -518,22 +537,29 @@ public class ReflectionUtils {
                     return null;
                 }
             }
+		} else {
+			boolean found = false;
+			if (trySubclass && Modifier.isAbstract(c.getModifiers())) {
+				Reflections reflections = new Reflections(c);
+				for (Class subclass : reflections.getSubTypesOf(c)) {
+					try {
+						field = subclass.getDeclaredField(fieldName);
+						found = true;
+						break;
+					} catch (NoSuchFieldException e) {
+					}
+				}
+			}
 
-        } else {
-
-            try {
-                // log.debug("get declared field {}",fieldName);
-                field = c.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException e) {
-
-                // log.debug("No field {} in {} might be in super {} ", fieldName, c, c.getSuperclass());
-                if (field == null && c.getSuperclass() != null) {
-                    return getField(c.getSuperclass(), fieldName);
-                }
-            }
-
-        }
-
+			while (!found && c != null) {
+				try {
+					field = c.getDeclaredField(fieldName);
+					found = true;
+				} catch (NoSuchFieldException e) {
+						c = c.getSuperclass();
+				}
+			}
+		}
         return field;
     }
 

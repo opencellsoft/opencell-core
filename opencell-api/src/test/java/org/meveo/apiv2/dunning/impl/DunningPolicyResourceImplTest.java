@@ -24,8 +24,6 @@ import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningCollectionPlanStatusContextEnum;
-import org.meveo.model.dunning.DunningInvoiceStatus;
-import org.meveo.model.dunning.DunningInvoiceStatusContextEnum;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
@@ -68,11 +66,6 @@ public class DunningPolicyResourceImplTest {
         collectionPlanStatus.setId(1L);
         collectionPlanStatus.setContext(DunningCollectionPlanStatusContextEnum.FAILED_DUNNING);
         collectionPlanStatus.setStatus("Failed Dunning");
-
-        DunningInvoiceStatus invoiceDunningStatuses = new DunningInvoiceStatus();
-        invoiceDunningStatuses.setId(1L);
-        invoiceDunningStatuses.setContext(DunningInvoiceStatusContextEnum.ACTIVE_DUNNING);
-        invoiceDunningStatuses.setStatus("Failed Dunning");
 
         when(dunningPolicyApiService.updateTotalLevels(any())).thenReturn(of(dunningPolicy));
         when(dunningPolicyApiService.create(any())).thenReturn(dunningPolicy);
