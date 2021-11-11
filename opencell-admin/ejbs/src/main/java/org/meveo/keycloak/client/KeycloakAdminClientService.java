@@ -306,10 +306,12 @@ public class KeycloakAdminClientService {
             }
             userResource.update(userRepresentation);
 
-            // add from posted data
-            usersResource.get(userRepresentation.getId()).roles().realmLevel().add(rolesToAdd);
-            // delete other roles
-            usersResource.get(userRepresentation.getId()).roles().realmLevel().remove(rolesToDelete);
+            if(!rolesToAdd.isEmpty()) {
+                // add from posted data
+                usersResource.get(userRepresentation.getId()).roles().realmLevel().add(rolesToAdd);
+                // delete other roles
+                usersResource.get(userRepresentation.getId()).roles().realmLevel().remove(rolesToDelete);
+            }
 
             if (!StringUtils.isBlank(postData.getPassword())) {
                 // Define password credential
