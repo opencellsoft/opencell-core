@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author Thang Nguyen
  */
-@Path("/apiv1rest.{type:json|yaml}")
+@Path("/openapiv1.{type:json|yaml}")
 public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
 
     @Inject
