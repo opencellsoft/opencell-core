@@ -2,12 +2,14 @@ package org.meveo.model.dunning;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -75,15 +77,6 @@ public class DunningCollectionPlan extends AuditableEntity {
     @JoinColumn(name = "collection_plan_stop_reason_id", referencedColumnName = "id")
      private DunningStopReason collectionPlanStopReason;
     
-    
-     
-     /**
-     * The collection plan current dunning level
-     */
-     /*@ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "collection_plan_current_dunning_id", referencedColumnName = "id")
-     private DunningLevelInstance collectionPlanCurrentDunningLevel;*/
-    
     /**
      * the sequence.
      */
@@ -141,8 +134,8 @@ public class DunningCollectionPlan extends AuditableEntity {
     /**
      * The dunning level instances
      */
-    /*@OneToMany(mappedBy = "dunningCollectionPlan", fetch = FetchType.LAZY)
-	private List<DunningLevelInstance> dunningLevelInstances;*/
+    @OneToMany(mappedBy = "dunningCollectionPlan", fetch = FetchType.LAZY)
+	private List<DunningLevelInstance> dunningLevelInstances;
     
     /**
      * The collection plan next action
@@ -169,6 +162,12 @@ public class DunningCollectionPlan extends AuditableEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "collection_plan_last_Action_date")
     private Date collectionPlanLastActionDate;
+    
+    /**
+     * The collection plan days open
+     */
+    @Column(name = "total_dunning_levels")
+    private Integer totalDunningLevels;
 
 	public DunningPolicy getCollectionPlanRelatedPolicy() {
 		return collectionPlanRelatedPolicy;
@@ -312,6 +311,22 @@ public class DunningCollectionPlan extends AuditableEntity {
 
 	public void setCollectionPlanLastActionDate(Date collectionPlanLastActionDate) {
 		this.collectionPlanLastActionDate = collectionPlanLastActionDate;
+	}
+
+	public List<DunningLevelInstance> getDunningLevelInstances() {
+		return dunningLevelInstances;
+	}
+
+	public void setDunningLevelInstances(List<DunningLevelInstance> dunningLevelInstances) {
+		this.dunningLevelInstances = dunningLevelInstances;
+	}
+
+	public Integer getTotalDunningLevels() {
+		return totalDunningLevels;
+	}
+
+	public void setTotalDunningLevels(Integer totalDunningLevels) {
+		this.totalDunningLevels = totalDunningLevels;
 	}
     
 }

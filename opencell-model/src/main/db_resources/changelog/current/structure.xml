@@ -11246,6 +11246,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="collection_plan_next_Action_date" type="datetime" />
             <column name="collection_plan_last_action" type="varchar(255)" />
             <column name="collection_plan_last_Action_date" type="datetime" />
+            <column name="total_dunning_levels" type="int4" />
             
             
         </createTable>
