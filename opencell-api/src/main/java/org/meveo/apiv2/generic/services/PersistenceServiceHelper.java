@@ -1,18 +1,11 @@
 package org.meveo.apiv2.generic.services;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Function;
-
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.base.PersistenceService;
-import org.reflections.Reflections;
+
+import java.util.function.Function;
 
 /**
  * Helper class for entities and core persistence services.
@@ -20,59 +13,19 @@ import org.reflections.Reflections;
 public final class PersistenceServiceHelper {
 
     /**
-	 * @param entityClass
-	 * @return
-	 */
-	public static PersistenceService getPersistenceService(Class entityClass) {
-		return getPersistenceService(entityClass, null);
-	}
-	
-    /**
      * Get a persistence service for an entity class.
      * If it doesn't exist then get {@link BaseEntityService}
      *
      * @param entityClass entity class
      * @return corresponding entity's persistence service
      */
-    public static PersistenceService getPersistenceService(Class entityClass, PaginationConfiguration searchConfig) {
-        Class clazz = entityClass;
-        if(Modifier.isAbstract(clazz.getModifiers()) && searchConfig!=null && searchConfig.getFilters()!=null) {
-        	final Set<String> filterKeys = searchConfig.getFilters().keySet();
-			if(!allFieldsExistsOnClass(clazz, filterKeys)) {
-	        	Reflections reflections = new Reflections(clazz);
-	        	Set<Class> classes = reflections.getSubTypesOf(clazz);
-	        	for(Class subclass : classes) {
-	        		if(allFieldsExistsOnClass(subclass, filterKeys)) {
-	        			clazz = subclass;
-	        		}
-	        	}
-			}
-        }
-		PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(clazz.getName() + "Service");
+    public static PersistenceService getPersistenceService(Class entityClass) {
+        PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
         if(serviceInterface == null){
             serviceInterface = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
             ((BaseEntityService) serviceInterface).setEntityClass(entityClass);
         }
         return serviceInterface;
-    }
-    
-    /**
-	 * @param subclass
-	 * @param filterKeys
-	 * @return
-	 */
-	private static boolean allFieldsExistsOnClass(Class clazz, Set<String> filterKeys) {
-		final Set<Field> allFields = listAllFields(clazz);
-		return allFields.containsAll(filterKeys);
-	}
-
-	private static Set<Field> listAllFields(Class clazz) {
-        Set<Field> fields = new HashSet<Field>();
-        while (clazz != null) {
-            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            clazz = clazz .getSuperclass();
-        }
-        return fields;
     }
 
     /**
@@ -86,7 +39,7 @@ public final class PersistenceServiceHelper {
         return getPersistenceService(GenericHelper.getEntityClass(entityName));
     }
 
-	/**
+    /**
      * Get the function that represent {@link #getPersistenceService(Class)}
      * to use in lambda expressions
      *
