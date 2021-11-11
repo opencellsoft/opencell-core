@@ -1,15 +1,16 @@
 package org.meveo.apiv2.generic.services;
 
+import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;
 import org.meveo.apiv2.generic.security.interceptor.UserPermissionCheckInterceptor;
 import org.meveo.model.IEntity;
-
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import java.util.List;
-
-import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
 
 
 /**
@@ -32,14 +33,14 @@ public class GenericApiPersistenceDelegate {
      * @return list of entities wrapped in {@link SearchResult} object
      */
     public SearchResult list(Class entityClass, PaginationConfiguration searchConfig) {
-        List entityList = getPersistenceService(entityClass).list(searchConfig);
+        List entityList = getPersistenceService(entityClass, searchConfig).list(searchConfig);
         long count = this.count(entityClass, searchConfig);
 
         SearchResult searchResult = new SearchResult(entityList, count);
         return searchResult;
     }
 
-    /**
+	/**
      * Get total count of entities
      *
      * @param entityClass entity class to count

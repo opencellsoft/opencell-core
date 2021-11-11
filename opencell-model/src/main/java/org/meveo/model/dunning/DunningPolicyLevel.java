@@ -53,12 +53,6 @@ public class DunningPolicyLevel extends AuditableEntity {
     @JoinColumn(name = "collection_plan_status_id", referencedColumnName = "id")
      private DunningCollectionPlanStatus collectionPlanStatus;
 
-    /**
-     * The invoice dunning status
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_dunning_statuses_id", referencedColumnName = "id")
-     private DunningInvoiceStatus invoiceDunningStatuses;
 
     public Integer getSequence() {
         return sequence;
@@ -82,14 +76,6 @@ public class DunningPolicyLevel extends AuditableEntity {
 
     public void setCollectionPlanStatus(DunningCollectionPlanStatus collectionPlanStatus) {
         this.collectionPlanStatus = collectionPlanStatus;
-    }
-
-    public DunningInvoiceStatus getInvoiceDunningStatuses() {
-        return invoiceDunningStatuses;
-    }
-
-    public void setInvoiceDunningStatuses(DunningInvoiceStatus invoiceDunningStatuses) {
-        this.invoiceDunningStatuses = invoiceDunningStatuses;
     }
 
     public DunningPolicy getDunningPolicy() {

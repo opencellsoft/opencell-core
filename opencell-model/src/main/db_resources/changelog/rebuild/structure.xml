@@ -306,7 +306,6 @@
 	    <createSequence sequenceName="collection_plan_status_seq" startValue="1" />
         <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
     	<createSequence sequenceName="accounting_period_seq" startValue="1" />
-    	<createSequence sequenceName="dunning_collection_plan_seq" startValue="1" />
     </changeSet>
 
 
@@ -10914,9 +10913,10 @@
             <column name="status" type="varchar(50)" >
             	<constraints nullable="false" />
             </column>
-            <column name="context" type="varchar(255)">
+            <column name="description" type="varchar(255)">
             	<constraints nullable="false" />
             </column>
+            <column name="color_code" type="varchar(50)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>

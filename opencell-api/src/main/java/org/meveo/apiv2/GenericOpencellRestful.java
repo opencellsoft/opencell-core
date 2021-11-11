@@ -38,7 +38,14 @@ import org.meveo.apiv2.catalog.resource.PricePlanMatrixResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
-import org.meveo.apiv2.dunning.impl.*;
+import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningAgentResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPauseReasonsResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPaymentRetryResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningPolicyResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningSettingsResourceImpl;
+import org.meveo.apiv2.dunning.impl.DunningStopReasonsResourceImpl;
 import org.meveo.apiv2.dunning.template.DunningTemplateResourceImpl;
 import org.meveo.apiv2.finance.impl.ReportingResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
@@ -96,32 +103,33 @@ public class GenericOpencellRestful extends Application {
     }
 
     @Override
-	public Set<Class<?>> getClasses() {
-		Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class,
-				NotYetImplementedResource.class, NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
-				MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
-				EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class,
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class,
+                NotYetImplementedResource.class, NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
+                MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
+                EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class,
                 EntityDoesNotExistsExceptionMapper.class,
                 OpenApiResource.class, DocumentResourceImpl.class,
-				GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
-				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class, ReportingResourceImpl.class,
-				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
-				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
-				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class,
-				DunningSettingsResourceImpl.class, DunningLevelResourceImpl.class ,DunningActionImpl.class,
-				QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
-				DunningAgentResourceImpl.class, CollectionPlanStatusResourceImpl.class,
-                StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class, DunningInvoiceStatusResourceImpl.class,
-                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class, RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class , DunningCollectionPlanResourceImpl.class)		        .collect(Collectors.toSet());
-		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
-			resources.add(GenericApiLoggingFilter.class);
-			log.info(
-					"generic api requests logging is enabled, to disable logging for generic api request, put {} to false",
-					GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
-		}
-		log.info("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
-		return resources;
-	}
+                GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
+                OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class, ReportingResourceImpl.class,
+                ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
+                DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, RefundResourceImpl.class, ValidationExceptionMapper.class,
+                BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class, AccountsManagementResourceImpl.class,
+                DunningSettingsResourceImpl.class, DunningLevelResourceImpl.class ,DunningActionImpl.class,
+                QuoteOfferResourceImpl.class, ConflictExceptionMapper.class, UnprocessableEntityExceptionMapper.class, AccountReceivableResourceImpl.class,
+                DunningAgentResourceImpl.class, CollectionPlanStatusResourceImpl.class,
+                StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class,
+                DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class, RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class)
+                .collect(Collectors.toSet());
+        if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
+            resources.add(GenericApiLoggingFilter.class);
+            log.info(
+                    "generic api requests logging is enabled, to disable logging for generic api request, put {} to false",
+                    GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
+        }
+        log.info("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
+        return resources;
+    }
 
     private void loadVersionInformation() {
         try {
