@@ -23,6 +23,7 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 
@@ -109,12 +110,20 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 				}
 				PricePlanMatrixColumn pricePlanMatrixColumn = PricePlanMatrixColumnList.get(0);
 				ColumnTypeEnum columnType;
-				if (column.contains("|")) {
-					 columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(true);
+				
+				columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(false);
+				
+				AttributeTypeEnum attributeType = pricePlanMatrixColumn.getAttribute().getAttributeType();
+				
+				if (attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_TEXT)
+						|| attributeType.equals(AttributeTypeEnum.LIST_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_TEXT)) {
+					columns.add(column+"|List");
+					
 				}else {
-					 columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(false);
+					columns.add(column+"|"+columnType.toString());
 				}
-				columns.add(column+"|"+columnType.toString());
+				
+				
 			}else {
 				columns.add(column);
 			}
@@ -172,6 +181,11 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
 						pricePlanMatrixValueDto.setFromDoubleValue(nextLine[j].split("\\|")[0].isEmpty() ? null : Double.parseDouble(nextLine[j].split("\\|")[0]));
 						pricePlanMatrixValueDto.setToDoubleValue(nextLine[j].split("\\|").length>1 ? Double.parseDouble(nextLine[j].split("\\|")[1]) : null);
+						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
+						break;
+					case "List":
+						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
+						pricePlanMatrixValueDto.setStringValue(nextLine[j].replace("\\|", ";"));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					default:

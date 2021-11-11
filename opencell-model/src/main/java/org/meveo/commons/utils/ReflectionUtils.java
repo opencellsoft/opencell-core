@@ -537,29 +537,33 @@ public class ReflectionUtils {
                     return null;
                 }
             }
-		} else {
-			boolean found = false;
-			if (trySubclass && Modifier.isAbstract(c.getModifiers())) {
-				Reflections reflections = new Reflections(c);
-				for (Class subclass : reflections.getSubTypesOf(c)) {
-					try {
-						field = subclass.getDeclaredField(fieldName);
-						found = true;
-						break;
-					} catch (NoSuchFieldException e) {
-					}
-				}
-			}
-
-			while (!found && c != null) {
-				try {
-					field = c.getDeclaredField(fieldName);
-					found = true;
-				} catch (NoSuchFieldException e) {
-						c = c.getSuperclass();
-				}
-			}
-		}
+        } else {
+        	boolean found=false;
+        	if(trySubclass && Modifier.isAbstract(c.getModifiers())) {
+	        	Reflections reflections = new Reflections(c);
+	        	for(Class subclass : reflections.getSubTypesOf(c)) {
+	        		try {
+	                    field = subclass.getDeclaredField(fieldName);
+	                    found=true;
+	                    break;
+	                } catch (NoSuchFieldException e) {
+	                }
+	        	}
+        	}
+        	
+        	while(!found) {
+        		try {
+                    // log.debug("get declared field {}",fieldName);
+                    field = c.getDeclaredField(fieldName);
+                    found=true;
+                } catch (NoSuchFieldException e) {
+                    // log.debug("No field {} in {} might be in super {} ", fieldName, c, c.getSuperclass());
+                    if (field == null && c.getSuperclass() != null) {
+                        c=c.getSuperclass();
+                    }
+                }
+        	}
+        }
         return field;
     }
 

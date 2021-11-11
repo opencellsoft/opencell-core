@@ -2,14 +2,13 @@ package org.meveo.api.cpq;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
@@ -24,7 +23,6 @@ import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -36,7 +34,6 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
-import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
@@ -252,13 +249,12 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		try {
 			attributeService.remove(attribute);
 			attributeService.commit();
-		}catch(Exception e) {
-			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+		} catch(Exception e) {
+			if (ExceptionUtils.indexOfThrowable(e, ConstraintViolationException.class) > -1) {
 				throw new DeleteReferencedEntityException(Attribute.class, code);
 			}
 			throw new MeveoApiException(e.getMessage());
 		}
-
 	}
 
 	@Override

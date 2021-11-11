@@ -5076,6 +5076,8 @@
             <column name="gdpr_config_id" type="bigint" />
             <column name="payment_deferral" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="maximum_delay" type="int4" />
+			<column name="maximum_deferral_per_invoice" type="int4" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -16676,6 +16678,8 @@
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
     <changeSet id="INTRD-2418_20211105" author="TarikFA." />
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889"/>
+    <changeSet id="#INTRD-1419_20211108" author="HHanine"/>
+    <changeSet id="#INTRD-2800_04112021" author="AbdelkaderBouazza"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
