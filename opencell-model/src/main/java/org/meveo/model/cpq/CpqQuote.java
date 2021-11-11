@@ -79,6 +79,7 @@ public class CpqQuote extends BusinessEntity implements IBillableEntity  {
 		//to move to quote version
 		this.validity = copy.validity;
 		this.orderInvoiceType = copy.orderInvoiceType;
+		this.userAccount=copy.userAccount;
 	}
 	/**
 	 * seller
