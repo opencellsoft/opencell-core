@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
@@ -18,6 +17,7 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 
 	@Inject
 	private DunningCollectionPlanStatusService dunningCollectionPlanStatusService;
+
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 
@@ -63,11 +63,14 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 		if (collectionPlan == null) {
 			throw new BadRequestException(NO_COLLECTION_PLAN_STATUS_FOUND + id);
 		}
-		if (baseEntity.getContext() != null) {
-			collectionPlan.setContext(baseEntity.getContext());
+		if (Strings.isNotEmpty(baseEntity.getDescription())) {
+			collectionPlan.setDescription(baseEntity.getDescription());
 		}
-		if (!Strings.isEmpty(baseEntity.getStatus())) {
+		if (Strings.isNotEmpty(baseEntity.getStatus())) {
 			collectionPlan.setStatus(baseEntity.getStatus());
+		}
+		if (Strings.isNotEmpty(baseEntity.getColorCode())) {
+		    collectionPlan.setColorCode(baseEntity.getColorCode());
 		}
 		dunningCollectionPlanStatusService.update(collectionPlan);
 		return Optional.of(collectionPlan);
