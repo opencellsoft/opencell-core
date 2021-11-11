@@ -12,7 +12,7 @@
     }],
     "info": {
       "version": "1.0",
-      "title": "Opencell OpenApi definition",
+      "title": "Opencell OpenApi definition V2",
       "description": "This is an Opencell Restful API server",
       "termsOfService": "http://opencell.com/terms/",
       "contact": {
