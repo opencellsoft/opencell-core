@@ -62,7 +62,7 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
         Map<String, PathItem> MAP_SWAGGER_PATHS = new Gson().fromJson(jsonApiStd, new TypeToken<Map<String, PathItem>>(){}.getType());
 
 
-        OpenAPI oasRestApi = new OpenAPI().info(new Info().title("Opencell RESTful APIv1"));
+        OpenAPI oasRestApi = new OpenAPI().info(new Info().title("Opencell OpenApi definition V1"));
         SwaggerConfiguration oasRestConfig = new SwaggerConfiguration()
                 .openAPI(oasRestApi)
                 .prettyPrint(true)
