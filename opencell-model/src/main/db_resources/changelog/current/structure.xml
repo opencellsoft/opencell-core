@@ -11265,6 +11265,20 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+      <changeSet id="INTRD-2959_11082021" author="Mbarek-Ay">
+     <addColumn tableName="cpq_quote">
+            <column name="user_account_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+                                 
+      <addColumn tableName="quote_offer">
+      <column name="user_account_id" type="bigint" />
+      </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
+    </changeSet>
 
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889">
         <addColumn tableName="cat_charge_template">
