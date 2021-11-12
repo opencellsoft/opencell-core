@@ -61,6 +61,8 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     private String mode;
 
     private DualListModel<PaymentMethodEnum> paymentMethodsModel;
+    
+    private boolean deduplicatedKeyEl;
 
     public ProviderBean() {
         super(Provider.class);
@@ -160,4 +162,12 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     public void setPaymentMethodsModel(DualListModel<PaymentMethodEnum> paymentMethodsModel) {
         this.paymentMethodsModel = paymentMethodsModel;
     }
+
+	/**
+	 * @return the deduplicatedKeyEl
+	 */
+	public boolean isDeduplicatedKeyEl() {
+		deduplicatedKeyEl = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("mediation.api.deduplicationKeyEL", "false"));
+		return deduplicatedKeyEl;
+	}
 }

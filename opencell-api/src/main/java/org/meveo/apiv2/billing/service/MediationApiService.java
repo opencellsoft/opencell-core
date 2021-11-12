@@ -30,6 +30,7 @@ import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
+import org.meveo.service.medina.impl.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,12 @@ public class MediationApiService {
                 if (cdr == null) {
                     throw new BusinessException("Failed to process a CDR line: " + cdrLine);
                 }
+
+            	if(cdrService.isCDRExistByOriginRecord(cdr.getOriginRecord())) {
+            		cdr.setRejectReason("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist");
+            		cdr.setRejectReasonException(new BusinessException("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist"));
+            	}
+            	
                 if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr.getLine(), cdr.getRejectReason());
 
