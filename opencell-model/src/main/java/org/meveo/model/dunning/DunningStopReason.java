@@ -24,7 +24,9 @@ import org.meveo.model.AuditableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "dunning_stop_reasons_seq") })
 @NamedQueries({
-		@NamedQuery(name = "DunningStopReasons.findByCodeAndDunningSettingCode", query = "FROM DunningStopReason d where d.stopReason = :stopReason and d.dunningSettings.code = :dunningSettingsCode") })
+		@NamedQuery(name = "DunningStopReason.findByStopReason", query = "FROM DunningStopReason d where d.stopReason = :stopReason"),
+		@NamedQuery(name = "DunningStopReason.findByCodeAndDunningSettingCode", query = "FROM DunningStopReason d where d.stopReason = :stopReason and d.dunningSettings.code = :dunningSettingsCode")
+	})
 public class DunningStopReason extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

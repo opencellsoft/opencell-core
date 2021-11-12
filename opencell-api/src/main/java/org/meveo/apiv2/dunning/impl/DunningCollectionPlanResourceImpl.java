@@ -21,15 +21,14 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
     private DunningCollectionPlanApiService dunningCollectionPlanApiService;
 
     @Override
-    public Response renew(Long id, DunningCollectionPlanInput dunningCollectionPlan) {
-        DunningCollectionPlan renewedCollectionPlan = dunningCollectionPlanApiService.renew(id, dunningCollectionPlan).get();
-        return Response.created(getUriBuilderFromResource(DunningCollectionPlanResource.class, renewedCollectionPlan.getId()).build())
-                .entity(toResourceOrderWithLink(collectionPlanMapper.toResource(renewedCollectionPlan)))
+    public Response switchCollectionPlan(Long collectionPlanId, DunningCollectionPlanInput dunningCollectionPlanInput) {
+        DunningCollectionPlan newCollectionPlan = dunningCollectionPlanApiService.switchCollectionPlan(collectionPlanId, dunningCollectionPlanInput).get();
+        return Response.created(getUriBuilderFromResource(DunningCollectionPlanResource.class, newCollectionPlan.getId()).build())
+                .entity(toResourceOrderWithLink(collectionPlanMapper.toResource(newCollectionPlan)))
                 .build();
     }
 
-    private org.meveo.apiv2.dunning.DunningCollectionPlan toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningCollectionPlan
-                                                                                          dunningCollectionPlan) {
+    private org.meveo.apiv2.dunning.DunningCollectionPlan toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningCollectionPlan dunningCollectionPlan) {
         return ImmutableDunningCollectionPlan.copyOf(dunningCollectionPlan)
                 .withLinks(
                         new LinkGenerator.SelfLinkGenerator(DunningSettingResource.class)
