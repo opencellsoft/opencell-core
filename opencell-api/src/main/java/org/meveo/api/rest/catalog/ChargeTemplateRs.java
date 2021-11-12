@@ -20,6 +20,7 @@ package org.meveo.api.rest.catalog;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -110,5 +111,18 @@ public interface ChargeTemplateRs extends IBaseRs {
 		tags = {"ChargeTemplates" }, description = "update charge template status for a given code", operationId = "PUT_ChargeTemplate_chargeTemplates_{chargeTemplateCode}", 
 		responses = {@ApiResponse(description = "charge template", content = @Content(schema = @Schema(implementation = GetChargeTemplateResponseDto.class))) })
 	ActionStatus updateStatus(@PathParam("chargeTemplateCode") String chargeTemplateCode, @PathParam("status") String status);
+
+	/**
+	 * Duplicate charge template
+	 *
+	 * @param chargeTemplateCode The charge template's code
+	 * @return action status
+	 */
+	@POST
+	@Path("/chargeTemplates/{chargeTemplateCode}/duplicate")
+	@Operation(summary = "add duplicate charge template for a given code", 
+		tags = {"ChargeTemplates" }, description = "add duplicate charge template for a given code", operationId = "POST_ChargeTemplate_chargeTemplates_{chargeTemplateCode}", 
+		responses = {@ApiResponse(description = "charge template", content = @Content(schema = @Schema(implementation = GetChargeTemplateResponseDto.class))) })
+	ActionStatus duplicateCharge(@PathParam("chargeTemplateCode") String chargeTemplateCode);
 
 }

@@ -21,15 +21,19 @@ package org.meveo.api.catalog;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -39,6 +43,10 @@ public class GenericChargeTemplateApi extends BaseApi {
 
     @Inject
     private ChargeTemplateServiceAll chargeTemplateService;
+
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     public ChargeTemplateDto find(String chargeTemplateCode) throws MeveoApiException {
         if (StringUtils.isBlank(chargeTemplateCode)) {
@@ -66,4 +74,48 @@ public class GenericChargeTemplateApi extends BaseApi {
     	}
 		chargeTemplateService.updateStatus(chargeTemplate, status);
 	}
+
+	/**
+	 * @param chargeTemplateCode
+	 * @return
+	 */
+	public GetChargeTemplateResponseDto duplicateCharge(String chargeTemplateCode) {
+		GetChargeTemplateResponseDto getChargeTemplateResponseDto = new GetChargeTemplateResponseDto();
+		ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(chargeTemplateCode);
+		
+		if(chargeTemplate ==null) {
+    		throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
+    	}
+
+		//price Plan to be duplicated
+		ScriptInstance duplicateRatingScript = null;
+		
+        if (chargeTemplate.getRatingScript() != null) {
+        	duplicateRatingScript = chargeTemplate.getRatingScript();
+        	duplicateRatingScript.setId(null);
+            scriptInstanceService.create(duplicateRatingScript);
+        }
+		
+		
+		//charge Template to be duplicated
+		
+		ChargeTemplate duplicateChargeTemplate = null;
+		
+		try {
+			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
+			duplicateChargeTemplate.setId(null);
+			duplicateChargeTemplate.setRatingScript(duplicateRatingScript);
+			
+			chargeTemplateService.create(duplicateChargeTemplate);
+			
+			getChargeTemplateResponseDto.setChargeTemplate(new ChargeTemplateDto(duplicateChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(duplicateChargeTemplate)));
+
+			
+		} catch (Exception e) {
+            log.error("Error when trying to cloneBean quoteOffer : ", e);
+        }
+		
+		return getChargeTemplateResponseDto;
+	}
+
 }

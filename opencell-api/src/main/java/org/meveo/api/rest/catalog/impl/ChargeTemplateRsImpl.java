@@ -72,4 +72,17 @@ public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
         }
         return result;
     }
+
+    @Override
+    public ActionStatus duplicateCharge(String chargeTemplateCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+        	chargeTemplateApi.duplicateCharge(chargeTemplateCode).setActionStatus(result);;
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
 }
