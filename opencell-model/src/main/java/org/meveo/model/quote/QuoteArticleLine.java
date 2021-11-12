@@ -173,31 +173,18 @@ public class QuoteArticleLine extends AuditableEntity {
 	public void setQuoteVersion(QuoteVersion quoteVersion) {
 		this.quoteVersion = quoteVersion;
 	}
-	
-	
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof QuoteArticleLine)) return false;
+		QuoteArticleLine that = (QuoteArticleLine) o;
+		return Objects.equals(getId(), that.getId());
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(billableAccount, accountingArticle , quoteLot, quoteProduct, quoteVersion);
-		return result;
+		return Objects.hash(super.hashCode(), getId());
 	}
-	
- 
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		QuoteArticleLine other = (QuoteArticleLine) obj;
-		return Objects.equals(billableAccount, other.billableAccount) && Objects.equals(accountingArticle, other.accountingArticle)
-				&& Objects.equals(quoteLot, other.quoteLot) && Objects.equals(quoteProduct, other.quoteProduct)
-				&& Objects.equals(quoteVersion, other.quoteVersion);
-		}
-	
 }
