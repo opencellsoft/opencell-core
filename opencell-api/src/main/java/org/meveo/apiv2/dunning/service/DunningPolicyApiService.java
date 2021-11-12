@@ -4,8 +4,6 @@ import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.ACTIVE_DUNNING;
-import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,7 +20,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.dunning.*;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningLevel;
+import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.model.dunning.DunningPolicyRule;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -113,7 +115,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     totalDunningLevels++;
                 }
                 if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
-                    if (!DunningCollectionPlanStatusContextEnum.FAILED_DUNNING.equals(policyLevel.getCollectionPlanStatus().getContext())) {
+                    if (policyLevel.getCollectionPlanStatus().getDescription() != null && !policyLevel.getCollectionPlanStatus().getDescription().equals("FAILED_DUNNING")) {
                         throw new BadRequestException("Dunning level creation fails");
                     }
                     if (policyLevel.getSequence() < highestSequence) {
@@ -151,7 +153,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     public void validateActiveDunning(DunningPolicyLevel policyLevel) {
         if (!policyLevel.getDunningLevel().isEndOfDunningLevel() && !policyLevel.getDunningLevel().isReminder()) {
-            if (!policyLevel.getCollectionPlanStatus().getContext().equals("ACTIVE_DUNNING")) {
+            if (policyLevel.getCollectionPlanStatus().getDescription() != null && !policyLevel.getCollectionPlanStatus().getDescription().equals("ACTIVE_DUNNING")) {
                 throw new BadRequestException("Dunning level creation fails");
             }
         }

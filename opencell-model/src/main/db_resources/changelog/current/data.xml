@@ -6477,7 +6477,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Pause"/>
-			<column name="context" value="PAUSED_DUNNING"/>
+			<column name="description" value="PAUSED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -6486,7 +6486,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Stop"/>
-			<column name="context" value="STOPPED_DUNNING"/>
+			<column name="description" value="STOPPED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -6495,7 +6495,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Succès"/>
-			<column name="context" value="SUCCESSFUL_DUNNING"/>
+			<column name="description" value="SUCCESSFUL_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -6504,7 +6504,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Echec"/>
-			<column name="context" value="FAILED_DUNNING"/>
+			<column name="description" value="FAILED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -6513,7 +6513,7 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Actif"/>
-			<column name="context" value="ACTIVE_DUNNING"/>
+			<column name="description" value="ACTIVE_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 	</changeSet>
@@ -7885,4 +7885,49 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<where>id=-10</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-2961_20211109-add-status-color_code" author="AmineBENAICHA">
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#FFA000</column>
+			<where>status='Pause'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#991A12</column>
+			<where>status='Stop'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#1976D2</column>
+			<where>status='Succès'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#F44336</column>
+			<where>status='Echec'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#00C853</column>
+			<where>status='Actif'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-2962_20211110" author="AmineBENAICHA">
+		<insert tableName="dunning_stop_reasons">
+			<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+        	<column name="stop_reason" value="Exclusion" />
+        	<column name="description" value="Client exclu du plan de recouvrement pour raison légitime. A expliciter par l'agent de recouvrement" />
+        	<column name="dunning_settings_id" valueNumeric="1" />
+       	</insert>
+       	<insert tableName="dunning_stop_reasons">
+       		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+        	<column name="stop_reason" value="Changement de politique de recouvrement" />
+        	<column name="description" value="Changement de politique de recouvrement amenant la génération d’un nouveau plan de recouvrement" />
+        	<column name="dunning_settings_id" valueNumeric="1" />
+       	</insert>
+   	</changeSet>
+
 </databaseChangeLog>

@@ -6934,7 +6934,7 @@ public class OrderAdvancement extends ModuleScript {
                     .collect(Collectors.toList());
 
             if (pricesToBill.isEmpty()) {
-                log.info("No order prices to bill related to a one shot charge were found for commercial order: " + commercialOrder.getId());
+                log.info("No order prices to bill related to a one shot charge were found for commercial order: "+ commercialOrder.getId());
                 return;
             }
 
@@ -11283,8 +11283,18 @@ order by date_trunc('month', i.invoice_date) DESC
 	        <column name="maximum_deferral_per_invoice" type="int4" />
 	    </addColumn>
 	</changeSet>
+
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza">
         <dropTable tableName="invoice_dunning_statuses" cascadeConstraints="true"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA">
+		<renameColumn tableName="dunning_collection_plan_statuses"
+			newColumnName="description" oldColumnName="context"
+			columnDataType="varchar(255)" />
+	    <addColumn tableName="dunning_collection_plan_statuses">
+	        <column name="color_code" type="varchar(50)" />
+	    </addColumn>
+	</changeSet>
 
 </databaseChangeLog>

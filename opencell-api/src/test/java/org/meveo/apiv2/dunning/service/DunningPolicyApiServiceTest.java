@@ -74,7 +74,7 @@ public class DunningPolicyApiServiceTest {
 
         DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
         collectionPlanStatus.setId(1L);
-        collectionPlanStatus.setContext(DunningCollectionPlanStatusContextEnum.FAILED_DUNNING);
+        collectionPlanStatus.setDescription("FAILED_DUNNING");
         dunningPolicyLevel.setCollectionPlanStatus(collectionPlanStatus);
 
         DunningPolicyLevel dunningPolicyLevel1 = new DunningPolicyLevel();
