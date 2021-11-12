@@ -19,6 +19,7 @@
 package org.meveo.api.dto.billing;
 
 import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.apiv2.billing.CdrListResult.CdrError;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,7 +40,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * The amount without Tax.
-      */
+     */
     private BigDecimal amountWithoutTax;
     /**
      * The tax amount.
@@ -60,8 +61,23 @@ public class ChargeCDRResponseDto extends BaseResponse {
      */
     private List<WalletOperationDto> walletOperations;
 
+    public ChargeCDRResponseDto() {
+        setActionStatus(null);
+    }
+
+    public ChargeCDRResponseDto(CdrError processingError) {
+        this.error = processingError;
+        setActionStatus(null);
+    }
+
+    /**
+     * CDR processing error
+     */
+    private CdrError error;
+
     /**
      * Gets the amountWithoutTax.
+     * 
      * @return The amount without Tax
      */
     public BigDecimal getAmountWithoutTax() {
@@ -70,6 +86,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the amountWithoutTax.
+     * 
      * @param amountWithoutTax The amount without Tax
      */
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
@@ -78,6 +95,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets the amountTax.
+     * 
      * @return the amountTax
      */
     public BigDecimal getAmountTax() {
@@ -86,6 +104,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the amountTax.
+     * 
      * @param amountTax the amountTax
      */
     public void setAmountTax(BigDecimal amountTax) {
@@ -94,6 +113,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets the amountWithTax.
+     * 
      * @return the amountWithTax.
      */
     public BigDecimal getAmountWithTax() {
@@ -102,6 +122,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the amountWithTax.
+     * 
      * @param amountWithTax the amountWithTax.
      */
     public void setAmountWithTax(BigDecimal amountWithTax) {
@@ -110,6 +131,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets total WO.
+     * 
      * @return total WO
      */
     public Integer getWalletOperationCount() {
@@ -118,6 +140,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets total WO.
+     * 
      * @param walletOperationCount total WO.
      */
     public void setWalletOperationCount(Integer walletOperationCount) {
@@ -125,11 +148,12 @@ public class ChargeCDRResponseDto extends BaseResponse {
     }
 
     /**
-     * Gets  walletOperations list.
+     * Gets walletOperations list.
+     * 
      * @return walletOperations list
      */
     public List<WalletOperationDto> getWalletOperations() {
-        if(walletOperations == null){
+        if (walletOperations == null) {
             walletOperations = new ArrayList<>();
         }
         return walletOperations;
@@ -137,9 +161,24 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the walletOperations.
+     * 
      * @param walletOperations wallet operations list.
      */
     public void setWalletOperations(List<WalletOperationDto> walletOperations) {
         this.walletOperations = walletOperations;
+    }
+
+    /**
+     * @return CDR procesing error
+     */
+    public CdrError getError() {
+        return error;
+    }
+
+    /**
+     * @param error CDR processing error
+     */
+    public void setError(CdrError error) {
+        this.error = error;
     }
 }

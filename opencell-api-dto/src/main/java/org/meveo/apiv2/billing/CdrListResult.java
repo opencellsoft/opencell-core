@@ -9,10 +9,33 @@ import org.meveo.api.dto.BaseEntityDto;
 public class CdrListResult extends BaseEntityDto {
     private static final long serialVersionUID = 1026307230457632555L;
 
+    /**
+     * Processing mode
+     */
     private RegisterCdrListModeEnum mode;
-    private Statistics statistics;
+
+    /**
+     * Processing statistics
+     */
+    private Statistics statistics = null;
+
+    /**
+     * A list of EDR ids that were created
+     */
     private List<Long> edrIds = new ArrayList<>();
+
+    /**
+     * CDR processing errors
+     */
     private List<CdrError> errors = new ArrayList<>();
+
+    public CdrListResult() {
+    }
+
+    public CdrListResult(RegisterCdrListModeEnum mode, int total) {
+        this.mode = mode;
+        this.statistics = new Statistics(total, 0, 0);
+    }
 
     public static class Statistics implements Serializable {
         private static final long serialVersionUID = -199653879663048902L;
@@ -51,6 +74,14 @@ public class CdrListResult extends BaseEntityDto {
         public void setFail(int fail) {
             this.fail = fail;
         }
+
+        public synchronized void addSuccess() {
+            this.success++;
+        }
+
+        public synchronized void addFail() {
+            this.fail++;
+        }
     }
 
     public static class CdrError implements Serializable {
@@ -59,6 +90,10 @@ public class CdrListResult extends BaseEntityDto {
         private String errorCode;
         private String errorMessage;
         private String cdr;
+
+        public CdrError() {
+
+        }
 
         public CdrError(String errorCode, String errorMessage, String cdr) {
             super();

@@ -63,6 +63,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;

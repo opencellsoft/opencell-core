@@ -231,6 +231,7 @@ public class MediationApi extends BaseApi {
         result.setAmountTax(amountTax);
         result.setAmountWithoutTax(amountWithoutTax);
         result.setAmountWithTax(amountWithTax);
+        result.setActionStatus(null);
         return result;
     }
 
