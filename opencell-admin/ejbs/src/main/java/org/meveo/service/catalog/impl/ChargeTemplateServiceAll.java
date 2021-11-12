@@ -22,9 +22,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -47,5 +49,23 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 		QueryBuilder qb=new QueryBuilder(this.getEntityClass(),"c");
 		qb.addCriterionEntity("invoiceSubCategory", invoiceSubCategory);
 		return qb.find(getEntityManager());
+	}
+
+	/**
+	 * @param chargeTemplate
+	 * @param stringStatus
+	 * @return
+	 */
+	public void updateStatus(ChargeTemplate chargeTemplate, String stringStatus) {
+		ChargeTemplateStatusEnum status= ChargeTemplateStatusEnum.valueOf(stringStatus);
+		final ChargeTemplateStatusEnum oldStatus = chargeTemplate.getStatus();
+		if((ChargeTemplateStatusEnum.DRAFT.equals(oldStatus) && ChargeTemplateStatusEnum.ACTIVE.equals(status)) 
+			||(ChargeTemplateStatusEnum.ACTIVE.equals(oldStatus) && ChargeTemplateStatusEnum.ARCHIVED.equals(status))
+			||(ChargeTemplateStatusEnum.ARCHIVED.equals(oldStatus) && ChargeTemplateStatusEnum.DRAFT.equals(status))) {
+			chargeTemplate.setStatus(status);
+			update(chargeTemplate);
+		} else {
+			throw new BusinessApiException("Could not change status from '"+oldStatus+"' to '"+status+"'");
+		}
 	}
 }

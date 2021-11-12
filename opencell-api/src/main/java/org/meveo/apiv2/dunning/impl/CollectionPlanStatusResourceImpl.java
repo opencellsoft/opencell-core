@@ -47,6 +47,4 @@ public class CollectionPlanStatusResourceImpl implements CollectionPlanStatusRes
 				                            .build()
 						);
 	}
-
-
 }

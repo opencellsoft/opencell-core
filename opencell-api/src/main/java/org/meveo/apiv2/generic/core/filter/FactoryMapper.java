@@ -30,7 +30,7 @@ public interface FactoryMapper {
             return resolveFilterMapperType(property, value, clazz, cetCode, entityManagerResolver);
         }
         try {
-            Field field = ReflectionUtils.getFieldThrowException(clazz, property);
+            Field field = ReflectionUtils.getFieldThrowException(clazz, property, true);
             if(field != null){
                 if(Collection.class.isAssignableFrom(field.getType())){
                     Type type = field.getGenericType();

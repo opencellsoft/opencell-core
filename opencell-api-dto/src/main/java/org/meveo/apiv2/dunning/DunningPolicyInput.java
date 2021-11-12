@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.dunning.DunningDetermineLevelBy;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -32,11 +33,11 @@ public interface DunningPolicyInput extends Resource {
 
     @Schema(description = "Min balance trigger currency")
     @Nullable
-    List<String> getMinBalanceTriggerCurrency();
+    Resource getMinBalanceTriggerCurrency();
 
     @Schema(description = "Determine level by")
     @Nullable
-    List<String> getDetermineLevelBy();
+    DunningDetermineLevelBy getDetermineLevelBy();
 
     @Nullable
     @Schema(description = "include due invoices in threshold")
@@ -69,7 +70,7 @@ public interface DunningPolicyInput extends Resource {
 
     @Schema(description = "Dunning policy levels")
     @Nullable
-    List<DunningPolicyLevel> getDunningLevels();
+    List<Resource> getDunningPolicyLevels();
 
     @Schema(description = "Dunning policy rules")
     @Nullable

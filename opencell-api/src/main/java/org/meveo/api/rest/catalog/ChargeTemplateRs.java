@@ -18,25 +18,24 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * @author Edward P. Legaspi
@@ -97,5 +96,19 @@ public interface ChargeTemplateRs extends IBaseRs {
 					)}
 	)
 	GetChargeTemplateResponseDto findV2(@PathParam("chargeTemplateCode") String chargeTemplateCode);
+	
+	/**
+	 * Update charge template status
+	 *
+	 * @param chargeTemplateCode The charge template's code
+	 * @param status             The new charge template's status
+	 * @return action status
+	 */
+	@PUT
+	@Path("/chargeTemplates/{chargeTemplateCode}/status/{status}")
+	@Operation(summary = "update charge template status for a given code", 
+		tags = {"ChargeTemplates" }, description = "update charge template status for a given code", operationId = "PUT_ChargeTemplate_chargeTemplates_{chargeTemplateCode}", 
+		responses = {@ApiResponse(description = "charge template", content = @Content(schema = @Schema(implementation = GetChargeTemplateResponseDto.class))) })
+	ActionStatus updateStatus(@PathParam("chargeTemplateCode") String chargeTemplateCode, @PathParam("status") String status);
 
 }

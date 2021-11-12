@@ -13,7 +13,7 @@
         	<column name="uuid" value="product activation date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-1"></column>
-        	<column name="code" value="product activation date"></column>
+        	<column name="code" value="product_activation_date"></column>
         	<column name="description" value="Product activation date"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -26,7 +26,7 @@
         	<column name="uuid" value="product quantity" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-2"></column>
-        	<column name="code" value="product quantity"></column>
+        	<column name="code" value="product_quantity"></column>
         	<column name="description" value="Product quantity"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -39,7 +39,7 @@
         	<column name="uuid" value="usage date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-3"></column>
-        	<column name="code" value="usage date"></column>
+        	<column name="code" value="usage_date"></column>
         	<column name="description" value="Usage date"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -52,7 +52,7 @@
         	<column name="uuid" value="usage quantity" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-4"></column>
-        	<column name="code" value="usage quantity"></column>
+        	<column name="code" value="usage_quantity"></column>
         	<column name="description" value="Usage quantity"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -65,7 +65,7 @@
         	<column name="uuid" value="renewal date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-5"></column>
-        	<column name="code" value="renewal date"></column>
+        	<column name="code" value="renewal_date"></column>
         	<column name="description" value="Renewal date"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -78,7 +78,7 @@
         	<column name="uuid" value="delivery date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-6"></column>
-        	<column name="code" value="delivery date"></column>
+        	<column name="code" value="delivery_date"></column>
         	<column name="description" value="Delivery date"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -91,7 +91,7 @@
         	<column name="uuid" value="quote validation date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-7"></column>
-        	<column name="code" value="quote validation date"></column>
+        	<column name="code" value="quote_validation_date"></column>
         	<column name="description" value="Quote validation date"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -104,7 +104,7 @@
         	<column name="uuid" value="subscription date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-8"></column>
-        	<column name="code" value="subscription date"></column>
+        	<column name="code" value="subscription_date"></column>
         	<column name="description" value="Subscription date"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -117,7 +117,7 @@
         	<column name="uuid" value="subscription age months" />
         	<column name="attribute_type" value="INTEGER"></column>
         	<column name="id" valueNumeric="-9"></column>
-        	<column name="code" value="subscription age months"></column>
+        	<column name="code" value="subscription_age_months"></column>
         	<column name="description" value="Subscription age months"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -130,7 +130,7 @@
         	<column name="uuid" value="subscription age days" />
         	<column name="attribute_type" value="INTEGER"></column>
         	<column name="id" valueNumeric="-10"></column>
-        	<column name="code" value="subscription age days"></column>
+        	<column name="code" value="subscription_age_days"></column>
         	<column name="description" value="Subscription age days"></column>
         </insert>
          <insert tableName="cpq_attribute">
@@ -143,7 +143,7 @@
         	<column name="uuid" value="EDR text parameter 1" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-11"></column>
-        	<column name="code" value="EDR text parameter 1"></column>
+        	<column name="code" value="EDR_text_parameter_1"></column>
         	<column name="description" value="EDR text parameter 1"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -156,7 +156,7 @@
         	<column name="uuid" value="EDR text parameter 2" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-12"></column>
-        	<column name="code" value="EDR text parameter 2"></column>
+        	<column name="code" value="EDR_text_parameter_2"></column>
         	<column name="description" value="EDR text parameter 2"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -169,7 +169,7 @@
         	<column name="uuid" value="EDR text parameter 3" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-13"></column>
-        	<column name="code" value="EDR text parameter 3"></column>
+        	<column name="code" value="EDR_text_parameter_3"></column>
         	<column name="description" value="EDR text parameter 3"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -182,7 +182,7 @@
         	<column name="uuid" value="EDR text parameter 4" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-14"></column>
-        	<column name="code" value="EDR text parameter 4"></column>
+        	<column name="code" value="EDR_text_parameter_4"></column>
         	<column name="description" value="EDR text parameter 4"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -195,7 +195,7 @@
         	<column name="uuid" value="EDR text parameter 5" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-15"></column>
-        	<column name="code" value="EDR text parameter 5"></column>
+        	<column name="code" value="EDR_text_parameter_5"></column>
         	<column name="description" value="EDR text parameter 5"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -208,7 +208,7 @@
         	<column name="uuid" value="EDR text parameter 6" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-16"></column>
-        	<column name="code" value="EDR text parameter 6"></column>
+        	<column name="code" value="EDR_text_parameter_6"></column>
         	<column name="description" value="EDR text parameter 6"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -221,7 +221,7 @@
         	<column name="uuid" value="EDR text parameter 7" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-17"></column>
-        	<column name="code" value="EDR text parameter 7"></column>
+        	<column name="code" value="EDR_text_parameter_7"></column>
         	<column name="description" value="EDR text parameter 7"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -234,7 +234,7 @@
         	<column name="uuid" value="EDR text parameter 8" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-18"></column>
-        	<column name="code" value="EDR text parameter 8"></column>
+        	<column name="code" value="EDR_text_parameter_8"></column>
         	<column name="description" value="EDR text parameter 8"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -247,7 +247,7 @@
         	<column name="uuid" value="EDR text parameter 9" />
         	<column name="attribute_type" value="TEXT"></column>
         	<column name="id" valueNumeric="-19"></column>
-        	<column name="code" value="EDR text parameter 9"></column>
+        	<column name="code" value="EDR_text_parameter_9"></column>
         	<column name="description" value="EDR text parameter 9"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -260,7 +260,7 @@
         	<column name="uuid" value="EDR date parameter 1" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-21"></column>
-        	<column name="code" value="EDR date parameter 1"></column>
+        	<column name="code" value="EDR_date_parameter_1"></column>
         	<column name="description" value="EDR date parameter 1"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -273,7 +273,7 @@
         	<column name="uuid" value="EDR date parameter 2" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-22"></column>
-        	<column name="code" value="EDR date parameter 2"></column>
+        	<column name="code" value="EDR_date_parameter_2"></column>
         	<column name="description" value="EDR date parameter 2"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -286,7 +286,7 @@
         	<column name="uuid" value="EDR date parameter 3" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-23"></column>
-        	<column name="code" value="EDR date parameter 3"></column>
+        	<column name="code" value="EDR_date_parameter_3"></column>
         	<column name="description" value="EDR date parameter 3"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -299,7 +299,7 @@
         	<column name="uuid" value="EDR date parameter 4" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-24"></column>
-        	<column name="code" value="EDR date parameter 4"></column>
+        	<column name="code" value="EDR_date_parameter_4"></column>
         	<column name="description" value="EDR date parameter 4"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -312,7 +312,7 @@
         	<column name="uuid" value="EDR date parameter 5" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-25"></column>
-        	<column name="code" value="EDR date parameter 5"></column>
+        	<column name="code" value="EDR_date_parameter_5"></column>
         	<column name="description" value="EDR date parameter 5"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -325,7 +325,7 @@
         	<column name="uuid" value="EDR numeric parameter 1" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-31"></column>
-        	<column name="code" value="EDR numeric parameter 1"></column>
+        	<column name="code" value="EDR_numeric_parameter_1"></column>
         	<column name="description" value="EDR numeric parameter 1"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -338,7 +338,7 @@
         	<column name="uuid" value="EDR numeric parameter 2" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-32"></column>
-        	<column name="code" value="EDR numeric parameter 2"></column>
+        	<column name="code" value="EDR_numeric_parameter_2"></column>
         	<column name="description" value="EDR numeric parameter 2"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -351,7 +351,7 @@
         	<column name="uuid" value="EDR numeric parameter 3" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-33"></column>
-        	<column name="code" value="EDR numeric parameter 3"></column>
+        	<column name="code" value="EDR_numeric_parameter_3"></column>
         	<column name="description" value="EDR numeric parameter 3"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -364,7 +364,7 @@
         	<column name="uuid" value="EDR numeric parameter 4" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-34"></column>
-        	<column name="code" value="EDR numeric parameter 4"></column>
+        	<column name="code" value="EDR_numeric_parameter_4"></column>
         	<column name="description" value="EDR numeric parameter 4"></column>
         </insert>
         <insert tableName="cpq_attribute">
@@ -377,7 +377,7 @@
         	<column name="uuid" value="EDR numeric parameter 5" />
         	<column name="attribute_type" value="NUMERIC"></column>
         	<column name="id" valueNumeric="-35"></column>
-        	<column name="code" value="EDR numeric parameter 5"></column>
+        	<column name="code" value="EDR_numeric_parameter_5"></column>
         	<column name="description" value="EDR numeric parameter 5"></column>
         </insert>
     </changeSet>
@@ -8391,7 +8391,7 @@
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Pause"/>
-			<column name="context" value="PAUSED_DUNNING"/>
+			<column name="description" value="PAUSED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -8400,7 +8400,7 @@
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Stop"/>
-			<column name="context" value="STOPPED_DUNNING"/>
+			<column name="description" value="STOPPED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -8409,7 +8409,7 @@
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Succès"/>
-			<column name="context" value="SUCCESSFUL_DUNNING"/>
+			<column name="description" value="SUCCESSFUL_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -8418,7 +8418,7 @@
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Echec"/>
-			<column name="context" value="FAILED_DUNNING"/>
+			<column name="description" value="FAILED_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 		<insert tableName="dunning_collection_plan_statuses">
@@ -8427,7 +8427,7 @@
 			<column name="creator" value="OPENCELL.ADMIN"/>
 			<column name="version" valueNumeric="1"/>
 			<column name="status" value="Actif"/>
-			<column name="context" value="ACTIVE_DUNNING"/>
+			<column name="description" value="ACTIVE_DUNNING"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
     
@@ -8443,11 +8443,1172 @@
 			<column name="description" value="dunning action" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="INTRD-2634_20211027" author="YoussefIZEM">
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-1" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="ENG - B2B relance 1 (J+15)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="htmlcontent">
+                <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+<p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-2" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="ENG - B2B relance 4 (J+35)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="LETTER" />
+            <column name="trading_language_id" value="-1" />
+            <column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.description} / #{customerAccount.name.firstName}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, on #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+<p>You will find a copy of the invoice attached to this letter.</p>
+<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.</p>
+<p>Signature</p>
+<p>Your name and surname</p>
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-3" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="ENG - B2C relance 1 (J+1)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="htmlcontent">
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+<p>Best regards,</p>	
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-4" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="ENG - B2C relance 1 (J+7)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="htmlcontent">
+			    <![CDATA[
+<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>We are following up on our email dated on the #{dunningCollectionPlan.lastActionDate} where we informed you that invoice #{invoice.invoiceNumber} was overdue for payment since #{invoice.dueDate}. We regret to inform you that we have not yet received payment from you for this matter.</p>
+<p>We ask that you proceed with the payment of the invoice as soon as possible and invite you to contact our customer support if you have any difficulties in paying this invoice.</p>
+<p>You will find a copy of the invoice attached.</p>
+<p>Kind regards,</p>
+                ]]>			
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-5" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="ENG - B2C relance 4 (J+14)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="LETTER" />
+            <column name="trading_language_id" value="-1" />
+            <column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.legalEntityType.code}   #{customerAccount.description}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, on #{day.date}</p> 
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+<p>You will find a copy of the invoice attached to this letter.</p>
+<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards. </p>
+<p>Signature</p>
+<p>Your name and surname</p>
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-6" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FR - B2B relance 1 (J+15)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="htmlcontent">
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+<p>Bien à vous,</p>
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-7" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FR - B2B relance 4 (J+35)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="LETTER" />
+            <column name="trading_language_id" value="-2" />
+            <column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.description} / #{customerAccount.name.firstName}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, le #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+<p>Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+<p>Company Signature</p>
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-8" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FR - B2C relance 1 (J+1)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="htmlcontent">
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+<p>Bien à vous,</p>
+                ]]>            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-9" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FR - B2C relance 2 (J+7)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="htmlcontent">
+			    <![CDATA[
+<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
+<p>Nous faisons suite à notre courriel en date du #{dunningCollectionPlan.lastActionDate}  où nous vous informions que votre facture #{invoice.invoiceNumber} était en retard de paiement depuis le #{invoice.dueDate}. Nous sommes dans le regret de vous informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet.</p> 
+<p>Nous vous demandons de procéder au règlement de la facture dans les meilleurs délais et nous invitons à contacter au plus vite notre assistance client si vous éprouvez des difficultés à régler cette facture.</p>
+<p>Vous trouverez à nouveau une copie de la facture en pièce jointe.</p>
+<p>Bien à vous,</p>
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-10" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="FR - B2C relance 4 (J+14)" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="LETTER" />
+            <column name="trading_language_id" value="-2" />
+            <column name="htmlcontent">
+			    <![CDATA[
+#{billingAccount.description}<br>
+#{billingAccount.address.address1}<br>
+#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
+#{billingAccount.contactInformation.phone}<br>
+<br>
+#{customerAccount.legalEntityType.code} , #{customerAccount.description}<br>
+#{customerAccount.address.address1}<br>
+#{customerAccount.address.zipCode}<br>
+#{customerAccount.address.city}<br>
+
+<p>#{billingAccount.address.city}, le #{day.date}</p>
+<p>#{customerAccount.legalEntityType.code},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+<p>Company Signature</p>
+                ]]>
+            </column>
+        </insert>
+    </changeSet>
+	
+	<changeSet id="INTRD-2731_20211103" author="AmineBENAICHA">
+
+		<!-- Dunning Policies B2C -->
+		<insert tableName="dunning_policy">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_name" value="Default policy B2C-EN" />
+			<column name="policy_description" value="This is a default policy for B2C" />
+			<column name="min_balance_trigger" valueNumeric="1" />
+			<column name="min_balance_trigger_currency_id" valueNumeric="5" /><!-- € -->
+			<column name="determine_level_by" value="DAYS_OVERDUE" />
+			<column name="policy_priority" valueNumeric="null" />
+			<column name="attach_invoices_to_emails" valueNumeric="1" />
+			<column name="is_active_policy" valueNumeric="1" />
+		</insert>
+		<insert tableName="dunning_policy_rule">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="rule_joint" value="null" />
+			<column name="dunning_policy_id" valueNumeric="-1" />
+		</insert>
+		<insert tableName="dunning_policy_rule_line">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_condition_target" value="IsIndividual" />
+			<column name="policy_condition_operator" value="equals" />
+			<column name="policy_condition_target_value" value="TRUE" />
+			<column name="rule_line_joint" value="null" />
+			<column name="dunning_policy_rule_id" valueNumeric="-1" />
+		</insert>
+
+		<!-- Level 1 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL1" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="1" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Email B2C LVL1" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-3" /><!-- Template name= ENG - B2C relance 1 (J+1) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-1" />
+			<column name="dunning_level_id" valueNumeric="-1" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="1" />
+			<column name="dunning_level_id" valueNumeric="-1" />
+			<column name="dunning_policy_id" valueNumeric="-1" />
+		</insert>
+		
+		<!-- Level 2 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL2" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="7" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Email B2C LVL2" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-4" /><!-- Template name= ENG - B2C relance 2 (J+7) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-2" />
+			<column name="dunning_level_id" valueNumeric="-2" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="2" />
+			<column name="dunning_level_id" valueNumeric="-2" />
+			<column name="dunning_policy_id" valueNumeric="-1" />
+		</insert>
+		
+		<!-- Level 3 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL3" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="10" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Call B2C LVL3" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="CALL" />
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-3" />
+			<column name="dunning_level_id" valueNumeric="-3" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="3" />
+			<column name="dunning_level_id" valueNumeric="-3" />
+			<column name="dunning_policy_id" valueNumeric="-1" />
+		</insert>
+		
+		<!-- Level 4 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL4" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="1" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="14" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-4" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Letter B2C LVL4" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="LETTER" />
+			<column name="action_notification_template_id" valueNumeric="-5" /><!-- Template name= ENG - B2C relance 4 (J+14) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-4" />
+			<column name="dunning_level_id" valueNumeric="-4" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="4" />
+			<column name="dunning_level_id" valueNumeric="-4" />
+			<column name="dunning_policy_id" valueNumeric="-1" />
+		</insert>		
+		<!-- ****************************************** -->
+		<!-- ****************************************** -->
+		<!-- ****************************************** -->
+		<!-- Dunning Policies B2B -->
+		<insert tableName="dunning_policy">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_name" value="Default policy B2B-EN" />
+			<column name="policy_description" value="This is a default policy for B2B" />
+			<column name="min_balance_trigger" valueNumeric="1" />
+			<column name="min_balance_trigger_currency_id" valueNumeric="5" /><!-- € -->
+			<column name="determine_level_by" value="DAYS_OVERDUE" />
+			<column name="policy_priority" valueNumeric="null" />
+			<column name="attach_invoices_to_emails" valueNumeric="1" />
+			<column name="is_active_policy" valueNumeric="1" />
+		</insert>
+		<insert tableName="dunning_policy_rule">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="rule_joint" value="null" />
+			<column name="dunning_policy_id" valueNumeric="-2" />
+		</insert>
+		<insert tableName="dunning_policy_rule_line">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_condition_target" value="IsCompany" />
+			<column name="policy_condition_operator" value="equals" />
+			<column name="policy_condition_target_value" value="TRUE" />
+			<column name="rule_line_joint" value="null" />
+			<column name="dunning_policy_rule_id" valueNumeric="-2" />
+		</insert>
+
+		<!-- Level 1 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-5" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL1B2B" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="15" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-5" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Email B2B LVL1" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-1" /><!-- Template name= ENG - B2B relance 1 (J+15) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-5" />
+			<column name="dunning_level_id" valueNumeric="-5" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="1" />
+			<column name="dunning_level_id" valueNumeric="-5" />
+			<column name="dunning_policy_id" valueNumeric="-2" />
+		</insert>
+		
+		<!-- Level 2 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL2B2B" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="22" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Call B2B LVL2" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="CALL" />
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-6" />
+			<column name="dunning_level_id" valueNumeric="-6" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="2" />
+			<column name="dunning_level_id" valueNumeric="-6" />
+			<column name="dunning_policy_id" valueNumeric="-2" />
+		</insert>
+		
+		<!-- Level 3 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL3B2B" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="27" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Call B2B LVL3" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="CALL" />
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-7" />
+			<column name="dunning_level_id" valueNumeric="-7" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="3" />
+			<column name="dunning_level_id" valueNumeric="-7" />
+			<column name="dunning_policy_id" valueNumeric="-2" />
+		</insert>
+		
+		<!-- Level 4 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-8" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL4B2B" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="1" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="35" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-8" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Letter B2B LVL4" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="LETTER" />
+			<column name="action_notification_template_id" valueNumeric="-2" /><!-- Template name= ENG - B2B relance 4 (J+35) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-8" />
+			<column name="dunning_level_id" valueNumeric="-8" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="4" />
+			<column name="dunning_level_id" valueNumeric="-8" />
+			<column name="dunning_policy_id" valueNumeric="-2" />
+		</insert>
+
+	</changeSet>
+
+	<changeSet id="INTRD-2732_20211104" author="AmineBENAICHA">
+
+		<!-- Dunning Policies B2C -->
+		<insert tableName="dunning_policy">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_name" value="Default policy B2C-FR" />
+			<column name="policy_description" value="This is a default policy for B2C" />
+			<column name="min_balance_trigger" valueNumeric="1" />
+			<column name="min_balance_trigger_currency_id" valueNumeric="5" /><!-- € -->
+			<column name="determine_level_by" value="DAYS_OVERDUE" />
+			<column name="policy_priority" valueNumeric="null" />
+			<column name="attach_invoices_to_emails" valueNumeric="1" />
+			<column name="is_active_policy" valueNumeric="1" />
+		</insert>
+		<insert tableName="dunning_policy_rule">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="rule_joint" value="null" />
+			<column name="dunning_policy_id" valueNumeric="-10" />
+		</insert>
+		<insert tableName="dunning_policy_rule_line">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_condition_target" value="IsIndividual" />
+			<column name="policy_condition_operator" value="equals" />
+			<column name="policy_condition_target_value" value="TRUE" />
+			<column name="rule_line_joint" value="null" />
+			<column name="dunning_policy_rule_id" valueNumeric="-10" />
+		</insert>
+
+		<!-- Level 1 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL1-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="1" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Email B2C LVL1-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-8" /><!-- Template name= FR - B2C relance 1 (J+1) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-10" />
+			<column name="dunning_level_id" valueNumeric="-10" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="1" />
+			<column name="dunning_level_id" valueNumeric="-10" />
+			<column name="dunning_policy_id" valueNumeric="-10" />
+		</insert>
+		
+		<!-- Level 2 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL2-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="7" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Email B2C LVL2-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-9" /><!-- Template name= FR - B2C relance 2 (J+7) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-20" />
+			<column name="dunning_level_id" valueNumeric="-20" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="2" />
+			<column name="dunning_level_id" valueNumeric="-20" />
+			<column name="dunning_policy_id" valueNumeric="-10" />
+		</insert>
+		
+		<!-- Level 3 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-30" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL3-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="10" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-30" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Call B2C LVL3-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="CALL" />
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-30" />
+			<column name="dunning_level_id" valueNumeric="-30" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="3" />
+			<column name="dunning_level_id" valueNumeric="-30" />
+			<column name="dunning_policy_id" valueNumeric="-10" />
+		</insert>
+		
+		<!-- Level 4 B2C -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL4-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="1" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="14" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Letter B2C LVL4-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="LETTER" />
+			<column name="action_notification_template_id" valueNumeric="-10" /><!-- Template name= FR - B2C relance 4 (J+14) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-40" />
+			<column name="dunning_level_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="4" />
+			<column name="dunning_level_id" valueNumeric="-40" />
+			<column name="dunning_policy_id" valueNumeric="-10" />
+		</insert>		
+		<!-- ****************************************** -->
+		<!-- ****************************************** -->
+		<!-- ****************************************** -->
+		<!-- Dunning Policies B2B -->
+		<insert tableName="dunning_policy">
+			<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_name" value="Default policy B2B-FR" />
+			<column name="policy_description" value="This is a default policy for B2B" />
+			<column name="min_balance_trigger" valueNumeric="1" />
+			<column name="min_balance_trigger_currency_id" valueNumeric="5" /><!-- € -->
+			<column name="determine_level_by" value="DAYS_OVERDUE" />
+			<column name="policy_priority" valueNumeric="null" />
+			<column name="attach_invoices_to_emails" valueNumeric="1" />
+			<column name="is_active_policy" valueNumeric="1" />
+		</insert>
+		<insert tableName="dunning_policy_rule">
+			<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="rule_joint" value="null" />
+			<column name="dunning_policy_id" valueNumeric="-20" />
+		</insert>
+		<insert tableName="dunning_policy_rule_line">
+			<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="policy_condition_target" value="IsCompany" />
+			<column name="policy_condition_operator" value="equals" />
+			<column name="policy_condition_target_value" value="TRUE" />
+			<column name="rule_line_joint" value="null" />
+			<column name="dunning_policy_rule_id" valueNumeric="-20" />
+		</insert>
+
+		<!-- Level 1 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-50" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL1B2B-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="15" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-50" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Email B2B LVL1-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-6" /><!-- Template name= FR - B2B relance 1 (J+15) -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-50" />
+			<column name="dunning_level_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="1" />
+			<column name="dunning_level_id" valueNumeric="-50" />
+			<column name="dunning_policy_id" valueNumeric="-20" />
+		</insert>
+		
+		<!-- Level 2 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL2B2B-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="22" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Call B2B LVL2-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="CALL" />
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-60" />
+			<column name="dunning_level_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="2" />
+			<column name="dunning_level_id" valueNumeric="-60" />
+			<column name="dunning_policy_id" valueNumeric="-20" />
+		</insert>
+		
+		<!-- Level 3 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-70" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL3B2B-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="0" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="27" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-70" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Call B2B LVL3-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="CALL" />
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-70" />
+			<column name="dunning_level_id" valueNumeric="-70" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="3" />
+			<column name="dunning_level_id" valueNumeric="-70" />
+			<column name="dunning_policy_id" valueNumeric="-20" />
+		</insert>
+		
+		<!-- Level 4 B2B -->
+		<insert tableName="dunning_level">
+			<column name="id" valueNumeric="-80" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="LVL4B2B-FR" />
+			<column name="description" value="N/A" />
+			<column name="reminder" valueNumeric="0" />
+			<column name="end_dunning_level" valueNumeric="1" />
+			<column name="active" valueNumeric="1" />
+			<column name="days_overdue" valueNumeric="35" />
+			<column name="min_balance" valueNumeric="0" />
+			<column name="charge_currency_id" valueNumeric="null" />
+			<column name="soft_decline" valueNumeric="0" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-80" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="Letter B2B LVL4-FR" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="MANUAL" />
+			<column name="action_channel" value="LETTER" />
+			<column name="action_notification_template_id" valueNumeric="-7" /><!-- Template name= FR - B2B relance 4 (J+35)  -->
+		</insert>
+		<insert tableName="dunning_level_dunning_action">
+			<column name="dunning_action_id" valueNumeric="-80" />
+			<column name="dunning_level_id" valueNumeric="-80" />
+		</insert>
+		<insert tableName="dunning_policy_level">
+			<column name="id" valueSequenceNext="dunning_policy_level_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence" valueNumeric="4" />
+			<column name="dunning_level_id" valueNumeric="-80" />
+			<column name="dunning_policy_id" valueNumeric="-20" />
+		</insert>
+	</changeSet>
+	<changeSet id="#INTRD-1166_20211110_Business_attributes" author="MohammedELAZZOUZI"/>
+	<changeSet id="INTRD-2849_20211110" author="TarikRabeh"></changeSet>
+	
+	<changeSet id="#INTRD-2961_20211109-add-status-color_code" author="AmineBENAICHA">
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#FFA000</column>
+			<where>status='Pause'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#991A12</column>
+			<where>status='Stop'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#1976D2</column>
+			<where>status='Succès'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#F44336</column>
+			<where>status='Echec'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="color_code">#00C853</column>
+			<where>status='Actif'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-2962_20211110" author="AmineBENAICHA">
+		<insert tableName="dunning_stop_reasons">
+			<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+        	<column name="stop_reason" value="Exclusion" />
+        	<column name="description" value="Client exclu du plan de recouvrement pour raison légitime. A expliciter par l'agent de recouvrement" />
+        	<column name="dunning_settings_id" valueNumeric="1" />
+       	</insert>
+       	<insert tableName="dunning_stop_reasons">
+       		<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+        	<column name="stop_reason" value="Changement de politique de recouvrement" />
+        	<column name="description" value="Changement de politique de recouvrement amenant la génération d’un nouveau plan de recouvrement" />
+        	<column name="dunning_settings_id" valueNumeric="1" />
+       	</insert>
+   	</changeSet>
+
     
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
 
-	
 </databaseChangeLog>

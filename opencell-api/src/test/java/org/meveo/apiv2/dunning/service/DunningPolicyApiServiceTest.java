@@ -3,28 +3,26 @@ package org.meveo.apiv2.dunning.service;
 import static java.lang.Boolean.FALSE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.dunning.*;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.DunningInvoiceStatusService;
-import org.meveo.service.payments.impl.DunningPolicyService;
-import org.meveo.service.payments.impl.CollectionPlanStatusService;
+import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningPolicyApiServiceTest {
@@ -39,11 +37,9 @@ public class DunningPolicyApiServiceTest {
     @Mock
     private DunningLevelService dunningLevelService;
 
-    @Mock
-    private DunningInvoiceStatusService invoiceDunningStatusesService;
 
     @Mock
-    private CollectionPlanStatusService collectionPlanStatusService;
+    private DunningCollectionPlanStatusService collectionPlanStatusService;
 
     @Mock
     private MeveoUser currentUser;
@@ -76,21 +72,15 @@ public class DunningPolicyApiServiceTest {
         dunningPolicyLevel.setSequence(2);
         dunningPolicyLevel.setDunningLevel(dunningLevel);
 
-        DunningInvoiceStatus invoiceDunningStatuses = new DunningInvoiceStatus();
-        invoiceDunningStatuses.setId(1L);
-        invoiceDunningStatuses.setContext(DunningInvoiceStatusContextEnum.FAILED_DUNNING);
-        dunningPolicyLevel.setInvoiceDunningStatuses(invoiceDunningStatuses);
-
-        CollectionPlanStatus collectionPlanStatus = new CollectionPlanStatus();
+        DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
         collectionPlanStatus.setId(1L);
-        collectionPlanStatus.setContext("Failed Dunning");
+        collectionPlanStatus.setDescription("FAILED_DUNNING");
         dunningPolicyLevel.setCollectionPlanStatus(collectionPlanStatus);
 
         DunningPolicyLevel dunningPolicyLevel1 = new DunningPolicyLevel();
         dunningPolicyLevel1.setId(2L);
         dunningPolicyLevel1.setSequence(2);
         dunningPolicyLevel1.setDunningLevel(dunningLevel1);
-        dunningPolicyLevel1.setInvoiceDunningStatuses(invoiceDunningStatuses);
         dunningPolicyLevel1.setCollectionPlanStatus(collectionPlanStatus);
 
         List<DunningPolicyLevel> dunningPolicyLevels = Arrays.asList(dunningPolicyLevel, dunningPolicyLevel1);
@@ -100,9 +90,7 @@ public class DunningPolicyApiServiceTest {
         when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
-        when(invoiceDunningStatusesService.refreshOrRetrieve(any(DunningInvoiceStatus.class)))
-                .thenReturn(invoiceDunningStatuses);
-        when(collectionPlanStatusService.refreshOrRetrieve(any(CollectionPlanStatus.class)))
+        when(collectionPlanStatusService.refreshOrRetrieve(any(DunningCollectionPlanStatus.class)))
                 .thenReturn(collectionPlanStatus);
         when(currentUser.getUserName()).thenReturn("opencell.admin");
     }
