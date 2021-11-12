@@ -35,19 +35,20 @@ public final class PersistenceServiceHelper {
      * @return corresponding entity's persistence service
      */
     public static PersistenceService getPersistenceService(Class entityClass, PaginationConfiguration searchConfig) {
-        if(Modifier.isAbstract(entityClass.getModifiers()) && searchConfig!=null && searchConfig.getFilters()!=null) {
+        Class clazz = entityClass;
+        if(Modifier.isAbstract(clazz.getModifiers()) && searchConfig!=null && searchConfig.getFilters()!=null) {
         	final Set<String> filterKeys = searchConfig.getFilters().keySet();
-			if(!allFieldsExistsOnClass(entityClass, filterKeys)) {
-	        	Reflections reflections = new Reflections(entityClass);
-	        	Set<Class> classes = reflections.getSubTypesOf(entityClass);
+			if(!allFieldsExistsOnClass(clazz, filterKeys)) {
+	        	Reflections reflections = new Reflections(clazz);
+	        	Set<Class> classes = reflections.getSubTypesOf(clazz);
 	        	for(Class subclass : classes) {
 	        		if(allFieldsExistsOnClass(subclass, filterKeys)) {
-	        			entityClass = subclass;
+	        			clazz = subclass;
 	        		}
 	        	}
 			}
         }
-		PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+		PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(clazz.getName() + "Service");
         if(serviceInterface == null){
             serviceInterface = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
             ((BaseEntityService) serviceInterface).setEntityClass(entityClass);
