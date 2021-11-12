@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
 
@@ -21,17 +21,13 @@ import org.meveo.model.payments.ActionTypeEnum;
 @Table(name = "dunning_action_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_action_instance_seq") })
-public class DunningActionInstance extends AuditableEntity {
+public class DunningActionInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 2810376973487134233L;
 
     @Column(name = "action_type", length = 255, nullable = false)
     @Enumerated(EnumType.STRING)
     private ActionTypeEnum actionType;
-
-    @Column(name = "description", length = 255)
-    @Size(max = 255)
-    private String description;
 
     @Column(name = "action_mode", length = 255, nullable = false)
     @Enumerated(EnumType.STRING)
@@ -68,14 +64,6 @@ public class DunningActionInstance extends AuditableEntity {
 
     public void setActionType(ActionTypeEnum actionType) {
         this.actionType = actionType;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public ActionModeEnum getActionMode() {

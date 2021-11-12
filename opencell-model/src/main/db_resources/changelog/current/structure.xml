@@ -11423,6 +11423,7 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="action_type" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="code" type="varchar(255)" />
 			<column name="description" type="varchar(255)" />
 			<column name="action_mode" type="varchar(255)" >
                 <constraints nullable="false" />
@@ -11433,7 +11434,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="dunning_collection_plan_id" type="bigint" />
             <column name="dunning_level_instance_id" type="bigint" />
 		</createTable>
-		
+
+		<addUniqueConstraint columnNames="code" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
+
 		<addForeignKeyConstraint baseColumnNames="dunning_agent_id" baseTableName="dunning_action_instance"
         	constraintName="fk_dunning_agent" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" />
