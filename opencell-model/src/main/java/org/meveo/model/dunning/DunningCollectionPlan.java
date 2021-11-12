@@ -4,16 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -30,6 +21,9 @@ import org.meveo.model.billing.Invoice;
 @Table(name = "dunning_collection_plan")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_collection_plan_seq")})
+@NamedQueries({
+		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.collectionPlanRelatedInvoice.id = :invoiceID")
+})
 public class DunningCollectionPlan extends AuditableEntity {
 	
     private static final long serialVersionUID = 1L;

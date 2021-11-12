@@ -9558,6 +9558,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
 	</changeSet>
+
 	<changeSet id="#INTRD-1166_20211110_Business_attributes" author="MohammedELAZZOUZI"/>
 	<changeSet id="INTRD-2849_20211110" author="TarikRabeh"></changeSet>
 	
@@ -9605,7 +9606,36 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
        	</insert>
    	</changeSet>
 
-    
+	<changeSet id="INTRD-2756_20211110" author="ZBariki">
+		<insert tableName="meveo_job_instance">
+			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2015-03-19 00:04:19.913" />
+			<column name="job_category" value="DUNNING" />
+			<column name="job_template" value="DunningCollectionPlanJob" />
+			<column name="code" value="DunningCollectionPlan_Job" />
+
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="DunningCollectionPlanJob_Job" />
+		</insert>
+	</changeSet>
+
+	<changeSet author="ZBariki" id="INTRD-3040_20211110">
+		<update tableName="dunning_policy_rule_line">
+			<column name="policy_condition_target" value="isCompany" />
+			<column name="policy_condition_target_value" value="FALSE" />
+			<column name="policy_condition_operator" value="EQUALS" />
+			<where> policy_condition_target='IsIndividual'</where>
+		</update>
+		<update tableName="dunning_policy_rule_line">
+			<column name="policy_condition_target" value="isCompany" />
+			<column name="policy_condition_operator" value="EQUALS" />
+			<where> policy_condition_target='IsCompany'</where>
+		</update>
+	</changeSet>
+	
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

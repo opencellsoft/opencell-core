@@ -1,4 +1,5 @@
 package org.meveo.service.payments.impl;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -20,6 +21,7 @@ import java.util.Arrays;
  */
 @Stateless
 public class DunningCollectionPlanStatusService extends PersistenceService<DunningCollectionPlanStatus> {
+
     public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, String status) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", Arrays.asList("dunningSettings"));
         queryBuilder.addCriterion("a.dunningSettings.code", "=", dunningSettingCode, false);
@@ -46,5 +48,13 @@ public class DunningCollectionPlanStatusService extends PersistenceService<Dunni
         } catch (NonUniqueResultException e) {
             throw new BadRequestException("No unique Collection Plan Status");
         }
+    }
+
+    public DunningCollectionPlanStatus findByStatus(String status) {
+        return getEntityManager()
+                    .createNamedQuery("DunningCollectionPlanStatus.findByStatus", DunningCollectionPlanStatus.class)
+                    .setParameter("status", status)
+                    .setMaxResults(1)
+                    .getSingleResult();
     }
 }

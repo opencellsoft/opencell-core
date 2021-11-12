@@ -7703,6 +7703,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 		</insert>
 
 	</changeSet>
+
 	<changeSet id="INTRD-2849_20211110" author="TarikRabeh">
 		<update tableName="com_message_template">
             <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
@@ -7929,5 +7930,35 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         	<column name="dunning_settings_id" valueNumeric="1" />
        	</insert>
    	</changeSet>
+
+	<changeSet id="INTRD-2756_20211110" author="ZBariki">
+		<insert tableName="meveo_job_instance">
+			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2015-03-19 00:04:19.913" />
+			<column name="job_category" value="DUNNING" />
+			<column name="job_template" value="DunningCollectionPlanJob" />
+			<column name="code" value="DunningCollectionPlan_Job" />
+
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="DunningCollectionPlanJob_Job" />
+		</insert>
+	</changeSet>
+
+	<changeSet author="ZBariki" id="INTRD-3040_20211110">
+		<update tableName="dunning_policy_rule_line">
+			<column name="policy_condition_target" value="isCompany" />
+			<column name="policy_condition_target_value" value="FALSE" />
+			<column name="policy_condition_operator" value="EQUALS" />
+			<where> policy_condition_target='IsIndividual'</where>
+		</update>
+		<update tableName="dunning_policy_rule_line">
+			<column name="policy_condition_target" value="isCompany" />
+			<column name="policy_condition_operator" value="EQUALS" />
+			<where> policy_condition_target='IsCompany'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
