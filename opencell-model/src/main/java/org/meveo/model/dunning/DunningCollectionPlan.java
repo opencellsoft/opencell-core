@@ -128,7 +128,7 @@ public class DunningCollectionPlan extends AuditableEntity {
     /**
      * The dunning level instances
      */
-    @OneToMany(mappedBy = "dunningCollectionPlan", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "collectionPlan", fetch = FetchType.LAZY)
 	private List<DunningLevelInstance> dunningLevelInstances;
     
     /**
