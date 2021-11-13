@@ -2,13 +2,18 @@ package org.meveo.apiv2.dunning.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
+import org.meveo.apiv2.dunning.DunningCollectionPlanInput;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.dunning.DunningCollectionPlanInput;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 
 @Path("/dunning/collectionPlan")
 @Produces(APPLICATION_JSON)
@@ -16,18 +21,14 @@ import javax.ws.rs.core.Response;
 public interface DunningCollectionPlanResource {
 
     @POST
-    @Path("renew/{id}")
-    @Operation(summary = "Renew collection plan",
-            tags = {"CollectionPlan"},
-            description = "Renew collection plan",
+    @Path("/switch/{collectionPlanId}")
+    @Operation(summary = "Switch dunning policy",
+            tags = { "CollectionPlan" },
+            description = "Switch dunning policy",
             responses = {
-                    @ApiResponse(responseCode = "200",
-                            description = "Collection plan successfully renewed"),
-                    @ApiResponse(responseCode = "404",
-                            description = "Collection plan does not exits")
+                    @ApiResponse(responseCode = "200", description = "Collection plan successfully renewed"),
+                    @ApiResponse(responseCode = "404", description = "Collection plan does not exits")
             })
-    Response renew(@Parameter(description = "Collection plan id", required = true)
-                   @PathParam("id") Long id,
-                   @Parameter(description = "Dunning collection plan", required = true)
-                           DunningCollectionPlanInput dunningCollectionPlan);
+    Response switchCollectionPlan(@Parameter(description = "Collection plan id", required = true) @PathParam("collectionPlanId") Long collectionPlanId,
+            @Parameter(description = "Dunning collection plan", required = true) DunningCollectionPlanInput dunningCollectionPlanInput);
 }
