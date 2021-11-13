@@ -1,19 +1,21 @@
 package org.meveo.service.payments.impl;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.service.payments.impl.PolicyConditionTargetEnum.valueOf;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.DunningPolicyRule;
-import org.meveo.model.dunning.DunningPolicyRuleLine;
+import org.meveo.model.dunning.*;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Stateless
 public class DunningPolicyService extends PersistenceService<DunningPolicy> {
@@ -22,7 +24,10 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private InvoiceService invoiceService;
 
     @Inject
-    private DunningPolicyService policyService;
+    private DunningCollectionPlanService collectionPlanService;
+
+    @Inject
+    private DunningCollectionPlanStatusService collectionPlanStatusService;
 
     public DunningPolicy findByName(String policyName) {
         try {
@@ -37,7 +42,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     }
 
     public List<Invoice> findEligibleInvoicesForPolicy(DunningPolicy policy) {
-        policy = policyService.refreshOrRetrieve(policy);
+        policy = refreshOrRetrieve(policy);
         try {
             String query = "SELECT inv FROM Invoice inv WHERE " + buildPolicyRulesFilter(policy.getDunningPolicyRules());
             return  (List<Invoice>) invoiceService.executeSelectQuery(query, null);
@@ -102,5 +107,37 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         } else {
             return "'" + policyConditionTargetValue + "'";
         }
+    }
+
+    public void processEligibleInvoice(Map<DunningPolicy, List<Invoice>> eligibleInvoice) {
+        DunningCollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.findByStatus("Actif");
+        for (Map.Entry<DunningPolicy, List<Invoice>> entry : eligibleInvoice.entrySet()) {
+            DunningPolicy policy = refreshOrRetrieve(entry.getKey());
+            Integer dayOverDue = policy.getDunningLevels().stream()
+                    .filter(policyLevel -> policyLevel.getSequence() == 1)
+                    .map(policyLevel -> policyLevel.getDunningLevel().getDaysOverdue())
+                    .findFirst()
+                    .orElseThrow(BusinessException::new);
+            entry.getValue().stream()
+                    .filter(invoice -> invoiceEligibilityCheck(invoice, policy, dayOverDue))
+                    .forEach(invoice ->
+                            collectionPlanService.createCollectionPlanFrom(invoice, policy, dayOverDue, collectionPlanStatus));
+        }
+    }
+
+    private boolean invoiceEligibilityCheck(Invoice invoice, DunningPolicy policy, Integer dayOverDue) {
+        boolean dayOverDueAndThresholdCondition;
+        invoice = invoiceService.refreshOrRetrieve(invoice);
+        Date today = new Date();
+        if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
+            dayOverDueAndThresholdCondition =
+                    (dayOverDue.longValue() == DAYS.between(invoice.getDueDate().toInstant(), today.toInstant()));
+        } else {
+            dayOverDueAndThresholdCondition =
+                    (dayOverDue.longValue() == DAYS.between(invoice.getDueDate().toInstant(), today.toInstant())
+                            || invoice.getRecordedInvoice().getUnMatchingAmount().doubleValue() >= policy.getMinBalanceTrigger());
+        }
+        return invoice.getPaymentStatus().equals(UNPAID)
+                && collectionPlanService.findByInvoiceId(invoice.getId()).isEmpty() && dayOverDueAndThresholdCondition;
     }
 }

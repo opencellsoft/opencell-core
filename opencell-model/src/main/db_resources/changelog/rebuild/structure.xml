@@ -16760,7 +16760,8 @@
     <changeSet id="#INTRD-2800_04112021" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-2764-20211104" author="HatimOUDAD"/>
     <changeSet id="#INTRD-2973_20211110" author="AmineBENAICHA"/>
-    
+    <changeSet id="#INTRD-2765_20211112" author="ZBariki"/>
+
     <changeSet id="#INTRD-2973_20211110-rebuild" author="AmineBENAICHA">
 		<createSequence sequenceName="dunning_level_instance_seq" startValue="1" />
 	    <createTable tableName="dunning_level_instance">
