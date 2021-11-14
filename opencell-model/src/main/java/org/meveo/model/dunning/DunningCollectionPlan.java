@@ -141,7 +141,7 @@ public class DunningCollectionPlan extends AuditableEntity {
      * The collection plan next action date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_next_Action_date")
+    @Column(name = "collection_plan_next_action_date")
     private Date collectionPlanNextActionDate;
     
     /**
@@ -154,7 +154,7 @@ public class DunningCollectionPlan extends AuditableEntity {
      * The collection plan last action date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_last_Action_date")
+    @Column(name = "collection_plan_last_action_date")
     private Date collectionPlanLastActionDate;
     
     /**
