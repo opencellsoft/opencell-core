@@ -560,6 +560,8 @@ public class ReflectionUtils {
                     // log.debug("No field {} in {} might be in super {} ", fieldName, c, c.getSuperclass());
                     if (field == null && c.getSuperclass() != null) {
                         c=c.getSuperclass();
+                    } else {
+                    	found=true;
                     }
                 }
         	}
