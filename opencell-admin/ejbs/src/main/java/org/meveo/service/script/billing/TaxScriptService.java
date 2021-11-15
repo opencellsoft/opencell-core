@@ -33,6 +33,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -60,7 +61,7 @@ public class TaxScriptService implements Serializable {
      * @return True if tax should be calculated externally
      * @throws BusinessException General business exception
      */
-    public boolean isApplicable(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date) throws BusinessException {
+    public boolean isApplicable(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date, WalletOperation walletOperation) throws BusinessException {
         TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
         Map<String, Object> scriptContext = new HashMap<>();
@@ -68,6 +69,7 @@ public class TaxScriptService implements Serializable {
         scriptContext.put(TaxScript.TAX_SELLER, seller);
         scriptContext.put(TaxScript.TAX_TAX_CLASS, taxClass);
         scriptContext.put(TaxScript.TAX_DATE, date);
+        scriptContext.put(TaxScript.TAX_WALLET_OPERATION, walletOperation);
 
         return scriptInterface.isApplicable(scriptContext);
     }
@@ -83,7 +85,7 @@ public class TaxScriptService implements Serializable {
      * @return A list of tax entities
      * @throws BusinessException General business exception
      */
-    public List<Tax> computeTaxes(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date) throws BusinessException {
+    public List<Tax> computeTaxes(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date,WalletOperation walletOperation) throws BusinessException {
         TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
         Map<String, Object> scriptContext = new HashMap<>();
@@ -91,6 +93,7 @@ public class TaxScriptService implements Serializable {
         scriptContext.put(TaxScript.TAX_SELLER, seller);
         scriptContext.put(TaxScript.TAX_TAX_CLASS, taxClass);
         scriptContext.put(TaxScript.TAX_DATE, date);
+        scriptContext.put(TaxScript.TAX_WALLET_OPERATION, walletOperation);
 
         return scriptInterface.computeTaxes(scriptContext);
     }

@@ -146,12 +146,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     		 billingAccount=billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
     	 }
     	
-    	 if(accountingArticle!=null) {
-             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount, null, date, false, false);
-             if (taxInfo != null) {
-                 entity.setTax(taxInfo.tax);
-             }
-         }
+    	 if(entity.getTax()==null && accountingArticle!=null) {
+             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount,null, date,null, false, false);
+             if(taxInfo!=null)
+            	 entity.setTax(taxInfo.tax);
+            }
     	super.create(entity);
     }
 
@@ -218,7 +217,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 
  public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        
+        Date operationDate=new Date();
+        Seller seller=null;
     	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription()); 
@@ -231,6 +231,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         CpqQuote quote =((CpqQuote) entityToInvoice);
         invoiceLine.setQuote(quote);
         invoiceLine.setBillingAccount(quote.getBillableAccount());
+        operationDate=quote.getQuoteDate();
+        seller=quote.getSeller();
         }
         CommercialOrder commercialOrder=null;
         if (entityToInvoice instanceof CommercialOrder) {
@@ -239,6 +241,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	invoiceLine.setCommercialOrder(commercialOrder);
         	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
         	invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
+        	operationDate=commercialOrder.getOrderDate();
+        	seller=commercialOrder.getSeller();
+
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
@@ -248,13 +253,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setTaxRate(totalTaxRate);
       
         invoiceLine.setValueDate(new Date());
-        if(accountingArticle!=null && commercialOrder!=null) {
-            TaxInfo taxInfo = taxMappingService
-                    .determineTax(accountingArticle.getTaxClass(), commercialOrder.getSeller(), commercialOrder.getBillingAccount(), commercialOrder.getUserAccount(),
-                            commercialOrder.getOrderDate(), false, false);
-            if (taxInfo != null) {
-                invoiceLine.setTax(taxInfo.tax);
-            }
+        if(invoiceLine.getTax()==null && accountingArticle!=null) {
+         TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, invoiceLine.getBillingAccount(),null , operationDate,null, false, false);
+         if(taxInfo!=null)
+          invoiceLine.setTaxRecalculated(true);
+         invoiceLine.setTax(taxInfo.tax);
         }
         create(invoiceLine);
     }
@@ -352,7 +355,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             InvoiceSubCategory invoiceSubCategory = defaultMinAccountingArticle.getInvoiceSubCategory();
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
             TaxMappingService.TaxInfo taxInfo = taxMappingService.determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount,
-                    null, minRatingDate, true, false);
+                    null, minRatingDate,null, true, false);
             InvoiceLine invoiceLine = createInvoiceLine( minAmountLabel, billableEntity, billingAccount, minRatingDate,
                     entity, seller, defaultMinAccountingArticle, taxInfo, diff);
             minAmountsResult.addMinAmountIL(invoiceLine);
