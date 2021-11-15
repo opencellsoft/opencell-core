@@ -93,6 +93,10 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The status date")
 	private Date statusDate;
+	
+	@Schema(description = "The code of the user account")
+	private String userAccountCode;
+	
 	/**
 	 * @return the quoteDate
 	 */
@@ -299,6 +303,18 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	public void setStatusDate(Date statusDate) {
 		this.statusDate = statusDate;
 	}
+
+
+	public String getUserAccountCode() {
+		return userAccountCode;
+	}
+
+
+	public void setUserAccountCode(String userAccountCode) {
+		this.userAccountCode = userAccountCode;
+	}
+
+
  
 
 

@@ -9382,6 +9382,7 @@
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
+            <column name="user_account_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9551,6 +9552,7 @@
             <column name="valid_to" type="datetime" />
             <column name="quote_number" type="varchar(50)" />
             <column name="invoice_type_id" type="bigint" />
+            <column name="user_account_id" type="bigint" />
          
         </createTable>
     </changeSet>
@@ -10913,9 +10915,10 @@
             <column name="status" type="varchar(50)" >
             	<constraints nullable="false" />
             </column>
-            <column name="context" type="varchar(255)">
+            <column name="description" type="varchar(255)">
             	<constraints nullable="false" />
             </column>
+            <column name="color_code" type="varchar(50)" />
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
@@ -15339,6 +15342,14 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="adm_currency"/>
     </changeSet>
+    
+     <changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay"> 
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
+    </changeSet>
       
     
     <!-- end fk -->
@@ -16680,6 +16691,7 @@
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889"/>
     <changeSet id="#INTRD-1419_20211108" author="HHanine"/>
     <changeSet id="#INTRD-2800_04112021" author="AbdelkaderBouazza"/>
+    <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

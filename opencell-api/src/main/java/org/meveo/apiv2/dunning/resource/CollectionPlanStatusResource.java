@@ -31,8 +31,6 @@ public interface CollectionPlanStatusResource {
     }) 
 	Response create(@Parameter(required = true) DunningCollectionPlanStatus collectionPlanStatus);
 	
-	
-	
 	@PUT
 	@Path("/{id}")
 	@Operation(summary = "Update an existing Collection plan status", tags = {

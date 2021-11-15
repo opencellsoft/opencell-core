@@ -6934,7 +6934,7 @@ public class OrderAdvancement extends ModuleScript {
                     .collect(Collectors.toList());
 
             if (pricesToBill.isEmpty()) {
-                log.info("No order prices to bill related to a one shot charge were found for commercial order: " + commercialOrder.getId());
+                log.info("No order prices to bill related to a one shot charge were found for commercial order: "+ commercialOrder.getId());
                 return;
             }
 
@@ -11265,6 +11265,20 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+      <changeSet id="INTRD-2959_11082021" author="Mbarek-Ay">
+     <addColumn tableName="cpq_quote">
+            <column name="user_account_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+                                 
+      <addColumn tableName="quote_offer">
+      <column name="user_account_id" type="bigint" />
+      </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
+    </changeSet>
 
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889">
         <addColumn tableName="cat_charge_template">
@@ -11283,8 +11297,18 @@ order by date_trunc('month', i.invoice_date) DESC
 	        <column name="maximum_deferral_per_invoice" type="int4" />
 	    </addColumn>
 	</changeSet>
+
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza">
         <dropTable tableName="invoice_dunning_statuses" cascadeConstraints="true"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA">
+		<renameColumn tableName="dunning_collection_plan_statuses"
+			newColumnName="description" oldColumnName="context"
+			columnDataType="varchar(255)" />
+	    <addColumn tableName="dunning_collection_plan_statuses">
+	        <column name="color_code" type="varchar(50)" />
+	    </addColumn>
+	</changeSet>
 
 </databaseChangeLog>

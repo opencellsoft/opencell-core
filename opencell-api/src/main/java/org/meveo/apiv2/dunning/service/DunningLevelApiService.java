@@ -75,7 +75,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	public Optional<DunningLevel> delete(Long id) {
 		DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
 		dunningLevelService.remove(dunningLevel);
-		createAuditLog(DunningLevel.class.getName(), "DELETE", dunningLevel);
+		createAuditLog(DunningLevel.class.getSimpleName(), "DELETE", dunningLevel);
 		return Optional.ofNullable(dunningLevel);
 	}
 	
@@ -88,7 +88,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		setDefaultValues(newDunningLevel);
 		validateParameters(newDunningLevel);
 		dunningLevelService.create(newDunningLevel);
-		createAuditLog(DunningLevel.class.getName(), "CREATE", newDunningLevel);
+		createAuditLog(DunningLevel.class.getSimpleName(), "CREATE", newDunningLevel);
 		return newDunningLevel;
 	}
 
@@ -144,7 +144,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
 		validateParameters(dunningLevelToUpdate);
 		dunningLevelService.update(dunningLevelToUpdate);
-		createAuditLog(DunningLevel.class.getName(), "UPDATE", dunningLevelToUpdate);
+		createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate);
 		return Optional.of(dunningLevelToUpdate);
 	}
 
@@ -260,7 +260,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	    auditLog.setActor(currentUser.getUserName());
 	    auditLog.setCreated(sysDate);
 	    auditLog.setEntity(entity);
-	    auditLog.setOrigin("API");
+	    auditLog.setOrigin(dunningLevel.getCode());
 	    auditLog.setAction(operationType);
 	    auditLog.setParameters("user "+currentUser.getUserName()+" apply "+operationType+" on "+sysDate+" to the Dunning level with code "+dunningLevel.getCode());
 	    auditLogService.create(auditLog);
