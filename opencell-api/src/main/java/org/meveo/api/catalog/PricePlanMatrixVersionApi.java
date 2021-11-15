@@ -81,7 +81,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (StringUtils.isBlank(pricePlanMatrixCode)) {
             missingParameters.add("pricePlanMatrixCode");
         }
-		if (!isMatrix) {
+        if (StringUtils.isBlank(isMatrix)) {
+            missingParameters.add("isMatrix");
+        }
+		if (isMatrix!=null && !isMatrix) {
 			if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
 				missingParameters.add("amountWithTax");
 			}
@@ -107,8 +110,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         	if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
 				if(validity==null || validity.getTo()==null) {
         			throw new ValidationException("ending date must not be null to update a published pricePlanMatrixVersion ");
-        		} else if(validity.getTo().after(new Date())) {
-                	throw new InvalidParameterException("ending date must not be greater than today");
+        		} else if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
+                	throw new InvalidParameterException("ending date must be greater than today");
                 }
         		pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
         	} else {
