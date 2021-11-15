@@ -1,11 +1,12 @@
 package org.meveo.apiv2.dunning.template;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.dunning.DunningTemplate;
 import org.meveo.service.payments.impl.DunningTemplateService;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 
 public class DunningTemplateResourceImpl implements DunningTemplateResource{
     @Inject
@@ -25,7 +26,14 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
         if(dunningTemplate == null) {
             throw new EntityDoesNotExistsException("dunning Template with id "+dunningTemplateId+" does not exist.");
         }
-        dunningTemplateService.remove(dunningTemplateId);
+        try {
+        	dunningTemplateService.remove(dunningTemplateId);
+        }  catch (Exception exception) {
+            Throwable throwable = exception.getCause().getCause();
+                if (throwable.getMessage().indexOf("ConstraintViolationException") > -1) {
+                 throw new DeleteReferencedEntityException(DunningTemplate.class, dunningTemplateId);
+                }  
+        }
         return Response.ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Template successfully deleted\"},\"id\": "+dunningTemplateId+"} ")
                 .build();
