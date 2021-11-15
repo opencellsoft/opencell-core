@@ -7481,7 +7481,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="code" value="LVL4-FR" />
+			<column name="code" value="LVL4-B2C-FR" />
 			<column name="description" value="N/A" />
 			<column name="reminder" valueNumeric="0" />
 			<column name="end_dunning_level" valueNumeric="1" />
@@ -7688,7 +7688,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="code" value="LVL4B2B-FR" />
+			<column name="code" value="LVL4-B2B-FR" />
 			<column name="description" value="N/A" />
 			<column name="reminder" valueNumeric="0" />
 			<column name="end_dunning_level" valueNumeric="1" />
