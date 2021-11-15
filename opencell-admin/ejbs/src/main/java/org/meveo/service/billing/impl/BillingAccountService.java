@@ -35,20 +35,20 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.*;
 
 /**
  * The Class BillingAccountService.
@@ -289,7 +289,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
             qb.addOrderCriterionAsIs("id", true);
 
-            return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+            String brLotSize = paramBeanFactory.getInstance().getProperty("billingRun.lot.size", null);
+            if (!StringUtils.isBlank(brLotSize)) {
+                log.info("Using param billingRun.lot.size={}", brLotSize);
+                return (List<BillingAccount>) qb.getQuery(getEntityManager()).setMaxResults(Integer.parseInt(brLotSize)).getResultList();
+            } else {
+                return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+            }
+
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
         }
