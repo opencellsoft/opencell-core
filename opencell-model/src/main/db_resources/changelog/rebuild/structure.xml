@@ -5074,6 +5074,7 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
+    		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
             <column name="payment_deferral" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="maximum_delay" type="int4" />
@@ -16687,6 +16688,7 @@
     <changeSet id="INTRD-30_2021114" author="ZBariki" />
     <changeSet id="INTRD-2449_2021114" author="ZBariki" />
     <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
+    <changeSet id="INTRD-2868_20211105" author="TarikFA." />
     <changeSet id="INTRD-2418_20211105" author="TarikFA." />
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889"/>
     <changeSet id="#INTRD-1419_20211108" author="HHanine"/>

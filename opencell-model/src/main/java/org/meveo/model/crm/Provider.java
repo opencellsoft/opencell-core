@@ -375,6 +375,11 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
             @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")) })
     private GenericSequence customerNoSequence = new GenericSequence();
 
+    @Column(name = "cdr_deduplicationkey_el", length = 500)
+    @Size(max = 500)
+    private String cdrDeduplicationKeyEL;
+    
+
     public String getCode() {
         return code;
     }
@@ -804,4 +809,18 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public boolean isCurrentProvider() {
         return id != null && id == CURRENT_PROVIDER_ID;
     }
+
+	/**
+	 * @return the cdrDeduplicationKeyEL
+	 */
+	public String getCdrDeduplicationKeyEL() {
+		return cdrDeduplicationKeyEL;
+	}
+
+	/**
+	 * @param cdrDeduplicationKeyEL the cdrDeduplicationKeyEL to set
+	 */
+	public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
+		this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
+	}
 }
