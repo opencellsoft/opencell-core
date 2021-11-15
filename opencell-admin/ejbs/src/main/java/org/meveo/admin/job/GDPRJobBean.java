@@ -152,6 +152,7 @@ public class GDPRJobBean extends BaseJobBean {
             public void execute(Connection connection) throws SQLException {
 
                 try (Statement statement = connection.createStatement()) {
+                    statement.execute("SET session_replication_role = replica");
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_subscriptions");
                     statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_subscriptions (id) as (select id from " + schemaPrefix
                             + "billing_subscription s where s.status not in ('CREATED', 'ACTIVE') and s.subscription_date<=now() - interval '" + gdprConfiguration.getInactiveSubscriptionLife() + " year')");
@@ -213,6 +214,7 @@ public class GDPRJobBean extends BaseJobBean {
 
                     }
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_subscriptions");
+                    statement.execute("SET session_replication_role = DEFAULT");
 
                 } catch (Exception e) {
                     log.error("Failed to remove subscriptions in GDPR", e);
@@ -245,6 +247,7 @@ public class GDPRJobBean extends BaseJobBean {
             public void execute(Connection connection) throws SQLException {
 
                 try (Statement statement = connection.createStatement()) {
+                    statement.execute("SET session_replication_role = replica");
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_orders");
                     statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_orders (id) as (select id from " + schemaPrefix + "ord_order o where o.order_date<=now() - interval '"
                             + gdprConfiguration.getInactiveOrderLife() + " year')");
@@ -303,6 +306,7 @@ public class GDPRJobBean extends BaseJobBean {
                     }
 
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_orders");
+                    statement.execute("SET session_replication_role = DEFAULT");
 
                 } catch (Exception e) {
                     log.error("Failed to remove orders in GDPR", e);
@@ -335,6 +339,7 @@ public class GDPRJobBean extends BaseJobBean {
             public void execute(Connection connection) throws SQLException {
 
                 try (Statement statement = connection.createStatement()) {
+                    statement.execute("SET session_replication_role = replica");
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_invoices");
                     statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_invoices (id) as (select id from " + schemaPrefix + "billing_invoice i where i.invoice_date<=now() - interval '"
                             + gdprConfiguration.getInvoiceLife() + " year')");
@@ -389,6 +394,7 @@ public class GDPRJobBean extends BaseJobBean {
                     }
 
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_invoices");
+                    statement.execute("SET session_replication_role = DEFAULT");
 
                 } catch (Exception e) {
                     log.error("Failed to remove invoices in GDPR", e);
@@ -430,6 +436,7 @@ public class GDPRJobBean extends BaseJobBean {
                 }
 
                 try (Statement statement = connection.createStatement()) {
+                    statement.execute("SET session_replication_role = replica");
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_aos");
                     statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_aos (id) as (select id from " + schemaPrefix + "ar_account_operation ao where " + where + ")");
                     statement.execute("create index mview_gdpr_aos_pk on " + schemaPrefix + "mview_gdpr_aos (id)");
@@ -469,6 +476,7 @@ public class GDPRJobBean extends BaseJobBean {
                     }
 
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_aos");
+                    statement.execute("SET session_replication_role = DEFAULT");
 
                 } catch (Exception e) {
                     log.error("Failed to remove Account operations in GDPR", e);
@@ -501,6 +509,7 @@ public class GDPRJobBean extends BaseJobBean {
             public void execute(Connection connection) throws SQLException {
 
                 try (Statement statement = connection.createStatement()) {
+                    statement.execute("SET session_replication_role = replica");
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_customers");
                     statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_customers (id) as (select c.id from " + schemaPrefix + "crm_customer c left join " + schemaPrefix
                             + "ar_customer_account ca on ca.customer_id=c.id left join " + schemaPrefix + "billing_billing_account ba on ba.customer_account_id=ca.id left join " + schemaPrefix
@@ -587,6 +596,7 @@ public class GDPRJobBean extends BaseJobBean {
                     }
 
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_customers");
+                    statement.execute("SET session_replication_role = DEFAULT");
 
                 } catch (Exception e) {
                     log.error("Failed to remove customers in GDPR", e);
