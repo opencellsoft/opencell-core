@@ -34,7 +34,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     @Inject
     private InvoiceService invoiceService;
 
-    public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel currentPolicyLevel) {
+    public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
         DunningStopReason stopReason = dunningStopReasonsService.findByStopReason("Changement de politique de recouvrement");
         oldCollectionPlan.setCollectionPlanStopReason(stopReason);
         oldCollectionPlan.setCollectionPlanCloseDate(new Date());
@@ -44,7 +44,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         newCollectionPlan.setCollectionPlanRelatedPolicy(policy);
         newCollectionPlan.setCollectionPlanBillingAccount(oldCollectionPlan.getCollectionPlanBillingAccount());
         newCollectionPlan.setCollectionPlanRelatedInvoice(oldCollectionPlan.getCollectionPlanRelatedInvoice());
-        newCollectionPlan.setCollectionPlanCurrentDunningLevelSequence(currentPolicyLevel.getSequence());
+        newCollectionPlan.setCollectionPlanCurrentDunningLevelSequence(selectedPolicyLevel.getSequence());
         newCollectionPlan.setTotalDunningLevels(policy.getTotalDunningLevels());
         newCollectionPlan.setCollectionPlanStartDate(oldCollectionPlan.getCollectionPlanStartDate());
         newCollectionPlan.setCollectionPlanStatus(collectionPlanStatusActif);
@@ -54,7 +54,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
             List<DunningLevelInstance> levelInstances = new ArrayList<>();
             for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
                 DunningLevelInstance levelInstance = null;
-                if (policyLevel.getId() == currentPolicyLevel.getId()) {
+                if (policyLevel.getSequence() <= selectedPolicyLevel.getSequence()) {
                     levelInstance = createLevelInstance(newCollectionPlan, collectionPlanStatusActif, null, policyLevel, DONE);
                 } else {
                     levelInstance = createLevelInstance(newCollectionPlan, collectionPlanStatusActif, null, policyLevel, TO_BE_DONE);
