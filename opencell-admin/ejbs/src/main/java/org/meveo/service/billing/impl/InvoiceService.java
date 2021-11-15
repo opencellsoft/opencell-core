@@ -766,15 +766,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         org.hibernate.query.Query<InvoiceableData> query = null;
         if (entityToInvoice instanceof Subscription) {
-            query = getEntityManager().unwrap(Session.class).createNamedQuery("RatedTransaction.listToInvoiceBySubscription", InvoiceableData.class).setParameter("subscriptionId", entityToInvoice.getId())
+            query = getEntityManager().unwrap(Session.class).createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionInvoiceableData", InvoiceableData.class).setParameter("subscriptionId", entityToInvoice.getId())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate);
 
         } else if (entityToInvoice instanceof BillingAccount) {
-            query = getEntityManager().unwrap(Session.class).createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", InvoiceableData.class).setParameter("billingAccountId", entityToInvoice.getId())
+            query = getEntityManager().unwrap(Session.class).createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountInvoiceableData", InvoiceableData.class).setParameter("billingAccountId", entityToInvoice.getId())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate);
 
         } else if (entityToInvoice instanceof Order) {
-            query = getEntityManager().unwrap(Session.class).createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", InvoiceableData.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
+            query = getEntityManager().unwrap(Session.class).createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberInvoiceableData", InvoiceableData.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate);
         }
 

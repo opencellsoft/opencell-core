@@ -13,16 +13,19 @@ import org.junit.runner.RunWith;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
+import org.meveo.util.ApplicationProvider;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -64,6 +67,10 @@ public class InvoiceLinesFactoryTest {
 
     @Mock
     private OrderLotService orderLotService;
+
+    @Mock
+    @ApplicationProvider
+    private Provider appProvider;
 
     @InjectMocks
     private InvoiceLinesFactory factory;
@@ -119,6 +126,8 @@ public class InvoiceLinesFactoryTest {
         accountingArticle.setId(1L);
         accountingArticle.setCode("ACCA_001");
         accountingArticle.setDescription("Accounting Article 001");
+        appProvider.setRounding(3);
+        appProvider.setRoundingMode(RoundingModeEnum.NEAREST);
 
         when(subscriptionService.findById(any())).thenReturn(subscription);
         when(billingAccountService.findById(any())).thenReturn(billingAccount);
@@ -128,6 +137,8 @@ public class InvoiceLinesFactoryTest {
         when(instanceService.findById(any())).thenReturn(serviceInstance);
         when(commercialOrderService.findById(any())).thenReturn(commercialOrder);
         when(productVersionService.findById(any())).thenReturn(productVersion);
+        when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
+        when(appProvider.getRounding()).thenReturn(3);
     }
 
     @Test
@@ -135,12 +146,14 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(false, NO_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
         Assert.assertEquals(invoiceLine.getBillingRun().getId(), Long.valueOf(1));
-        Assert.assertEquals(invoiceLine.getAmountWithoutTax(), new BigDecimal(200));
+        Assert.assertEquals(invoiceLine.getAmountWithoutTax(), new BigDecimal(100.124));
+        Assert.assertEquals(invoiceLine.getAmountTax(), new BigDecimal(10.012));
+        Assert.assertEquals(invoiceLine.getAmountWithTax(), new BigDecimal(110.136));
     }
 
     @Test
@@ -148,7 +161,7 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(false, DATE);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -160,13 +173,17 @@ public class InvoiceLinesFactoryTest {
     public void test_create_invoiceLines_enterprise() throws ParseException {
         AggregationConfiguration configuration = new AggregationConfiguration(true, NO_AGGREGATION);
         Map<String, Object> record = buildRecord();
+        when(appProvider.isEntreprise()).thenReturn(Boolean.TRUE);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
         Assert.assertEquals(invoiceLine.getRawAmount(), BigDecimal.valueOf(10));
         Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(10));
+        Assert.assertEquals(invoiceLine.getAmountWithoutTax(), new BigDecimal(100.123));
+        Assert.assertEquals(invoiceLine.getAmountTax(), new BigDecimal(10.012));
+        Assert.assertEquals(invoiceLine.getAmountWithTax(), new BigDecimal(110.135));
     }
 
     private Map<String, Object> buildRecord() throws ParseException {
@@ -185,8 +202,8 @@ public class InvoiceLinesFactoryTest {
         record.put("order_number", "1123456");
         record.put("quantity", new BigDecimal(10));
         record.put("tax_percent", new BigDecimal(10));
-        record.put("sum_with_tax", new BigDecimal(100));
-        record.put("sum_without_Tax", new BigDecimal(200));
+        record.put("sum_with_tax", new BigDecimal(110.13574));
+        record.put("sum_without_Tax", new BigDecimal(100.1234));
         record.put("label", "labe");
         record.put("unit_amount_without_tax", new BigDecimal(10));
         record.put("unit_amount_with_tax", new BigDecimal(20));
