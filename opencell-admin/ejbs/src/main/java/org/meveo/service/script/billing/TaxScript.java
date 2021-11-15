@@ -62,6 +62,11 @@ public class TaxScript extends ModuleScript implements TaxScriptInterface {
      * Parameter Date
      */
     public static final String TAX_DATE = "TAX_DATE";
+    
+    /**
+     * Parameter Date
+     */
+    public static final String TAX_WALLET_OPERATION = "TAX_WALLET_OPERATION";
 
     /**
      * Checks if this script is applicable to the context parameter.
