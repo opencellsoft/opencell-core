@@ -1,17 +1,14 @@
 package org.meveo.apiv2.dunning.impl;
 
-import static org.meveo.apiv2.generic.common.LinkGenerator.getUriBuilderFromResource;
-
-import org.meveo.apiv2.dunning.DunningCollectionPlanInput;
-import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
-import org.meveo.apiv2.dunning.resource.DunningCollectionPlanResource;
-import org.meveo.apiv2.dunning.resource.DunningSettingResource;
-import org.meveo.apiv2.dunning.service.DunningCollectionPlanApiService;
-import org.meveo.apiv2.generic.common.LinkGenerator;
-import org.meveo.model.dunning.DunningCollectionPlan;
-
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+
+import org.meveo.apiv2.dunning.ImmutableSwitchCollectionSuccessResponse;
+import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.resource.DunningCollectionPlanResource;
+import org.meveo.apiv2.dunning.service.DunningCollectionPlanApiService;
+import org.meveo.model.dunning.DunningCollectionPlan;
 
 public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanResource {
 
@@ -21,20 +18,19 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
     private DunningCollectionPlanApiService dunningCollectionPlanApiService;
 
     @Override
-    public Response switchCollectionPlan(Long collectionPlanId, DunningCollectionPlanInput dunningCollectionPlanInput) {
-        DunningCollectionPlan newCollectionPlan = dunningCollectionPlanApiService.switchCollectionPlan(collectionPlanId, dunningCollectionPlanInput).get();
-        return Response.created(getUriBuilderFromResource(DunningCollectionPlanResource.class, newCollectionPlan.getId()).build())
-                .entity(toResourceOrderWithLink(collectionPlanMapper.toResource(newCollectionPlan)))
-                .build();
+    public Response switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
+        DunningCollectionPlan newCollectionPlan = dunningCollectionPlanApiService.switchCollectionPlan(collectionPlanId, switchDunningCollectionPlan).get();
+        return Response.ok(ImmutableSwitchCollectionSuccessResponse.builder()
+            .status("SUCCESS")
+            .newCollectionPlan(collectionPlanMapper.toResource(newCollectionPlan))
+            .build()).build();
     }
-
-    private org.meveo.apiv2.dunning.DunningCollectionPlan toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningCollectionPlan dunningCollectionPlan) {
-        return ImmutableDunningCollectionPlan.copyOf(dunningCollectionPlan)
-                .withLinks(
-                        new LinkGenerator.SelfLinkGenerator(DunningSettingResource.class)
-                                .withId(dunningCollectionPlan.getId())
-                                .withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction()
-                                .build()
-                );
+    
+    @Override
+    public Response massSwitchCollectionPlan(MassSwitchDunningCollectionPlan massSwitchDunningCollectionPlan) {
+        dunningCollectionPlanApiService.massSwitchCollectionPlan(massSwitchDunningCollectionPlan);
+        return Response.ok(ImmutableSwitchCollectionSuccessResponse.builder()
+            .status("SUCCESS")
+            .build()).build();
     }
 }

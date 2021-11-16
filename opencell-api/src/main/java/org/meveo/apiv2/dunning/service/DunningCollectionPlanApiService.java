@@ -6,11 +6,15 @@ import static java.util.Optional.of;
 import java.util.List;
 import java.util.Optional;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.apiv2.dunning.DunningCollectionPlanInput;
+import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
+import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningPolicy;
@@ -79,19 +83,43 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return empty();
     }
 
-    public Optional<DunningCollectionPlan> switchCollectionPlan(Long collectionPlanId, DunningCollectionPlanInput dunningCollectionPlanInput) {
+    public Optional<DunningCollectionPlan> switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
         DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
         if (collectionPlan == null) {
             throw new NotFoundException("Dunning collection plan with id " + collectionPlanId + " does not exits");
         }
-        DunningPolicy policy = dunningPolicyService.findById(dunningCollectionPlanInput.getDunningPolicy().getId());
+        DunningPolicy policy = dunningPolicyService.findById(switchDunningCollectionPlan.getDunningPolicy().getId());
         if (policy == null) {
-            throw new NotFoundException("Policy with id " + dunningCollectionPlanInput.getDunningPolicy().getId() + " does not exits");
+            throw new NotFoundException("Policy with id " + switchDunningCollectionPlan.getDunningPolicy().getId() + " does not exits");
         }
-        DunningPolicyLevel policyLevel = dunningPolicyLevelService.findById(dunningCollectionPlanInput.getPolicyLevel().getId());
+        DunningPolicyLevel policyLevel = dunningPolicyLevelService.findById(switchDunningCollectionPlan.getPolicyLevel().getId());
         if (policyLevel == null) {
-            throw new NotFoundException("Policy level with id " + dunningCollectionPlanInput.getPolicyLevel().getId() + " does not exits");
+            throw new NotFoundException("Policy level with id " + switchDunningCollectionPlan.getPolicyLevel().getId() + " does not exits");
         }
         return of(dunningCollectionPlanService.switchCollectionPlan(collectionPlan, policy, policyLevel));
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void massSwitchCollectionPlan(MassSwitchDunningCollectionPlan massSwitchDunningCollectionPlan) {
+
+        DunningPolicy policy = dunningPolicyService.findById(massSwitchDunningCollectionPlan.getDunningPolicy().getId());
+        if (policy == null) {
+            throw new NotFoundException("Policy with id " + massSwitchDunningCollectionPlan.getDunningPolicy().getId() + " does not exits");
+        }
+        DunningPolicyLevel policyLevel = dunningPolicyLevelService.findById(massSwitchDunningCollectionPlan.getPolicyLevel().getId());
+        if (policyLevel == null) {
+            throw new NotFoundException("Policy level with id " + massSwitchDunningCollectionPlan.getPolicyLevel().getId() + " does not exits");
+        }
+
+        List<Resource> collectionPlanList = massSwitchDunningCollectionPlan.getCollectionPlanList();
+        if (collectionPlanList != null) {
+            for (Resource collectionPlanResource : collectionPlanList) {
+                DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanResource.getId());
+                if (collectionPlan == null) {
+                    throw new NotFoundException("Dunning collection plan with id " + collectionPlanResource.getId() + " does not exits");
+                }
+                dunningCollectionPlanService.switchCollectionPlan(collectionPlan, policy, policyLevel);
+            }
+        }
     }
 }

@@ -1,40 +1,52 @@
 package org.meveo.apiv2.dunning.impl;
 
+import java.util.stream.Collectors;
+
 import org.meveo.apiv2.dunning.DunningCollectionPlan;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
-
-import static java.util.Optional.ofNullable;
-import static org.meveo.apiv2.models.ImmutableResource.builder;
+import org.meveo.model.BaseEntity;
 
 public class DunningCollectionPlanMapper
         extends ResourceMapper<DunningCollectionPlan, org.meveo.model.dunning.DunningCollectionPlan> {
 
     @Override
     protected DunningCollectionPlan toResource(org.meveo.model.dunning.DunningCollectionPlan entity) {
-        Resource collectionPlanStatus = ofNullable(entity.getCollectionPlanStatus())
-                .map(cps -> builder().id(cps.getId()).build())
-                .orElse(null);
-        Resource billingAccount = ofNullable(entity.getCollectionPlanBillingAccount())
-                .map(ba -> builder().id(ba.getId()).build())
-                .orElse(null);
+        
         return ImmutableDunningCollectionPlan.builder()
-                .collectionPlanBillingAccount(billingAccount)
-                .startDate(entity.getCollectionPlanStartDate())
-                .collectionPlanSequence(entity.getCollectionPlanCurrentDunningLevelSequence())
-                .collectionPlanStatus(collectionPlanStatus)
-                .collectionPlanDaysOpen(entity.getCollectionPlanDaysOpen())
-                .collectionPlanPausedUntilDate(entity.getCollectionPlanPausedUntilDate())
-                .collectionPlanLastUpdate(entity.getCollectionPlanLastActionDate())
-                .collectionPlanTotalBalance(entity.getCollectionPlanBalance())
-                .retryPaymentOnResumeDate(entity.isRetryPaymentOnResumeDate())
-                .collectionPlanSequence(entity.getCollectionPlanCurrentDunningLevelSequence())
-                .build();
+            .collectionPlanRelatedPolicy(createResource(entity.getCollectionPlanRelatedPolicy()))
+            .initialCollectionPlan(createResource(entity.getInitialCollectionPlan()))
+            .collectionPlanBillingAccount(createResource(entity.getCollectionPlanBillingAccount()))
+            .collectionPlanRelatedInvoice(createResource(entity.getCollectionPlanRelatedInvoice()))
+            .collectionPlanPauseReason(createResource(entity.getCollectionPlanPauseReason()))
+            .collectionPlanStopReason(createResource(entity.getCollectionPlanStopReason()))
+            .collectionPlanCurrentDunningLevelSequence(entity.getCollectionPlanCurrentDunningLevelSequence())
+            .collectionPlanStartDate(entity.getCollectionPlanStartDate())
+            .collectionPlanDaysOpen(entity.getCollectionPlanDaysOpen())
+            .collectionPlanCloseDate(entity.getCollectionPlanCloseDate())
+            .collectionPlanStatus(createResource(entity.getCollectionPlanStatus()))
+            .collectionPlanPausedUntilDate(entity.getCollectionPlanPausedUntilDate())
+            .collectionPlanBalance(entity.getCollectionPlanBalance())
+            .retryPaymentOnResumeDate(entity.isRetryPaymentOnResumeDate())
+            .dunningLevelInstances(entity.getDunningLevelInstances() != null 
+                    ? entity.getDunningLevelInstances().stream().map(l -> createResource(l)).collect(Collectors.toList())
+                    : null)
+            .collectionPlanNextAction(entity.getCollectionPlanNextAction())
+            .collectionPlanNextActionDate(entity.getCollectionPlanNextActionDate())
+            .collectionPlanLastAction(entity.getCollectionPlanLastAction())
+            .collectionPlanLastActionDate(entity.getCollectionPlanLastActionDate())
+            .totalDunningLevels(entity.getTotalDunningLevels())
+            .build();
     }
 
     @Override
     protected org.meveo.model.dunning.DunningCollectionPlan toEntity(DunningCollectionPlan resource) {
         return null;
+    }
+    
+    private Resource createResource(BaseEntity baseEntity) {
+        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).build() : null;
     }
 }

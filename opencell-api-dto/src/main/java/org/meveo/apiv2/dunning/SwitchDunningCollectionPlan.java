@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableDunningCollectionPlanInput.class)
-public interface DunningCollectionPlanInput extends Resource {
+@JsonDeserialize(as = ImmutableSwitchDunningCollectionPlan.class)
+public interface SwitchDunningCollectionPlan extends Resource {
 
     @Schema(description = "Indicate dunning policy")
     @Nullable
