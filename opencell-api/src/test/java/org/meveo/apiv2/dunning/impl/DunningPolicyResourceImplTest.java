@@ -76,7 +76,6 @@ public class DunningPolicyResourceImplTest {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
                 .sequence(1)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -96,7 +95,6 @@ public class DunningPolicyResourceImplTest {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
                 .sequence(1)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -115,7 +113,6 @@ public class DunningPolicyResourceImplTest {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
                 .sequence(1)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -135,7 +132,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldUpdateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .id(1L)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()
@@ -156,7 +152,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldFailIfDunningPolicyDoesNotExits() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .id(1L)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()

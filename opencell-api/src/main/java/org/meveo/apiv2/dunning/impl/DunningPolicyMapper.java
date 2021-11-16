@@ -2,6 +2,7 @@ package org.meveo.apiv2.dunning.impl;
 
 import static java.util.Optional.ofNullable;
 
+import org.hibernate.Hibernate;
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
@@ -27,7 +28,7 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
                 .isAttachInvoicesToEmails(entity.getAttachInvoicesToEmails())
                 .isIncludePayReminder(entity.getIncludePayReminder())
                 .determineLevelBy(entity.getDetermineLevelBy());
-        if (entity.getDunningLevels() != null) {
+        if (entity.getDunningLevels() != null && Hibernate.isInitialized(entity.getDunningLevels())) {
             builder.dunningPolicyLevels(entity.getDunningLevels().stream()
                     .map(dunningPolicyLevel ->  policyLevelMapper.toResource(dunningPolicyLevel))
                     .collect(Collectors.toList()));
