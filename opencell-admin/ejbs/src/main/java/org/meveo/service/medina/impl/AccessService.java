@@ -25,6 +25,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.Date;
@@ -42,7 +43,7 @@ public class AccessService extends PersistenceService<Access> {
      * @return List of Access
      */
     public List<Access> getActiveAccessByUserId(String accessUserId) {
-        return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
+        return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).setFlushMode(FlushModeType.COMMIT).getResultList();
     }
 
     public boolean isDuplicateAndOverlaps(Access access) {
