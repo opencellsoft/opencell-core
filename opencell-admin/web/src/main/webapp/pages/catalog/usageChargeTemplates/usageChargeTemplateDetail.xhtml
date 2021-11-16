@@ -52,6 +52,7 @@
 
                     <hftl:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" componentWidth="25" />
                     <hftl:formLanguageFields field="description" componentWidth="50" newLine="false" />
+                    <hftl:formField label="#{messages['chargeTemplate.status']}" field="status" />
                     <hftl:formField id="invoiceSubCategorySelectedId" label="#{messages['charge.subCategory']}" field="invoiceSubCategory" valueLabelField="code" required="true"
                         listBean="#{invoiceSubCategoryBean}" />
                     <!--                            popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->

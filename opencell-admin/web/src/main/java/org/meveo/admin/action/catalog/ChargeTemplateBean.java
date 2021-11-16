@@ -28,6 +28,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -117,6 +118,18 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 		} 
 		}
 		return null;
-	} 
+	}
+	
+	public void activateCharge() {
+		chargeTemplateService.updateStatus(getEntity(), ChargeTemplateStatusEnum.ACTIVE.name());
+	}
+	
+	public void archiveCharge() {
+		chargeTemplateService.updateStatus(getEntity(), ChargeTemplateStatusEnum.ARCHIVED.name());
+	}
+	
+	public void reopenCharge() {
+		chargeTemplateService.updateStatus(getEntity(), ChargeTemplateStatusEnum.DRAFT.name());
+	}
 	
 }
