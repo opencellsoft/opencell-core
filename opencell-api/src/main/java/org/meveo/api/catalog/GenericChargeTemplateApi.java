@@ -18,8 +18,12 @@
 
 package org.meveo.api.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.api.BaseApi;
@@ -29,10 +33,18 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -44,9 +56,22 @@ public class GenericChargeTemplateApi extends BaseApi {
     @Inject
     private ChargeTemplateServiceAll chargeTemplateService;
 
-
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+    
+    @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+
+    public EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
+    }
 
     public ChargeTemplateDto find(String chargeTemplateCode) throws MeveoApiException {
         if (StringUtils.isBlank(chargeTemplateCode)) {
@@ -104,9 +129,43 @@ public class GenericChargeTemplateApi extends BaseApi {
 		try {
 			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
 			duplicateChargeTemplate.setId(null);
+			duplicateChargeTemplate.setStatus(ChargeTemplateStatusEnum.DRAFT);
 			duplicateChargeTemplate.setRatingScript(duplicateRatingScript);
 			
 			chargeTemplateService.create(duplicateChargeTemplate);
+			
+	        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+	        
+	        //Duplicate Price Plan Matrix
+	        if(pricePlanMatrixes != null && !pricePlanMatrixes.isEmpty()) {
+	        	for(PricePlanMatrix pricePlanMatrix:pricePlanMatrixes) {
+
+	        		@SuppressWarnings("unchecked")
+	            	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
+							.setParameter("pricePlanMatrixCode", pricePlanMatrix.getCode()).getResultList();
+	            	
+	        		List<PricePlanMatrixVersion> pricesVersionsNew = new ArrayList<PricePlanMatrixVersion>();
+	        		
+	    	        if(pricePlanMatrix != null && !pricePlanMatrixes.isEmpty()) {
+		            	for(PricePlanMatrixVersion priceVersion: pricesVersions) {
+		            		PricePlanMatrixVersion priceVersionNew = (PricePlanMatrixVersion) BeanUtils.cloneBean(priceVersion);
+		            		
+		            		priceVersionNew.setId(null);
+		            		priceVersionNew.setStatus(VersionStatusEnum.DRAFT);
+		            		
+		            		pricePlanMatrixVersionService.create(priceVersionNew);
+		            		pricesVersionsNew.add(priceVersionNew);
+		            	}
+	    	        }
+	        		
+	        		PricePlanMatrix pricePlanMatrixNew = (PricePlanMatrix) BeanUtils.cloneBean(pricePlanMatrix);
+	        		pricePlanMatrixNew.setId(null);
+	        		pricePlanMatrixNew.setEventCode(duplicateChargeTemplate.getCode());
+	        		pricePlanMatrixNew.setVersions(pricesVersionsNew);
+	        		pricePlanMatrixService.create(pricePlanMatrixNew);
+	        	}
+	        }
+
 			
 			getChargeTemplateResponseDto.setChargeTemplate(new ChargeTemplateDto(duplicateChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(duplicateChargeTemplate)));
 
