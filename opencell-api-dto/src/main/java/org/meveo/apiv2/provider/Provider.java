@@ -41,6 +41,8 @@ public interface Provider {
     @Nullable String getInvoiceRoundingMode();
     @Nullable String getDiscountAccountingCode();
     @Nullable String getEmail();
+    @Nullable Integer getMaximumDelay();
+    @Nullable Integer getMaximumDeferralPerInvoice();
 
     @Nullable
     Map<String, Long> getCurrency();
@@ -163,6 +165,14 @@ public interface Provider {
         if (this.getBankCoordinates() != null) {
             provider.setBankCoordinates(this.getBankCoordinates());
         }
+        if (this.getMaximumDelay() != null) {
+            provider.setMaximumDelay(this.getMaximumDelay());
+        }
+        
+        if (this.getMaximumDeferralPerInvoice() != null) {
+            provider.setMaximumDeferralPerInvoice(this.getMaximumDeferralPerInvoice());
+        }
+        
         if (this.getInvoiceConfiguration() != null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
             invoiceConfiguration.setId(this.getInvoiceConfiguration().get("id"));
