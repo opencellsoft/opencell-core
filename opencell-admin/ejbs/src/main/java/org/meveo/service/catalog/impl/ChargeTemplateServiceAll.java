@@ -21,6 +21,7 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.xml.bind.ValidationException;
 
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -57,15 +58,12 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	 * @return
 	 */
 	public void updateStatus(ChargeTemplate chargeTemplate, String stringStatus) {
-		ChargeTemplateStatusEnum status= ChargeTemplateStatusEnum.valueOf(stringStatus);
-		final ChargeTemplateStatusEnum oldStatus = chargeTemplate.getStatus();
-		if((ChargeTemplateStatusEnum.DRAFT.equals(oldStatus) && ChargeTemplateStatusEnum.ACTIVE.equals(status)) 
-			||(ChargeTemplateStatusEnum.ACTIVE.equals(oldStatus) && ChargeTemplateStatusEnum.ARCHIVED.equals(status))
-			||(ChargeTemplateStatusEnum.ARCHIVED.equals(oldStatus) && ChargeTemplateStatusEnum.DRAFT.equals(status))) {
+		ChargeTemplateStatusEnum status = ChargeTemplateStatusEnum.valueOf(stringStatus);
+		try {
 			chargeTemplate.setStatus(status);
 			update(chargeTemplate);
-		} else {
-			throw new BusinessApiException("Could not change status from '"+oldStatus+"' to '"+status+"'");
+		} catch (ValidationException e) {
+			throw new BusinessApiException(e.getMessage());
 		}
 	}
 }
