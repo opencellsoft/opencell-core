@@ -1102,6 +1102,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setTaxClass(taxClass);
         result.setFullRatingPeriod(fullRatingPeriod);
         result.setChargeMode(chargeMode);
+        result.setAccountingCode(accountingCode);
 
         return result;
     }
