@@ -474,10 +474,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
-        entity.setSubscribedTillDate(null);
-        entity.setSubscriptionTerminationReason(null);
-        entity.getSubscriptionRenewal().setInitialyActiveFor(null);
-        entity.setSubscriptionRenewal(new SubscriptionRenewal());
+        entity.getSubscriptionRenewal().setAutoRenew(false);
     }
 
     /**

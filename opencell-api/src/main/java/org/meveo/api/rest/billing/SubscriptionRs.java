@@ -856,7 +856,29 @@ public interface SubscriptionRs extends IBaseRs {
 	)
     ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
 
-    /**
+	/**
+	 * Cancels the programed termination of a subscription.
+	 * @param subscriptionCode code of the subscription
+	 * @return status of the request
+	 */
+	@POST
+	@Path("/cancelSubscriptionTermination/{subscriptionCode}")
+	@Operation(
+			summary=" Cancels the programed termination of a subscription. ",
+			description=" Cancels the programed termination of a subscription. ",
+			operationId="    POST_Subscription_cancelSubscriptionRenewal_{subscriptionCode}",
+			responses= {
+					@ApiResponse(description=" status of the request ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus cancelSubscriptionTermination(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
+
+	/**
      * Create a subscription and activate services in a single transaction.
      * 
      * @param postData Subscription and services to activate data
