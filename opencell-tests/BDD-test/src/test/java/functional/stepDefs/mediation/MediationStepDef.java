@@ -1,13 +1,11 @@
 package functional.stepDefs.mediation;
 
-import functional.driver.actions.generic.CreateEntity;
 import functional.driver.actions.mediation.ImportCDR;
 import functional.driver.actions.subscription.ActivateService;
 import functional.driver.actions.subscription.UpdateService;
 import functional.driver.assertions.GetAmountWithTaxOfWalletOperation;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.Actor;
@@ -25,25 +23,20 @@ public class MediationStepDef {
         restApiBaseUrl = environmentVariables.optionalProperty("restapi.baseurl")
                 .orElse("https://reqres.in/api");
 
-        actor = Actor.named("Thang the supervisor").whoCan(CallAnApi.at(restApiBaseUrl));
+        actor = Actor.named("I am the supervisor").whoCan(CallAnApi.at(restApiBaseUrl));
     }
 
-    @Given("Thang creates or updates entity {string}")
-    public void actorCreateOrUpdateEntity(String entityDto) {
-        actor.attemptsTo(CreateEntity.called(entityDto));
-    }
-
-    @When("Thang activates services {string} on subscription")
+    @When("^I activate services \"([^\"]*)\" on subscription$")
     public void actorActivatesServiceOnSubscription(String entityDto) {
         actor.attemptsTo(ActivateService.called(entityDto));
     }
 
-    @And("Thang imports CDR {string}")
+    @And("I import CDR {string}")
     public void actorImportCDR(String entityDto) {
         actor.attemptsTo(ImportCDR.called(entityDto));
     }
 
-    @And("Thang updates service {string} on subscription")
+    @And("^I update service \"([^\"]*)\" on subscription$")
     public void actorUpdateServiceOnSubscription(String entityDto) {
         actor.attemptsTo(UpdateService.called(entityDto));
     }

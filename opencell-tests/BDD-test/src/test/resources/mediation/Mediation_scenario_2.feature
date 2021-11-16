@@ -7,11 +7,11 @@
      @MediationProcess2
      Scenario Outline: Testing mediation process
 
-       Given  Thang creates entity "<SubscriptionDto>"
-       And    Thang updates service "<UpdateServicesRequestDto>" on subscription
-       And    Thang imports CDR "<CDR>"
-       When   Thang activates services "<ActivateServicesRequestDto>" on subscription
-       Then   amount with tax of <order> wallet operation should be equal to <amount> euros
+#       Given  Thang creates entity "<SubscriptionDto>"
+#       And    Thang updates service "<UpdateServicesRequestDto>" on subscription
+#       And    Thang imports CDR "<CDR>"
+#       When   Thang activates services "<ActivateServicesRequestDto>" on subscription
+#       Then   amount with tax of <order> wallet operation should be equal to <amount> euros
 
        Examples:
          | SubscriptionDto                                                                                                                         | ActivateServicesRequestDto                                                                                                                                                            | CDR                                                            | UpdateServicesRequestDto                                                                                                                                                           | order | amount |

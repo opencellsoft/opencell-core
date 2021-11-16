@@ -1,0 +1,20 @@
+{
+  "subscription": "subCode",
+  "servicesToActivate": {
+    "service": [
+      {
+        "code": "SE_USG_UNIT",
+        "quantity": 1,
+        "subscriptionDate": "2020-10-05T03:15:45.000Z",
+        "customFields": {
+          "customField": [
+            {
+              "code": "CF_SE_DOUBLE",
+              "doubleValue": 150
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

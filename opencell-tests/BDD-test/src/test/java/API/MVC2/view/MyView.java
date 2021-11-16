@@ -2,7 +2,7 @@ package API.MVC2.view;
 
 import API.MVC2.controllers.SaveController;
 import API.MVC2.model.MyModel;
-import functional.SQLite.SQLiteConnection;
+import functional.SQLite.SQLiteManagement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ public class MyView {
         try
         {
             // Read Json data from database and convert to JSONObject
-            String jsonString = SQLiteConnection.selectJsonTable("Seller", "UpdateSeller", "TableUpdateSeller");
+            String jsonString = SQLiteManagement.selectJsonTable("Seller", "UpdateSeller", "TableUpdateSeller");
 
             map = new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
         }

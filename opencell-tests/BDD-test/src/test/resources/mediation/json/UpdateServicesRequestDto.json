@@ -1,0 +1,16 @@
+{
+  "subscriptionCode": "subCode",
+  "serviceToUpdate": [
+    {
+      "code": "SE_USG_UNIT",
+      "customFields": {
+        "customField": [
+          {
+            "code": "CF_SE_DOUBLE",
+            "doubleValue": 277
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -18,10 +18,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Stream;
 
-public class SQLiteConnection {
+public class SQLiteManagement {
 
     private static final String JSON_DATABASE = "Test_automation.db";
     private static final String JSON_TABLE = "json_data_table";
+    private static final String TABLE_MAP_ENTITY_AND_RS = "map_entity_and_rs_path";
     private static final char SINGLE_QUOTE = '\'';
 
     public static void createNewDatabase() {
@@ -37,6 +38,56 @@ public class SQLiteConnection {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void createTableRsAndEntity() {
+        // SQLite connection string
+        String url = "jdbc:sqlite:C://sqlite/db/" + JSON_DATABASE;
+        // SQL statement for creating a new table
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_MAP_ENTITY_AND_RS + "(\n"
+                + "	entityName text NOT NULL,\n"
+                + "	rs_path text NOT NULL,\n"
+                + " PRIMARY KEY (entityName)"
+                + ");";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             Statement stmt = conn.createStatement()) {
+            // create a new table
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void insertTableRsAndEntity(String entityName, String rs_path) {
+        String sql = "INSERT INTO " + TABLE_MAP_ENTITY_AND_RS + "(entityName, rs_path) VALUES(?, ?)";
+
+        try (Connection conn = connectToDB();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, entityName);
+            pstmt.setString(2, rs_path);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static String selectTableEntityAndRs(String entityName) {
+        String sqlToSearchForTableName = "SELECT rs_path FROM " + TABLE_MAP_ENTITY_AND_RS
+                + " WHERE entityName = " + SINGLE_QUOTE + entityName + SINGLE_QUOTE;
+
+        try (Connection conn = connectToDB();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sqlToSearchForTableName)){
+
+            // loop through the result set
+            while (rs.next()) {
+                return rs.getString("rs_path");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     public static void createJsonTable() {
@@ -62,7 +113,7 @@ public class SQLiteConnection {
         }
     }
 
-    private static Connection connect() {
+    private static Connection connectToDB() {
         // SQLite connection string
         String url = "jdbc:sqlite:C://sqlite/db/" + JSON_DATABASE;
         Connection conn = null;
@@ -78,8 +129,8 @@ public class SQLiteConnection {
                                        JSONObject jsonObject, String jsonExpectedResult) {
         String sql = "INSERT INTO " + JSON_TABLE + "(key1, key2, key3, jsonObject, jsonExpectedResult) VALUES(?, ?, ?, json(?), ?)";
 
-        try (Connection conn = connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = connectToDB();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, key1);
             pstmt.setString(2, key2);
             pstmt.setString(3, key3);
@@ -96,13 +147,12 @@ public class SQLiteConnection {
                         + " AND key2 = " + SINGLE_QUOTE + key2 + SINGLE_QUOTE
                         + " AND key3 = " + SINGLE_QUOTE + key3 + SINGLE_QUOTE;
 
-        try (Connection conn = connect();
+        try (Connection conn = connectToDB();
              Statement stmt  = conn.createStatement();
              ResultSet rs    = stmt.executeQuery(sqlToSearchForTableName)){
 
             // loop through the result set
             while (rs.next()) {
-//System.out.println("rs.getString(\"jsonObject\") : " + rs.getString("jsonObject") );
                 return rs.getString("jsonObject");
             }
         } catch (SQLException e) {

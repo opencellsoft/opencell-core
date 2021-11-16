@@ -1,7 +1,10 @@
 package functional.driver.actions.generic;
 
+import functional.SQLite.SQLiteManagement;
 import functional.driver.utils.Constants;
+import functional.driver.utils.FileManagement;
 import functional.driver.utils.KeyCloakAuthenticationHook;
+import lombok.SneakyThrows;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
@@ -12,28 +15,35 @@ import net.thucydides.core.annotations.Step;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-public class CreateEntity implements Task {
+public class CreateEntityWithDto implements Task {
 
+    private final String entity;
     private final String entityDto;
+    private final String featurePath;
 
-    public CreateEntity(String entityDto) {
+    public CreateEntityWithDto(String entity, String entityDto, String featurePath) {
+        this.entity = entity;
         this.entityDto = entityDto;
+        this.featurePath = featurePath;
     }
 
-    public static CreateEntity called(String entityDto) {
-        return Tasks.instrumented(CreateEntity.class, entityDto);
+    public static CreateEntityWithDto called(String entity, String entityDto, String featurePath) {
+        return Tasks.instrumented(CreateEntityWithDto.class, entity, entityDto, featurePath);
     }
 
+    @SneakyThrows
     @Override
     @Step("{0} creates entity")
     public <T extends Actor> void performAs(T actor) {
-        final String url = "/billing/subscription/createOrUpdate";
+        String url = SQLiteManagement.selectTableEntityAndRs(entity);
+        String dto = FileManagement.readEntityDto(featurePath, entityDto);
+
         actor.attemptsTo(
                 Post.to(url)
                         .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                         .with(request -> request.header(
                                 HttpHeaders.AUTHORIZATION, Constants.OAUTH2 + " " + KeyCloakAuthenticationHook.getToken())
-                                .body(entityDto)
+                                .body(dto)
                         )
         );
 
