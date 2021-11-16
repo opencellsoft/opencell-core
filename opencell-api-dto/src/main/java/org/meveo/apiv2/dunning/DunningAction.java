@@ -50,7 +50,7 @@ public interface DunningAction {
     Map<String, Long> getActionNotificationTemplate();
     
     @Nullable
-    Long getAssignedTo();
+    Map<String, Long> getAssignedTo();
     
     @Value.Default
     default boolean getAttachOverdueInvoices() {
@@ -82,7 +82,7 @@ public interface DunningAction {
         }
         if (getAssignedTo() != null) {
             DunningAgent dunningAgent = new DunningAgent();
-            dunningAgent.setId(getAssignedTo());
+            dunningAgent.setId(getAssignedTo().get("id"));
             dunningActionEntity.setAssignedTo(dunningAgent);
         }
 
@@ -118,7 +118,7 @@ public interface DunningAction {
                 .attachDueInvoices(dunningAction.isAttachDueInvoices());
                 
         if (dunningAction.getAssignedTo() != null) {
-            immutableDunningAction.assignedTo(dunningAction.getAssignedTo().getId());
+            immutableDunningAction.assignedTo(Collections.singletonMap("id",dunningAction.getAssignedTo().getId()));
         }
 
         if (dunningAction.getActionNotificationTemplate() != null) {
