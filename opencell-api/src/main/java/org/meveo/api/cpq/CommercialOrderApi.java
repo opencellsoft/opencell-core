@@ -192,7 +192,12 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
-		order.setDeliveryDate(orderDto.getDeliveryDate());
+		if (orderDto.getDeliveryDate()!=null) {
+        	if(orderDto.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	order.setDeliveryDate(orderDto.getDeliveryDate());
+        }
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
 		order.setExternalReference(orderDto.getExternalReference());
@@ -327,8 +332,12 @@ public class CommercialOrderApi extends BaseApi {
 			order.setProgressDate(orderDto.getProgressDate());
 		if(orderDto.getOrderDate() != null)
 			order.setOrderDate(orderDto.getOrderDate());
-		if(orderDto.getDeliveryDate() != null)
-			order.setDeliveryDate(orderDto.getDeliveryDate());
+		if (orderDto.getDeliveryDate()!=null) {
+        	if(orderDto.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	order.setDeliveryDate(orderDto.getDeliveryDate());
+        }
 		if(orderDto.getCustomerServiceBegin() != null)
 			order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		
@@ -561,7 +570,12 @@ public class CommercialOrderApi extends BaseApi {
 		orderOffer.setOrder(commercialOrder);
 		orderOffer.setOfferTemplate(offerTemplate);
 		orderOffer.setDiscountPlan(discountPlan);
-		orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+		if (orderOfferDto.getDeliveryDate()!=null) {
+        	if(orderOfferDto.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        }
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -603,7 +617,12 @@ public class CommercialOrderApi extends BaseApi {
     	orderOffer.setOrder(commercialOrder);
     	orderOffer.setOfferTemplate(offerTemplate);
     	orderOffer.setDiscountPlan(discountPlan);
-    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+    	if (orderOfferDto.getDeliveryDate()!=null) {
+        	if(orderOfferDto.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        }
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
     	orderOfferService.update(orderOffer); 
@@ -804,7 +823,12 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity());
-		orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
+		if (orderProductDto.getDeliveryDate()!=null) {
+        	if(orderProductDto.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
+        }
 		orderProduct.updateAudit(currentUser); 
 		return orderProduct;
     }

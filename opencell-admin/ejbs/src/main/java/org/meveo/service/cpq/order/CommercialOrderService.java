@@ -19,6 +19,7 @@ import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -222,6 +223,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
 		if (deliveryDate != null) {
+			if(deliveryDate.before(new Date())) {
+				throw new MeveoApiException("Delivery date should be in the future");
+			}
 			serviceInstance.setDeliveryDate(deliveryDate);
 		} else {
 			serviceInstance.setDeliveryDate(getServiceDeliveryDate(subscription.getOrder(), subscription.getOrderOffer(), orderProduct));
