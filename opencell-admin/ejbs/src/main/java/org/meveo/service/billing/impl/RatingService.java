@@ -239,19 +239,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
     public RatingResult rateCharge(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
             Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
-        // For virtual operation, lookup charge in the subscription
-        if (isVirtual && chargeInstance.getSubscription() != null) {
-            List<ServiceInstance> serviceInstances = chargeInstance.getSubscription().getServiceInstances();
-            for (ServiceInstance serviceInstance : serviceInstances) {
-                for (ChargeInstance chargeInstanceFromService : serviceInstance.getChargeInstances()) {
-                    if (chargeInstanceFromService.getCode().equals(chargeInstance.getCode())) {
-                        chargeInstance = chargeInstanceFromService;
-                        break;
-                    }
-                }
-            }
-        }
-
         WalletOperation walletOperation = null;
         
         if(quantityInChargeUnits==null) {
