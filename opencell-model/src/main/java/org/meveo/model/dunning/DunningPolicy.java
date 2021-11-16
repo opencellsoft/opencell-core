@@ -1,12 +1,12 @@
 package org.meveo.model.dunning;
 
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Currency;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,15 +35,13 @@ public class DunningPolicy extends AuditableEntity {
     @NotNull
     private Double minBalanceTrigger;
 
-    @ElementCollection(fetch = LAZY)
-    @CollectionTable(name = "dunning_min_balance_trigger_currency", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "min_balance_trigger_currency")
-    private List<String> minBalanceTriggerCurrency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "min_balance_trigger_currency_id")
+    private Currency minBalanceTriggerCurrency;
 
-    @ElementCollection(fetch = EAGER)
-    @CollectionTable(name = "dunning_determine_level_by", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "determine_level_by")
-    private List<String> determineLevelBy;
+    @Column(name = "determine_level_by", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DunningDetermineLevelBy determineLevelBy;
 
     @Column(name = "include_due_invoices_in_threshold")
     @Type(type = "numeric_boolean")
@@ -74,7 +72,7 @@ public class DunningPolicy extends AuditableEntity {
     @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyLevel> dunningLevels;
 
-    @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY)
+    @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyRule> dunningPolicyRules;
 
     public String getPolicyName() {
@@ -109,19 +107,19 @@ public class DunningPolicy extends AuditableEntity {
         this.minBalanceTrigger = minBalanceTrigger;
     }
 
-    public List<String> getMinBalanceTriggerCurrency() {
+    public Currency getMinBalanceTriggerCurrency() {
         return minBalanceTriggerCurrency;
     }
 
-    public void setMinBalanceTriggerCurrency(List<String> minBalanceTriggerCurrency) {
+    public void setMinBalanceTriggerCurrency(Currency minBalanceTriggerCurrency) {
         this.minBalanceTriggerCurrency = minBalanceTriggerCurrency;
     }
 
-    public List<String> getDetermineLevelBy() {
+    public DunningDetermineLevelBy getDetermineLevelBy() {
         return determineLevelBy;
     }
 
-    public void setDetermineLevelBy(List<String> determineLevelBy) {
+    public void setDetermineLevelBy(DunningDetermineLevelBy determineLevelBy) {
         this.determineLevelBy = determineLevelBy;
     }
 

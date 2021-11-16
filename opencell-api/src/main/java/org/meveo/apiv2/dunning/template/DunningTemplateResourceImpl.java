@@ -1,11 +1,14 @@
 package org.meveo.apiv2.dunning.template;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.dunning.DunningTemplate;
 import org.meveo.service.payments.impl.DunningTemplateService;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 
 public class DunningTemplateResourceImpl implements DunningTemplateResource{
     @Inject
@@ -25,10 +28,18 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
         if(dunningTemplate == null) {
             throw new EntityDoesNotExistsException("dunning Template with id "+dunningTemplateId+" does not exist.");
         }
-        dunningTemplateService.remove(dunningTemplateId);
+        try {
+        	dunningTemplateService.remove(dunningTemplateId);
+        }catch (Exception exception) {
+        	if (ExceptionUtils.indexOfThrowable(exception, org.hibernate.exception.ConstraintViolationException.class) > -1) {
+        		throw new DeleteReferencedEntityException(DunningTemplate.class, dunningTemplateId);
+        	} else {
+        		throw new BusinessApiException(exception);
+        	} 
+        }
         return Response.ok()
-                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Template successfully deleted\"},\"id\": "+dunningTemplateId+"} ")
-                .build();
+        		.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Template successfully deleted\"},\"id\": "+dunningTemplateId+"} ")
+        		.build();
     }
 
     @Override

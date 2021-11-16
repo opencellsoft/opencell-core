@@ -4,6 +4,7 @@ import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.PROCESS_ALL;
 import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.ROLLBACK_ON_ERROR;
 import static org.meveo.apiv2.billing.RegisterCdrListModeEnum.STOP_ON_FIRST_FAIL;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -29,6 +30,7 @@ import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
+import org.meveo.service.medina.impl.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +75,12 @@ public class MediationApiService {
                 if (cdr == null) {
                     throw new BusinessException("Failed to process a CDR line: " + cdrLine);
                 }
+
+            	if(cdrService.isCDRExistByOriginRecord(cdr.getOriginRecord())) {
+            		cdr.setRejectReason("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist");
+            		cdr.setRejectReasonException(new BusinessException("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist"));
+            	}
+            	
                 if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr.getLine(), cdr.getRejectReason());
 
@@ -99,12 +107,13 @@ public class MediationApiService {
 
             } catch (Exception e) {
 
-                checkRollBackMode(mode, e);
-
-                fail = checkInvalidAccess(fail, cdr, e);
-
                 CdrError cdrError = createCdrError(cdr, cdrLine, e);
                 cdrListResult.getErrors().add(cdrError);
+
+                checkRollBackMode(mode, cdrListResult, total);
+
+                fail = checkInvalidAccessAndIncrement(fail, cdr, e);
+                
                 cdrService.createOrUpdateCdr(cdr);
 
                 if (mode == STOP_ON_FIRST_FAIL) {
@@ -126,7 +135,7 @@ public class MediationApiService {
 
     private CdrError createCdrError(CDR cdr, String cdrLine, Exception e) {
         CdrError cdrError = null;
-        if (cdr != null) {
+        if (cdr != null && cdr.getRejectReasonException() != null) {
             cdrError = new CdrError(cdr.getRejectReasonException().getClass().getSimpleName(), cdr.getRejectReason(), cdr.getLine());
         } else {
             cdrError = new CdrError(e.getClass().getSimpleName(), e.getMessage(), cdrLine);
@@ -134,7 +143,7 @@ public class MediationApiService {
         return cdrError;
     }
 
-    private int checkInvalidAccess(int fail, CDR cdr, Exception e) {
+    private int checkInvalidAccessAndIncrement(int fail, CDR cdr, Exception e) {
         if (e instanceof InvalidAccessException) {
             fail++;
             if (cdr != null) {
@@ -144,13 +153,12 @@ public class MediationApiService {
         return fail;
     }
 
-    private void checkRollBackMode(RegisterCdrListModeEnum mode, Exception e) {
+    private void checkRollBackMode(RegisterCdrListModeEnum mode, CdrListResult cdrListResult, int total) {
         if (mode == ROLLBACK_ON_ERROR) {
-            if (e instanceof BusinessException) {
-                throw (BusinessException) e;
-            } else {
-                throw new BusinessException(e);
-            }
+            cdrListResult.setEdrIds(new ArrayList<Long>());
+            Statistics statistics = new Statistics(total, 0, total);
+            cdrListResult.setStatistics(statistics);
+            throw new RollbackOnErrorException(cdrListResult);
         }
     }
 

@@ -23,23 +23,30 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.util.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
+import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -61,7 +68,16 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
     private AccessService accessService;
-
+    
+    @Inject
+    private ProviderService providerService;
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+    
+    @Inject
+    private CDRService cdrService;
+    
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public CDR parse(Object line) throws CDRParsingException {
@@ -246,7 +262,16 @@ public class MEVEOCdrParser implements ICdrParser {
     public CDR parseByApi(String line, String userName, String ipAddress) throws CDRParsingException {
         CDR cdr = parse(line);
         cdr.setOriginBatch("API_" + ipAddress);
-        cdr.setOriginRecord(userName + "_" + new Date().getTime());
+        var provider = providerService.getProvider();
+        boolean deduplication = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "false"));
+        if(provider != null && !Strings.isBlank(provider.getCdrDeduplicationKeyEL()) && deduplication) {
+        	try {
+        		cdr.setOriginRecord(ValueExpressionWrapper.evaluateExpression(provider.getCdrDeduplicationKeyEL(), Map.of("cdr",cdr), String.class));
+        	}catch(BusinessException e) {
+        		throw new BusinessException("Error detected in dedudplicationKeyEL : " + e.getMessage());
+        	}
+        }else
+        	cdr.setOriginRecord(userName + "_" + new Date().getTime());
         return cdr;
     }
 

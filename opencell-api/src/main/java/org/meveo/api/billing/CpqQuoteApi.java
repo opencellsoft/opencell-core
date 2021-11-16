@@ -72,7 +72,6 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.BaseEntity;
@@ -100,9 +99,7 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -124,6 +121,7 @@ import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -239,6 +237,9 @@ public class CpqQuoteApi extends BaseApi {
 
     @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
+    
+    @Inject
+    private UserAccountService userAccountService;
 
     @Inject
     @StatusUpdated
@@ -279,9 +280,12 @@ public class CpqQuoteApi extends BaseApi {
             else
                 cpqQuote.setBillableAccount(billableAccount);
 
-        }else
+        }else {
             cpqQuote.setBillableAccount(applicantAccount);
-
+        }
+        if(!Strings.isEmpty(quote.getUserAccountCode())) {
+            cpqQuote.setUserAccount(userAccountService.findByCode(quote.getUserAccountCode()));
+        }
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
         if (quote.getDeliveryDate()!=null) {
@@ -618,9 +622,12 @@ public class CpqQuoteApi extends BaseApi {
                 quote.setBillableAccount(quote.getApplicantAccount());
             else
                 quote.setBillableAccount(billableAccount);
-        }else
+        }else {
             quote.setBillableAccount(quote.getApplicantAccount());
-        
+        }
+        if(!Strings.isEmpty(quoteDto.getUserAccountCode())) {
+            quote.setUserAccount(userAccountService.findByCode(quoteDto.getUserAccountCode()));
+        }
         try {
             cpqQuoteService.update(quote);
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
@@ -755,6 +762,8 @@ public class CpqQuoteApi extends BaseApi {
         dto.setQuoteNumber(quote.getQuoteNumber());
         dto.setId(quote.getId());
         dto.setStatusDate(quote.getStatusDate());
+        if (quote.getUserAccount()!= null)
+            dto.setUserAccountCode(quote.getUserAccount().getCode());
         return dto;
     }
 
@@ -805,6 +814,9 @@ public class CpqQuoteApi extends BaseApi {
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
         if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
         	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
+        }
+        if(!StringUtils.isBlank(quoteOfferDto.getUserAccountCode())) {
+        	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDto.getUserAccountCode()));
         }
         quoteOffer.setSequence(quoteOfferDto.getSequence());
         quoteOffer.setCode(quoteOfferDto.getCode());
@@ -860,6 +872,9 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(!Strings.isEmpty(quoteOfferDTO.getDiscountPlanCode())) {
         	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDTO.getDiscountPlanCode()));
+        }
+        if(!StringUtils.isBlank(quoteOfferDTO.getUserAccountCode())) {
+        	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDTO.getUserAccountCode()));
         }
         if (!Strings.isEmpty(quoteOfferDTO.getBillableAccountCode()))
             quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));

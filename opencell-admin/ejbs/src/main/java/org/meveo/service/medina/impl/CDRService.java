@@ -24,12 +24,14 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
@@ -192,5 +194,9 @@ public class CDRService extends PersistenceService<CDR> {
                 update(cdr);
             }                       
         }
+    }
+    
+    public boolean isCDRExistByOriginRecord(String originRecord) {
+        return getEntityManager().createNamedQuery("CDR.findByOrginRecord").setParameter("originRecord", originRecord).getResultList().size() > 0;
     }
 }

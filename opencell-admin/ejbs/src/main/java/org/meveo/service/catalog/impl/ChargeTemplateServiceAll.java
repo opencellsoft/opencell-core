@@ -21,10 +21,13 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.xml.bind.ValidationException;
 
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -47,5 +50,20 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 		QueryBuilder qb=new QueryBuilder(this.getEntityClass(),"c");
 		qb.addCriterionEntity("invoiceSubCategory", invoiceSubCategory);
 		return qb.find(getEntityManager());
+	}
+
+	/**
+	 * @param chargeTemplate
+	 * @param stringStatus
+	 * @return
+	 */
+	public void updateStatus(ChargeTemplate chargeTemplate, String stringStatus) {
+		ChargeTemplateStatusEnum status = ChargeTemplateStatusEnum.valueOf(stringStatus);
+		try {
+			chargeTemplate.setStatus(status);
+			update(chargeTemplate);
+		} catch (ValidationException e) {
+			throw new BusinessApiException(e.getMessage());
+		}
 	}
 }

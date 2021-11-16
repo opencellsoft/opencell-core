@@ -830,7 +830,7 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        		    if (serviceInstance.getDeliveryDate().after(new Date())) {
+        		    if (serviceInstance.getDeliveryDate() != null && serviceInstance.getDeliveryDate().after(new Date())) {
         				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
         			}else {
         				serviceInstanceService.serviceActivation(serviceInstance);
@@ -2439,6 +2439,21 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscriptionService.cancelSubscriptionRenewal(subscription);
+    }
+
+    public void cancelSubscriptionTermination(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        handleMissingParameters();
+
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
+        }
+
+        subscriptionService.cancelSubscriptionTermination(subscription);
     }
 
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) throws MeveoApiException, BusinessException {

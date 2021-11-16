@@ -30,6 +30,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -154,6 +155,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
 			throw new BusinessException("Can not validate order with status different than DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
 		}
+		UserAccount userAccount = order.getUserAccount();
+		if(userAccount==null) {
+			throw new BusinessException("Can not validate order with empty user account: " + order.getId());
+		}
 		
 		List<OrderOffer> validOffers = validateOffers(order.getOffers());
 		
@@ -168,7 +173,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			Subscription subscription = new Subscription();
 			subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 			subscription.setUserAccount(order.getUserAccount());
-            subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
+			subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
 			subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
 			if (subscription.getSubscriptionDate().after(new Date())) {
