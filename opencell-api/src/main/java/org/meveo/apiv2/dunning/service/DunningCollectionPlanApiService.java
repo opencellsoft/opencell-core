@@ -3,6 +3,9 @@ package org.meveo.apiv2.dunning.service;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,9 +19,13 @@ import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
@@ -33,6 +40,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
+    
+    @Inject
+    private AuditLogService auditLogService;
+    
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
 
     @Override
     public List<DunningCollectionPlan> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -70,11 +84,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @Override
     public Optional<DunningCollectionPlan> delete(Long id) {
-        try {
-            dunningCollectionPlanService.remove(id);
+        DunningCollectionPlan dunningCollectionPlan = dunningCollectionPlanService.findById(id);
+        if(dunningCollectionPlan != null) {
+            dunningPolicyService.remove(id);
+            trackOperation("delete", new Date(), dunningCollectionPlan);
+            return of(dunningCollectionPlan);
+        } else {
             return empty();
-        } catch (Exception exception) {
-            throw new BusinessException(exception.getMessage());
         }
     }
 
@@ -83,6 +99,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return empty();
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningCollectionPlan> switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
         DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
         if (collectionPlan == null) {
@@ -121,5 +138,26 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 dunningCollectionPlanService.switchCollectionPlan(collectionPlan, policy, policyLevel);
             }
         }
+    }
+    
+    
+    public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
+        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
+        AuditLog auditLog = new AuditLog();
+        auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
+        auditLog.setCreated(operationDate);
+        auditLog.setActor(currentUser.getUserName());
+        auditLog.setAction(operationType);
+        StringBuilder parameters = new StringBuilder()
+                .append(formatter.format(operationDate)).append(" - ")
+                .append(currentUser.getUserName()).append(" - ")
+                .append(" apply ")
+                .append(operationType)
+                .append(" to collection Plan id=")
+                .append(dunningCollectionPlan.getId());
+        auditLog.setParameters(parameters.toString());
+        auditLog.setOrigin("DunningCollectionPlan: " + dunningCollectionPlan.getId());
+        auditLogService.create(auditLog);
+        return auditLog;
     }
 }
