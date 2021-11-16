@@ -15,6 +15,7 @@ import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 
 @Path("/dunning/collectionPlan")
 @Produces(APPLICATION_JSON)
@@ -41,4 +42,16 @@ public interface DunningCollectionPlanResource {
                         @ApiResponse(responseCode = "200", description = "Mass switch success"),
                         @ApiResponse(responseCode = "404", description = "Entity does not exist") })
     Response massSwitchCollectionPlan(@Parameter(description = "MassSwitchDunningCollectionPlan input", required = true) MassSwitchDunningCollectionPlan massSwitchDunningCollectionPlan);
+
+    @POST
+    @Path("/checkMassSwitch")
+    @Operation(summary = "Check eligible collection for switch",
+            tags = { "CollectionPlan" },
+            description = "Check eligible collection for switch",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Check successfully passed"),
+                    @ApiResponse(responseCode = "404", description = "Entity does not exits")
+            })
+    Response checkMassSwitch(@Parameter(description = "Collection plans to check", required = true)
+                                     DunningMassSwitchInput massSwitchInput);
 }

@@ -43,6 +43,9 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     public List<Invoice> findEligibleInvoicesForPolicy(DunningPolicy policy) {
         policy = refreshOrRetrieve(policy);
+        if (policy == null) {
+            throw new BusinessException("Policy does not exists");
+        }
         try {
             String query = "SELECT inv FROM Invoice inv WHERE " + buildPolicyRulesFilter(policy.getDunningPolicyRules());
             return  (List<Invoice>) invoiceService.executeSelectQuery(query, null);

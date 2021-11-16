@@ -1,6 +1,6 @@
 package org.meveo.apiv2.dunning.impl;
 
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 import org.meveo.apiv2.dunning.DunningCollectionPlan;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
@@ -8,6 +8,8 @@ import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
+
+import java.util.List;
 
 public class DunningCollectionPlanMapper
         extends ResourceMapper<DunningCollectionPlan, org.meveo.model.dunning.DunningCollectionPlan> {
@@ -31,7 +33,7 @@ public class DunningCollectionPlanMapper
             .collectionPlanBalance(entity.getCollectionPlanBalance())
             .retryPaymentOnResumeDate(entity.isRetryPaymentOnResumeDate())
             .dunningLevelInstances(entity.getDunningLevelInstances() != null 
-                    ? entity.getDunningLevelInstances().stream().map(l -> createResource(l)).collect(Collectors.toList())
+                    ? entity.getDunningLevelInstances().stream().map(l -> createResource(l)).collect(toList())
                     : null)
             .collectionPlanNextAction(entity.getCollectionPlanNextAction())
             .collectionPlanNextActionDate(entity.getCollectionPlanNextActionDate())
@@ -45,8 +47,16 @@ public class DunningCollectionPlanMapper
     protected org.meveo.model.dunning.DunningCollectionPlan toEntity(DunningCollectionPlan resource) {
         return null;
     }
-    
+
     private Resource createResource(BaseEntity baseEntity) {
         return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).build() : null;
+    }
+
+    public List<org.meveo.model.dunning.DunningCollectionPlan> toEntities(List<Resource> collectionPlans) {
+        return collectionPlans
+                .stream()
+                .map(dunningCollectionPlan ->
+                        new org.meveo.model.dunning.DunningCollectionPlan(dunningCollectionPlan.getId()))
+                .collect(toList());
     }
 }

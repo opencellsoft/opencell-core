@@ -9,6 +9,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -162,6 +163,12 @@ public class DunningCollectionPlan extends AuditableEntity {
      */
     @Column(name = "total_dunning_levels")
     private Integer totalDunningLevels;
+
+    public DunningCollectionPlan() {};
+
+	public DunningCollectionPlan(Long id) {
+		this.id = id;
+	}
 
 	public DunningPolicy getCollectionPlanRelatedPolicy() {
 		return collectionPlanRelatedPolicy;

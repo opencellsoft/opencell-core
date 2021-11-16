@@ -2,24 +2,26 @@ package org.meveo.apiv2.dunning.service;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.stream.Collectors.toList;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.*;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
@@ -139,7 +141,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
         }
     }
-    
+
     
     public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
         final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
@@ -159,5 +161,33 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         auditLog.setOrigin("DunningCollectionPlan: " + dunningCollectionPlan.getId());
         auditLogService.create(auditLog);
         return auditLog;
+    }
+
+    public Optional<Map<String, List<Long>>> checkMassSwitch(DunningPolicy policy,
+                                                             List<DunningCollectionPlan> collectionPlans) {
+        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
+        List<Long> canBeSwitched = new ArrayList<>();
+        List<Long> canNotBeSwitched = new ArrayList<>();
+        Map<String, List<Long>> massSwitchResult = new HashMap<>();
+        if(eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
+            for (DunningCollectionPlan collectionPlan : collectionPlans) {
+                collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+                if (collectionPlan == null) {
+                    throw new NotFoundException("Collection plan does not exits");
+                }
+                for (Invoice invoice : eligibleInvoice) {
+                    if (invoice.getId() == collectionPlan.getCollectionPlanRelatedInvoice().getId()) {
+                        canBeSwitched.add(collectionPlan.getId());
+                    } else {
+                        canNotBeSwitched.add(collectionPlan.getId());
+                    }
+                }
+            }
+        } else {
+            canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
+        }
+        massSwitchResult.put("canBESwitched", canBeSwitched);
+        massSwitchResult.put("canNotBESwitched", canNotBeSwitched);
+        return of(massSwitchResult);
     }
 }
