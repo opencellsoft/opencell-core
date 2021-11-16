@@ -18,11 +18,15 @@
 
 package org.meveo.api.dto.billing;
 
-import org.meveo.api.dto.BaseEntityDto;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.api.dto.BaseEntityDto;
+
+
 
 /**
  * The Class ChargeCDRDto.
@@ -38,6 +42,11 @@ public class ChargeCDRDto extends BaseEntityDto {
      * The CDR string
      */
     private String cdr;
+    
+    /**
+     * A list of CDR strings
+     */
+    private List<String> cdrs;
 
     /**
      * The remote IP
@@ -72,6 +81,15 @@ public class ChargeCDRDto extends BaseEntityDto {
 
     public ChargeCDRDto(String cdr, String ip, boolean virtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
         this.cdr = cdr;
+        this.ip = ip;
+        this.virtual = virtual;
+        this.rateTriggeredEdr = rateTriggeredEdr;
+        this.returnWalletOperations = returnWalletOperations;
+        this.maxDepth = maxDepth == null ? 1 : maxDepth;
+    }
+    
+    public ChargeCDRDto(List<String> cdrs, String ip, boolean virtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
+        this.cdrs = cdrs;
         this.ip = ip;
         this.virtual = virtual;
         this.rateTriggeredEdr = rateTriggeredEdr;
@@ -168,5 +186,19 @@ public class ChargeCDRDto extends BaseEntityDto {
      */
     public void setMaxDepth(Integer maxDepth) {
         this.maxDepth = maxDepth;
+    }
+    
+    /**
+     * @return A list of CDR strings
+     */
+    public List<String> getCdrs() {
+        return cdrs;
+    }
+    
+    /**
+     * @param cdrs A list of CDR strings
+     */
+    public void setCdrs(List<String> cdrs) {
+        this.cdrs = cdrs;
     }
 }
