@@ -264,7 +264,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
-        ci =  chargeInstanceService.refreshOrRetrieve(aggregatedWo.getChargeInstance());
+        ci =  aggregatedWo.getChargeInstance() != null ? chargeInstanceService.findById(aggregatedWo.getChargeInstance()) : null;
         si = (aggregatedWo.getServiceInstance() == null && ci != null) ? ci.getServiceInstance() : serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance());
         sub = (aggregatedWo.getSubscription() == null && ci != null) ? ci.getSubscription() : subscriptionService.refreshOrRetrieve(aggregatedWo.getSubscription());
         ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
