@@ -155,7 +155,7 @@ public class GDPRJobBean extends BaseJobBean {
                     statement.execute("SET session_replication_role = replica");
                     statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_subscriptions");
                     statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_subscriptions (id) as (select id from " + schemaPrefix
-                            + "billing_subscription s where s.status not in ('CREATED', 'ACTIVE') and s.subscription_date<=now() - interval '" + gdprConfiguration.getInactiveSubscriptionLife() + " year')");
+                            + "billing_subscription s where s.status not in ('CREATED', 'ACTIVE') and s.termination_date<=now() - interval '" + gdprConfiguration.getInactiveSubscriptionLife() + " year')");
                     statement.execute("create index mview_gdpr_subscriptions_pk on " + schemaPrefix + "mview_gdpr_subscriptions (id)");
 
                     ResultSet resultset = statement.executeQuery("select count(*) from " + schemaPrefix + "mview_gdpr_subscriptions");
