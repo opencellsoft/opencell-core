@@ -6,10 +6,12 @@ import static java.util.stream.Collectors.toList;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.*;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -42,10 +44,10 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
-    
+
     @Inject
     private AuditLogService auditLogService;
-    
+
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
@@ -87,7 +89,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     @Override
     public Optional<DunningCollectionPlan> delete(Long id) {
         DunningCollectionPlan dunningCollectionPlan = dunningCollectionPlanService.findById(id);
-        if(dunningCollectionPlan != null) {
+        if (dunningCollectionPlan != null) {
             dunningPolicyService.remove(id);
             trackOperation("delete", new Date(), dunningCollectionPlan);
             return of(dunningCollectionPlan);
@@ -103,8 +105,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningCollectionPlan> switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
-        DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
-        if (collectionPlan == null) {
+        DunningCollectionPlan oldCollectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
+        if (oldCollectionPlan == null) {
             throw new NotFoundException("Dunning collection plan with id " + collectionPlanId + " does not exits");
         }
         DunningPolicy policy = dunningPolicyService.findById(switchDunningCollectionPlan.getDunningPolicy().getId());
@@ -115,7 +117,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         if (policyLevel == null) {
             throw new NotFoundException("Policy level with id " + switchDunningCollectionPlan.getPolicyLevel().getId() + " does not exits");
         }
-        return of(dunningCollectionPlanService.switchCollectionPlan(collectionPlan, policy, policyLevel));
+        Optional<DunningCollectionPlan> optional = of(dunningCollectionPlanService.switchCollectionPlan(oldCollectionPlan, policy, policyLevel));
+        trackOperation("switch", new Date(), oldCollectionPlan);
+        return optional;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -142,7 +146,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
     }
 
-    
     public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
         final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
         AuditLog auditLog = new AuditLog();
@@ -163,13 +166,12 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return auditLog;
     }
 
-    public Optional<Map<String, List<Long>>> checkMassSwitch(DunningPolicy policy,
-                                                             List<DunningCollectionPlan> collectionPlans) {
+    public Optional<Map<String, List<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
         List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
         List<Long> canBeSwitched = new ArrayList<>();
         List<Long> canNotBeSwitched = new ArrayList<>();
         Map<String, List<Long>> massSwitchResult = new HashMap<>();
-        if(eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
+        if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
                 collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
                 if (collectionPlan == null) {
