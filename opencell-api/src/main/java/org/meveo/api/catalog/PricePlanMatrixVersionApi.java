@@ -7,9 +7,7 @@ import java.util.Date;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
@@ -109,7 +107,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         } else {
         	if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
 				if(validity==null || validity.getTo()==null) {
-        			throw new ValidationException("ending date must not be null to update a published pricePlanMatrixVersion ");
+					throw new InvalidParameterException("ending date must not be null to update a published pricePlanMatrixVersion ");
         		} else if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
                 	throw new InvalidParameterException("ending date must be greater than today");
                 }
