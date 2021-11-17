@@ -1,13 +1,14 @@
 package org.meveo.apiv2.dunning.impl;
 
 import static java.util.stream.Collectors.toList;
+import static org.meveo.apiv2.models.ImmutableResource.builder;
 
-import org.meveo.apiv2.dunning.DunningCollectionPlan;
-import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
+import org.meveo.apiv2.dunning.*;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.dunning.DunningPolicy;
 
 import java.util.List;
 
@@ -58,5 +59,34 @@ public class DunningCollectionPlanMapper
                 .map(dunningCollectionPlan ->
                         new org.meveo.model.dunning.DunningCollectionPlan(dunningCollectionPlan.getId()))
                 .collect(toList());
+    }
+
+    public AvailablePoliciesList toAvailablePolicies(List<DunningPolicy> availablePolicies) {
+        List<org.meveo.apiv2.dunning.DunningPolicy> dunningPolicies = availablePolicies.stream()
+                .map(this::toPolicy)
+                .collect(toList());
+        AvailablePoliciesList availablePoliciesResponse = ImmutableAvailablePoliciesList.builder()
+                .total(availablePolicies.size())
+                .availablePolicies(dunningPolicies)
+                .build();
+        return availablePoliciesResponse;
+    }
+
+    private org.meveo.apiv2.dunning.DunningPolicy toPolicy(DunningPolicy policy) {
+        return ImmutableDunningPolicy.builder()
+                    .id(policy.getId())
+                    .isDefaultPolicy(policy.getDefaultPolicy())
+                    .isActivePolicy(policy.getActivePolicy())
+                    .policyName(policy.getPolicyName())
+                    .minBalanceTriggerCurrency(builder().id(policy.getMinBalanceTriggerCurrency().getId()).build())
+                    .policyDescription(policy.getPolicyDescription())
+                    .minBalanceTrigger(policy.getMinBalanceTrigger())
+                    .policyPriority(policy.getPolicyPriority())
+                    .interestForDelaySequence(policy.getInterestForDelaySequence())
+                    .isIncludeDueInvoicesInThreshold(policy.getIncludeDueInvoicesInThreshold())
+                    .isAttachInvoicesToEmails(policy.getAttachInvoicesToEmails())
+                    .isIncludePayReminder(policy.getIncludePayReminder())
+                    .determineLevelBy(policy.getDetermineLevelBy())
+                .build();
     }
 }

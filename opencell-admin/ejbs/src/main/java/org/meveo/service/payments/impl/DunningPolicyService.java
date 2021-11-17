@@ -13,6 +13,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -142,5 +143,20 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         return invoice.getPaymentStatus().equals(UNPAID)
                 && collectionPlanService.findByInvoiceId(invoice.getId()).isEmpty() && dayOverDueAndThresholdCondition;
+    }
+
+    public List<DunningPolicy> availablePoliciesForSwitch(Invoice invoice) {
+        List<DunningPolicy> availablePoliciesForSwitch = new ArrayList<>();
+        for (DunningPolicy policy : list()) {
+            if(checkInvoiceMatch(findEligibleInvoicesForPolicy(policy), invoice)) {
+                availablePoliciesForSwitch.add(policy);
+            }
+        }
+        return availablePoliciesForSwitch;
+    }
+
+    private boolean checkInvoiceMatch(List<Invoice> invoices, Invoice invoice) {
+        return invoices.stream()
+                        .anyMatch(inv -> inv.getId() == invoice.getId());
     }
 }

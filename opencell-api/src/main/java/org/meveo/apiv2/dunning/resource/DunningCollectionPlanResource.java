@@ -9,6 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.meveo.apiv2.dunning.AvailablePoliciesInput;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 
@@ -54,4 +55,16 @@ public interface DunningCollectionPlanResource {
             })
     Response checkMassSwitch(@Parameter(description = "Collection plans to check", required = true)
                                      DunningMassSwitchInput massSwitchInput);
+
+    @POST
+    @Path("/availableDunningPolicies")
+    @Operation(summary = "List of available dunning policies",
+            tags = { "CollectionPlan" },
+            description = "List of available dunning policies",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List successfully returned"),
+                    @ApiResponse(responseCode = "404", description = "Entity does not exits")
+            })
+    Response availableDunningPolicies(@Parameter(description = "available dunning policies input", required = true)
+                                              AvailablePoliciesInput availablePoliciesInput);
 }

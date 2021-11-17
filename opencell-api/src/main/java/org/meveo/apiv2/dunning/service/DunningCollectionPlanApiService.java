@@ -16,8 +16,10 @@ import java.util.Optional;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import org.meveo.apiv2.models.Resource;
@@ -30,6 +32,8 @@ import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
@@ -51,6 +55,12 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private ResourceBundle resourceMessages;
 
     @Override
     public List<DunningCollectionPlan> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -191,5 +201,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         massSwitchResult.put("canBESwitched", canBeSwitched);
         massSwitchResult.put("canNotBESwitched", canNotBeSwitched);
         return of(massSwitchResult);
+    }
+
+    public List<DunningPolicy> availableDunningPolicies(Long invoiceID) {
+        Invoice invoice = invoiceService.findById(invoiceID);
+        if (invoice == null) {
+            throw new BadRequestException(resourceMessages.getString("error.collectionPlan.availablePolicies.invoiceNotFound", invoiceID));
+        }
+        return dunningPolicyService.availablePoliciesForSwitch(invoice);
     }
 }

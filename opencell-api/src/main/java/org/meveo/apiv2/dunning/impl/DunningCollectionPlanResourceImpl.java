@@ -1,20 +1,21 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.lang.Long.valueOf;
+import static java.util.stream.Collectors.toList;
+import static org.meveo.apiv2.models.ImmutableResource.builder;
+
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.*;
 import org.meveo.apiv2.dunning.resource.DunningCollectionPlanResource;
 import org.meveo.apiv2.dunning.service.DunningCollectionPlanApiService;
-import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningPolicy;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.Long.valueOf;
-import static java.util.stream.Collectors.toList;
-import static org.meveo.apiv2.models.ImmutableResource.builder;
 
 public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanResource {
 
@@ -22,6 +23,9 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 
     @Inject
     private DunningCollectionPlanApiService dunningCollectionPlanApiService;
+
+    @Inject
+    private ResourceBundle resourceMessages;
 
     @Override
     public Response switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
@@ -72,6 +76,18 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
                 .total(total)
                 .canBeSwitched(canBeSwitched)
                 .canNotBeSwitched(canNotBeSwitched)
+                .build();
+    }
+
+    @Override
+    public Response availableDunningPolicies(AvailablePoliciesInput availablePoliciesInput) {
+        if(availablePoliciesInput.getInvoice() == null) {
+            throw new BadRequestException(resourceMessages.getString("error.collectionPlan.availablePolicies.missingInvoice"));
+        }
+        List<DunningPolicy> dunningPolicies =
+                dunningCollectionPlanApiService.availableDunningPolicies(availablePoliciesInput.getInvoice().getId());
+        return Response.ok()
+                .entity(collectionPlanMapper.toAvailablePolicies(dunningPolicies))
                 .build();
     }
 }
