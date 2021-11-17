@@ -761,47 +761,50 @@ public class CpqQuoteApi extends BaseApi {
 
 
     public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteOfferDto) {
+        try {
 
-        if (quoteOfferDto.getQuoteVersion() == null)
-            missingParameters.add("quoteVersion");
-        if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
-            missingParameters.add("quoteCode");
-        if (quoteOfferDto.getOfferId() == null)
-            missingParameters.add("offerId");
+            if (quoteOfferDto.getQuoteVersion() == null)
+                missingParameters.add("quoteVersion");
+            if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
+                missingParameters.add("quoteCode");
+            if (quoteOfferDto.getOfferId() == null)
+                missingParameters.add("offerId");
 
-        handleMissingParameters();
+            handleMissingParameters();
 
-        OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
-        if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
-        final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
-        if (quoteVersion == null)
-            throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
-        QuoteOffer quoteOffer = new QuoteOffer();
-        quoteOffer.setOfferTemplate(offerTemplate);
-        quoteOffer.setQuoteVersion(quoteVersion);
-        if (!Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
-            quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
-        if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
-            quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
+            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            if (offerTemplate == null)
+                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
+            final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
+            if (quoteVersion == null)
+                throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
+            QuoteOffer quoteOffer = new QuoteOffer();
+            quoteOffer.setOfferTemplate(offerTemplate);
+            quoteOffer.setQuoteVersion(quoteVersion);
+            if (!Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
+                quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
+            if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
+                quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
-        if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
-        	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
+            if (!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
+                quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
+            }
+            quoteOffer.setSequence(quoteOfferDto.getSequence());
+            quoteOffer.setCode(quoteOfferDto.getCode());
+            quoteOffer.setDescription(quoteOfferDto.getDescription());
+            populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
+            quoteOfferService.create(quoteOffer);
+            quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
+            quoteOfferDto.setCode(quoteOffer.getCode());
+            quoteOfferDto.setDescription(quoteOffer.getDescription());
+            newPopulateProduct(quoteOfferDto, quoteOffer);
+            newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
+
+
+            return quoteOfferDto;
+        }catch(BusinessException exp){
+            throw new BusinessApiException(exp.getMessage());
         }
-        quoteOffer.setSequence(quoteOfferDto.getSequence());
-        quoteOffer.setCode(quoteOfferDto.getCode());
-        quoteOffer.setDescription(quoteOfferDto.getDescription());
-        populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
-        quoteOfferService.create(quoteOffer);
-        quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
-        quoteOfferDto.setCode(quoteOffer.getCode());
-        quoteOfferDto.setDescription(quoteOffer.getDescription());
-        newPopulateProduct(quoteOfferDto, quoteOffer);
-        newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
-
-
-
-        return quoteOfferDto;
     }
 
 

@@ -5,6 +5,7 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 import java.util.regex.Pattern;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.AttributeValue;
@@ -21,7 +22,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
         if (!validate(attributeValue.getAttribute().getValidationType(),
                 attributeValue.getAttribute().getValidationPattern(), attributeValue, cpqQuote, quoteVersion,
                 commercialOrder, serviceInstance)) {
-            throw new BusinessException(createErrorMessage(attributeValue));
+            throw new BusinessException(createErrorMessage(attributeValue, quoteVersion, commercialOrder, serviceInstance));
         }
 
     }
@@ -38,7 +39,10 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
         }
     }
 
-    private static String createErrorMessage(AttributeValue attributeValue) {
+    private static String createErrorMessage(AttributeValue attributeValue, QuoteVersion quoteVersion, CommercialOrder commercialOrder, ServiceInstance serviceInstance) {
+        if(StringUtils.isNotBlank(attributeValue.getAttribute().getValidationLabel())){
+            return evaluateExpression(attributeValue.getAttribute().getValidationLabel(), String.class, attributeValue, quoteVersion, commercialOrder, serviceInstance);
+        }
         AttributeTypeEnum attributeType = attributeValue.getAttribute().getAttributeType();
         String value;
         if (AttributeTypeEnum.NUMERIC.equals(attributeType)) {

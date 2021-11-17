@@ -187,6 +187,9 @@ public class AttributeDTO extends EnableBusinessDto {
 								.map(tag -> tag.getCode())
 								.collect(Collectors.toList());
 		}
+		validationType = attribute.getValidationType();
+		validationLabel = attribute.getValidationLabel();
+		validationPattern = attribute.getValidationPattern();
     }
     
     public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {

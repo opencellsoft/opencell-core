@@ -192,6 +192,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
 		processMedias(postData,attribute);
+		attribute.setValidationType(postData.getValidationType());
+		attribute.setValidationPattern(postData.getValidationPattern());
+		attribute.setValidationLabel(postData.getValidationLabel());
 		attributeService.update(attribute);
 		return attribute;
 	}
