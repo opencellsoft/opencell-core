@@ -19,7 +19,9 @@
 package org.meveo.api.catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -31,21 +33,26 @@ import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
+import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
+import org.meveo.service.cpq.AttributeService;
 
 /**
  * @author Edward P. Legaspi
@@ -57,13 +64,22 @@ public class GenericChargeTemplateApi extends BaseApi {
     private ChargeTemplateServiceAll chargeTemplateService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
-    
-    @Inject
     private PricePlanMatrixService pricePlanMatrixService;
     
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    @Inject
+    private AttributeService attributeService;
+
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
+    @Inject
+    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+
+    @Inject
+    private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     @Inject
     @MeveoJpa
@@ -111,27 +127,36 @@ public class GenericChargeTemplateApi extends BaseApi {
 		if(chargeTemplate ==null) {
     		throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
     	}
-
-		//price Plan to be duplicated
-		ScriptInstance duplicateRatingScript = null;
-		
-        if (chargeTemplate.getRatingScript() != null) {
-        	duplicateRatingScript = chargeTemplate.getRatingScript();
-        	duplicateRatingScript.setId(null);
-            scriptInstanceService.create(duplicateRatingScript);
-        }
 		
 		
 		//charge Template to be duplicated
-		
 		ChargeTemplate duplicateChargeTemplate = null;
 		
 		try {
 			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
 			duplicateChargeTemplate.setId(null);
+			duplicateChargeTemplate.setCode(chargeTemplateService.findDuplicateCode(chargeTemplate));
 			duplicateChargeTemplate.setStatus(ChargeTemplateStatusEnum.DRAFT);
-			duplicateChargeTemplate.setRatingScript(duplicateRatingScript);
+
+			if(chargeTemplate.getAttributes() != null) {
+				Set<Attribute> attributes = new HashSet<Attribute>();
+				for(Attribute attribute:chargeTemplate.getAttributes()) {
+					Attribute attributeNew = attributeService.findByCode(attribute.getCode());
+					attributes.add(attributeNew);
+				}
+				duplicateChargeTemplate.setAttributes(attributes);
+			}
 			
+			if(chargeTemplate.getEdrTemplates() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+				for(TriggeredEDRTemplate triggeredEDRTemplate:chargeTemplate.getEdrTemplates()) {
+					TriggeredEDRTemplate triggeredEDRTemplateNew = triggeredEDRTemplateService.findByCode(triggeredEDRTemplate.getCode());
+					edrTemplates.add(triggeredEDRTemplateNew);
+				}
+				duplicateChargeTemplate.setEdrTemplates(edrTemplates);
+			}
+			
+
 			chargeTemplateService.create(duplicateChargeTemplate);
 			
 	        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
@@ -144,31 +169,56 @@ public class GenericChargeTemplateApi extends BaseApi {
 	            	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
 							.setParameter("pricePlanMatrixCode", pricePlanMatrix.getCode()).getResultList();
 	            	
-	        		List<PricePlanMatrixVersion> pricesVersionsNew = new ArrayList<PricePlanMatrixVersion>();
+	        		PricePlanMatrix pricePlanMatrixNew = (PricePlanMatrix) BeanUtils.cloneBean(pricePlanMatrix);
+
+	        		pricePlanMatrixNew.setId(null);
+	        		pricePlanMatrixNew.setEventCode(duplicateChargeTemplate.getCode());
+	        		pricePlanMatrixNew.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
+
+	        		List<PricePlanMatrixVersion> versionsNew = new ArrayList<PricePlanMatrixVersion>();
+	        		pricePlanMatrixNew.setVersions(versionsNew);
 	        		
-	    	        if(pricePlanMatrix != null && !pricePlanMatrixes.isEmpty()) {
-		            	for(PricePlanMatrixVersion priceVersion: pricesVersions) {
+	        		pricePlanMatrixService.create(pricePlanMatrixNew);
+
+
+	        		if(pricesVersions != null && !pricesVersions.isEmpty()) {
+		        		for(PricePlanMatrixVersion priceVersion: pricesVersions) {
 		            		PricePlanMatrixVersion priceVersionNew = (PricePlanMatrixVersion) BeanUtils.cloneBean(priceVersion);
 		            		
 		            		priceVersionNew.setId(null);
 		            		priceVersionNew.setStatus(VersionStatusEnum.DRAFT);
+		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
 		            		
+		            		if(priceVersion.getColumns() != null) {
+			            		Set<PricePlanMatrixColumn> pricePlanColumns = new HashSet<>();
+			            		for(PricePlanMatrixColumn pricePlanColumn:priceVersion.getColumns()){
+			            			PricePlanMatrixColumn pricePlanColumnNew = pricePlanMatrixColumnService.findByCode(pricePlanColumn.getCode());
+			            			pricePlanColumns.add(pricePlanColumnNew);
+			            		}
+			            		priceVersionNew.setColumns(pricePlanColumns);
+		            		}
+		            		
+		            		if(priceVersion.getLines() != null) {
+		            			Set<PricePlanMatrixLine> lines = new HashSet<>();
+			            		for(PricePlanMatrixLine pricePlanMatrixLine:priceVersion.getLines()){
+			            			PricePlanMatrixLine pricePlanMatrixLineNew = pricePlanMatrixLineService.findById(pricePlanMatrixLine.getId());
+			            			lines.add(pricePlanMatrixLineNew);
+			            		}
+			            		priceVersionNew.setLines(lines);
+		            		}
+
+		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
 		            		pricePlanMatrixVersionService.create(priceVersionNew);
-		            		pricesVersionsNew.add(priceVersionNew);
+		            		//versionsNew.add(priceVersionNew);
 		            	}
-	    	        }
-	        		
-	        		PricePlanMatrix pricePlanMatrixNew = (PricePlanMatrix) BeanUtils.cloneBean(pricePlanMatrix);
-	        		pricePlanMatrixNew.setId(null);
-	        		pricePlanMatrixNew.setEventCode(duplicateChargeTemplate.getCode());
-	        		pricePlanMatrixNew.setVersions(pricesVersionsNew);
-	        		pricePlanMatrixService.create(pricePlanMatrixNew);
+	        		}
+	        		//pricePlanMatrixNew.setVersions(versionsNew);
+
+//	        		pricePlanMatrixService.create(pricePlanMatrixNew);
 	        	}
 	        }
-
 			
 			getChargeTemplateResponseDto.setChargeTemplate(new ChargeTemplateDto(duplicateChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(duplicateChargeTemplate)));
-
 			
 		} catch (Exception e) {
             log.error("Error when trying to cloneBean quoteOffer : ", e);

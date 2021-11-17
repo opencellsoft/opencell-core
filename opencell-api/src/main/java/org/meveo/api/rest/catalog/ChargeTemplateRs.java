@@ -123,6 +123,6 @@ public interface ChargeTemplateRs extends IBaseRs {
 	@Operation(summary = "add duplicate charge template for a given code", 
 		tags = {"ChargeTemplates" }, description = "add duplicate charge template for a given code", operationId = "POST_ChargeTemplate_chargeTemplates_{chargeTemplateCode}", 
 		responses = {@ApiResponse(description = "charge template", content = @Content(schema = @Schema(implementation = GetChargeTemplateResponseDto.class))) })
-	ActionStatus duplicateCharge(@PathParam("chargeTemplateCode") String chargeTemplateCode);
+	GetChargeTemplateResponseDto duplicateCharge(@PathParam("chargeTemplateCode") String chargeTemplateCode);
 
 }
