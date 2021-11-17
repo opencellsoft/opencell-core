@@ -147,6 +147,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     public List<DunningPolicy> availablePoliciesForSwitch(Invoice invoice) {
         List<DunningPolicy> availablePoliciesForSwitch = new ArrayList<>();
+        invoice = invoiceService.refreshOrRetrieve(invoice);
         for (DunningPolicy policy : list()) {
             if(checkInvoiceMatch(findEligibleInvoicesForPolicy(policy), invoice)) {
                 availablePoliciesForSwitch.add(policy);

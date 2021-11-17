@@ -16,7 +16,7 @@ public interface AvailablePoliciesInput {
     @Nullable
     Resource getBillingAccount();
 
-    @Schema(description = "Invoice resource")
+    @Schema(description = "Collection plan resource")
     @Nullable
-    Resource getInvoice();
+    Resource getCollectionPlan();
 }

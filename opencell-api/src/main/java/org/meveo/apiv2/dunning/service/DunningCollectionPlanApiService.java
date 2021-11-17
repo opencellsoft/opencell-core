@@ -1,7 +1,6 @@
 package org.meveo.apiv2.dunning.service;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.toList;
 
 import java.text.DateFormat;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.util.ResourceBundle;
@@ -32,8 +30,6 @@ import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
@@ -55,9 +51,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
-
-    @Inject
-    private InvoiceService invoiceService;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -203,11 +196,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return of(massSwitchResult);
     }
 
-    public List<DunningPolicy> availableDunningPolicies(Long invoiceID) {
-        Invoice invoice = invoiceService.findById(invoiceID);
-        if (invoice == null) {
-            throw new BadRequestException(resourceMessages.getString("error.collectionPlan.availablePolicies.invoiceNotFound", invoiceID));
+    public List<DunningPolicy> availableDunningPolicies(Long collectionPlanID) {
+        DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanID);
+        if (collectionPlan == null) {
+            throw new NotFoundException(resourceMessages.getString("error.collectionPlan.availablePolicies.collectionPlanNotFound", collectionPlanID));
         }
+        Invoice invoice = ofNullable(collectionPlan.getCollectionPlanRelatedInvoice())
+                .orElseThrow(() -> new NotFoundException("No invoice found for collection plan : " + collectionPlanID));
         return dunningPolicyService.availablePoliciesForSwitch(invoice);
     }
 }

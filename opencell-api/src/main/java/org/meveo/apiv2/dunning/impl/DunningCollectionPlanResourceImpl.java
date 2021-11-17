@@ -81,11 +81,11 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 
     @Override
     public Response availableDunningPolicies(AvailablePoliciesInput availablePoliciesInput) {
-        if(availablePoliciesInput.getInvoice() == null) {
+        if(availablePoliciesInput.getCollectionPlan() == null) {
             throw new BadRequestException(resourceMessages.getString("error.collectionPlan.availablePolicies.missingInvoice"));
         }
         List<DunningPolicy> dunningPolicies =
-                dunningCollectionPlanApiService.availableDunningPolicies(availablePoliciesInput.getInvoice().getId());
+                dunningCollectionPlanApiService.availableDunningPolicies(availablePoliciesInput.getCollectionPlan().getId());
         return Response.ok()
                 .entity(collectionPlanMapper.toAvailablePolicies(dunningPolicies))
                 .build();
