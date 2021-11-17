@@ -75,7 +75,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	public Optional<DunningLevel> delete(Long id) {
 		DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
 		dunningLevelService.remove(dunningLevel);
-		createAuditLog(DunningLevel.class.getSimpleName(), "DELETE", dunningLevel);
+		createAuditLog(DunningLevel.class.getSimpleName(), "DELETE", dunningLevel,"");
 		return Optional.ofNullable(dunningLevel);
 	}
 	
@@ -88,13 +88,14 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		setDefaultValues(newDunningLevel);
 		validateParameters(newDunningLevel);
 		dunningLevelService.create(newDunningLevel);
-		createAuditLog(DunningLevel.class.getSimpleName(), "CREATE", newDunningLevel);
+		createAuditLog(DunningLevel.class.getSimpleName(), "CREATE", newDunningLevel, "");
 		return newDunningLevel;
 	}
 
 	@Override
 	public Optional<DunningLevel> update(Long id, DunningLevel dunningLevel) {
 		DunningLevel dunningLevelToUpdate = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
+		StringBuilder updatedFields = new StringBuilder();
 
 		if (StringUtils.isNotBlank(dunningLevel.getCode()) && !dunningLevel.getCode().equals(dunningLevelToUpdate.getCode())) {
 			if (dunningLevelService.findByCode(dunningLevel.getCode()) != null) {
@@ -104,47 +105,56 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		}
 		if (dunningLevel.getDescription() != null) {
 			dunningLevelToUpdate.setDescription(dunningLevel.getDescription());
+			updatedFields.append("Description, ");
 		}
 		if (dunningLevel.isReminder() != null) {
 			dunningLevelToUpdate.setReminder(dunningLevel.isReminder());
+			updatedFields.append("Reminder, ");
 		}
 		if (dunningLevel.isActive() != null) {
 			dunningLevelToUpdate.setActive(dunningLevel.isActive());
+			updatedFields.append("Active, ");
 		}
 		if (dunningLevel.getDaysOverdue() != null) {
 			dunningLevelToUpdate.setDaysOverdue(dunningLevel.getDaysOverdue());
+			updatedFields.append("DaysOverdue, ");
 		}
 		if (dunningLevel.isSoftDecline() != null) {
 			dunningLevelToUpdate.setSoftDecline(dunningLevel.isSoftDecline());
+			updatedFields.append("SoftDecline, ");
 		}
 		if (dunningLevel.getMinBalance() != null) {
 			dunningLevelToUpdate.setMinBalance(dunningLevel.getMinBalance());
+			updatedFields.append("MinBalance, ");
 		}
 		if (dunningLevel.getMinBalanceCurrency() != null) {
 			dunningLevelToUpdate.setMinBalanceCurrency(dunningLevel.getMinBalanceCurrency());
+			updatedFields.append("MinBalanceCurrency, ");
 		}
 		if (dunningLevel.getChargeType() != null) {
 			dunningLevelToUpdate.setChargeType(dunningLevel.getChargeType());
+			updatedFields.append("ChargeType, ");
 		}
 		if (dunningLevel.getChargeValue() != null) {
 			dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
-		}
-		if (dunningLevel.getChargeValue() != null) {
-			dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
+			updatedFields.append("ChargeValue, ");
 		}
 		if (dunningLevel.getChargeCurrency() != null) {
 			dunningLevelToUpdate.setChargeCurrency(dunningLevel.getChargeCurrency());
+			updatedFields.append("ChargeCurrency, ");
 		}
 		if (dunningLevel.isEndOfDunningLevel() != null) {
 			dunningLevelToUpdate.setEndOfDunningLevel(dunningLevel.isEndOfDunningLevel());
+			updatedFields.append("EndOfDunningLevel, ");
 		}
 		if (dunningLevel.getDunningActions() != null) {
 			dunningLevelToUpdate.setDunningActions(dunningLevel.getDunningActions());
+			updatedFields.append("DunningActions, ");
 		}
 
 		validateParameters(dunningLevelToUpdate);
 		dunningLevelService.update(dunningLevelToUpdate);
-		createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate);
+		createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate, updatedFields.delete(updatedFields.length()-3, updatedFields.length()-1).toString());
 		return Optional.of(dunningLevelToUpdate);
 	}
 
@@ -254,7 +264,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 		return null;
 	}
 	
-	private void createAuditLog(String entity, String operationType, DunningLevel dunningLevel) {
+	private void createAuditLog(String entity, String operationType, DunningLevel dunningLevel, String fields) {
 	    AuditLog auditLog = new AuditLog();
 	    Date sysDate = new Date();
 	    auditLog.setActor(currentUser.getUserName());
@@ -262,7 +272,8 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 	    auditLog.setEntity(entity);
 	    auditLog.setOrigin(dunningLevel.getCode());
 	    auditLog.setAction(operationType);
-	    auditLog.setParameters("user "+currentUser.getUserName()+" apply "+operationType+" on "+sysDate+" to the Dunning level with code "+dunningLevel.getCode());
+	    auditLog.setParameters("user "+currentUser.getUserName()+" apply "+operationType+" on "+sysDate+" to the Dunning level with code "+dunningLevel.getCode()+
+				(fields.isBlank() ? "" : ", fields ("+fields+")"));
 	    auditLogService.create(auditLog);
 	}
 
