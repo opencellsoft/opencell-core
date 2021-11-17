@@ -2593,7 +2593,12 @@ public class SubscriptionApi extends BaseApi {
     				});
     			}
     			if (!serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-    			    serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+    				 if (serviceInstanceDto.getDeliveryDate() != null) {
+     		        	if(serviceInstanceDto.getDeliveryDate().before(new Date())) {
+     		        		throw new MeveoApiException("Delivery date should be in the future");	
+     		        	}
+     		        	  serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+    				 }
     			    serviceInstanceService.update(serviceInstance);
                 }
     		});
