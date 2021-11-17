@@ -34,7 +34,7 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
 	        	var productVersionAttributeOptional = findMandatoryByProductVersion(orderAttribute, orderAttribute.getOrderProduct().getProductVersion());
 	        	var productVersionAttribute = productVersionAttributeOptional.get();
 	        	if(productVersionAttributeOptional.isPresent()) {
-	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(),
+	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), productVersionAttribute.getValidationPattern(), productVersionAttribute.getValidationLabel(),
 							orderAttribute, 
 							productVersionAttribute.getMandatoryWithEl(), 
 							orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
@@ -48,7 +48,7 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
 	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(orderAttribute, orderAttribute.getOrderOffer().getOfferTemplate());
 	    		var offerTempalteAttribute = offerTemplatMandatoryEl.get();
 				if(offerTemplatMandatoryEl.isPresent()) {
-					super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), offerTempalteAttribute.getValidationPattern(), 
+					super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), offerTempalteAttribute.getValidationPattern(), offerTempalteAttribute.getValidationLabel(),
 							orderAttribute, 
 							offerTemplatMandatoryEl.get().getMandatoryWithEl(), 
 							orderAttribute.getCommercialOrder() != null ? orderAttribute.getCommercialOrder().getQuote() : null, 
