@@ -477,6 +477,8 @@ public class CommercialOrderApi extends BaseApi {
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getBillingAccountCode()))
 			missingParameters.add("billingAccountCode");
+		if(Strings.isEmpty(order.getUserAccountCode()))
+			missingParameters.add("userAccountCode");
 		if(Strings.isEmpty(order.getOrderTypeCode()))
 			missingParameters.add("orderTypeCode");
 		
@@ -559,14 +561,19 @@ public class CommercialOrderApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
 		}
+		UserAccount userAccount=null;
 		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
-			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
+			userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
 			if (userAccount == null) {
 				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
 			}
-			orderOffer.setUserAccount(userAccount);
+		} else {
+			userAccount = commercialOrder.getUserAccount();
+			if(userAccount == null) {
+				throw new BusinessApiException("Could not create a OrderOffer with empty userAccount");
+			}
 		}
-		
+		orderOffer.setUserAccount(userAccount);
 		DiscountPlan discountPlan=null;
 		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
 		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
