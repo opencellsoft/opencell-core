@@ -11221,7 +11221,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             
-            
+            <column name="collection_plan_id" type="varchar(255)" />
             <column name="collection_plan_related_policy_id" type="bigint" />
             <column name="initial_collection_plan_id" type="bigint" />
             <column name="collection_plan_billing_account_id" type="bigint" />

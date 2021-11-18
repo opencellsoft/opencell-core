@@ -28,6 +28,12 @@ import org.meveo.model.billing.Invoice;
 public class DunningCollectionPlan extends AuditableEntity {
 	
     private static final long serialVersionUID = 1L;
+    
+    /**
+     * The collection plan id
+     */
+    @Column(name = "collection_plan_id")
+	private String collectionPlanID;
 
     /**
      * The collection plan related policy
