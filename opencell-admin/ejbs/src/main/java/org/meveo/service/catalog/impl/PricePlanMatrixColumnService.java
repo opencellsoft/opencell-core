@@ -3,6 +3,7 @@ package org.meveo.service.catalog.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -117,10 +118,10 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 				
 				if (attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_TEXT)
 						|| attributeType.equals(AttributeTypeEnum.LIST_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_TEXT)) {
-					columns.add(column+"|List");
+					columns.add(column+"|List|"+pricePlanMatrixColumn.getRange());
 					
 				}else {
-					columns.add(column+"|"+columnType.toString());
+					columns.add(column+"|"+columnType.toString()+"|"+pricePlanMatrixColumn.getRange());
 				}
 				
 				
@@ -149,7 +150,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					
 					String columnType = columns.get(j).toString().split("\\|")[1];
 					String columnCode = columns.get(j).toString().split("\\|")[0];
-				
+					boolean isRange = Boolean.valueOf(columns.get(j).toString().split("\\|")[2]);
 					switch (columnType) {
 					case "String":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
@@ -173,8 +174,13 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						break;
 					case "Range_Date":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setFromDateValue(nextLine[j].split("\\|")[0].isEmpty() ? null : DateUtils.parseDate(nextLine[j].split("\\|")[0]));
-						pricePlanMatrixValueDto.setToDateValue(nextLine[j].split("\\|").length>1 ?DateUtils.parseDate(nextLine[j].split("\\|")[1]): null);
+						final Date fromDateValue = nextLine[j].split("\\|")[0].isEmpty() ? null : DateUtils.parseDate(nextLine[j].split("\\|")[0]);
+						if(isRange) {
+							pricePlanMatrixValueDto.setFromDateValue(fromDateValue);
+							pricePlanMatrixValueDto.setToDateValue(nextLine[j].split("\\|").length>1 ?DateUtils.parseDate(nextLine[j].split("\\|")[1]): null);
+						} else {
+							pricePlanMatrixValueDto.setDateValue(fromDateValue);
+						}
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "Range_Numeric":
