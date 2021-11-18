@@ -163,6 +163,12 @@ public class DunningCollectionPlan extends AuditableEntity {
      */
     @Column(name = "total_dunning_levels")
     private Integer totalDunningLevels;
+    
+    /**
+     * The collection plan pause duration
+     */
+    @Column(name = "pause_duration")
+    private Integer pauseDuration;
 
     public DunningCollectionPlan() {};
 
@@ -328,6 +334,14 @@ public class DunningCollectionPlan extends AuditableEntity {
 
 	public void setTotalDunningLevels(Integer totalDunningLevels) {
 		this.totalDunningLevels = totalDunningLevels;
+	}
+
+	public Integer getPauseDuration() {
+		return pauseDuration;
+	}
+
+	public void setPauseDuration(Integer pauseDuration) {
+		this.pauseDuration = pauseDuration;
 	}
     
 }

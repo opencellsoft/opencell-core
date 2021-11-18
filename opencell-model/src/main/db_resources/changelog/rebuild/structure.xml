@@ -11315,7 +11315,7 @@
             <column name="collection_plan_last_action" type="varchar(255)" />
             <column name="collection_plan_last_action_date" type="datetime" />
             <column name="total_dunning_levels" type="int4" />
-            
+            <column name="pause_duration" type="int4" />
             
         </createTable>
         
