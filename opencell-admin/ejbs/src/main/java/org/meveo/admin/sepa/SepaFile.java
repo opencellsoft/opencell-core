@@ -22,6 +22,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -69,6 +70,7 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
@@ -83,6 +85,10 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.DDRequestItemService;
+import org.meveo.service.payments.impl.DDRequestLOTService;
+import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
@@ -155,6 +161,11 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private static final String CATEGORY_PURPOSE_CODE = "SUPP";
 
 	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
+	private DDRequestLOTService ddRequestLOTService = (DDRequestLOTService) EjbUtils.getServiceInterface(DDRequestLOTService.class.getSimpleName());
+	private DDRequestItemService ddRequestItemService = (DDRequestItemService) EjbUtils.getServiceInterface(DDRequestItemService.class.getSimpleName());	
+	private CustomerAccountService customerAccountService = (CustomerAccountService) EjbUtils.getServiceInterface(CustomerAccountService.class.getSimpleName());
+	
+	
 
 	@Override
 	public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
@@ -309,6 +320,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 		org.meveo.admin.sepa.jaxb.pain001.Document document;
 		CustomerCreditTransferInitiationV03 message;
+		ddRequestLot = ddRequestLOTService.findById(ddRequestLot.getId(), Arrays.asList("ddrequestItems", "ddRequestBuilder"));
 		List<DDRequestItem> ddrequestItems = ddRequestLot.getDdrequestItems();
 		DDRequestItem ddrequestItem;
 		Long operationsByFile = ddRequestLot.getDdRequestBuilder().getNbOperationPerFile();
@@ -471,8 +483,15 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @throws Exception the exception
 	 */
 	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
-		CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
+		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
+		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods")) ;
+		
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+		
+		if(preferedPaymentMethod != null) {
+			preferedPaymentMethod = PersistenceUtils.initializeAndUnproxy(preferedPaymentMethod);
+		}
+		
 		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}

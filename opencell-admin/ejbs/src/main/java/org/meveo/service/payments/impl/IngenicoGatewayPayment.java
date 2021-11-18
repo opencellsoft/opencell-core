@@ -665,8 +665,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
 			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
 			cardPaymentMethodSpecificInputBase.setTokenize(true);
+			
+			AmountOfMoney amountOfMoney3DS = new AmountOfMoney();
+			amountOfMoney3DS.setAmount(Long.valueOf(hostedCheckoutInput.getAuthenticationAmount()));
+			amountOfMoney3DS.setCurrencyCode(hostedCheckoutInput.getCurrencyCode());
 
 			ThreeDSecureBase threeDSecure = new ThreeDSecureBase();
+			threeDSecure.setAuthenticationAmount(amountOfMoney3DS);
 			threeDSecure.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
 			cardPaymentMethodSpecificInputBase.setThreeDSecure(threeDSecure);
 
