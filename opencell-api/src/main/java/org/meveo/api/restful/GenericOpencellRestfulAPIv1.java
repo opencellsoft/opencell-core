@@ -73,7 +73,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     public static RegExHashMap<Object,String> MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH = new RegExHashMap<>();
     public static Map<String,Class> MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS = new HashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
-    public static final String API_VERSION = "/api/rest/v1";
+	public static final String API_VERSION = "/api/rest/v1";
+	public static final String REST_PATH = "/api/rest";
     public static Map RESTFUL_ENTITIES_MAP = new LinkedHashMap();
     public static OpenAPI API_STD_SWAGGER;
 

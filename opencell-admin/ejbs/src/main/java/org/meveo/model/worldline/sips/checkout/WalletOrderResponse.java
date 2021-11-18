@@ -12,6 +12,7 @@ public class WalletOrderResponse extends BaseResponse {
     private String responseCode;
     private String transactionDateTime;
     private String transactionPlatform;
+    private String complementaryCode;
 
     public String getAcquirerResponseCode() {
         return acquirerResponseCode;
@@ -68,4 +69,13 @@ public class WalletOrderResponse extends BaseResponse {
     public void setTransactionPlatform(String transactionPlatform) {
         this.transactionPlatform = transactionPlatform;
     }
+
+	public String getComplementaryCode() {
+		return complementaryCode;
+	}
+
+	public void setComplementaryCode(String complementaryCode) {
+		this.complementaryCode = complementaryCode;
+	}
+    
 }

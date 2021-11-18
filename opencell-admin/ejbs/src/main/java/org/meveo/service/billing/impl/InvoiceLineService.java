@@ -64,6 +64,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
@@ -76,6 +77,7 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+import org.meveo.util.ApplicationProvider;
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -100,27 +102,28 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @Inject
     private CpqQuoteService cpqQuoteService;
-    
+
     @Inject
     private CommercialOrderService commercialOrderService;
-    
+
     @Inject
     private BillingAccountService billingAccountService;
-    
+
     @Inject
     private SellerService sellerService;
-    
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
-        return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
-                .setParameter("quote", quote)
-                .getResultList();
+        return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class).setParameter("quote", quote).getResultList();
     }
 
     public List<InvoiceLine> findByCommercialOrder(CommercialOrder commercialOrder) {
-        return getEntityManager().createNamedQuery("InvoiceLine.findByCommercialOrder", InvoiceLine.class)
-                .setParameter("commercialOrder", commercialOrder)
-                .getResultList();
+        return getEntityManager().createNamedQuery("InvoiceLine.findByCommercialOrder", InvoiceLine.class).setParameter("commercialOrder", commercialOrder).getResultList();
     }
+
     @Override
     public void create(InvoiceLine entity) throws BusinessException {
     	AccountingArticle accountingArticle=entity.getAccountingArticle();
@@ -143,8 +146,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     		 billingAccount=billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
     	 }
     	
-    	 if(accountingArticle!=null) {
-             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount,null, date, false, false);
+    	 if(entity.getTax()==null && accountingArticle!=null) {
+             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount,null, date,null, false, false);
              if(taxInfo!=null)
             	 entity.setTax(taxInfo.tax);
             }
@@ -214,7 +217,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 
  public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        
+        Date operationDate=new Date();
+        Seller seller=null;
     	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription()); 
@@ -227,6 +231,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         CpqQuote quote =((CpqQuote) entityToInvoice);
         invoiceLine.setQuote(quote);
         invoiceLine.setBillingAccount(quote.getBillableAccount());
+        operationDate=quote.getQuoteDate();
+        seller=quote.getSeller();
         }
         CommercialOrder commercialOrder=null;
         if (entityToInvoice instanceof CommercialOrder) {
@@ -235,6 +241,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	invoiceLine.setCommercialOrder(commercialOrder);
         	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
         	invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
+        	operationDate=commercialOrder.getOrderDate();
+        	seller=commercialOrder.getSeller();
+
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
@@ -244,9 +253,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setTaxRate(totalTaxRate);
       
         invoiceLine.setValueDate(new Date());
-        if(accountingArticle!=null && commercialOrder!=null) {
-         TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), commercialOrder.getSeller(), commercialOrder.getBillingAccount(),commercialOrder.getUserAccount() , commercialOrder.getOrderDate(), false, false);
+        if(invoiceLine.getTax()==null && accountingArticle!=null) {
+         TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, invoiceLine.getBillingAccount(),null , operationDate,null, false, false);
          if(taxInfo!=null)
+          invoiceLine.setTaxRecalculated(true);
          invoiceLine.setTax(taxInfo.tax);
         }
         create(invoiceLine);
@@ -345,7 +355,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             InvoiceSubCategory invoiceSubCategory = defaultMinAccountingArticle.getInvoiceSubCategory();
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
             TaxMappingService.TaxInfo taxInfo = taxMappingService.determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount,
-                    null, minRatingDate, true, false);
+                    null, minRatingDate,null, true, false);
             InvoiceLine invoiceLine = createInvoiceLine( minAmountLabel, billableEntity, billingAccount, minRatingDate,
                     entity, seller, defaultMinAccountingArticle, taxInfo, diff);
             minAmountsResult.addMinAmountIL(invoiceLine);
@@ -358,8 +368,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     private AccountingArticle getDefaultAccountingArticle() {
         AccountingArticle accountingArticle = accountingArticleService.findByCode(INVOICE_MINIMUM_COMPLEMENT_CODE);
-        if (accountingArticle == null)
+        if (accountingArticle == null) {
             throw new EntityDoesNotExistsException(AccountingArticle.class, INVOICE_MINIMUM_COMPLEMENT_CODE);
+        }
         return accountingArticle;
     }
 
@@ -474,29 +485,31 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}
 		if(resource.getBillingAccountCode()!=null) {
 			invoiceLine.setBillingAccount((BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, resource.getBillingAccountCode()));
-		}
-		if(resource.getOfferTemplateCode()!=null) {
-			invoiceLine.setOfferTemplate((OfferTemplate)tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
-		}
+        }
+        if (resource.getOfferTemplateCode() != null) {
+            invoiceLine.setOfferTemplate((OfferTemplate) tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
+        }
 
-		if(resource.isTaxRecalculated()!=null){
-			invoiceLine.setTaxRecalculated( resource.isTaxRecalculated());
-		}
+        if (resource.isTaxRecalculated() != null) {
+            invoiceLine.setTaxRecalculated(resource.isTaxRecalculated());
+        }
 
-		var datePeriod = new DatePeriod();
-		if(resource.getStartDate() != null)
-			datePeriod.setFrom(resource.getStartDate());
-		if(resource.getEndDate() != null)
-			datePeriod.setTo(resource.getEndDate());
+        var datePeriod = new DatePeriod();
+        if (resource.getStartDate() != null) {
+            datePeriod.setFrom(resource.getStartDate());
+        }
+        if (resource.getEndDate() != null) {
+            datePeriod.setTo(resource.getEndDate());
+        }
 
-		invoiceLine.setValidity(datePeriod);
-		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
-		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
-		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
-		invoiceLine.setBillingRun((BillingRun)tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
+        invoiceLine.setValidity(datePeriod);
+        invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
+        invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
+        invoiceLine.setCommercialOrder((CommercialOrder) tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
+        invoiceLine.setBillingRun((BillingRun) tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
 
-		return invoiceLine;
-	}
+        return invoiceLine;
+    }
 
 	/**
 	 * @param invoice
@@ -623,7 +636,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         List<InvoiceLine> invoiceLines = new ArrayList<>();
         //Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
-            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result);
+            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
             create(invoiceLine);
             invoiceLines.add(invoiceLine);
             //iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());

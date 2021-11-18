@@ -2354,7 +2354,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptions.size() == 0) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         } else if (subscriptions.size() == 1) {
-            subscriptionService.activateInstantiatedService(subscriptions.get(1));
+            subscriptionService.activateInstantiatedService(subscriptions.get(0));
         } else {
             // so in this case, practically subscriptions list contains
             // the current last one sub valid on subscriptionValidityDate,
@@ -2434,6 +2434,21 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscriptionService.cancelSubscriptionRenewal(subscription);
+    }
+
+    public void cancelSubscriptionTermination(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        handleMissingParameters();
+
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
+        }
+
+        subscriptionService.cancelSubscriptionTermination(subscription);
     }
 
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) throws MeveoApiException, BusinessException {
