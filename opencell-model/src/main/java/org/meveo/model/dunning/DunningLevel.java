@@ -33,6 +33,8 @@ import java.util.List;
         @Parameter(name = "sequence_name", value = "dunning_level_seq")})
 public class DunningLevel extends BusinessEntity {
 
+    private static final long serialVersionUID = 8092970257735394941L;
+
     /**
      * A reminder level, is a level with a send notification action, its purpose is to remind the customer that his payment is due in a couple of days.
      * It is the first level of a policy, and a policy can only have one reminder level.

@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.service;
 import static java.util.Optional.empty;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,254 +28,274 @@ import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CurrencyService;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningActionService;
 import org.meveo.service.payments.impl.DunningLevelService;
 
 public class DunningLevelApiService implements ApiService<DunningLevel> {
 
-	@Inject
-	private CurrencyService currencyService;
+    @Inject
+    private CurrencyService currencyService;
 
-	@Inject
-	private DunningLevelService dunningLevelService;
+    @Inject
+    private DunningLevelService dunningLevelService;
 
-	@Inject
-	private DunningActionService dunningActionService;
+    @Inject
+    private DunningActionService dunningActionService;
 
-	private static final BigDecimal HUNDRED = new BigDecimal(100);
-	
-	@Inject
-	private AuditLogService auditLogService;
+    @Inject
+    private AuditLogService auditLogService;
 
-	@Inject
-	@CurrentUser
-	protected MeveoUser currentUser;
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
-	@Inject
-	private AuditableFieldService auditableFieldService;
+    private static final BigDecimal HUNDRED = new BigDecimal("100");
 
+    @Override
+    public Optional<DunningLevel> findById(Long id) {
+        return Optional.ofNullable(dunningLevelService.findById(id, Arrays.asList("minBalanceCurrency", "chargeCurrency", "dunningActions")));
+    }
 
-	
-	@Override
-	public Optional<DunningLevel> findById(Long id) {
-		return Optional.ofNullable(dunningLevelService.findById(id, Arrays.asList("minBalanceCurrency", "chargeCurrency", "dunningActions")));
-	}
+    @Override
+    public Optional<DunningLevel> findByCode(String code) {
+        DunningLevel dunningLevel = dunningLevelService.findByCode(code, Arrays.asList("minBalanceCurrency", "chargeCurrency", "dunningActions"));
+        if (dunningLevel == null) {
+            throw new EntityDoesNotExistsException(DunningLevel.class, code);
+        }
+        return Optional.of(dunningLevel);
+    }
 
-	@Override
-	public Optional<DunningLevel> findByCode(String code) {
-		DunningLevel dunningLevel = dunningLevelService.findByCode(code, Arrays.asList("minBalanceCurrency", "chargeCurrency", "dunningActions"));
-		if (dunningLevel == null) {
-			throw new EntityDoesNotExistsException(DunningLevel.class, code);
-		}
-		return Optional.of(dunningLevel);
-	}
+    @Override
+    public Optional<DunningLevel> delete(Long id) {
+        DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
+        dunningLevelService.remove(dunningLevel);
+        createAuditLog(DunningLevel.class.getSimpleName(), "DELETE", dunningLevel, null);
+        return Optional.ofNullable(dunningLevel);
+    }
 
-	@Override
-	public Optional<DunningLevel> delete(Long id) {
-		DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
-		dunningLevelService.remove(dunningLevel);
-		createAuditLog(DunningLevel.class.getSimpleName(), "DELETE", dunningLevel,"");
-		return Optional.ofNullable(dunningLevel);
-	}
-	
-	@Override
-	public DunningLevel create(DunningLevel newDunningLevel) {
-		if (dunningLevelService.findByCode(newDunningLevel.getCode()) != null) {
-			throw new EntityAlreadyExistsException(DunningLevel.class, newDunningLevel.getCode());
-		}
+    @Override
+    public DunningLevel create(DunningLevel newDunningLevel) {
+        if (dunningLevelService.findByCode(newDunningLevel.getCode()) != null) {
+            throw new EntityAlreadyExistsException(DunningLevel.class, newDunningLevel.getCode());
+        }
 
-		setDefaultValues(newDunningLevel);
-		validateParameters(newDunningLevel);
-		dunningLevelService.create(newDunningLevel);
-		createAuditLog(DunningLevel.class.getSimpleName(), "CREATE", newDunningLevel, "");
-		return newDunningLevel;
-	}
+        setDefaultValues(newDunningLevel);
+        validateParameters(newDunningLevel);
+        dunningLevelService.create(newDunningLevel);
+        createAuditLog(DunningLevel.class.getSimpleName(), "CREATE", newDunningLevel, null);
+        return newDunningLevel;
+    }
 
-	@Override
-	public Optional<DunningLevel> update(Long id, DunningLevel dunningLevel) {
-		DunningLevel dunningLevelToUpdate = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
-		StringBuilder updatedFields = new StringBuilder();
+    @Override
+    public Optional<DunningLevel> update(Long id, DunningLevel dunningLevel) {
+        DunningLevel dunningLevelToUpdate = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
 
-		if (StringUtils.isNotBlank(dunningLevel.getCode()) && !dunningLevel.getCode().equals(dunningLevelToUpdate.getCode())) {
-			if (dunningLevelService.findByCode(dunningLevel.getCode()) != null) {
-				throw new EntityAlreadyExistsException(DunningLevel.class, dunningLevel.getCode());
-			}
-			dunningLevelToUpdate.setCode(dunningLevel.getCode());
-		}
-		if (dunningLevel.getDescription() != null) {
-			dunningLevelToUpdate.setDescription(dunningLevel.getDescription());
-			updatedFields.append("Description, ");
-		}
-		if (dunningLevel.isReminder() != null) {
-			dunningLevelToUpdate.setReminder(dunningLevel.isReminder());
-			updatedFields.append("Reminder, ");
-		}
-		if (dunningLevel.isActive() != null) {
-			dunningLevelToUpdate.setActive(dunningLevel.isActive());
-			updatedFields.append("Active, ");
-		}
-		if (dunningLevel.getDaysOverdue() != null) {
-			dunningLevelToUpdate.setDaysOverdue(dunningLevel.getDaysOverdue());
-			updatedFields.append("DaysOverdue, ");
-		}
-		if (dunningLevel.isSoftDecline() != null) {
-			dunningLevelToUpdate.setSoftDecline(dunningLevel.isSoftDecline());
-			updatedFields.append("SoftDecline, ");
-		}
-		if (dunningLevel.getMinBalance() != null) {
-			dunningLevelToUpdate.setMinBalance(dunningLevel.getMinBalance());
-			updatedFields.append("MinBalance, ");
-		}
-		if (dunningLevel.getMinBalanceCurrency() != null) {
-			dunningLevelToUpdate.setMinBalanceCurrency(dunningLevel.getMinBalanceCurrency());
-			updatedFields.append("MinBalanceCurrency, ");
-		}
-		if (dunningLevel.getChargeType() != null) {
-			dunningLevelToUpdate.setChargeType(dunningLevel.getChargeType());
-			updatedFields.append("ChargeType, ");
-		}
-		if (dunningLevel.getChargeValue() != null) {
-			dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
-			updatedFields.append("ChargeValue, ");
-		}
-		if (dunningLevel.getChargeCurrency() != null) {
-			dunningLevelToUpdate.setChargeCurrency(dunningLevel.getChargeCurrency());
-			updatedFields.append("ChargeCurrency, ");
-		}
-		if (dunningLevel.isEndOfDunningLevel() != null) {
-			dunningLevelToUpdate.setEndOfDunningLevel(dunningLevel.isEndOfDunningLevel());
-			updatedFields.append("EndOfDunningLevel, ");
-		}
-		if (dunningLevel.getDunningActions() != null) {
-			dunningLevelToUpdate.setDunningActions(dunningLevel.getDunningActions());
-			updatedFields.append("DunningActions, ");
-		}
+        List<String> updatedFields = new ArrayList<>();
 
-		validateParameters(dunningLevelToUpdate);
-		dunningLevelService.update(dunningLevelToUpdate);
-		createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate, updatedFields.delete(updatedFields.length()-3, updatedFields.length()-1).toString());
-		return Optional.of(dunningLevelToUpdate);
-	}
+        if (StringUtils.isNotBlank(dunningLevel.getCode()) && !dunningLevel.getCode().equals(dunningLevelToUpdate.getCode())) {
+            if (dunningLevelService.findByCode(dunningLevel.getCode()) != null) {
+                throw new EntityAlreadyExistsException(DunningLevel.class, dunningLevel.getCode());
+            }
+            dunningLevelToUpdate.setCode(dunningLevel.getCode());
+            updatedFields.add("Code");
+        }
+        if (dunningLevel.getDescription() != null) {
+            dunningLevelToUpdate.setDescription(dunningLevel.getDescription());
+            if (!dunningLevel.getDescription().equals(dunningLevelToUpdate.getDescription())) {
+                updatedFields.add("Description");
+            }
+        }
+        if (dunningLevel.isReminder() != null) {
+            dunningLevelToUpdate.setReminder(dunningLevel.isReminder());
+            if (!dunningLevel.isReminder().equals(dunningLevelToUpdate.isReminder())) {
+                updatedFields.add("Reminder");
+            }
+        }
+        if (dunningLevel.isActive() != null) {
+            dunningLevelToUpdate.setActive(dunningLevel.isActive());
+            if (!dunningLevel.isActive().equals(dunningLevelToUpdate.isActive())) {
+                updatedFields.add("Active");
+            }
+        }
+        if (dunningLevel.getDaysOverdue() != null) {
+            dunningLevelToUpdate.setDaysOverdue(dunningLevel.getDaysOverdue());
+            if (!dunningLevel.getDaysOverdue().equals(dunningLevelToUpdate.getDaysOverdue())) {
+                updatedFields.add("DaysOverdue");
+            }
+        }
+        if (dunningLevel.isSoftDecline() != null) {
+            dunningLevelToUpdate.setSoftDecline(dunningLevel.isSoftDecline());
+            if (!dunningLevel.isSoftDecline().equals(dunningLevelToUpdate.isSoftDecline())) {
+                updatedFields.add("SoftDecline");
+            }
+        }
+        if (dunningLevel.getMinBalance() != null) {
+            dunningLevelToUpdate.setMinBalance(dunningLevel.getMinBalance());
+            if (!dunningLevel.getMinBalance().equals(dunningLevelToUpdate.getMinBalance())) {
+                updatedFields.add("MinBalance");
+            }
+        }
+        if (dunningLevel.getMinBalanceCurrency() != null) {
+            dunningLevelToUpdate.setMinBalanceCurrency(dunningLevel.getMinBalanceCurrency());
+            if (!dunningLevel.getMinBalanceCurrency().equals(dunningLevelToUpdate.getMinBalanceCurrency())) {
+                updatedFields.add("MinBalanceCurrency");
+            }
+        }
+        if (dunningLevel.getChargeType() != null) {
+            dunningLevelToUpdate.setChargeType(dunningLevel.getChargeType());
+            if (!dunningLevel.getChargeType().equals(dunningLevelToUpdate.getChargeType())) {
+                updatedFields.add("ChargeType");
+            }
+        }
+        if (dunningLevel.getChargeValue() != null) {
+            dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
+            if (!dunningLevel.getChargeValue().equals(dunningLevelToUpdate.getChargeValue())) {
+                updatedFields.add("ChargeValue");
+            }
+        }
+        if (dunningLevel.getChargeCurrency() != null) {
+            dunningLevelToUpdate.setChargeCurrency(dunningLevel.getChargeCurrency());
+            if (!dunningLevel.getChargeCurrency().equals(dunningLevelToUpdate.getChargeCurrency())) {
+                updatedFields.add("ChargeCurrency");
+            }
+        }
+        if (dunningLevel.isEndOfDunningLevel() != null) {
+            dunningLevelToUpdate.setEndOfDunningLevel(dunningLevel.isEndOfDunningLevel());
+            if (!dunningLevel.isEndOfDunningLevel().equals(dunningLevelToUpdate.isEndOfDunningLevel())) {
+                updatedFields.add("EndOfDunningLevel");
+            }
+        }
+        if (dunningLevel.getDunningActions() != null) {
+            dunningLevelToUpdate.setDunningActions(dunningLevel.getDunningActions());
+            if (!dunningLevel.getDunningActions().equals(dunningLevelToUpdate.getDunningActions())) {
+                updatedFields.add("DunningActions");
+            }
+        }
 
-	private void validateParameters(DunningLevel baseEntity) {
+        validateParameters(dunningLevelToUpdate);
+        dunningLevelService.update(dunningLevelToUpdate);
+        createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate, String.join(", ", updatedFields));
+        return Optional.of(dunningLevelToUpdate);
+    }
 
-		if (StringUtils.isBlank(baseEntity.getCode())) {
-			throw new MissingParameterException("code");
-		}
-		if (baseEntity.getDaysOverdue() == null) {
-			throw new MissingParameterException("dunningLevelDaysOverdue");
-		}
-		if (baseEntity.getMinBalanceCurrency() != null) {
-			Currency currency = null;
-			Long currencyId = baseEntity.getMinBalanceCurrency().getId();
-			if (currencyId != null) {
-				currency = findCurrencyByIdOrByCode(currencyId, null).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyId));
-			} else {
-				String currencyCode = baseEntity.getMinBalanceCurrency() == null ? null : baseEntity.getMinBalanceCurrency().getCurrencyCode();
-				currency = findCurrencyByIdOrByCode(null, currencyCode).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyCode));
-			}
-			baseEntity.setMinBalanceCurrency(currency);
-		}
+    private void validateParameters(DunningLevel baseEntity) {
 
-		if (baseEntity.getChargeCurrency() != null) {
-			Currency currency = null;
-			Long currencyId = baseEntity.getChargeCurrency().getId();
-			if (currencyId != null) {
-				currency = findCurrencyByIdOrByCode(currencyId, null).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyId));
-			} else {
-				String currencyCode = baseEntity.getChargeCurrency() == null ? null : baseEntity.getChargeCurrency().getCurrencyCode();
-				currency = findCurrencyByIdOrByCode(null, currencyCode).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyCode));
-			}
-			baseEntity.setChargeCurrency(currency);
-		}
+        if (StringUtils.isBlank(baseEntity.getCode())) {
+            throw new MissingParameterException("code");
+        }
+        if (baseEntity.getDaysOverdue() == null) {
+            throw new MissingParameterException("dunningLevelDaysOverdue");
+        }
+        if (baseEntity.getMinBalanceCurrency() != null) {
+            Currency currency = null;
+            Long currencyId = baseEntity.getMinBalanceCurrency().getId();
+            if (currencyId != null) {
+                currency = findCurrencyByIdOrByCode(currencyId, null).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyId));
+            } else {
+                String currencyCode = baseEntity.getMinBalanceCurrency() == null ? null : baseEntity.getMinBalanceCurrency().getCurrencyCode();
+                currency = findCurrencyByIdOrByCode(null, currencyCode).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyCode));
+            }
+            baseEntity.setMinBalanceCurrency(currency);
+        }
 
-		String chargeCurrencyCode = baseEntity.getChargeCurrency() == null ? null : baseEntity.getChargeCurrency().getCurrencyCode();
-		if (chargeCurrencyCode != null) {
-			Currency chargeCurrency = currencyService.findByCode(chargeCurrencyCode);
-			if (chargeCurrency == null) {
-				throw new EntityDoesNotExistsException(Currency.class, chargeCurrencyCode);
-			}
-			baseEntity.setChargeCurrency(chargeCurrency);
-		}
+        if (baseEntity.getChargeCurrency() != null) {
+            Currency currency = null;
+            Long currencyId = baseEntity.getChargeCurrency().getId();
+            if (currencyId != null) {
+                currency = findCurrencyByIdOrByCode(currencyId, null).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyId));
+            } else {
+                String currencyCode = baseEntity.getChargeCurrency() == null ? null : baseEntity.getChargeCurrency().getCurrencyCode();
+                currency = findCurrencyByIdOrByCode(null, currencyCode).orElseThrow(() -> new EntityDoesNotExistsException(Currency.class, currencyCode));
+            }
+            baseEntity.setChargeCurrency(currency);
+        }
 
-		if (baseEntity.getChargeValue() != null) {
-			if (baseEntity.getChargeType() == DunningLevelChargeTypeEnum.PERCENTAGE && HUNDRED.compareTo(baseEntity.getChargeValue()) < 0) {
-				throw new InvalidParameterException("dunningLevelChargeValue shoud be less than or equal to 100");
-			}
-		}
+        String chargeCurrencyCode = baseEntity.getChargeCurrency() == null ? null : baseEntity.getChargeCurrency().getCurrencyCode();
+        if (chargeCurrencyCode != null) {
+            Currency chargeCurrency = currencyService.findByCode(chargeCurrencyCode);
+            if (chargeCurrency == null) {
+                throw new EntityDoesNotExistsException(Currency.class, chargeCurrencyCode);
+            }
+            baseEntity.setChargeCurrency(chargeCurrency);
+        }
 
-		if (baseEntity.getDaysOverdue() != null) {
-			if (baseEntity.isReminder() && baseEntity.getDaysOverdue() > 0) {
-				throw new InvalidParameterException("dunningLevelDaysOverdue shoud be negative");
-			}
-			if (!baseEntity.isReminder() && baseEntity.getDaysOverdue() < 0) {
-				throw new InvalidParameterException("dunningLevelDaysOverdue shoud be positive");
-			}
-		}
-		if (baseEntity.getDunningActions() != null && !(baseEntity.getDunningActions() instanceof PersistentCollection)) {
-			Optional<DunningAction> unfoundAction = baseEntity.getDunningActions().stream().filter(action -> dunningActionService.findByCode(action.getCode()) == null).findFirst();
-			if (unfoundAction.isPresent()) {
-				throw new EntityDoesNotExistsException(DunningAction.class, unfoundAction.get().getCode());
-			}
-			baseEntity.setDunningActions(baseEntity.getDunningActions().stream().map(action -> dunningActionService.findByCode(action.getCode())).collect(Collectors.toList()));
-		}
-	}
+        if (baseEntity.getChargeValue() != null) {
+            if (baseEntity.getChargeType() == DunningLevelChargeTypeEnum.PERCENTAGE && HUNDRED.compareTo(baseEntity.getChargeValue()) < 0) {
+                throw new InvalidParameterException("dunningLevelChargeValue shoud be less than or equal to 100");
+            }
+        }
 
-	private void setDefaultValues(DunningLevel newDunningLevel) {
-		if (newDunningLevel.isActive() == null) {
-			newDunningLevel.setActive(Boolean.TRUE);
-		}
-		if (newDunningLevel.isReminder() == null) {
-			newDunningLevel.setReminder(Boolean.FALSE);
-		}
-		if (newDunningLevel.isSoftDecline() == null) {
-			newDunningLevel.setSoftDecline(Boolean.FALSE);
-		}
-		if (newDunningLevel.isEndOfDunningLevel() == null) {
-			newDunningLevel.setEndOfDunningLevel(Boolean.FALSE);
-		}
-		if (newDunningLevel.getMinBalanceCurrency() == null) {
-			Currency minBalanceCurrency = new Currency();
-			minBalanceCurrency.setCurrencyCode("EUR");
-			newDunningLevel.setMinBalanceCurrency(minBalanceCurrency);
-		}
-	}
+        if (baseEntity.getDaysOverdue() != null) {
+            if (baseEntity.isReminder() && baseEntity.getDaysOverdue() > 0) {
+                throw new InvalidParameterException("dunningLevelDaysOverdue shoud be negative");
+            }
+            if (!baseEntity.isReminder() && baseEntity.getDaysOverdue() < 0) {
+                throw new InvalidParameterException("dunningLevelDaysOverdue shoud be positive");
+            }
+        }
+        if (baseEntity.getDunningActions() != null && !(baseEntity.getDunningActions() instanceof PersistentCollection)) {
+            Optional<DunningAction> unfoundAction = baseEntity.getDunningActions().stream().filter(action -> dunningActionService.findByCode(action.getCode()) == null).findFirst();
+            if (unfoundAction.isPresent()) {
+                throw new EntityDoesNotExistsException(DunningAction.class, unfoundAction.get().getCode());
+            }
+            baseEntity.setDunningActions(baseEntity.getDunningActions().stream().map(action -> dunningActionService.findByCode(action.getCode())).collect(Collectors.toList()));
+        }
+    }
 
-	private Optional<Currency> findCurrencyByIdOrByCode(Long id, String code) {
-		if (id != null) {
-			return Optional.ofNullable(currencyService.findById(id));
-		}
-		return Optional.ofNullable(currencyService.findByCode(code));
-	}
+    private void setDefaultValues(DunningLevel newDunningLevel) {
+        if (newDunningLevel.isActive() == null) {
+            newDunningLevel.setActive(Boolean.TRUE);
+        }
+        if (newDunningLevel.isReminder() == null) {
+            newDunningLevel.setReminder(Boolean.FALSE);
+        }
+        if (newDunningLevel.isSoftDecline() == null) {
+            newDunningLevel.setSoftDecline(Boolean.FALSE);
+        }
+        if (newDunningLevel.isEndOfDunningLevel() == null) {
+            newDunningLevel.setEndOfDunningLevel(Boolean.FALSE);
+        }
+        if (newDunningLevel.getMinBalanceCurrency() == null) {
+            Currency minBalanceCurrency = new Currency();
+            minBalanceCurrency.setCurrencyCode("EUR");
+            newDunningLevel.setMinBalanceCurrency(minBalanceCurrency);
+        }
+    }
 
-	@Override
-	public Optional<DunningLevel> patch(Long id, DunningLevel baseEntity) {
-		return empty();
-	}
-	
-	@Override
-	public List<DunningLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return Lists.emptyList();
-	}
+    private Optional<Currency> findCurrencyByIdOrByCode(Long id, String code) {
+        if (id != null) {
+            return Optional.ofNullable(currencyService.findById(id));
+        }
+        return Optional.ofNullable(currencyService.findByCode(code));
+    }
 
-	@Override
-	public Long getCount(String filter) {
-		return null;
-	}
-	
-	private void createAuditLog(String entity, String operationType, DunningLevel dunningLevel, String fields) {
-	    AuditLog auditLog = new AuditLog();
-	    Date sysDate = new Date();
-	    auditLog.setActor(currentUser.getUserName());
-	    auditLog.setCreated(sysDate);
-	    auditLog.setEntity(entity);
-	    auditLog.setOrigin(dunningLevel.getCode());
-	    auditLog.setAction(operationType);
-	    auditLog.setParameters("user "+currentUser.getUserName()+" apply "+operationType+" on "+sysDate+" to the Dunning level with code "+dunningLevel.getCode()+
-				(fields.isBlank() ? "" : ", fields ("+fields+")"));
-	    auditLogService.create(auditLog);
-	}
+    @Override
+    public Optional<DunningLevel> patch(Long id, DunningLevel baseEntity) {
+        return empty();
+    }
+
+    @Override
+    public List<DunningLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+        return Lists.emptyList();
+    }
+
+    @Override
+    public Long getCount(String filter) {
+        return null;
+    }
+
+    private void createAuditLog(String entity, String operationType, DunningLevel dunningLevel, String fields) {
+        AuditLog auditLog = new AuditLog();
+        Date sysDate = new Date();
+        auditLog.setActor(currentUser.getUserName());
+        auditLog.setCreated(sysDate);
+        auditLog.setEntity(entity);
+        auditLog.setOrigin(dunningLevel.getCode());
+        auditLog.setAction(operationType);
+        auditLog.setParameters("user " + currentUser.getUserName() + " apply " + operationType + " on " + sysDate + " to the Dunning level with code " + dunningLevel.getCode()
+                + (StringUtils.isBlank(fields) ? "" : ", fields (" + fields + ")"));
+        auditLogService.create(auditLog);
+    }
 
 }
