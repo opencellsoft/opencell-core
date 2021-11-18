@@ -115,7 +115,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
         if (dunningLevel.isActive() != null) {
             dunningLevelToUpdate.setActive(dunningLevel.isActive());
             if (!dunningLevel.isActive().equals(dunningLevelToUpdate.isActive())) {
-                updatedFields.add("Active");
+                createAuditLog(DunningLevel.class.getSimpleName(), "CHANGE_STATUS", dunningLevelToUpdate, null);
             }
         }
         if (dunningLevel.getDaysOverdue() != null) {
@@ -175,7 +175,9 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
         validateParameters(dunningLevelToUpdate);
         dunningLevelService.update(dunningLevelToUpdate);
-        createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate, String.join(", ", updatedFields));
+        if (!updatedFields.isEmpty()) {
+            createAuditLog(DunningLevel.class.getSimpleName(), "UPDATE", dunningLevelToUpdate, String.join(", ", updatedFields));
+        }
         return Optional.of(dunningLevelToUpdate);
     }
 
