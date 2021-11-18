@@ -3,6 +3,7 @@ package org.meveo.model.quote;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -172,6 +173,18 @@ public class QuoteArticleLine extends AuditableEntity {
 	public void setQuoteVersion(QuoteVersion quoteVersion) {
 		this.quoteVersion = quoteVersion;
 	}
-	
-	
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof QuoteArticleLine)) return false;
+		QuoteArticleLine that = (QuoteArticleLine) o;
+		return Objects.equals(getId(), that.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getId());
+	}
 }
