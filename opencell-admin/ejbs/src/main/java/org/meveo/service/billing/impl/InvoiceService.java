@@ -755,7 +755,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a scrollable resultset of rated transactions to invoice
-     * 
+     *
      * @param entityToInvoice Entity to invoice
      * @param firstTransactionDate First transaction date
      * @param lastTransactionDate Last transaction date
@@ -788,7 +788,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a list of rated transactions to invoice
-     * 
+     *
      * @param entityToInvoice Entity to invoice
      * @param ratedTransactionFilter Filter to retrieve rated transactions
      * @param firstTransactionDate First transaction date
@@ -818,7 +818,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return rts;
     }
-    
+
     private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, boolean isDraft) {
         List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate, ratedTransactionFilter, rtPaginationSize);
         // if draft add unrated wallet operation
@@ -1014,7 +1014,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (entityToInvoice instanceof Order) {
             billingAccount = null;
             defaultInvoiceType = null;
-        } 
+        }
 
         // Invoice from rated transactions
         if (ratedTransactionFilter == null) {
@@ -1223,7 +1223,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
     }
-            
+
 
     private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
@@ -3423,7 +3423,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (changedToTax == null) {
 
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(), invoice.getBillingAccount(), invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
@@ -3996,32 +3997,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
     }
 
-    /**
-     * Recalculate tax to see if it has changed
-     *
-     * @param tax Previous tax
-     * @param isExonerated Is Billing account exonerated from taxes
-     * @param invoice Invoice in reference
-     * @param taxClass Tax class
-     * @param userAccount User account to calculate tax by external program
-     * @param taxZero Zero tax to apply if Billing account is exonerated
-     * @return An array containing applicable tax and True/false if tax % has changed from a previous tax
-     * @throws BusinessException Were not able to determine a tax
-     */
-    private Object[] getApplicableTax(Tax tax, boolean isExonerated, Invoice invoice, TaxClass taxClass, UserAccount userAccount, Tax taxZero) throws BusinessException {
-
-        if (isExonerated) {
-            return new Object[] { taxZero, false };
-
-        } else {
-
-            TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(taxClass, invoice.getSeller(), invoice.getBillingAccount(), userAccount, invoice.getInvoiceDate(), false, false);
-
-            Tax recalculatedTax = recalculatedTaxInfo.tax;
-
-            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
-        }
-    }
 
     /**
      * Create an invoice from an InvoiceDto
@@ -5277,7 +5252,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {

@@ -72,6 +72,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
@@ -105,6 +106,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private CommercialOrderService commercialOrderService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
+
+    @Inject
+    private TaxService taxService;
 
     @Inject
     @ApplicationProvider
@@ -142,11 +149,23 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     		 billingAccount=entity.getBillingAccount();
     	 }
-    	 if(entity.getTax()==null && accountingArticle!=null) {
-             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount,null, date, false, false);
-             if(taxInfo!=null)
-            	 entity.setTax(taxInfo.tax);
-            }
+    	
+    	 if (accountingArticle != null ) {
+             Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
+             Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
+             if (isExonerated == null) {
+                 isExonerated = billingAccountService.isExonerated(billingAccount);
+             }
+             Object[] applicableTax = taxMappingService.getApplicableTax(entity.getTax(), isExonerated, seller, billingAccount, date, accountingArticle.getTaxClass(),null, taxZero);
+            boolean taxRecalculated = (boolean) applicableTax[1];
+             if (taxRecalculated) {
+                 Tax tax = (Tax) applicableTax[0];
+                 log.debug("Will update invoice line of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%", billingAccount.getId(), accountingArticle.getTaxClass().getId(), entity.getTax() == null ? null : entity.getTax().getId(),
+                         tax == null ? null : tax.getPercent(), tax.getId(), tax.getPercent());
+                 entity.setTax(tax);
+                 entity.setTaxRecalculated(taxRecalculated);
+             }
+         }
     	super.create(entity);
     }
 
@@ -251,11 +270,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
       
         invoiceLine.setValueDate(new Date());
         if(invoiceLine.getTax()==null && accountingArticle!=null) {
-            TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, invoiceLine.getBillingAccount(),null , operationDate,null, false, false);
-            if(taxInfo!=null)
-             invoiceLine.setTaxRecalculated(true);	 
+            TaxInfo taxInfo = taxMappingService
+                    .determineTax(accountingArticle.getTaxClass(), seller, invoiceLine.getBillingAccount(), null, operationDate, null, false, false, invoiceLine.getTax());
+            if (taxInfo != null) {
+                invoiceLine.setTaxRecalculated(true);
+            }
             invoiceLine.setTax(taxInfo.tax);
-           }
+        }
         create(invoiceLine);
     }
 
@@ -351,10 +372,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             }
             InvoiceSubCategory invoiceSubCategory = defaultMinAccountingArticle.getInvoiceSubCategory();
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
-            TaxMappingService.TaxInfo taxInfo = taxMappingService.determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount,
-                    null, minRatingDate,null, true, false);
-            InvoiceLine invoiceLine = createInvoiceLine( minAmountLabel, billableEntity, billingAccount, minRatingDate,
-                    entity, seller, defaultMinAccountingArticle, taxInfo, diff);
+            TaxMappingService.TaxInfo taxInfo = taxMappingService
+                    .determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount, null, minRatingDate, null, true, false, null);
+            InvoiceLine invoiceLine = createInvoiceLine(minAmountLabel, billableEntity, billingAccount, minRatingDate, entity, seller, defaultMinAccountingArticle, taxInfo, diff);
             minAmountsResult.addMinAmountIL(invoiceLine);
             minILAmountMap.put(mapKey, new Amounts(invoiceLine.getAmountWithoutTax(), invoiceLine.getAmountWithTax(), invoiceLine.getAmountTax()));
             extraMinAmounts.add(new ExtraMinAmount(entity, minILAmountMap));
