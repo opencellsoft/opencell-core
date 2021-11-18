@@ -349,5 +349,14 @@ public class DunningCollectionPlan extends AuditableEntity {
 	public void setPauseDuration(Integer pauseDuration) {
 		this.pauseDuration = pauseDuration;
 	}
+
+	public String getCollectionPlanID() {
+		return collectionPlanID;
+	}
+
+	public void setCollectionPlanID(String collectionPlanID) {
+		this.collectionPlanID = collectionPlanID;
+	}
+	
     
 }
