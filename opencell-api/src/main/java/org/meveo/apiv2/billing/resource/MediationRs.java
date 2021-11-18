@@ -1,4 +1,4 @@
-package org.meveo.apiv2.mediation;
+package org.meveo.apiv2.billing.resource;
 
 /*
  * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
