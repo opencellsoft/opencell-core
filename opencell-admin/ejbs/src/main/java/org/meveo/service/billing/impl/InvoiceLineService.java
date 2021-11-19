@@ -218,11 +218,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
- public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        Date operationDate=new Date();
-        Seller seller=null;
-        BillingAccount billingAccount = null;
-        InvoiceLine invoiceLine = new InvoiceLine();
+ public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, OrderOffer orderOffer,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+	   Date operationDate=new Date();
+       Seller seller=null;
+       BillingAccount billingAccount = null;
+    	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription()); 
         invoiceLine.setProduct(productVersion.getProduct());
