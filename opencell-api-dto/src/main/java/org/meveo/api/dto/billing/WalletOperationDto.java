@@ -18,14 +18,9 @@
 
 package org.meveo.api.dto.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
@@ -34,10 +29,12 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import io.swagger.v3.oas.annotations.media.Schema;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * The Class WalletOperationDto.
@@ -205,6 +202,10 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     public WalletOperationDto() {
 
+    }
+
+    public WalletOperationDto(Long woId) {
+        this.walletId = woId;
     }
 
     /**

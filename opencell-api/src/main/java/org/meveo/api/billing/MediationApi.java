@@ -18,21 +18,7 @@
 
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
-import javax.inject.Inject;
-
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.RatingException;
@@ -40,17 +26,22 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
+import org.meveo.api.dto.billing.ChargeCDRListResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto.CdrError;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
@@ -58,6 +49,27 @@ import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.notification.DefaultObserver;
+
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * API for CDR processing and mediation handling in general
@@ -89,6 +101,15 @@ public class MediationApi extends BaseApi {
     private DefaultObserver defaultObserver;
 
     Map<Long, Timer> timers = new HashMap<Long, Timer>();
+
+    @Resource(lookup = "java:jboss/ee/concurrency/executor/job_executor")
+    protected ManagedExecutorService executor;
+
+    @Inject
+    protected CurrentUserProvider currentUserProvider;
+
+    @EJB
+    private MediationApi thisNewTX;
 
     /**
      * Register EDRS
@@ -132,24 +153,24 @@ public class MediationApi extends BaseApi {
 
         handleMissingParameters();
         CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
-       
+
         try {
-            CDR cdr = cdrParser.parseCDR(cdrLine);           
+            CDR cdr = cdrParser.parseCDR(cdrLine);
             List<EDR> edrs = cdrParsingService.getEDRList(cdr);
             List<WalletOperation> walletOperations = new ArrayList<>();
-            for (EDR edr : edrs) {            	 
+            for (EDR edr : edrs) {
                 log.debug("edr={}", edr);
                 edr.setSubscription(edr.getSubscription());
                 if (!chargeCDRDto.isVirtual()) {
                     edrService.create(edr);
                 }
-                List<WalletOperation> wo = rateUsage(edr, chargeCDRDto);
+                List<WalletOperation> wo = rateUsage(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth());
                 if (wo != null) {
                     walletOperations.addAll(wo);
                 }
             }
 
-            return createChargeCDRResultDto(walletOperations, chargeCDRDto.isReturnWalletOperations());
+            return createChargeCDRResultDto(edrs, walletOperations, chargeCDRDto.isReturnWalletOperationDetails(), false);
 
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
@@ -157,27 +178,165 @@ public class MediationApi extends BaseApi {
         }
     }
 
-    private ChargeCDRResponseDto createChargeCDRResultDto(List<WalletOperation> walletOperations, boolean returnWalletOperations) {
+    /**
+     * Register and rate EDRS
+     *
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException business exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public ChargeCDRListResponseDto chargeCdrList(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
+
+        if (chargeCDRDto.getCdrs() == null || chargeCDRDto.getCdrs().isEmpty()) {
+            missingParameters.add("cdrs");
+        }
+
+        handleMissingParameters();
+
+        ChargeCDRListResponseDto cdrListResult = new ChargeCDRListResponseDto(chargeCDRDto.getCdrs().size());
+
+        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
+
+        int nbThreads = Runtime.getRuntime().availableProcessors();
+
+        List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
+        List<Future> futures = new ArrayList<>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+
+        final SynchronizedIterator<String> cdrLineIterator = new SynchronizedIterator<String>(chargeCDRDto.getCdrs());
+
+        for (int k = 0; k < nbThreads; k++) {
+
+            int finalK = k;
+            tasks.add(() -> {
+
+                Thread.currentThread().setName("MediationApi" + "-" + finalK);
+
+                currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                thisNewTX.processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(), cdrListResult);
+
+            });
+        }
+
+        for (Runnable task : tasks) {
+            futures.add(executor.submit(task));
+        }
+
+        // Wait for all async methods to finish
+        for (Future future : futures) {
+            try {
+                future.get();
+
+            } catch (InterruptedException | CancellationException e) {
+//                wasKilled = true;
+
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                log.error("Failed to execute Mediation API async method", cause);
+            }
+        }
+
+        return cdrListResult;
+    }
+
+    /**
+     * Process CDRs in a new transaction
+     * 
+     * @param cdrLineIterator Iterator over CDRs to process
+     * @param cdrParser CDR parser
+     * @param isVirtual Is this is virtual charging - neither CDR, EDR nor wallet operations will be persisted
+     * @param rateTriggeredEdrs In case of rating, shall Triggered EDRs be rated as well
+     * @param maxDepth Max depth to rate of triggered EDRs
+     * @param returnWalletOperationDetails Shall wallet operation details be returned
+     * @param returnWalletOperations Shall wallet operation ids be returned
+     * @param cdrProcessingResult CDR processing result tracking
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, CSVCDRParser cdrParser, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
+            boolean returnWalletOperations, ChargeCDRListResponseDto cdrProcessingResult) {
+
+        while (true) {
+
+            SynchronizedIterator<String>.NextItem<String> nextCDR = cdrLineIterator.nextWPosition();
+            if (nextCDR == null) {
+                break;
+            }
+            int position = nextCDR.getPosition();
+            String cdrLine = nextCDR.getValue();
+
+            try {
+                CDR cdr = cdrParser.parseCDR(cdrLine);
+                List<EDR> edrs = cdrParsingService.getEDRList(cdr);
+                List<WalletOperation> walletOperations = new ArrayList<>();
+                for (EDR edr : edrs) {
+                    log.debug("edr={}", edr);
+                    edr.setSubscription(edr.getSubscription());
+                    if (!isVirtual) {
+                        edrService.create(edr);
+                    }
+                    List<WalletOperation> wo = rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth);
+                    if (wo != null) {
+                        walletOperations.addAll(wo);
+                    }
+                }
+                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations));
+                cdrProcessingResult.getStatistics().addSuccess();
+
+            } catch (CDRParsingException e) {
+                log.error("Error parsing cdr={}", e.getRejectionCause());
+
+                cdrProcessingResult.getStatistics().addFail();
+                cdrProcessingResult.addChargedCdr(position,
+                    new ChargeCDRResponseDto(new CdrError(e.getClass().getSimpleName(), e.getRejectionCause() != null ? e.getRejectionCause().toString() : e.getMessage(), cdrLine)));
+
+            } catch (MeveoApiException e) {
+                log.error("Error Code Meveo Api={}", e.getErrorCode());
+
+                cdrProcessingResult.getStatistics().addFail();
+                cdrProcessingResult.addChargedCdr(position,
+                        new ChargeCDRResponseDto(new CdrError(e.getErrorCode().toString(), e.getCause() != null ? e.getCause().toString() : e.getMessage(), cdrLine)));
+
+            }
+        }
+    }
+
+    private ChargeCDRResponseDto createChargeCDRResultDto(List<EDR> edrs, List<WalletOperation> walletOperations, boolean returnWalletOperationDetails, boolean returnWalletOperations) {
 
         ChargeCDRResponseDto result = new ChargeCDRResponseDto();
-        BigDecimal amountWithTax = BigDecimal.ZERO;
-        BigDecimal amountWithoutTax = BigDecimal.ZERO;
-        BigDecimal amountTax = BigDecimal.ZERO;
-        for (WalletOperation walletOperation : walletOperations) {
-            if (returnWalletOperations) {
-                WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
-                result.getWalletOperations().add(walletOperationDto);
+
+        if (edrs.get(0).getId() != null) {
+            result.setEdrIds(new ArrayList<Long>(edrs.size()));
+            for (EDR edr : edrs) {
+                result.getEdrIds().add(edr.getId());
             }
-            amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax() != null ? walletOperation.getAmountWithTax() : BigDecimal.ZERO);
-            amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax() != null ? walletOperation.getAmountWithoutTax() : BigDecimal.ZERO);
-            amountTax = amountTax.add(walletOperation.getAmountTax() != null ? walletOperation.getAmountTax() : BigDecimal.ZERO);
         }
-        if (returnWalletOperations) {
-            result.setWalletOperationCount(result.getWalletOperations().size());
+        if (walletOperations != null) {
+            BigDecimal amountWithTax = BigDecimal.ZERO;
+            BigDecimal amountWithoutTax = BigDecimal.ZERO;
+            BigDecimal amountTax = BigDecimal.ZERO;
+            for (WalletOperation walletOperation : walletOperations) {
+                if (returnWalletOperationDetails) {
+                    WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
+                    result.getWalletOperations().add(walletOperationDto);
+                }
+                else {
+                    if (returnWalletOperations) {
+                        WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
+                        result.getWalletOperations().add(new WalletOperationDto(walletOperationDto.getWalletId()));
+                    }
+                }
+                amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax() != null ? walletOperation.getAmountWithTax() : BigDecimal.ZERO);
+                amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax() != null ? walletOperation.getAmountWithoutTax() : BigDecimal.ZERO);
+                amountTax = amountTax.add(walletOperation.getAmountTax() != null ? walletOperation.getAmountTax() : BigDecimal.ZERO);
+            }
+            if (returnWalletOperationDetails) {
+                result.setWalletOperationCount(result.getWalletOperations().size());
+            }
+            result.setAmountTax(amountTax);
+            result.setAmountWithoutTax(amountWithoutTax);
+            result.setAmountWithTax(amountWithTax);
         }
-        result.setAmountTax(amountTax);
-        result.setAmountWithoutTax(amountWithoutTax);
-        result.setAmountWithTax(amountWithTax);
         return result;
     }
 
@@ -193,8 +352,7 @@ public class MediationApi extends BaseApi {
     }
 
     /**
-     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
-     * (PREPAID_RESRV_DELAY_MS)
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)
      * 
      * @param cdrLine String of CDR
      * @param ip where request came from
@@ -281,7 +439,7 @@ public class MediationApi extends BaseApi {
                     reservationService.cancelPrepaidReservation(reservation);
                     EDR edr = reservation.getOriginEdr();
                     edr.setQuantity(reservationDto.getConsumedQuantity());
-                    rateUsage(edr, new ChargeCDRDto());
+                    rateUsage(edr, false, false, null);
                 } else {
                     throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");
                 }
@@ -304,11 +462,11 @@ public class MediationApi extends BaseApi {
         }
     }
 
-    private List<WalletOperation> rateUsage(EDR edr, ChargeCDRDto chargeCDRDto) throws MeveoApiException {
+    private List<WalletOperation> rateUsage(EDR edr, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth) throws MeveoApiException {
 
         List<WalletOperation> walletOperations = null;
         try {
-            walletOperations = usageRatingService.rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0);
+            walletOperations = usageRatingService.rateUsageWithinTransaction(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0);
 
         } catch (InsufficientBalanceException e) {
             log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());

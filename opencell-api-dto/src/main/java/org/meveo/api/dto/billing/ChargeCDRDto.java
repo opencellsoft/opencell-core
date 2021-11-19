@@ -23,6 +23,9 @@ import org.meveo.api.dto.BaseEntityDto;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+
+
 
 /**
  * The Class ChargeCDRDto.
@@ -38,6 +41,11 @@ public class ChargeCDRDto extends BaseEntityDto {
      * The CDR string
      */
     private String cdr;
+    
+    /**
+     * A list of CDR strings
+     */
+    private List<String> cdrs;
 
     /**
      * The remote IP
@@ -56,6 +64,11 @@ public class ChargeCDRDto extends BaseEntityDto {
     /**
      * If true, the API will return the list of all wallet operations produced during, even if the are virtual.
      */
+    private boolean returnWalletOperationDetails;
+
+    /**
+     * If true, the API will return the list of all wallet operations id.
+     */
     private boolean returnWalletOperations;
 
     /**
@@ -67,7 +80,7 @@ public class ChargeCDRDto extends BaseEntityDto {
         virtual = false;
         rateTriggeredEdr = false;
         maxDepth = 1;
-        returnWalletOperations = false;
+        returnWalletOperationDetails = false;
     }
 
     public ChargeCDRDto(String cdr, String ip, boolean virtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
@@ -75,8 +88,18 @@ public class ChargeCDRDto extends BaseEntityDto {
         this.ip = ip;
         this.virtual = virtual;
         this.rateTriggeredEdr = rateTriggeredEdr;
-        this.returnWalletOperations = returnWalletOperations;
+        this.returnWalletOperationDetails = returnWalletOperations;
         this.maxDepth = maxDepth == null ? 1 : maxDepth;
+    }
+    
+    public ChargeCDRDto(List<String> cdrs, String ip, boolean virtual, boolean rateTriggeredEdr, boolean returnWalletOperationDetails, Integer maxDepth, boolean returnWalletOperations) {
+        this.cdrs = cdrs;
+        this.ip = ip;
+        this.virtual = virtual;
+        this.rateTriggeredEdr = rateTriggeredEdr;
+        this.returnWalletOperationDetails = returnWalletOperationDetails;
+        this.maxDepth = maxDepth == null ? 1 : maxDepth;
+        this.returnWalletOperations = returnWalletOperations;
     }
 
     public String getCdr() {
@@ -136,6 +159,24 @@ public class ChargeCDRDto extends BaseEntityDto {
      *
      * @return true if return WalletOperations is enabled, false else.
      */
+    public boolean isReturnWalletOperationDetails() {
+        return returnWalletOperationDetails;
+    }
+
+    /**
+     * Sets returnWalletOperations
+     *
+     * @param returnWalletOperationDetails
+     */
+    public void setReturnWalletOperationDetails(boolean returnWalletOperationDetails) {
+        this.returnWalletOperationDetails = returnWalletOperationDetails;
+    }
+
+    /**
+     * check if return WalletOperations is enabled
+     *
+     * @return true if return WalletOperations is enabled, false else.
+     */
     public boolean isReturnWalletOperations() {
         return returnWalletOperations;
     }
@@ -168,5 +209,19 @@ public class ChargeCDRDto extends BaseEntityDto {
      */
     public void setMaxDepth(Integer maxDepth) {
         this.maxDepth = maxDepth;
+    }
+    
+    /**
+     * @return A list of CDR strings
+     */
+    public List<String> getCdrs() {
+        return cdrs;
+    }
+    
+    /**
+     * @param cdrs A list of CDR strings
+     */
+    public void setCdrs(List<String> cdrs) {
+        this.cdrs = cdrs;
     }
 }
