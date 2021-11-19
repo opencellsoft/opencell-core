@@ -1,7 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Arrays.asList;
 import static org.meveo.apiv2.ordering.common.LinkGenerator.*;
-import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -15,6 +15,7 @@ import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.apiv2.report.SuccessResponse;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -23,7 +24,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
@@ -35,6 +35,9 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
+
+    @Inject
+    private DunningPolicyService dunningPolicyService;
 
     private final DunningPolicyMapper mapper = new DunningPolicyMapper();
 
@@ -107,14 +110,16 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Override
     public Response update(Long dunningPolicyId, DunningPolicyInput dunningPolicy) {
-        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyApiService.findById(dunningPolicyId)
-                .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits"));
+        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
+        if (entity == null) {
+            throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
+        }
         StringBuilder updatedField = new StringBuilder();
         List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
         if (dunningPolicy.getDunningPolicyLevels() != null && !dunningPolicy.getDunningPolicyLevels().isEmpty()) {
             updatedField.append("dunningLevels;");
-            entity.setDunningLevels(null);
-            for (Resource resource : dunningPolicy.getDunningPolicyLevels()) { ;
+            entity.getDunningLevels().clear();
+            for (Resource resource : dunningPolicy.getDunningPolicyLevels()) {
                 DunningPolicyLevel level = dunningPolicyLevelService.findById(resource.getId());
                 if (level != null) {
                     dunningPolicyLevelList.add(level);
