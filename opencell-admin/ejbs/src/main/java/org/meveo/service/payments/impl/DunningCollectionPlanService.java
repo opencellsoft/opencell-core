@@ -103,6 +103,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
             collectionPlan.setDunningLevelInstances(createLevelInstances(policy, collectionPlan,
                     collectionPlanStatus, dayOverDue));
         }
+        collectionPlan.setCollectionPlanID("C"+collectionPlan.getId());
         return update(collectionPlan);
     }
 
