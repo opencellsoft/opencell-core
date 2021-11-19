@@ -53,7 +53,7 @@ public interface MediationRs extends IBaseRs {
      * @param cdrs list of String of CDR
      * @param isVirtual Boolean for the virtual option
      * @param rateTriggeredEdr Boolean for rate Triggered Edr
-     * @param returnWalletOperations return Wallet Operations option
+     * @param returnWalletOperationDetails return Wallet Operations details option
      * @param maxDepth Integer of the max Depth
      * @return Request processing status
      */
@@ -62,7 +62,8 @@ public interface MediationRs extends IBaseRs {
     @Operation(summary = "Accepts a list of CDR lines, parses them, creates EDRs and rates them. . CDR is same format use in mediation job", description = "Accepts a list of CDR lines, parses them, creates EDRs and rates them. . CDR is same format use in mediation job", operationId = "    POST_Mediation_chargeCdrList", responses = {
             @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ChargeCDRListResponseDto.class))) })
     ChargeCDRListResponseDto chargeCdrList(List<String> cdrs, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr,
-                                           @QueryParam("returnWalletOperations") boolean returnWalletOperations, @QueryParam("maxDepth") Integer maxDepth);
+                                           @QueryParam("returnWalletOperationDetails") boolean returnWalletOperationDetails, @QueryParam("maxDepth") Integer maxDepth,
+                                           @QueryParam("returnEDRs") boolean returnEDRs, @QueryParam("returnWalletOperations") boolean returnWalletOperations);
 
 }
 

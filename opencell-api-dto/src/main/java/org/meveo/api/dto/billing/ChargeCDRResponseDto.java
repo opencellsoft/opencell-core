@@ -18,16 +18,15 @@
 
 package org.meveo.api.dto.billing;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import org.meveo.api.dto.response.BaseResponse;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.response.BaseResponse;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class ChargeCDRResponseDto.
@@ -169,7 +168,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets walletOperations list.
-     * 
+     *
      * @return walletOperations list
      */
     public List<WalletOperationDto> getWalletOperations() {
@@ -181,7 +180,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the walletOperations.
-     * 
+     *
      * @param walletOperations wallet operations list.
      */
     public void setWalletOperations(List<WalletOperationDto> walletOperations) {

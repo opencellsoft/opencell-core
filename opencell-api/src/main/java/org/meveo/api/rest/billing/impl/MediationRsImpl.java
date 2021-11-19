@@ -18,12 +18,6 @@
 
 package org.meveo.api.rest.billing.impl;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -37,6 +31,11 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Mediation related API REST implementation
@@ -86,10 +85,11 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
     }
 
     @Override
-    public ChargeCDRListResponseDto chargeCdrList(List<String> cdrs, boolean isVirtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
+    public ChargeCDRListResponseDto chargeCdrList(List<String> cdrs, boolean isVirtual, boolean rateTriggeredEdr, boolean returnWalletOperationDetails, Integer maxDepth,
+                                                  boolean returnWalletOperations) {
 
         try {
-            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdrs, httpServletRequest.getRemoteAddr(), isVirtual, rateTriggeredEdr, returnWalletOperations, maxDepth);
+            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdrs, httpServletRequest.getRemoteAddr(), isVirtual, rateTriggeredEdr, returnWalletOperationDetails, maxDepth, returnWalletOperations);
             return mediationApi.chargeCdrList(chargeCDRDto);
         } catch (Exception e) {
             ChargeCDRListResponseDto result = new ChargeCDRListResponseDto();

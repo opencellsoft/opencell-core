@@ -170,7 +170,7 @@ public class MediationApi extends BaseApi {
                 }
             }
 
-            return createChargeCDRResultDto(edrs, walletOperations, chargeCDRDto.isReturnWalletOperations());
+            return createChargeCDRResultDto(edrs, walletOperations, chargeCDRDto.isReturnWalletOperationDetails(), false);
 
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
@@ -213,7 +213,7 @@ public class MediationApi extends BaseApi {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                thisNewTX.processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperations(), cdrListResult);
+                thisNewTX.processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(), cdrListResult);
 
             });
         }
@@ -247,13 +247,14 @@ public class MediationApi extends BaseApi {
      * @param isVirtual Is this is virtual charging - neither CDR, EDR nor wallet operations will be persisted
      * @param rateTriggeredEdrs In case of rating, shall Triggered EDRs be rated as well
      * @param maxDepth Max depth to rate of triggered EDRs
-     * @param returnWalletOperations Shall wallet operation details be returned
+     * @param returnWalletOperationDetails Shall wallet operation details be returned
+     * @param returnWalletOperations Shall wallet operation ids be returned
      * @param cdrProcessingResult CDR processing result tracking
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, CSVCDRParser cdrParser, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperations,
-            ChargeCDRListResponseDto cdrProcessingResult) {
+    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, CSVCDRParser cdrParser, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
+            boolean returnWalletOperations, ChargeCDRListResponseDto cdrProcessingResult) {
 
         while (true) {
 
@@ -279,7 +280,7 @@ public class MediationApi extends BaseApi {
                         walletOperations.addAll(wo);
                     }
                 }
-                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperations));
+                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations));
                 cdrProcessingResult.getStatistics().addSuccess();
 
             } catch (CDRParsingException e) {
@@ -300,7 +301,7 @@ public class MediationApi extends BaseApi {
         }
     }
 
-    private ChargeCDRResponseDto createChargeCDRResultDto(List<EDR> edrs, List<WalletOperation> walletOperations, boolean returnWalletOperations) {
+    private ChargeCDRResponseDto createChargeCDRResultDto(List<EDR> edrs, List<WalletOperation> walletOperations, boolean returnWalletOperationDetails, boolean returnWalletOperations) {
 
         ChargeCDRResponseDto result = new ChargeCDRResponseDto();
 
@@ -315,15 +316,21 @@ public class MediationApi extends BaseApi {
             BigDecimal amountWithoutTax = BigDecimal.ZERO;
             BigDecimal amountTax = BigDecimal.ZERO;
             for (WalletOperation walletOperation : walletOperations) {
-                if (returnWalletOperations) {
+                if (returnWalletOperationDetails) {
                     WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
                     result.getWalletOperations().add(walletOperationDto);
+                }
+                else {
+                    if (returnWalletOperations) {
+                        WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
+                        result.getWalletOperations().add(new WalletOperationDto(walletOperationDto.getWalletId()));
+                    }
                 }
                 amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax() != null ? walletOperation.getAmountWithTax() : BigDecimal.ZERO);
                 amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax() != null ? walletOperation.getAmountWithoutTax() : BigDecimal.ZERO);
                 amountTax = amountTax.add(walletOperation.getAmountTax() != null ? walletOperation.getAmountTax() : BigDecimal.ZERO);
             }
-            if (returnWalletOperations) {
+            if (returnWalletOperationDetails) {
                 result.setWalletOperationCount(result.getWalletOperations().size());
             }
             result.setAmountTax(amountTax);
