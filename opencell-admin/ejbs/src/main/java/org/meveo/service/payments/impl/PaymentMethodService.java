@@ -421,6 +421,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         GatewayPaymentInterface gatewayPaymentInterface = null;
         gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount,seller);
         hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
+        
+        if(StringUtils.isBlank(hostedCheckoutInput.getAuthenticationAmount())) {
+        	hostedCheckoutInput.setAuthenticationAmount(hostedCheckoutInput.getAmount());
+        }
 
         return gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
     }

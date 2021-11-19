@@ -15,6 +15,11 @@ public class HostedCheckoutInput {
      * The amount.
      */
     String amount;
+    
+    /**
+     * The authenticationAmount.
+     */
+    String authenticationAmount;
 
     /**
      * The currency code.
@@ -373,4 +378,12 @@ public class HostedCheckoutInput {
     public void setAdvancedOptions(String advancedOptions) {
         this.advancedOptions = advancedOptions;
     }
+    
+	public String getAuthenticationAmount() {
+		return authenticationAmount;
+	}
+
+	public void setAuthenticationAmount(String authenticationAmount) {
+		this.authenticationAmount = authenticationAmount;
+	}
 }
