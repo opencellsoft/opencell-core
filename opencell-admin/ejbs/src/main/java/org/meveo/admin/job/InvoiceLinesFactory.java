@@ -28,6 +28,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -36,34 +37,26 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
 
 public class InvoiceLinesFactory {
 
-    private BillingAccountService billingAccountService =
-            (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
-    private BillingRunService billingRunService =
-            (BillingRunService) getServiceInterface(BillingRunService.class.getSimpleName());
-    private AccountingArticleService accountingArticleService =
-            (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
-    private OfferTemplateService offerTemplateService =
-            (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
-    private ServiceInstanceService instanceService =
-            (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
-    private SubscriptionService subscriptionService =
-            (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
-    private CommercialOrderService commercialOrderService = 
-    		(CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
-    private ProductVersionService productVersionService = 
-    		(ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
-    private OrderLotService orderLotService = 
-    		(OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
-    private ChargeInstanceService chargeInstanceService =
-            (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
-    private RatedTransactionService ratedTransactionService =
-            (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+    private BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
+    private BillingRunService billingRunService = (BillingRunService) getServiceInterface(BillingRunService.class.getSimpleName());
+    private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
+    private OfferTemplateService offerTemplateService = (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
+    private ServiceInstanceService instanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
+    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
+    private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
+    private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+
+    private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
 
     /**
      * @param record        map of ratedTransaction
@@ -92,6 +85,7 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.findById(((BigInteger) id).longValue())));
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));
         if (invoiceLine.getValueDate() == null) {
@@ -101,7 +95,7 @@ public class InvoiceLinesFactory {
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));
         invoiceLine.setDiscountAmount(ZERO);
         invoiceLine.setDiscountRate(ZERO);
-        BigDecimal taxPercent = (BigDecimal) record.get("tax_percent");
+        BigDecimal taxPercent = invoiceLine.getTax() != null ? invoiceLine.getTax().getPercent() : (BigDecimal) record.get("tax_percent");
         invoiceLine.setTaxRate(taxPercent);
         BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_tax")).orElse(ZERO);
         BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax")).orElse(ZERO);
