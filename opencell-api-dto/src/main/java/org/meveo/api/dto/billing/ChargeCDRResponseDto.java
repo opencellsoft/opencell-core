@@ -69,15 +69,34 @@ public class ChargeCDRResponseDto extends BaseResponse {
     /**
      * CDR processing error
      */
-    private CdrError error;
+    private CdrError cdrError;
 
     public ChargeCDRResponseDto() {
         setActionStatus(null);
     }
 
     public ChargeCDRResponseDto(CdrError processingError) {
-        this.error = processingError;
+        System.out.println( "this constructer ChargeCDRResponseDto" );
+        this.cdrError = processingError;
         setActionStatus(null);
+    }
+
+    /**
+     * Gets the cdrError.
+     *
+     * @return the cdrError
+     */
+    public CdrError getCdrError() {
+        return cdrError;
+    }
+
+    /**
+     * Sets the cdrError.
+     *
+     * @param cdrError the CdrError
+     */
+    public void setCdrError(CdrError cdrError) {
+        this.cdrError = cdrError;
     }
 
     /**
