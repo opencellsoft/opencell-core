@@ -97,80 +97,80 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
             if (dunningLevelService.findByCode(dunningLevel.getCode()) != null) {
                 throw new EntityAlreadyExistsException(DunningLevel.class, dunningLevel.getCode());
             }
-            dunningLevelToUpdate.setCode(dunningLevel.getCode());
             updatedFields.add("Code");
+            dunningLevelToUpdate.setCode(dunningLevel.getCode());
         }
         if (dunningLevel.getDescription() != null) {
-            dunningLevelToUpdate.setDescription(dunningLevel.getDescription());
             if (!dunningLevel.getDescription().equals(dunningLevelToUpdate.getDescription())) {
                 updatedFields.add("Description");
             }
+            dunningLevelToUpdate.setDescription(dunningLevel.getDescription());
         }
         if (dunningLevel.isReminder() != null) {
-            dunningLevelToUpdate.setReminder(dunningLevel.isReminder());
             if (!dunningLevel.isReminder().equals(dunningLevelToUpdate.isReminder())) {
                 updatedFields.add("Reminder");
             }
+            dunningLevelToUpdate.setReminder(dunningLevel.isReminder());
         }
         if (dunningLevel.isActive() != null) {
-            dunningLevelToUpdate.setActive(dunningLevel.isActive());
             if (!dunningLevel.isActive().equals(dunningLevelToUpdate.isActive())) {
                 createAuditLog(DunningLevel.class.getSimpleName(), "CHANGE_STATUS", dunningLevelToUpdate, null);
             }
+            dunningLevelToUpdate.setActive(dunningLevel.isActive());
         }
         if (dunningLevel.getDaysOverdue() != null) {
-            dunningLevelToUpdate.setDaysOverdue(dunningLevel.getDaysOverdue());
             if (!dunningLevel.getDaysOverdue().equals(dunningLevelToUpdate.getDaysOverdue())) {
                 updatedFields.add("DaysOverdue");
             }
+            dunningLevelToUpdate.setDaysOverdue(dunningLevel.getDaysOverdue());
         }
         if (dunningLevel.isSoftDecline() != null) {
-            dunningLevelToUpdate.setSoftDecline(dunningLevel.isSoftDecline());
             if (!dunningLevel.isSoftDecline().equals(dunningLevelToUpdate.isSoftDecline())) {
                 updatedFields.add("SoftDecline");
             }
+            dunningLevelToUpdate.setSoftDecline(dunningLevel.isSoftDecline());
         }
         if (dunningLevel.getMinBalance() != null) {
-            dunningLevelToUpdate.setMinBalance(dunningLevel.getMinBalance());
             if (!dunningLevel.getMinBalance().equals(dunningLevelToUpdate.getMinBalance())) {
                 updatedFields.add("MinBalance");
             }
+            dunningLevelToUpdate.setMinBalance(dunningLevel.getMinBalance());
         }
         if (dunningLevel.getMinBalanceCurrency() != null) {
-            dunningLevelToUpdate.setMinBalanceCurrency(dunningLevel.getMinBalanceCurrency());
             if (!dunningLevel.getMinBalanceCurrency().equals(dunningLevelToUpdate.getMinBalanceCurrency())) {
                 updatedFields.add("MinBalanceCurrency");
             }
+            dunningLevelToUpdate.setMinBalanceCurrency(dunningLevel.getMinBalanceCurrency());
         }
         if (dunningLevel.getChargeType() != null) {
-            dunningLevelToUpdate.setChargeType(dunningLevel.getChargeType());
             if (!dunningLevel.getChargeType().equals(dunningLevelToUpdate.getChargeType())) {
                 updatedFields.add("ChargeType");
             }
+            dunningLevelToUpdate.setChargeType(dunningLevel.getChargeType());
         }
         if (dunningLevel.getChargeValue() != null) {
-            dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
             if (!dunningLevel.getChargeValue().equals(dunningLevelToUpdate.getChargeValue())) {
                 updatedFields.add("ChargeValue");
             }
+            dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
         }
         if (dunningLevel.getChargeCurrency() != null) {
-            dunningLevelToUpdate.setChargeCurrency(dunningLevel.getChargeCurrency());
             if (!dunningLevel.getChargeCurrency().equals(dunningLevelToUpdate.getChargeCurrency())) {
                 updatedFields.add("ChargeCurrency");
             }
+            dunningLevelToUpdate.setChargeCurrency(dunningLevel.getChargeCurrency());
         }
         if (dunningLevel.isEndOfDunningLevel() != null) {
-            dunningLevelToUpdate.setEndOfDunningLevel(dunningLevel.isEndOfDunningLevel());
             if (!dunningLevel.isEndOfDunningLevel().equals(dunningLevelToUpdate.isEndOfDunningLevel())) {
                 updatedFields.add("EndOfDunningLevel");
             }
+            dunningLevelToUpdate.setEndOfDunningLevel(dunningLevel.isEndOfDunningLevel());
         }
         if (dunningLevel.getDunningActions() != null) {
-            dunningLevelToUpdate.setDunningActions(dunningLevel.getDunningActions());
             if (!dunningLevel.getDunningActions().equals(dunningLevelToUpdate.getDunningActions())) {
                 updatedFields.add("DunningActions");
             }
+            dunningLevelToUpdate.setDunningActions(dunningLevel.getDunningActions());
         }
 
         validateParameters(dunningLevelToUpdate);
