@@ -131,7 +131,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
             dunningLevelToUpdate.setSoftDecline(dunningLevel.isSoftDecline());
         }
         if (dunningLevel.getMinBalance() != null) {
-            if (!dunningLevel.getMinBalance().equals(dunningLevelToUpdate.getMinBalance())) {
+            if (dunningLevelToUpdate.getMinBalance() == null || dunningLevel.getMinBalance().compareTo(dunningLevelToUpdate.getMinBalance()) != 0) {
                 updatedFields.add("MinBalance");
             }
             dunningLevelToUpdate.setMinBalance(dunningLevel.getMinBalance());
