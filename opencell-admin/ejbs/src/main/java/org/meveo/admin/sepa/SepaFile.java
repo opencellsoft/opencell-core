@@ -87,6 +87,7 @@ import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DDRequestItemService;
+import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
@@ -161,6 +162,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
 	private DDRequestItemService ddRequestItemService = (DDRequestItemService) EjbUtils.getServiceInterface(DDRequestItemService.class.getSimpleName());
 	private CustomerAccountService customerAccountService = (CustomerAccountService) EjbUtils.getServiceInterface(CustomerAccountService.class.getSimpleName());
+	private DDRequestLOTService ddRequestLOTService = (DDRequestLOTService) EjbUtils.getServiceInterface(DDRequestLOTService.class.getSimpleName());
 	
 	
 	
@@ -293,6 +295,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			Document document = new Document();
 			CustomerDirectDebitInitiationV02 message = new CustomerDirectDebitInitiationV02();
 			document.setCstmrDrctDbtInitn(message);
+			ddRequestLot = ddRequestLOTService.findById(ddRequestLot.getId(), Arrays.asList("ddrequestItems", "ddRequestBuilder"));
 			addHeader(message, ddRequestLot, appProvider);
 			for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
 				if (!ddrequestItem.hasError()) {
@@ -482,7 +485,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 */
 	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
 		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
-		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId());
+		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(), Arrays.asList("paymentMethods"));		
 		PaymentMethod preferedPaymentMethod = PersistenceUtils.initializeAndUnproxy(ca.getPreferredPaymentMethod());
 		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
