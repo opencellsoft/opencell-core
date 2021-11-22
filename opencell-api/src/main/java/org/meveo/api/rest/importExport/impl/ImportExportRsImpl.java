@@ -193,6 +193,8 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         if(exportData.getExportType().equalsIgnoreCase("zip")) {
             parameters.put("zip", true);
+        }else if("xml".equalsIgnoreCase(exportData.getExportType())){
+            parameters.put("xml", true);
         }
         if (exportData.getExportType().equalsIgnoreCase("remoteInstance")) {
             parameters.put("remoteInstance", retrieveInstance(exportData.getInstanceCode()));
