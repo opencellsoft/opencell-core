@@ -182,6 +182,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public void validateLevelsNumber(int countReminderLevels, int countEndOfDunningLevel, int totalDunningLevels) {
+        if (countReminderLevels == 0) {
+            throw new BadRequestException("Reminder level is mandatory");
+        }
         if (countReminderLevels > 1) {
             throw new BadRequestException("There is already a Reminder level for this policy, remove the existing level to select a new one.");
         }
