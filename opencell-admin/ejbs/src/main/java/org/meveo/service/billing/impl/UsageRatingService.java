@@ -540,7 +540,9 @@ public class UsageRatingService implements Serializable {
                 ratedEDRResult = rateEDRonChargeAndCounters(edr, usageChargeInstance, isVirtual);
                 if (ratedEDRResult.getWalletOperation() != null) {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
-                    walletOperationService.applyAccumulatorCounter(usageChargeInstance, Collections.singletonList(ratedEDRResult.getWalletOperation()), isVirtual);
+                    if (usageChargeInstance.getCounter() != null) {
+                        walletOperationService.applyAccumulatorCounter(usageChargeInstance, Collections.singletonList(ratedEDRResult.getWalletOperation()), isVirtual);
+                    }
                 }
 
                 if (rateTriggeredEdr && ratedEDRResult.getTriggeredEDRs() != null && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {

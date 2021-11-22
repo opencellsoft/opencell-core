@@ -111,25 +111,31 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             return null;
         }
         String line = fileReader.readLine();
-        if (line == null) {
+
+        return getRecord(cdrParser, line);
+    }
+
+    @Override
+    public CDR getRecord(ICdrParser cdrParser, Object cdrData) {
+
+        if (cdrData == null) {
             return null;
         }
         CDR cdr = null;
         try {
-            cdr = cdrParser.parse(line);
+            cdr = cdrParser.parse(cdrData);
         } catch (CDRParsingException e) {
             cdr = new CDR();
             cdr.setRejectReasonException(e);
 
         } finally {
             // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
-            //cdr.setSource(line);
-            cdr.setLine(line);
+            // cdr.setSource(line);
+            cdr.setLine((String) cdrData);
             cdr.setOriginBatch(batchName);
-            cdr.setOriginRecord(getOriginRecord(line));
+            cdr.setOriginRecord(getOriginRecord((String) cdrData));
         }
         return cdr;
-
     }
 
     @Override

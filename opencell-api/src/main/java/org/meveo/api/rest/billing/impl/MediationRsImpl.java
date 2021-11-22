@@ -65,9 +65,9 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
             String ip = StringUtils.isBlank(httpServletRequest.getHeader("x-forwarded-for")) ? httpServletRequest.getRemoteAddr() : httpServletRequest.getHeader("x-forwarded-for");
             postData.setIpAddress(ip);
             List<CdrErrorDto> cdrErrorDtos = mediationApi.registerCdrList(postData);
-            if(!cdrErrorDtos.isEmpty())
+            if (!cdrErrorDtos.isEmpty()) {
                 return new CdrErrorListDto(ActionStatusEnum.FAIL, "error while creating CDRs", cdrErrorDtos);
-
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -80,7 +80,10 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
         try {
             ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, httpServletRequest.getRemoteAddr(), isVirtual, rateTriggeredEdr, returnWalletOperations, maxDepth);
-            return mediationApi.chargeCdr(chargeCDRDto);
+            ChargeCDRResponseDto responseDto = mediationApi.chargeCdr(chargeCDRDto);
+            responseDto.setActionStatus(new ActionStatus());
+            return responseDto;
+
         } catch (Exception e) {
             ChargeCDRResponseDto result = new ChargeCDRResponseDto();
             processException(e, result.getActionStatus());

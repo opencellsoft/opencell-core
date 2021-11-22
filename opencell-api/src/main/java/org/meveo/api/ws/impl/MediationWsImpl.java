@@ -76,7 +76,10 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
 
         try {
             ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, getHttpServletRequest().getRemoteAddr(), isVirtual,  rateTriggeredEdr,  returnWalletOperations,  maxDepth);
-            return mediationApi.chargeCdr(chargeCDRDto);
+            ChargeCDRResponseDto responseDto = mediationApi.chargeCdr(chargeCDRDto);
+            responseDto.setActionStatus(new ActionStatus());
+            return responseDto;
+            
         } catch (Exception e) {
             ChargeCDRResponseDto result = new ChargeCDRResponseDto();
             processException(e, result.getActionStatus());
