@@ -91,7 +91,7 @@ public class DunningLevel extends BusinessEntity {
      *  ​if DunningLevelChargeType = Percentage, value < 100
      */
     @Column(name = "charge_value", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal  chargeValue;
+    private BigDecimal chargeValue;
 
     /**
      * The currency of dunning charge

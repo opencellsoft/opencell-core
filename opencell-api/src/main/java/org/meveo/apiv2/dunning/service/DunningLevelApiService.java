@@ -119,7 +119,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
             dunningLevelToUpdate.setActive(dunningLevel.isActive());
         }
         if (dunningLevel.getDaysOverdue() != null) {
-            if (!dunningLevel.getDaysOverdue().equals(dunningLevelToUpdate.getDaysOverdue())) {
+            if (dunningLevelToUpdate.getDaysOverdue() == null || dunningLevel.getDaysOverdue() != dunningLevelToUpdate.getDaysOverdue()) {
                 updatedFields.add("DaysOverdue");
             }
             dunningLevelToUpdate.setDaysOverdue(dunningLevel.getDaysOverdue());
@@ -143,13 +143,13 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
             dunningLevelToUpdate.setMinBalanceCurrency(dunningLevel.getMinBalanceCurrency());
         }
         if (dunningLevel.getChargeType() != null) {
-            if (!dunningLevel.getChargeType().equals(dunningLevelToUpdate.getChargeType())) {
+            if (dunningLevelToUpdate.getChargeType() == null || dunningLevel.getChargeType() != dunningLevelToUpdate.getChargeType()) {
                 updatedFields.add("ChargeType");
             }
             dunningLevelToUpdate.setChargeType(dunningLevel.getChargeType());
         }
         if (dunningLevel.getChargeValue() != null) {
-            if (!dunningLevel.getChargeValue().equals(dunningLevelToUpdate.getChargeValue())) {
+            if (dunningLevelToUpdate.getChargeValue() == null || dunningLevel.getChargeValue().compareTo(dunningLevelToUpdate.getChargeValue()) != 0) {
                 updatedFields.add("ChargeValue");
             }
             dunningLevelToUpdate.setChargeValue(dunningLevel.getChargeValue());
