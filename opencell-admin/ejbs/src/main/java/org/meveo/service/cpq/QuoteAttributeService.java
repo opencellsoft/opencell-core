@@ -55,7 +55,8 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
 	        	var productVersionAttribute = mandatoryEl.get();
 	        	if(mandatoryEl.isPresent()) {
 	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), 
-							productVersionAttribute.getValidationPattern(), 
+							productVersionAttribute.getValidationPattern(),
+							productVersionAttribute.getValidationLabel(),
 							quoteAttribute, 
 							productVersionAttribute.getMandatoryWithEl(), 
 							quoteVersion.getQuote(), quoteVersion, null, null);
@@ -68,7 +69,8 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
 	    		var offerTempalteAttribute = offerTemplatMandatoryEl.get();
 				if(offerTemplatMandatoryEl.isPresent()) {
 	        		super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), 
-	        									offerTempalteAttribute.getValidationPattern(), 
+	        									offerTempalteAttribute.getValidationPattern(),
+	        									offerTempalteAttribute.getValidationLabel(),
 	        									quoteAttribute, 
 	        									offerTempalteAttribute.getMandatoryWithEl(), 
 	        									quoteVersion.getQuote(), 
