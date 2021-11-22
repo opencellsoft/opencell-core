@@ -68,13 +68,13 @@ import com.worldline.sips.util.SealCalculator;
 public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String WALLET_URL_PROPERTY = "atos.api.walletUrl";
     private static final String OFFICE_URL_PROPERTY = "atos.api.officeUrl";
-    private static final String WALLET_ORDER_URI = "/checkout/walletOrder";
-    private static final String WALLET_CREDIT_HOLDER_URI = "/cashManagement/walletCreditHolder";
+    private static final String WALLET_ORDER_URI_PROPERTY = "atos.api.wallet.order.uri";
+    private static final String WALLET_CREDIT_HOLDER_URI_PROPERTY = "atos.api.wallet.credit.uri";
 
-    private static final String WALLETPAGE_INTERFACE_VERSION = "HP_2.5";
-    private static final String CASHMANAGEMENT_INTERFACE_VERSION = "CR_WS_2.25";
-    private static final String CHECKOUT_INTERFACE_VERSION = "IR_WS_2.24";
-    private static final String SEAL_ALGORITHM = "HMAC-SHA-256";
+    private static final String PAYPAGE_INTERFACE_VERSION_PROPERTY = "atos.paypage.version";
+    private static final String CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY = "atos.api.chashmanag.version";
+    private static final String CHECKOUT_INTERFACE_VERSION_PROPERTY = "atos.api.checkout.version";
+    private static final String SEAL_ALGORITHM_PROPERTY = "atos.api.seal.algorithm";
     
     private static final String CF_PRV_ACQUIRER_CODE_WLSIPS = "CF_PRV_ACQUIRER_CODE_WLSIPS";
     private static final String CF_PRV_COMPL_CODE_WLSIPS = "CF_PRV_COMPL_CODE_WLSIPS";
@@ -95,7 +95,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, WALLET_ORDER_URI, CHECKOUT_INTERFACE_VERSION);
+        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, paramBean().getProperty(WALLET_ORDER_URI_PROPERTY,"/checkout/walletOrder"), paramBean().getProperty(CHECKOUT_INTERFACE_VERSION_PROPERTY,"IR_WS_2.24"));
     }
 
     @Override
@@ -121,7 +121,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPaymentOrRefundToken(paymentToken, ctsAmount, WALLET_CREDIT_HOLDER_URI, CASHMANAGEMENT_INTERFACE_VERSION);
+    	
+        return doPaymentOrRefundToken(paymentToken, ctsAmount, paramBean().getProperty(WALLET_CREDIT_HOLDER_URI_PROPERTY,"/cashManagement/walletCreditHolder"), paramBean().getProperty(CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY,"CR_WS_2.25"));
     }
 
     @Override
@@ -155,7 +156,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
             String data = getSealString(request);
             seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
             request.setSeal(seal);
-            request.setSealAlgorithm(SEAL_ALGORITHM);
+            request.setSealAlgorithm(paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256"));
         } catch (SealCalculationException e) {
             processError("Error occurred during seal calculation", e, paymentResponseDto);
             return paymentResponseDto;
@@ -247,15 +248,14 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         PaymentHostedCheckoutResponseDto.Result result = response.getResult();
 
         result.setHostedCheckoutUrl(walletUrl);
-        result.setHostedCheckoutVersion(WALLETPAGE_INTERFACE_VERSION);
+        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"IR_WS_2.0"));
         result.setReturnUrl(returnUrl);
 
         CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
         String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
 
-        String data = "merchantId=" +
-                paymentGateway.getMarchandId() +
+        String data = "merchantId=" + paymentGateway.getMarchandId() +
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
                 "|merchantWalletId=" + merchantWalletId +
@@ -452,18 +452,18 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
 	@Override
 	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
-		throw new UnsupportedOperationException();
+		 throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
-		throw new UnsupportedOperationException();
+		 throw new UnsupportedOperationException();
 		
 	}
 
 	@Override
 	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
-		throw new UnsupportedOperationException();
+		 throw new UnsupportedOperationException();
 		
 	}
 }
