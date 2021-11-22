@@ -53,6 +53,10 @@ public class DunningActionInstance extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_level_instance_id")
     private DunningLevelInstance dunningLevelInstance;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_action_id")
+    private DunningAction dunningAction;
 
     public DunningActionInstance() {
         super();
@@ -113,4 +117,13 @@ public class DunningActionInstance extends BusinessEntity {
     public void setDunningLevelInstance(DunningLevelInstance dunningLevelInstance) {
         this.dunningLevelInstance = dunningLevelInstance;
     }
+
+	public DunningAction getDunningAction() {
+		return dunningAction;
+	}
+
+	public void setDunningAction(DunningAction dunningAction) {
+		this.dunningAction = dunningAction;
+	}
+    
 }

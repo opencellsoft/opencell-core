@@ -157,6 +157,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         List<DunningActionInstance> actionInstances = new ArrayList<>();
         for (DunningAction action : policyLevel.getDunningLevel().getDunningActions()) {
             DunningActionInstance actionInstance = new DunningActionInstance();
+            actionInstance.setDunningAction(action);
+            actionInstance.setCode(action.getCode());
             actionInstance.setActionType(action.getActionType());
             actionInstance.setActionMode(action.getActionMode());
             actionInstance.setActionOwner(action.getAssignedTo());
