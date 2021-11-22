@@ -6,8 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
+import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -26,8 +28,10 @@ import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -47,6 +51,9 @@ public class DunningPolicyResourceImplTest {
     @Mock
     private DunningPolicyLevelService dunningPolicyLevelService;
 
+    @Mock
+    private DunningPolicyService dunningPolicyService;
+
     @Before
     public void setUp() {
         DunningPolicy dunningPolicy = new DunningPolicy();
@@ -60,6 +67,7 @@ public class DunningPolicyResourceImplTest {
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(1l);
         dunningLevel.setEndOfDunningLevel(Boolean.TRUE);
+        dunningPolicy.setDunningLevels(new ArrayList<>());
 
         DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
         collectionPlanStatus.setId(1L);
@@ -67,7 +75,7 @@ public class DunningPolicyResourceImplTest {
 
         when(dunningPolicyApiService.updateTotalLevels(any())).thenReturn(of(dunningPolicy));
         when(dunningPolicyApiService.create(any())).thenReturn(dunningPolicy);
-        when(dunningPolicyApiService.findById(1L)).thenReturn(of(dunningPolicy));
+        when(dunningPolicyService.findById(anyLong(), Mockito.anyList())).thenReturn(dunningPolicy);
         when(dunningPolicyApiService.update(anyLong(), any(DunningPolicy.class))).thenReturn(Optional.of(dunningPolicy));
     }
 
@@ -161,7 +169,7 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
-        when(dunningPolicyApiService.findById(1L)).thenReturn(Optional.empty());
+        when(dunningPolicyService.findById(anyLong(), Mockito.anyList())).thenReturn(null);
         dunningPolicyResource.update(1L, resource);
     }
 }
