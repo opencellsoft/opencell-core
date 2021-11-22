@@ -169,6 +169,7 @@ public class ProductApi extends BaseApi {
 		}
 		handleMissingParameters();
 		try {
+			productDto.setCode(productDto.getCode().trim());
 			Product product=populateProduct(productDto, true);
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
