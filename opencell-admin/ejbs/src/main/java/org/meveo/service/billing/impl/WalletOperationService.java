@@ -305,14 +305,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public boolean isChargeMatch(ChargeInstance chargeInstance, String filterExpression) throws BusinessException {
-
-        /**
-         * 1- chekc if chargeTEmplate has linked attributes : !chargeInstance.getChargeTemplate().getLinkedAttributes().isEmpty()
-         * 2- iterate on chargeInstance.getServiceInstance().getAttributeInstances();
-         * 3- check if attributeInstances corresponding to linkedAttributes have value TRUE
-         * 4- if only one if false so matched=false
-         * */
-
         boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances()
                 .stream()
                 .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
