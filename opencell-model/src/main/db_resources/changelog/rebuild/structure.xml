@@ -11289,36 +11289,34 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             
-            <column name="collection_plan_id" type="varchar(255)" />
-            <column name="collection_plan_related_policy_id" type="bigint" />
+            <column name="collection_plan_number" type="varchar(255)" />
+            <column name="related_policy_id" type="bigint" />
             <column name="initial_collection_plan_id" type="bigint" />
-            <column name="collection_plan_billing_account_id" type="bigint" />
-            <column name="collection_plan_related_invoice_id" type="bigint" />
-            <column name="collection_plan_pause_reason_id" type="bigint" />
-            <column name="collection_plan_stop_reason_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
+            <column name="related_invoice_id" type="bigint" />
+            <column name="pause_reason_id" type="bigint" />
+            <column name="stop_reason_id" type="bigint" />
             
-            <column name="collection_plan_current_dunning_level_sequence" type="int4" />
+            <column name="current_dunning_level_sequence" type="int4" />
             
             
             
-            <column name="collection_plan_start_date" type="datetime" />
-            <column name="collection_plan_days_open" type="int4" />
-             <column name="collection_plan_close_date" type="datetime" />
+            <column name="start_date" type="datetime" />
+            <column name="days_open" type="int4" />
+             <column name="close_date" type="datetime" />
             
-            <column name="collection_plan_status_id" type="bigint" />
-            <column name="collection_plan_paused_until_date" type="datetime" />
-            <column name="collection_plan_balance" type="numeric(23, 12)"/>
+            <column name="status_id" type="bigint" />
+            <column name="paused_until_date" type="datetime" />
+            <column name="balance" type="numeric(23, 12)"/>
             <column name="retry_payment_on_resume_date" type="${type.boolean}" defaultValueNumeric="0"/>
             
-            <column name="collection_plan_next_action" type="varchar(255)" />
-            <column name="collection_plan_next_action_date" type="datetime" />
-            <column name="collection_plan_last_action" type="varchar(255)" />
-            <column name="collection_plan_last_action_date" type="datetime" />
+            <column name="next_action" type="varchar(255)" />
+            <column name="next_action_date" type="datetime" />
+            <column name="last_action" type="varchar(255)" />
+            <column name="last_action_date" type="datetime" />
             <column name="total_dunning_levels" type="int4" />
             <column name="pause_duration" type="int4" />
-            
         </createTable>
-        
         </changeSet>
 	
     <!-- end tables -->
@@ -15398,23 +15396,23 @@
     </changeSet>
 
 	<changeSet id="rebuild-str-fk-540-1642" author="HatimOUDAD">
-	      <addForeignKeyConstraint baseColumnNames="collection_plan_billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
         						 
-		<addForeignKeyConstraint baseColumnNames="collection_plan_pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
+		<addForeignKeyConstraint baseColumnNames="pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
         						 deferrable="false" initiallyDeferred="false"
         						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" /> 
         						        
-        <addForeignKeyConstraint baseColumnNames="collection_plan_stop_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_stop_reason"
+        <addForeignKeyConstraint baseColumnNames="stop_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_stop_reason"
         						 deferrable="false" initiallyDeferred="false"
         						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_stop_reasons" /> 
         						 
-        <addForeignKeyConstraint baseColumnNames="collection_plan_related_policy_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_related_policy"
+        <addForeignKeyConstraint baseColumnNames="related_policy_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_related_policy"
         						 deferrable="false" initiallyDeferred="false"
         						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" /> 
         
-        <addForeignKeyConstraint baseColumnNames="collection_plan_status_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_plan_status"
+        <addForeignKeyConstraint baseColumnNames="status_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_plan_status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan_statuses" />
                                  
@@ -15422,10 +15420,10 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
                                  
-        <addForeignKeyConstraint baseColumnNames="collection_plan_related_invoice_id" baseTableName="dunning_collection_plan" constraintName="fk_collection_plan_related_invoice"
+        <addForeignKeyConstraint baseColumnNames="related_invoice_id" baseTableName="dunning_collection_plan" constraintName="fk_collection_plan_related_invoice"
                                  deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />           				 
-     </changeSet>
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />                        
+      </changeSet>
     
     <!-- end fk -->
 

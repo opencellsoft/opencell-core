@@ -54,7 +54,7 @@ public class DunningCollectionPlanApiServiceTest {
         collectionPlan.setId(1L);
         Invoice invoice = new Invoice();
         invoice.setId(1L);
-        collectionPlan.setCollectionPlanRelatedInvoice(invoice);
+        collectionPlan.setRelatedInvoice(invoice);
         when(dunningCollectionPlanService.findById(anyLong())).thenReturn(collectionPlan);
 
         List<DunningPolicy> availablePolicies = collectionPlanApiService.availableDunningPolicies(1L);

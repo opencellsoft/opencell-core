@@ -4,12 +4,22 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -23,7 +33,7 @@ import org.meveo.model.billing.Invoice;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_collection_plan_seq")})
 @NamedQueries({
-		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.collectionPlanRelatedInvoice.id = :invoiceID")
+		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.relatedInvoice.id = :invoiceID")
 })
 public class DunningCollectionPlan extends AuditableEntity {
 	
@@ -32,15 +42,15 @@ public class DunningCollectionPlan extends AuditableEntity {
     /**
      * The collection plan id
      */
-    @Column(name = "collection_plan_id")
-	private String collectionPlanID;
+    @Column(name = "collection_plan_number")
+	private String collectionPlanNumber;
 
     /**
      * The collection plan related policy
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_plan_related_policy_id", referencedColumnName = "id")
-     private DunningPolicy collectionPlanRelatedPolicy;
+    @JoinColumn(name = "related_policy_id", referencedColumnName = "id")
+     private DunningPolicy relatedPolicy;
     
     /**
      * The collection plan billing Account
@@ -53,77 +63,77 @@ public class DunningCollectionPlan extends AuditableEntity {
      * The collection plan billing Account
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_plan_billing_account_id", referencedColumnName = "id")
-     private BillingAccount collectionPlanBillingAccount;
+    @JoinColumn(name = "billing_account_id", referencedColumnName = "id")
+     private BillingAccount billingAccount;
     
 
     /**
     * The collection plan related invoice
     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_plan_related_invoice_id", referencedColumnName = "id")
-    private Invoice collectionPlanRelatedInvoice;
+    @JoinColumn(name = "related_invoice_id", referencedColumnName = "id")
+    private Invoice relatedInvoice;
     
     /**
      * The collection plan pause reason
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_plan_pause_reason_id", referencedColumnName = "id")
-     private DunningPauseReason collectionPlanPauseReason;
+    @JoinColumn(name = "pause_reason_id", referencedColumnName = "id")
+     private DunningPauseReason pauseReason;
     
     /**
      * The collection plan stop reason
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_plan_stop_reason_id", referencedColumnName = "id")
-     private DunningStopReason collectionPlanStopReason;
+    @JoinColumn(name = "stop_reason_id", referencedColumnName = "id")
+     private DunningStopReason stopReason;
     
     /**
      * the sequence.
      */
-    @Column(name = "collection_plan_current_dunning_level_sequence")
-    private Integer collectionPlanCurrentDunningLevelSequence;
+    @Column(name = "current_dunning_level_sequence")
+    private Integer currentDunningLevelSequence;
     
     /**
      * The collection plan start date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_start_date")
-    private Date collectionPlanStartDate;
+    @Column(name = "start_date")
+    private Date startDate;
     
     /**
      * The collection plan days open
      */
-    @Column(name = "collection_plan_days_open")
-    private Integer collectionPlanDaysOpen;
+    @Column(name = "days_open")
+    private Integer daysOpen;
     
     /**
      * The collection plan close date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_close_date")
-    private Date collectionPlanCloseDate;
+    @Column(name = "close_date")
+    private Date closeDate;
    
     /**
      * The collection plan status
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_plan_status_id", referencedColumnName = "id")
-    private DunningCollectionPlanStatus collectionPlanStatus;
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
+    private DunningCollectionPlanStatus status;
     
 
     /**
      * The collection plan paused until date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_paused_until_date")
-    private Date collectionPlanPausedUntilDate;
+    @Column(name = "paused_until_date")
+    private Date pausedUntilDate;
     
     /**
      * The collection plan total balance
      */
-    @Column(name = "collection_plan_balance")
-    private BigDecimal collectionPlanBalance;
+    @Column(name = "balance")
+    private BigDecimal balance;
     
     /**
      * Retry payment on resume date
@@ -141,28 +151,28 @@ public class DunningCollectionPlan extends AuditableEntity {
     /**
      * The collection plan next action
      */
-    @Column(name = "collection_plan_next_action")
-	private String collectionPlanNextAction;
+    @Column(name = "next_action")
+	private String nextAction;
     
     /**
      * The collection plan next action date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_next_action_date")
-    private Date collectionPlanNextActionDate;
+    @Column(name = "next_action_date")
+    private Date nextActionDate;
     
     /**
      * The collection plan next action
      */
-    @Column(name = "collection_plan_last_action")
-	private String collectionPlanLastAction;
+    @Column(name = "last_action")
+	private String lastAction;
     
     /**
      * The collection plan last action date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "collection_plan_last_action_date")
-    private Date collectionPlanLastActionDate;
+    @Column(name = "last_action_date")
+    private Date lastActionDate;
     
     /**
      * The collection plan days open
@@ -182,12 +192,12 @@ public class DunningCollectionPlan extends AuditableEntity {
 		this.id = id;
 	}
 
-	public DunningPolicy getCollectionPlanRelatedPolicy() {
-		return collectionPlanRelatedPolicy;
+	public DunningPolicy getRelatedPolicy() {
+		return relatedPolicy;
 	}
 
-	public void setCollectionPlanRelatedPolicy(DunningPolicy collectionPlanRelatedPolicy) {
-		this.collectionPlanRelatedPolicy = collectionPlanRelatedPolicy;
+	public void setRelatedPolicy(DunningPolicy relatedPolicy) {
+		this.relatedPolicy = relatedPolicy;
 	}
 
 	public DunningCollectionPlan getInitialCollectionPlan() {
@@ -198,92 +208,92 @@ public class DunningCollectionPlan extends AuditableEntity {
 		this.initialCollectionPlan = initialCollectionPlan;
 	}
 
-	public BillingAccount getCollectionPlanBillingAccount() {
-		return collectionPlanBillingAccount;
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
 	}
 
-	public void setCollectionPlanBillingAccount(BillingAccount collectionPlanBillingAccount) {
-		this.collectionPlanBillingAccount = collectionPlanBillingAccount;
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 
-	public Invoice getCollectionPlanRelatedInvoice() {
-		return collectionPlanRelatedInvoice;
+	public Invoice getRelatedInvoice() {
+		return relatedInvoice;
 	}
 
-	public void setCollectionPlanRelatedInvoice(Invoice collectionPlanRelatedInvoice) {
-		this.collectionPlanRelatedInvoice = collectionPlanRelatedInvoice;
+	public void setRelatedInvoice(Invoice relatedInvoice) {
+		this.relatedInvoice = relatedInvoice;
 	}
 
-	public DunningPauseReason getCollectionPlanPauseReason() {
-		return collectionPlanPauseReason;
+	public DunningPauseReason getPauseReason() {
+		return pauseReason;
 	}
 
-	public void setCollectionPlanPauseReason(DunningPauseReason collectionPlanPauseReason) {
-		this.collectionPlanPauseReason = collectionPlanPauseReason;
+	public void setPauseReason(DunningPauseReason pauseReason) {
+		this.pauseReason = pauseReason;
 	}
 
-	public DunningStopReason getCollectionPlanStopReason() {
-		return collectionPlanStopReason;
+	public DunningStopReason getStopReason() {
+		return stopReason;
 	}
 
-	public void setCollectionPlanStopReason(DunningStopReason collectionPlanStopReason) {
-		this.collectionPlanStopReason = collectionPlanStopReason;
+	public void setStopReason(DunningStopReason stopReason) {
+		this.stopReason = stopReason;
 	}
 
-	public Integer getCollectionPlanCurrentDunningLevelSequence() {
-		return collectionPlanCurrentDunningLevelSequence;
+	public Integer getCurrentDunningLevelSequence() {
+		return currentDunningLevelSequence;
 	}
 
-	public void setCollectionPlanCurrentDunningLevelSequence(Integer collectionPlanCurrentDunningLevelSequence) {
-		this.collectionPlanCurrentDunningLevelSequence = collectionPlanCurrentDunningLevelSequence;
+	public void setCurrentDunningLevelSequence(Integer currentDunningLevelSequence) {
+		this.currentDunningLevelSequence = currentDunningLevelSequence;
 	}
 
-	public Date getCollectionPlanStartDate() {
-		return collectionPlanStartDate;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setCollectionPlanStartDate(Date collectionPlanStartDate) {
-		this.collectionPlanStartDate = collectionPlanStartDate;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
-	public Integer getCollectionPlanDaysOpen() {
-		return collectionPlanDaysOpen;
+	public Integer getDaysOpen() {
+		return daysOpen;
 	}
 
-	public void setCollectionPlanDaysOpen(Integer collectionPlanDaysOpen) {
-		this.collectionPlanDaysOpen = collectionPlanDaysOpen;
+	public void setDaysOpen(Integer daysOpen) {
+		this.daysOpen = daysOpen;
 	}
 
-	public Date getCollectionPlanCloseDate() {
-		return collectionPlanCloseDate;
+	public Date getCloseDate() {
+		return closeDate;
 	}
 
-	public void setCollectionPlanCloseDate(Date collectionPlanCloseDate) {
-		this.collectionPlanCloseDate = collectionPlanCloseDate;
+	public void setCloseDate(Date closeDate) {
+		this.closeDate = closeDate;
 	}
 
-	public DunningCollectionPlanStatus getCollectionPlanStatus() {
-		return collectionPlanStatus;
+	public DunningCollectionPlanStatus getStatus() {
+		return status;
 	}
 
-	public void setCollectionPlanStatus(DunningCollectionPlanStatus collectionPlanStatus) {
-		this.collectionPlanStatus = collectionPlanStatus;
+	public void setStatus(DunningCollectionPlanStatus status) {
+		this.status = status;
 	}
 
-	public Date getCollectionPlanPausedUntilDate() {
-		return collectionPlanPausedUntilDate;
+	public Date getPausedUntilDate() {
+		return pausedUntilDate;
 	}
 
-	public void setCollectionPlanPausedUntilDate(Date collectionPlanPausedUntilDate) {
-		this.collectionPlanPausedUntilDate = collectionPlanPausedUntilDate;
+	public void setPausedUntilDate(Date pausedUntilDate) {
+		this.pausedUntilDate = pausedUntilDate;
 	}
 
-	public BigDecimal getCollectionPlanBalance() {
-		return collectionPlanBalance;
+	public BigDecimal getBalance() {
+		return balance;
 	}
 
-	public void setCollectionPlanBalance(BigDecimal collectionPlanBalance) {
-		this.collectionPlanBalance = collectionPlanBalance;
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 	public boolean isRetryPaymentOnResumeDate() {
@@ -294,36 +304,36 @@ public class DunningCollectionPlan extends AuditableEntity {
 		this.retryPaymentOnResumeDate = retryPaymentOnResumeDate;
 	}
 
-	public String getCollectionPlanNextAction() {
-		return collectionPlanNextAction;
+	public String getNextAction() {
+		return nextAction;
 	}
 
-	public void setCollectionPlanNextAction(String collectionPlanNextAction) {
-		this.collectionPlanNextAction = collectionPlanNextAction;
+	public void setNextAction(String nextAction) {
+		this.nextAction = nextAction;
 	}
 
-	public Date getCollectionPlanNextActionDate() {
-		return collectionPlanNextActionDate;
+	public Date getNextActionDate() {
+		return nextActionDate;
 	}
 
-	public void setCollectionPlanNextActionDate(Date collectionPlanNextActionDate) {
-		this.collectionPlanNextActionDate = collectionPlanNextActionDate;
+	public void setNextActionDate(Date nextActionDate) {
+		this.nextActionDate = nextActionDate;
 	}
 
-	public String getCollectionPlanLastAction() {
-		return collectionPlanLastAction;
+	public String getLastAction() {
+		return lastAction;
 	}
 
-	public void setCollectionPlanLastAction(String collectionPlanLastAction) {
-		this.collectionPlanLastAction = collectionPlanLastAction;
+	public void setLastAction(String lastAction) {
+		this.lastAction = lastAction;
 	}
 
-	public Date getCollectionPlanLastActionDate() {
-		return collectionPlanLastActionDate;
+	public Date getLastActionDate() {
+		return lastActionDate;
 	}
 
-	public void setCollectionPlanLastActionDate(Date collectionPlanLastActionDate) {
-		this.collectionPlanLastActionDate = collectionPlanLastActionDate;
+	public void setLastActionDate(Date lastActionDate) {
+		this.lastActionDate = lastActionDate;
 	}
 
 	public List<DunningLevelInstance> getDunningLevelInstances() {
@@ -350,13 +360,11 @@ public class DunningCollectionPlan extends AuditableEntity {
 		this.pauseDuration = pauseDuration;
 	}
 
-	public String getCollectionPlanID() {
-		return collectionPlanID;
+	public String getCollectionPlanNumber() {
+		return collectionPlanNumber;
 	}
 
-	public void setCollectionPlanID(String collectionPlanID) {
-		this.collectionPlanID = collectionPlanID;
+	public void setCollectionPlanNumber(String collectionPlanNumber) {
+		this.collectionPlanNumber = collectionPlanNumber;
 	}
-	
-    
 }

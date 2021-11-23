@@ -49,19 +49,19 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
         DunningStopReason stopReason = dunningStopReasonsService.findByStopReason("Changement de politique de recouvrement");
-        oldCollectionPlan.setCollectionPlanStopReason(stopReason);
-        oldCollectionPlan.setCollectionPlanCloseDate(new Date());
+        oldCollectionPlan.setStopReason(stopReason);
+        oldCollectionPlan.setCloseDate(new Date());
 
         DunningCollectionPlanStatus collectionPlanStatusActif = dunningCollectionPlanStatusService.findByStatus("Actif");
         DunningCollectionPlan newCollectionPlan = new DunningCollectionPlan();
-        newCollectionPlan.setCollectionPlanRelatedPolicy(policy);
-        newCollectionPlan.setCollectionPlanBillingAccount(oldCollectionPlan.getCollectionPlanBillingAccount());
-        newCollectionPlan.setCollectionPlanRelatedInvoice(oldCollectionPlan.getCollectionPlanRelatedInvoice());
-        newCollectionPlan.setCollectionPlanCurrentDunningLevelSequence(selectedPolicyLevel.getSequence());
+        newCollectionPlan.setRelatedPolicy(policy);
+        newCollectionPlan.setBillingAccount(oldCollectionPlan.getBillingAccount());
+        newCollectionPlan.setRelatedInvoice(oldCollectionPlan.getRelatedInvoice());
+        newCollectionPlan.setCurrentDunningLevelSequence(selectedPolicyLevel.getSequence());
         newCollectionPlan.setTotalDunningLevels(policy.getTotalDunningLevels());
-        newCollectionPlan.setCollectionPlanStartDate(oldCollectionPlan.getCollectionPlanStartDate());
-        newCollectionPlan.setCollectionPlanStatus(collectionPlanStatusActif);
-        newCollectionPlan.setCollectionPlanBalance(oldCollectionPlan.getCollectionPlanBalance());
+        newCollectionPlan.setStartDate(oldCollectionPlan.getStartDate());
+        newCollectionPlan.setStatus(collectionPlanStatusActif);
+        newCollectionPlan.setBalance(oldCollectionPlan.getBalance());
         create(newCollectionPlan);
         if (policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             List<DunningLevelInstance> levelInstances = new ArrayList<>();
@@ -101,22 +101,22 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                                                           Integer dayOverDue, DunningCollectionPlanStatus collectionPlanStatus) {
         invoice = invoiceService.refreshOrRetrieve(invoice);
         DunningCollectionPlan collectionPlan = new DunningCollectionPlan();
-        collectionPlan.setCollectionPlanRelatedPolicy(policy);
-        collectionPlan.setCollectionPlanBillingAccount(invoice.getBillingAccount());
-        collectionPlan.setCollectionPlanRelatedInvoice(invoice);
-        collectionPlan.setCollectionPlanCurrentDunningLevelSequence(1);
+        collectionPlan.setRelatedPolicy(policy);
+        collectionPlan.setBillingAccount(invoice.getBillingAccount());
+        collectionPlan.setRelatedInvoice(invoice);
+        collectionPlan.setCurrentDunningLevelSequence(1);
         collectionPlan.setTotalDunningLevels(policy.getTotalDunningLevels());
-        collectionPlan.setCollectionPlanStartDate(addDaysToDate(invoice.getDueDate(), dayOverDue));
-        collectionPlan.setCollectionPlanStatus(collectionPlanStatus);
+        collectionPlan.setStartDate(addDaysToDate(invoice.getDueDate(), dayOverDue));
+        collectionPlan.setStatus(collectionPlanStatus);
         Optional.ofNullable(invoice.getRecordedInvoice())
                 .ifPresent(recordedInvoice ->
-                        collectionPlan.setCollectionPlanBalance(recordedInvoice.getUnMatchingAmount()));
+                        collectionPlan.setBalance(recordedInvoice.getUnMatchingAmount()));
         create(collectionPlan);
         if(policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             collectionPlan.setDunningLevelInstances(createLevelInstances(policy, collectionPlan,
                     collectionPlanStatus, dayOverDue));
         }
-        collectionPlan.setCollectionPlanID("C"+collectionPlan.getId());
+        collectionPlan.setCollectionPlanNumber("C"+collectionPlan.getId());
         return update(collectionPlan);
     }
 
@@ -191,14 +191,14 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		if(!forcePause) {
 			Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToPause.getDunningLevelInstances()
 					.stream().max(Comparator.comparing(DunningLevelInstance::getId));
-			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseUntil.after(DateUtils.addDaysToDate(collectionPlanToPause.getCollectionPlanStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
+			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseUntil.after(DateUtils.addDaysToDate(collectionPlanToPause.getStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
 				throw new BusinessApiException("Collection Plan with id "+collectionPlanToPause.getId()+" cannot be paused, the pause until date is after the planned trigger date of the last level");
 			}
 		}
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus("Pause");
-		collectionPlanToPause.setCollectionPlanStatus(collectionPlanStatus);
-		collectionPlanToPause.setCollectionPlanPausedUntilDate(pauseUntil);
-		collectionPlanToPause.setCollectionPlanPauseReason(dunningPauseReason);
+		collectionPlanToPause.setStatus(collectionPlanStatus);
+		collectionPlanToPause.setPausedUntilDate(pauseUntil);
+		collectionPlanToPause.setPauseReason(dunningPauseReason);
 		update(collectionPlanToPause);
 		return collectionPlanToPause; 
 	}
@@ -206,28 +206,28 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 	public DunningCollectionPlan stopCollectionPlan(DunningCollectionPlan collectionPlanToStop, DunningStopReason dunningStopReason) {
 		
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus("Stop");
-		collectionPlanToStop.setCollectionPlanStatus(collectionPlanStatus);
-		collectionPlanToStop.setCollectionPlanCloseDate(new Date());
-		collectionPlanToStop.setCollectionPlanStopReason(dunningStopReason);
+		collectionPlanToStop.setStatus(collectionPlanStatus);
+		collectionPlanToStop.setCloseDate(new Date());
+		collectionPlanToStop.setStopReason(dunningStopReason);
 		update(collectionPlanToStop);
 		return collectionPlanToStop; 
 	}
 
 	public DunningCollectionPlan resumeCollectionPlan(DunningCollectionPlan collectionPlanToResume) {
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus("Actif");
-		if(!collectionPlanToResume.getCollectionPlanStatus().getStatus().equals("Pause")) {
+		if(!collectionPlanToResume.getStatus().getStatus().equals("Pause")) {
 			throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the collection plan is not paused");
 		}
-		if(collectionPlanToResume.getCollectionPlanPausedUntilDate() != null && collectionPlanToResume.getCollectionPlanPausedUntilDate().before(new Date())) {
+		if(collectionPlanToResume.getPausedUntilDate() != null && collectionPlanToResume.getPausedUntilDate().before(new Date())) {
 			throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the field pause until is in the past");
 		}
 		Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToResume.getDunningLevelInstances()
 				.stream().max(Comparator.comparing(DunningLevelInstance::getId));
-		if(collectionPlanToResume.getCollectionPlanPausedUntilDate() != null && collectionPlanToResume.getCollectionPlanPausedUntilDate().after(DateUtils.addDaysToDate(collectionPlanToResume.getCollectionPlanStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
+		if(collectionPlanToResume.getPausedUntilDate() != null && collectionPlanToResume.getPausedUntilDate().after(DateUtils.addDaysToDate(collectionPlanToResume.getStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
 			throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the pause until date is after the planned trigger date of the last level");
 		}
-		collectionPlanToResume.setCollectionPlanStatus(collectionPlanStatus);
-		collectionPlanToResume.setCollectionPlanStartDate(new Date());
+		collectionPlanToResume.setStatus(collectionPlanStatus);
+		collectionPlanToResume.setStartDate(new Date());
 		update(collectionPlanToResume);
 		return collectionPlanToResume;
 	}

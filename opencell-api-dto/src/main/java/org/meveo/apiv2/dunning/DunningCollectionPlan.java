@@ -16,63 +16,63 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableDunningCollectionPlan.class)
 public interface DunningCollectionPlan extends Resource {
 
-    @Nullable
-    Resource getCollectionPlanRelatedPolicy();
+	@Nullable
+	Resource getRelatedPolicy();
 
-    @Nullable
-    Resource getInitialCollectionPlan();
+	@Nullable
+	Resource getInitialCollectionPlan();
 
-    @Nullable
-    Resource getCollectionPlanBillingAccount();
+	@Nullable
+	Resource getBillingAccount();
 
-    @Nullable
-    Resource getCollectionPlanRelatedInvoice();
+	@Nullable
+	Resource getRelatedInvoice();
 
-    @Nullable
-    Resource getCollectionPlanPauseReason();
+	@Nullable
+	Resource getPauseReason();
 
-    @Nullable
-    Resource getCollectionPlanStopReason();
+	@Nullable
+	Resource getStopReason();
 
-    @Nullable
-    Integer getCollectionPlanCurrentDunningLevelSequence();
+	@Nullable
+	Integer getCurrentDunningLevelSequence();
 
-    @Nullable
-    Date getCollectionPlanStartDate();
+	@Nullable
+	Date getStartDate();
 
-    @Nullable
-    Integer getCollectionPlanDaysOpen();
+	@Nullable
+	Integer getDaysOpen();
 
-    @Nullable
-    Date getCollectionPlanCloseDate();
+	@Nullable
+	Date getCloseDate();
 
-    @Nullable
-    Resource getCollectionPlanStatus();
+	@Nullable
+	Resource getStatus();
 
-    @Nullable
-    Date getCollectionPlanPausedUntilDate();
+	@Nullable
+	Date getPausedUntilDate();
 
-    @Nullable
-    BigDecimal getCollectionPlanBalance();
+	@Nullable
+	BigDecimal getBalance();
 
-    @Nullable
-    Boolean getRetryPaymentOnResumeDate();
+	@Nullable
+	Boolean getRetryPaymentOnResumeDate();
 
-    @Nullable
-    List<Resource> getDunningLevelInstances();
+	@Nullable
+	List<Resource> getDunningLevelInstances();
 
-    @Nullable
-    String getCollectionPlanNextAction();
+	@Nullable
+	String getNextAction();
 
-    @Nullable
-    Date getCollectionPlanNextActionDate();
+	@Nullable
+	Date getNextActionDate();
 
-    @Nullable
-    String getCollectionPlanLastAction();
+	@Nullable
+	String getLastAction();
 
-    @Nullable
-    Date getCollectionPlanLastActionDate();
+	@Nullable
+	Date getLastActionDate();
 
-    @Nullable
-    Integer totalDunningLevels();
+	@Nullable
+	Integer getTotalDunningLevels();
 }

@@ -197,7 +197,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     throw new NotFoundException("Collection plan does not exits");
                 }
                 for (Invoice invoice : eligibleInvoice) {
-                    if (invoice.getId() == collectionPlan.getCollectionPlanRelatedInvoice().getId()) {
+                    if (invoice.getId() == collectionPlan.getRelatedInvoice().getId()) {
                         canBeSwitched.add(collectionPlan.getId());
                     } else {
                         canNotBeSwitched.add(collectionPlan.getId());
@@ -217,7 +217,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         if (collectionPlan == null) {
             throw new NotFoundException(resourceMessages.getString("error.collectionPlan.availablePolicies.collectionPlanNotFound", collectionPlanID));
         }
-        Invoice invoice = ofNullable(collectionPlan.getCollectionPlanRelatedInvoice())
+        Invoice invoice = ofNullable(collectionPlan.getRelatedInvoice())
                 .orElseThrow(() -> new NotFoundException("No invoice found for collection plan : " + collectionPlanID));
         return dunningPolicyService.availablePoliciesForSwitch(invoice);
     }
