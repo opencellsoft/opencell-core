@@ -138,7 +138,8 @@ public class Notification extends EnableBusinessCFEntity {
      * Run in async mode?
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "run_async")
+    @Column(name = "run_async", nullable = false)
+    @NotNull
     private boolean runAsync = false;
 
 
@@ -146,7 +147,8 @@ public class Notification extends EnableBusinessCFEntity {
      * Save successful notifications?
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "save_successful_notif")
+    @Column(name = "save_successful_notif", nullable = false)
+    @NotNull
     private boolean saveSuccessfulNotifications = true;
 
     public String getClassNameFilter() {
