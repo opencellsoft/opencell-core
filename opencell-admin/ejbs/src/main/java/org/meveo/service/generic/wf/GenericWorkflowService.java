@@ -183,12 +183,15 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
 						} catch (Exception e) {
 							log.error(e.getLocalizedMessage(), e.getCause());
-							WFStatus fromStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getFromStatus(), genericWorkflow);
-							workflowInstance.setCurrentStatus(fromStatus);
-							workflowInstanceService.updateNoCheck(workflowInstance);
+							if(gWFTransition != null && gWFTransition.getFromStatus() != null && genericWorkflow != null) {
+								WFStatus fromStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getFromStatus(), genericWorkflow);
+								if(fromStatus != null) {
+									workflowInstance.setCurrentStatus(fromStatus);
+									workflowInstanceService.updateNoCheck(workflowInstance);
+								}
+							}
 							break;
 						}
-
 					}
 				}
 			}
