@@ -55,7 +55,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         try {
             String query = "SELECT inv FROM Invoice inv WHERE " + buildPolicyRulesFilter(policy.getDunningPolicyRules());
-            return  (List<Invoice>) invoiceService.executeSelectQuery(query, null);
+            return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
         } catch (Exception exception) {
             throw new BusinessException(exception.getMessage());
         }
@@ -165,5 +165,15 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private boolean checkInvoiceMatch(List<Invoice> invoices, Invoice invoice) {
         return invoices.stream()
                         .anyMatch(inv -> inv.getId() == invoice.getId());
+    }
+
+    public List<DunningPolicy> getPolicies(boolean active) {
+        try {
+            return getEntityManager().createNamedQuery("DunningPolicy.listPoliciesByIsActive", DunningPolicy.class)
+                    .setParameter("active", active)
+                    .getResultList();
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
     }
 }
