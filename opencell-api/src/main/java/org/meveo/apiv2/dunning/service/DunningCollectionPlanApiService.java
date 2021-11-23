@@ -1,6 +1,8 @@
 package org.meveo.apiv2.dunning.service;
 
-import static java.util.Optional.*;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import java.text.DateFormat;
@@ -15,9 +17,12 @@ import java.util.Optional;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
+import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import org.meveo.apiv2.models.Resource;
@@ -25,14 +30,18 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningCollectionPlan;
+import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
+import org.meveo.service.payments.impl.DunningPauseReasonsService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
+import org.meveo.service.payments.impl.DunningStopReasonsService;
 
 public class DunningCollectionPlanApiService implements ApiService<DunningCollectionPlan> {
 
@@ -54,6 +63,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @Inject
     private ResourceBundle resourceMessages;
+    
+    @Inject
+	private DunningPauseReasonsService dunningPauseReasonService;
+	@Inject
+	private DunningStopReasonsService dunningStopReasonService;
+	
+	private static final String NO_DUNNING_FOUND = "No Dunning Plan collection found with id : %s";
 
     @Override
     public List<DunningCollectionPlan> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -205,4 +221,35 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 .orElseThrow(() -> new NotFoundException("No invoice found for collection plan : " + collectionPlanID));
         return dunningPolicyService.availablePoliciesForSwitch(invoice);
     }
+    
+    public Optional<DunningCollectionPlan> pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlan,
+			Long id, DunningCollectionPlanPause dunningCollectionPlanInput) {
+		var collectionPlanToPause = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
+		DunningPauseReason dunningPauseReason = dunningPauseReasonService.findById(dunningCollectionPlanInput.getDunningPauseReason().getId());
+		if(dunningPauseReason == null) {
+			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanInput.getDunningPauseReason().getId() + " does not exits");
+		}
+		collectionPlanToPause = dunningCollectionPlanService.pauseCollectionPlan(dunningCollectionPlan.getForcePause(), dunningCollectionPlan.getPauseUntil(), collectionPlanToPause, dunningPauseReason);
+		trackOperation("PAUSE", new Date(), collectionPlanToPause);
+		return of(collectionPlanToPause);
+	}
+	
+	
+	public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlan, Long id, DunningCollectionPlanStop dunningCollectionPlanInput) {
+		var collectionPlanToStop = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_FOUND + id));
+		DunningStopReason dunningStopReason = dunningStopReasonService.findById(dunningCollectionPlanInput.getDunningStopReason().getId());
+		if(dunningStopReason == null) {
+			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanInput.getDunningStopReason().getId() + " does not exits");
+		}
+		collectionPlanToStop = dunningCollectionPlanService.stopCollectionPlan(collectionPlanToStop, dunningStopReason);
+		trackOperation("STOP", new Date(), collectionPlanToStop);
+		return of(collectionPlanToStop);
+	}
+	
+	public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
+		var collectionPlanToResume = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_FOUND + id));
+		collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
+		trackOperation("RESUME", new Date(), collectionPlanToResume);
+		return of(collectionPlanToResume);
+	}
 }

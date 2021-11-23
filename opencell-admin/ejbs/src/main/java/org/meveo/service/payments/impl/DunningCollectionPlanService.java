@@ -4,17 +4,30 @@ import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.dunning.*;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.InvoiceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.dunning.DunningAction;
+import org.meveo.model.dunning.DunningActionInstance;
+import org.meveo.model.dunning.DunningCollectionPlan;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningLevelInstance;
+import org.meveo.model.dunning.DunningLevelInstanceStatusEnum;
+import org.meveo.model.dunning.DunningPauseReason;
+import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.model.dunning.DunningStopReason;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 @Stateless
 public class DunningCollectionPlanService extends PersistenceService<DunningCollectionPlan> {
@@ -172,4 +185,50 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         }
         return actionInstances;
     }
+    
+    public DunningCollectionPlan pauseCollectionPlan(boolean forcePause, Date pauseUntil,
+			DunningCollectionPlan collectionPlanToPause, DunningPauseReason dunningPauseReason) {
+		if(!forcePause) {
+			Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToPause.getDunningLevelInstances()
+					.stream().max(Comparator.comparing(DunningLevelInstance::getId));
+			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseUntil.after(DateUtils.addDaysToDate(collectionPlanToPause.getCollectionPlanStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
+				throw new BusinessApiException("Collection Plan with id "+collectionPlanToPause.getId()+" cannot be paused, the pause until date is after the planned trigger date of the last level");
+			}
+		}
+		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus("Pause");
+		collectionPlanToPause.setCollectionPlanStatus(collectionPlanStatus);
+		collectionPlanToPause.setCollectionPlanPausedUntilDate(pauseUntil);
+		collectionPlanToPause.setCollectionPlanPauseReason(dunningPauseReason);
+		update(collectionPlanToPause);
+		return collectionPlanToPause; 
+	}
+	
+	public DunningCollectionPlan stopCollectionPlan(DunningCollectionPlan collectionPlanToStop, DunningStopReason dunningStopReason) {
+		
+		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus("Stop");
+		collectionPlanToStop.setCollectionPlanStatus(collectionPlanStatus);
+		collectionPlanToStop.setCollectionPlanCloseDate(new Date());
+		collectionPlanToStop.setCollectionPlanStopReason(dunningStopReason);
+		update(collectionPlanToStop);
+		return collectionPlanToStop; 
+	}
+
+	public DunningCollectionPlan resumeCollectionPlan(DunningCollectionPlan collectionPlanToResume) {
+		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus("Actif");
+		if(!collectionPlanToResume.getCollectionPlanStatus().getStatus().equals("Pause")) {
+			throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the collection plan is not paused");
+		}
+		if(collectionPlanToResume.getCollectionPlanPausedUntilDate() != null && collectionPlanToResume.getCollectionPlanPausedUntilDate().before(new Date())) {
+			throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the field pause until is in the past");
+		}
+		Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToResume.getDunningLevelInstances()
+				.stream().max(Comparator.comparing(DunningLevelInstance::getId));
+		if(collectionPlanToResume.getCollectionPlanPausedUntilDate() != null && collectionPlanToResume.getCollectionPlanPausedUntilDate().after(DateUtils.addDaysToDate(collectionPlanToResume.getCollectionPlanStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
+			throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the pause until date is after the planned trigger date of the last level");
+		}
+		collectionPlanToResume.setCollectionPlanStatus(collectionPlanStatus);
+		collectionPlanToResume.setCollectionPlanStartDate(new Date());
+		update(collectionPlanToResume);
+		return collectionPlanToResume;
+	}
 }

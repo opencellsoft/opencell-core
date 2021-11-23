@@ -10,6 +10,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.dunning.AvailablePoliciesInput;
+import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
+import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 
@@ -67,4 +69,44 @@ public interface DunningCollectionPlanResource {
             })
     Response availableDunningPolicies(@Parameter(description = "available dunning policies input", required = true)
                                               AvailablePoliciesInput availablePoliciesInput);
+    
+    @POST
+	@Path("/pause/{id}")
+	@Operation(summary = "Pause Collection plan",
+    tags = {"Collection Plan"},
+    description = "Pause collection plan",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "collection plan successfully paused"),
+            @ApiResponse(responseCode = "404",
+                    description = "Dunning with the same code exist")
+    }) 
+	Response pauseCollectionPlan(@Parameter(required = true) DunningCollectionPlanPause dunningCollectionPlan, @PathParam("id") Long id);
+	
+	@POST
+	@Path("/stop/{id}")
+	@Operation(summary = "Stop Collection plan",
+    tags = {"Collection Plan"},
+    description = "Pause collection plan",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "collection plan successfully paused"),
+            @ApiResponse(responseCode = "404",
+                    description = "Dunning with the same code exist")
+    }) 
+	Response stopCollectionPlan(@Parameter(required = true) DunningCollectionPlanStop dunningCollectionPlan, @PathParam("id") Long id);
+	
+	@POST
+	@Path("/resume/{id}")
+	@Operation(summary = "Resume Collection plan",
+    tags = {"Collection Plan"},
+    description = "Pause collection plan",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "collection plan successfully paused"),
+            @ApiResponse(responseCode = "404",
+                    description = "Dunning with the same code exist")
+    }) 
+	Response resumeCollectionPlan(@PathParam("id") Long id);
+	
 }
