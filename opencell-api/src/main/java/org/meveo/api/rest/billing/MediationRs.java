@@ -117,7 +117,8 @@ public interface MediationRs extends IBaseRs {
     @Operation(summary = "Accepts a list of CDR lines, parses them, creates EDRs and rates them. . CDR is same format use in mediation job", description = "Accepts a list of CDR lines, parses them, creates EDRs and rates them. . CDR is same format use in mediation job", operationId = "    POST_Mediation_chargeCdrList", responses = {
             @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ChargeCDRListResponseDto.class))) })
     ChargeCDRListResponseDto chargeCdrList(List<String> cdrs, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr,
-            @QueryParam("returnWalletOperationDetails") boolean returnWalletOperationDetails, @QueryParam("maxDepth") Integer maxDepth, @QueryParam("returnWalletOperations") boolean returnWalletOperations);
+            @QueryParam("returnWalletOperationDetails") boolean returnWalletOperationDetails, @QueryParam("maxDepth") Integer maxDepth,
+			@QueryParam("returnEDRs") boolean returnEDRs, @QueryParam("returnWalletOperations") boolean returnWalletOperations);
     
     /**
      * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity

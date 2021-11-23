@@ -170,7 +170,7 @@ public class MediationApi extends BaseApi {
                 }
             }
 
-            return createChargeCDRResultDto(edrs, walletOperations, chargeCDRDto.isReturnWalletOperationDetails(), false);
+            return createChargeCDRResultDto(edrs, walletOperations, chargeCDRDto.isReturnWalletOperationDetails(), false, true);
 
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
@@ -213,7 +213,7 @@ public class MediationApi extends BaseApi {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                thisNewTX.processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(), cdrListResult);
+                thisNewTX.processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(), chargeCDRDto.isReturnEDRs(), cdrListResult);
 
             });
         }
@@ -254,7 +254,7 @@ public class MediationApi extends BaseApi {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, CSVCDRParser cdrParser, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
-            boolean returnWalletOperations, ChargeCDRListResponseDto cdrProcessingResult) {
+                boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult) {
 
         while (true) {
 
@@ -280,7 +280,7 @@ public class MediationApi extends BaseApi {
                         walletOperations.addAll(wo);
                     }
                 }
-                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations));
+                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations, returnEDRs));
                 cdrProcessingResult.getStatistics().addSuccess();
 
             } catch (CDRParsingException e) {
@@ -301,14 +301,17 @@ public class MediationApi extends BaseApi {
         }
     }
 
-    private ChargeCDRResponseDto createChargeCDRResultDto(List<EDR> edrs, List<WalletOperation> walletOperations, boolean returnWalletOperationDetails, boolean returnWalletOperations) {
+    private ChargeCDRResponseDto createChargeCDRResultDto(List<EDR> edrs, List<WalletOperation> walletOperations,
+          boolean returnWalletOperationDetails, boolean returnWalletOperations, boolean returnEDRs) {
 
         ChargeCDRResponseDto result = new ChargeCDRResponseDto();
 
         if (edrs.get(0).getId() != null) {
             result.setEdrIds(new ArrayList<Long>(edrs.size()));
-            for (EDR edr : edrs) {
-                result.getEdrIds().add(edr.getId());
+            if (returnEDRs) {
+                for (EDR edr : edrs) {
+                    result.getEdrIds().add(edr.getId());
+                }
             }
         }
         if (walletOperations != null) {
