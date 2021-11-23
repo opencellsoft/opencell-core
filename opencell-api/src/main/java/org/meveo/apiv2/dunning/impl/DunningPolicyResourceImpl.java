@@ -43,8 +43,6 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     private final DunningPolicyLevelMapper policyLevelMapper = new DunningPolicyLevelMapper();
 
-    private DunningPolicyLevelMapper dunningPolicyLevelMapper = new DunningPolicyLevelMapper();
-
     private DunningPolicyRuleMapper dunningPolicyRuleMapper = new DunningPolicyRuleMapper();
 
     @Override
@@ -76,26 +74,18 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
             dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
             dunningPolicyApiService.refreshPolicyLevel(dunningPolicyLevelEntity);
-            if (dunningPolicyLevelEntity.getDunningLevel().isReminder()
-                    && dunningPolicyLevel.getCollectionPlanStatusId() != null) {
-                throw new BadRequestException("Reminder level's collection plan status must be null");
-            }
             if (!dunningPolicyLevelEntity.getDunningLevel().isReminder()) {
                 totalDunningLevels++;
             } else {
                 countReminderLevels++;
             }
             if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
-                if (!dunningPolicyLevelEntity.getCollectionPlanStatus().getStatus().equals("Echec")) {
-                    throw new BadRequestException("Dunning level creation fails : End of dunning level status must be ECHEC");
-                }
                 if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
                     throw new BadRequestException("End of dunning level sequence must be the highest");
                 }
                 highestSequence = dunningPolicyLevelEntity.getSequence();
                 countEndOfDunningLevel++;
             }
-            dunningPolicyApiService.validateActiveDunning(dunningPolicyLevelEntity);
             policyLevelApiService.create(dunningPolicyLevelEntity);
         }
         if(countReminderLevels == 0 || totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
@@ -128,6 +118,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             for (Resource resource : dunningPolicy.getDunningPolicyLevels()) {
                 DunningPolicyLevel level = dunningPolicyLevelService.findById(resource.getId());
                 if (level != null) {
+                    level.setDunningPolicy(entity);
                     dunningPolicyLevelList.add(level);
                 }
             }

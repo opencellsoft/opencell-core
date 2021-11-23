@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.meveo.model.dunning.*;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
@@ -36,10 +35,6 @@ public class DunningPolicyApiServiceTest {
 
     @Mock
     private DunningLevelService dunningLevelService;
-
-
-    @Mock
-    private DunningCollectionPlanStatusService collectionPlanStatusService;
 
     @Mock
     private MeveoUser currentUser;
@@ -90,8 +85,6 @@ public class DunningPolicyApiServiceTest {
         when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
-        when(collectionPlanStatusService.refreshOrRetrieve(any(DunningCollectionPlanStatus.class)))
-                .thenReturn(collectionPlanStatus);
         when(currentUser.getUserName()).thenReturn("opencell.admin");
     }
 
