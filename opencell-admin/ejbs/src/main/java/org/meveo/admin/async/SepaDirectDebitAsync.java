@@ -31,7 +31,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -41,6 +40,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
@@ -87,8 +87,12 @@ public class SepaDirectDebitAsync {
 	 * @return Future String
 	 * @throws BusinessException BusinessException
 	 */
+	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems,  JobExecutionResultImpl result) throws BusinessException {
+	public Future<Map<String, Object>> launchAndForgetPaymentCreation( List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
+		Map<String, Object> resultFuture = new HashMap<String, Object>();
+		Integer nbItemsKo = 0;
+		BigDecimal totalAmount = BigDecimal.ZERO;
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
 			if (result != null && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
@@ -96,14 +100,20 @@ public class SepaDirectDebitAsync {
 			}
 			try {
 				unitSSDJobBean.execute(result, ddRequestItem);
+				if (!ddRequestItem.hasError()) {
+					totalAmount = totalAmount.add(ddRequestItem.getAmount());
+				}
 			} catch (Exception e) {
-				Log.warn("Error on launchAndForgetPaymentCreation", e);
-				if(result != null) {
-					result.registerError(e.getMessage());
+				ddRequestItem.setErrorMsg("AO.id:" + ddRequestItem.getAccountOperations().get(0) + ":" + e.getMessage());
+				nbItemsKo++;				
+				if (result != null) {
+					result.registerError("AO.id:" + ddRequestItem.getAccountOperations().get(0) + ":" + e.getMessage());
 				}
 			}
 		}
-		return new AsyncResult<String>("OK");
+		resultFuture.put("nbItemsKo", nbItemsKo);
+		resultFuture.put("totalAmount", totalAmount);
+		return new AsyncResult<Map<String, Object>>(resultFuture);
 	}
 
 	/**
@@ -116,39 +126,33 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public Future<Map<String,Object>> launchAndForgetDDRequesltLotCreation(DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay,
-			Provider appProvider) throws BusinessException {
-				
-		Map<String,Object> result = new HashMap<String, Object>();
+	public Future<Map<String, Object>> launchAndForgetDDRequesltLotCreation(DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay, Provider appProvider)
+			throws BusinessException {
 
-		
-		Long nbItemsKo = 0L,nbItemsOk=0L;	
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long nbItemsKo = 0L, nbItemsOk = 0L;
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		StringBuilder allErrors = new StringBuilder();
-			for (AccountOperation ao : listAoToPay) {
-				ao = accountOperationService.refreshOrRetrieve(ao);
-				CustomerAccount ca = ao.getCustomerAccount();
-				String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
-				String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";
-				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
-				if (errorMsg != null) {
-					nbItemsKo++;
-					allErrors.append(errorMsg).append(" ; ");
-				} else {
-					nbItemsOk++;
-					totalAmount = totalAmount.add(ao.getUnMatchingAmount());
-				}
+		for (AccountOperation ao : listAoToPay) {
+			ao = accountOperationService.refreshOrRetrieve(ao);
+			CustomerAccount ca = ao.getCustomerAccount();
+			String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
+			String caFullName = ca.getName() != null ? ca.getName().getFullName() : "";
+			ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
+			if (errorMsg != null) {
+				nbItemsKo++;
+				allErrors.append(errorMsg).append(" ; ");
+			} else {
+				nbItemsOk++;
+				totalAmount = totalAmount.add(ao.getUnMatchingAmount());
 			}
-			
-			result.put("nbItemsOk",nbItemsOk);
-			result.put("nbItemsKo",nbItemsKo);
-			result.put("allErrors",allErrors.toString());
-			result.put("totalAmount",totalAmount);
-			
-			return new AsyncResult<Map<String,Object>>(result);
-		
+		}
+
+		result.put("nbItemsOk", nbItemsOk);
+		result.put("nbItemsKo", nbItemsKo);
+		result.put("allErrors", allErrors.toString());
+		result.put("totalAmount", totalAmount);
+
+		return new AsyncResult<Map<String, Object>>(result);
 	}
-
-
-	
 }
