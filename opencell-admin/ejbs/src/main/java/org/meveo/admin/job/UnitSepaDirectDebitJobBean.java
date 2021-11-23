@@ -95,7 +95,6 @@ public class UnitSepaDirectDebitJobBean {
 	@Inject
 	private Logger log;
 
-
 	/**
 	 * Execute processing one ddRequestItem.
 	 *
@@ -105,10 +104,10 @@ public class UnitSepaDirectDebitJobBean {
 	 *                                          exception
 	 * @throws UnbalanceAmountException         the unbalanced amount exception
 	 */
-    @JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		//ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
+		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
 		log.debug("processing DD requestItem id  : {}", ddrequestItem.getId());
 		AccountOperation automatedPayment = null;
@@ -121,8 +120,7 @@ public class UnitSepaDirectDebitJobBean {
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
-						ddRequestLOT.getSendDate(), ddrequestItem.getDueDate(), new Date(),
-						ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
+						ddRequestLOT.getSendDate(), ddrequestItem.getDueDate(), new Date(), ddrequestItem.getAccountOperations(), MatchingTypeEnum.A_DERICT_DEBIT);
 				if (ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
 					ddrequestItem.setAutomatedRefund((AutomatedRefund) automatedPayment);
 				} else {
@@ -130,24 +128,31 @@ public class UnitSepaDirectDebitJobBean {
 
 				}
 			}
-			if (result != null) {
-				result.registerSucces();
-			}
+
 		} else {
 			paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
 			paymentStatusEnum = PaymentStatusEnum.ERROR;
 			errorMsg = ddrequestItem.getErrorMsg();
+		}
+		Payment payment = automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null;
+		Refund refund = automatedPayment instanceof Refund ? (Refund) automatedPayment : null;
+		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), payment, refund,
+				(ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(), paymentStatusEnum, errorMsg, errorMsg,
+				payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null), paymentErrorTypeEnum,
+				ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum() == PaymentOrRefundEnum.PAYMENT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),
+				ddrequestItem.getAccountOperations());
+
+		if (!ddrequestItem.hasError()) {
+			if (result != null) {
+				result.registerSucces();
+			}
+
+		} else {
 			if (result != null) {
 				result.registerError(errorMsg);
 			}
 		}
-		Payment payment = automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null;
-		Refund refund = automatedPayment instanceof Refund ? (Refund) automatedPayment : null;
-		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
-				payment, refund, (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
-				paymentStatusEnum, errorMsg, errorMsg, payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null), paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum() == PaymentOrRefundEnum.PAYMENT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),ddrequestItem.getAccountOperations());
-
 	}
 
 	/**
@@ -165,7 +170,6 @@ public class UnitSepaDirectDebitJobBean {
 	 * @param dueDate            the due date
 	 * @param transactionDate    the transaction date
 	 * @param occForMatching     the occ for matching
-	 * @param isToMatching       the is to matching
 	 * @param matchingTypeEnum   the matching type enum
 	 * @return the automated payment
 	 * @throws BusinessException                the business exception
@@ -176,10 +180,8 @@ public class UnitSepaDirectDebitJobBean {
 	@SuppressWarnings("unchecked")
 	public <T extends AccountOperation> T createPaymentOrRefund(DDRequestItem ddRequestItem, PaymentMethodEnum paymentMethodEnum, BigDecimal amount,
 			CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate,
-			List<AccountOperation> occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
-			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		log.info("create payment for amount: {} paymentMethodEnum: {} isToMatching: {} customerAccount: {}", amount , paymentMethodEnum, isToMatching ,
-				customerAccount.getCode());
+			List<AccountOperation> occForMatching, MatchingTypeEnum matchingTypeEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+		log.info("create payment for amount: {} paymentMethodEnum: {}  customerAccount: {}", amount, paymentMethodEnum, customerAccount.getCode());
 
 		ParamBean paramBean = paramBeanFactory.getInstance();
 		String occTemplateCode = null;
@@ -220,17 +222,15 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setSeller(ddRequestItem.getDdRequestLOT().getSeller());
 
 		accountOperationService.create(automatedPayment);
-		if (isToMatching) {
-			List<Long> aoIds = new ArrayList<Long>();
-			for (AccountOperation ao : occForMatching) {
-				aoIds.add(ao.getId());
-			}
-			aoIds.add(automatedPayment.getId());
-			matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIds, null, MatchingTypeEnum.A);
-			log.info("matching created  for 1 automated Payment/Refund ");
-		} else {
-			log.info("no matching created ");
+
+		List<Long> aoIds = new ArrayList<Long>();
+		for (AccountOperation ao : occForMatching) {
+			aoIds.add(ao.getId());
 		}
+		aoIds.add(automatedPayment.getId());
+		matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIds, null, MatchingTypeEnum.A);
+		log.info("matching created  for 1 automated Payment/Refund ");
+
 		log.info("automated Payment/Refund created for amount:" + automatedPayment.getAmount());
 		return automatedPayment;
 	}
