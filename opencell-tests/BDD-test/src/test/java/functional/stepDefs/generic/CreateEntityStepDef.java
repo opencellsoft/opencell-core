@@ -1,16 +1,16 @@
 package functional.stepDefs.generic;
 
-import functional.driver.actions.generic.CreateEntityWithDto;
+import functional.driver.actions.generic.CreateEntityInline;
+import functional.driver.actions.generic.CreateEntityWithFile;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 public class CreateEntityStepDef {
 
@@ -33,24 +33,15 @@ public class CreateEntityStepDef {
 
     @Given("^I create entity \"([^\"]*)\" from dto \"([^\"]*)\"$")
     public void actorCreateEntityFromDto(String entity, String entityDto) {
-        actor.attemptsTo(CreateEntityWithDto.called(entity, entityDto, featurePath));
+        actor.attemptsTo(CreateEntityWithFile.called(entity, entityDto, featurePath));
     }
 
     @Given("^I create entity from feature \"[^\"]*\"")
     public void actorCreateEntityFromFeature(String featurePath) {
     }
 
-    @Given("^I create entity \"([^\"]*)\", with field and value (([^\":,]* : [^\":,]*)*)$")
-    public void actorCreateEntity(String entity, List<String> entries) {
-        System.out.println("entity : " + entity);
-        for (String arg : entries) {
-            // do smth with arg.
-            System.out.println("arg DAY NE : " + arg);
-        }
-    }
-
-    @And("^with field \"[^\"]*\" and value \"[^\"]*\"")
-    public void withFieldAndValue(String field, String value) {
-
+    @Given("^I create entity \"([^\"]*)\", with field and value$")
+    public void actorCreateEntityInline(String entity, DataTable dataTable) throws Exception {
+        actor.attemptsTo(CreateEntityInline.called(entity, dataTable));
     }
 }

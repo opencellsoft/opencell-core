@@ -7,11 +7,18 @@
      @MediationProcess1
      Scenario Outline: Testing mediation process
 
-       Given  I create entity "Subscription", with field and value offerTemplate : OF_BASIC code : subCode
-       When   I activate services "ActivateServicesRequestDto.json" on subscription
-       And    I update service "UpdateServicesRequestDto.json" on subscription
-       And    I import CDR "<CDR>"
-       Then   amount with tax of wallet operation should be equal to <amount> euros
+#       Given  I create entity "Subscription", with field and value
+#         | /code           | /description                   | /userAccount | /offerTemplate |
+#         | subCodeThang_18 | a description for Subscription | OPENSOFT-01  | OF_BASIC       |
+#       When   I activate services on subscription
+#         | /subscription   | /servicesToActivate/service/0/subscriptionDate | /servicesToActivate/service/0/code | /servicesToActivate/service/0/quantity |
+#         | subCodeThang_18 | 2019-12-15T01:23:45.678Z                       | SE_USG_UNIT                        | 1                                      |
+#       And    I update service on subscription
+#         | /subscriptionCode | /serviceToUpdate/0/code | /serviceToUpdate/0/quantity |
+#         | subCodeThang_18   | SE_USG_UNIT             | 1                           |
+       And    I import CDR
+         | 2020-10-05T03:15:45.000Z;1;subCodeThang_18;UNIT;PS_SUPPORT |
+#       Then   amount with tax of wallet operation should be equal to <amount> euros
 
        Examples:
          |  |  |  | CDR      |  | order | amount |

@@ -4,6 +4,7 @@ import functional.driver.actions.mediation.ImportCDR;
 import functional.driver.actions.subscription.ActivateService;
 import functional.driver.actions.subscription.UpdateService;
 import functional.driver.assertions.GetAmountWithTaxOfWalletOperation;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -26,19 +27,20 @@ public class MediationStepDef {
         actor = Actor.named("I am the supervisor").whoCan(CallAnApi.at(restApiBaseUrl));
     }
 
-    @When("^I activate services \"([^\"]*)\" on subscription$")
-    public void actorActivatesServiceOnSubscription(String entityDto) {
-        actor.attemptsTo(ActivateService.called(entityDto));
+    @When("^I activate services on subscription$")
+    public void actorActivatesServiceOnSubscription(DataTable dataTable) {
+        actor.attemptsTo(ActivateService.called(dataTable));
     }
 
-    @And("I import CDR {string}")
-    public void actorImportCDR(String entityDto) {
-        actor.attemptsTo(ImportCDR.called(entityDto));
+    @And("I import CDR")
+    public void actorImportCDR(String cdr) {
+        System.out.println( "cdr : " + cdr );
+        actor.attemptsTo(ImportCDR.called(cdr));
     }
 
-    @And("^I update service \"([^\"]*)\" on subscription$")
-    public void actorUpdateServiceOnSubscription(String entityDto) {
-        actor.attemptsTo(UpdateService.called(entityDto));
+    @And("^I update service on subscription$")
+    public void actorUpdateServiceOnSubscription(DataTable dataTable) {
+        actor.attemptsTo(UpdateService.called(dataTable));
     }
 
     @Then("amount with tax of {int} wallet operation should be equal to {double} euros")

@@ -15,20 +15,20 @@ import net.thucydides.core.annotations.Step;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-public class CreateEntityWithDto implements Task {
+public class CreateEntityWithFile implements Task {
 
     private final String entity;
     private final String entityDto;
     private final String featurePath;
 
-    public CreateEntityWithDto(String entity, String entityDto, String featurePath) {
+    public CreateEntityWithFile(String entity, String entityDto, String featurePath) {
         this.entity = entity;
         this.entityDto = entityDto;
         this.featurePath = featurePath;
     }
 
-    public static CreateEntityWithDto called(String entity, String entityDto, String featurePath) {
-        return Tasks.instrumented(CreateEntityWithDto.class, entity, entityDto, featurePath);
+    public static CreateEntityWithFile called(String entity, String entityDto, String featurePath) {
+        return Tasks.instrumented(CreateEntityWithFile.class, entity, entityDto, featurePath);
     }
 
     @SneakyThrows
