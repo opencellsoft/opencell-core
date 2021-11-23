@@ -11465,4 +11465,10 @@ order by date_trunc('month', i.invoice_date) DESC
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
 	</changeSet>
 	
+	<changeSet id="#INTRD-3250_20211123" author="HatimOUDAD">
+	    <addColumn tableName="dunning_action_instance">
+	        <column name="dunning_action_id" type="bigint" />
+	    </addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
