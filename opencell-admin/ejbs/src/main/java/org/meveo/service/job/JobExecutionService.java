@@ -124,6 +124,46 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         return null;
     }
 
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Boolean persistResultJob(JobExecutionResultImpl resultToPersist) {
+        try {
+        	//Job job, JobExecutionResultImpl result, JobInstance jobInstance
+            //JobExecutionResultImpl resultToPersist = JobExecutionResultImpl.createFromInterface(jobInstance, result);
+            boolean isPersistResult = false;
+
+            JobInstance jobInstance = resultToPersist.getJobInstance();
+            String jobName = resultToPersist.getClass().getSimpleName();
+            
+            if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
+                log.info(jobName + " " + resultToPersist.toString());
+                isPersistResult = true;
+            } else {
+                log.info("{}/{}: No items were found to process", jobName, jobInstance.getCode());
+                isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
+            }
+            if (isPersistResult) {
+                if (resultToPersist.isTransient()) {
+                    create(resultToPersist);
+                    //result.setId(resultToPersist.getId());
+                } else {
+                    // search for job execution result
+                    JobExecutionResultImpl updateEntity = findById(resultToPersist.getId());
+                    if (updateEntity != null) {
+                        JobExecutionResultImpl.updateFromInterface(resultToPersist, updateEntity);
+                        update(updateEntity);
+                    }
+                }
+            }
+            return resultToPersist.isDone();
+
+        } catch (Exception e) { // FIXME:BusinessException e) {
+            log.error("Failed to persist job execution results", e);
+        }
+
+        return null;
+    }
+    
     /**
      * Execute next job or continue executing same job if more data is left to process (execution in batches). Executed asynchronously. Current user should be already available
      * from earlier context.

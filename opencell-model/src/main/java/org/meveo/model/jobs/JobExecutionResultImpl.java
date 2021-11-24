@@ -196,6 +196,16 @@ public class JobExecutionResultImpl extends BaseEntity {
         this.addReport(getWarningAString());
     }
 
+    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher) {
+        this.jobInstance = jobInstance;
+        //this.status = JobExecutionResultStatusEnum.RUNNING;
+        this.startDate = new Date();
+        this.jobLauncherEnum = jobLauncher;
+    }
+    
+    public JobExecutionResultImpl() {
+        
+    }
     /**
      * Create a copy of job execution statistics
      * 
@@ -503,7 +513,7 @@ public class JobExecutionResultImpl extends BaseEntity {
     public String toString() {
         return "JobExecutionResultImpl [jobInstanceCode=" + (jobInstance == null ? null : jobInstance.getCode()) + ", startDate=" + startDate + ", endDate=" + endDate
                 + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
-                + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", jobLauncherEnum=" + jobLauncherEnum
+                + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", =" + jobLauncherEnum
                 + ", warnings=" + warnings + ", errors=" + errors + ", report=" + report + "]";
     }
 }

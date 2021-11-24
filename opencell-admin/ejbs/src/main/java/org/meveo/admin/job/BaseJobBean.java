@@ -9,6 +9,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * The Class BaseJobBean : Holding a common behaviors for all JoBbeans instances
@@ -22,6 +23,10 @@ public abstract class BaseJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
+    //HHAN
+    @Inject
+    protected JobExecutionService jobExecutionResultService;
+    
     /**
      * Gets the parameter CF value if found, otherwise return CF value from job definition
      *
