@@ -20,7 +20,7 @@ public interface CdrListInput extends Resource {
 
     @Default
     @Schema(description = "How the CDR list is processed : STOP_ON_FIRST_FAIL, PROCESS_ALL, ROLLBACK_ON_ERROR")
-    default RegisterCdrListModeEnum getMode() {
-        return RegisterCdrListModeEnum.STOP_ON_FIRST_FAIL;
+    default ProcessCdrListModeEnum getMode() {
+        return ProcessCdrListModeEnum.STOP_ON_FIRST_FAIL;
     }
 }

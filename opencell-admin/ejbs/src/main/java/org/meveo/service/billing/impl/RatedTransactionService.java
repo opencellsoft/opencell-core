@@ -51,6 +51,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -262,6 +263,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
         boolean isESEnabled = elasticClient.isEnabled(new RatedTransaction());
 
+        String providerCode = currentUser.getProviderCode();
+        final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
+        
         // Convert WO to RT and persist RT
         Long[][] woRtIds = new Long[walletOperations.size()][2];
         int i = 0;
@@ -297,7 +301,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Session hibernateSession = em.unwrap(Session.class);
         hibernateSession.doWork(connection -> {
-            try (PreparedStatement preparedStatement = connection.prepareStatement("insert into billing_wallet_operation_pending (id, rated_transaction_id) values (?,?)")) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement("insert into " + schemaPrefix + "billing_wallet_operation_pending (id, rated_transaction_id) values (?,?)")) {
 
 //                int i = 0;                
                 for (Long[] woRtId : woRtIds) {

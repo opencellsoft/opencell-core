@@ -226,6 +226,7 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 				&& Objects.equals(ppmValueId, other.ppmValueId)
 				&& Objects.equals(stringValue, other.stringValue) 
 				&& Objects.equals(toDateValue, other.toDateValue)
+				&& Objects.equals(booleanValue,other.booleanValue)
 				&& checkToDoubleValue(fromDoubleValue, other.fromDoubleValue)
 				&& checkToDoubleValue(toDoubleValue, other.toDoubleValue)
 				&& checkToDoubleValue(doubleValue, other.doubleValue)

@@ -146,7 +146,7 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     /**
      * Order action history
      */
-    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY)
     private List<OrderHistory> orderHistories = new ArrayList<>();
 
     /**

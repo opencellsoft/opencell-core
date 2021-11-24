@@ -83,8 +83,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
     
     public PricePlanMatrixVersion updatePublishedPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, Date endingDate) {
-        if(endingDate!=null && endingDate.after(new Date())) {
-        	throw new ValidationException("ending date must not be greater than today");
+        if(endingDate!=null && endingDate.before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
+        	throw new ValidationException("ending date must be greater than today");
         }
         pricePlanMatrixVersion.getValidity().setTo(endingDate);
         update(pricePlanMatrixVersion);

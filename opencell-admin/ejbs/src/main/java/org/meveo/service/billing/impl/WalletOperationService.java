@@ -17,6 +17,9 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.emptyList;
+import static org.meveo.commons.utils.NumberUtils.round;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -95,9 +98,6 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
-
-import static java.util.Collections.emptyList;
-import static org.meveo.commons.utils.NumberUtils.round;
 
 /**
  * Service class for WalletOperation entity
@@ -187,8 +187,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             applicationDate = new Date();
         }
 
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}",
-                subscription.getId(), quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription());
+        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", subscription.getId(), quantityInChargeUnits,
+            applicationDate, chargeInstance.getId(), chargeInstance.getDescription());
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null, chargeMode, null, false,
             isVirtual);
@@ -604,11 +604,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     }
 
                     if (chargeMode.isReimbursement())
-                        log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", "reimbursement",
-                                chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate, inputQuantity);
+                        log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", "reimbursement", chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate, inputQuantity);
                     else
-                        log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", isApplyInAdvance ? "start of period" : "end of period",
-                                chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate, inputQuantity);
+                        log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", isApplyInAdvance ? "start of period" : "end of period", chargeInstance.getId(), effectiveChargeFromDate,
+                            effectiveChargeToDate, inputQuantity);
 
                     if (!isVirtual && recurringChargeTemplate.isProrataOnPriceChange()) {
                         walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectiveChargeFromDate, effectiveChargeToDate,
@@ -748,24 +747,32 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
-        for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
-            CounterPeriod counterPeriod = null;
-            if (counterInstance != null) {
-                // get the counter period of charge instance
-                log.debug("Get accumulator counter period for counter instance {}", counterInstance);
-
-                for (WalletOperation wo : walletOperations) {
-                    counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, wo.getOperationDate());
-                    if ((counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) && (counterPeriod == null)) {
-                            counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                                chargeInstance.getServiceInstance());
-                    }
-
-                    log.debug("Increment accumulator counter period value {} by the WO's amount {} or quantity {} ", counterPeriod, wo.getAmountWithoutTax(), wo.getQuantity());
-                    counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
-                }
-            }
+        if (chargeInstance.getCounter() == null) {
+            return;
         }
+        
+        CounterPeriod counterPeriod = null;
+
+        for (WalletOperation wo : walletOperations) {
+            
+            // In case of virtual operation only instantiate a counter period, don't create it
+            if (isVirtual) {
+                counterPeriod = counterInstanceService.instantiateCounterPeriod(chargeInstance.getCounter().getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                    chargeInstance, chargeInstance.getServiceInstance());
+                
+                CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                    chargeInstance.getServiceInstance());
+                
+                counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>( realCounterPeriod.getAccumulatedValues()));
+                counterPeriod.setValue(realCounterPeriod.getValue());
+                
+            } else {
+                counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                    chargeInstance.getServiceInstance());
+            }
+
+            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+        }        
     }
 
     private double computeQuantityRatio(Date computedApplyChargeOnDate, Date computedNextChargeDate) {
@@ -1006,8 +1013,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             result.add(op);
             create(op);
             // Prepaid charges only
-        }
-        else {
+        } else {
             result = chargeOnPrepaidWallets(chargeInstance, op);
         }
         return result;
@@ -1046,8 +1052,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * Only unbilled wallet operations will be considered. <br/>
      * Update Wallet operations to status TO_RERATE and cancel related RTs. In case of Wallet operation aggregation to a single Rated transaction, all related wallet operations through the same Rated transaction, will be
      * marked for re-rating as well. <br/>
-     * Note, that a number of Wallet operation ids passed and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were
-     * invalid.
+     * Note, that a number of Wallet operation ids passed and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
      * <p/>
      * <b>When includeInvoiced = true:</b> <br/>
      *
@@ -1065,7 +1070,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
 
         int nrOfWosToRerate = 0;
-        
+
         List<Long> unbilledWalletOperationIds = new ArrayList<Long>(walletOperationIds);
 
         // Ignore Rated transactions that were billed already
@@ -1091,13 +1096,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         // Cancelled related RTS and change WO status to re-rate. Note: in case of aggregation, it will re-rate all WOs that are linked through the related RTs
         if (!unbilledWalletOperationIds.isEmpty()) {
             getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("woIds", unbilledWalletOperationIds).setParameter("now", new Date()).executeUpdate();
-            
+
             int nrStatusUpdated = getEntityManager().createNamedQuery("WalletOperation.setStatusToToRerate").setParameter("now", new Date()).setParameter("woIds", unbilledWalletOperationIds).executeUpdate();
             nrOfWosToRerate = nrOfWosToRerate + nrStatusUpdated;
         }
 
         log.info("{} out of {} requested Wallet operations are marked for rerating", nrOfWosToRerate, walletOperationIds.size());
-        
+
         return nrOfWosToRerate;
     }
 
@@ -1136,7 +1141,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             return Collections.emptyList();
         }
     }
-    
+
     public Long countNonTreatedWOByBA(BillingAccount billingAccount) {
         try {
             return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
@@ -1174,15 +1179,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public int moveNotBilledWOToUA(WalletInstance newWallet, Subscription subscription) {
-        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
-                .setParameter("newWallet", newWallet)
-                .setParameter("subscription", subscription).executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA").setParameter("newWallet", newWallet).setParameter("subscription", subscription).executeUpdate();
     }
 
     public int moveAndRerateNotBilledWOToUA(WalletInstance wallet, Subscription subscription) {
-        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
-                .setParameter("newWallet", wallet)
-                .setParameter("subscription", subscription).executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA").setParameter("newWallet", wallet).setParameter("subscription", subscription).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
@@ -1514,15 +1515,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
 
-    public boolean ignoreChargeTemplate(ChargeInstance chargeInstance){
+    public boolean ignoreChargeTemplate(ChargeInstance chargeInstance) {
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
-        if(serviceInstance != null && serviceInstance.getProductVersion() != null){
-            boolean dontApplyCharge = serviceInstance.getAttributeInstances()
-                    .stream()
-                    .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                    .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                    .anyMatch(attributeInstance -> !Boolean.valueOf(attributeInstance.getStringValue()));
-            if(dontApplyCharge){
+        if (serviceInstance != null && serviceInstance.getProductVersion() != null) {
+            boolean dontApplyCharge = serviceInstance.getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                .anyMatch(attributeInstance -> !Boolean.valueOf(attributeInstance.getStringValue()));
+            if (dontApplyCharge) {
                 log.debug(String.format("charge %s will be ignored, cause it was ignored by an attribute", chargeInstance.getChargeTemplate().getCode()));
                 return true;
             }

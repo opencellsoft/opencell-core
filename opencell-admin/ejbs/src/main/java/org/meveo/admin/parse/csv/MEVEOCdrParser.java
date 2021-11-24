@@ -242,15 +242,6 @@ public class MEVEOCdrParser implements ICdrParser {
     }
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public CDR parseByApi(String line, String userName, String ipAddress) throws CDRParsingException {
-        CDR cdr = parse(line);
-        cdr.setOriginBatch("API_" + ipAddress);
-        cdr.setOriginRecord(userName + "_" + new Date().getTime());
-        return cdr;
-    }
-
-    @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
         if (accesses == null || accesses.isEmpty()) {
