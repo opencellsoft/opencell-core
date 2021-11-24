@@ -133,10 +133,9 @@ public class CommercialOrderApi extends BaseApi {
 		
 		final BillingAccount billingAccount = loadEntityByCode(billingAccountService, orderDto.getBillingAccountCode(), BillingAccount.class);
 		order.setBillingAccount(billingAccount);
-		final Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-		if(seller == null)
-			throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
-		order.setSeller(seller);
+		if(!StringUtils.isBlank(orderDto.getSellerCode())) {
+			order.setSeller(loadEntityByCode(sellerService, orderDto.getSellerCode(), Seller.class));
+        } 
 		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
 		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
 			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));
