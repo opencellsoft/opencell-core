@@ -156,7 +156,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             }
             return resultToPersist.isDone();
 
-        } catch (Exception e) { // FIXME:BusinessException e) {
+        } catch (Exception e) {
             log.error("Failed to persist job execution results", e);
         }
 
