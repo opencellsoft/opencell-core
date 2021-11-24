@@ -80,6 +80,12 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		Scanner scanner = new Scanner(data);
 		List<String> columns = new LinkedList<String>();
 		
+		/*
+		File format example:
+		id(text);Booléen(BOOLEAN);Nombres(LIST_MULTIPLE_NUMERIC);Valeurs(LIST_MULTIPLE_TEXT);description(text);priority(number);pricetWithoutTax(number)
+		252;true;;3XL|Bleu;;0;20
+		*/
+		
 		// Get columns types
 		String line;
 		populateColumns(pricePlanMatrixVersion, scanner, columns);
@@ -159,25 +165,25 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						break;
 					case "Long":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setLongValue(nextLine[j].isEmpty()? null : Long.parseLong(nextLine[j]));
+						pricePlanMatrixValueDto.setLongValue(nextLine[j] == null || nextLine[j].isEmpty()? null : Long.parseLong(nextLine[j]));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "Double":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setDoubleValue(nextLine[j].isEmpty()? null : Double.parseDouble(nextLine[j]));
+						pricePlanMatrixValueDto.setDoubleValue((nextLine[j] == null || nextLine[j].isEmpty())? null : Double.parseDouble(nextLine[j]));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "Boolean":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setBooleanValue(Boolean.valueOf(nextLine[j]));
+						pricePlanMatrixValueDto.setBooleanValue((nextLine[j] == null || nextLine[j].isEmpty())? null :Boolean.valueOf(nextLine[j]));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "Range_Date":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						final Date fromDateValue = nextLine[j].split("\\|")[0].isEmpty() ? null : DateUtils.parseDate(nextLine[j].split("\\|")[0]);
+						final Date fromDateValue = (nextLine[j].split("\\|")[0] == null || nextLine[j].split("\\|")[0].isEmpty()) ? null : DateUtils.parseDate(nextLine[j].split("\\|")[0]);
 						if(isRange) {
 							pricePlanMatrixValueDto.setFromDateValue(fromDateValue);
-							pricePlanMatrixValueDto.setToDateValue(nextLine[j].split("\\|").length>1 ?DateUtils.parseDate(nextLine[j].split("\\|")[1]): null);
+							pricePlanMatrixValueDto.setToDateValue((nextLine[j] != null && nextLine[j].split("\\|").length>1) ?DateUtils.parseDate(nextLine[j].split("\\|")[1]): null);
 						} else {
 							pricePlanMatrixValueDto.setDateValue(fromDateValue);
 						}
@@ -185,13 +191,13 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						break;
 					case "Range_Numeric":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setFromDoubleValue(nextLine[j].split("\\|")[0].isEmpty() ? null : Double.parseDouble(nextLine[j].split("\\|")[0]));
-						pricePlanMatrixValueDto.setToDoubleValue(nextLine[j].split("\\|").length>1 ? Double.parseDouble(nextLine[j].split("\\|")[1]) : null);
+						pricePlanMatrixValueDto.setFromDoubleValue((nextLine[j] == null || nextLine[j].split("\\|")[0].isEmpty()) ? null : Double.parseDouble(nextLine[j].split("\\|")[0]));
+						pricePlanMatrixValueDto.setToDoubleValue(nextLine[j] != null && nextLine[j].split("\\|").length>1 ? Double.parseDouble(nextLine[j].split("\\|")[1]) : null);
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "List":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setStringValue(nextLine[j].replace("\\|", ";"));
+						pricePlanMatrixValueDto.setStringValue((nextLine[j] == null || nextLine[j].isEmpty())? null :nextLine[j].replace("\\|", ";"));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					default:
