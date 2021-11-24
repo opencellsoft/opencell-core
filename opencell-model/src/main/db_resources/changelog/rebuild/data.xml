@@ -13809,6 +13809,12 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="sequence_size" valueNumeric="9" />
         </insert>
     </changeSet>
+    <changeSet id="INTRD-2701_20211124" author="hichamElHaloui">
+        <update tableName="meveo_timer">
+            <column name="sc_d_o_week" value="*" />
+            <where>id=-2</where>
+        </update>
+    </changeSet>
 
 
 </databaseChangeLog>
