@@ -45,9 +45,6 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     private DunningLevelService dunningLevelService;
 
     @Inject
-    private DunningCollectionPlanStatusService collectionPlanStatusService;
-
-    @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
 
     @Inject
@@ -118,17 +115,12 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                         totalDunningLevels++;
                     }
                     if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
-                        if (policyLevel.getCollectionPlanStatus().getStatus() != null
-                                && !policyLevel.getCollectionPlanStatus().getStatus().equals("Echec")) {
-                            throw new BadRequestException("Dunning level creation fails : End of dunning level status must be ECHEC");
-                        }
                         if (policyLevel.getSequence() < highestSequence) {
                             throw new BadRequestException("End of dunning level sequence must be high");
                         }
                         highestSequence = policyLevel.getSequence();
                         countEndOfDunningLevel++;
                     }
-                    validateActiveDunning(policyLevel);
                 }
                 if (countReminderLevels == 0) {
                     throw new BadRequestException("Can not remove reminder level");
@@ -160,25 +152,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             throw new BadRequestException("Policy level creation fails : dunning level does not exists");
         }
         policyLevel.setDunningLevel(dunningLevel);
-        if(policyLevel.getCollectionPlanStatus() != null) {
-            DunningCollectionPlanStatus collectionPlanStatus =
-                    collectionPlanStatusService.refreshOrRetrieve(policyLevel.getCollectionPlanStatus());
-            if (collectionPlanStatus == null) {
-                throw new BadRequestException("Policy level creation fails : collection plan status does not exists");
-            }
-            policyLevel.setCollectionPlanStatus(collectionPlanStatus);
-        }
         return policyLevel;
-    }
-
-    public void validateActiveDunning(DunningPolicyLevel policyLevel) {
-        if (!policyLevel.getDunningLevel().isEndOfDunningLevel() && !policyLevel.getDunningLevel().isReminder()) {
-            if (policyLevel.getCollectionPlanStatus() != null
-                    && policyLevel.getCollectionPlanStatus().getStatus() != null
-                    && !policyLevel.getCollectionPlanStatus().getStatus().equals("Actif")) {
-                throw new BadRequestException("Dunning level creation fails : non reminder/endOfDunning level status must be Actif");
-            }
-        }
     }
 
     public void validateLevelsNumber(int countReminderLevels, int countEndOfDunningLevel, int totalDunningLevels) {
