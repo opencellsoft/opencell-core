@@ -34,7 +34,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
@@ -70,9 +69,6 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
     private ProviderService providerService;
-
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -259,8 +255,7 @@ public class MEVEOCdrParser implements ICdrParser {
         CDR cdr = parse(line);
         cdr.setOriginBatch("API_" + ipAddress);
         var provider = providerService.getProvider();
-        boolean deduplication = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("mediation.api.deduplicationKeyEL", "false"));
-        if (deduplication && StringUtils.isNotBlank(provider.getCdrDeduplicationKeyEL())) {
+        if (StringUtils.isNotBlank(provider.getCdrDeduplicationKeyEL())) {
             try {
                 cdr.setOriginRecord(ValueExpressionWrapper.evaluateExpression(provider.getCdrDeduplicationKeyEL(), Map.of("cdr", cdr), String.class));
             } catch (BusinessException e) {
