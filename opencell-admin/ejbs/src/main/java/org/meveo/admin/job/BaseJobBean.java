@@ -23,7 +23,6 @@ public abstract class BaseJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    //HHAN
     @Inject
     protected JobExecutionService jobExecutionResultService;
     
