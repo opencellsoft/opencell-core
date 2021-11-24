@@ -86,7 +86,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
 
-//    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    private String globalFileName;
+
+//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void runReport(ReportExtract entity) throws ReportExtractExecutionException, BusinessException {
         runReport(entity, null, ReportExtractExecutionOrigin.GUI);
     }
@@ -136,12 +138,12 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
         String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());
         filename = evaluateStringExpression(filename, entity);
+        globalFileName = filename;
 
         ReportExtractExecutionResult reportExtractExecutionResult = new ReportExtractExecutionResult();
         reportExtractExecutionResult.updateAudit(currentUser);
         reportExtractExecutionResult.setReportExtract(entity);
         reportExtractExecutionResult.setStartDate(new Date());
-        reportExtractExecutionResult.setFilePath(filename);
         reportExtractExecutionResult.setLineCount(0);
         reportExtractExecutionResult.setOrigin(origin);
         reportExtractExecutionResult.setStatus(true);
@@ -173,7 +175,6 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
             } else if (be == null && entity.isGenerateEmptyReport()) {
                 generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
-                reportExtractExecutionResult.setFilePath(filename);
                 reportExtractExecutionResult.setLineCount(0);
             }
 
@@ -192,6 +193,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
         }
 
+        reportExtractExecutionResult.setFilePath(globalFileName);
         reportExtractExecutionResult.setEndDate(new Date());
         reportExtractExecutionResultService.createInNewTransaction(reportExtractExecutionResult);
 
@@ -213,6 +215,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
         if (FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
             filename = FileUtils.changeExtension(filename, ".html");
+            globalFileName = filename;
         }
 
         try {
@@ -306,6 +309,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             List<String> fileNames = new ArrayList<>();
             String[] path = filename.split("\\.");
             filename = new StringBuilder(path[0]).append("_").append(format("%04d", fileSufix)).append(".").append(path[1]).toString();
+            globalFileName = filename;
             File file = new File(sbDir + File.separator + filename);
             file.createNewFile();
             fileWriter = new FileWriter(file);
@@ -435,6 +439,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     private void generateEmptyReport(String filename, StringBuilder sbDir, ReportExtractResultTypeEnum reportType) {
         if (reportType.equals(ReportExtractResultTypeEnum.HTML) && FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
             filename = FileUtils.changeExtension(filename, ".html");
+            globalFileName = filename;
         }
         File dir = new File(sbDir.toString());
         if (!dir.exists()) {

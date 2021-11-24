@@ -761,29 +761,30 @@ public class CpqQuoteApi extends BaseApi {
 
 
     public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteOfferDto) {
+        try {
 
-        if (quoteOfferDto.getQuoteVersion() == null)
-            missingParameters.add("quoteVersion");
-        if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
-            missingParameters.add("quoteCode");
-        if (quoteOfferDto.getOfferId() == null)
-            missingParameters.add("offerId");
+            if (quoteOfferDto.getQuoteVersion() == null)
+                missingParameters.add("quoteVersion");
+            if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
+                missingParameters.add("quoteCode");
+            if (quoteOfferDto.getOfferId() == null)
+                missingParameters.add("offerId");
 
-        handleMissingParameters();
+            handleMissingParameters();
 
-        OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
-        if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
-        final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
-        if (quoteVersion == null)
-            throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
-        QuoteOffer quoteOffer = new QuoteOffer();
-        quoteOffer.setOfferTemplate(offerTemplate);
-        quoteOffer.setQuoteVersion(quoteVersion);
-        if (!Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
-            quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
-        if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
-            quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
+            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            if (offerTemplate == null)
+                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
+            final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
+            if (quoteVersion == null)
+                throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
+            QuoteOffer quoteOffer = new QuoteOffer();
+            quoteOffer.setOfferTemplate(offerTemplate);
+            quoteOffer.setQuoteVersion(quoteVersion);
+            if (!Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
+                quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
+            if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
+                quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
         if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
         	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
@@ -800,8 +801,10 @@ public class CpqQuoteApi extends BaseApi {
         newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
 
 
-
-        return quoteOfferDto;
+            return quoteOfferDto;
+        }catch(BusinessException exp){
+            throw new BusinessApiException(exp.getMessage());
+        }
     }
 
 
@@ -1129,9 +1132,8 @@ public class CpqQuoteApi extends BaseApi {
         if(quoteVersion.getQuoteOffers().isEmpty()) {
         	throw new MeveoApiException("link an offer to a version before publishing it");
         }
-        if (quoteVersion.getStatus().equals(VersionStatusEnum.CLOSED) ||
-                quoteVersion.getStatus().equals(VersionStatusEnum.PUBLISHED)) {
-            throw new MeveoApiException("You can not update the quote version with status = " + quoteVersion.getStatus());
+        if (!quoteVersion.getStatus().allowedTargets().contains(status)) {
+            throw new MeveoApiException("You can not update the quote version with status = " + quoteVersion.getStatus() + " allowed target status are: " + quoteVersion.getStatus().allowedTargets());
         }
         var quoteVersionPublished = quoteVersionService.findByQuoteIdAndStatusActive(quoteVersion.getQuote().getId());
         var numberQuoteVersionPublished = quoteVersionPublished.stream().filter(qv -> qv.getQuoteVersion().intValue() != currentVersion).collect(Collectors.toList()).size();
