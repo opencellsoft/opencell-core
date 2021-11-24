@@ -222,7 +222,7 @@ public class EntityManagerProvider {
      * @param providerCode Provider code
      * @return Schema name corresponding to a provider code
      */
-    public String convertToSchemaName(String providerCode) {
+    public static String convertToSchemaName(String providerCode) {
         return providerCode.replace(' ', '_').toLowerCase();
     }
 }
