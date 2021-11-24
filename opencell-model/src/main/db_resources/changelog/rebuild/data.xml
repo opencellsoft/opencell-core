@@ -9636,6 +9636,29 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</update>
 	</changeSet>
 	
+	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM">
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">ACTIVE</column>
+			<where>status = 'Actif'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">SUCCESS</column>
+			<where>status = 'Succès'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">FAILED</column>
+			<where>status = 'Echec'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">PAUSED</column>
+			<where>status = 'Pause'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">STOPPED</column>
+			<where>status = 'Stop'</where>
+		</update>
+	</changeSet>
+    
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

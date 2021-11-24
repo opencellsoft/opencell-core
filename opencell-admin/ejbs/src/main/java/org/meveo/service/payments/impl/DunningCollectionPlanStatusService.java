@@ -8,6 +8,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 import java.util.Arrays;
@@ -22,7 +23,7 @@ import java.util.Arrays;
 @Stateless
 public class DunningCollectionPlanStatusService extends PersistenceService<DunningCollectionPlanStatus> {
 
-    public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, String status) {
+	public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, DunningCollectionPlanStatusEnum status) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", Arrays.asList("dunningSettings"));
         queryBuilder.addCriterion("a.dunningSettings.code", "=", dunningSettingCode, false);
         queryBuilder.addCriterion("a.status", "=", status, false);

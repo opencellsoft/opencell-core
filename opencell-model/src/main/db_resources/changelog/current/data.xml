@@ -7960,5 +7960,28 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<where> policy_condition_target='IsCompany'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM">
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">ACTIVE</column>
+			<where>status = 'Actif'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">SUCCESS</column>
+			<where>status = 'Succès'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">FAILED</column>
+			<where>status = 'Echec'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">PAUSED</column>
+			<where>status = 'Pause'</where>
+		</update>
+		<update tableName="dunning_collection_plan_statuses">
+			<column name="status">STOPPED</column>
+			<where>status = 'Stop'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>

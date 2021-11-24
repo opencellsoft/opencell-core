@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -20,7 +21,7 @@ public interface DunningCollectionPlanStatus extends Resource {
 
     @Schema(description = "indicate the status used in the collection")
     @Nonnull
-    String getStatus();
+    DunningCollectionPlanStatusEnum getStatus();
 
     @Schema(description = "indicate description for the collection")
     @Nonnull
