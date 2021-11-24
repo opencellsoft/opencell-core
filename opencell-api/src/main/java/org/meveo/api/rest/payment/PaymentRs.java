@@ -1132,6 +1132,7 @@ public interface PaymentRs extends IBaseRs {
      * @param automaticReturnUrl the automatic return URL (currently only for ATOS Wallet)
      * @param allowedActions the allowed actions (currently only for ATOS Wallet)
      * @param returnContext the return context (currently only for ATOS Wallet)
+    * @param authenticationAmount Allows you to send in an authentication amount which can be greater or equal to the order amount. The currency code of the authentication amount should be the same as the currency code of the order amount. In case you don't provide an authentication amount we will use the order amount for the authentication automatically.
      * @param advancedOptions the advanced options (currently only for ATOS Wallet)
      * @return the PaymentHostedCheckoutResponseDto
      */
@@ -1164,6 +1165,7 @@ public interface PaymentRs extends IBaseRs {
                                                                  @QueryParam("automaticReturnUrl") String automaticReturnUrl,
                                                                  @QueryParam("allowedActions") String allowedActions,
                                                                  @QueryParam("returnContext") String returnContext,
+                                                                 @QueryParam("authenticationAmount") String authenticationAmount,
                                                                  @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions
     );
 

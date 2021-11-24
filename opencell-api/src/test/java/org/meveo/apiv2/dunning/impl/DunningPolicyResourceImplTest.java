@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -25,16 +26,17 @@ import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.DunningSettings;
+import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-//@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DunningPolicyResourceImplTest {
 
-    /*
     @Spy
     @InjectMocks
     private DunningPolicyResourceImpl dunningPolicyResource;
@@ -44,6 +46,12 @@ public class DunningPolicyResourceImplTest {
 
     @Mock
     private DunningPolicyLevelApiService policyLevelApiService;
+
+    @Mock
+    private DunningPolicyLevelService dunningPolicyLevelService;
+
+    @Mock
+    private DunningPolicyService dunningPolicyService;
 
     @Before
     public void setUp() {
@@ -58,6 +66,7 @@ public class DunningPolicyResourceImplTest {
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(1l);
         dunningLevel.setEndOfDunningLevel(Boolean.TRUE);
+        dunningPolicy.setDunningLevels(new ArrayList<>());
 
         DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
         collectionPlanStatus.setId(1L);
@@ -65,16 +74,15 @@ public class DunningPolicyResourceImplTest {
 
         when(dunningPolicyApiService.updateTotalLevels(any())).thenReturn(of(dunningPolicy));
         when(dunningPolicyApiService.create(any())).thenReturn(dunningPolicy);
-        when(dunningPolicyApiService.findById(1L)).thenReturn(of(dunningPolicy));
+        when(dunningPolicyService.findById(anyLong(), Mockito.anyList())).thenReturn(dunningPolicy);
         when(dunningPolicyApiService.update(anyLong(), any(DunningPolicy.class))).thenReturn(Optional.of(dunningPolicy));
     }
-    /*
+
     @Test
     public void shouldCreateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
                 .sequence(1)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -94,7 +102,6 @@ public class DunningPolicyResourceImplTest {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
                 .sequence(1)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -113,7 +120,6 @@ public class DunningPolicyResourceImplTest {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
                 .sequence(1)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -128,12 +134,11 @@ public class DunningPolicyResourceImplTest {
         dunningPolicyResource.create(resource);
     }
 
- 
+
     @Test
     public void shouldUpdateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .id(1L)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()
@@ -143,17 +148,17 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
+        when(dunningPolicyLevelService.findById(1L)).thenReturn(null);
 
         Response response = dunningPolicyResource.update(1L, resource);
         Assert.assertEquals(200, response.getStatus());
     }
-   
+
 
     @Test(expected = NotFoundException.class)
     public void shouldFailIfDunningPolicyDoesNotExits() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .id(1L)
-                .invoiceDunningStatusesId(1L)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()
@@ -163,8 +168,7 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
-        when(dunningPolicyApiService.findById(1L)).thenReturn(Optional.empty());
+        when(dunningPolicyService.findById(anyLong(), Mockito.anyList())).thenReturn(null);
         dunningPolicyResource.update(1L, resource);
     }
-     */
 }

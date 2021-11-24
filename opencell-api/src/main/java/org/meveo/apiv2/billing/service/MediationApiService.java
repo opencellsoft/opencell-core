@@ -74,6 +74,7 @@ public class MediationApiService {
                 if (cdr == null) {
                     throw new BusinessException("Failed to process a CDR line: " + cdrLine);
                 }
+
                 if (cdr.getRejectReason() != null) {
                     log.error("Failed to process a CDR line: {} error {}", cdr.getLine(), cdr.getRejectReason());
 
@@ -106,7 +107,7 @@ public class MediationApiService {
                 checkRollBackMode(mode, cdrListResult, total);
 
                 fail = checkInvalidAccessAndIncrement(fail, cdr, e);
-                
+
                 cdrService.createOrUpdateCdr(cdr);
 
                 if (mode == STOP_ON_FIRST_FAIL) {

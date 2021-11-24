@@ -143,6 +143,14 @@ public class ProviderResourceImpl implements ProviderResource{
             providerByCode.setBankCoordinates(providerUpdateInfos.getBankCoordinates());
         }
 
+        if(provider.getMaximumDelay() != null) {
+            providerByCode.setMaximumDelay(providerUpdateInfos.getMaximumDelay());
+        }
+        
+        if(provider.getMaximumDeferralPerInvoice() != null) {
+            providerByCode.setMaximumDeferralPerInvoice(providerUpdateInfos.getMaximumDeferralPerInvoice());
+        }
+        
         if(provider.getCurrency() != null) {
             Currency currency = currencyService.findById(providerUpdateInfos.getCurrency().getId());
             if(currency == null) {

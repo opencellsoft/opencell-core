@@ -172,13 +172,28 @@
                 <version>2.6</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-resources-apiv1</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>./target/opencell/pages/docs</outputDirectory>
+                            <outputDirectory>./target/opencell/pages/docs/v1</outputDirectory> 
+                            <resources>
+                                <resource>
+                                    <directory>./target/swagger-ui-master/dist</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                     <execution>
+                        <id>copy-resources-apiv2</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration> 
+                            <outputDirectory>./target/opencell/pages/docs/v2</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>./target/swagger-ui-master/dist</directory>
@@ -207,14 +222,34 @@
                             <goal>replace</goal>
                         </goals>
                     </execution>
+            <execution>
+                <id>replace-apiv1</id>
+                <goals>
+                    <goal>replace</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                    <includes>
+                         <include>${project.build.directory}/opencell/pages/docs/v1/index.html</include> 
+                    </includes>
+                     <file>${project.build.directory}/opencell/pages/docs/v1/index.html</file>
+                    <replacements>
+                          <replacement>
+                            <token>https://petstore.swagger.io/v2/swagger.json</token>
+                            <value>/opencell/api/rest/v1/openapiv1.json</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </execution>
                 </executions>
                 <configuration>
                     <includes>
-                        <include>${project.build.directory}/opencell/pages/docs/index.html</include>
+                        <include>${project.build.directory}/opencell/pages/docs/v2/index.html</include>
                         <include>${project.build.directory}/opencell/layout/*.xhtml</include>
                         <include>${project.build.directory}/opencell/about.xhtml</include>
                         <include>${project.build.outputDirectory}/version.json</include>
                     </includes>
+                    <file>${project.build.directory}/opencell/pages/docs/v2/index.html</file>
                     <replacements>
                         <replacement>
                             <token>https://petstore.swagger.io/v2/swagger.json</token>

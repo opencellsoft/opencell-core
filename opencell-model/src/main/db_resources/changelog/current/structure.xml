@@ -11206,6 +11206,12 @@ order by date_trunc('month', i.invoice_date) DESC
    		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
+    
+    <changeSet id="INTRD-2868_20211105" author="TarikFA.">
+    	<addColumn tableName="crm_provider">
+    		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
+    	</addColumn>
+    </changeSet>
 
     <changeSet id="INTRD-30_2021114" author="ZBariki">
         <dropForeignKeyConstraint baseTableName="dunning_min_balance_trigger_currency"

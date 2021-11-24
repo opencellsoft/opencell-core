@@ -1,5 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Optional.ofNullable;
+
 import org.meveo.apiv2.dunning.DunningPolicyLevel;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicyLevel;
 import org.meveo.apiv2.ordering.ResourceMapper;
@@ -12,7 +14,9 @@ public class DunningPolicyLevelMapper extends ResourceMapper<DunningPolicyLevel,
     protected DunningPolicyLevel toResource(org.meveo.model.dunning.DunningPolicyLevel entity) {
         return ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(entity.getDunningLevel().getId())
-                .collectionPlanStatusId(entity.getCollectionPlanStatus().getId())
+                .collectionPlanStatusId(ofNullable(entity.getCollectionPlanStatus())
+                        .map(DunningCollectionPlanStatus::getId)
+                        .orElse(null))
                 .sequence(entity.getSequence())
                 .build();
     }
@@ -23,9 +27,11 @@ public class DunningPolicyLevelMapper extends ResourceMapper<DunningPolicyLevel,
         entity.setSequence(resource.getSequence());
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(resource.getDunningLevelId());
-        DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
-        collectionPlanStatus.setId(resource.getCollectionPlanStatusId());
-        entity.setCollectionPlanStatus(collectionPlanStatus);
+        if (resource.getCollectionPlanStatusId() != null) {
+            DunningCollectionPlanStatus collectionPlanStatus = new DunningCollectionPlanStatus();
+            collectionPlanStatus.setId(resource.getCollectionPlanStatusId());
+            entity.setCollectionPlanStatus(collectionPlanStatus);
+        }
         entity.setDunningLevel(dunningLevel);
         return entity;
     }

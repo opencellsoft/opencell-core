@@ -42,6 +42,7 @@ public class DunningActionService  extends BusinessService<DunningAction> {
         validateScriptInstance(dunningAction);
         validateActionNotificationTemplate(dunningAction);
         validateDunningLevel(dunningAction);
+        validateAssignedTo(dunningAction);
         if(ActionModeEnum.AUTOMATIC.equals(dunningAction.getActionMode())) {
         	if(dunningAction.getActionChannel() != null && !ActionChannelEnum.EMAIL.equals(dunningAction.getActionChannel())) {
                 throw new BusinessApiException("The only action channel for the automatic mode is Email.");

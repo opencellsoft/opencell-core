@@ -77,7 +77,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -89,7 +89,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @Column(name = "is_range")
     private Boolean isRange;
 
-    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
