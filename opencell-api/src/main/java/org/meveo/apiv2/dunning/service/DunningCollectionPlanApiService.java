@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +25,15 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningCollectionPlan;
+import org.meveo.model.dunning.DunningLevelInstance;
+import org.meveo.model.dunning.DunningLevelInstanceStatusEnum;
 import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
@@ -38,6 +42,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
+import org.meveo.service.payments.impl.DunningLevelInstanceService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
@@ -53,6 +58,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
+    
+    @Inject
+    private DunningLevelInstanceService dunningLevelInstanceService;
 
     @Inject
     private AuditLogService auditLogService;
@@ -66,10 +74,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     
     @Inject
 	private DunningPauseReasonsService dunningPauseReasonService;
+
 	@Inject
 	private DunningStopReasonsService dunningStopReasonService;
 	
-	private static final String NO_DUNNING_FOUND = "No Dunning Plan collection found with id : %s";
+	private static final String NO_DUNNING_FOUND = "No Dunning Plan collection found with id : ";
 
     @Override
     public List<DunningCollectionPlan> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -236,7 +245,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	
 	
 	public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlan, Long id, DunningCollectionPlanStop dunningCollectionPlanInput) {
-		var collectionPlanToStop = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_FOUND + id));
+		var collectionPlanToStop = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
 		DunningStopReason dunningStopReason = dunningStopReasonService.findById(dunningCollectionPlanInput.getDunningStopReason().getId());
 		if(dunningStopReason == null) {
 			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanInput.getDunningStopReason().getId() + " does not exits");
@@ -247,9 +256,30 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	}
 	
 	public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
-		var collectionPlanToResume = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_FOUND + id));
+		var collectionPlanToResume = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
 		collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
 		trackOperation("RESUME", new Date(), collectionPlanToResume);
 		return of(collectionPlanToResume);
+	}
+	
+	public void removeDunningLevelInstance(RemoveLevelInstanceInput removeLevelInstanceInput) {
+
+	    List<Long> levels = removeLevelInstanceInput.getLevels();
+	    
+	    if (levels != null) {
+            for (Long levelInstanceId : levels) {
+                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("policyLevel"));
+                if (dunningLevelInstance == null) {
+                    new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
+                }
+                if (dunningLevelInstance.getPolicyLevel().getDunningLevel().isEndOfDunningLevel()) {
+                    new BadRequestException("Cannot modify or delete the end level");
+                }
+                if (dunningLevelInstance.getLevelStatus() != null && dunningLevelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.TO_BE_DONE) {
+                    new BadRequestException("Cannot delete a level instance with status : " + dunningLevelInstance.getLevelStatus());
+                }
+                dunningLevelInstanceService.remove(dunningLevelInstance);
+            }
+        }
 	}
 }

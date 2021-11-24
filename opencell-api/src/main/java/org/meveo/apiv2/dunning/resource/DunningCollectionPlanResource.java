@@ -12,13 +12,14 @@ import javax.ws.rs.core.Response;
 import org.meveo.apiv2.dunning.AvailablePoliciesInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
+import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 
 @Path("/dunning/collectionPlan")
 @Produces(APPLICATION_JSON)
@@ -79,7 +80,7 @@ public interface DunningCollectionPlanResource {
             @ApiResponse(responseCode = "200",
                    description = "collection plan successfully paused"),
             @ApiResponse(responseCode = "404",
-                    description = "Dunning with the same code exist")
+                    description = "Entity does not exits")
     }) 
 	Response pauseCollectionPlan(@Parameter(required = true) DunningCollectionPlanPause dunningCollectionPlan, @PathParam("id") Long id);
 	
@@ -87,12 +88,12 @@ public interface DunningCollectionPlanResource {
 	@Path("/stop/{id}")
 	@Operation(summary = "Stop Collection plan",
     tags = {"Collection Plan"},
-    description = "Pause collection plan",
+    description = "Stop collection plan",
     responses = {
             @ApiResponse(responseCode = "200",
                    description = "collection plan successfully paused"),
             @ApiResponse(responseCode = "404",
-                    description = "Dunning with the same code exist")
+                    description = "Entity does not exits")
     }) 
 	Response stopCollectionPlan(@Parameter(required = true) DunningCollectionPlanStop dunningCollectionPlan, @PathParam("id") Long id);
 	
@@ -100,13 +101,25 @@ public interface DunningCollectionPlanResource {
 	@Path("/resume/{id}")
 	@Operation(summary = "Resume Collection plan",
     tags = {"Collection Plan"},
-    description = "Pause collection plan",
+    description = "Resume collection plan",
     responses = {
             @ApiResponse(responseCode = "200",
                    description = "collection plan successfully paused"),
             @ApiResponse(responseCode = "404",
-                    description = "Dunning with the same code exist")
-    }) 
+                    description = "Entity does not exits")
+    })
 	Response resumeCollectionPlan(@PathParam("id") Long id);
 	
+	@POST
+    @Path("/removeDunningLevelInstance")
+    @Operation(summary = "Remove DunningLevelInstance",
+    tags = {"Collection Plan"},
+    description = "Remove DunningLevelInstance",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "Remove action success"),
+            @ApiResponse(responseCode = "404",
+                    description = "Entity does not exist")
+    })
+    Response removeDunningLevelInstance(@Parameter(required = true) RemoveLevelInstanceInput removeLevelInstanceInput);
 }
