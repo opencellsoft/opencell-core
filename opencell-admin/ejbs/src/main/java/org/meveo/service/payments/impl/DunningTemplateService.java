@@ -23,6 +23,7 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
     @Override
     public void create(DunningTemplate template) throws BusinessException {
         validate(template);
+        template.setActive(false);
         super.create(template);
     }
 
@@ -63,6 +64,7 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
         detach(template);
         template.setId(null);
         template.setCode(template.getCode() + " - copy");
+        template.setActive(false);
         super.create(template);
     }
 
