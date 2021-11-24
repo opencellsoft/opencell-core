@@ -13,28 +13,10 @@
 
 	<dependencies>
 
-		<!-- Primeface and xtream are used for api documention generation -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.primefaces</groupId> -->
-		<!-- <artifactId>primefaces</artifactId> -->
-		<!-- <version>5.2</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.thoughtworks.xstream</groupId> -->
-		<!-- <artifactId>xstream</artifactId> -->
-		<!-- <version>1.4.8</version> -->
-		<!-- </dependency> -->
-
 		<dependency>
 			<groupId>com.opencellsoft</groupId>
 			<artifactId>opencell-admin-ejbs</artifactId>
 		</dependency>
-
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jboss.spec.javax.xml.bind</groupId> -->
-<!-- 			<artifactId>jboss-jaxb-api_2.2_spec</artifactId> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.jboss.spec.javax.ws.rs</groupId>

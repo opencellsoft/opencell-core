@@ -263,7 +263,20 @@
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -326,6 +339,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>javax.mail-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -398,15 +412,18 @@
         <dependency>
             <groupId>com.lapis.jsfexporter</groupId>
             <artifactId>export-type-csv</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.opencsv</groupId>
+                    <artifactId>opencsv</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.lapis.jsfexporter</groupId>
             <artifactId>export-source-primefaces</artifactId>
         </dependency>
-
-
-        <!-- <dependency> <groupId>net.sf.flexjson</groupId> <artifactId>flexjson</artifactId> <version>2.0</version> </dependency> -->
 
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -425,31 +442,10 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>javax.persistence</groupId> -->
-<!--             <artifactId>javax.persistence-api</artifactId>             -->
-<!--             <scope>provided</scope> -->
-<!--         </dependency> -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-		<!--
-		<dependency>
-			<groupId>meveo</groupId>
-			<artifactId>opencell-fonts</artifactId>
-			<version>1.0</version>
-		</dependency>
-		 -->
-
-        <!-- Primefaces Theme -->
-        <!-- <dependency> -->
-        <!-- <groupId>org.primefaces.themes</groupId> -->
-        <!-- <artifactId>humanity</artifactId> -->
-        <!-- <version>1.0.10</version> -->
-        <!-- </dependency> -->
-
-
 
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
@@ -459,7 +455,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.0</version>
         </dependency>
 
         <dependency>
@@ -475,7 +470,6 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.24.0-GA</version>
             <scope>test</scope>
         </dependency>
         <dependency>

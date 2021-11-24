@@ -211,6 +211,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>javax.mail-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -277,16 +278,19 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxb-provider</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -298,12 +302,8 @@
         <dependency>
 		    <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
 		    <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
-		    </dependency>
-        <!-- <dependency> -->
-        <!-- <groupId>org.javassist</groupId> -->
-        <!-- <artifactId>javassist</artifactId> -->
-        <!-- <scope>provided</scope> -->
-        <!-- </dependency> -->
+<!-- DO NOT SET as provided scope as maven will fail -->
+            </dependency>
 
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -348,11 +348,9 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
         </dependency>
-        
         <dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-compress</artifactId>
-		    <version>1.19</version>
 		</dependency>
         <dependency>
             <groupId>javax.el</groupId>
@@ -417,6 +415,10 @@
                     <artifactId>bcprov-jdk15on</artifactId>
                     <groupId>org.bouncycastle</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jdt.core.compiler</groupId>
+                    <artifactId>ecj</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -439,7 +441,6 @@
         <dependency>
 		    <groupId>org.yaml</groupId>
 		    <artifactId>snakeyaml</artifactId>
-		    <version>1.26</version>
 		</dependency>
         
         <dependency>
@@ -454,6 +455,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -469,14 +471,10 @@
             <artifactId>joda-time</artifactId>
         </dependency>
 
-        <!-- <dependency> -->
-        <!-- <groupId>xalan</groupId> -->
-        <!-- <artifactId>xalan</artifactId> -->
-        <!-- </dependency> -->
-
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -606,26 +604,18 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <!-- DO NOT SET as test scope as maven will fail -->
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api-maven</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.jboss.resteasy</groupId> -->
-        <!-- <artifactId>jaxrs-api</artifactId> -->
-        <!-- </dependency> -->
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.jboss.spec.javax.ws.rs</groupId> -->
-        <!-- <artifactId>jboss-jaxrs-api_2.0_spec</artifactId> -->
-        <!-- </dependency> -->
 
         <dependency>
             <groupId>junit</groupId>
@@ -644,7 +634,6 @@
             <artifactId>yamlbeans</artifactId>
             <version>1.11</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.ingenico.connect.gateway</groupId>
