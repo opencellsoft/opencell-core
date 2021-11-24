@@ -20,10 +20,8 @@ package org.meveo.admin.job;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -31,14 +29,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
@@ -76,15 +70,21 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
         try {
 
             InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
-            List<Long> invoiceIds = new ArrayList<>();
 
-            List<Long> billingRunsIds = getBillingRunsIds(this.getParamOrCFValue(jobInstance, "billingRuns"));
-            for (Long billingRunId : billingRunsIds) {
-                invoiceIds.addAll(this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId));
+            Long billingRunId = null;
+            if (parameter != null && parameter.trim().length() > 0) {
+                try {
+                    billingRunId = Long.parseLong(parameter);
+                } catch (Exception e) {
+                    log.error("error while getting billing run", e);
+                    result.registerError(e.getMessage());
+                }
             }
 
-            log.info("invoices to process={}", invoiceIds.size());
-            List<Future<Boolean>> futures = new ArrayList<>();
+            List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
+
+            log.info("invoices to process={}", invoiceIds == null ? null : invoiceIds.size());
+            List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
             result.setNbItemsToProcess(subListCreator.getListSize());
 
@@ -141,27 +141,5 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
             break;
         }
         return invoiceIds;
-    }
-
-    /**
-     * Get Billing runs Ids to process
-     *
-     * @param billingRunsCF the billing runs getting from the custom field
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private List<Long> getBillingRunsIds(Object billingRunsCF) {
-        List<EntityReferenceWrapper> brList = (List<EntityReferenceWrapper>) billingRunsCF;
-        if (brList != null && !brList.isEmpty()) {
-            return brList.stream().map(br -> {
-                String compositeCode = br.getCode();
-                if (compositeCode == null) {
-                    return null;
-                }
-                return Long.valueOf(compositeCode.split("/")[0]);
-            }).collect(Collectors.toList());
-        } else {
-            return new ArrayList<>();
-        }
     }
 }

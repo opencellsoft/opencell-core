@@ -28,7 +28,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -103,17 +102,6 @@ public class XMLInvoiceGenerationJob extends Job {
 		customFieldInvToProcess.setValueRequired(true);
 		customFieldInvToProcess.setListValues(invoicesToProcessValues);
 		result.put(cfInvToProcessCode, customFieldInvToProcess);
-
-        CustomFieldTemplate customFieldBR = new CustomFieldTemplate();
-        customFieldBR.setCode("billingRuns");
-        customFieldBR.setAppliesTo(APPLIES_TO);
-        customFieldBR.setActive(true);
-        customFieldBR.setDescription(resourceMessages.getString("jobExecution.billingRuns"));
-        customFieldBR.setFieldType(CustomFieldTypeEnum.ENTITY);
-        customFieldBR.setStorageType(CustomFieldStorageTypeEnum.LIST);
-        customFieldBR.setEntityClazz("org.meveo.model.billing.BillingRun");
-        customFieldBR.setValueRequired(false);
-        result.put("billingRuns", customFieldBR);
 
         return result;
     }
