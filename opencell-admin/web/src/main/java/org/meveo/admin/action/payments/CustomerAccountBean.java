@@ -109,7 +109,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     private Long customerId;
 
-    private CustomerAccount customerAccountTransfer = new CustomerAccount();
+    private CustomerAccount customerAccountTransfer;
 
     private BigDecimal amountToTransfer;
 
@@ -224,7 +224,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             customerAccountService.transferAccount(entity, customerAccountTransfer, getAmountToTransfer());
             messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
             setCustomerAccountTransfer(null);
-            setAmountToTransfer(BigDecimal.ZERO);
+            setAmountToTransfer(null);
 
         } catch (Exception e) {
             log.error("failed to transfer account ", e);
