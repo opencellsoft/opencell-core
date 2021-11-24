@@ -145,7 +145,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             if (isPersistResult) {
                 if (resultToPersist.isTransient()) {
                     create(resultToPersist);
-                    //result.setId(resultToPersist.getId());
                 } else {
                     // search for job execution result
                     JobExecutionResultImpl updateEntity = findById(resultToPersist.getId());
