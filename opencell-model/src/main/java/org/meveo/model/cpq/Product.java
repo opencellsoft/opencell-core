@@ -40,6 +40,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.article.ArticleMappingLine;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -412,70 +413,82 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
+		List<ServiceChargeTemplateRecurring> serviceRecurringCharges= new ArrayList<ServiceChargeTemplateRecurring>();
 		if(this.serviceRecurringCharges.isEmpty()){
-			this.serviceRecurringCharges = getProductCharges().stream()
-					.filter(pc -> pc.getChargeTemplate() != null)
-					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-					.filter(charge -> charge instanceof RecurringChargeTemplate)
-					.map(ch -> {
+			for(ProductChargeTemplateMapping pc : getProductCharges()) {
+				if(pc.getChargeTemplate() != null) {
+					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
+					if(ch instanceof RecurringChargeTemplate) {
 						ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 						serviceChargeTemplateRecurring.setChargeTemplate((RecurringChargeTemplate)ch);
-						return serviceChargeTemplateRecurring;
-					})
-					.collect(Collectors.toList());
+						serviceChargeTemplateRecurring.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());
+						serviceChargeTemplateRecurring.setCounterTemplate(pc.getCounterTemplate());
+						serviceRecurringCharges.add(serviceChargeTemplateRecurring);
+					}
+				}
+			}
 		}
 		return serviceRecurringCharges;
 	}
 
 	@Override
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
+		List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<ServiceChargeTemplateUsage>();
 		if(this.serviceUsageCharges.isEmpty()){
-			this.serviceUsageCharges = getProductCharges().stream()
-					.filter(pc -> pc.getChargeTemplate() != null)
-					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-					.filter(charge -> charge instanceof UsageChargeTemplate)
-					.map(ch -> {
-						ServiceChargeTemplateUsage serviceChargeTemplateRecurring = new ServiceChargeTemplateUsage();
-						serviceChargeTemplateRecurring.setChargeTemplate((UsageChargeTemplate)ch);
-						return serviceChargeTemplateRecurring;
-					})
-					.collect(Collectors.toList());
+			for(ProductChargeTemplateMapping pc : getProductCharges()) {
+				if(pc.getChargeTemplate() != null) {
+					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
+					if(ch instanceof UsageChargeTemplate) {
+						ServiceChargeTemplateUsage serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+						serviceChargeTemplateUsage.setChargeTemplate((UsageChargeTemplate)ch);
+						serviceChargeTemplateUsage.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());
+						serviceChargeTemplateUsage.setCounterTemplate(pc.getCounterTemplate());
+						serviceUsageCharges.add(serviceChargeTemplateUsage);
+					}
+				}
+			}
 		}
 		return serviceUsageCharges;
 	}
 
 	@Override
 	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
+		List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges= new ArrayList<ServiceChargeTemplateSubscription>();
 		if(this.serviceSubscriptionCharges.isEmpty()){
-			this.serviceSubscriptionCharges = getProductCharges().stream()
-					.filter(pc -> pc.getChargeTemplate() != null)
-					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-					.filter(charge -> charge instanceof OneShotChargeTemplate)
-					.filter(ch -> (((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)
-					.map(ch -> {
+			for(ProductChargeTemplateMapping pc : getProductCharges()) {
+				if(pc.getChargeTemplate() != null) {
+					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
+					if(ch instanceof OneShotChargeTemplate && 
+							(((OneShotChargeTemplate)ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)) {
 						ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 						serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
-						return serviceChargeTemplateSubscription;
-					})
-					.collect(Collectors.toList());
+						serviceChargeTemplateSubscription.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());
+						serviceChargeTemplateSubscription.setCounterTemplate(pc.getCounterTemplate());
+						serviceSubscriptionCharges.add(serviceChargeTemplateSubscription);
+					}
+				}
+			}
 		}
 		return this.serviceSubscriptionCharges;
 	}
 
 	@Override
 	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
+		List<ServiceChargeTemplateTermination> serviceTerminationCharges= new ArrayList<ServiceChargeTemplateTermination>();
 		if(this.serviceTerminationCharges.isEmpty()){
-			this.serviceTerminationCharges = getProductCharges().stream()
-					.filter(pc -> pc.getChargeTemplate() != null)
-					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-					.filter(charge -> charge instanceof OneShotChargeTemplate)
-					.filter(ch -> ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION)
-					.map(ch -> {
+			for(ProductChargeTemplateMapping pc : getProductCharges()) {
+				if(pc.getChargeTemplate() != null) {
+					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
+					if(ch instanceof OneShotChargeTemplate && 
+							((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
 						ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 						serviceChargeTemplateTermination.setChargeTemplate((OneShotChargeTemplate) ch);
-						return serviceChargeTemplateTermination;
-					})
-					.collect(Collectors.toList());
+						serviceChargeTemplateTermination.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());
+						serviceChargeTemplateTermination.setCounterTemplate(pc.getCounterTemplate());
+						serviceTerminationCharges.add(serviceChargeTemplateTermination);
+					}
+				}
+			}
 		}
 		return this.serviceTerminationCharges;
 	}
