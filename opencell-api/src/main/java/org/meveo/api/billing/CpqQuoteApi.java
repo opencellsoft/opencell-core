@@ -1343,6 +1343,7 @@ public class CpqQuoteApi extends BaseApi {
         .map(price -> {
             QuotePrice quotePrice = price.get();
             quotePriceService.create(quotePrice);
+            quoteOffer.getQuotePrices().add(quotePrice);
             pricesDTO.add(new PriceDTO(quotePrice));
             return pricesDTO;
         }).collect(Collectors.toList());
