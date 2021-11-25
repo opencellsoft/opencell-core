@@ -638,33 +638,35 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }).flatMap(List::stream).collect(Collectors.toList());
     }
 
-    public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+    public synchronized void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
-        if (chargeInstance.getCounter() == null) {
+        if (chargeInstance.getCounterInstances() == null || chargeInstance.getCounterInstances().isEmpty()) {
             return;
         }
 
-        CounterPeriod counterPeriod = null;
+        for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
 
-        for (WalletOperation wo : walletOperations) {
+            CounterPeriod counterPeriod = null;
 
-            // In case of virtual operation only instantiate a counter period, don't create it
-            if (isVirtual) {
-                counterPeriod = counterInstanceService.instantiateCounterPeriod(chargeInstance.getCounter().getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                        chargeInstance, chargeInstance.getServiceInstance());
+            for (WalletOperation wo : walletOperations) {
 
-                CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                        chargeInstance.getServiceInstance());
+                // In case of virtual operation only instantiate a counter period, don't create it
+                if (isVirtual) {
+                    counterPeriod = counterInstanceService.instantiateCounterPeriod(counterInstance.getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance, chargeInstance.getServiceInstance());
 
-                counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>( realCounterPeriod.getAccumulatedValues()));
-                counterPeriod.setValue(realCounterPeriod.getValue());
+                    CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance, chargeInstance.getServiceInstance());
 
-            } else {
-                counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                        chargeInstance.getServiceInstance());
+                    counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
+                    counterPeriod.setValue(realCounterPeriod.getValue());
+
+                } else {
+                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                            chargeInstance.getServiceInstance());
+                }
+                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
             }
-
-            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
         }
     }
 

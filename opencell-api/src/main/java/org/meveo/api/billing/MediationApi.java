@@ -197,7 +197,8 @@ public class MediationApi extends BaseApi {
 
         CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
 
-        int nbThreads = Runtime.getRuntime().availableProcessors();
+//        int nbThreads = Runtime.getRuntime().availableProcessors();
+        int nbThreads = 1;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
         List<Future> futures = new ArrayList<>();
