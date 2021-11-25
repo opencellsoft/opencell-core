@@ -4823,10 +4823,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     postPaidInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
                 }
             }
+            
             InvoiceType invoiceType = postPaidInvoiceType;
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
-            Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-            String invoiceKey = billingAccount.getId() + "_" + seller.getId()
+            Seller seller = getSelectedSeller(invoiceLine);
+            
+            String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null)
                     + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
             if (ilGroup == null) {
@@ -4875,6 +4877,28 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter, rtPaginationSize);
     }
 
+    private Seller getSelectedSeller(InvoiceLine invoiceLine) {
+    	Seller seller = null;
+    	Invoice invoice=invoiceLine.getInvoice();
+    	if(invoice!=null) {
+    		if(invoice.getSubscription()!=null) {
+    			if(invoice.getSubscription().getSeller()!=null)
+    				seller=invoice.getSubscription().getSeller();
+    		}
+    		if(seller==null && invoice.getCommercialOrder()!=null) {
+    			if(invoice.getCommercialOrder().getSeller()!=null)
+    				seller=invoice.getCommercialOrder().getSeller();
+    		} 
+    		if(seller==null && invoice.getCpqQuote()!=null) {
+    			if(invoice.getCpqQuote().getSeller()!=null) {
+    				seller=invoice.getCpqQuote().getSeller();
+    			}
+    		}
+    	}else {	
+    		seller=invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	}
+    	return seller;
+    }
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
