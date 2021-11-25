@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="oc.xml"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -225,8 +227,9 @@
 		</field>
 	</subDataset>
 	<subDataset name="ba_prices" uuid="5584035b-3f01-4c5b-b63f-2bc9582f7d4a">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="oc.xml"/>
 		<queryString language="xPath">
-			<![CDATA[/quote/details]]>
+			<![CDATA[/quote/details/quote/billableAccounts/billableAccount/billingAccountPrices/price]]>
 		</queryString>
 		<field name="accountingArticle_label" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::accountingArticle/@label]]></fieldDescription>
@@ -261,10 +264,15 @@
 		<field name="recurrencePeriodicity" class="java.lang.String">
 			<fieldDescription><![CDATA[recurrencePeriodicity]]></fieldDescription>
 		</field>
+		<field name="consumer" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/@consumer"/>
+			<fieldDescription><![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/@consumer]]></fieldDescription>
+		</field>
 	</subDataset>
 	<subDataset name="line_prices" uuid="f4a51d10-a40b-44a8-ab1f-124785a429d2">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="oc.xml"/>
 		<queryString language="xPath">
-			<![CDATA[/quote/details]]>
+			<![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price]]>
 		</queryString>
 		<field name="name" class="java.lang.String">
 			<fieldDescription><![CDATA[quoteLots/quoteLot/@name]]></fieldDescription>
@@ -310,6 +318,10 @@
 		</field>
 		<field name="quantity" class="java.lang.Double">
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
+		</field>
+		<field name="consumer" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="ancestor::quoteLine/@consumer"/>
+			<fieldDescription><![CDATA[ancestor::quoteLine/@consumer]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
@@ -699,23 +711,8 @@
 							<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quote/billableAccounts/billableAccount/billingAccountPrices/price")]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="90" uuid="5f9a6320-a48e-4608-b6b0-ba8cf98ba3bc">
-							<jr:columnHeader height="37" rowSpan="1">
-								<box>
-									<pen lineWidth="0.0"/>
-									<topPen lineWidth="0.0"/>
-									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="0.0"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.0"/>
-									<topPen lineWidth="0.0"/>
-									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="0.0"/>
-								</box>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+							<jr:tableHeader height="30" rowSpan="1">
 								<textField>
 									<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#CCCCCC" uuid="90860549-0aa0-4f7f-9b27-55da951eae09"/>
 									<box>
@@ -727,9 +724,42 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{billingAccountCode}]]></textFieldExpression>
 								</textField>
+							</jr:tableHeader>
+							<jr:columnHeader height="37" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="90" height="37" uuid="e950bb10-e45e-4833-aca7-a1d98ce57311"/>
+									<box leftPadding="0" rightPadding="2"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="SansSerif" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Consumer]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="30" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textField isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="90" height="30" isPrintWhenDetailOverflows="true" uuid="07278a25-0ee8-4abc-be68-0d75bf10dd6d"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{consumer}]]></textFieldExpression>
+								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="95" uuid="ba770bf1-8765-4d9f-b311-669fae82c05e">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -744,7 +774,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[price type]]></text>
+									<text><![CDATA[Price type]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -763,6 +793,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="90" uuid="9134d350-8cbf-4085-9999-8daabbfdbaab">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -777,7 +809,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[amount without tax]]></text>
+									<text><![CDATA[Amount without tax]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -796,6 +828,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="99" uuid="fcf14bb3-259d-4c47-9e87-b2a25a89473d">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -810,7 +844,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[amount with tax]]></text>
+									<text><![CDATA[Amount with tax]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -829,6 +863,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="69" uuid="e9c9089f-b869-4a3c-9951-08f5b9b64c99">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -843,7 +879,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[tax]]></text>
+									<text><![CDATA[Tax]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -862,6 +898,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="65" uuid="4b1e6572-7e87-456c-af20-b470232bcea2">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -876,7 +914,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[tax rate]]></text>
+									<text><![CDATA[Tax rate]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -895,6 +933,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="83" uuid="5dd88f85-b595-4119-915d-aed2f0d66917">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -909,7 +949,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[recurrence duration]]></text>
+									<text><![CDATA[Recurrence duration]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -958,8 +998,8 @@
 							<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price")]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="67" uuid="7bfd2125-96e0-458d-ba0f-99d214a2b80a">
-							<jr:columnHeader height="37" rowSpan="1"/>
-							<jr:detailCell height="30" rowSpan="1">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+							<jr:tableHeader height="30" rowSpan="1">
 								<textField>
 									<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="67" height="30" backcolor="#CCCCCC" uuid="47119aa4-c1f4-49b2-b51e-aef4b63732fb"/>
 									<box>
@@ -972,9 +1012,40 @@
 									<textElement verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{billingAccountCode}]]></textFieldExpression>
 								</textField>
+							</jr:tableHeader>
+							<jr:columnHeader height="37" rowSpan="1">
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="67" height="37" uuid="4f7f147e-f574-4fcc-b5c1-c0d194ec3964"/>
+									<box leftPadding="0" rightPadding="2"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="SansSerif" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Consumer]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell height="30" rowSpan="1">
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="67" height="30" uuid="96ef05bd-18bf-4907-82b4-dec73dad7a70"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{consumer}]]></textFieldExpression>
+								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="81" uuid="37ac9d2f-0d72-4e6f-b958-089d30f63c11">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -989,7 +1060,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[article]]></text>
+									<text><![CDATA[Article]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1002,12 +1073,14 @@
 								</box>
 								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="81" height="30" uuid="9118be67-ed72-4e77-bde5-79fe436a7f2b"/>
-									<textElement verticalAlignment="Middle"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{accountingArticleLabel}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="70" uuid="7e7c6c00-3f02-4529-8f88-9d4c760f100c">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1022,7 +1095,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[price type]]></text>
+									<text><![CDATA[Price type]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1035,12 +1108,14 @@
 								</box>
 								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="70" height="30" uuid="5ff454c7-b406-4060-829b-24731bc1ab1d"/>
-									<textElement verticalAlignment="Middle"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{priceType}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="52" uuid="af553297-0264-4786-895b-a0ef783f69a9">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1055,7 +1130,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[quantity]]></text>
+									<text><![CDATA[Quantity]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1074,6 +1149,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="70" uuid="d4a77252-04e5-4528-987d-cb5d3104cb43">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1088,7 +1165,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[amount without tax]]></text>
+									<text><![CDATA[Amount without tax]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1107,6 +1184,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="71" uuid="059f628b-75ea-4a7d-af84-8525e695d0e3">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1121,7 +1200,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[amount with tax]]></text>
+									<text><![CDATA[Amount with tax]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1140,6 +1219,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="62" uuid="0e694df2-bd5a-4b57-858c-35b568c02a19">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1154,7 +1235,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[tax]]></text>
+									<text><![CDATA[Tax]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1173,6 +1254,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="61" uuid="560d1926-a0ab-46a8-ab18-2cbe1f8fcd8a">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1187,7 +1270,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[tax rate]]></text>
+									<text><![CDATA[Tax rate]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">
@@ -1206,6 +1289,8 @@
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="56" uuid="2bb64140-6e8b-4b36-a26f-e0eef7de8e21">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+							<jr:tableHeader height="30" rowSpan="1"/>
 							<jr:columnHeader height="37" rowSpan="1">
 								<box>
 									<pen lineWidth="0.25"/>
@@ -1220,7 +1305,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="SansSerif" isBold="true"/>
 									</textElement>
-									<text><![CDATA[recurrence duration]]></text>
+									<text><![CDATA[Recurrence duration]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="30" rowSpan="1">

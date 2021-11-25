@@ -1,21 +1,23 @@
 package org.meveo.api.dto.cpq.xml;
 
-import org.meveo.api.dto.cpq.PriceDTO;
-import org.meveo.model.cpq.commercial.PriceLevelEnum;
-import org.meveo.model.cpq.enums.PriceTypeEnum;
-import org.meveo.model.quote.QuoteArticleLine;
-import org.meveo.model.quote.QuotePrice;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import org.meveo.api.dto.cpq.PriceDTO;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QuoteLine {
@@ -32,13 +34,16 @@ public class QuoteLine {
     private List<PriceDTO> prices;
     
     private Offer offer;
+    
+    @XmlAttribute
+    private String consumer;
 
     public QuoteLine(QuoteArticleLine line,Offer offer) {
         this.quantity = line.getQuantity();
         this.accountingArticleCode = line.getAccountingArticle().getCode();
         this.accountingArticleLabel = line.getAccountingArticle().getDescription();
+        this.consumer=line.getQuoteVersion()!=null?(line.getQuoteVersion().getQuote().getUserAccount()!=null?line.getQuoteVersion().getQuote().getUserAccount().getCode():null):null;
         this.prices = aggregatePricesPerType(line.getQuotePrices());
-        
         this.offer= offer;
         
         
@@ -110,6 +115,16 @@ public class QuoteLine {
 	public void setOffer(Offer offer) {
 		this.offer = offer;
 	}
+
+	public String getConsumer() {
+		return consumer;
+	}
+
+	public void setConsumer(String consumer) {
+		this.consumer = consumer;
+	}
+	
+	
     
     
 }
