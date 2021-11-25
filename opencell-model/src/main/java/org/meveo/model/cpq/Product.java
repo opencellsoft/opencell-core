@@ -41,6 +41,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.article.ArticleMappingLine;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -429,17 +430,20 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
+		List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<ServiceChargeTemplateUsage>();
 		if(this.serviceUsageCharges.isEmpty()){
-			this.serviceUsageCharges = getProductCharges().stream()
-					.filter(pc -> pc.getChargeTemplate() != null)
-					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-					.filter(charge -> charge instanceof UsageChargeTemplate)
-					.map(ch -> {
-						ServiceChargeTemplateUsage serviceChargeTemplateRecurring = new ServiceChargeTemplateUsage();
-						serviceChargeTemplateRecurring.setChargeTemplate((UsageChargeTemplate)ch);
-						return serviceChargeTemplateRecurring;
-					})
-					.collect(Collectors.toList());
+			for(ProductChargeTemplateMapping pc : getProductCharges()) {
+				if(pc.getChargeTemplate() != null) {
+					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
+					if(ch instanceof UsageChargeTemplate) {
+						ServiceChargeTemplateUsage serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+						serviceChargeTemplateUsage.setChargeTemplate((UsageChargeTemplate)ch);
+						serviceChargeTemplateUsage.setAccumulatorCounterTemplates(pc.getAccumulatorCounterTemplates());
+						serviceChargeTemplateUsage.setCounterTemplate(pc.getCounterTemplate());
+						serviceUsageCharges.add(serviceChargeTemplateUsage);
+					}
+				}
+			}
 		}
 		return serviceUsageCharges;
 	}
