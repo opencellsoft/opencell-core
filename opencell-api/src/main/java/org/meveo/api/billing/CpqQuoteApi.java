@@ -1213,6 +1213,8 @@ public class CpqQuoteApi extends BaseApi {
 
         clearExistingQuotations(quoteVersion);
 
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
@@ -1242,7 +1244,7 @@ public class CpqQuoteApi extends BaseApi {
 
 
 
-        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+
 
 
 
@@ -1276,7 +1278,9 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
-            quotePriceService.create(quotePrice);
+            if(!PriceLevelEnum.OFFER.equals(level)) {
+                quotePriceService.create(quotePrice);
+            }
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
     	}
@@ -1299,7 +1303,7 @@ public class CpqQuoteApi extends BaseApi {
             	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
             }
             if(!PriceLevelEnum.OFFER.equals(level)) {
-            quotePriceService.create(quotePrice);
+                quotePriceService.create(quotePrice);
             }
             log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
 
