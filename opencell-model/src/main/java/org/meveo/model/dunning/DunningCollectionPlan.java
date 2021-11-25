@@ -33,6 +33,7 @@ import org.meveo.model.billing.Invoice;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_collection_plan_seq")})
 @NamedQueries({
+		@NamedQuery(name = "DunningCollectionPlan.DCPtoResume", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.status.status='PAUSED' and dcp.pausedUntilDate <= :resumeDate"),
 		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.relatedInvoice.id = :invoiceID")
 })
 public class DunningCollectionPlan extends AuditableEntity {
@@ -366,5 +367,12 @@ public class DunningCollectionPlan extends AuditableEntity {
 
 	public void setCollectionPlanNumber(String collectionPlanNumber) {
 		this.collectionPlanNumber = collectionPlanNumber;
+	}
+
+	/**
+	 * @param days
+	 */
+	public void addPauseDuration(int days) {
+		this.pauseDuration = this.pauseDuration == null ? days : this.pauseDuration + days;
 	}
 }

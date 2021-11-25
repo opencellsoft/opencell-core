@@ -6,6 +6,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.ws.rs.BadRequestException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
@@ -51,11 +52,15 @@ public class DunningCollectionPlanStatusService extends PersistenceService<Dunni
         }
     }
 
-    public DunningCollectionPlanStatus findByStatus(String status) {
-        return getEntityManager()
+    public DunningCollectionPlanStatus findByStatus(DunningCollectionPlanStatusEnum status) {
+        final DunningCollectionPlanStatus DCPstatus = getEntityManager()
                     .createNamedQuery("DunningCollectionPlanStatus.findByStatus", DunningCollectionPlanStatus.class)
                     .setParameter("status", status)
                     .setMaxResults(1)
                     .getSingleResult();
+        if(DCPstatus==null) {
+        	throw new BusinessException("No DunningCollectionPlanStatus found for status : "+status);
+        }
+		return DCPstatus;
     }
 }
