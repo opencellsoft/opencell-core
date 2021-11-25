@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -78,6 +79,23 @@ public class ProductChargeTemplateMappingDto {
 	 */
 	public void setAccumulatorCounterCodes(List<String> accumulatorCounterCodes) {
 		this.accumulatorCounterCodes = accumulatorCounterCodes;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(accumulatorCounterCodes, chargeCode, counterCode, productCode);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductChargeTemplateMappingDto other = (ProductChargeTemplateMappingDto) obj;
+		return Objects.equals(accumulatorCounterCodes, other.accumulatorCounterCodes)
+				&& Objects.equals(chargeCode, other.chargeCode) && Objects.equals(counterCode, other.counterCode)
+				&& Objects.equals(productCode, other.productCode);
 	}
 	
 	
