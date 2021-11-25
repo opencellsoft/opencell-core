@@ -232,7 +232,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             return null;
         }
 
-        return "customerAccountDetailOperationsTab";
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + entity.getId() + "&edit=false&mainTab=1&faces-redirect=true";
     }
 
     public String backCA() {
