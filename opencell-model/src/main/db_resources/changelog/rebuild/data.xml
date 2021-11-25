@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
     	
     <changeSet id="#INTRD-1166_20211018_Business_attributes" author="MohammedELAZZOUZI">
 		<insert tableName="cpq_attribute">
@@ -7667,7 +7668,7 @@
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
             <column name="sc_d_o_month" value="Last" />
-            <column name="sc_d_o_week" value="0" />
+            <column name="sc_d_o_week" value="*" />
             <column name="sc_hour" value="23" />
             <column name="sc_min" value="59" />
             <column name="sc_month" value="*" />
@@ -9604,6 +9605,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         	<column name="dunning_settings_id" valueNumeric="1" />
        	</insert>
    	</changeSet>
+	<changeSet id="INTRD-2701_20211124" author="hichamElHaloui"/>
 
 	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM">
 		<update tableName="dunning_collection_plan_statuses">
