@@ -7936,7 +7936,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</update>
 	</changeSet>
 
-
     <changeSet id="#INTRD-3262_20211123" author="YoussefIZEM">
 		<update tableName="dunning_collection_plan_statuses">
 			<column name="status">ACTIVE</column>
