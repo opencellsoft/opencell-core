@@ -10587,7 +10587,7 @@
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
             <column name="sc_d_o_month" value="Last" />
-            <column name="sc_d_o_week" value="0" />
+            <column name="sc_d_o_week" value="*" />
             <column name="sc_hour" value="23" />
             <column name="sc_min" value="59" />
             <column name="sc_month" value="*" />
@@ -13809,12 +13809,7 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="sequence_size" valueNumeric="9" />
         </insert>
     </changeSet>
-    <changeSet id="INTRD-2701_20211124" author="hichamElHaloui">
-        <update tableName="meveo_timer">
-            <column name="sc_d_o_week" value="*" />
-            <where>id=-2</where>
-        </update>
-    </changeSet>
+    <changeSet id="INTRD-2701_20211124" author="hichamElHaloui"/>
 
 
 </databaseChangeLog>
