@@ -268,11 +268,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	    
 	    if (levels != null) {
             for (Long levelInstanceId : levels) {
-                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("policyLevel"));
+                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(levelInstanceId);
                 if (dunningLevelInstance == null) {
                     new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
                 }
-                if (dunningLevelInstance.getPolicyLevel().getDunningLevel().isEndOfDunningLevel()) {
+                if (dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
                     new BadRequestException("Cannot modify or delete the end level");
                 }
                 if (dunningLevelInstance.getLevelStatus() != null && dunningLevelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.TO_BE_DONE) {
