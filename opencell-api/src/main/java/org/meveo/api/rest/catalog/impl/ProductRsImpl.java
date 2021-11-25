@@ -1,5 +1,7 @@
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
@@ -8,6 +10,7 @@ import org.meveo.api.cpq.ProductLineApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.ProductChargeTemplateMappingDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -243,6 +246,30 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		GetCpqOfferResponseDto result = new GetCpqOfferResponseDto();
 		try {  
 			result = productApi.listPost(offerContextDto);
+			return Response.ok(result).build(); 
+
+		} catch (MeveoApiException e) { 
+			return errorResponse(e, result.getActionStatus());
+		} 
+	}
+
+	@Override
+	public Response addCharges(String productCode, List<ProductChargeTemplateMappingDto> productChargeTemplateMapping) {
+		GetProductDtoResponse result = new GetProductDtoResponse();
+		try {  
+			result = productApi.addCharges(productCode, productChargeTemplateMapping);
+			return Response.ok(result).build(); 
+
+		} catch (MeveoApiException e) { 
+			return errorResponse(e, result.getActionStatus());
+		} 
+	}
+
+	@Override
+	public Response removeCharge(String productCode, List<String> chargeCodes) {
+		GetProductDtoResponse result = new GetProductDtoResponse();
+		try {  
+			result = productApi.removeCharges(productCode, chargeCodes);
 			return Response.ok(result).build(); 
 
 		} catch (MeveoApiException e) { 
