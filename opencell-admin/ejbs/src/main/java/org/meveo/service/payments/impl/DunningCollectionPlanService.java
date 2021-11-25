@@ -150,7 +150,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         levelInstance.setPolicyLevel(policyLevel);
         levelInstance.setLevelStatus(status);
         levelInstance.setSequence(policyLevel.getSequence());
-        if (dayOverDue != null) {            
+        levelInstance.setDunningLevel(policyLevel.getDunningLevel());
+        if (dayOverDue != null) {
             levelInstance.setDaysOverdue(dayOverDue);
         }
         else {

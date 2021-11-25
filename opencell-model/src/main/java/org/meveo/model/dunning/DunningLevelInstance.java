@@ -4,7 +4,17 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -15,9 +25,7 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "dunning_level_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_level_instance_seq") })
-@NamedQueries({
-        @NamedQuery(name = "DunningLevelInstance.findByPolicyLevelId", query = "SELECT li FROM DunningLevelInstance li where li.policyLevel.id = :policyLevelId")
-})
+@NamedQueries({ @NamedQuery(name = "DunningLevelInstance.findByPolicyLevelId", query = "SELECT li FROM DunningLevelInstance li where li.policyLevel.id = :policyLevelId") })
 public class DunningLevelInstance extends AuditableEntity {
 
     private static final long serialVersionUID = -5809793412586160209L;
@@ -49,6 +57,10 @@ public class DunningLevelInstance extends AuditableEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private DunningLevelInstanceStatusEnum levelStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_level_id")
+    private DunningLevel dunningLevel;
 
     public DunningLevelInstance() {
         super();
@@ -108,5 +120,13 @@ public class DunningLevelInstance extends AuditableEntity {
 
     public void setLevelStatus(DunningLevelInstanceStatusEnum levelStatus) {
         this.levelStatus = levelStatus;
+    }
+
+    public DunningLevel getDunningLevel() {
+        return dunningLevel;
+    }
+
+    public void setDunningLevel(DunningLevel dunningLevel) {
+        this.dunningLevel = dunningLevel;
     }
 }
