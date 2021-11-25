@@ -334,8 +334,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         try {
             ParamBean paramBean = paramBeanFactory.getInstance();
-            String occTransferAccountCredit = paramBean.getProperty("occ.templateTransferAccountCredit", null);
-            String occTransferAccountDebit = paramBean.getProperty("occ.templateTransferAccountDebit", null);
+            String occTransferAccountCredit = paramBean.getProperty("occ.templateTransferAccountCredit", "CRD_TRS");
+            String occTransferAccountDebit = paramBean.getProperty("occ.templateTransferAccountDebit", "DBT_TRS");
             String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
             String descTransfertTo = paramBean.getProperty("occ.descTransfertTo", "transfer to");
 
