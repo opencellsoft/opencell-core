@@ -16792,6 +16792,7 @@
             <column name="dunning_collection_plan_id" type="bigint" />
             <column name="dunning_collection_plan_status_id" type="bigint"/>
             <column name="level_status" type="varchar(255)" />
+            <column name="dunning_level_id" type="bigint" />
 		</createTable>
 
 		<addForeignKeyConstraint baseColumnNames="dunning_policy_level_id" baseTableName="dunning_level_instance"
@@ -16805,6 +16806,10 @@
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_status_id" baseTableName="dunning_level_instance"
         	constraintName="fk_dunning_collection_plan_statuses" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan_statuses" />
+
+		<addForeignKeyConstraint baseColumnNames="dunning_level_id" baseTableName="dunning_level_instance"
+			constraintName="fk_dunning_level_instance_dunning_level" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
 
 		<createSequence sequenceName="dunning_action_instance_seq" startValue="1" />
 		<createTable tableName="dunning_action_instance">
@@ -16848,6 +16853,8 @@
         	constraintName="fk_dunning_level_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

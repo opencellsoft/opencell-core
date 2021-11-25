@@ -11471,4 +11471,13 @@ order by date_trunc('month', i.invoice_date) DESC
 	    </addColumn>
 	</changeSet>
 	
+	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA">
+	    <addColumn tableName="dunning_level_instance">
+	        <column name="dunning_level_id" type="bigint" />
+	    </addColumn>
+	    <addForeignKeyConstraint baseColumnNames="dunning_level_id" baseTableName="dunning_level_instance" constraintName="fk_dunning_level_instance_dunning_level"
+        	deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
+	</changeSet>
+	
 </databaseChangeLog>
