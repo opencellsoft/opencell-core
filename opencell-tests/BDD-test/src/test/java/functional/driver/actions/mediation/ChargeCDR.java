@@ -12,16 +12,16 @@ import net.thucydides.core.annotations.Step;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-public class ImportCDR implements Task {
+public class ChargeCDR implements Task {
 
     private final String entityDto;
 
-    public ImportCDR(String entityDto) {
+    public ChargeCDR(String entityDto) {
         this.entityDto = entityDto;
     }
 
-    public static ImportCDR called(String entityDto) {
-        return Tasks.instrumented(ImportCDR.class, entityDto);
+    public static ChargeCDR called(String entityDto) {
+        return Tasks.instrumented(ChargeCDR.class, entityDto);
     }
 
     @Override

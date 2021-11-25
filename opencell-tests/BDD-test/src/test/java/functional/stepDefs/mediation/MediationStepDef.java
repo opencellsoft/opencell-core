@@ -1,9 +1,8 @@
 package functional.stepDefs.mediation;
 
-import functional.driver.actions.mediation.ImportCDR;
+import functional.driver.actions.mediation.ChargeCDR;
 import functional.driver.actions.subscription.ActivateService;
 import functional.driver.actions.subscription.UpdateService;
-import functional.driver.assertions.GetAmountWithTaxOfWalletOperation;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -27,24 +26,23 @@ public class MediationStepDef {
         actor = Actor.named("I am the supervisor").whoCan(CallAnApi.at(restApiBaseUrl));
     }
 
-    @When("^I activate services on subscription$")
+    @When("I activate services on subscription")
     public void actorActivatesServiceOnSubscription(DataTable dataTable) {
         actor.attemptsTo(ActivateService.called(dataTable));
     }
 
-    @And("I import CDR")
-    public void actorImportCDR(String cdr) {
-        System.out.println( "cdr : " + cdr );
-        actor.attemptsTo(ImportCDR.called(cdr));
+    @And("I register CDR and create Wallet Operations")
+    public void actorChargeCDR(String cdr) {
+        actor.attemptsTo(ChargeCDR.called(cdr));
     }
 
-    @And("^I update service on subscription$")
+    @And("I update service on subscription")
     public void actorUpdateServiceOnSubscription(DataTable dataTable) {
         actor.attemptsTo(UpdateService.called(dataTable));
     }
 
     @Then("amount with tax of {int} wallet operation should be equal to {double} euros")
     public void amountWithTaxOfWalletOperationShouldBeEqualToEuros(int order, double amount) {
-        actor.asksFor(GetAmountWithTaxOfWalletOperation.called(order, amount));
+//        actor.asksFor(GetAmountWithTaxOfWalletOperation.called(order, amount));
     }
 }

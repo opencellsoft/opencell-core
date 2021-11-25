@@ -13,23 +13,25 @@ import javax.ws.rs.core.MediaType;
 
 public class GetAmountWithTaxOfWalletOperation implements Question<Object> {
 
-    private final int order;
-    private final float amount;
-    private final String elementToVerify;
+    private final String order;
+    private final String entity;
+    private final String field;
+    private final String expectedValue;
 
-    public GetAmountWithTaxOfWalletOperation(int order, double amount) {
-        this.order = order - 1;
-        this.amount = (float) amount;
-        elementToVerify = "amountWithTax";
+    public GetAmountWithTaxOfWalletOperation(String order, String entity, String field, String expectedValue) {
+        this.order = order;
+        this.entity = entity;
+        this.field = field;
+        this.expectedValue = expectedValue;
     }
 
-    public static Question<Object> called(int order, double amount) {
-        return new GetAmountWithTaxOfWalletOperation(order, amount);
+    public static Question<Object> called(String order, String entity, String field, String expectedValue) {
+        return new GetAmountWithTaxOfWalletOperation(order, entity, field, expectedValue);
     }
 
     @Override
     public Object answeredBy(Actor actor) {
-        final String url = "/v2/generic/all/walletOperation";
+        final String url = "/v2/generic/all/" + entity;
         final String bodyRequest = "{\"limit\":\"1\","
                 + "\"offset\":" + this.order + ",\"filters\":{\"code\":\"CH_USG_UNIT\"}}";
 
@@ -44,7 +46,7 @@ public class GetAmountWithTaxOfWalletOperation implements Question<Object> {
 
         actor.should(
                 ResponseConsequence.seeThatResponse(response -> response.statusCode(200)
-                        .body("data[0]." + elementToVerify, CoreMatchers.equalTo(amount)))
+                        .body("data[0]." + field, CoreMatchers.equalTo(expectedValue)))
         );
 
         return null;
