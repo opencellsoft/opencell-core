@@ -148,6 +148,45 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 }
                 reportExtractExecutionResult.setLineCount(reportSize);
                 results.close();
+            } else {
+                String header = "";
+                switch (entity.getCode()) {
+                case "REPORT_ACCOUNT_OPERATIONS" : header = "Account Operation Id|Customer Account Id|Customer Account Code|Transaction Type|Type Code|Description|Transaction Direction|Transaction Date|Due Date|Amount Without Tax|Tax Amount|Amount with Tax|Matching Amount|Unmatched Amount|Matching Status|Billing Account Number|Payment File AC Number|From Billing Account|To Billing Account|Payment File Name|Reason|User|Accounting Code|Payment Reference|Invoice Number|Invoice Date|Order Number"; break;
+                case "REPORT_ACCOUNTING_CODE" : header = "Accounting Code Id|Parent Code|Description|Account Type|Reporting Account|Disabled"; break;
+                case "REPORT_ASSOCIATIONS" : header = "Subscription Id|Association Id|Name|Circuit Id|Association Type|Association End|Status|State|Order|Address Line 1|Address Line 2|Address Line 3|Address Line 4|Address Line 5|County|Postal District|Country|Eircode"; break;
+                case "REPORT_BILLED_NONUSAGE" : header = "Subscription Id|Transaction Id|Charge Code|Charge Description|Offer|Offer Type|Price Plan|Invoice|Billing Account|Billing Run|Wallet Operation|Re-Rated WO Id|Amount Without Tax|Tax Class|Tax Rate|Tax Amount|Amount with Tax|Raw Amount with Tax|Raw Amount without Tax|Input Quantity|Quantity|Invoice Subcategory|Accounting Code|Date|Start Date|End Date|Status|Billed Date"; break;
+                case "REPORT_BILLED_USAGE" : header = "Subscription Id|Transaction Id|Charge Code|Charge Description|Price Plan|Invoice|Billing Account|Billing Run|CDR|EDR|Wallet Operation|Amount Without Tax|Tax Class|Tax Rate|Tax Amount|Amount with Tax|Raw Amount with Tax|Raw Amount without Tax|Call Duration|Invoice Subcategory|Accounting Code|Usage Date|Start Date|End Date|Connection Charge|Min Call Charge|Time Period|Traffic Class|Status|Billed Date"; break;
+                case "REPORT_BILLING_ACCOUNT" : header = "Billing Account Id|Billing Account Code|Billing Account Number|Billing Account Name|Customer Account Id|Customer Account Code|Title|First Name|Last Name|Status|Status Date|Language|Service Type|Last Bill Date|Next Bill Date|Bill Cycle|Bill Delivery Type|HUB Directory|Electronic Billing|Phone|Email Address|Address Line 1|Address Line 2|Address Line 3|Postal Code|City|Country|Tax Category|Operator Id|VAT Authentication Number|VAT Authentication Expiry Date|Registration Number"; break;
+                case "REPORT_BILLING_ACCOUNT_BALANCE" : header = "Billing Account Id|Billing Account Code|Billing Account Name|Billing Account Number|Date|Outstanding Balance|Last Bill Date|Next Bill Date|Customer Account Id|Customer Id"; break;
+                case "REPORT_CUSTOMER" : header = "Customer Id|Customer Code|Company|Title|First Name|Last Name|Customer Category|Seller|RAP Customer"; break;
+                case "REPORT_CUSTOMER_ACCOUNT" : header = "Customer Account Id|Customer Account Code|Customer Account Name|Customer Id|Status|Title|First Name|Last Name|Currency|Address Line 1|Address Line 2|Address Line 3|Postal Code|City|Country"; break;
+                case "REPORT_ENDPOINTS" : header = "Subscription Id|End Point Id|End|A End Point Name|Order|Status|End Point Type|ARD Id|End Point State|End Address Line 1|End Address Line 2|End Address Line 3|End Address Line 4|End Address Line 5|End County|End Postal District|End Country|End Eircode"; break;
+                case "REPORT_SUBSCRIPTION" : header = "Subscription Id|User Account Id|Subscription Code|Offer|Circuit Type|Billing Account Id|Billing Account Code|Billing Account Number|Status|Status Date|End of Engagement Date|Subscription Start Date|Subscription End Date|UAN|End Point A Id|End Point B Id|Association A Id|Association B Id|Association C Id"; break;
+                case "REPORT_SUBSCRIPTION_SERVICES" : header = "Service Instance Id|Subscription Id|Subscription Code|Service|Service Name|Service Type|User Account|User Account Id|Quantity|Operator Order Number|Order Id|Activation Date|Reccuring Charge|Charge Interval|Reccuring Charge ex VAT|Specially Initiation Price|Special Rental Price|Next Charge Date|Charged To Date|Action Qualifier|A End ARD Id|AF|Agent Code|Analogue Quantity|Analogue Rate|Bandwidth|B End ARD Id|Charge Type|Class of Service|Commitment Period|Commitment Treatment|Component Id|CPE Description|CPE Type|Density|Distance|EF|Egress Group|ETS Type|Exchange Code|IND 01|IND 02|IND 03|IND 04|IND 05|IND 06|IND 07|IND 08|IND 09|IND 10|Item Component Id|Main Service Bill Code|Not Before Date OMS|Operator Order No|Order Type|Price Plan|Price Plan ind|Price Plan Text|Processing Status|Quantity*|Range Start|Range End|Rating Scheme|Ref Service Id|Region|Rental Liability Date|Service Category|Service Type*|SGN STD Code|Site General Number|SLA|State|Status|Sub Order|Transmission|Unique id of the Component in OMS|XREF|Zone A|Zone B"; break;
+                case "REPORT_UNBILLED_NONUSAGE" : header = "Subscription Id|Transaction Id|Charge Code|Charge Description|Offer|Offer Type|Price Plan|Invoice|Billing Account|Billing Run|Wallet Operation|Re-Rated WO Id|Amount Without Tax|Tax Class|Tax Rate|Tax Amount|Amount with Tax|Raw Amount with Tax|Raw Amount without Tax|Input Quantity|Quantity|Invoice Subcategory|Accounting Code|Date|Start Date|End Date|Status"; break;
+                case "REPORT_UNBILLED_USAGE" : header = "Subscription Id|Transaction Id|Charge Code|Charge Description|Price Plan|Invoice|Billing Account|Billing Run|CDR|EDR|Wallet Operation|Amount Without Tax|Tax Class|Tax Rate|Tax Amount|Amount with Tax|Raw Amount with Tax|Raw Amount without Tax|Call Duration|Invoice Subcategory|Accounting Code|Usage Date|Start Date|End Date|Connection Charge|Min Call Charge|Time Period|Traffic Class|Status"; break;
+                case "REPORT_VAT_DETAIL" : header = "Bill Run Id|Bill Cycle Id|Bill Cycle Name|Billing Account Number|Invoice Number|Tax Class|Bill Date|Tax Category|Tax Rate|Tax Amount|Billed Amount Net (ex VAT)|Billed Amount Gross (incl VAT)|Service Type|Currency"; break;
+                case "REPORT_VAT_SUMMARY" : header = "Tax Class|Bill Date|Tax Category|Tax Rate|Tax Amount|Billed Amount Net (ex VAT)|Billed Amount Gross (incl VAT)|Service Type|Currency"; break;
+                case "REPORT1_AGED_DEBT_ANALYSIS" : header = "Customer code|Customer account code|Billing account number|Billing Account Name|Service Type|Tax Category|Active Subscriptions|Not Overdue (Amount)|1-30 days|31-60 days|61-90 days|91-120 days|121-150 days|151-180 days|181-210 days|211-240 days|241-270 days|271-300 days|301-330 days|331-365 days|1-2 year|> 2 years|due_total"; break;
+                case "REPORT2_RWO_AGED_DEBT_ANALYSIS" : header = "Customer code|Customer account code|Billing account number|Billing Account Name|Service Type|Tax Category|RWO Number|Transaction number|Transaction date|Transaction type|Not Overdue (Amount)|1-30 days|31-60 days|61-90 days|91-120 days|121-150 days|151-180 days|181-210 days|211-240 days|241-270 days|271-300 days|301-330 days|331-365 days|1-2 year|> 2 years|due_total"; break;
+                case "REPORT3_RWO_PAYMENTS_DAILY" : header = "Tax category|Billing account number|Billing account code|Billing account name|Amount|Currency|Account operation code|Transaction date"; break;
+                case "REPORT4_RWO_PAYMENTS_MONTHLY" : header = "Tax category|Billing account number|Billing account code|Billing account name|Amount|Currency|Account operation code|Transaction date"; break;
+                case "REPORT5_RWO_BILLING" : header = "Tax category|Billing account number|Billing account code|RWO number|Billing account name|Address line 1|Address line 2|Address line 3|Postal code|City|Bill date|Invoice number|Bill text|From date|To date|Amount ex. tax|Tax"; break;
+                case "REPORT6_UNBILLED_CHARGES" : header = "Service type|Bill cycle name|Billing account number|Billing account name|Next invoice date|Status|Amount (ex VAT)"; break;             
+                }
+                if(StringUtils.isNotBlank(header)) {
+                    File dir = new File(reportDir.toString());
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    File file = new File(reportDir.toString() + File.separator + filename);
+                    try (FileWriter fileWriter = new FileWriter(file);) {
+                        fileWriter.write(header);
+                        fileWriter.flush();
+                    } catch (Exception e) {
+                        throw new BusinessException("Cannot write report to file "+ file.getAbsolutePath(), e);            
+                    } 
+                }
             }
 
         } else {
