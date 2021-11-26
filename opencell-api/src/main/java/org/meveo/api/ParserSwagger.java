@@ -90,8 +90,6 @@ public class ParserSwagger {
                 missingCommentList.add(fileIndex);
             }
         }
-        System.out.println("List of files with missing Comments:");
-        missingCommentList.forEach(System.out::println);
     }
     //Function to check if missing comment by comparing the length of  the list of the declaration and the number of return type
     private boolean checkLength(File FILE_PATH) throws FileNotFoundException {

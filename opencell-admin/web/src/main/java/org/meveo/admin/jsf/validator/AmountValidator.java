@@ -54,7 +54,6 @@ public class AmountValidator implements Validator {
             amount2.setScale(2, RoundingMode.HALF_UP);
             Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
             BigDecimal calculatedAmount = amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100)).add(amountWithoutTax).setScale(2, RoundingMode.HALF_UP);
-            System.out.println("CALCULATED" + calculatedAmount + "aaa" + calculatedAmount.compareTo(amount2));
             if (calculatedAmount.compareTo(amount2) == 0) {
                 return true;
             }

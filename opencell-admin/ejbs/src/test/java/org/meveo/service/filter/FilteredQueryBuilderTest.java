@@ -147,7 +147,6 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		try {
 			String result = filterService.filteredList(filter, 1, 2);
 
-			System.out.println(result);
 
 			Assert.assertNotNull(result);
 		} catch (Exception e) {

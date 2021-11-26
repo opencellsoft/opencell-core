@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.slf4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -27,6 +30,8 @@ import junit.framework.Assert;
  * @lastModifiedVersion 7.0
  */
 public class ExportTest {
+	@Inject
+	private Logger log;
 
     private Map<ExportTemplate, XStream> xstreams = new HashMap<ExportTemplate, XStream>();
 
@@ -131,8 +136,6 @@ public class ExportTest {
 
         writer.endNode();
 
-        System.out.println(buffer.toString());
-
         // ObjectOutputStream oos = xstream.createObjectOutputStream(writer);
         // oos.writeObject(customer);
         // oos.writeObject(custAccount);
@@ -145,7 +148,7 @@ public class ExportTest {
 
         String rootNode = reader.getNodeName();
         if (rootNode.equals("meveoExport")) {
-            System.out.println("Version " + reader.getAttribute("version"));
+        	log.info("Version : " + reader.getAttribute("version"));
         }
 
         while (reader.hasMoreChildren()) {
@@ -179,15 +182,14 @@ public class ExportTest {
 
             Object obj = xstream.unmarshal(reader);
             if (obj instanceof CustomerAccount) {
-                System.out.println("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
-
+                log.info("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
             } else if (obj instanceof Customer) {
                 if (((Customer) obj).getCode().equals("Customer_1")) {
                     ((Customer) obj).setCode("KUKU");
                 }
 
             } else {
-                System.out.println("Object is " + obj.toString());
+                log.info("Object is " + obj.toString());
             }
             reader.moveUp();
         }
