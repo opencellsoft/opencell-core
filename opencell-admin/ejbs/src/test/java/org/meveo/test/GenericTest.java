@@ -35,13 +35,13 @@ public class GenericTest {
 
 	private void writerOfferAndMethod() {
 		for (Method m : OfferTemplateService.class.getMethods()) {
-			System.out.println(m.getParameterTypes());
+			log.info(m.getParameterTypes().toString());
 		}
 	}
 
 	private void testGetMethod() {
 		for (Method m : OfferTemplateService.class.getMethods()) {
-			System.out.println(m.getName() + " " + m.getParameterTypes().length + " " + ReflectionUtils
+			log.info(m.getName() + " " + m.getParameterTypes().length + " " + ReflectionUtils
 					.isMethodImplemented(OfferTemplateService.class, m.getName(), m.getParameterTypes()));
 			// System.out.println(m.getName() + " " +
 			// ReflectionUtils.isMethodOverrriden(m));
@@ -65,9 +65,9 @@ public class GenericTest {
 		AuditConfigurationProvider x = new AuditConfigurationProvider();
 		List<Class<? extends IPersistenceService>> y = x.getServiceClasses();
 		for (Class a : y) {
-			System.out.println(a.getName());
+			log.info(a.getName());
 			for (Method m : a.getMethods()) {
-				System.out.println(m.toString());
+				log.info(m.toString());
 			}
 		}
 	}

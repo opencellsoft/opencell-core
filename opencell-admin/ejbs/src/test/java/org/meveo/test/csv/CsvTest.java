@@ -36,7 +36,6 @@ public class CsvTest {
 	}
 
 	private void testCsvRead() throws Exception {
-		System.out.println("read csv");
 
 		// load file from resource
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -54,7 +53,7 @@ public class CsvTest {
 		try (Reader reader = new FileReader(file)) {
 			MappingIterator<OfferTemplateCategory> mi = oReader.readValues(reader);
 			while (mi.hasNext()) {
-				System.out.println(mi.next());
+				log.info(mi.next().toString());
 			}
 		}
 	}
