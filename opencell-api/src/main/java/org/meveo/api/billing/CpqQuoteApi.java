@@ -812,20 +812,20 @@ public class CpqQuoteApi extends BaseApi {
 
 
     public QuoteOfferDTO updateQuoteItem(QuoteOfferDTO quoteOfferDTO) {
-
-        if (quoteOfferDTO.getQuoteOfferId() == null)
-            missingParameters.add("quoteOfferId");
-        handleMissingParameters();
-        QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
-        if (quoteOffer == null)
-            throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
-        // check offer template if exist
-        if (quoteOfferDTO.getOfferId() != null) {
-            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
-            if (offerTemplate == null)
-                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
-            quoteOffer.setOfferTemplate(offerTemplate);
-        }
+        try {
+            if (quoteOfferDTO.getQuoteOfferId() == null)
+                missingParameters.add("quoteOfferId");
+            handleMissingParameters();
+            QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
+            if (quoteOffer == null)
+                throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
+            // check offer template if exist
+            if (quoteOfferDTO.getOfferId() != null) {
+                OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
+                if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
+                quoteOffer.setOfferTemplate(offerTemplate);
+            }
 
         // check quote version
         if (!Strings.isEmpty(quoteOfferDTO.getQuoteCode())) {
@@ -854,7 +854,10 @@ public class CpqQuoteApi extends BaseApi {
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
         quoteOfferService.update(quoteOffer);
 
-        return quoteOfferDTO;
+            return quoteOfferDTO;
+        }catch(BusinessException exp){
+            throw new BusinessApiException(exp.getMessage());
+        }
     }
 
     private void processQuoteProduct(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
@@ -1348,6 +1351,7 @@ public class CpqQuoteApi extends BaseApi {
         .map(price -> {
             QuotePrice quotePrice = price.get();
             quotePriceService.create(quotePrice);
+            quoteOffer.getQuotePrices().add(quotePrice);
             pricesDTO.add(new PriceDTO(quotePrice));
             return pricesDTO;
         }).collect(Collectors.toList());
