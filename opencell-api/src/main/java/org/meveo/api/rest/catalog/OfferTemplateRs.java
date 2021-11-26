@@ -19,6 +19,7 @@
 package org.meveo.api.rest.catalog;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -36,7 +37,9 @@ import javax.ws.rs.core.Response;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ProductOfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
@@ -530,5 +533,84 @@ public interface OfferTemplateRs extends IBaseRs {
     					  @Parameter(name = "new status", required = true) @QueryParam("status") LifeCycleStatusEnum status, 
     					  @Parameter(name = "date valid from") @QueryParam("validFrom") @RestDateParam Date validFrom, 
     					  @Parameter(name = "date valid to") @QueryParam("validTo") @RestDateParam Date validTo);
+    
+    @POST
+    @Path("/{offerCode}/addProduct")
+	@Operation(
+			summary="Add existing product to an offer",
+			tags = { "OfferTemplate" },
+			description="Add existing product to an offer",
+			responses= {
+				@ApiResponse(description=" Request processing status and offerTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOfferTemplateResponseDto.class
+											)
+								)
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "product code and product id paramters are missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while adding product to offer template ", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))	
+			}
+	)
+    Response addProduct(@PathParam("offerCode") String offerCode, ProductOfferTemplateDto productDto);
+    
+    @POST
+    @Path("/{offerCode}/dissociateProducts")
+	@Operation(
+			summary="dissociate existing product from an offer",
+			tags = { "OfferTemplate" },
+			description="dissociate existing product from an offer",
+			responses= {
+				@ApiResponse(description=" Request processing status and offerTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOfferTemplateResponseDto.class
+											)
+								)
+				),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while dissociate product from offer template ", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))	
+			}
+	)
+    public Response dissociateProduct(@PathParam("offerCode") String offerCode, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, List<String> productCodes);
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
