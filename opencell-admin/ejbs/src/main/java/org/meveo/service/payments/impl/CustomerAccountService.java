@@ -49,7 +49,6 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -82,12 +81,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
-    
-   /** The payment gatway service. */
-    
-    @Inject
-    private PaymentGatewayService paymentGatewayService;
-    
 
     /**
      * Checks if is customer account with id exists.

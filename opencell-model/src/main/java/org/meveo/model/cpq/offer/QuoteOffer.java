@@ -23,10 +23,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -62,6 +62,7 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.cfValues = copy.getCfValues();
 		this.sequence=copy.sequence;
 		this.deliveryDate=copy.deliveryDate;
+		this.userAccount=copy.userAccount;
 	}
 
 
@@ -133,6 +134,10 @@ public class QuoteOffer extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "delivery_date")
     private Date deliveryDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id") 
+    private UserAccount userAccount;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -327,4 +332,15 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.deliveryDate = deliveryDate;
 	}
 
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	
 }
