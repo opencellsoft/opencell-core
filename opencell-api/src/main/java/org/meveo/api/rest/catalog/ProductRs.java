@@ -1,5 +1,7 @@
 package org.meveo.api.rest.catalog;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.ProductChargeTemplateMappingDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -357,7 +360,29 @@ public interface ProductRs extends IBaseRs{
     })
     public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
     
-
+    @POST
+    @Path("/{productCode}/addCharges")
+    @Operation(summary = "Allow to add existing charges from existing product",
+    tags = {"Catalog browsing"},
+    description = "Allow to add existing charges to an existing product",
+    responses = {
+    		@ApiResponse(responseCode = "200", description = "All charges was added", content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class ))),
+            @ApiResponse(responseCode = "404", description = "product or one of the charges doesn't exist")
+    		
+    })
+    public Response addCharges(@PathParam("productCode") String productCode, List<ProductChargeTemplateMappingDto> productChargeTemplateMapping);
+    
+    @POST
+    @Path("/{productCode}/removeCharges")
+    @Operation(summary = "Allow to remove existing charges from existing product",
+    tags = {"Catalog browsing"},
+    description = "remove to add existing charges from existing product",
+    responses = {
+    		@ApiResponse(responseCode = "200", description = "All charges was removed", content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class ))),
+            @ApiResponse(responseCode = "404", description = "product or one of the charges doesn't exist")
+    		
+    })
+    public Response removeCharge(@PathParam("productCode") String productCode, List<String> chargeCodes);
 
 	
 }

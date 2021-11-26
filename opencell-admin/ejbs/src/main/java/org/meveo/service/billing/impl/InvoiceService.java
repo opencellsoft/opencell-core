@@ -1405,7 +1405,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String INVOICE_TAG_NAME = "invoice";
 
-        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+        boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
         File invoiceXmlFile = new File(invoiceXmlFileName);
         if (!invoiceXmlFile.exists()) {
@@ -1898,7 +1898,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Default to invoiceDateOrBillingRunId/invoiceNumber.xml or invoiceDateOrBillingRunId/_IA_invoiceNumber.xml for adjustment invoice
         if (StringUtils.isBlank(xmlFileName)) {
 
-            boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+            boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
             BillingRun billingRun = invoice.getBillingRun();
             String brPath = billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId().toString();
@@ -1972,7 +1972,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Default to invoiceDate_invoiceNumber.pdf or invoiceDate_IA_invoiceNumber.pdf for adjustment invoice
         if (StringUtils.isBlank(pdfFileName)) {
 
-            boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+            boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
             pdfFileName = formatInvoiceDate(invoice.getInvoiceDate()) + (isInvoiceAdjustment ? paramBeanFactory.getInstance().getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "_")
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
@@ -3375,7 +3375,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, taxClass, ratedTransaction.getUserAccount(), taxZero);
+                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(), invoice.getBillingAccount(), invoice.getInvoiceDate(), taxClass, ratedTransaction.getUserAccount(), taxZero);
+
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
@@ -3965,32 +3966,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
     }
 
-    /**
-     * Recalculate tax to see if it has changed
-     *
-     * @param tax Previous tax
-     * @param isExonerated Is Billing account exonerated from taxes
-     * @param invoice Invoice in reference
-     * @param taxClass Tax class
-     * @param userAccount User account to calculate tax by external program
-     * @param taxZero Zero tax to apply if Billing account is exonerated
-     * @return An array containing applicable tax and True/false if tax % has changed from a previous tax
-     * @throws BusinessException Were not able to determine a tax
-     */
-    private Object[] getApplicableTax(Tax tax, boolean isExonerated, Invoice invoice, TaxClass taxClass, UserAccount userAccount, Tax taxZero) throws BusinessException {
-
-        if (isExonerated) {
-            return new Object[] { taxZero, false };
-
-        } else {
-
-            TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(taxClass, invoice.getSeller(), invoice.getBillingAccount(), userAccount, invoice.getInvoiceDate(), false, false);
-
-            Tax recalculatedTax = recalculatedTaxInfo.tax;
-
-            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
-        }
-    }
 
     /**
      * Create an invoice from an InvoiceDto
@@ -5286,7 +5261,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
