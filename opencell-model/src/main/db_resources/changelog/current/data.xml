@@ -7929,5 +7929,12 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         	<column name="dunning_settings_id" valueNumeric="1" />
        	</insert>
    	</changeSet>
+	<changeSet id="INTRD-2701_20211124" author="hichamElHaloui">
+		<update tableName="meveo_timer">
+			<column name="sc_d_o_week" value="*" />
+			<where>id=-2</where>
+		</update>
+	</changeSet>
+
 
 </databaseChangeLog>

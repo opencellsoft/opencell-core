@@ -178,7 +178,10 @@ public class WebHookNotifier {
 				OutputStream os = conn.getOutputStream();
 				OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
 				BufferedWriter writer = new BufferedWriter(out);
-				writer.write(paramQuery);
+				if (paramQuery.contains("body=")) {
+					String body=paramQuery.replace("body=", "");
+					writer.write(body);
+				}
 				writer.flush();
 				writer.close();
 				out.close();

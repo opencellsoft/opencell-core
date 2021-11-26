@@ -103,7 +103,7 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
     }
         
     public String getAdjustmentCode() {
-		return invoiceTypeService.getAdjustementCode();
+		return String.join(",", invoiceTypeService.getListAdjustementCode());
 	}
     
     public String getCommercialCode() {

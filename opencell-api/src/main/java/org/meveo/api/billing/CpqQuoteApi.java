@@ -845,20 +845,20 @@ public class CpqQuoteApi extends BaseApi {
 
 
     public QuoteOfferDTO updateQuoteItem(QuoteOfferDTO quoteOfferDTO) {
-
-        if (quoteOfferDTO.getQuoteOfferId() == null)
-            missingParameters.add("quoteOfferId");
-        handleMissingParameters();
-        QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
-        if (quoteOffer == null)
-            throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
-        // check offer template if exist
-        if (quoteOfferDTO.getOfferId() != null) {
-            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
-            if (offerTemplate == null)
-                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
-            quoteOffer.setOfferTemplate(offerTemplate);
-        }
+        try {
+            if (quoteOfferDTO.getQuoteOfferId() == null)
+                missingParameters.add("quoteOfferId");
+            handleMissingParameters();
+            QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
+            if (quoteOffer == null)
+                throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
+            // check offer template if exist
+            if (quoteOfferDTO.getOfferId() != null) {
+                OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
+                if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
+                quoteOffer.setOfferTemplate(offerTemplate);
+            }
 
         // check quote version
         if (!Strings.isEmpty(quoteOfferDTO.getQuoteCode())) {
@@ -894,7 +894,10 @@ public class CpqQuoteApi extends BaseApi {
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
         quoteOfferService.update(quoteOffer);
 
-        return quoteOfferDTO;
+            return quoteOfferDTO;
+        }catch(BusinessException exp){
+            throw new BusinessApiException(exp.getMessage());
+        }
     }
 
     private void processQuoteProduct(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
@@ -1213,6 +1216,8 @@ public class CpqQuoteApi extends BaseApi {
 
         clearExistingQuotations(quoteVersion);
 
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
@@ -1242,7 +1247,7 @@ public class CpqQuoteApi extends BaseApi {
 
 
 
-        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+
 
 
 
@@ -1276,7 +1281,9 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
-            quotePriceService.create(quotePrice);
+            if(!PriceLevelEnum.OFFER.equals(level)) {
+                quotePriceService.create(quotePrice);
+            }
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
     	}
@@ -1299,7 +1306,7 @@ public class CpqQuoteApi extends BaseApi {
             	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
             }
             if(!PriceLevelEnum.OFFER.equals(level)) {
-            quotePriceService.create(quotePrice);
+                quotePriceService.create(quotePrice);
             }
             log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
 
@@ -1390,6 +1397,7 @@ public class CpqQuoteApi extends BaseApi {
         .map(price -> {
             QuotePrice quotePrice = price.get();
             quotePriceService.create(quotePrice);
+            quoteOffer.getQuotePrices().add(quotePrice);
             pricesDTO.add(new PriceDTO(quotePrice));
             return pricesDTO;
         }).collect(Collectors.toList());
