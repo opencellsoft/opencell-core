@@ -44,7 +44,7 @@ public class DunningActionInstance extends BusinessEntity {
     @Column(name = "action_status", length = 255)
     @Enumerated(EnumType.STRING)
     @NotNull
-    private DunningLevelInstanceStatusEnum actionStatus;
+    private DunningActionInstanceStatusEnum actionStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_collection_plan_id")
@@ -94,11 +94,11 @@ public class DunningActionInstance extends BusinessEntity {
         this.actionRestult = actionRestult;
     }
 
-    public DunningLevelInstanceStatusEnum getActionStatus() {
+    public DunningActionInstanceStatusEnum getActionStatus() {
         return actionStatus;
     }
 
-    public void setActionStatus(DunningLevelInstanceStatusEnum actionStatus) {
+    public void setActionStatus(DunningActionInstanceStatusEnum actionStatus) {
         this.actionStatus = actionStatus;
     }
 

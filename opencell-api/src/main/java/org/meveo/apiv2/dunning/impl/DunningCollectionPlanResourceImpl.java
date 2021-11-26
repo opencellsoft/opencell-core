@@ -16,9 +16,11 @@ import org.meveo.apiv2.dunning.AvailablePoliciesInput;
 import org.meveo.apiv2.dunning.CheckSwitchResult;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
+import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
 import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 import org.meveo.apiv2.dunning.ImmutableCheckSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
+import org.meveo.apiv2.dunning.ImmutableDunningLevelInstanceSuccessResponse;
 import org.meveo.apiv2.dunning.ImmutableMassSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableSwitchCollectionSuccessResponse;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
@@ -30,6 +32,7 @@ import org.meveo.apiv2.dunning.service.DunningCollectionPlanApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.model.dunning.DunningCollectionPlan;
+import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.model.dunning.DunningPolicy;
 
 public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanResource {
@@ -50,10 +53,10 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
         DunningCollectionPlan newCollectionPlan = dunningCollectionPlanApiService.switchCollectionPlan(collectionPlanId, switchDunningCollectionPlan).get();
         return Response.ok(ImmutableSwitchCollectionSuccessResponse.builder()
             .status("SUCCESS")
-            .newCollectionPlan(collectionPlanMapper.toResource(newCollectionPlan))
+            .newCollectionPlan(newCollectionPlan)
             .build()).build();
     }
-    
+
     @Override
     public Response massSwitchCollectionPlan(MassSwitchDunningCollectionPlan massSwitchDunningCollectionPlan) {
         dunningCollectionPlanApiService.massSwitchCollectionPlan(massSwitchDunningCollectionPlan);
@@ -138,6 +141,14 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
                 .build()).build();
 	}
 
+	@Override
+	public Response addDunningLevelInstance(DunningLevelInstanceInput dunningLevelInstanceInput) {
+	    DunningLevelInstance newDunningLevelInstance = dunningCollectionPlanApiService.addDunningLevelInstance(dunningLevelInstanceInput).get();
+	    return Response.ok(ImmutableDunningLevelInstanceSuccessResponse.builder()
+            .status("SUCCESS")
+            .newDunningLevelInstance(newDunningLevelInstance)
+            .build()).build();
+	}
 
 	private Object toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningCollectionPlan dunningCollectionPlan) {
 		return ImmutableDunningCollectionPlan.copyOf(dunningCollectionPlan)

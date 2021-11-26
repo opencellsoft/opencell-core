@@ -24,6 +24,7 @@ import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningActionInstance;
+import org.meveo.model.dunning.DunningActionInstanceStatusEnum;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevelInstance;
@@ -189,7 +190,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
             actionInstance.setActionType(action.getActionType());
             actionInstance.setActionMode(action.getActionMode());
             actionInstance.setActionOwner(action.getAssignedTo());
-            actionInstance.setActionStatus(TO_BE_DONE);
+            actionInstance.setActionStatus(DunningActionInstanceStatusEnum.TO_BE_DONE);
             actionInstance.setCollectionPlan(collectionPlan);
             actionInstance.setDunningLevelInstance(levelInstance);
             actionInstance.setCode(action.getCode());

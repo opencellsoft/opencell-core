@@ -3,19 +3,18 @@ package org.meveo.apiv2.dunning;
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
+import org.meveo.model.dunning.DunningLevelInstance;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import org.meveo.model.dunning.DunningCollectionPlan;
-
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableSwitchCollectionSuccessResponse.class)
-public interface SwitchCollectionSuccessResponse {
+@JsonDeserialize(as = ImmutableDunningLevelInstanceSuccessResponse.class)
+public interface DunningLevelInstanceSuccessResponse {
 
     @Nullable
     String getStatus();
 
     @Nullable
-    DunningCollectionPlan getNewCollectionPlan();
+    DunningLevelInstance getNewDunningLevelInstance();
 }
