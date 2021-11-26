@@ -188,12 +188,14 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
+				.filter(price -> PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()))
 				.collect(Collectors.groupingBy(QuotePrice::getTaxRate));
 
 
 		for (BigDecimal taxRate : pricesPerTax.keySet() ) {
 
 			Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = quotePrices.stream()
+					.filter(price -> PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()))
 					.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
 			List<PriceDTO> taxPrices = pricesPerType
