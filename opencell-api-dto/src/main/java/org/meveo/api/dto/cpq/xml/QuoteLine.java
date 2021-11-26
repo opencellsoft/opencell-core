@@ -42,7 +42,7 @@ public class QuoteLine {
         this.quantity = line.getQuantity();
         this.accountingArticleCode = line.getAccountingArticle().getCode();
         this.accountingArticleLabel = line.getAccountingArticle().getDescription();
-        this.consumer=line.getQuoteVersion()!=null?(line.getQuoteVersion().getQuote().getUserAccount()!=null?line.getQuoteVersion().getQuote().getUserAccount().getCode():null):null;
+        this.consumer=line.getQuoteVersion()!=null?(line.getQuoteVersion().getQuote().getUserAccount()!=null?line.getQuoteVersion().getQuote().getUserAccount().getCode():"N/A"):"N/A";
         this.prices = aggregatePricesPerType(line.getQuotePrices());
         this.offer= offer;
         
