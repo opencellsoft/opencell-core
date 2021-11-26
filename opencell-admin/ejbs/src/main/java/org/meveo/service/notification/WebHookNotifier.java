@@ -121,28 +121,21 @@ public class WebHookNotifier {
                 String page = evaluate(webHook.getPage(), entityOrEvent, context);
                 url += ((url.endsWith("/") || page.startsWith("/")) ? "" : "/") + page;
             }
+            
             Map<String, String> params = evaluateMap(webHook.getWebhookParams(), entityOrEvent, context);
-
-            String paramQuery = "";
-            String sep = "";
-            for (String paramKey : params.keySet()) {
-                paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
-                sep = "&";
-            }
-            String bodyEL_evaluated;
-            log.debug("paramQuery={}", paramQuery);
-            if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
-                url += "?" + paramQuery;
-            } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
-                bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
-                log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
-                if (!StringUtils.isBlank(bodyEL_evaluated)) {
-                    paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&body=" + bodyEL_evaluated : "body=" + bodyEL_evaluated;
+            if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod() || WebHookMethodEnum.HTTP_DELETE == webHook.getHttpMethod()) {
+                String paramQuery = "";
+                String sep = "";
+                for (String paramKey : params.keySet()) {
+                    paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
+                    sep = "&";
                 }
+                log.debug("paramQuery={}", paramQuery);
+                url += "?" + paramQuery;
             }
+
             log.debug("webhook url: {}", url);
             URL obj = new URL(url);
-
             conn = (HttpURLConnection) obj.openConnection();
 
             Map<String, String> headers = evaluateMap(webHook.getHeaders(), entityOrEvent, context);
@@ -166,20 +159,19 @@ public class WebHookNotifier {
             }
             conn.setUseCaches(false);
 
-            if (WebHookMethodEnum.HTTP_GET != webHook.getHttpMethod() && WebHookMethodEnum.HTTP_DELETE != webHook.getHttpMethod()) {
+            if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod() || WebHookMethodEnum.HTTP_PUT == webHook.getHttpMethod()) {
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
                 BufferedWriter writer = new BufferedWriter(out);
-                if (paramQuery.contains("body=")) {
-					String body=paramQuery.replace("body=", "");
-					writer.write(body);
-				}
+                String body = evaluate(webHook.getBodyEL(), entityOrEvent, context);
+                writer.write(body);
                 writer.flush();
                 writer.close();
                 out.close();
                 os.close();
             }
+            
             int responseCode = conn.getResponseCode();
             InputStream is = conn.getInputStream();
             InputStreamReader inputStreamReader = new InputStreamReader(is);
