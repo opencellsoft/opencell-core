@@ -555,7 +555,7 @@ public class BillingAccountApi extends AccountEntityApi {
                     List<InvoiceDto> invoicesDto = new ArrayList<InvoiceDto>();
                     if (invoices != null && invoices.size() > 0) {
                         for (Invoice invoice : invoices) {
-                            if (invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())) {
+                            if (invoiceTypeService.getListAdjustementCode().equals(invoice.getInvoiceType().getCode())) {
                                 InvoiceDto invoiceDto = invoiceApi.invoiceToDto(invoice, false, false);
                                 invoicesDto.add(invoiceDto);
                             }
