@@ -24,7 +24,8 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
                                                   boolean returnEDRs, boolean returnWalletOperations) {
 
         try {
-            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdrs, httpServletRequest.getRemoteAddr(), isVirtual, rateTriggeredEdr, returnWalletOperationDetails, maxDepth, returnWalletOperations);
+            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdrs, httpServletRequest.getRemoteAddr(), isVirtual,
+                    rateTriggeredEdr, returnWalletOperationDetails, maxDepth, returnEDRs, returnWalletOperations);
             return mediationApi.chargeCdrList(chargeCDRDto);
         } catch (Exception e) {
             ChargeCDRListResponseDto result = new ChargeCDRListResponseDto();
