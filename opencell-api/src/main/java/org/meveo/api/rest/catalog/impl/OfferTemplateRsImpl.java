@@ -19,6 +19,7 @@
 package org.meveo.api.rest.catalog.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -30,7 +31,9 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ProductOfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
@@ -244,7 +247,30 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 			       return errorResponse(e, result);
 	        }
 	}
-    
+
+	@Override
+	public Response addProduct(String offerCode, ProductOfferTemplateDto productDto) {
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+		try {
+            result.setOfferTemplate(offerTemplateApi.addProduct(offerCode, productDto));
+        	return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+
+	}
+
+	@Override
+	public Response dissociateProduct(String offerCode, Date validFrom, Date validTo, List<String> productCodes) {
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+		try {
+            result.setOfferTemplate(offerTemplateApi.dissociateProduct(offerCode, validFrom, validTo, productCodes));
+        	return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+
+	}
     
 
 
