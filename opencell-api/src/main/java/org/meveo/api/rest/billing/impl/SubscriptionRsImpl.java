@@ -448,6 +448,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
+    public ActionStatus activatePatchedSubscription(String subscriptionCode, Boolean updateEffectiveDate, Date newEffectiveDate) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.activatePatchedSubscription(subscriptionCode, updateEffectiveDate, newEffectiveDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus activate(ActivateSubscriptionRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -466,6 +479,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.cancelSubscriptionRenewal(subscriptionCode, subscriptionValidityDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus cancelSubscriptionTermination(String subscriptionCode, Date subscriptionValidityDate) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelSubscriptionTermination(subscriptionCode, subscriptionValidityDate);
         } catch (Exception e) {
             processException(e, result);
         }

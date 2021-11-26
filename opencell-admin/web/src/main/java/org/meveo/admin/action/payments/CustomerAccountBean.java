@@ -108,7 +108,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     private Long customerId;
 
-    private CustomerAccount customerAccountTransfer = new CustomerAccount();
+    private CustomerAccount customerAccountTransfer;
 
     private BigDecimal amountToTransfer;
 
@@ -176,22 +176,24 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
         if (!entity.isTransient()) {
             CustomerAccount customerAccountFromDB = customerAccountService.findByCode(entity.getCode());
-            if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
-                // a safeguard to allow this only if all the WO/RT have been invoiced.
-                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
-                if (countNonTreatedWO > 0) {
-                    messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
-                    return null;
-                }
-                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
-                if (countNonInvoicedRT > 0) {
-                    messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
-                    return null;
-                }
-                Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
-                if (countUnmatchedAO > 0) {
-                    messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
-                    return null;
+            if(customerAccountFromDB != null) {
+                if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
+                    // a safeguard to allow this only if all the WO/RT have been invoiced.
+                    Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
+                    if (countNonTreatedWO > 0) {
+                        messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
+                        return null;
+                    }
+                    Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
+                    if (countNonInvoicedRT > 0) {
+                        messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
+                        return null;
+                    }
+                    Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
+                    if (countUnmatchedAO > 0) {
+                        messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
+                        return null;
+                    }
                 }
             }
         }
@@ -221,7 +223,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             customerAccountService.transferAccount(entity, customerAccountTransfer, getAmountToTransfer());
             messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
             setCustomerAccountTransfer(null);
-            setAmountToTransfer(BigDecimal.ZERO);
+            setAmountToTransfer(null);
 
         } catch (Exception e) {
             log.error("failed to transfer account ", e);
@@ -229,7 +231,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             return null;
         }
 
-        return "customerAccountDetailOperationsTab";
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + entity.getId() + "&edit=false&mainTab=1&faces-redirect=true";
     }
 
     public String backCA() {

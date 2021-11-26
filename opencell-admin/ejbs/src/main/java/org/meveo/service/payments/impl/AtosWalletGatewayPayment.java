@@ -1,14 +1,13 @@
 package org.meveo.service.payments.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.worldline.sips.exception.SealCalculationException;
-import com.worldline.sips.exception.UnknownStatusException;
-import com.worldline.sips.model.AcquirerResponseCode;
-import com.worldline.sips.model.Currency;
-import com.worldline.sips.model.OrderChannel;
-import com.worldline.sips.model.ResponseCode;
-import com.worldline.sips.util.SealCalculator;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -28,20 +27,32 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.payments.*;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.worldline.sips.checkout.WalletOrderRequest;
 import org.meveo.model.worldline.sips.checkout.WalletOrderResponse;
 import org.meveo.model.worldline.sips.wallet.WalletAction;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.worldline.sips.exception.SealCalculationException;
+import com.worldline.sips.exception.UnknownStatusException;
+import com.worldline.sips.model.Currency;
+import com.worldline.sips.model.OrderChannel;
+import com.worldline.sips.model.ResponseCode;
+import com.worldline.sips.util.SealCalculator;
 
 /**
  * Gateway for ATOS SIPS Wallet payments
@@ -57,13 +68,17 @@ import java.util.Map;
 public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String WALLET_URL_PROPERTY = "atos.api.walletUrl";
     private static final String OFFICE_URL_PROPERTY = "atos.api.officeUrl";
-    private static final String WALLET_ORDER_URI = "/checkout/walletOrder";
-    private static final String WALLET_CREDIT_HOLDER_URI = "/cashManagement/walletCreditHolder";
+    private static final String WALLET_ORDER_URI_PROPERTY = "atos.api.wallet.order.uri";
+    private static final String WALLET_CREDIT_HOLDER_URI_PROPERTY = "atos.api.wallet.credit.uri";
 
-    private static final String WALLETPAGE_INTERFACE_VERSION = "HP_2.5";
-    private static final String CASHMANAGEMENT_INTERFACE_VERSION = "CR_WS_2.25";
-    private static final String CHECKOUT_INTERFACE_VERSION = "IR_WS_2.24";
-    private static final String SEAL_ALGORITHM = "HMAC-SHA-256";
+    private static final String PAYPAGE_INTERFACE_VERSION_PROPERTY = "atos.paypage.version";
+    private static final String CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY = "atos.api.chashmanag.version";
+    private static final String CHECKOUT_INTERFACE_VERSION_PROPERTY = "atos.api.checkout.version";
+    private static final String SEAL_ALGORITHM_PROPERTY = "atos.api.seal.algorithm";
+    
+    private static final String CF_PRV_ACQUIRER_CODE_WLSIPS = "CF_PRV_ACQUIRER_CODE_WLSIPS";
+    private static final String CF_PRV_COMPL_CODE_WLSIPS = "CF_PRV_COMPL_CODE_WLSIPS";
+    private static final String CF_PRV_RESPONSE_CODE_WLSIPS = "CF_PRV_RESPONSE_CODE_WLSIPS";
 
     protected Logger log = LoggerFactory.getLogger(AtosWalletGatewayPayment.class);
 
@@ -80,7 +95,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, WALLET_ORDER_URI, CHECKOUT_INTERFACE_VERSION);
+        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, paramBean().getProperty(WALLET_ORDER_URI_PROPERTY,"/checkout/walletOrder"), paramBean().getProperty(CHECKOUT_INTERFACE_VERSION_PROPERTY,"IR_WS_2.24"));
     }
 
     @Override
@@ -106,7 +121,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPaymentOrRefundToken(paymentToken, ctsAmount, WALLET_CREDIT_HOLDER_URI, CASHMANAGEMENT_INTERFACE_VERSION);
+    	
+        return doPaymentOrRefundToken(paymentToken, ctsAmount, paramBean().getProperty(WALLET_CREDIT_HOLDER_URI_PROPERTY,"/cashManagement/walletCreditHolder"), paramBean().getProperty(CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY,"CR_WS_2.25"));
     }
 
     @Override
@@ -134,13 +150,13 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
 
         WalletOrderRequest request = buildWalletOrderRequest(paymentMethod, ctsAmount, interfaceVersion);
-
+ 
         String seal;
         try {
             String data = getSealString(request);
             seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
             request.setSeal(seal);
-            request.setSealAlgorithm(SEAL_ALGORITHM);
+            request.setSealAlgorithm(paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256"));
         } catch (SealCalculationException e) {
             processError("Error occurred during seal calculation", e, paymentResponseDto);
             return paymentResponseDto;
@@ -166,24 +182,18 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
         // Execute and get the response
-        HttpResponse httpResponse;
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            httpResponse = httpClient.execute(httpPost);
-        } catch (IOException e) {
-            processError("Error occurred while calling WalletOrder method", e, paymentResponseDto);
-            return paymentResponseDto;
-        }
-
         WalletOrderResponse response;
-        try {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+
             String responseBody = EntityUtils.toString(httpResponse.getEntity());
             log.debug("WallerOrderResponse: {}", responseBody);
             response = mapper.readValue(responseBody, WalletOrderResponse.class);
         } catch (IOException e) {
-            processError("Unable to parse JSON response", e, paymentResponseDto);
+            processError("Error occurred while calling WalletOrder method", e, paymentResponseDto);
             return paymentResponseDto;
         }
-
+        
         if (response != null) {
             paymentResponseDto.setPaymentID(request.getTransactionReference());
             paymentResponseDto.setTokenId(paymentMethod.getTokenId()); // Token ID = merchant wallet ID (since created, this never change)
@@ -192,13 +202,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
             paymentResponseDto.setTransactionId(response.getAuthorisationId());
 
             if (!paymentResponseDto.getPaymentStatus().equals(PaymentStatusEnum.ACCEPTED)) {
-                paymentResponseDto.setErrorCode(response.getAcquirerResponseCode());
-                try {
-                    paymentResponseDto.setErrorMessage(AcquirerResponseCode.fromCode(response.getAcquirerResponseCode()).name());
-                } catch (UnknownStatusException e) {
-                    paymentResponseDto.setErrorMessage("UNKNOWN_STATUS");
-                    log.error("Unknown acquirer response code received", e);
-                }
+                paymentResponseDto.setErrorCode(getErreurCodeAndMsg(response)[0]);
+                paymentResponseDto.setErrorMessage(getErreurCodeAndMsg(response)[1]);              
             }
 
             return paymentResponseDto;
@@ -212,7 +217,29 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         return paymentResponseDto;
     }
 
-    @Override
+	private String[] getErreurCodeAndMsg(WalletOrderResponse response) {
+		Map<Object, Object> mapErrorCodeAndMsg = new HashMap<Object, Object>();
+		Provider provider = ((ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName())).getProvider();
+		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}",response.getAuthorisationId(),response.getAcquirerResponseCode(),response.getComplementaryCode(),response.getResponseCode());
+		String[] codeAndMsg = { "notFound", "notFound" };
+		
+		if (!StringUtils.isBlank(response.getAcquirerResponseCode())) {
+			codeAndMsg[0] = response.getAcquirerResponseCode();
+			mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_ACQUIRER_CODE_WLSIPS);			
+		} else {
+			if (!StringUtils.isBlank(response.getComplementaryCode()) && !"0".equals(response.getComplementaryCode())) {
+				codeAndMsg[0] = response.getComplementaryCode();
+				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_COMPL_CODE_WLSIPS);				
+			} else {
+				codeAndMsg[0] = response.getResponseCode();
+				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_RESPONSE_CODE_WLSIPS);				
+			}
+		}
+		codeAndMsg[1] = (String) mapErrorCodeAndMsg.get(codeAndMsg[0]);
+		return codeAndMsg;
+	}
+
+	@Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
         String returnUrl = hostedCheckoutInput.getReturnUrl();
         String walletUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
@@ -221,15 +248,14 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         PaymentHostedCheckoutResponseDto.Result result = response.getResult();
 
         result.setHostedCheckoutUrl(walletUrl);
-        result.setHostedCheckoutVersion(WALLETPAGE_INTERFACE_VERSION);
+        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"IR_WS_2.0"));
         result.setReturnUrl(returnUrl);
 
         CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
         String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
 
-        String data = "merchantId=" +
-                paymentGateway.getMarchandId() +
+        String data = "merchantId=" + paymentGateway.getMarchandId() +
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
                 "|merchantWalletId=" + merchantWalletId +
@@ -294,7 +320,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         request.setOrderChannel(OrderChannel.INTERNET.name());
         request.setInterfaceVersion(interfaceVersion);
         request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-        request.setTransactionReference(System.currentTimeMillis() + "_-_" + paymentMethod.getCustomerAccount().getId());
+        request.setTransactionReference(System.currentTimeMillis() + "CA" + paymentMethod.getCustomerAccount().getId());
+        request.setSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 
         // Needed for backward compatibility purpose, in 5.X version, the merchant wallet ID is the customer account ID
         // Starting at 9.X version, the merchant wallet ID match the token ID of payment method
@@ -423,21 +450,20 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         return customerAccountService;
     }
 
-    @Override
-    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
+		 throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
+		 throw new UnsupportedOperationException();
+		
+	}
 
-    @Override
-    public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+		 throw new UnsupportedOperationException();
+		
+	}
 }

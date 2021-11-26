@@ -276,12 +276,12 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         while (date.before(paymentScheduleInstance.getEndDate())) {
             PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
             paymentScheduleInstanceItem.setDueDate(calendarBankingService.getNextBankWorkingDate(DateUtils.addDaysToDate(date, dueDateDelay)));
+            paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, date, dueDateDelay));
             if (paymentScheduleInstance.getPaymentScheduleTemplate().getUseBankingCalendar() == null || paymentScheduleInstance.getPaymentScheduleTemplate()
                     .getUseBankingCalendar()) {
                 paymentScheduleInstanceItem.setDueDate(computeDueDate(customerAccount, paymentScheduleInstanceItem.getRequestPaymentDate()));
             }
             paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
-            paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, date, dueDateDelay));
             paymentScheduleInstanceItem.setAmount(paymentScheduleInstance.getAmount());
             date = cal.nextCalendarDate(date);
             if (!date.before(paymentScheduleInstance.getEndDate())) {

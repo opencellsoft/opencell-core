@@ -156,8 +156,14 @@ public class AggregatedWalletOperation {
 	 */
 	private Integer sortIndex;
 
+	/**
+	 * Since ChargeInstance is an abstract class, it couldn't be instantiated here.
+	 * So we will map here just its ID, and if needed, we could use this ID to load the ChargeInstance entity.
+	 */
+	private Long chargeInstance;
+
+
 	private Subscription subscription;
-	private ChargeInstance chargeInstance;
 	private ServiceInstance serviceInstance;
 	private OfferTemplate offer;
 	private UserAccount userAccount;
@@ -461,11 +467,20 @@ public class AggregatedWalletOperation {
 		this.subscription = subscription;
 	}
 
-	public ChargeInstance getChargeInstance() {
+	/**
+	 * get the chargeInstance's ID.
+	 * We use ID because ChargeInstance is abstract and couldn't be instantiated here
+	 * @return the chargeInstance's ID
+	 */
+	public Long getChargeInstance() {
 		return chargeInstance;
 	}
 
-	public void setChargeInstance(ChargeInstance chargeInstance) {
+	/**
+	 * set the chargeInstance's ID.
+	 * We use ID because ChargeInstance is abstract, and couldn't be instantiated here
+	 */
+	public void setChargeInstance(Long chargeInstance) {
 		this.chargeInstance = chargeInstance;
 	}
 

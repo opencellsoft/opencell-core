@@ -39,7 +39,7 @@ import org.meveo.service.base.PersistenceService;
  * User service implementation.
  */
 @Stateless
-@DeclareRoles({ "userManagement", "userSelfManagement" })
+@DeclareRoles({"jobRunner", "userManagement", "userSelfManagement" })
 public class UserService extends PersistenceService<User> {
 
     static User systemUser = null;
@@ -102,7 +102,7 @@ public class UserService extends PersistenceService<User> {
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
-    @RolesAllowed({ "userManagement", "userSelfManagement" })
+    @RolesAllowed({ "jobRunner","userManagement", "userSelfManagement" })
     public User findByUsername(String username) {
         try {
             return getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();

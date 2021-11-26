@@ -45,10 +45,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.commons.utils.NumberUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.commons.utils.*;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -88,6 +85,8 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
+
+    private static final String APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION = "apply.minima.even.on.zero.transaction";
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -133,6 +132,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private WalletService walletService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -262,7 +264,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
-        ci =  chargeInstanceService.refreshOrRetrieve(aggregatedWo.getChargeInstance());
+        ci =  aggregatedWo.getChargeInstance() != null ? chargeInstanceService.findById(aggregatedWo.getChargeInstance()) : null;
         si = (aggregatedWo.getServiceInstance() == null && ci != null) ? ci.getServiceInstance() : serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance());
         sub = (aggregatedWo.getSubscription() == null && ci != null) ? ci.getSubscription() : subscriptionService.refreshOrRetrieve(aggregatedWo.getSubscription());
         ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
@@ -576,7 +578,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (calculateAndUpdateTotalAmounts) {
                 totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
             }
-        } else {
+        } else  {
             // Create Min Amount RTs for hierarchy
 
             BillingAccount billingAccount = (billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
@@ -611,7 +613,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billableEntity.setTotalInvoicingAmountTax(totalInvoiceableAmounts.getAmountTax());
         }
     }
-
     private Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date date, Date lastTransactionDate) {
         if (billableEntity instanceof Subscription) {
             return computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, date, lastTransactionDate);
@@ -658,7 +659,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String mapKeyPrefix = seller.getId().toString() + "_";
 
             BigDecimal diff = minAmount.subtract(totalInvoiceableAmount);
-            if (diff.compareTo(BigDecimal.ZERO) <= 0) continue;
+            if (diff.compareTo(BigDecimal.ZERO) <= 0 || (BigDecimal.ZERO.equals(totalInvoiceableAmount) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {// (diff.equals(BigDecimal.ZERO) && !paramBeanFactory.getInstance().getPropertyAsBoolean(APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION, true))) {
+                continue;
+            }
 
             OneShotChargeTemplate oneShotChargeTemplate = getMinimumChargeTemplate(entity);
             if (oneShotChargeTemplate == null) {

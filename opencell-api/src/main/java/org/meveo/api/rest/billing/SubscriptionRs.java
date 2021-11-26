@@ -663,7 +663,7 @@ public interface SubscriptionRs extends IBaseRs {
 				)}
 	)
     GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
-            @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
+            @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
 
     /**
      * Returns a list of service instances.
@@ -688,7 +688,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.
@@ -714,7 +714,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
+    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
     /**
@@ -762,9 +762,34 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
-    
-    /**
+    ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
+
+	/**
+	 * Activate the patched version of a given Subscription.
+	 *
+	 * @param subscriptionCode subscription code
+	 * @param updateEffectiveDate should update effective date or not
+	 * @param newEffectiveDate new effective date
+	 * @return Request processing status
+	 */
+	@POST
+	@Path("/activatePatchedSubscription")
+	@Operation(
+			summary=" Activate the patched version of a given Subscription. ",
+			description=" Activate the patched version of a given Subscription. ",
+			operationId="    POST_Patched_Subscription_activate",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus activatePatchedSubscription(String subscriptionCode, @QueryParam("updateEffectiveDate") Boolean updateEffectiveDate, @QueryParam("newEffectiveDate") @RestDateParam Date newEffectiveDate);
+
+	/**
      * Activate a given Subscription.
      * 
      * @param putData containing subscription code
@@ -830,9 +855,31 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
+    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
 
-    /**
+	/**
+	 * Cancels the programed termination of a subscription.
+	 * @param subscriptionCode code of the subscription
+	 * @return status of the request
+	 */
+	@POST
+	@Path("/cancelSubscriptionTermination/{subscriptionCode}")
+	@Operation(
+			summary=" Cancels the programed termination of a subscription. ",
+			description=" Cancels the programed termination of a subscription. ",
+			operationId="    POST_Subscription_cancelSubscriptionRenewal_{subscriptionCode}",
+			responses= {
+					@ApiResponse(description=" status of the request ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus cancelSubscriptionTermination(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
+
+	/**
      * Create a subscription and activate services in a single transaction.
      * 
      * @param postData Subscription and services to activate data

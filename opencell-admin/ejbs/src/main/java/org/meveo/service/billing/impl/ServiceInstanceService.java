@@ -516,7 +516,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-				recurringChargeInstance.setChargeToDateOnTermination(recurringChargeInstance.getChargedToDate());
+				Date lastChargedDate = recurringChargeInstance.getChargedToDate() != null ? recurringChargeInstance.getChargedToDate() : recurringChargeInstance.getChargeDate();
+				recurringChargeInstance.setChargeToDateOnTermination(lastChargedDate);
 			}
 
             recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
@@ -531,7 +532,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), chargeToDateOnTermination, terminationReason.getCode());
 
             // Effective termination date was moved to the future - to the end of agreement
-            if (chargeToDateOnTermination.after(chargedToDate)) {
+            // chargedToDate is null means that charge was never charged
+            if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
                     recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
 

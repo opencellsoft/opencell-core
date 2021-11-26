@@ -103,6 +103,7 @@ import org.meveo.service.script.ScriptInterface;
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {
 
+
     /**
      * The wallet operation service.
      */
@@ -215,7 +216,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 billingAccounts = (List<BillingAccount>) billingAccountService
                         .executeSelectQuery("SELECT rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)", params);
             } else {
-                String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+                String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0]:billingRun.getSelectedBillingAccounts().split(",");
                 for (String id : Arrays.asList(baIds)) {
                     Long baId = Long.valueOf(id);
                     billingAccounts.add(billingAccountService.findById(baId));
@@ -650,7 +651,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         .executeSelectQuery("SELECT rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)", params);
             }
             List<BillingAccount> result = new ArrayList<>();
-            String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+            String[] baIds = billingRun.getSelectedBillingAccounts() == null ? new String[0] : billingRun.getSelectedBillingAccounts().split(",");
 
             for (String id : Arrays.asList(baIds)) {
                 // Long baId = Long.valueOf(id);

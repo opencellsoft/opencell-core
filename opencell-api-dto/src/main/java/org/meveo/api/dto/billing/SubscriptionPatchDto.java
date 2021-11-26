@@ -14,6 +14,7 @@ public class SubscriptionPatchDto {
     private String offerTemplate;
     private String newSubscriptionCode;
     @XmlElement(required = true)
+    private Boolean terminateOldSubscription = Boolean.TRUE;
     private String terminationReason;
     private Date effectiveDate;
     private ServicesToInstantiateDto servicesToInstantiate;
@@ -37,6 +38,14 @@ public class SubscriptionPatchDto {
 
     public void setNewSubscriptionCode(String newSubscriptionCode) {
         this.newSubscriptionCode = newSubscriptionCode;
+    }
+
+    public Boolean getTerminateOldSubscription() {
+        return terminateOldSubscription;
+    }
+
+    public void setTerminateOldSubscription(Boolean terminateOldSubscription) {
+        this.terminateOldSubscription = terminateOldSubscription;
     }
 
     public String getTerminationReason() {

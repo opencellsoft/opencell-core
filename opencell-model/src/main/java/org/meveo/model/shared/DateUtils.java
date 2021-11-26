@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.validation.ValidationException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -171,13 +172,53 @@ public class DateUtils {
      * @return Date object
      */
     public static Date parseDate(String dateValue, String[] datePatterns) {
+        return parseDate(dateValue, datePatterns, true);
+    }
+    
+    /**
+     * Parse date
+     *
+     * @param dateValue The date/timestamp string to parse
+     * @param datePatterns Date patterns to consider for a date string
+     * @param lenient parse date with lenient mode
+     * @return Date object
+     */
+    public static Date parseDate(String dateValue, String[] datePatterns, boolean lenient) {
         if (datePatterns != null) {
             for (String datePattern : datePatterns) {
-                Date date = parseDateWithPattern(dateValue, datePattern);
+                Date date = parseDateWithPattern(dateValue, datePattern, lenient);
                 if (date != null) {
                     return date;
                 }
             }
+        }
+        return null;
+    }
+    
+    /**
+     * Validate and parse date. Will consider formats in the following order: number of miliseconds, "yyyy-MM-dd'T'hh:mm:ssXXX", meveo.dateTimeFormat configuration value, "yyyy-MM-dd",
+     * meveo.dateFormat configuration value
+     *
+     * @param dateValue The date/timestamp as a number of miliseconds or a date/tiestamp string to parse
+     * @return Date object
+     */
+    public static Date validateParseDate(Object dateValue) {
+    	if (dateValue instanceof Number) {
+            return new Date(((Number) dateValue).longValue());
+        } else if (dateValue instanceof String) {
+        	if(StringUtils.isBlank((String) dateValue)) {
+            	return null;
+            }
+            Long time = NumberUtils.toLong((String) dateValue);
+            if (time > 0L) {
+                return new Date(time);
+            }
+            String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat() };
+            final Date date = parseDate((String) dateValue, datePatterns, false);
+            if(date==null) {
+            	throw new ValidationException("Wrong date format : " + dateValue);
+            }
+			return date;
         }
         return null;
     }
@@ -190,12 +231,24 @@ public class DateUtils {
      * @return Date object
      */
     public static Date parseDateWithPattern(String dateValue, String pattern) {
+    	return parseDateWithPattern(dateValue, pattern, true);
+    }
+    
+    /**
+     * Parse date with a given pattern
+     * 
+     * @param dateValue The date/timestamp string to parse
+     * @param pattern Date pattern to use for parsing
+     * @param lenient is lenient option active or not
+     * @return Date object
+     */
+    public static Date parseDateWithPattern(String dateValue, String pattern, boolean lenient) {
         if (StringUtils.isBlank(dateValue)) {
             return null;
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        // sdf.setLenient(false);
+        sdf.setLenient(lenient);
 
         try {
             return sdf.parse(dateValue);

@@ -155,11 +155,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription update(Subscription subscription) throws BusinessException {
     	Subscription subscriptionOld = this.findById(subscription.getId());
     	OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
-        if(subscriptionOld.getOffer() != offerTemplate) {
-        	if(offerTemplate.isDisabled()) {
-        		throw new BusinessException("Cannot subscribe to disabled offer");
-        	}
-        }
+    	if(offerTemplate.isDisabled()) {
+    		throw new BusinessException("Cannot subscribe to disabled offer");
+    	}
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
        
@@ -498,10 +496,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
-        entity.setSubscribedTillDate(null);
-        entity.setSubscriptionTerminationReason(null);
-        entity.getSubscriptionRenewal().setInitialyActiveFor(null);
-        entity.setSubscriptionRenewal(new SubscriptionRenewal());
+        entity.getSubscriptionRenewal().setAutoRenew(false);
     }
 
     /**
@@ -910,6 +905,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
 
 
+    }
+
+    public List<Subscription> findListByCodeAndValidityDate(String code, Date date) {
+        return getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                .setParameter("code", code.toLowerCase())
+                .setParameter("validityDate", date)
+                .getResultList();
     }
     
     /**
