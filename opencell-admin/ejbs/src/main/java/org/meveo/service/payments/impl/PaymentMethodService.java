@@ -254,9 +254,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 			}
 		}
 
-        if ( ( customerAccount.getTradingCurrency() != null ) && (!StringUtils.isBlank(customerAccount.getTradingCurrency().getCurrencyCode()))) {
-            hostedCheckoutInput.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
-        }
         if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
         }
