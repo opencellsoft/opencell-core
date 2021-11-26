@@ -750,10 +750,10 @@
 									<bottomPen lineWidth="0.25"/>
 									<rightPen lineWidth="0.25"/>
 								</box>
-								<textField isBlankWhenNull="true">
+								<textField isBlankWhenNull="false">
 									<reportElement x="0" y="0" width="90" height="30" isPrintWhenDetailOverflows="true" uuid="07278a25-0ee8-4abc-be68-0d75bf10dd6d"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{consumer}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{consumer}==null) ? "N/A" : $F{consumer}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1039,7 +1039,7 @@
 								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="67" height="30" uuid="96ef05bd-18bf-4907-82b4-dec73dad7a70"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{consumer}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{consumer}==null) ? "N/A" : $F{consumer}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

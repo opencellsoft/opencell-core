@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.cpq.PriceDTO;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuoteArticleLine;
@@ -41,8 +40,12 @@ public class QuoteLine {
     public QuoteLine(QuoteArticleLine line,Offer offer) {
         this.quantity = line.getQuantity();
         this.accountingArticleCode = line.getAccountingArticle().getCode();
-        this.accountingArticleLabel = line.getAccountingArticle().getDescription();
-        this.consumer=line.getQuoteVersion()!=null?(line.getQuoteVersion().getQuote().getUserAccount()!=null?line.getQuoteVersion().getQuote().getUserAccount().getCode():"N/A"):"N/A";
+        this.accountingArticleLabel = line.getAccountingArticle().getDescription(); 
+        if(line.getQuoteVersion()!=null) {
+        	var quote=line.getQuoteVersion().getQuote();
+        	if(quote.getUserAccount()!=null) 
+        		this.consumer=quote.getUserAccount().getCode();
+        }
         this.prices = aggregatePricesPerType(line.getQuotePrices());
         this.offer= offer;
         
