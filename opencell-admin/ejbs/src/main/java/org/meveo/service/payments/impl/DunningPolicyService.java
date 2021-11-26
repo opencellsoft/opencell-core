@@ -4,19 +4,25 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.service.payments.impl.PolicyConditionTargetEnum.valueOf;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.dunning.*;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.InvoiceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.dunning.DunningDetermineLevelBy;
+import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.model.dunning.DunningPolicyRule;
+import org.meveo.model.dunning.DunningPolicyRuleLine;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
+import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 @Stateless
 public class DunningPolicyService extends PersistenceService<DunningPolicy> {
@@ -49,7 +55,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         try {
             String query = "SELECT inv FROM Invoice inv WHERE " + buildPolicyRulesFilter(policy.getDunningPolicyRules());
-            return  (List<Invoice>) invoiceService.executeSelectQuery(query, null);
+            return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
         } catch (Exception exception) {
             throw new BusinessException(exception.getMessage());
         }
@@ -114,7 +120,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     }
 
     public void processEligibleInvoice(Map<DunningPolicy, List<Invoice>> eligibleInvoice) {
-        DunningCollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.findByStatus("Actif");
+        DunningCollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.ACTIVE);
         for (Map.Entry<DunningPolicy, List<Invoice>> entry : eligibleInvoice.entrySet()) {
             DunningPolicy policy = refreshOrRetrieve(entry.getKey());
             Integer dayOverDue = policy.getDunningLevels().stream()
@@ -159,5 +165,15 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private boolean checkInvoiceMatch(List<Invoice> invoices, Invoice invoice) {
         return invoices.stream()
                         .anyMatch(inv -> inv.getId() == invoice.getId());
+    }
+
+    public List<DunningPolicy> getPolicies(boolean active) {
+        try {
+            return getEntityManager().createNamedQuery("DunningPolicy.listPoliciesByIsActive", DunningPolicy.class)
+                    .setParameter("active", active)
+                    .getResultList();
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
     }
 }

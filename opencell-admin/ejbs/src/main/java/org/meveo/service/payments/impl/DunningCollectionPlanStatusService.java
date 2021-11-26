@@ -6,8 +6,10 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.ws.rs.BadRequestException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 import java.util.Arrays;
@@ -22,7 +24,7 @@ import java.util.Arrays;
 @Stateless
 public class DunningCollectionPlanStatusService extends PersistenceService<DunningCollectionPlanStatus> {
 
-    public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, String status) {
+	public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, DunningCollectionPlanStatusEnum status) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", Arrays.asList("dunningSettings"));
         queryBuilder.addCriterion("a.dunningSettings.code", "=", dunningSettingCode, false);
         queryBuilder.addCriterion("a.status", "=", status, false);
@@ -50,11 +52,15 @@ public class DunningCollectionPlanStatusService extends PersistenceService<Dunni
         }
     }
 
-    public DunningCollectionPlanStatus findByStatus(String status) {
-        return getEntityManager()
+    public DunningCollectionPlanStatus findByStatus(DunningCollectionPlanStatusEnum status) {
+        final DunningCollectionPlanStatus DCPstatus = getEntityManager()
                     .createNamedQuery("DunningCollectionPlanStatus.findByStatus", DunningCollectionPlanStatus.class)
                     .setParameter("status", status)
                     .setMaxResults(1)
                     .getSingleResult();
+        if(DCPstatus==null) {
+        	throw new BusinessException("No DunningCollectionPlanStatus found for status : "+status);
+        }
+		return DCPstatus;
     }
 }

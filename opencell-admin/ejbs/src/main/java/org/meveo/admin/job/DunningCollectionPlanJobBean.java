@@ -22,7 +22,7 @@ public class DunningCollectionPlanJobBean extends BaseJobBean {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        List<DunningPolicy> policies = policyService.list();
+        List<DunningPolicy> policies = policyService.getPolicies(true);
         jobExecutionResult.setNbItemsToProcess(policies.size());
         if (policies != null && !policies.isEmpty()) {
             Map<DunningPolicy, List<Invoice>> eligibleInvoicesByPolicy = new HashMap<>();
