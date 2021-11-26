@@ -10,6 +10,7 @@ import javax.ws.rs.BadRequestException;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningCollectionPlanStatus;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
@@ -66,7 +67,7 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 		if (Strings.isNotEmpty(baseEntity.getDescription())) {
 			collectionPlan.setDescription(baseEntity.getDescription());
 		}
-		if (Strings.isNotEmpty(baseEntity.getStatus())) {
+		if (baseEntity.getStatus() != null) {
 			collectionPlan.setStatus(baseEntity.getStatus());
 		}
 		if (Strings.isNotEmpty(baseEntity.getColorCode())) {
@@ -91,7 +92,7 @@ public class CollectionPlanStatusApiService implements ApiService<DunningCollect
 		return Optional.of(collectionPlan);
 	}
 
-	public DunningCollectionPlanStatus delete(String dunningSettingCode, String status) {
+	public DunningCollectionPlanStatus delete(String dunningSettingCode, DunningCollectionPlanStatusEnum status) {
 		var collectionPlan = dunningCollectionPlanStatusService.findByDunningCodeAndStatus(dunningSettingCode, status);
 		if (collectionPlan == null) {
 			throw new BadRequestException(String.format(NO_COLLECTION_PLAN_STATUS_FOUND_FOR_DUNNING, dunningSettingCode, status));

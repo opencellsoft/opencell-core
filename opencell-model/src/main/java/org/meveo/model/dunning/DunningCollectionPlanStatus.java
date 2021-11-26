@@ -1,7 +1,10 @@
 package org.meveo.model.dunning;
 
+import static javax.persistence.EnumType.STRING;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,6 +15,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 
 /**
  * @author Mbarek-Ay
@@ -29,7 +33,7 @@ public class DunningCollectionPlanStatus extends AuditableEntity {
         super();
     }
 
-    public DunningCollectionPlanStatus(@Size(max = 50) @NotNull String status, @NotNull String description, @NotNull DunningSettings dunningSettings, String colorCode) {
+    public DunningCollectionPlanStatus(@Size(max = 50) @NotNull DunningCollectionPlanStatusEnum status, @NotNull String description, @NotNull DunningSettings dunningSettings, String colorCode) {
         super();
         this.status = status;
         this.description = description;
@@ -41,9 +45,9 @@ public class DunningCollectionPlanStatus extends AuditableEntity {
      * status
      */
     @Column(name = "status", length = 50)
-    @Size(max = 50)
+    @Enumerated(STRING)
     @NotNull
-    private String status;
+    private DunningCollectionPlanStatusEnum status;
 
     /**
      * description
@@ -66,11 +70,11 @@ public class DunningCollectionPlanStatus extends AuditableEntity {
     @NotNull
     private DunningSettings dunningSettings;
 
-    public String getStatus() {
+    public DunningCollectionPlanStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DunningCollectionPlanStatusEnum status) {
         this.status = status;
     }
 
