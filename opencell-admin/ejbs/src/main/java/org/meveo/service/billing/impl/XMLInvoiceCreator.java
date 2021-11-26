@@ -26,7 +26,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -281,7 +280,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String customerCode = customer.getCode();
         InvoiceType invoiceType = invoice.getInvoiceType();
         String invoiceTypeCode = invoiceType.getCode();
-        boolean isInvoiceAdjustment = invoiceTypeCode.equals(invoiceTypeService.getAdjustementCode());
+        boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoiceTypeCode);
         TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
         String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();

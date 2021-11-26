@@ -29,6 +29,9 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The Class InvoiceTypeService.
  *
@@ -68,7 +71,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         String occCode = "accountOperationsGenerationJob.occCode";
         String occCodeDefaultValue = "INV_STD";
         OperationCategoryEnum operationCategory = OperationCategoryEnum.DEBIT;
-        if (getAdjustementCode().equals(invoiceTypeCode)) {
+        if (getListAdjustementCode().contains(invoiceTypeCode)) {
             occCode = "accountOperationsGenerationJob.occCodeAdjustement";
             occCodeDefaultValue = "INV_CRN";
             operationCategory = OperationCategoryEnum.CREDIT;
@@ -86,7 +89,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @throws BusinessException the business exception
      */
     public InvoiceType getDefaultAdjustement() throws BusinessException {
-        return getDefaultType(getAdjustementCode());
+        return getDefaultType(getListAdjustementCode().get(0));
     }
 
     /**
@@ -139,12 +142,13 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
 
     /**
-     * Gets the adjustement code.
+     * Gets list of the adjustement codes.
      *
-     * @return the adjustement code
+     * @return the list of adjustement codes
      */
-    public String getAdjustementCode() {
-        return paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ");
+    public List<String> getListAdjustementCode() {
+        String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ");
+        return Arrays.asList(listAdjustmentCode.split("\\s*,\\s*"));
     }
 
     /**
@@ -182,7 +186,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      */
     public String getCustomFieldCode(InvoiceType invoiceType) {
         String cfName = "INVOICE_SEQUENCE_" + invoiceType.getCode().toUpperCase();
-        if (getAdjustementCode().equals(invoiceType.getCode())) {
+        if (getListAdjustementCode().contains(invoiceType.getCode())) {
             cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
         }
         if (getCommercialCode().equals(invoiceType.getCode())) {
