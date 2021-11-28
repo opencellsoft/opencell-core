@@ -53,6 +53,9 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     @Inject
     private DunningCollectionPlanStatusService dunningCollectionPlanStatusService;
+    
+    @Inject
+    private DunningCollectionPlanService dunningCollectionPlanService;
 
     @Inject
     private InvoiceService invoiceService;
@@ -203,6 +206,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     
     public DunningCollectionPlan pauseCollectionPlan(boolean forcePause, Date pauseUntil,
 			DunningCollectionPlan collectionPlanToPause, DunningPauseReason dunningPauseReason) {
+    	collectionPlanToPause = dunningCollectionPlanService.refreshOrRetrieve(collectionPlanToPause);
+		collectionPlanToPause = refreshLevelInstances(collectionPlanToPause);
 		if(!forcePause) {
 			Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToPause.getDunningLevelInstances()
 					.stream().max(Comparator.comparing(DunningLevelInstance::getId));
@@ -221,7 +226,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 	}
 	
 	public DunningCollectionPlan stopCollectionPlan(DunningCollectionPlan collectionPlanToStop, DunningStopReason dunningStopReason) {
-		
+		collectionPlanToStop = dunningCollectionPlanService.refreshOrRetrieve(collectionPlanToStop);
+		collectionPlanToStop = refreshLevelInstances(collectionPlanToStop);
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.STOPPED);
 		collectionPlanToStop.setStatus(collectionPlanStatus);
 		collectionPlanToStop.setCloseDate(new Date());
@@ -241,6 +247,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public DunningCollectionPlan resumeCollectionPlan(DunningCollectionPlan collectionPlanToResume, boolean validate) {
     	collectionPlanToResume = retrieveIfNotManaged(collectionPlanToResume);
+    	collectionPlanToResume = refreshLevelInstances(collectionPlanToResume);
+    	DunningCollectionPlanStatus dunningCollectionPlanStatus = dunningCollectionPlanStatusService.refreshOrRetrieve(collectionPlanToResume.getStatus());
 		if(validate) {
 			if(!collectionPlanToResume.getStatus().getStatus().equals(DunningCollectionPlanStatusEnum.PAUSED)) {
 				throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the collection plan is not paused");
@@ -297,5 +305,16 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                 .createNamedQuery("DunningCollectionPlan.DCPtoResume", DunningCollectionPlan.class)
                 .setParameter("resumeDate", new Date())
                 .getResultList();
+	}
+	
+	private DunningCollectionPlan refreshLevelInstances(DunningCollectionPlan dunningCollectionPlan) {
+		List<DunningLevelInstance> dunningLevelInstances = new ArrayList<DunningLevelInstance>();
+		for (DunningLevelInstance levelInstance : dunningCollectionPlan.getDunningLevelInstances()) {
+		    levelInstance = levelInstanceService.findById(levelInstance.getId());
+		    dunningLevelInstances.add(levelInstance);
+		}
+		
+		dunningCollectionPlan.setDunningLevelInstances(dunningLevelInstances);
+		return dunningCollectionPlan;
 	}
 }
