@@ -583,7 +583,7 @@ public class ProductApi extends BaseApi {
 	        	var overloppingExist = productVersions
 	        									.stream()
 	        									.filter(pv -> {
-	        										return pv.getId() != productVersion.getId();
+	        										return pv.getId() != productVersion.getId() && pv.getStatus() == VersionStatusEnum.PUBLISHED;
 	        									})
 	        									.filter(pv -> {
 	        										return productVersion.getValidity().isCorrespondsToPeriod(pv.getValidity().getFrom(), pv.getValidity().getTo(), false);
