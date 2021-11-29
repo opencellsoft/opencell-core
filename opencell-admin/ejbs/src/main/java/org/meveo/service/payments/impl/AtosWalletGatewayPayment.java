@@ -49,8 +49,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worldline.sips.exception.SealCalculationException;
 import com.worldline.sips.exception.UnknownStatusException;
+import com.worldline.sips.model.CaptureMode;
 import com.worldline.sips.model.Currency;
 import com.worldline.sips.model.OrderChannel;
+import com.worldline.sips.model.PaymentPattern;
 import com.worldline.sips.model.ResponseCode;
 import com.worldline.sips.util.SealCalculator;
 
@@ -85,7 +87,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private PaymentGateway paymentGateway = null;
     private ParamBeanFactory paramBeanFactory;
     private CustomerAccountService customerAccountService;
-    private RequestConfig requestConfig;
+    private RequestConfig requestConfig;   
+    private PaymentMethodService paymentMethodService;
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expiryDate, String issueNumber,
@@ -200,6 +203,10 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
             paymentResponseDto.setNewToken(false);
             paymentResponseDto.setPaymentStatus(mappingStatus(response.getResponseCode()));
             paymentResponseDto.setTransactionId(response.getAuthorisationId());
+            if(StringUtils.isBlank(response.getSchemeTransactionIdentifier() )){
+            	paymentMethod.setToken3DsId(response.getSchemeTransactionIdentifier() );
+            	paymentMethodService().updateNoCheck(paymentMethod);
+            }
 
             if (!paymentResponseDto.getPaymentStatus().equals(PaymentStatusEnum.ACCEPTED)) {
                 paymentResponseDto.setErrorCode(getErreurCodeAndMsg(response)[0]);
@@ -242,33 +249,38 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	@Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
         String returnUrl = hostedCheckoutInput.getReturnUrl();
-        String walletUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
+        String walletUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "https://payment-webinit.test.sips-services.com/walletManagementInit");
 
         PaymentHostedCheckoutResponseDto response = new PaymentHostedCheckoutResponseDto();
         PaymentHostedCheckoutResponseDto.Result result = response.getResult();
 
         result.setHostedCheckoutUrl(walletUrl);
-        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"IR_WS_2.0"));
+        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"HP_2.39"));
         result.setReturnUrl(returnUrl);
 
         CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
         String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
 
-        String data = "merchantId=" + paymentGateway.getMarchandId() +
+        String data ="amount="+hostedCheckoutInput.getAmount()+
+        		"|authenticationData.authentAmount="+hostedCheckoutInput.getAuthenticationAmount()+
+        		"|currencyCode="+hostedCheckoutInput.getCurrencyCode()+
+        		"|merchantId="+paymentGateway.getMarchandId() +
+        		"|normalReturnUrl="+returnUrl+
+        		"|orderChannel="+OrderChannel.INTERNET.name()+
+        		"|transactionReference="+System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId()+
+        		"|paymentPattern="+PaymentPattern.RECURRING_1.name()+
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
+                "|fraudData.challengeMode3DS=CHALLENGE_MANDATE"+
+                "|captureMode="+CaptureMode.AUTHOR_CAPTURE.name()+
+                "|captureDay=0"+
                 "|merchantWalletId=" + merchantWalletId +
-                "|keyVersion=" + paymentGateway.getWebhooksKeyId() +
-                "|requestDateTime=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date());
+                "|keyVersion=" + paymentGateway.getWebhooksKeyId()+
+                "|sealAlgorithm="+paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256");
+                
+        		
 
-        // Wallet action
-        if (!StringUtils.isBlank(hostedCheckoutInput.getAllowedActions())) {
-            String walletActionnameList = buildWalletActionnameList(hostedCheckoutInput.getAllowedActions());
-            if (!StringUtils.isBlank(walletActionnameList)) {
-                data += "|walletActionnameList=" + walletActionnameList;
-            }
-        }
 
         if (!StringUtils.isBlank(hostedCheckoutInput.getVariant())) {
             data += "|templateName=" + hostedCheckoutInput.getVariant();
@@ -318,10 +330,11 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         request.setCurrencyCode(Currency.valueOf(paymentMethod.getCustomerAccount().getTradingCurrency().getCurrencyCode()).getCode());
         request.setMerchantId(paymentGateway.getMarchandId());
         request.setOrderChannel(OrderChannel.INTERNET.name());
+        request.setPaymentPattern(PaymentPattern.RECURRING_N.name());
         request.setInterfaceVersion(interfaceVersion);
         request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-        request.setTransactionReference(System.currentTimeMillis() + "CA" + paymentMethod.getCustomerAccount().getId());
-        request.setSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
+        request.setTransactionReference(System.currentTimeMillis() +"R"+ ((int )(Math.random() * 1000 + 1)) + "CA" + paymentMethod.getCustomerAccount().getId());
+        request.setInitialSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 
         // Needed for backward compatibility purpose, in 5.X version, the merchant wallet ID is the customer account ID
         // Starting at 9.X version, the merchant wallet ID match the token ID of payment method
@@ -448,5 +461,13 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         }
 
         return customerAccountService;
+    }
+    
+    private PaymentMethodService paymentMethodService() {
+        if (paymentMethodService == null) {
+        	paymentMethodService = (PaymentMethodService) EjbUtils.getServiceInterface(PaymentMethodService.class.getSimpleName());
+        }
+
+        return paymentMethodService;
     }
 }

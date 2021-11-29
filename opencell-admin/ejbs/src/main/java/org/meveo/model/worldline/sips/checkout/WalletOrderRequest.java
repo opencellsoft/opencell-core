@@ -9,7 +9,8 @@ public class WalletOrderRequest extends BaseRequest {
     private String orderChannel;
     private String paymentMeanId;
     private String transactionReference;
-    private String schemeTransactionIdentifier;
+    private String initialSchemeTransactionIdentifier;
+    private String paymentPattern;
 
     public String getTransactionReference() {
         return transactionReference;
@@ -59,12 +60,22 @@ public class WalletOrderRequest extends BaseRequest {
         this.paymentMeanId = paymentMeanId;
     }
 
-	public String getSchemeTransactionIdentifier() {
-		return schemeTransactionIdentifier;
+	public String getInitialSchemeTransactionIdentifier() {
+		return initialSchemeTransactionIdentifier;
 	}
 
-	public void setSchemeTransactionIdentifier(String schemeTransactionIdentifier) {
-		this.schemeTransactionIdentifier = schemeTransactionIdentifier;
+	public void setInitialSchemeTransactionIdentifier(String schemeTransactionIdentifier) {
+		this.initialSchemeTransactionIdentifier = schemeTransactionIdentifier;
 	}
+
+	public String getPaymentPattern() {
+		return paymentPattern;
+	}
+
+	public void setPaymentPattern(String paymentPattern) {
+		this.paymentPattern = paymentPattern;
+	}
+	
+	
     
 }
