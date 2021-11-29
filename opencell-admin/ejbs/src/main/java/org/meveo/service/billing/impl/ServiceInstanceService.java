@@ -548,6 +548,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
         }
+        
+        if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
+			serviceInstance.setDeliveryDate(new Date());
+	    }
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance = update(serviceInstance);
