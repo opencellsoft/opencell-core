@@ -15133,13 +15133,15 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="dunning_settings" />
-			
+		
+		<!-- 
 		<addForeignKeyConstraint
 			constraintName="fk_collection_plan_statuses_dunning_settings"
 			referencedTableName="dunning_settings"
 			baseColumnNames="dunning_settings_id"
 			baseTableName="dunning_collection_plan_statuses"
 			referencedColumnNames="id" />
+		 -->
 	
 		<addForeignKeyConstraint
 			baseColumnNames="dunning_settings_id"
