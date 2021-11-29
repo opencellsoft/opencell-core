@@ -61,7 +61,7 @@ import com.worldline.sips.util.SealCalculator;
  * <p>
  * Use <a href="https://documentation.sips.worldline.com/fr/WLSIPS.310-UG-Sips-Office-JSON.html">SIPS Office JSON API</a> to make payment/refund requests
  * <br>
- * Currently support only card payment methods
+ * Currently support only card payment methods with payPage
  * </p>
  *
  * @author Julien LEBOUTEILLER
