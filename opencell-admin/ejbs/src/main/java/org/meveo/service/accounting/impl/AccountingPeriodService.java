@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.accounting.AccountingOperationAction;
@@ -113,6 +114,9 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 */
 	public AccountingPeriod generateNextAP() {
 		final AccountingPeriod openAccountingPeriod = findLastAccountingPeriod();
+		if(openAccountingPeriod == null) {
+			throw new BusinessException("No accounting period found");
+		}
 		AccountingPeriod nextAP = new AccountingPeriod();
 
 		final Date endDate = Date.from(openAccountingPeriod.getEndDate().toInstant().atZone(ZoneId.systemDefault()).plusYears(1).toInstant());
