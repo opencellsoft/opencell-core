@@ -40,7 +40,7 @@ public class ProductOfferTemplateDto extends BusinessEntityDto{
 	@XmlElementWrapper(name = "products", required = true)
     @XmlElement(name = "products", required = true)
 	@NotNull
-    protected List<OfferProductsDto> products = new ArrayList<OfferProductsDto>();
+    private List<OfferProductsDto> products = new ArrayList<OfferProductsDto>();
 
 
 	public Date getValidFrom() {
