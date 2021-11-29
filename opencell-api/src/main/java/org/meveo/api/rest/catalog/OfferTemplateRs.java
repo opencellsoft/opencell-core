@@ -599,18 +599,4 @@ public interface OfferTemplateRs extends IBaseRs {
 			}
 	)
     public Response dissociateProduct(@PathParam("offerCode") String offerCode, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, List<String> productCodes);
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
