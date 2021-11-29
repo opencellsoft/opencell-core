@@ -15166,11 +15166,13 @@
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="dunning_settings" />
 	
+		<!-- 
 		<addForeignKeyConstraint
 			constraintName="fk_dunning_agent_dunning_settings"
 			referencedTableName="dunning_settings"
 			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
 			referencedColumnNames="id" />
+		 -->
 	
 		<addForeignKeyConstraint
 			constraintName="fk_dunning_collection_plan_statuses_dunning_settings"
