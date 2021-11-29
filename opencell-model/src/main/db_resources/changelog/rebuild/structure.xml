@@ -15172,7 +15172,7 @@
 			referencedTableName="dunning_settings"
 			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
 			referencedColumnNames="id" />
-		 -->
+		
 	
 		<addForeignKeyConstraint
 			constraintName="fk_dunning_collection_plan_statuses_dunning_settings"
@@ -15340,20 +15340,25 @@
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="dunning_policy" />
 			
+		 -->
+			
     </changeSet>
     <changeSet id="rebuild-str-fk-540-1641" author="ZBariki">
+    <!-- 
         <addForeignKeyConstraint baseColumnNames="min_balance_trigger_currency_id" baseTableName="dunning_policy"
                                  constraintName="fk_dunning_min_balance_currency_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="adm_currency"/>
+                                  -->
     </changeSet>
     
      <changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay"> 
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
+        <!--  <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
                                  
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
+                                  -->
     </changeSet>
       
     
