@@ -268,7 +268,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         		"|merchantId="+paymentGateway.getMarchandId() +
         		"|normalReturnUrl="+returnUrl+
         		"|orderChannel="+OrderChannel.INTERNET.name()+
-        		"|transactionReference="+System.currentTimeMillis()+"CA"+ca.getId()+
+        		"|transactionReference="+System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId()+
         		"|paymentPattern="+PaymentPattern.RECURRING_1.name()+
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
@@ -333,7 +333,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         request.setPaymentPattern(PaymentPattern.RECURRING_N.name());
         request.setInterfaceVersion(interfaceVersion);
         request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-        request.setTransactionReference(System.currentTimeMillis() + "CA" + paymentMethod.getCustomerAccount().getId());
+        request.setTransactionReference(System.currentTimeMillis() +"R"+ ((int )(Math.random() * 1000 + 1)) + "CA" + paymentMethod.getCustomerAccount().getId());
         request.setInitialSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 
         // Needed for backward compatibility purpose, in 5.X version, the merchant wallet ID is the customer account ID
