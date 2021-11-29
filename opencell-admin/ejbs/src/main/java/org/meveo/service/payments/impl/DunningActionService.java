@@ -14,6 +14,8 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningLevel;
+import org.meveo.model.payments.ActionChannelEnum;
+import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.BaseEntityService;
@@ -40,6 +42,14 @@ public class DunningActionService  extends BusinessService<DunningAction> {
         validateScriptInstance(dunningAction);
         validateActionNotificationTemplate(dunningAction);
         validateDunningLevel(dunningAction);
+        validateAssignedTo(dunningAction);
+        if(ActionModeEnum.AUTOMATIC.equals(dunningAction.getActionMode())) {
+        	if(dunningAction.getActionChannel() != null && !ActionChannelEnum.EMAIL.equals(dunningAction.getActionChannel())) {
+                throw new BusinessApiException("The only action channel for the automatic mode is Email.");
+        	}    	
+      		dunningAction.setActionChannel(ActionChannelEnum.EMAIL);
+    	}
+        
         if(ActionTypeEnum.SEND_NOTIFICATION.equals(dunningAction.getActionType()) && dunningAction.getActionChannel() == null){
             throw new BusinessApiException("the action channel is required, when ActionType is of type Send Notification.");
         }

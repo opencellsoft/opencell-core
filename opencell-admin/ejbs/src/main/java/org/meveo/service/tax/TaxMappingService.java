@@ -39,9 +39,11 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
@@ -75,10 +77,10 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     @Inject 
     private AccountingArticleService accountingArticleService;
     
-    private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = false;
+    private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = true;
 
     static {
-        IS_DETERMINE_TAX_CLASS_FROM_AA = ParamBean.getInstance().getBooleanValue("taxes.determineTaxClassFromAA", false);
+        IS_DETERMINE_TAX_CLASS_FROM_AA = ParamBean.getInstance().getBooleanValue("taxes.determineTaxClassFromAA", true);
     }
     
     @Override
@@ -208,7 +210,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             return null;
         }
     }
-
+    
     /**
      * Determine applicable tax for a given charge instance. Considers when Billing Account is exonerated.
      * 
@@ -237,7 +239,40 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             chargeInstance.setTaxClassResolved(taxClass);
         }
 
-        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, true, false);
+        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, null, true, false,
+                null);
+    }
+
+    /**
+     * Determine applicable tax for a given wallet operation. Considers when Billing Account is exonerated.
+     * 
+     * @param walletOperation wallet operation
+     * @return Tax to apply
+     * @throws BusinessException General business exception
+     */
+    public TaxInfo determineTax(WalletOperation walletOperation) throws BusinessException {
+    	ChargeInstance chargeInstance=walletOperation.getChargeInstance();
+    	Date date =walletOperation.getOperationDate();
+        TaxClass taxClass = chargeInstance.getTaxClassResolved();
+        if (taxClass == null && IS_DETERMINE_TAX_CLASS_FROM_AA) {
+            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+            if (accountingArticle != null) {
+                taxClass = accountingArticle.getTaxClass();
+                chargeInstance.setTaxClassResolved(taxClass);
+            }
+        }
+        if (taxClass == null) {
+            if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+                taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
+            }
+            if (taxClass == null) {
+                taxClass = chargeInstance.getChargeTemplate().getTaxClass();
+            }
+            chargeInstance.setTaxClassResolved(taxClass);
+        }
+
+        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, walletOperation, true,
+                false, null);
     }
 
     /**
@@ -257,6 +292,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         return determineTax(taxClass, seller, userAccount.getBillingAccount(), userAccount, date, true, false);
     }
 
+  
+ 
     /**
      * Determine applicable tax for a given seller/buyer and tax category and class combination. Considers when Billing Account is exonerated.
      * 
@@ -272,12 +309,33 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws BusinessException General business exception
      */
     public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, boolean checkExoneration, boolean ignoreNoTax) throws BusinessException {
+        return determineTax(taxClass, seller, billingAccount, userAccount, date, null, checkExoneration, ignoreNoTax, null);
+    }
+
+    /**
+     * Determine applicable tax for a given seller/buyer and tax category and class combination. Considers when Billing Account is exonerated.
+     *
+     * @param taxClass Tax class
+     * @param seller Seller
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param date Date to determine tax validity
+     * @param checkExoneration Check if billing account is exonerated
+     * @param ignoreNoTax Should exception be thrown if no tax was matched. True - exception will be ignored and NULL returned. False - IncorrectChargeTemplateException will be
+     *        thrown.
+     * @param walletoperation a wallet Operation
+     * @param defaultTax a default tax to be used if there is one
+     * @return Tax to apply
+     * @throws BusinessException General business exception
+     */
+    public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, WalletOperation walletoperation,
+            boolean checkExoneration, boolean ignoreNoTax, Tax defaultTax) throws BusinessException {
 
         try {
             TaxInfo taxInfo = new TaxInfo();
             taxInfo.taxClass = taxClass;
 
-            Tax tax = null;
+            Tax tax = defaultTax;
 
             if (checkExoneration && billingAccountService.isExonerated(billingAccount)) {
                 tax = taxService.getZeroTax();
@@ -295,9 +353,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
                 if (taxMapping.getTaxScript() != null) {
 
-                    if (taxScriptService.isApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date)) {
-                        List<Tax> taxes = taxScriptService.computeTaxes(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date);
-                        if (!taxes.isEmpty()) {
+                    if (taxScriptService.isApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation)) {
+                        List<Tax> taxes = taxScriptService.computeTaxes(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation);
+                        if (taxes != null && !taxes.isEmpty()) {
                             tax = taxes.get(0);
                         }
                     }
@@ -355,13 +413,15 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return A best matched Tax mapping
      */
     public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
-    	if(seller == null)
-    		throw new BusinessException("Seller is mandatory for finding a tax mapping");
+        if (seller == null) {
+            throw new BusinessException("Seller is mandatory for finding a tax mapping");
+        }
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 
-        List<TaxMapping> taxMappings = getEntityManager().createNamedQuery("TaxMapping.findApplicableTax", TaxMapping.class).setParameter("taxCategory", taxCategory).setParameter("taxClass", taxClass)
-            .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).getResultList();
+        List<TaxMapping> taxMappings = getEntityManager().createNamedQuery("TaxMapping.findApplicableTax", TaxMapping.class).setParameter("taxCategory", taxCategory)
+                .setParameter("taxClass", taxClass).setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry)
+                .setParameter("applicationDate", applicationDate).getResultList();
 
         for (TaxMapping taxMapping : taxMappings) {
             if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
@@ -369,16 +429,18 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             }
         }
 
-        log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}", taxCategory != null ? taxCategory.getCode() : null,
-            taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null, taxClass != null ? taxClass.getId() : null, sellersCountry != null ? sellersCountry.getCode() : null,
-            sellersCountry != null ? sellersCountry.getId() : null, buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+        log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}",
+                taxCategory != null ? taxCategory.getCode() : null, taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null,
+                taxClass != null ? taxClass.getId() : null, sellersCountry != null ? sellersCountry.getCode() : null, sellersCountry != null ? sellersCountry.getId() : null,
+                buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
 
         throw new IncorrectChargeTemplateException(
-            "No Tax mapping matched for tax category="+ (taxCategory != null ? taxCategory.getCode() : null )+ "/" + (taxCategory != null ? taxCategory.getId() : null)
-            		+ ", tax class=" + (taxClass != null ? taxClass.getCode() : null )+ "/" + (taxClass != null ? taxClass.getId() : null) 
-            		+ ", seller's country=" + (sellersCountry != null ? sellersCountry.getCode() : null)+ "/" + (sellersCountry != null ? sellersCountry.getId() : null)
-                    + ", buyer's country=" + buyersCountry.getCode() + "/" + buyersCountry.getId() 
-                    + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+                "No Tax mapping matched for tax category=" + (taxCategory != null ? taxCategory.getCode() : null) + "/" + (taxCategory != null ? taxCategory.getId() : null)
+                        + ", tax class=" + (taxClass != null ? taxClass.getCode() : null) + "/" + (taxClass != null ? taxClass.getId() : null) + ", seller's country=" + (
+                        sellersCountry != null ?
+                                sellersCountry.getCode() :
+                                null) + "/" + (sellersCountry != null ? sellersCountry.getId() : null) + ", buyer's country=" + buyersCountry.getCode() + "/" + buyersCountry
+                        .getId() + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
     }
 
     /**
@@ -590,4 +652,34 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
          */
         public Tax tax;
     }
+
+    /**
+     * Recalculate tax to see if it has changed
+     *
+     * @param tax Previous tax
+     * @param isExonerated Is Billing account exonerated from taxes
+     * @param seller The seller
+     * @param billingAccount the billing account
+     * @param taxClass Tax class
+     * @param userAccount User account to calculate tax by external program
+     * @param taxZero Zero tax to apply if Billing account is exonerated
+     * @return An array containing applicable tax and True/false if tax % has changed from a previous tax
+     * @throws BusinessException Were not able to determine a tax
+     */
+    public Object[] getApplicableTax(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount, Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero) throws BusinessException {
+
+        if (isExonerated) {
+            return new Object[] { taxZero, false };
+
+        } else {
+
+            TaxInfo recalculatedTaxInfo = determineTax(taxClass, seller, billingAccount, userAccount, operationDate, null, isExonerated, false, tax);
+
+            Tax recalculatedTax = recalculatedTaxInfo.tax;
+
+            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
+        }
+    }
+
+
 }

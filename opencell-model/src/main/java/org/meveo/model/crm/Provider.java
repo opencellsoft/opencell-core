@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
@@ -230,6 +231,32 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     private int invoiceRounding = 2;
 
     /**
+     * The Maximum Delay
+     */
+    
+    @Column(name = "maximum_delay")
+    private Integer maximumDelay;
+    
+    public Integer getMaximumDelay() {
+		return maximumDelay;
+	}
+
+	public void setMaximumDelay(Integer maximumDelay) {
+		this.maximumDelay = maximumDelay;
+	}
+
+	@Column(name = "maximum_deferral_per_invoice")
+	private Integer maximumDeferralPerInvoice;
+		 
+	public Integer getMaximumDeferralPerInvoice() {
+		return maximumDeferralPerInvoice;
+	}
+	
+	public void setMaximumDeferralPerInvoice(Integer maximumDeferralPerInvoice) {
+		this.maximumDeferralPerInvoice = maximumDeferralPerInvoice;
+	}
+
+	/**
      * The invoice amount rounding mode
      */
     @Column(name = "invoice_rounding_mode", nullable = false)
@@ -351,7 +378,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @JoinColumn(name = "gdpr_config_id")
     private GdprConfiguration gdprConfiguration;
 
-    /**
+    @Type(type = "numeric_boolean")
+    @Column(name = "payment_deferral")
+    private boolean paymentDeferral;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "payment_plan")
+    private boolean paymentPlan;
+
+
+	/**
      * RUM number sequence
      */
     @Embedded
@@ -366,6 +402,11 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")),
             @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")) })
     private GenericSequence customerNoSequence = new GenericSequence();
+
+    @Column(name = "cdr_deduplicationkey_el", length = 500)
+    @Size(max = 500)
+    private String cdrDeduplicationKeyEL;
+    
 
     public String getCode() {
         return code;
@@ -572,7 +613,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public void setDiscountAccountingCode(String discountAccountingCode) {
         this.discountAccountingCode = discountAccountingCode;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
 
@@ -729,6 +770,22 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
+    public boolean isPaymentDeferral() {
+        return paymentDeferral;
+    }
+
+    public void setPaymentDeferral(boolean paymentDeferral) {
+        this.paymentDeferral = paymentDeferral;
+    }
+
+    public boolean isPaymentPlan() {
+        return paymentPlan;
+    }
+
+    public void setPaymentPlan(boolean paymentPlan) {
+        this.paymentPlan = paymentPlan;
+    }
+
     public GdprConfiguration getGdprConfiguration() {
         return gdprConfiguration;
     }
@@ -780,4 +837,18 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public boolean isCurrentProvider() {
         return id != null && id == CURRENT_PROVIDER_ID;
     }
+
+	/**
+	 * @return the cdrDeduplicationKeyEL
+	 */
+	public String getCdrDeduplicationKeyEL() {
+		return cdrDeduplicationKeyEL;
+	}
+
+	/**
+	 * @param cdrDeduplicationKeyEL the cdrDeduplicationKeyEL to set
+	 */
+	public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
+		this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
+	}
 }

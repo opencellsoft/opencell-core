@@ -24,7 +24,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
+
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -32,7 +35,7 @@ import java.util.Map;
  *
  * @author Thang Nguyen
  */
-@Path("/apiv1rest.{type:json|yaml}")
+@Path("/openapiv1.{type:json|yaml}")
 public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
 
     @Inject
@@ -59,12 +62,12 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
         Map<String, PathItem> MAP_SWAGGER_PATHS = new Gson().fromJson(jsonApiStd, new TypeToken<Map<String, PathItem>>(){}.getType());
 
 
-        OpenAPI oasRestApi = new OpenAPI().info(new Info().title("Opencell RESTful APIv1"));
+        OpenAPI oasRestApi = new OpenAPI().info(new Info().title("Opencell OpenApi definition V1"));
         SwaggerConfiguration oasRestConfig = new SwaggerConfiguration()
                 .openAPI(oasRestApi)
                 .prettyPrint(true)
                 .readAllResources(false);
-
+ 
         setOpenApiConfiguration(oasRestConfig);
 
         try {
@@ -115,10 +118,14 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
                             break;
                     }
                     break;
+                }else {
+                	aRFPath=GenericOpencellRestfulAPIv1.REST_PATH +anOldPath;
                 }
+                paths.addPathItem(aRFPath, pathItemInOldSwagger); 
+                
             }
 
-            paths.addPathItem(aRFPath, pathItem);
+            //paths.addPathItem(aRFPath, pathItem);
         }
 
         oasRestApi.setPaths(paths);

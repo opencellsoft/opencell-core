@@ -60,6 +60,8 @@
 				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
 				entityView="invoiceSubCategoryDetail" propagateConversation="false"
 				backView="invoiceCategories" />
+			<hftl:column label="#{messages['menu.status']}"
+				field="status" valueLabelField="code" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}"
 				field="edrTemplates" valueLabelField="code" isList="true" />
 			<hftl:column label="#{messages['enableEntity.active']}"

@@ -226,10 +226,14 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 	}
 	
-	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate) {
+	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate, boolean isBefore) {
         try {
+            String queryName = "SubAccountingPeriod.findByAPAndAfterEndDate";
+            if (isBefore) {
+                queryName = "SubAccountingPeriod.findByAPAndBeforeEndDate";
+            }
             return (List<SubAccountingPeriod>) getEntityManager()
-                    .createNamedQuery("SubAccountingPeriod.findByAPAndEndDate", entityClass)
+                    .createNamedQuery(queryName, entityClass)
                     .setParameter("apId", accountingPeriod.getId())
                     .setParameter("endDate", endDate)
                     .getResultList();
