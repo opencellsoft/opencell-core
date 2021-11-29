@@ -648,13 +648,14 @@ public class SubscriptionApi extends BaseApi {
 
             } else {
                 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription, InstanceStatusEnum.INACTIVE,
-                        InstanceStatusEnum.ACTIVE);
+                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.PENDING);
 
                 if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
                     for (ServiceInstance alreadyInstantiatedService : alreadyInstantiatedServices) {
                         if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.ACTIVE) {
                             throw new MeveoApiException("ServiceInstance with code=" + alreadyInstantiatedService.getCode() + " is already activated.");
-                        } else if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.INACTIVE) {
+                        } else if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.INACTIVE
+                        		|| alreadyInstantiatedService.getStatus() == InstanceStatusEnum.PENDING) {
                             serviceInstance = alreadyInstantiatedService;
                             break;
                         }
