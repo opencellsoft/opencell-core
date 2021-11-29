@@ -658,7 +658,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
                             chargeInstance, chargeInstance.getServiceInstance());
 
-                    counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
+                    if (realCounterPeriod.getAccumulatedValues() != null)
+                        counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
                     counterPeriod.setValue(realCounterPeriod.getValue());
                     counterPeriod.setCounterInstance(realCounterPeriod.getCounterInstance());
 
