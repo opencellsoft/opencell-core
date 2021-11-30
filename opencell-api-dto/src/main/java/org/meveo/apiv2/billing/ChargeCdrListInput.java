@@ -28,13 +28,26 @@ public interface ChargeCdrListInput extends CdrListInput {
         return false;
     }
 
+    @Schema(description = "The max deep used in triggered EDR")
+    @Nullable
+    Integer getMaxDepth();
+
     @Default
-    @Schema(description = "If true, the API will return the list of all wallet operations produced during, even if the are virtual")
+    @Schema(description = "If true, the API will return the list of IDs of all wallet operations produced. Applies to non-virtual mode only.")
     default boolean isReturnWalletOperations() {
         return false;
     }
 
-    @Schema(description = "The max deep used in triggered EDR")
-    @Nullable
-    Integer getMaxDepth();
+    @Default
+    @Schema(description = "If true, the API will return the list of details of all wallet operations produced, even if they are virtual")
+    default boolean isReturnWalletOperationDetails() {
+        return false;
+    }
+
+
+    @Default
+    @Schema(description = "If true, the API will return the list of counter updates produced, even if they are virtual")
+    default boolean isReturnCounters() {
+        return false;
+    }
 }

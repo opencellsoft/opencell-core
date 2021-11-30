@@ -43,8 +43,8 @@ import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ImmutableCdrListInput;
 import org.meveo.apiv2.billing.ImmutableChargeCdrListInput;
-import org.meveo.apiv2.billing.ProcessCdrListResult;
 import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
+import org.meveo.apiv2.billing.ProcessCdrListResult;
 import org.meveo.apiv2.billing.service.MediationApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
@@ -97,7 +97,7 @@ public class MediationApi extends BaseApi {
         handleMissingParameters();
         List<CdrErrorDto> errors = new ArrayList<>();
 
-        CdrListInput cdrListInput = ImmutableCdrListInput.builder().addAllCdrs(postData.getCdr()).mode(ProcessCdrListModeEnum.PROCESS_ALL).build();
+        CdrListInput cdrListInput = ImmutableCdrListInput.builder().addAllCdrs(postData.getCdr()).mode(ProcessCdrListModeEnum.PROCESS_ALL).isReturnEDRs(true).build();
         ProcessCdrListResult processCdrListResult = mediationApiService.registerCdrList(cdrListInput, postData.getIpAddress());
 
         for (ChargeCDRResponseDto processedCdr : processCdrListResult.getChargedCDRs()) {
@@ -124,7 +124,8 @@ public class MediationApi extends BaseApi {
         handleMissingParameters();
 
         ChargeCdrListInput cdrListInput = ImmutableChargeCdrListInput.builder().addCdrs(chargeCDRDto.getCdr()).mode(ProcessCdrListModeEnum.PROCESS_ALL).isVirtual(chargeCDRDto.isVirtual())
-            .isRateTriggeredEdr(chargeCDRDto.isRateTriggeredEdr()).isReturnWalletOperations(chargeCDRDto.isReturnWalletOperations()).maxDepth(chargeCDRDto.getMaxDepth()).build();
+            .isRateTriggeredEdr(chargeCDRDto.isRateTriggeredEdr()).maxDepth(chargeCDRDto.getMaxDepth()).isReturnEDRs(chargeCDRDto.isReturnEDRs()).isReturnWalletOperations(chargeCDRDto.isReturnWalletOperations())
+            .isReturnWalletOperationDetails(chargeCDRDto.isReturnWalletOperationDetails()).isReturnCounters(chargeCDRDto.isReturnCounters()).build();
         ProcessCdrListResult processCdrListResult = mediationApiService.registerCdrList(cdrListInput, chargeCDRDto.getIp());
 
         ChargeCDRResponseDto chargeCDRResponseDto = null;

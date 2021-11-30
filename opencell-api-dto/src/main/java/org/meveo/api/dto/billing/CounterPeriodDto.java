@@ -21,10 +21,24 @@ package org.meveo.api.dto.billing;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAttribute;
+
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.shared.DateUtils;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class CounterPeriodDto {
+
+    protected Long id;
+
+    /**
+     * The code
+     */
+    protected String code;
 
     private CounterTypeEnum counterType;
     private BigDecimal level;
@@ -44,6 +58,32 @@ public class CounterPeriodDto {
      * The type field can be "Multi-value" if the accumulator is true.
      */
     private AccumulatorCounterTypeEnum accumulatorType;
+
+    /**
+     * Constructor
+     */
+    public CounterPeriodDto() {
+
+    }
+
+    /**
+     * Entity to DTO constructor
+     * 
+     * @param counterPeriod
+     */
+    public CounterPeriodDto(CounterPeriod counterPeriod) {
+
+        id = counterPeriod.getId();
+        code = counterPeriod.getCode();
+        setCounterType(counterPeriod.getCounterType());
+        setLevel(counterPeriod.getLevel());
+        setPeriodEndDate(DateUtils.formatDateWithPattern(counterPeriod.getPeriodEndDate(), "yyyy-MM-dd"));
+        setPeriodStartDate(DateUtils.formatDateWithPattern(counterPeriod.getPeriodStartDate(), "yyyy-MM-dd"));
+        setValue(counterPeriod.getValue());
+        setAccumulatedValues(counterPeriod.getAccumulatedValues());
+        setAccumulator(counterPeriod.isAccumulator());
+        setAccumulatorType(counterPeriod.getAccumulatorType());
+    }
 
     public CounterTypeEnum getCounterType() {
         return counterType;
