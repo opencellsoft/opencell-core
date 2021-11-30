@@ -482,7 +482,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
-
+        
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
         if (serviceInstance.getSubscriptionDate() == null) {
@@ -993,6 +993,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.SUSPENDED)) //
             .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList();
+        
+        ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getPendingToActivate", Long.class) //
+                .setParameter("date", new Date()) //
+                .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.PENDING)) //
+                .setParameter("statuses", Arrays.asList(InstanceStatusEnum.PENDING)) //
+                .getResultList());
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
             .setParameter("date", untillDate) //

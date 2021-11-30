@@ -1398,12 +1398,12 @@ public class ValidateBRScript extends Script {
             <column name="tag_start" value="#{"/>
             <column name="tag_end" value="}" />
             <column name="description" value="Report query result" />
-            <column name="subject" value="[opencell] Query result query.name query execution start date" />
-            <column name="textcontent">
+            <column name="subject" value="[opencell] Query result #{reportQueryName} #{startDate}" />
+            <column name="htmlcontent">
                 <![CDATA[Dear #{userName},
 
 The result for your query is ready.
-Check the result on Opencell Portal direct link to the result on the portal
+Check the result on <a href="#{portalResultLink}">Opencell Portal</a>
 
 Query : #{reportQueryName}
 Started : #{startDate}
@@ -1426,7 +1426,7 @@ Opencell team.
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
             <column name="description" value="Report query failure notification" />
-            <column name="subject" value="[opencell] Query failed query.name query execution start date" />
+            <column name="subject" value="[opencell] Query failed #{reportQueryName} #{startDate}" />
             <column name="textcontent">
                 <![CDATA[Dear #{userName},
 

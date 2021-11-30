@@ -7973,5 +7973,31 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="AccountingPeriodClosingJob_Job" />
 		</insert>
 	</changeSet>
+	<changeSet id="INTRD-3316_20211129_query_notification_template" author="TarikRabeh">
+		<update tableName="com_message_template">
+            <column name="subject" value="[opencell] Query result #{reportQueryName} #{startDate}" />
+            <column name="textcontent"></column>
+            <column name="htmlcontent">
+                <![CDATA[Dear #{userName},
 
+The result for your query is ready.
+Check the result on <a href="#{portalResultLink}">Opencell Portal</a>
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+Line count : #{lineCount}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
+            <where>code='REPORT_QUERY_RESULT_SUCCESS'</where>
+		</update>
+		<update tableName="com_message_template">
+            <column name="subject" value="[opencell] Query failed #{reportQueryName} #{startDate}" />
+			<where>code='REPORT_QUERY_RESULT_FAILURE'</where>
+		</update>
+    </changeSet>
 </databaseChangeLog>
