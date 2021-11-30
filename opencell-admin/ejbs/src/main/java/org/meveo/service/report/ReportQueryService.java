@@ -367,9 +367,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     private void notifyUser(Long reportQueryId, String reportQueryName, String userEmail, String userName, boolean success,
                             Date startDate, long duration, Integer lineCount, String error) {
         EmailTemplate emailTemplate;
-        String content;
+        String contentHtml = null;
+        String content = null;
         String subject;
-        String portalResultLink = paramBeanFactory.getInstance().getProperties().getProperty("portal.host.queryUri").concat(reportQueryId+"/show");
+        String portalResultLink = paramBeanFactory.getInstance().getProperty("portal.host.queryUri", "https://integration.d2.opencell.work/opencell/frontend/DEMO/portal/finance/reports/query-tool/query-runs-results/").concat(reportQueryId+"/show");
 
         Format format = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
         Map<Object, Object> params = new HashMap<>();
@@ -384,7 +385,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             if(success) {
                 emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
                 params.put("lineCount", lineCount);
-                content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
                 subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
             } else {
                 emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
@@ -393,7 +394,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
             }
             emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
-                    null, asList(userEmail), subject, content, null);
+                    null, asList(userEmail), subject, content, contentHtml);
         } catch (Exception exception) {
             log.error("Failed to send notification email " + exception.getMessage());
         }
