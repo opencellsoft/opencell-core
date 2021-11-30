@@ -17,6 +17,7 @@ import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.UpdateLevelInstanceInput;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -84,7 +85,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exits")
     }) 
 	Response pauseCollectionPlan(@Parameter(required = true) DunningCollectionPlanPause dunningCollectionPlan, @PathParam("id") Long id);
-	
+
 	@POST
 	@Path("/stop/{id}")
 	@Operation(summary = "Stop Collection plan",
@@ -97,7 +98,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exits")
     }) 
 	Response stopCollectionPlan(@Parameter(required = true) DunningCollectionPlanStop dunningCollectionPlan, @PathParam("id") Long id);
-	
+
 	@POST
 	@Path("/resume/{id}")
 	@Operation(summary = "Resume Collection plan",
@@ -110,7 +111,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exits")
     })
 	Response resumeCollectionPlan(@PathParam("id") Long id);
-	
+
 	@POST
     @Path("/removeDunningLevelInstance")
     @Operation(summary = "Remove DunningLevelInstance",
@@ -123,7 +124,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response removeDunningLevelInstance(@Parameter(required = true) RemoveLevelInstanceInput removeLevelInstanceInput);
-	
+
 	@POST
     @Path("/addDunningLevelInstance")
     @Operation(summary = "Add DunningLevelInstance",
@@ -136,4 +137,17 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response addDunningLevelInstance(@Parameter(required = true) DunningLevelInstanceInput dunningLevelInstanceInput);
+
+	@POST
+    @Path("/updateDunningLevelInstance/{levelInstanceId}")
+    @Operation(summary = "Update DunningLevelInstance",
+    tags = {"Collection Plan"},
+    description = "Update DunningLevelInstance",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "Update action success"),
+            @ApiResponse(responseCode = "404",
+                    description = "Entity does not exist")
+    })
+    Response updateDunningLevelInstance(@Parameter(required = true) UpdateLevelInstanceInput updateLevelInstanceInput, @PathParam("levelInstanceId") Long levelInstanceId);
 }

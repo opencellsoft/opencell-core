@@ -95,7 +95,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
         create(newCollectionPlan);
         update(oldCollectionPlan);
-        trackOperation("switch", new Date(), oldCollectionPlan);
+        trackOperation("SWITCH", new Date(), oldCollectionPlan);
         return newCollectionPlan;
     }
 
@@ -250,7 +250,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     	collectionPlanToResume = refreshLevelInstances(collectionPlanToResume);
     	DunningCollectionPlanStatus dunningCollectionPlanStatus = dunningCollectionPlanStatusService.refreshOrRetrieve(collectionPlanToResume.getStatus());
 		if(validate) {
-			if(!collectionPlanToResume.getStatus().getStatus().equals(DunningCollectionPlanStatusEnum.PAUSED)) {
+			if(!dunningCollectionPlanStatus.getStatus().equals(DunningCollectionPlanStatusEnum.PAUSED)) {
 				throw new BusinessApiException("Collection Plan with id "+collectionPlanToResume.getId()+" cannot be resumed, the collection plan is not paused");
 			}
 			if(collectionPlanToResume.getPausedUntilDate() != null && collectionPlanToResume.getPausedUntilDate().before(new Date())) {
@@ -276,7 +276,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 	
     @Override
     public void remove(DunningCollectionPlan entity) throws BusinessException {
-    	trackOperation("delete", new Date(), entity);
+    	trackOperation("DELETE", new Date(), entity);
     	super.remove(entity);
     }
     

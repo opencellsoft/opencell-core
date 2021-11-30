@@ -27,6 +27,7 @@ import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchResult;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.UpdateLevelInstanceInput;
 import org.meveo.apiv2.dunning.resource.DunningCollectionPlanResource;
 import org.meveo.apiv2.dunning.service.DunningCollectionPlanApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
@@ -114,7 +115,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
     
     @Override
 	public Response pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlanInput, Long id) {
-		DunningCollectionPlan dunningCollectionPlan = collectionPlanApiService.pauseCollectionPlan(dunningCollectionPlanInput, id, dunningCollectionPlanInput).get();
+		DunningCollectionPlan dunningCollectionPlan = collectionPlanApiService.pauseCollectionPlan(dunningCollectionPlanInput, id).get();
 		return Response.ok(toResourceOrderWithLink(collectionPlanMapper.toResource(dunningCollectionPlan))).build();
 	}
 	
@@ -122,7 +123,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 
 	@Override
 	public Response stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlanInput, Long id) {
-		DunningCollectionPlan dunningCollectionPlan = collectionPlanApiService.stopCollectionPlan(dunningCollectionPlanInput, id, dunningCollectionPlanInput).get();
+		DunningCollectionPlan dunningCollectionPlan = collectionPlanApiService.stopCollectionPlan(dunningCollectionPlanInput, id).get();
 		return Response.ok(toResourceOrderWithLink(collectionPlanMapper.toResource(dunningCollectionPlan))).build();
 	}
 
@@ -149,6 +150,15 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
             .newDunningLevelInstance(newDunningLevelInstance)
             .build()).build();
 	}
+
+	@Override
+	public Response updateDunningLevelInstance(UpdateLevelInstanceInput updateLevelInstanceInput, Long levelInstanceId) {
+        DunningLevelInstance updatedDunningLevelInstance = dunningCollectionPlanApiService.updateDunningLevelInstance(updateLevelInstanceInput, levelInstanceId).get();
+        return Response.ok(ImmutableDunningLevelInstanceSuccessResponse.builder()
+            .status("SUCCESS")
+            .newDunningLevelInstance(updatedDunningLevelInstance)
+            .build()).build();
+    }
 
 	private Object toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningCollectionPlan dunningCollectionPlan) {
 		return ImmutableDunningCollectionPlan.copyOf(dunningCollectionPlan)

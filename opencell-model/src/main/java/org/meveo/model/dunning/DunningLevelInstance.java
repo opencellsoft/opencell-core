@@ -25,7 +25,10 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "dunning_level_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_level_instance_seq") })
-@NamedQueries({ @NamedQuery(name = "DunningLevelInstance.findByPolicyLevelId", query = "SELECT li FROM DunningLevelInstance li where li.policyLevel.id = :policyLevelId") })
+@NamedQueries({ 
+        @NamedQuery(name = "DunningLevelInstance.findByPolicyLevelId", query = "SELECT li FROM DunningLevelInstance li where li.policyLevel.id = :policyLevelId"),
+        @NamedQuery(name = "DunningLevelInstance.findByCurrentLevelSequence", query = "SELECT li FROM DunningLevelInstance li LEFT JOIN FETCH li.actions a where li.collectionPlan = :collectionPlan and li.sequence = :sequence")
+    })
 public class DunningLevelInstance extends AuditableEntity {
 
     private static final long serialVersionUID = -5809793412586160209L;

@@ -8,6 +8,8 @@ import static java.util.stream.Collectors.toList;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +30,14 @@ import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
+import org.meveo.apiv2.dunning.UpdateLevelInstanceInput;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningActionInstance;
+import org.meveo.model.dunning.DunningActionInstanceStatusEnum;
 import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningLevelInstance;
@@ -42,6 +46,9 @@ import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningStopReason;
+import org.meveo.model.payments.ActionModeEnum;
+import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -49,6 +56,7 @@ import org.meveo.service.payments.impl.DunningActionInstanceService;
 import org.meveo.service.payments.impl.DunningActionService;
 import org.meveo.service.payments.impl.DunningAgentService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
+import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
 import org.meveo.service.payments.impl.DunningLevelInstanceService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
@@ -90,13 +98,16 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     private DunningLevelInstanceService dunningLevelInstanceService;
 
     @Inject
-    private AuditLogService auditLogService;
-
-    @Inject
 	private DunningPauseReasonsService dunningPauseReasonService;
 
 	@Inject
 	private DunningStopReasonsService dunningStopReasonService;
+	
+	@Inject
+    private DunningCollectionPlanStatusService dunningCollectionPlanStatusService;
+	
+    @Inject
+    private AuditLogService auditLogService;
 	
 	private static final String NO_DUNNING_FOUND = "No Dunning Plan collection found with id : ";
 
@@ -138,8 +149,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     public Optional<DunningCollectionPlan> delete(Long id) {
         DunningCollectionPlan dunningCollectionPlan = dunningCollectionPlanService.findById(id);
         if (dunningCollectionPlan != null) {
-            dunningPolicyService.remove(id);
-            trackOperation("delete", new Date(), dunningCollectionPlan);
+            dunningCollectionPlanService.remove(dunningCollectionPlan);
             return of(dunningCollectionPlan);
         } else {
             return empty();
@@ -166,7 +176,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             throw new NotFoundException("Policy level with id " + switchDunningCollectionPlan.getPolicyLevel().getId() + " does not exits");
         }
         Optional<DunningCollectionPlan> optional = of(dunningCollectionPlanService.switchCollectionPlan(oldCollectionPlan, policy, policyLevel));
-        trackOperation("switch", new Date(), oldCollectionPlan);
         return optional;
     }
 
@@ -192,26 +201,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 dunningCollectionPlanService.switchCollectionPlan(collectionPlan, policy, policyLevel);
             }
         }
-    }
-
-    public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
-        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
-        AuditLog auditLog = new AuditLog();
-        auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
-        auditLog.setCreated(operationDate);
-        auditLog.setActor(currentUser.getUserName());
-        auditLog.setAction(operationType);
-        StringBuilder parameters = new StringBuilder()
-                .append(formatter.format(operationDate)).append(" - ")
-                .append(currentUser.getUserName()).append(" - ")
-                .append(" apply ")
-                .append(operationType)
-                .append(" to collection Plan id=")
-                .append(dunningCollectionPlan.getId());
-        auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin("API");
-        auditLogService.create(auditLog);
-        return auditLog;
     }
 
     public Optional<Map<String, List<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
@@ -251,34 +240,30 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return dunningPolicyService.availablePoliciesForSwitch(invoice);
     }
     
-    public Optional<DunningCollectionPlan> pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlan,
-			Long id, DunningCollectionPlanPause dunningCollectionPlanInput) {
+    public Optional<DunningCollectionPlan> pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlanPause, Long id) {
 		var collectionPlanToPause = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
-		DunningPauseReason dunningPauseReason = dunningPauseReasonService.findById(dunningCollectionPlanInput.getDunningPauseReason().getId());
+		DunningPauseReason dunningPauseReason = dunningPauseReasonService.findById(dunningCollectionPlanPause.getDunningPauseReason().getId());
 		if(dunningPauseReason == null) {
-			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanInput.getDunningPauseReason().getId() + " does not exits");
+			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanPause.getDunningPauseReason().getId() + " does not exits");
 		}
-		collectionPlanToPause = dunningCollectionPlanService.pauseCollectionPlan(dunningCollectionPlan.getForcePause(), dunningCollectionPlan.getPauseUntil(), collectionPlanToPause, dunningPauseReason);
-		trackOperation("PAUSE", new Date(), collectionPlanToPause);
+		collectionPlanToPause = dunningCollectionPlanService.pauseCollectionPlan(dunningCollectionPlanPause.getForcePause(), dunningCollectionPlanPause.getPauseUntil(), collectionPlanToPause, dunningPauseReason);
 		return of(collectionPlanToPause);
 	}
 	
 	
-	public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlan, Long id, DunningCollectionPlanStop dunningCollectionPlanInput) {
+	public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlanStop, Long id) {
 		var collectionPlanToStop = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
-		DunningStopReason dunningStopReason = dunningStopReasonService.findById(dunningCollectionPlanInput.getDunningStopReason().getId());
+		DunningStopReason dunningStopReason = dunningStopReasonService.findById(dunningCollectionPlanStop.getDunningStopReason().getId());
 		if(dunningStopReason == null) {
-			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanInput.getDunningStopReason().getId() + " does not exits");
+			throw new NotFoundException("dunning Pause Reason with id " + dunningCollectionPlanStop.getDunningStopReason().getId() + " does not exits");
 		}
 		collectionPlanToStop = dunningCollectionPlanService.stopCollectionPlan(collectionPlanToStop, dunningStopReason);
-		trackOperation("STOP", new Date(), collectionPlanToStop);
 		return of(collectionPlanToStop);
 	}
 	
 	public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
 		var collectionPlanToResume = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
 		collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
-		trackOperation("RESUME", new Date(), collectionPlanToResume);
 		return of(collectionPlanToResume);
 	}
 	
@@ -299,6 +284,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     new BadRequestException("Cannot delete a level instance with status : " + dunningLevelInstance.getLevelStatus());
                 }
                 dunningLevelInstanceService.remove(dunningLevelInstance);
+                trackOperation("REMOVE DunningLevelInstance", new Date(), dunningLevelInstance.getCollectionPlan());
             }
         }
 	}
@@ -320,14 +306,102 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
         dunningLevelInstanceService.create(dunningLevelInstance);
 
-        List<DunningActionInstance> actions = new ArrayList<>();
-        for (DunningActionInstanceInput actionInput : dunningLevelInstanceInput.getActions()) {
-            DunningActionInstance dunningActionInstance = new DunningActionInstance();
+        createActions(dunningLevelInstance, dunningLevelInstanceInput.getActions());
 
+        trackOperation("ADD DunningLevelInstance", new Date(), collectionPlan);
+        return of(dunningLevelInstance);
+	}
+
+	public Optional<DunningLevelInstance> updateDunningLevelInstance(UpdateLevelInstanceInput updateLevelInstanceInput, Long levelInstanceId) {
+
+	    DunningLevelInstance dunningLevelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("actions"));
+        if (dunningLevelInstanceToUpdate == null) {
+            new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
+        }
+
+        if (updateLevelInstanceInput.getSequence() != null) {
+            dunningLevelInstanceToUpdate.setSequence(updateLevelInstanceInput.getSequence());
+        }
+        if (updateLevelInstanceInput.getDaysOverdue() != null) {
+            dunningLevelInstanceToUpdate.setDaysOverdue(updateLevelInstanceInput.getDaysOverdue());
+        }
+        if (updateLevelInstanceInput.getLevelStatus() != null) {
+            if (dunningLevelInstanceToUpdate.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+                throw new BadRequestException("Cannot update a DONE dunningLevelInstance");
+            }
+            dunningLevelInstanceToUpdate.setLevelStatus(updateLevelInstanceInput.getLevelStatus());
+        }
+        dunningLevelInstanceService.update(dunningLevelInstanceToUpdate);
+        
+
+        if (updateLevelInstanceInput.getActions() != null) {
+            for (DunningActionInstance action : dunningLevelInstanceToUpdate.getActions()) {
+                dunningActionInstanceService.remove(action);
+            }
+            createActions(dunningLevelInstanceToUpdate, updateLevelInstanceInput.getActions());
+        }
+
+        if (dunningLevelInstanceToUpdate.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+            
+            DunningCollectionPlan collectionPlan = dunningLevelInstanceToUpdate.getCollectionPlan();
+            
+            if (!dunningLevelInstanceToUpdate.getDunningLevel().isEndOfDunningLevel()) {
+                
+                Integer currentDunningLevelSequence = collectionPlan.getCurrentDunningLevelSequence();
+                if (currentDunningLevelSequence == null) {
+                    currentDunningLevelSequence = 0;
+                }
+                collectionPlan.setCurrentDunningLevelSequence(++currentDunningLevelSequence);
+
+                List<DunningActionInstance> lastLevelActions = dunningLevelInstanceToUpdate.getActions();
+                if (lastLevelActions != null && !lastLevelActions.isEmpty()) {
+                    collectionPlan.setLastAction(lastLevelActions.stream()
+                        .sorted(Comparator.comparing(a -> a.getAuditable().getLastModified(), Comparator.reverseOrder()))
+                        .findFirst().get().getCode());
+                    
+                    collectionPlan.setLastActionDate(new Date());
+                }
+
+                DunningLevelInstance nextLevelInstance = dunningLevelInstanceService.findByCurrentLevelSequence(collectionPlan);
+                String nextLevelAction = null;
+                List<DunningActionInstance> nextLevelActions = nextLevelInstance.getActions();
+                if (nextLevelActions != null && !nextLevelActions.isEmpty()) {
+                    for (DunningActionInstance nextActionInstance : nextLevelActions) {
+                        if (nextActionInstance.getActionMode() == ActionModeEnum.AUTOMATIC) {
+                            nextLevelAction = nextActionInstance.getCode();
+                            break;
+                        }
+                    }
+                    if (nextLevelAction == null) {
+                        nextLevelAction = nextLevelActions.get(0).getCode();
+                    }
+
+                    collectionPlan.setNextAction(nextLevelAction);
+                    collectionPlan.setNextActionDate(DateUtils.addDaysToDate(collectionPlan.getStartDate(), nextLevelInstance.getDaysOverdue()));
+                }
+            }
+            else {
+                collectionPlan.setNextAction(null);
+                collectionPlan.setNextActionDate(null);
+                collectionPlan.setStatus(dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.FAILED));
+            }
+
+            dunningCollectionPlanService.update(collectionPlan);
+        }
+
+        trackOperation("UPDATE DunningLevelInstance", new Date(), dunningLevelInstanceToUpdate.getCollectionPlan());
+        return of(dunningLevelInstanceToUpdate);
+    }
+	
+	private  void createActions(DunningLevelInstance dunningLevelInstance, List<DunningActionInstanceInput> actionInstanceInputs) {
+	    List<DunningActionInstance> actions = new ArrayList<>();
+        
+	    for (DunningActionInstanceInput actionInput : actionInstanceInputs) {
+            DunningActionInstance dunningActionInstance = new DunningActionInstance();
             Long dunningActionId = actionInput.getDunningAction().getId();
             DunningAction dunningAction = dunningActionService.findById(dunningActionId);
             if (dunningAction == null) {
-                new NotFoundException("No Dunning action found with id : " + collectionPlanId);
+                new NotFoundException("No Dunning action found with id : " + dunningActionId);
             }
 
             if (actionInput.getCode() != null) {
@@ -371,8 +445,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             dunningActionInstance.setActionRestult(actionInput.getActionRestult());
-            dunningActionInstance.setActionStatus(actionInput.getActionStatus());
-            dunningActionInstance.setCollectionPlan(collectionPlan);
+            if (dunningLevelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+                dunningActionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+            }
+            else {
+                dunningActionInstance.setActionStatus(actionInput.getActionStatus());
+            }
+            dunningActionInstance.setCollectionPlan(dunningLevelInstance.getCollectionPlan());
             dunningActionInstance.setDunningLevelInstance(dunningLevelInstance);
             dunningActionInstance.setDunningAction(dunningAction);
             dunningActionInstanceService.create(dunningActionInstance);
@@ -380,7 +459,25 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
 
         dunningLevelInstance.setActions(actions);
-        trackOperation("Add DunningLevelInstance", new Date(), collectionPlan);
-        return of(dunningLevelInstance);
 	}
+	
+    public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
+        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
+        AuditLog auditLog = new AuditLog();
+        auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
+        auditLog.setCreated(operationDate);
+        auditLog.setActor(currentUser.getUserName());
+        auditLog.setAction(operationType);
+        StringBuilder parameters = new StringBuilder()
+                .append(formatter.format(operationDate)).append(" - ")
+                .append(currentUser.getUserName()).append(" - ")
+                .append(" apply ")
+                .append(operationType)
+                .append(" to collection Plan id=")
+                .append(dunningCollectionPlan.getId());
+        auditLog.setParameters(parameters.toString());
+        auditLog.setOrigin("API");
+        auditLogService.create(auditLog);
+        return auditLog;
+    }
 }
