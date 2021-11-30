@@ -363,10 +363,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         EmailTemplate emailTemplate;
         String content;
         String subject;
+        String portalResultLink = "";
         Map<Object, Object> params = new HashMap<>();
         params.put("userName", userName);
         params.put("reportQueryName", reportQueryName);
         params.put("startDate", startDate);
+        params.put("portalResultLink", portalResultLink);
         Format format = new SimpleDateFormat("HH:mm:ss");
         params.put("duration", format.format(duration));
         try {
@@ -374,13 +376,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
                 params.put("lineCount", lineCount);
                 content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                subject = emailTemplate.getSubject();
-
+                subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
             } else {
                 emailTemplate = emailTemplateService.findByCode(FAILURE_TEMPLATE_CODE);
                 params.put("error", error);
                 content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-                subject = emailTemplate.getSubject();
+                subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
             }
             emailSender.send(ofNullable(appProvider.getEmail()).orElse(DEFAULT_EMAIL_ADDRESS),
                     null, asList(userEmail), subject, content, null);
