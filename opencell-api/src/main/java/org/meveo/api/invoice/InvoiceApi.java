@@ -465,12 +465,6 @@ public class InvoiceApi extends BaseApi {
     }
 
     public String getXMLInvoice(Long invoiceId, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-
-        if (StringUtils.isBlank(invoiceTypeCode)) {
-            missingParameters.add("invoiceTypeCode");
-        }
-        handleMissingParameters();
-
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
         return invoiceService.getInvoiceXml(invoice);
     }
