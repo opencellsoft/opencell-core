@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Format;
@@ -48,6 +49,7 @@ import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
@@ -88,6 +90,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     @ApplicationProvider
     protected Provider appProvider;
 
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+    
     private static final String ROOT_DIR = "reports" + File.separator;
     private static final String DEFAULT_EMAIL_ADDRESS = "no-reply@opencellsoft.com";
     private static final String DELIMITER = ";";
@@ -338,12 +344,12 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             Future<QueryExecutionResult> asyncResult = executeReportQueryAndSaveResult(reportQuery, targetEntity, startDate);
             QueryExecutionResult executionResult = asyncResult.get();
             if(executionResult != null && sendNotification) {
-                notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
+                notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
                         executionResult.getStartDate(), executionResult.getExecutionDuration(),
                         executionResult.getLineCount(), null);
             }
             for(String email : emails) {
-            	notifyUser(reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
+            	notifyUser(reportQuery.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
                         executionResult.getStartDate(), executionResult.getExecutionDuration(),
                         executionResult.getLineCount(), null);
             }
@@ -351,27 +357,30 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         } catch (Exception exception) {
         	if(sendNotification) {
 	            long duration = new Date().getTime() - startDate.getTime();
-	            notifyUser(reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
+	            notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), false,
 	                    startDate, duration, null, exception.getMessage());
         	}
             log.error("Failed to execute async report query", exception);
         }
     }
 
-    private void notifyUser(String reportQueryName, String userEmail, String userName, boolean success,
+    private void notifyUser(Long reportQueryId, String reportQueryName, String userEmail, String userName, boolean success,
                             Date startDate, long duration, Integer lineCount, String error) {
         EmailTemplate emailTemplate;
         String content;
         String subject;
-        String portalResultLink = "";
+        String portalResultLink = paramBeanFactory.getInstance().getProperties().getProperty("portal.host.queryUri").concat(reportQueryId+"/show");
+
+        Format format = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
         Map<Object, Object> params = new HashMap<>();
         params.put("userName", userName);
         params.put("reportQueryName", reportQueryName);
-        params.put("startDate", startDate);
+        params.put("startDate", format.format(startDate));
         params.put("portalResultLink", portalResultLink);
-        Format format = new SimpleDateFormat("HH:mm:ss");
+        format = new SimpleDateFormat("hh'h' mm'm' ss's'");
         params.put("duration", format.format(duration));
         try {
+        	
             if(success) {
                 emailTemplate = emailTemplateService.findByCode(SUCCESS_TEMPLATE_CODE);
                 params.put("lineCount", lineCount);
