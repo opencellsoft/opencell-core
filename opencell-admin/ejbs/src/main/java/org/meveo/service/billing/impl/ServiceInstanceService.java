@@ -482,7 +482,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
-
+        
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
         if (serviceInstance.getSubscriptionDate() == null) {
