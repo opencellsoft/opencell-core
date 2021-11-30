@@ -548,6 +548,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
         }
+        
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance = update(serviceInstance);
