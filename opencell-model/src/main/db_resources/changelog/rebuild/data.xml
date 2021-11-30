@@ -9612,5 +9612,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
+    <changeSet id="INTRD-3316_20211129_query_notification_template" author="TarikRabeh" />
 
 </databaseChangeLog>
