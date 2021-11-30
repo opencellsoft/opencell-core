@@ -50,7 +50,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         }
         
         if(!pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(dtoData.getCode(), pricePlanMatrixVersion).isEmpty()) {
-            throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode() + ", " + version + ")");
+            throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode().toLowerCase() + ", " + version + ")");
         }
 
         PricePlanMatrixColumn pricePlanMatrixColumn = new PricePlanMatrixColumn();
