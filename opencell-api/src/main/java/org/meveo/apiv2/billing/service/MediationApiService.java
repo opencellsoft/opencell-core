@@ -9,7 +9,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -170,12 +172,20 @@ public class MediationApiService {
         boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
         int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+        if (nbThreads > cdrLines.size()) {
+            nbThreads = cdrLines.size();
+        }
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
 
         final SynchronizedIterator<String> cdrLineIterator = new SynchronizedIterator<String>(cdrLines);
+
+        final Map<String, List<CounterPeriod>> virtualCounters = new HashMap<String, List<CounterPeriod>>();
+        final Map<String, List<CounterPeriod>> counterUpdates = new HashMap<String, List<CounterPeriod>>();
+
+        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
         for (int k = 0; k < nbThreads; k++) {
 
@@ -185,9 +195,9 @@ public class MediationApiService {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                thisNewTX.processCDRsInTx(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                    cdrListResult);
 
+                thisNewTX.processCDRsInTx(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                    cdrListResult, virtualCounters, counterUpdates);
             });
         }
 
@@ -235,11 +245,16 @@ public class MediationApiService {
      * @param maxDepth Max depth to rate of triggered EDRs
      * @param returnWalletOperations Shall wallet operation details be returned
      * @param cdrProcessingResult CDR processing result tracking
+     * @param virtualCounters Virtual counters
+     * @param counterUpdates Counter udpate tracking
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, ICdrReader cdrReader, ICdrParser cdrParser, boolean isDuplicateCheckOn, boolean isVirtual, boolean rate, boolean reserve,
-            boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, ProcessCdrListResult cdrProcessingResult) {
+            boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, ProcessCdrListResult cdrProcessingResult,
+            Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
+
+        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
         while (true) {
 

@@ -48,7 +48,7 @@ public class CounterUpdateTracking {
         CounterPeriod counterPeriodMatched = null;
         for (CounterPeriod counterPeriodTracked : counterPeriods) {
             if (counterPeriodTracked.isCorrespondsToPeriod(counterPeriod.getPeriodStartDate())) {
-                counterPeriodMatched = counterPeriod;
+                counterPeriodMatched = counterPeriodTracked;
                 break;
             }
         }
@@ -75,5 +75,12 @@ public class CounterUpdateTracking {
      */
     public Map<String, List<CounterPeriod>> getCounterUpdates() {
         return counterUpdates;
+    }
+
+    /**
+     * @param counterUpdates Counter periods grouped by a counter instance with key=<Counter instance id>-<Counter code> and value a list of counter periods
+     */
+    public void setCounterUpdates(Map<String, List<CounterPeriod>> counterUpdates) {
+        this.counterUpdates = counterUpdates;
     }
 }

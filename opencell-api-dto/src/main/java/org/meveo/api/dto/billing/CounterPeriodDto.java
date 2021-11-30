@@ -21,24 +21,23 @@ package org.meveo.api.dto.billing;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAttribute;
-
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.shared.DateUtils;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_EMPTY)
 public class CounterPeriodDto {
 
-    protected Long id;
+    private Long id;
 
     /**
      * The code
      */
-    protected String code;
+    private String code;
 
     private CounterTypeEnum counterType;
     private BigDecimal level;
@@ -149,4 +148,39 @@ public class CounterPeriodDto {
         this.accumulatorType = accumulatorType;
     }
 
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param id the new id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 }
