@@ -86,6 +86,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "charge_type", insertable = false, updatable = false)
+    private ChargeTypeEnum type;
+
+
+    /**
      * Specifies that charge does not apply to any order
      */
     public static String NO_ORDER_NUMBER = "none";
@@ -579,5 +587,30 @@ public abstract class ChargeInstance extends BusinessCFEntity {
             this.counterInstances = new ArrayList<>();
         }
         this.counterInstances.add(counterInstance);
+    }
+
+
+    public boolean isRecurringCharge() {
+        return type == ChargeTypeEnum.R;
+    }
+
+    public boolean isSubscriptionCharge() {
+        return type == ChargeTypeEnum.S;
+    }
+
+    public boolean isTerminationCharge() {
+        return type == ChargeTypeEnum.T;
+    }
+
+    public boolean isUsageCharge() {
+        return type == ChargeTypeEnum.U;
+    }
+
+    public boolean isProductCharge() {
+        return type == ChargeTypeEnum.P;
+    }
+
+    public boolean isOneShotCharge() {
+        return type == ChargeTypeEnum.O;
     }
 }
