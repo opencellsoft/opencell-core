@@ -72,6 +72,7 @@ public class ExportImportStatistics {
      */
     private String remoteImportExecutionId;
 
+    private byte[]  fileContent;
     @SuppressWarnings("rawtypes")
     public Map<Class, Integer> getSummary() {
         return summary;
@@ -121,6 +122,7 @@ public class ExportImportStatistics {
         for (Entry<String, Collection<String>> fieldInfo : stats.getFieldsNotImported().entrySet()) {
             addFieldsNotImported(fieldInfo.getKey(), fieldInfo.getValue());
         }
+        setFileContent(stats.getFileContent());
     }
 
     /**
@@ -217,5 +219,13 @@ public class ExportImportStatistics {
 
     public boolean isFailed() {
         return exception != null || errorMessageKey != null;
+    }
+
+    public byte[] getFileContent() {
+        return fileContent;
+    }
+
+    public void setFileContent(byte[] fileContent) {
+        this.fileContent = fileContent;
     }
 }

@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -32,12 +33,16 @@ import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.DuplicateException;
@@ -61,6 +66,9 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
     private AccessService accessService;
+
+    @Inject
+    private ProviderService providerService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -242,11 +250,24 @@ public class MEVEOCdrParser implements ICdrParser {
     }
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public CDR parseByApi(String line, String userName, String ipAddress) throws CDRParsingException {
         CDR cdr = parse(line);
         cdr.setOriginBatch("API_" + ipAddress);
-        cdr.setOriginRecord(userName + "_" + new Date().getTime());
+        var provider = providerService.getProvider();
+        if (StringUtils.isNotBlank(provider.getCdrDeduplicationKeyEL())) {
+            try {
+                cdr.setOriginRecord(ValueExpressionWrapper.evaluateExpression(provider.getCdrDeduplicationKeyEL(), Map.of("cdr", cdr), String.class));
+            } catch (BusinessException e) {
+                throw new BusinessException("Error detected in dedudplicationKeyEL : " + e.getMessage());
+            }
+
+            if (edrService.isEDRExistByOriginRecord(cdr.getOriginRecord())) {
+                cdr.setRejectReasonException(new BusinessException("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist"));
+            }
+        } else {
+            cdr.setOriginRecord(userName + "_" + System.currentTimeMillis());
+        }
         return cdr;
     }
 

@@ -328,6 +328,7 @@ public class ValueExpressionWrapper {
         elVariablesByClass.put(BigDecimal.class.getName(), new String[] { VAR_AMOUNT });
         elVariablesByClass.put(Product.class.getName(), new String[] { VAR_PRODUCT });
         elVariablesByClass.put(CpqQuote.class.getName(), new String[] { VAR_CPQ_QUOTE });
+        elVariablesByClass.put(QuoteVersion.class.getName(), new String[] { VAR_QUOTE_VERSION });
         elVariablesByClass.put(QuoteAttribute.class.getName(), new String[] { VAR_QUOTE_ATRIBUTE });
         elVariablesByClass.put(OrderAttribute.class.getName(), new String[] { VAR_ORDER_ATRIBUTE });
         elVariablesByClass.put(AttributeInstance.class.getName(), new String[] { VAR_ATRIBUTE_INSTANCE });

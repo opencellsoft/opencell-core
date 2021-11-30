@@ -1,21 +1,11 @@
 package org.meveo.service.script;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionChargeInstance;
-import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -27,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OrderValidationScript extends Script {
@@ -103,6 +92,7 @@ public class OrderValidationScript extends Script {
         serviceInstance.setProductVersion(orderProduct.getProductVersion());
 
         serviceInstance.setSubscription(subscription);
+        serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
 
         AttributeInstance attributeInstance = null;
         for (OrderAttribute orderAttribute : orderProduct.getOrderAttributes()) {

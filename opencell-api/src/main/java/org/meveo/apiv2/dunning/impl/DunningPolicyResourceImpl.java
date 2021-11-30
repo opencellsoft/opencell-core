@@ -1,8 +1,10 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Arrays.asList;
 import static org.meveo.apiv2.ordering.common.LinkGenerator.*;
-import static org.meveo.model.dunning.DunningInvoiceStatusContextEnum.FAILED_DUNNING;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.dunning.*;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
@@ -13,6 +15,7 @@ import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.apiv2.report.SuccessResponse;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningPolicyService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -21,7 +24,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
@@ -34,11 +36,12 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
 
+    @Inject
+    private DunningPolicyService dunningPolicyService;
+
     private final DunningPolicyMapper mapper = new DunningPolicyMapper();
 
     private final DunningPolicyLevelMapper policyLevelMapper = new DunningPolicyLevelMapper();
-
-    private DunningPolicyLevelMapper dunningPolicyLevelMapper = new DunningPolicyLevelMapper();
 
     private DunningPolicyRuleMapper dunningPolicyRuleMapper = new DunningPolicyRuleMapper();
 
@@ -56,14 +59,11 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                     .entity("Policy name is missing")
                     .build();
         }
+        if (dunningPolicy.getDunningPolicyLevels() == null || dunningPolicy.getDunningPolicyLevels().isEmpty()) {
+            throw new BadRequestException("Policy levels are missing");
+        }
         org.meveo.model.dunning.DunningPolicy entity = mapper.toEntity(dunningPolicy);
         org.meveo.model.dunning.DunningPolicy savedEntity = dunningPolicyApiService.create(entity);
-        if (dunningPolicy.getDunningPolicyLevels() != null) {
-            entity.setDunningLevels(dunningPolicy.getDunningPolicyLevels()
-                    .stream()
-                    .map(dunningPolicyLevelMapper::toEntity)
-                    .collect(Collectors.toList()));
-        }
         int totalDunningLevels = 0;
         int countReminderLevels = 0;
         int countEndOfDunningLevel = 0;
@@ -80,39 +80,45 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 countReminderLevels++;
             }
             if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
-                if (!dunningPolicyLevelEntity.getCollectionPlanStatus().getDescription().equals("FAILED_DUNNING")) {
-                    throw new BadRequestException("Dunning level creation fails");
-                }
                 if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
-                    throw new BadRequestException("sequence must be high");
+                    throw new BadRequestException("End of dunning level sequence must be the highest");
                 }
                 highestSequence = dunningPolicyLevelEntity.getSequence();
                 countEndOfDunningLevel++;
             }
-            dunningPolicyApiService.validateActiveDunning(dunningPolicyLevelEntity);
             policyLevelApiService.create(dunningPolicyLevelEntity);
+        }
+        if(countReminderLevels == 0 || totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
+            dunningPolicyService.remove(savedEntity);
         }
         dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
         savedEntity.setTotalDunningLevels(totalDunningLevels);
         dunningPolicyApiService.updateTotalLevels(savedEntity);
+        ActionStatus actionStatus = new ActionStatus();
+        actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+        actionStatus.setMessage("Entity successfully created");
+        actionStatus.setEntityId(entity.getId());
         return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
                 .build())
-                .entity(entity.getId())
+                .entity(actionStatus)
                 .build();
     }
 
     @Override
     public Response update(Long dunningPolicyId, DunningPolicyInput dunningPolicy) {
-        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyApiService.findById(dunningPolicyId)
-                .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits"));
+        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
+        if (entity == null) {
+            throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
+        }
         StringBuilder updatedField = new StringBuilder();
         List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
         if (dunningPolicy.getDunningPolicyLevels() != null && !dunningPolicy.getDunningPolicyLevels().isEmpty()) {
             updatedField.append("dunningLevels;");
-            entity.setDunningLevels(null);
-            for (Resource resource : dunningPolicy.getDunningPolicyLevels()) { ;
+            entity.getDunningLevels().clear();
+            for (Resource resource : dunningPolicy.getDunningPolicyLevels()) {
                 DunningPolicyLevel level = dunningPolicyLevelService.findById(resource.getId());
                 if (level != null) {
+                    level.setDunningPolicy(entity);
                     dunningPolicyLevelList.add(level);
                 }
             }
@@ -123,9 +129,13 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         org.meveo.model.dunning.DunningPolicy policy =
                 dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedField)).get();
         dunningPolicyApiService.trackOperation("update", new Date(), updatedField.toString(), policy.getPolicyName());
+        ActionStatus actionStatus = new ActionStatus();
+        actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+        actionStatus.setMessage("Entity successfully updated");
+        actionStatus.setEntityId(entity.getId());
         return Response
                 .ok(getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
-                .entity(mapper.toResource(entity))
+                .entity(actionStatus)
                 .build();
     }
 

@@ -250,7 +250,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     public Document createDocument(Invoice invoice, boolean isVirtual, boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
         invoice = invoiceService.retrieveIfNotManaged(invoice);
-        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+        boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
         BillingRun billingRun = invoice.getBillingRun();
         if (!isInvoiceAdjustment && billingRun != null && BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus()) && invoice.getInvoiceNumber() == null) {
             invoice = serviceSingleton.assignInvoiceNumber(invoice);

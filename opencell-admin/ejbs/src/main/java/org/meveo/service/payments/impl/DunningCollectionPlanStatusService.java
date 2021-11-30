@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Stateless
 public class DunningCollectionPlanStatusService extends PersistenceService<DunningCollectionPlanStatus> {
 
-	public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, DunningCollectionPlanStatusEnum status) {
+    public DunningCollectionPlanStatus findByDunningCodeAndStatus(String dunningSettingCode, DunningCollectionPlanStatusEnum status) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", Arrays.asList("dunningSettings"));
         queryBuilder.addCriterion("a.dunningSettings.code", "=", dunningSettingCode, false);
         queryBuilder.addCriterion("a.status", "=", status, false);

@@ -18,17 +18,33 @@
 
 package org.meveo.service.catalog.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.xml.bind.ValidationException;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.cpq.AttributeService;
 
 /**
  * Charge Template service implementation.
@@ -36,6 +52,32 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+    
+    @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    @Inject
+    private AttributeService attributeService;
+
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
+    @Inject
+    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+
+    @Inject
+    private PricePlanMatrixLineService pricePlanMatrixLineService;
+
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+
+    public EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
+    }
 
 	@SuppressWarnings("unchecked")
 	public List<ChargeTemplate> findByEDRTemplate(TriggeredEDRTemplate edrTemplate){
@@ -57,15 +99,105 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	 * @return
 	 */
 	public void updateStatus(ChargeTemplate chargeTemplate, String stringStatus) {
-		ChargeTemplateStatusEnum status= ChargeTemplateStatusEnum.valueOf(stringStatus);
-		final ChargeTemplateStatusEnum oldStatus = chargeTemplate.getStatus();
-		if((ChargeTemplateStatusEnum.DRAFT.equals(oldStatus) && ChargeTemplateStatusEnum.ACTIVE.equals(status)) 
-			||(ChargeTemplateStatusEnum.ACTIVE.equals(oldStatus) && ChargeTemplateStatusEnum.ARCHIVED.equals(status))
-			||(ChargeTemplateStatusEnum.ARCHIVED.equals(oldStatus) && ChargeTemplateStatusEnum.DRAFT.equals(status))) {
+		ChargeTemplateStatusEnum status = ChargeTemplateStatusEnum.valueOf(stringStatus);
+		try {
 			chargeTemplate.setStatus(status);
 			update(chargeTemplate);
-		} else {
-			throw new BusinessApiException("Could not change status from '"+oldStatus+"' to '"+status+"'");
+		} catch (ValidationException e) {
+			throw new BusinessApiException(e.getMessage());
 		}
 	}
+
+	public ChargeTemplate duplicateCharge(ChargeTemplate chargeTemplate) {
+		//charge Template to be duplicated
+		ChargeTemplate duplicateChargeTemplate = null;
+		
+		try {
+			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
+			duplicateChargeTemplate.setId(null);
+			duplicateChargeTemplate.setCode(findDuplicateCode(chargeTemplate));
+			//set status to null then to DRAFT to bypass the validation used in the setStatus method
+			duplicateChargeTemplate.setStatus(null);
+			duplicateChargeTemplate.setStatus(ChargeTemplateStatusEnum.DRAFT);
+
+			if(chargeTemplate.getAttributes() != null) {
+				Set<Attribute> attributes = new HashSet<Attribute>();
+				for(Attribute attribute:chargeTemplate.getAttributes()) {
+					Attribute attributeNew = attributeService.findByCode(attribute.getCode());
+					attributes.add(attributeNew);
+				}
+				duplicateChargeTemplate.setAttributes(attributes);
+			}
+			
+			if(chargeTemplate.getEdrTemplates() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+				for(TriggeredEDRTemplate triggeredEDRTemplate:chargeTemplate.getEdrTemplates()) {
+					TriggeredEDRTemplate triggeredEDRTemplateNew = triggeredEDRTemplateService.findByCode(triggeredEDRTemplate.getCode());
+					edrTemplates.add(triggeredEDRTemplateNew);
+				}
+				duplicateChargeTemplate.setEdrTemplates(edrTemplates);
+			}
+			
+			create(duplicateChargeTemplate);
+			
+	        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplate.getCode());
+	        
+	        //Duplicate Price Plan Matrix
+	        if(pricePlanMatrixes != null && !pricePlanMatrixes.isEmpty()) {
+	        	for(PricePlanMatrix pricePlanMatrix:pricePlanMatrixes) {
+
+	        		@SuppressWarnings("unchecked")
+	            	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
+							.setParameter("pricePlanMatrixCode", pricePlanMatrix.getCode()).getResultList();
+	            	
+	        		PricePlanMatrix pricePlanMatrixNew = (PricePlanMatrix) BeanUtils.cloneBean(pricePlanMatrix);
+
+	        		pricePlanMatrixNew.setId(null);
+	        		pricePlanMatrixNew.setEventCode(duplicateChargeTemplate.getCode());
+	        		pricePlanMatrixNew.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
+
+	        		List<PricePlanMatrixVersion> versionsNew = new ArrayList<PricePlanMatrixVersion>();
+	        		pricePlanMatrixNew.setVersions(versionsNew);
+	        		
+	        		pricePlanMatrixService.create(pricePlanMatrixNew);
+
+	        		if(pricesVersions != null && !pricesVersions.isEmpty()) {
+		        		for(PricePlanMatrixVersion priceVersion: pricesVersions) {
+		            		PricePlanMatrixVersion priceVersionNew = (PricePlanMatrixVersion) BeanUtils.cloneBean(priceVersion);
+		            		
+		            		priceVersionNew.setId(null);
+		            		priceVersionNew.setStatus(VersionStatusEnum.DRAFT);
+		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
+		            		
+		            		if(priceVersion.getColumns() != null) {
+			            		Set<PricePlanMatrixColumn> pricePlanColumns = new HashSet<>();
+			            		for(PricePlanMatrixColumn pricePlanColumn:priceVersion.getColumns()){
+			            			PricePlanMatrixColumn pricePlanColumnNew = pricePlanMatrixColumnService.findByCode(pricePlanColumn.getCode());
+			            			pricePlanColumns.add(pricePlanColumnNew);
+			            		}
+			            		priceVersionNew.setColumns(pricePlanColumns);
+		            		}
+		            		
+		            		if(priceVersion.getLines() != null) {
+		            			Set<PricePlanMatrixLine> lines = new HashSet<>();
+			            		for(PricePlanMatrixLine pricePlanMatrixLine:priceVersion.getLines()){
+			            			PricePlanMatrixLine pricePlanMatrixLineNew = pricePlanMatrixLineService.findById(pricePlanMatrixLine.getId());
+			            			lines.add(pricePlanMatrixLineNew);
+			            		}
+			            		priceVersionNew.setLines(lines);
+		            		}
+
+		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
+		            		pricePlanMatrixVersionService.create(priceVersionNew);
+		            	}
+	        		}
+	        	}
+	        }
+		} catch (Exception e) {
+            log.error("Error when trying to cloneBean chargeTemplate : ", e);
+			throw new BusinessApiException(e.getMessage());
+        }
+		return duplicateChargeTemplate;
+	}
+
 }

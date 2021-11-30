@@ -33,7 +33,7 @@ import java.util.List;
         @Parameter(name = "sequence_name", value = "dunning_level_seq")})
 public class DunningLevel extends BusinessEntity {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8092970257735394941L;
 
     /**
      * A reminder level, is a level with a send notification action, its purpose is to remind the customer that his payment is due in a couple of days.
@@ -91,7 +91,7 @@ public class DunningLevel extends BusinessEntity {
      *  ​if DunningLevelChargeType = Percentage, value < 100
      */
     @Column(name = "charge_value", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal  chargeValue;
+    private BigDecimal chargeValue;
 
     /**
      * The currency of dunning charge

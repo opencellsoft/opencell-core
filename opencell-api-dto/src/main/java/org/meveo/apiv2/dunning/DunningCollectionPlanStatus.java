@@ -1,6 +1,7 @@
 package org.meveo.apiv2.dunning;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
@@ -24,7 +25,7 @@ public interface DunningCollectionPlanStatus extends Resource {
     DunningCollectionPlanStatusEnum getStatus();
 
     @Schema(description = "indicate description for the collection")
-    @Nonnull
+    @Nullable
     String getDescription();
 
     @Schema(description = "indicate color code for the status")

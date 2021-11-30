@@ -21,6 +21,7 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.meveo.api.dto.catalog.OfferProductTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ProductOfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
@@ -574,33 +576,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private void processOfferProductDtos(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-        List<OfferProductsDto> offerProductDtos = postData.getOfferProducts(); 
-            List<OfferComponent> newOfferProductDtos = new ArrayList<>();
-            OfferComponent offerComponent = null;
-            boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
-            var productCodes = new HashSet<String>();
-        	offerTemplate.getOfferComponents().clear();
-            if(hasOfferComponentDtos) {
-            	for (int i = 0; i < offerProductDtos.size(); i++) {
-					var currentOfferProduct = offerProductDtos.get(i);
-					if(offerProductDtos.size() != (i + 1)) {
-						for (int j = i + 1; j < offerProductDtos.size(); j++) {
-							var nextOfferProduct = offerProductDtos.get(j);
-							if(currentOfferProduct.getSequence() == nextOfferProduct.getSequence())
-								throw new MeveoApiException("Offer product can not have the same sequence between products");
-						}
-					}
-					if(currentOfferProduct.getProduct() == null || !productCodes.add(currentOfferProduct.getProduct().getCode())) continue;
-					offerComponent = getOfferComponentFromDto(currentOfferProduct);
-	            	offerComponent.setOfferTemplate(offerTemplate);
-	            	newOfferProductDtos.add(offerComponent);
-				}
-	            offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
-            }
+    	processOfferProductDtos(postData, offerTemplate, true);
     }
-    
-    
-    
 
     private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
@@ -1132,5 +1109,78 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         return result;
+    }
+    
+    public OfferTemplateDto addProduct(String offerCode, ProductOfferTemplateDto productDto) {
+    	if(Strings.isBlank(offerCode))  
+    		missingParameters.add("offerCode");
+    	if(productDto == null)
+    		missingParameters.add("productDto");
+    	if(productDto.getProducts().isEmpty())
+    		missingParameters.add("products");
+        handleMissingParameters();
+        
+        var offerTemplate = findOfferTemplate(offerCode, productDto.getValidFrom(), productDto.getValidTo());
+        var tmpOfferTemplateDto = new OfferTemplateDto();
+        tmpOfferTemplateDto.getOfferProducts().addAll(productDto.getProducts());
+        List<String> productCodes = productDto.getProducts().stream().map(offerProductDto -> offerProductDto.getProduct().getCode()).collect(Collectors.toList());
+        offerTemplate.getOfferComponents().removeIf(offerComponent -> offerComponent.getProduct() != null && productCodes.contains(offerComponent.getProduct().getCode()));
+        processOfferProductDtos(tmpOfferTemplateDto, offerTemplate, false); 
+        List<Integer> sequences = offerTemplate.getOfferComponents().stream().map(offerComponent -> offerComponent.getSequence()).collect(Collectors.toList());
+        offerTemplate.getOfferComponents().forEach(offer -> {
+        	var frequency = Collections.frequency(sequences, offer.getSequence());
+        	if(frequency > 1)
+				throw new MeveoApiException("Offer product can not have the same sequence between products");
+        });
+        offerTemplateService.update(offerTemplate);
+    	return find(offerCode, productDto.getValidFrom(), productDto.getValidTo());
+    }
+    
+    public OfferTemplateDto dissociateProduct(String offerCode, Date validFrom, Date validTo, List<String> productCodes) {
+    	if(Strings.isBlank(offerCode)) {  
+    		missingParameters.add("offerCode");
+            handleMissingParameters();
+    	}
+    	var offerTemplate = findOfferTemplate(offerCode, validFrom, validTo);
+    	productCodes.forEach(productCode -> {
+    		offerTemplate.getOfferComponents().removeIf(offerComponent -> offerComponent.getProduct() != null && offerComponent.getProduct().getCode().equalsIgnoreCase(productCode));
+    	});
+    	return find(offerCode, validFrom, validTo);
+    }
+    
+    private OfferTemplate findOfferTemplate(String offerCode, Date validFrom, Date validTo) {
+    	var offerTemplate = offerTemplateService.findByCode(offerCode, validFrom, validTo);
+    	String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
+        if(offerTemplate == null)
+        	 throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / "
+                     + DateUtils.formatDateWithPattern(validTo, datePattern));
+        return offerTemplate;
+    }
+
+    private void processOfferProductDtos(OfferTemplateDto postData, OfferTemplate offerTemplate, boolean clearOfferComponent) throws MeveoApiException, BusinessException {
+    	 List<OfferProductsDto> offerProductDtos = postData.getOfferProducts(); 
+         List<OfferComponent> newOfferProductDtos = new ArrayList<>();
+         OfferComponent offerComponent = null;
+         boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
+         var productCodes = new HashSet<String>();
+         if(clearOfferComponent)
+        	 offerTemplate.getOfferComponents().clear();
+         if(hasOfferComponentDtos) {
+         	for (int i = 0; i < offerProductDtos.size(); i++) {
+					var currentOfferProduct = offerProductDtos.get(i);
+					if(offerProductDtos.size() != (i + 1)) {
+						for (int j = i + 1; j < offerProductDtos.size(); j++) {
+							var nextOfferProduct = offerProductDtos.get(j);
+							if(currentOfferProduct.getSequence() == nextOfferProduct.getSequence())
+								throw new MeveoApiException("Offer product can not have the same sequence between products");
+						}
+					}
+					if(currentOfferProduct.getProduct() == null || !productCodes.add(currentOfferProduct.getProduct().getCode())) continue;
+					offerComponent = getOfferComponentFromDto(currentOfferProduct);
+	            	offerComponent.setOfferTemplate(offerTemplate);
+	            	newOfferProductDtos.add(offerComponent);
+				}
+	            offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
+         }
     }
 }
