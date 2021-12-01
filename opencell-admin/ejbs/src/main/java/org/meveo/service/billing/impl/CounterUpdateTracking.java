@@ -56,7 +56,9 @@ public class CounterUpdateTracking {
         // Update already tracked counter period value
         if (counterPeriodMatched != null) {
             counterPeriodMatched.setValue(counterPeriod.getValue());
-            counterPeriodMatched.setAccumulatedValues(new HashMap<String, BigDecimal>(counterPeriod.getAccumulatedValues()));
+            if (counterPeriod.getAccumulatedValues() != null) {
+                counterPeriodMatched.setAccumulatedValues(new HashMap<String, BigDecimal>(counterPeriod.getAccumulatedValues()));
+            }
         } else {
             try {
                 counterPeriodMatched = counterPeriod.clone();
