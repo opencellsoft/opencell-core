@@ -2892,6 +2892,7 @@
             <column name="has_minimum" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="commercial_order_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
+            <column name="cpq_quote_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -15361,6 +15362,11 @@
                                   -->
     </changeSet>
       
+      
+       <changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
     
     <!-- end fk -->
 
@@ -16705,6 +16711,7 @@
     <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA"/>
     <changeSet id="INTRD-2959_11082021" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza"/>
+	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
