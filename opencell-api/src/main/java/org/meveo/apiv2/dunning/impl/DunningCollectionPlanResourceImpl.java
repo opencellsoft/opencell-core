@@ -25,6 +25,7 @@ import org.meveo.apiv2.dunning.ImmutableMassSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableSwitchCollectionSuccessResponse;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchResult;
+import org.meveo.apiv2.dunning.RemoveActionInstanceInput;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
 import org.meveo.apiv2.dunning.SwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.UpdateLevelInstanceInput;
@@ -35,6 +36,7 @@ import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.model.dunning.DunningPolicy;
+import org.meveo.service.payments.impl.DunningActionInstanceService;
 
 public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanResource {
 
@@ -42,12 +44,12 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 
     @Inject
     private DunningCollectionPlanApiService dunningCollectionPlanApiService;
-
+    
     @Inject
     private ResourceBundle resourceMessages;
     
     @Inject
-	private DunningCollectionPlanApiService collectionPlanApiService;
+    private DunningCollectionPlanApiService collectionPlanApiService;
 
     @Override
     public Response switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
@@ -112,14 +114,12 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
                 .entity(collectionPlanMapper.toAvailablePolicies(dunningPolicies))
                 .build();
     }
-    
+
     @Override
 	public Response pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlanInput, Long id) {
 		DunningCollectionPlan dunningCollectionPlan = collectionPlanApiService.pauseCollectionPlan(dunningCollectionPlanInput, id).get();
 		return Response.ok(toResourceOrderWithLink(collectionPlanMapper.toResource(dunningCollectionPlan))).build();
 	}
-	
-
 
 	@Override
 	public Response stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlanInput, Long id) {
@@ -127,13 +127,12 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 		return Response.ok(toResourceOrderWithLink(collectionPlanMapper.toResource(dunningCollectionPlan))).build();
 	}
 
-
 	@Override
 	public Response resumeCollectionPlan(Long id) {
 		DunningCollectionPlan dunningCollectionPlan = collectionPlanApiService.resumeCollectionPlan(id).get();
 		return Response.ok(toResourceOrderWithLink(collectionPlanMapper.toResource(dunningCollectionPlan))).build();
 	}
-	
+
 	@Override
 	public Response removeDunningLevelInstance(RemoveLevelInstanceInput removeLevelInstanceInput) {
 	    dunningCollectionPlanApiService.removeDunningLevelInstance(removeLevelInstanceInput);
@@ -158,6 +157,14 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
             .status("SUCCESS")
             .newDunningLevelInstance(updatedDunningLevelInstance)
             .build()).build();
+    }
+
+	@Override
+    public Response removeDunningActionInstance(RemoveActionInstanceInput removeActionInstanceInput) {
+        dunningCollectionPlanApiService.removeDunningActionInstance(removeActionInstanceInput);
+        return Response.ok(ImmutableSuccessResponse.builder()
+                .status("SUCCESS")
+                .build()).build();
     }
 
 	private Object toResourceOrderWithLink(org.meveo.apiv2.dunning.DunningCollectionPlan dunningCollectionPlan) {
