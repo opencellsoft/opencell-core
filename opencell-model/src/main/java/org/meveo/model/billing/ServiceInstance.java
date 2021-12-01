@@ -1214,13 +1214,13 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
 
-            if (chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);
-            } else if (chargeInstance instanceof SubscriptionChargeInstance) {
+            } else if (chargeInstance.getChargeType().equals("S")) {
                 subscriptionChargeInstances.add((SubscriptionChargeInstance) chargeInstance);
-            } else if (chargeInstance instanceof TerminationChargeInstance) {
+            } else if (chargeInstance.getChargeType().equals("T")) {
                 terminationChargeInstances.add((TerminationChargeInstance) chargeInstance);
-            } else if (chargeInstance instanceof UsageChargeInstance) {
+            } else if (chargeInstance.getChargeType().equals("U")) {
                 usageChargeInstances.add((UsageChargeInstance) chargeInstance);
             }
         }
