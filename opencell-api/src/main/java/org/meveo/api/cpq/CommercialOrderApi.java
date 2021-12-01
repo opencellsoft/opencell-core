@@ -333,7 +333,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(orderDto.getOrderDate() != null)
 			order.setOrderDate(orderDto.getOrderDate());
 
-    	if(orderDto != null && orderDto.getDeliveryDate().before(new Date())) {
+    	if(orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	order.setDeliveryDate(orderDto.getDeliveryDate());
