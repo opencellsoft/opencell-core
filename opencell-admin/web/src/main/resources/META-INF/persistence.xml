@@ -10,7 +10,7 @@
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />
             <property name="hibernate.hbm2ddl.auto" value="validate" /> <!-- DB structure is managed by liquibase, not hibernate -->
-            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.show_sql" value="false" />
             <property name="format_sql" value="false" />
             <property name="show_sql" value="false" />
             <property name="use_sql_comments" value="false" />
@@ -42,7 +42,7 @@
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 
             <!-- Additional query functions for accessing JSON -->
-            <property name="hibernate.dialect" value="org.meveo.commons.persistence.postgresql.MeveoPostgreSQLDialect" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.${env.OPENCELL_DIALECT:postgresql.MeveoPostgreSQLDialect}" />
         </properties>
     </persistence-unit>
 
@@ -88,7 +88,7 @@
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 
             <!-- Additional query functions for accessing JSON -->
-            <property name="hibernate.dialect" value="org.meveo.commons.persistence.postgresql.MeveoPostgreSQLDialect" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.${opencell.dialect}" />
         </properties>
     </persistence-unit>
 
