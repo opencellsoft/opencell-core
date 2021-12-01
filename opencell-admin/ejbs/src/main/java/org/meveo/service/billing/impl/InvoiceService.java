@@ -201,7 +201,6 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.billing.TaxScriptService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
-import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -3946,6 +3945,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
+        }else if(entity instanceof CpqQuote){
+            CpqQuote quote = (CpqQuote) entity;
+            invoice.setCpqQuote(quote);
         }
         if (paymentMethod != null) {
             invoice.setPaymentMethodType(paymentMethod.getPaymentType());
@@ -5665,6 +5667,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setCommercialOrder(commercialOrder);
         }
 
+        if(invoiceResource.getCpqQuote()!=null) {
+            final Long cpqQuoteId = invoiceResource.getCpqQuote().getId();
+            CpqQuote cpqQuote = (CpqQuote)tryToFindByEntityClassAndId(CpqQuote.class, cpqQuoteId);
+            toUpdate.setCpqQuote(cpqQuote);
+        }
         if (input.getCfValues() != null) {
             toUpdate.setCfValues(input.getCfValues());
         }
