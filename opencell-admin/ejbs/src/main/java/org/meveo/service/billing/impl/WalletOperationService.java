@@ -156,7 +156,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 billingAccountService.update(billingAccount);
             }
         }
-        applyAccumulatorCounter(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
+//        applyAccumulatorCounter(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
         return walletOperation;
     }
 
@@ -405,7 +405,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         if (isApplyInAdvance && isNotOfferChangeCaseOrIsOfferChangeProrata) {
             List<WalletOperation> walletOperations = applyFirstRecurringCharge(chargeInstance, nextChargeDate, false);
-            applyAccumulatorCounter(chargeInstance, walletOperations, false);
+//            applyAccumulatorCounter(chargeInstance, walletOperations, false);
         }
     }
 
@@ -599,7 +599,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 walletOperations.addAll(operations);
             }
             if (!reimbursement) {
-                applyAccumulatorCounter(chargeInstance, walletOperations, false);
+//                applyAccumulatorCounter(chargeInstance, walletOperations, false);
             }
             // create(chargeApplication);
             chargeInstance.setChargeDate(applyChargeOnDate);
@@ -638,39 +638,39 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }).flatMap(List::stream).collect(Collectors.toList());
     }
 
-    public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
-
-        if (chargeInstance.getCounterInstances() == null || chargeInstance.getCounterInstances().isEmpty()) {
-            return;
-        }
-
-        for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
-
-            CounterPeriod counterPeriod = null;
-
-            for (WalletOperation wo : walletOperations) {
-
-                // In case of virtual operation only instantiate a counter period, don't create it
-                if (isVirtual) {
-                    counterPeriod = counterInstanceService.instantiateCounterPeriod(counterInstance.getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                            chargeInstance, chargeInstance.getServiceInstance());
-
-                    CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                            chargeInstance, chargeInstance.getServiceInstance());
-
-                    if (realCounterPeriod.getAccumulatedValues() != null)
-                        counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
-                    counterPeriod.setValue(realCounterPeriod.getValue());
-                    counterPeriod.setCounterInstance(realCounterPeriod.getCounterInstance());
-
-                } else {
-                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                            chargeInstance.getServiceInstance());
-                }
-                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
-            }
-        }
-    }
+//    public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+//
+//        if (chargeInstance.getCounterInstances() == null || chargeInstance.getCounterInstances().isEmpty()) {
+//            return;
+//        }
+//
+//        for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
+//
+//            CounterPeriod counterPeriod = null;
+//
+//            for (WalletOperation wo : walletOperations) {
+//
+//                // In case of virtual operation only instantiate a counter period, don't create it
+//                if (isVirtual) {
+//                    counterPeriod = counterInstanceService.instantiateCounterPeriod(counterInstance.getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+//                            chargeInstance, chargeInstance.getServiceInstance());
+//
+//                    CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+//                            chargeInstance, chargeInstance.getServiceInstance());
+//
+//                    if (realCounterPeriod.getAccumulatedValues() != null)
+//                        counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
+//                    counterPeriod.setValue(realCounterPeriod.getValue());
+//                    counterPeriod.setCounterInstance(realCounterPeriod.getCounterInstance());
+//
+//                } else {
+//                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+//                            chargeInstance.getServiceInstance());
+//                }
+//                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+//            }
+//        }
+//    }
 
     private double computeQuantityRatio(Date computedApplyChargeOnDate, Date computedNextChargeDate) {
         int lengthOfMonth = 30;
@@ -837,7 +837,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
         chargeInstance.setNextChargeDate(nextChargeDate);
         if (!reimbursement) {
-            applyAccumulatorCounter(chargeInstance, walletOperations, false);
+//            applyAccumulatorCounter(chargeInstance, walletOperations, false);
         }
         return walletOperations;
     }
@@ -1285,6 +1285,22 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             log.warn("failed to countNonTreated WO by CA", e);
             return null;
         }
+    }
+
+    /**
+     * Determine if charge should be applied in advance
+     *
+     * @param recurringChargeInstance Recurring charge instance
+     * @return True if charge is applied in advance
+     */
+    public boolean isApplyInAdvance(RecurringChargeInstance recurringChargeInstance) {
+        boolean isApplyInAdvance = recurringChargeInstance.getApplyInAdvance() != null && recurringChargeInstance.getApplyInAdvance();
+        if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
+            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(),
+                    recurringChargeInstance.getServiceInstance(), null, null);
+        }
+
+        return isApplyInAdvance;
     }
 
     /**

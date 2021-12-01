@@ -17,7 +17,8 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -25,8 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import org.meveo.model.catalog.ProductChargeTemplate;
+import java.math.BigDecimal;
 
 /**
  * Product charge as part of purchased product. Can be either part of subscription or not.
@@ -107,5 +107,10 @@ public class ProductChargeInstance extends ChargeInstance {
      */
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public ChargeTemplate.ChargeMainTypeEnum getChargeMainType() {
+        return ChargeTemplate.ChargeMainTypeEnum.PRODUCT;
     }
 }

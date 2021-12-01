@@ -17,8 +17,8 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -27,8 +27,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-
-import org.meveo.model.catalog.OneShotChargeTemplate;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * One shot charge as part of subscribed service
@@ -152,5 +152,10 @@ public class OneShotChargeInstance extends ChargeInstance {
      */
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
+    }
+
+    @Override
+    public ChargeTemplate.ChargeMainTypeEnum getChargeMainType() {
+        return ChargeTemplate.ChargeMainTypeEnum.ONESHOT;
     }
 }

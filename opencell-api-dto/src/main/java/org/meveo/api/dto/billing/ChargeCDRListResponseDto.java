@@ -1,8 +1,9 @@
 package org.meveo.api.dto.billing;
 
-import java.io.Serializable;
-
 import org.meveo.api.dto.response.BaseResponse;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class ChargeCDRListResponseDto extends BaseResponse {
 
@@ -15,6 +16,11 @@ public class ChargeCDRListResponseDto extends BaseResponse {
      * Processed CDR information
      */
     private ChargeCDRResponseDto[] chargedCDRs;
+
+    /**
+     * Counter periods that were updated during the rating
+     */
+    private List<CounterPeriodDto> counterPeriods;
 
     public ChargeCDRListResponseDto() {
 
@@ -53,6 +59,20 @@ public class ChargeCDRListResponseDto extends BaseResponse {
     public void addChargedCdr(int position, ChargeCDRResponseDto chargedCdr) {
 
         chargedCDRs[position] = chargedCdr;
+    }
+
+    /**
+     * @return Counter periods that were updated during the rating
+     */
+    public List<CounterPeriodDto> getCounterPeriods() {
+        return counterPeriods;
+    }
+
+    /**
+     * @param counterPeriods Counter periods that were updated during the rating
+     */
+    public void setCounterPeriods(List<CounterPeriodDto> counterPeriods) {
+        this.counterPeriods = counterPeriods;
     }
 
     public static class Statistics implements Serializable {

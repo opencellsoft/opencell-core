@@ -356,4 +356,29 @@ public class CounterPeriod extends BusinessEntity {
         }
         return matchedLevels;
     }
+
+    /**
+     * Get a non-persisted copy (no id and version field set) of a counter period
+     */
+    @Override
+    public CounterPeriod clone() throws CloneNotSupportedException {
+        CounterPeriod clone = new CounterPeriod();
+
+        if (accumulatedValues != null) {
+            clone.setAccumulatedValues(new HashMap<String, BigDecimal>(accumulatedValues));
+        }
+        clone.setValue(getValue());
+        clone.setPeriodStartDate(getPeriodStartDate());
+        clone.setPeriodEndDate(getPeriodEndDate());
+        clone.setCode(code);
+        clone.setDescription(description);
+        clone.setLevel(level);
+        clone.setCounterType(counterType);
+        clone.setNotificationLevels(notificationLevels);
+        clone.setAccumulator(accumulator);
+        clone.setAccumulatorType(accumulatorType);
+        clone.setCounterInstance(counterInstance);
+
+        return clone;
+    }
 }

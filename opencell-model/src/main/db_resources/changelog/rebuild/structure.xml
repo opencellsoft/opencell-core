@@ -2334,6 +2334,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="order_number" type="varchar(100)" />
+            <column name="reactivation_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -10001,5 +10002,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
+
+    <changeSet id="INTRD-3347_20211201" author="TNguyen" />
 </databaseChangeLog>
 

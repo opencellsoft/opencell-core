@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -282,7 +283,7 @@ public class ReservationService extends PersistenceService<Reservation> {
         if (reservation.getCounterPeriodValues().size() > 0) {
 
             for (Entry<Long, BigDecimal> periodInfo : reservation.getCounterPeriodValues().entrySet()) {
-                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue(), reservation);
+                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue());
             }
         }
 
@@ -297,14 +298,11 @@ public class ReservationService extends PersistenceService<Reservation> {
             .getResultList();
 
         for (WalletReservation wo : ops) {
-            if (wo.getStatus() != WalletOperationStatusEnum.OPEN) {
-                wo.changeStatus(WalletOperationStatusEnum.OPEN);
-                if(wo.getChargeInstance()!=null && wo.getChargeInstance().getCounterInstances()!=null) {
-                	for(CounterInstance counterInstance: wo.getChargeInstance().getCounterInstances()) {
-                		CounterPeriod counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, wo.getOperationDate());
-                		counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, false);
-                	}
+            if (wo.getStatus() == WalletOperationStatusEnum.RESERVED) {
+                if (wo.getChargeInstance() != null && wo.getChargeInstance().getAccumulatorCounterInstances() != null && !wo.getChargeInstance().getAccumulatorCounterInstances().isEmpty()) {
+                    counterInstanceService.incrementAccumulatorCounterValue(wo.getChargeInstance(), Collections.singletonList(wo), false);
                 }
+                wo.changeStatus(WalletOperationStatusEnum.OPEN);
             }
             walletCacheContainerProvider.updateBalance(wo);
         }

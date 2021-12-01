@@ -33,6 +33,7 @@ import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.billing.service.MediationApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Reservation;
@@ -40,7 +41,6 @@ import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
-import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
@@ -67,9 +67,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * API for CDR processing and mediation handling in general
@@ -110,6 +107,9 @@ public class MediationApi extends BaseApi {
 
     @EJB
     private MediationApi thisNewTX;
+
+    @Inject
+    private MediationApiService mediationApiService;
 
     /**
      * Register EDRS
@@ -193,51 +193,7 @@ public class MediationApi extends BaseApi {
 
         handleMissingParameters();
 
-        ChargeCDRListResponseDto cdrListResult = new ChargeCDRListResponseDto(chargeCDRDto.getCdrs().size());
-
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
-
-//        int nbThreads = Runtime.getRuntime().availableProcessors();
-        int nbThreads = 1;
-
-        List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
-        List<Future> futures = new ArrayList<>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-
-        final SynchronizedIterator<String> cdrLineIterator = new SynchronizedIterator<String>(chargeCDRDto.getCdrs());
-
-        for (int k = 0; k < nbThreads; k++) {
-
-            int finalK = k;
-            tasks.add(() -> {
-
-                Thread.currentThread().setName("MediationApi" + "-" + finalK);
-
-                currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(), chargeCDRDto.isReturnEDRs(), cdrListResult);
-
-            });
-        }
-
-        for (Runnable task : tasks) {
-            futures.add(executor.submit(task));
-        }
-
-        // Wait for all async methods to finish
-        for (Future future : futures) {
-            try {
-                future.get();
-
-            } catch (InterruptedException | CancellationException e) {
-//                wasKilled = true;
-
-            } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-                log.error("Failed to execute Mediation API async method", cause);
-            }
-        }
-
-        return cdrListResult;
+        return mediationApiService.processCdrList(chargeCDRDto);
     }
 
     /**
