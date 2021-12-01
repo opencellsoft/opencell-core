@@ -413,7 +413,6 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
-		List<ServiceChargeTemplateRecurring> serviceRecurringCharges= new ArrayList<ServiceChargeTemplateRecurring>();
 		if(this.serviceRecurringCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
@@ -433,7 +432,6 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
-		List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<ServiceChargeTemplateUsage>();
 		if(this.serviceUsageCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
@@ -453,7 +451,6 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
-		List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges= new ArrayList<ServiceChargeTemplateSubscription>();
 		if(this.serviceSubscriptionCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
@@ -474,7 +471,6 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
-		List<ServiceChargeTemplateTermination> serviceTerminationCharges= new ArrayList<ServiceChargeTemplateTermination>();
 		if(this.serviceTerminationCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
