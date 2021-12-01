@@ -27,7 +27,8 @@ import org.meveo.model.AuditableEntity;
         @Parameter(name = "sequence_name", value = "dunning_level_instance_seq") })
 @NamedQueries({ 
         @NamedQuery(name = "DunningLevelInstance.findByPolicyLevelId", query = "SELECT li FROM DunningLevelInstance li where li.policyLevel.id = :policyLevelId"),
-        @NamedQuery(name = "DunningLevelInstance.findByCurrentLevelSequence", query = "SELECT li FROM DunningLevelInstance li LEFT JOIN FETCH li.actions a where li.collectionPlan = :collectionPlan and li.sequence = :sequence")
+        @NamedQuery(name = "DunningLevelInstance.findByCurrentLevelSequence", query = "SELECT li FROM DunningLevelInstance li LEFT JOIN FETCH li.actions where li.collectionPlan = :collectionPlan and li.sequence = :sequence"),
+        @NamedQuery(name = "DunningLevelInstance.findLastLevelInstance", query = "SELECT li FROM DunningLevelInstance li LEFT JOIN li.dunningLevel d where li.collectionPlan = :collectionPlan and d.isEndOfDunningLevel = true")
     })
 public class DunningLevelInstance extends AuditableEntity {
 

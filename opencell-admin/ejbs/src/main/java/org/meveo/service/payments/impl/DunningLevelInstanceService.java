@@ -31,4 +31,15 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
             return null;
         }
     }
+
+    public DunningLevelInstance findLastLevelInstance(DunningCollectionPlan collectionPlan) {
+        try {
+            return getEntityManager()
+                    .createNamedQuery("DunningLevelInstance.findLastLevelInstance", entityClass)
+                    .setParameter("collectionPlan", collectionPlan)
+                    .getSingleResult();
+        } catch (Exception exception) {
+            return null;
+        }
+    }
 }
