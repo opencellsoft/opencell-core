@@ -1,22 +1,17 @@
 package org.meveo.api.dto.cpq.xml;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
+
+import javax.xml.bind.annotation.*;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QuoteLine {
@@ -36,15 +31,19 @@ public class QuoteLine {
     
     @XmlAttribute
     private String consumer;
-
     public QuoteLine(QuoteArticleLine line,Offer offer) {
         this.quantity = line.getQuantity();
         this.accountingArticleCode = line.getAccountingArticle().getCode();
         this.accountingArticleLabel = line.getAccountingArticle().getDescription(); 
         if(line.getQuoteVersion()!=null) {
         	var quote=line.getQuoteVersion().getQuote();
-        	if(quote.getUserAccount()!=null) 
-        		this.consumer=quote.getUserAccount().getCode();
+        	if(line.getQuoteProduct()!=null
+                    &&  line.getQuoteProduct().getQuoteOffer() != null
+                    && line.getQuoteProduct().getQuoteOffer().getUserAccount() != null
+            )
+        		this.consumer= line.getQuoteProduct().getQuoteOffer().getUserAccount().getCode();
+
+
         }
         this.prices = aggregatePricesPerType(line.getQuotePrices());
         this.offer= offer;
