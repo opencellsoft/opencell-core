@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.dunning.AvailablePoliciesInput;
+import org.meveo.apiv2.dunning.DunningActionInstanceInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
@@ -150,4 +151,18 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response updateDunningLevelInstance(@Parameter(required = true) UpdateLevelInstanceInput updateLevelInstanceInput, @PathParam("levelInstanceId") Long levelInstanceId);
+	
+	@POST
+    @Path("/addDunningActionInstance")
+    @Operation(summary = "Add addDunningActionInstance",
+    tags = {"Collection Plan"},
+    description = "Add addDunningActionInstance",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "Add action success"),
+            @ApiResponse(responseCode = "404",
+                    description = "Entity does not exist")
+    })
+    Response addDunningActionInstance(@Parameter(required = true) DunningActionInstanceInput dunningActionInstanceInput);
+	
 }
