@@ -254,7 +254,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
                 defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
                 defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
@@ -489,7 +489,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         } else {
 
             RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
 
@@ -716,7 +716,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
@@ -1117,7 +1117,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE) >= 0) {
             ProductInstance productInstance = null;
-            if (chargeInstance instanceof ProductChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.PRODUCT) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }

@@ -33,6 +33,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -86,19 +87,19 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 
     public ServiceInstance getServiceInstanceFromChargeInstance(ChargeInstance chargeInstance) {
 
-        if (chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
             RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(chargeInstance.getId());
             if (recurringChargeInstance != null) {
                 return recurringChargeInstance.getServiceInstance();
             }
 
-        } else if (chargeInstance instanceof UsageChargeInstance) {
+        } else if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.USAGE) {
             UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(chargeInstance.getId());
             if (usageChargeInstance != null) {
                 return usageChargeInstance.getServiceInstance();
             }
 
-        } else if (chargeInstance instanceof OneShotChargeInstance) {
+        } else if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT) {
             OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(chargeInstance.getId());
             if (oneShotChargeInstance != null) {
                 return oneShotChargeInstance.getServiceInstance();
