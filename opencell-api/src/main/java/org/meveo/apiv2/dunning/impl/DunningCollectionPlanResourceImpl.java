@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.AvailablePoliciesInput;
 import org.meveo.apiv2.dunning.CheckSwitchResult;
+import org.meveo.apiv2.dunning.DunningActionInstanceInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
@@ -21,6 +22,7 @@ import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 import org.meveo.apiv2.dunning.ImmutableCheckSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
 import org.meveo.apiv2.dunning.ImmutableDunningLevelInstanceSuccessResponse;
+import org.meveo.apiv2.dunning.ImmutableDunningActionInstanceSuccessResponse;
 import org.meveo.apiv2.dunning.ImmutableMassSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableSwitchCollectionSuccessResponse;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
@@ -33,6 +35,7 @@ import org.meveo.apiv2.dunning.resource.DunningCollectionPlanResource;
 import org.meveo.apiv2.dunning.service.DunningCollectionPlanApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.report.ImmutableSuccessResponse;
+import org.meveo.model.dunning.DunningActionInstance;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.model.dunning.DunningPolicy;
@@ -176,4 +179,14 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 				                            .build()
 						);
 	}
+
+	@Override
+	public Response addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
+	    DunningActionInstance newDunningActionInstance = dunningCollectionPlanApiService.addDunningActionInstance(dunningActionInstanceInput).get();
+	    return Response.ok(ImmutableDunningActionInstanceSuccessResponse.builder()
+            .status("SUCCESS")
+            .newDunningActionInstance(newDunningActionInstance)
+            .build()).build();
+	}
+
 }

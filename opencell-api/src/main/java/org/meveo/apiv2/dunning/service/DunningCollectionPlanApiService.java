@@ -23,6 +23,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.dunning.DunningActionInstanceInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
@@ -475,6 +476,58 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         dunningLevelInstance.setActions(actions);
 	}
 	
+	public Optional<DunningActionInstance> addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
+        DunningActionInstance dunningActionInstance = new DunningActionInstance();
+        
+        Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
+        DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId);
+        if (dunningLevelInstance == null) {
+            new NotFoundException("No Dunning Level found with id : " + dunningLevelInstanceId);
+        }else if(dunningLevelInstance.getDunningLevel().isEndOfDunningLevel() == true) {
+            new BusinessApiException("Cant not add actions at the end of dunning level with id : " + dunningLevelInstanceId);
+        }else {
+            dunningActionInstance.setDunningLevelInstance(dunningLevelInstance);
+        }
+        
+        Long collectionPlanId = dunningActionInstanceInput.getCollectionPlan().getId();
+        DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
+        if (collectionPlan == null) {
+            new NotFoundException("No Dunning Collection Plan found with id : " + collectionPlanId);
+        }
+        dunningActionInstance.setCollectionPlan(collectionPlan);
+        
+
+        if(dunningActionInstanceInput.getDunningAction() != null && dunningActionInstanceInput.getDunningAction().getId() != null) {
+            Long dunningActionId = dunningActionInstanceInput.getDunningAction().getId();
+            DunningAction dunningAction = dunningActionService.findById(dunningActionId);
+            if (dunningAction == null) {
+                new NotFoundException("No Dunning action found with id : " + dunningActionId);
+            }
+            dunningActionInstance.setDunningAction(dunningAction);
+        }
+
+        if (dunningActionInstanceInput.getActionOwner() != null && dunningActionInstanceInput.getActionOwner().getId() != null) {
+            Long dunningAgentId = dunningActionInstanceInput.getActionOwner().getId();
+            DunningAgent dunningAgent = dunningAgentService.findById(dunningAgentId);
+            if (dunningAgent == null) {
+                new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
+            }
+            dunningActionInstance.setActionOwner(dunningAgent);
+        }
+        
+        dunningActionInstance.setCode(dunningActionInstanceInput.getCode());
+        dunningActionInstance.setDescription(dunningActionInstanceInput.getDescription());
+        dunningActionInstance.setActionType(dunningActionInstanceInput.getActionType());
+        dunningActionInstance.setActionMode(dunningActionInstanceInput.getMode());
+        dunningActionInstance.setActionStatus(dunningActionInstanceInput.getActionStatus());
+        dunningActionInstance.setActionRestult(dunningActionInstanceInput.getActionRestult());
+        
+        dunningActionInstanceService.create(dunningActionInstance);
+
+        trackOperation("ADD DunningActionInstance", new Date(), collectionPlan);
+        return of(dunningActionInstance);
+	}
+
 	private void updateCollectionPlanActions(DunningLevelInstance dunningLevelInstance) {
     	if (dunningLevelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
             
