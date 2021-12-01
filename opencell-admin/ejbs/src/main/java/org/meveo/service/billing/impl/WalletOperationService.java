@@ -1316,7 +1316,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 if (chargeInstance.getInvoicingCalendar() != null) {
 
                     Date defaultInitDate = null;
-                    if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+                    if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
                         defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
                     } else if (chargeInstance.getServiceInstance() != null) {
                         defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();

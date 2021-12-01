@@ -602,14 +602,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 //
 //        this.setDescription(descTranslated);
 
-        if (chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
             this.subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
 
-        } else if (chargeInstance instanceof UsageChargeInstance) {
+        } else if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.USAGE) {
             this.subscriptionDate = chargeInstance.getSubscription().getSubscriptionDate();
             this.counter = ((UsageChargeInstance) chargeInstance).getCounter();
 
-        } else if (chargeInstance instanceof OneShotChargeInstance) {
+        } else if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT) {
             if (chargeInstance.getServiceInstance() != null) {
                 this.subscriptionDate = chargeInstance.getServiceInstance().getSubscriptionDate();
             } else if (chargeInstance.getSubscription() != null) {
