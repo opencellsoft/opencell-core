@@ -2895,6 +2895,7 @@
             <column name="has_minimum" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="commercial_order_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
+            <column name="cpq_quote_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -15513,6 +15514,11 @@
 			constraintName="fk_dunning_level_instance" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
       </changeSet>
+      
+       <changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
     
     <!-- end fk -->
 
@@ -16862,6 +16868,7 @@
     <changeSet id="#INTRD-2765_20211112" author="ZBariki"/>
     <changeSet id="#INTRD-3250_20211123" author="HatimOUDAD"/>
 	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA" />
+	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
