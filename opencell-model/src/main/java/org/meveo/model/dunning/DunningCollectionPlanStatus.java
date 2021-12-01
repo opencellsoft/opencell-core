@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -25,6 +27,9 @@ import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 @Table(name = "dunning_collection_plan_statuses")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_collection_plan_statuses_seq") })
+@NamedQueries({
+		@NamedQuery(name = "DunningCollectionPlanStatus.findByStatus", query = "SELECT cps FROM DunningCollectionPlanStatus cps where cps.status = :status")
+})
 public class DunningCollectionPlanStatus extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
