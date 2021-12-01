@@ -3,17 +3,6 @@
  */
 package org.meveo.apiv2.billing.service;
 
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -33,6 +22,17 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.filter.FilterService;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
 	
@@ -126,8 +126,49 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		return ofNullable(invoiceService.getInvoicePdf(invoice, generateIfMissing));
 		
 	}
-	
-	/**
+
+    /**
+     * @param invoice
+     * @return
+     */
+    public void deleteInvoicePdf(Invoice invoice) {
+        if (invoiceService.isInvoicePdfExist(invoice)) {
+            try {
+                invoiceService.deleteInvoicePdf(invoice);
+            } catch (Exception exception) {
+                throw new InternalServerErrorException(exception);
+            }
+
+
+        } else {
+            throw new NotFoundException("pdf invoice does not exists : ");
+        }
+
+
+    }
+
+    /**
+     * @param invoice
+     * @return
+     */
+    public void deleteInvoiceXml(Invoice invoice) {
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            try {
+                invoiceService.deleteInvoiceXml(invoice);
+            } catch (Exception exception) {
+                throw new InternalServerErrorException(exception);
+            }
+
+
+        } else {
+            throw new NotFoundException("xml invoice does not exists : ");
+        }
+
+
+    }
+
+
+    /**
 	 * @param basicInvoice
 	 * @return
 	 */
