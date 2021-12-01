@@ -101,6 +101,20 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
+	public Response deleteInvoicePdf(@NotNull Long id) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+			invoiceApiService.deleteInvoicePdf(invoice);
+		return Response.ok().build();
+	}
+
+	@Override
+	public Response deleteInvoiceXml(@NotNull Long id) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		invoiceApiService.deleteInvoiceXml(invoice);
+		return Response.ok().build();
+	}
+
+	@Override
 	public Response createBasicInvoices(BasicInvoice basicInvoice) {
         Invoice invoice = invoiceApiService.create(basicInvoice);
         return Response
