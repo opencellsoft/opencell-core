@@ -86,19 +86,19 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 
     public ServiceInstance getServiceInstanceFromChargeInstance(ChargeInstance chargeInstance) {
 
-        if (chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance.isRecurringCharge()) {
             RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(chargeInstance.getId());
             if (recurringChargeInstance != null) {
                 return recurringChargeInstance.getServiceInstance();
             }
 
-        } else if (chargeInstance instanceof UsageChargeInstance) {
+        } else if (chargeInstance.isUsageCharge()) {
             UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(chargeInstance.getId());
             if (usageChargeInstance != null) {
                 return usageChargeInstance.getServiceInstance();
             }
 
-        } else if (chargeInstance instanceof OneShotChargeInstance) {
+        } else if (chargeInstance.isOneShotCharge()) {
             OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(chargeInstance.getId());
             if (oneShotChargeInstance != null) {
                 return oneShotChargeInstance.getServiceInstance();

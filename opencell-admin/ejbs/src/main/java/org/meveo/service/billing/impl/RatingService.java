@@ -488,7 +488,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         } else {
 
             RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance != null && chargeInstance.isRecurringCharge()) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
 
@@ -715,7 +715,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance != null && chargeInstance.isRecurringCharge()) {
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
@@ -1094,7 +1094,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         }
         if (expression.indexOf("productInstance") >= 0) {
             ProductInstance productInstance = null;
-            if (chargeInstance instanceof ProductChargeInstance) {
+            if (chargeInstance.isProductCharge()) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
