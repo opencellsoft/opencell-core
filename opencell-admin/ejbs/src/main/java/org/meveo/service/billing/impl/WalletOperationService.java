@@ -638,39 +638,39 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }).flatMap(List::stream).collect(Collectors.toList());
     }
 
-//    public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
-//
-//        if (chargeInstance.getCounterInstances() == null || chargeInstance.getCounterInstances().isEmpty()) {
-//            return;
-//        }
-//
-//        for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
-//
-//            CounterPeriod counterPeriod = null;
-//
-//            for (WalletOperation wo : walletOperations) {
-//
-//                // In case of virtual operation only instantiate a counter period, don't create it
-//                if (isVirtual) {
-//                    counterPeriod = counterInstanceService.instantiateCounterPeriod(counterInstance.getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-//                            chargeInstance, chargeInstance.getServiceInstance());
-//
-//                    CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-//                            chargeInstance, chargeInstance.getServiceInstance());
-//
-//                    if (realCounterPeriod.getAccumulatedValues() != null)
-//                        counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
-//                    counterPeriod.setValue(realCounterPeriod.getValue());
-//                    counterPeriod.setCounterInstance(realCounterPeriod.getCounterInstance());
-//
-//                } else {
-//                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-//                            chargeInstance.getServiceInstance());
-//                }
-//                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
-//            }
-//        }
-//    }
+    public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+
+        if (chargeInstance.getAccumulatorCounterInstances() == null || chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
+            return;
+        }
+
+        for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
+
+            CounterPeriod counterPeriod = null;
+
+            for (WalletOperation wo : walletOperations) {
+
+                // In case of virtual operation only instantiate a counter period, don't create it
+                if (isVirtual) {
+                    counterPeriod = counterInstanceService.instantiateCounterPeriod(counterInstance.getCounterTemplate(), wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance, chargeInstance.getServiceInstance());
+
+                    CounterPeriod realCounterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance, chargeInstance.getServiceInstance());
+
+                    if (realCounterPeriod.getAccumulatedValues() != null)
+                        counterPeriod.setAccumulatedValues(new HashMap<String, BigDecimal>(realCounterPeriod.getAccumulatedValues()));
+                    counterPeriod.setValue(realCounterPeriod.getValue());
+                    counterPeriod.setCounterInstance(realCounterPeriod.getCounterInstance());
+
+                } else {
+                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                            chargeInstance.getServiceInstance());
+                }
+                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+            }
+        }
+    }
 
     private double computeQuantityRatio(Date computedApplyChargeOnDate, Date computedNextChargeDate) {
         int lengthOfMonth = 30;

@@ -17,20 +17,12 @@
  */
 package org.meveo.model.billing;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
-import org.meveo.model.tax.TaxClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -57,12 +49,21 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.tax.TaxClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Instantiated/subscribed charge
@@ -86,16 +87,17 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Specifies that charge does not apply to any order
+     * Status
      */
-    public static final String NO_ORDER_NUMBER = "none";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "charge_type", insertable = false, updatable = false)
+    private ChargeTypeEnum type;
+
 
     /**
-     * Charge type (class discriminator value)
+     * Specifies that charge does not apply to any order
      */
-    @Column(name = "charge_type", insertable = false, updatable = false)
-    @Size(max = 1)
-    private String chargeType;
+    public static String NO_ORDER_NUMBER = "none";
 
     /**
      * Status
@@ -118,11 +120,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @Column(name = "termination_date")
     protected Date terminationDate;
 
-    /** reactivation date timestamp */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "reactivation_date")
-    private Date reactivationDate;
-
     /**
      * Charge template/definition that charge was instantiated from
      */
@@ -131,15 +128,15 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected ChargeTemplate chargeTemplate;
 
     /**
-     * Invoicing calendar to calculate if operation should be invoiced on an future date.
+     * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
+     * be invoiced on an future date.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     protected Calendar invoicingCalendar;
 
     /**
-     * Charge instantiation date - one shot and usage charges<br>
-     * or the last date charge applied on - recurring charges
+     * Charge instantiation date
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "charge_date")
@@ -241,7 +238,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     private List<WalletInstance> prepaidWalletInstances;
 
     /**
-     * Wallet operations sorted by date
+     * Wallet operations srted by date
      */
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
@@ -261,7 +258,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected String orderNumber;
 
     /**
-     * Accumulator type counter instances
+     * Wallet instances
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "counter_instance_id"))
@@ -290,7 +287,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         this.currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
         this.chargeTemplate = chargeTemplate;
         this.status = status != null ? status : InstanceStatusEnum.ACTIVE;
-        this.orderNumber = subscription.getOrderNumber();
 
         if (chargeTemplate.getDescriptionI18n() != null) {
             String languageCode = userAccount.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
@@ -309,6 +305,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
 
         this(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance.getSubscription(), status);
+
 
         this.serviceInstance = serviceInstance;
         this.orderNumber = serviceInstance.getOrderNumber();
@@ -376,24 +373,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         this.terminationDate = terminationDate;
     }
 
-    /**
-     * get reactivation date
-     *
-     * @return reactivation date
-     */
-    public Date getReactivationDate() {
-        return reactivationDate;
-    }
-
-    /**
-     * set reactivation date
-     *
-     * @param reactivationDate reactivation date
-     */
-    public void setReactivationDate(Date reactivationDate) {
-        this.reactivationDate = reactivationDate;
-    }
-
     public ChargeTemplate getChargeTemplate() {
         return chargeTemplate;
     }
@@ -409,18 +388,10 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         }
     }
 
-    /**
-     * @return Charge instantiation date - one shot and usage charges<br>
-     *         or the last date charge applied on - recurring charges
-     */
     public Date getChargeDate() {
         return chargeDate;
     }
 
-    /**
-     * @param chargeDate Charge instantiation date - one shot and usage charges<br>
-     *        or the last date charge applied on - recurring charges
-     */
     public void setChargeDate(Date chargeDate) {
         this.chargeDate = chargeDate;
     }
@@ -619,24 +590,28 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         this.accumulatorCounterInstances.add(counterInstance);
     }
 
-    /**
-     * Get a charge main type
-     *
-     * @return Charge main type
-     */
-    public abstract ChargeMainTypeEnum getChargeMainType();
 
-    /**
-     * @return Charge type (class discriminator value)
-     */
-    public String getChargeType() {
-        return chargeType;
+    public boolean isRecurringCharge() {
+        return type == ChargeTypeEnum.R;
     }
 
-    /**
-     * @param chargeType Charge type (class discriminator value)
-     */
-    public void setChargeType(String chargeType) {
-        this.chargeType = chargeType;
+    public boolean isSubscriptionCharge() {
+        return type == ChargeTypeEnum.S;
+    }
+
+    public boolean isTerminationCharge() {
+        return type == ChargeTypeEnum.T;
+    }
+
+    public boolean isUsageCharge() {
+        return type == ChargeTypeEnum.U;
+    }
+
+    public boolean isProductCharge() {
+        return type == ChargeTypeEnum.P;
+    }
+
+    public boolean isOneShotCharge() {
+        return type == ChargeTypeEnum.O;
     }
 }

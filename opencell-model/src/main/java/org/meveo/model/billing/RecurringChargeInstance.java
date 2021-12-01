@@ -20,7 +20,6 @@ package org.meveo.model.billing;
 import org.hibernate.annotations.Type;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 import javax.persistence.Column;
@@ -29,8 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -47,8 +44,6 @@ import java.util.Date;
 
 @Entity
 @DiscriminatorValue("R")
-@NamedQueries({ @NamedQuery(name = "RecurringChargeInstance.listToRateByStatusAndDate", query = "SELECT c.id FROM RecurringChargeInstance c where c.status=:status and (c.nextChargeDate is null OR c.nextChargeDate<:maxNextChargeDate)"),
-        @NamedQuery(name = "RecurringChargeInstance.listToRateByStatusBCAndDate", query = "SELECT c.id FROM RecurringChargeInstance c where c.status=:status and (c.nextChargeDate is null OR c.nextChargeDate<:maxNextChargeDate) and c.userAccount.billingAccount.billingCycle in :billingCycles") })
 public class RecurringChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
@@ -247,10 +242,5 @@ public class RecurringChargeInstance extends ChargeInstance {
      */
     public void setApplyInAdvance(Boolean applyInAdvance) {
         this.applyInAdvance = applyInAdvance;
-    }
-
-    @Override
-    public ChargeTemplate.ChargeMainTypeEnum getChargeMainType() {
-        return ChargeTemplate.ChargeMainTypeEnum.RECURRING;
     }
 }

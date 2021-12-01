@@ -31,6 +31,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -954,6 +955,83 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
             }
         }
         return counterValueChangeInfos;
+    }
+
+    /**
+     * Set the accumulator counter period value.
+     *
+     * @param counterPeriod the counter period
+     * @param walletOperation the wallet operation
+     * @param reservation the reservation
+     * @param isVirtual whether the operation is virtual or not
+     */
+    public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
+        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal previousValue = counterPeriod.getValue();
+        CounterInstance counterInstance = counterPeriod.getCounterInstance();
+        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
+        boolean isMultiValuesAccumulator = counterPeriod.getAccumulatorType() != null && counterPeriod.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE);
+        boolean isMultiValuesApplied = isMultiValuesAccumulator && evaluateFilterElExpression(counterTemplate.getFilterEl(),walletOperation);
+        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
+            if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
+                value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
+                log.debug("Increment counter period value {} by amount {}", counterPeriod, value);
+            } else if (CounterTypeEnum.USAGE.equals(counterPeriod.getCounterType())) {
+                value = walletOperation.getQuantity();
+                log.debug("Increment counter period value {} by quantity {}", counterPeriod, value);
+            }
+            if (isMultiValuesApplied) {
+                value = applyMultiAccumulatedValues(counterPeriod, walletOperation);
+            } else{
+                counterPeriod.setValue(counterPeriod.getValue().add(value));
+            }
+
+            if (reservation != null) {
+                previousValue = reservation.getCounterPeriodValues().get(counterPeriod.getId());
+                if (previousValue == null) {
+                    previousValue = BigDecimal.ZERO;
+                }
+                reservation.getCounterPeriodValues().put(counterPeriod.getId(), previousValue.add(value));
+                counterPeriod.setValue(reservation.getCounterPeriodValues().get(counterPeriod.getId()));
+            }
+            if (!isVirtual) {
+                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterPeriod.getValue());
+                counterPeriodService.update(counterPeriod);
+            }
+            CounterValueChangeInfo counterValueChangeInfo = new CounterValueChangeInfo(counterPeriod.getId(),
+                    counterPeriod.getAccumulator(), previousValue, value, counterPeriod.getValue());
+            triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
+        }
+
+    }
+
+    /**
+     * Accumulate counter multi values, Each value is stored in map with a key evaluated for an EL expression
+     * @param counterPeriod the counter period
+     * @param walletOperation the wallet operation
+     * @return
+     */
+    private BigDecimal applyMultiAccumulatedValues(CounterPeriod counterPeriod, WalletOperation walletOperation) {
+        CounterInstance counterInstance = counterPeriod.getCounterInstance();
+        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
+        BigDecimal value = evaluateValueElExpression(counterTemplate.getValueEl(), walletOperation);
+        log.debug("Extract the multi accumulator counter period value {}", value);
+        String key = evaluateKeyElExpression(counterTemplate.getKeyEl(), walletOperation);
+        log.debug("Extract the multi accumulator counter period key {}", key);
+        if(counterPeriod.getAccumulatedValues() == null){
+            Map<String, BigDecimal> accumulatedValues = new HashMap<>();
+            accumulatedValues.put(key, value);
+            counterPeriod.setAccumulatedValues(accumulatedValues);
+        }else{
+            BigDecimal accumulatedValue = counterPeriod.getAccumulatedValues().get(key);
+            if(accumulatedValue == null){
+                counterPeriod.getAccumulatedValues().put(key, value);
+            }else{
+                counterPeriod.getAccumulatedValues().put(key, accumulatedValue.add(value));
+            }
+        }
+        log.debug("Icrement the multi accumulator counter period values {}", counterPeriod.getAccumulatedValues());
+        return value;
     }
 
     private CounterValueChangeInfo accumulateCounterValue(CounterPeriod counterPeriod, WalletOperation walletOperation, boolean isVirtual) {

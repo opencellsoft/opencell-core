@@ -8,9 +8,11 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.ChargeCDRDto;
 import org.meveo.api.dto.billing.ChargeCDRListResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
+import org.meveo.api.dto.billing.CounterPeriodDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
@@ -35,10 +37,12 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Stateless
 public class MediationApiService {
@@ -70,7 +74,7 @@ public class MediationApiService {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ChargeCDRListResponseDto processCdrList(ChargeCDRDto chargeCDRDto) {
 
         ChargeCDRListResponseDto cdrListResult = new ChargeCDRListResponseDto(chargeCDRDto.getCdrs().size());
@@ -78,7 +82,6 @@ public class MediationApiService {
         CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
 
         int nbThreads = Runtime.getRuntime().availableProcessors();
-        System.out.println("nbThreads : " + nbThreads);
 //        int nbThreads = 1;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
@@ -118,14 +121,14 @@ public class MediationApiService {
             }
         }
 
-//        // Gather counter update summary information
-//        if (chargeCDRDto.isReturnCounters()) {
-//            List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
-//            if (counterPeriods != null) {
-//                counterPeriods.sort(Comparator.comparing(CounterPeriod::getPeriodStartDate));
-//                cdrListResult.setCounterPeriods(counterPeriods.stream().map(CounterPeriodDto::new).collect(Collectors.toList()));
-//            }
-//        }
+        // Gather counter update summary information
+        if (chargeCDRDto.isReturnCounters()) {
+            List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
+            if (counterPeriods != null) {
+                counterPeriods.sort(Comparator.comparing(CounterPeriod::getPeriodStartDate));
+                cdrListResult.setCounterPeriods(counterPeriods.stream().map(CounterPeriodDto::new).collect(Collectors.toList()));
+            }
+        }
 
         return cdrListResult;
     }
@@ -187,6 +190,7 @@ public class MediationApiService {
 
         }
     }
+
     private List<WalletOperation> rateUsage(EDR edr, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth) throws MeveoApiException {
 
         List<WalletOperation> walletOperations = null;

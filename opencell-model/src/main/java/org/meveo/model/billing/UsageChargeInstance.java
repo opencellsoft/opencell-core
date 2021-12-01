@@ -17,7 +17,6 @@
  */
 package org.meveo.model.billing;
 
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
 import javax.persistence.Column;
@@ -119,10 +118,5 @@ public class UsageChargeInstance extends ChargeInstance {
 
     public void setPriority(int priority) {
         this.priority = priority;
-    }
-
-    @Override
-    public ChargeTemplate.ChargeMainTypeEnum getChargeMainType() {
-        return ChargeTemplate.ChargeMainTypeEnum.USAGE;
     }
 }
