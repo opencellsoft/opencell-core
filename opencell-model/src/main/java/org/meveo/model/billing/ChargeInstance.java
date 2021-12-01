@@ -17,12 +17,19 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.tax.TaxClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -49,21 +56,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.tax.TaxClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Instantiated/subscribed charge
@@ -589,32 +587,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         }
         this.accumulatorCounterInstances.add(counterInstance);
     }
-
-
-    public boolean isRecurringCharge() {
-        return type == ChargeTypeEnum.R;
-    }
-
-    public boolean isSubscriptionCharge() {
-        return type == ChargeTypeEnum.S;
-    }
-
-    public boolean isTerminationCharge() {
-        return type == ChargeTypeEnum.T;
-    }
-
-    public boolean isUsageCharge() {
-        return type == ChargeTypeEnum.U;
-    }
-
-    public boolean isProductCharge() {
-        return type == ChargeTypeEnum.P;
-    }
-
-    public boolean isOneShotCharge() {
-        return type == ChargeTypeEnum.O;
-    }
-
 
     public boolean isRecurringCharge() {
         return type == ChargeTypeEnum.R;

@@ -17,7 +17,6 @@
  */
 package org.meveo.model.billing;
 
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 
 import javax.persistence.Column;
@@ -152,10 +151,5 @@ public class OneShotChargeInstance extends ChargeInstance {
      */
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
-    }
-
-    @Override
-    public ChargeTemplate.ChargeMainTypeEnum getChargeMainType() {
-        return ChargeTemplate.ChargeMainTypeEnum.ONESHOT;
     }
 }

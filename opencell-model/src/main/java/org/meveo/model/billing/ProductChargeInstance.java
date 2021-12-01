@@ -17,7 +17,6 @@
  */
 package org.meveo.model.billing;
 
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ProductChargeTemplate;
 
 import javax.persistence.Column;
@@ -107,10 +106,5 @@ public class ProductChargeInstance extends ChargeInstance {
      */
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
-    }
-
-    @Override
-    public ChargeTemplate.ChargeMainTypeEnum getChargeMainType() {
-        return ChargeTemplate.ChargeMainTypeEnum.PRODUCT;
     }
 }
