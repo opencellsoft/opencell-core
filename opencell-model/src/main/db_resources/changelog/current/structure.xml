@@ -11485,6 +11485,11 @@ order by date_trunc('month', i.invoice_date) DESC
         	deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
 	</changeSet>
+
+    <changeSet id="#INTRD-3426_202112012" author="ZBariki">
+        <modifyDataType columnName="start_date" newDataType="date" tableName="sub_accounting_period"/>
+        <modifyDataType columnName="end_date" newDataType="date" tableName="sub_accounting_period"/>
+    </changeSet>
 	
 	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
      <addColumn tableName="billing_invoice">
