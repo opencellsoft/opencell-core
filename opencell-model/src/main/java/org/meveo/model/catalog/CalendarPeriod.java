@@ -17,15 +17,14 @@
  */
 package org.meveo.model.catalog;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * The CalendarPeriod class.
@@ -287,4 +286,8 @@ public class CalendarPeriod extends Calendar {
         }
     }
 
+    @Override
+    public boolean isInitializationRequired() {
+        return true;
+    }
 }
