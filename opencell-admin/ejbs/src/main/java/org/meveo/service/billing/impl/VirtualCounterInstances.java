@@ -32,9 +32,11 @@ public class VirtualCounterInstances {
 
         String key = counterInstanceId + "-" + counterCode;
         List<CounterPeriod> counterPeriods = virtualCounters.get(key);
-        for (CounterPeriod counterPeriod : counterPeriods) {
-            if (counterPeriod.isCorrespondsToPeriod(date)) {
-                return counterPeriod;
+        if (counterPeriods != null) {
+            for (CounterPeriod counterPeriod : counterPeriods) {
+                if (counterPeriod.isCorrespondsToPeriod(date)) {
+                    return counterPeriod;
+                }
             }
         }
         return null;
@@ -61,4 +63,10 @@ public class VirtualCounterInstances {
         counterPeriods.add(counterPeriod);
     }
 
+    /**
+     * @param virtualCounters Counter periods grouped by a counter instance with key= <Counter instance id>-<Counter code> and value a list of counter periods
+     */
+    public void setVirtualCounters(Map<String, List<CounterPeriod>> virtualCounters) {
+        this.virtualCounters = virtualCounters;
+    }
 }

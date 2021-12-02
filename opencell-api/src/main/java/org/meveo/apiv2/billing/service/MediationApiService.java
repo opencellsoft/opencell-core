@@ -38,7 +38,9 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -90,6 +92,11 @@ public class MediationApiService {
 
         final SynchronizedIterator<String> cdrLineIterator = new SynchronizedIterator<String>(chargeCDRDto.getCdrs());
 
+        final Map<String, List<CounterPeriod>> virtualCounters = new HashMap<>();
+        final Map<String, List<CounterPeriod>> counterUpdates = new HashMap<>();
+
+        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
+
         for (int k = 0; k < nbThreads; k++) {
 
             int finalK = k;
@@ -98,7 +105,9 @@ public class MediationApiService {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(), chargeCDRDto.isReturnEDRs(), cdrListResult);
+                processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(),
+                        chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(),
+                        chargeCDRDto.isReturnEDRs(), cdrListResult, virtualCounters, counterUpdates);
 
             });
         }
@@ -133,8 +142,12 @@ public class MediationApiService {
         return cdrListResult;
     }
 
-    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, CSVCDRParser cdrParser, boolean isVirtual, boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
-                                boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult) {
+    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, CSVCDRParser cdrParser, boolean isVirtual,
+                                boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
+                                boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult,
+                                Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
+
+        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
         while (true) {
 

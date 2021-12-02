@@ -4,7 +4,6 @@ import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.CounterPeriod;
 
 import javax.enterprise.context.RequestScoped;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +46,7 @@ public class CounterUpdateTracking {
         CounterPeriod counterPeriodMatched = null;
         for (CounterPeriod counterPeriodTracked : counterPeriods) {
             if (counterPeriodTracked.isCorrespondsToPeriod(counterPeriod.getPeriodStartDate())) {
-                counterPeriodMatched = counterPeriod;
+                counterPeriodMatched = counterPeriodTracked;
                 break;
             }
         }
@@ -55,7 +54,9 @@ public class CounterUpdateTracking {
         // Update already tracked counter period value
         if (counterPeriodMatched != null) {
             counterPeriodMatched.setValue(counterPeriod.getValue());
-            counterPeriodMatched.setAccumulatedValues(new HashMap<String, BigDecimal>(counterPeriod.getAccumulatedValues()));
+            if (counterPeriod.getAccumulatedValues() != null) {
+                counterPeriodMatched.setAccumulatedValues(new HashMap<>(counterPeriod.getAccumulatedValues()));
+            }
         } else {
             try {
                 counterPeriodMatched = counterPeriod.clone();
@@ -74,5 +75,12 @@ public class CounterUpdateTracking {
      */
     public Map<String, List<CounterPeriod>> getCounterUpdates() {
         return counterUpdates;
+    }
+
+    /**
+     * @param counterUpdates Counter periods grouped by a counter instance with key=<Counter instance id>-<Counter code> and value a list of counter periods
+     */
+    public void setCounterUpdates(Map<String, List<CounterPeriod>> counterUpdates) {
+        this.counterUpdates = counterUpdates;
     }
 }

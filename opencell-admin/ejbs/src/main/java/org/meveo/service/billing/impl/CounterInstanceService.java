@@ -122,7 +122,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     private VirtualCounterInstances virtualCounterInstances;
 
     @Inject
-    CounterUpdateTracking counterUpdatesTracking;
+    private CounterUpdateTracking counterUpdatesTracking;
 
     public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
 
@@ -297,7 +297,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 counterPeriod.setCounterInstance(counterInstance);
             }
 
-            // It is a real counter instance, just need to create a copy of the counte rperiod for a virtual rating purpose
+            // It is a real counter instance, just need to create a copy of the counter period for a virtual rating purpose
         } else {
 
             CounterPeriod realCounterPeriod = getOrCreateCounterPeriod(chargeInstance.getCounter(), chargeDate, initDate, chargeInstance);
@@ -338,13 +338,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
-            log.warn("cannot create counter for the date {} (not in calendar)", chargeDate);
+            log.warn("Can't create counter {} for the date {} (not in calendar)", counterTemplate.getCode(), chargeDate);
             return null;
         }
         Date endDate = cal.nextCalendarDate(startDate);
         counterPeriod.setPeriodStartDate(startDate);
         counterPeriod.setPeriodEndDate(endDate);
-        log.debug("create counter period from {} to {}", startDate, endDate);
 
         BigDecimal initialValue = counterTemplate.getCeiling();
 
@@ -882,5 +881,17 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         }
 
         return counterUpdates.values().stream().flatMap(counterPeriods -> counterPeriods.stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Restore virtualCounterInstances and counterUpdatesTracking values. Used when launching a new thread, request scope beans are not preserved. This restores the bean values.
+     *
+     * @param virtualCounters Virtual counters for the duration of the request
+     * @param counterUpdates Counter updates tracking for the duration of the request
+     */
+    public void reestablishCounterTracking(Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
+
+        virtualCounterInstances.setVirtualCounters(virtualCounters);
+        counterUpdatesTracking.setCounterUpdates(counterUpdates);
     }
 }

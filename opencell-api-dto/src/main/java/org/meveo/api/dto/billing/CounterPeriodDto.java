@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.billing;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.CounterTypeEnum;
@@ -26,7 +28,15 @@ import org.meveo.model.shared.DateUtils;
 import java.math.BigDecimal;
 import java.util.Map;
 
+@JsonInclude(Include.NON_EMPTY)
 public class CounterPeriodDto {
+
+    private Long id;
+
+    /**
+     * The code
+     */
+    private String code;
 
     private CounterTypeEnum counterType;
     private BigDecimal level;
@@ -41,6 +51,11 @@ public class CounterPeriodDto {
      * Accumulated values.
      */
     private Map<String, BigDecimal> accumulatedValues;
+
+    /**
+     * The type field can be "Multi-value" if the accumulator is true.
+     */
+    private AccumulatorCounterTypeEnum accumulatorType;
 
     /**
      * Constructor
@@ -65,11 +80,6 @@ public class CounterPeriodDto {
         setAccumulator(counterPeriod.getAccumulator());
         setAccumulatorType(counterPeriod.getAccumulatorType());
     }
-
-    /**
-     * The type field can be "Multi-value" if the accumulator is true.
-     */
-    private AccumulatorCounterTypeEnum accumulatorType;
 
     public CounterTypeEnum getCounterType() {
         return counterType;
@@ -135,4 +145,39 @@ public class CounterPeriodDto {
         this.accumulatorType = accumulatorType;
     }
 
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param id the new id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

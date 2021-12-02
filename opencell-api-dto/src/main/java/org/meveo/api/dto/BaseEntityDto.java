@@ -18,12 +18,11 @@
 
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
-import org.meveo.api.message.exception.InvalidDTOException;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.meveo.api.message.exception.InvalidDTOException;
+
+import java.io.Serializable;
 
 /**
  * A base class for all API DTO classes
@@ -31,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
  **/
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(Include.NON_EMPTY)
 public abstract class BaseEntityDto implements Serializable {
 
     private static final long serialVersionUID = 4456089256601996946L;

@@ -18,8 +18,6 @@
 
 package org.meveo.api.dto.billing;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -174,7 +172,6 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
     private BigDecimal rawAmountWithTax;
 
     /** The rated transaction. */
-    @JsonInclude(Include.ALWAYS)
     private WoRatedTransactionDto ratedTransaction;
 
     /**
