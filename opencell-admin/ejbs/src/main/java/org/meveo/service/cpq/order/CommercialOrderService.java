@@ -23,6 +23,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -171,7 +172,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		for(OrderOffer offer : validOffers){
 			Subscription subscription = new Subscription();
-			subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+			subscription.setSeller(getSelectedSeller(order));
 			subscription.setUserAccount(order.getUserAccount());
 			subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
@@ -209,6 +210,20 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		return order;
 	}
+	
+	private Seller getSelectedSeller(CommercialOrder order) {
+    	Seller seller = null;
+        if(order.getSeller()!=null) {
+        	seller = order.getSeller();
+        }
+        else if(order.getQuote()!=null) {
+        	if( order.getQuote().getSeller()!=null)
+        		seller = order.getQuote().getSeller();
+        }else {
+        	seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        return seller;
+    }
 	
 	private void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
 	     // instantiate the discounts

@@ -498,7 +498,7 @@ public class CommercialOrderApi extends BaseApi {
 
 	public CommercialOrderDto validateOrder(CommercialOrder order, boolean orderCompleted) {
 		ParamBean paramBean = ParamBean.getInstance();
-		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
+		String sellerCode = getSelectedSeller(order).getCode();
 		String orderScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
 		if (!StringUtils.isBlank(orderScriptCode)) {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(orderScriptCode);
@@ -524,6 +524,20 @@ public class CommercialOrderApi extends BaseApi {
 			throw new BusinessApiException(e.getMessage());
 		}
 	}
+	
+	private Seller getSelectedSeller(CommercialOrder order) {
+    	Seller seller = null;
+        if(order.getSeller()!=null) {
+        	seller = order.getSeller();
+        }
+        else if(order.getQuote()!=null) {
+        	if( order.getQuote().getSeller()!=null)
+        		seller = order.getQuote().getSeller();
+        }else {
+        	seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        return seller;
+    }
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
 		Set<String> orderLots = postData.getOrderLotCodes(); 
