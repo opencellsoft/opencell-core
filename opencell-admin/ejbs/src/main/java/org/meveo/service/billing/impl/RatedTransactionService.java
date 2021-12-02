@@ -250,7 +250,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Create Rated transaction from wallet operation.
-     * 
+     *
      * @param walletOperation Wallet operation
      * @return Rated transaction
      * @throws BusinessException business exception
@@ -303,7 +303,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         hibernateSession.doWork(connection -> {
             try (PreparedStatement preparedStatement = connection.prepareStatement("insert into " + schemaPrefix + "billing_wallet_operation_pending (id, rated_transaction_id) values (?,?)")) {
 
-//                int i = 0;                
+//                int i = 0;
                 for (Long[] woRtId : woRtIds) {
                     preparedStatement.setLong(1, woRtId[0]);
                     preparedStatement.setLong(2, woRtId[1]);
@@ -325,7 +325,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         });
 
         // Need to flush, so WOs can be updated in mass
-        em.flush(); 
+        em.flush();
 
         // Mass update WOs with status and RT info
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable").executeUpdate();
@@ -377,7 +377,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
-        ci = chargeInstanceService.refreshOrRetrieve(aggregatedWo.getChargeInstance());
+        ci = aggregatedWo.getChargeInstance() != null ? chargeInstanceService.findById(aggregatedWo.getChargeInstance()) : null;
         si = (aggregatedWo.getServiceInstance() == null && ci != null) ? ci.getServiceInstance() : serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance());
         sub = (aggregatedWo.getSubscription() == null && ci != null) ? ci.getSubscription() : subscriptionService.refreshOrRetrieve(aggregatedWo.getSubscription());
         ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
@@ -914,14 +914,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String query = "RatedTransaction.sumTotalInvoiceableByOrderNumber";
 //      if (ignorePrepaidWallets) {
 //          query = "RatedTransaction.sumTotalInvoiceableByOrderNumberExcludePrepaidWO";
-//      }        
+//      }
 
         Query q = getEntityManager().createNamedQuery(query).setParameter("orderNumber", order.getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate",
             lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate);
 
 //      if (ignorePrepaidWallets) {
 //          q = q.setParameter("walletsIds", prePaidWalletsIds);
-//      }        
+//      }
 
         return (Amounts) q.getSingleResult();
     }
@@ -1444,26 +1444,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
-    
+
     public List<Map<String, Object>> getGroupedRTs(List<Long> ratedTransactionIds) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
-        
+
         String query = "SELECT rt.billing_account__id, \n" +
-                "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, \n" +
-                "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n" +
-                "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, \n" +
-                "                 rt.offer_id, rt.service_instance_id,\n" +
-                "                 rt.usage_date, rt.start_date, rt.end_date,\n" +
-                "                 rt.order_number, rt.subscription_id, rt.tax_percent, " + 
-                "                 rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id\n" +
-                " FROM billing_rated_transaction rt WHERE id in (:ids) \n" +
-                " GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, \n" +
-                "         rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n" +
-                "         rt.offer_id, rt.service_instance_id, rt.usage_date, rt.start_date,\n" +
-                "         rt.end_date, rt.order_number, rt.subscription_id, rt.tax_percent," + 
-                "         rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
+                "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, \n"
+                + "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
+                + "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, \n"
+                + "                 rt.offer_id, rt.service_instance_id,\n"
+                + "                 rt.usage_date, rt.start_date, rt.end_date,\n"
+                + "                 rt.order_number, rt.subscription_id, rt.tax_percent, rt.tax_id, "
+                + "                 rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id\n"
+                + " FROM billing_rated_transaction rt WHERE id in (:ids) \n"
+                + " GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, \n"
+                + "         rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
+                + "         rt.offer_id, rt.service_instance_id, rt.usage_date, rt.start_date,\n"
+                + "         rt.end_date, rt.order_number, rt.subscription_id, rt.tax_percent, rt.tax_id, "
+                + "         rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
         return executeNativeSelectQuery(query, params);
     }
 
@@ -1472,23 +1472,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT rt.billing_account__id,  \n" +
-                "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity,  \n" +
-                "              sum(rt.amount_without_tax) as sum_amount_without_tax, \n" +
-                "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price, \n" +
-                "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, \n" +
-                "              EXTRACT(MONTH FROM rt.usage_date) valueDate, min(rt.start_date) as start_date, \n" +
-                "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, " + 
-                "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id \n" +
-                "    FROM billing_rated_transaction rt WHERE id in (:ids) \n" +
-                "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description,  \n" +
-                "             rt.amount_without_tax, rt.amount_with_tax, \n" +
-                "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, \n" +
-                "             rt.end_date, rt.order_number, rt.tax_percent, " + 
-                "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
+        String query = "SELECT rt.billing_account__id,  \n"
+                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity,  \n"
+                + "              sum(rt.amount_without_tax) as sum_amount_without_tax, \n"
+                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price, \n"
+                + "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, \n"
+                + "              EXTRACT(MONTH FROM rt.usage_date) valueDate, min(rt.start_date) as start_date, \n"
+                + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
+                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id \n"
+                + "    FROM billing_rated_transaction rt WHERE id in (:ids) \n"
+                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description,  \n"
+                + "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, \n"
+                + "             rt.end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
+                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
         return executeNativeSelectQuery(query, params);
     }
-    
+
     public int makeAsProcessed(List<Long> ratedTransactionIds) {
         return getEntityManager()
                     .createNamedQuery("RatedTransaction.markAsProcessed")

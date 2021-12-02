@@ -13,6 +13,8 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "dunning_policy_rule")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_policy_rule_seq")})
+@NamedQueries({
+        @NamedQuery(name = "DunningPolicyRule.findByDunningPolicyId", query = "SELECT dpr from DunningPolicyRule dpr where dpr.dunningPolicy.id = :policyId") })
 public class DunningPolicyRule extends AuditableEntity {
 
     @Column(name = "rule_joint")
@@ -22,7 +24,7 @@ public class DunningPolicyRule extends AuditableEntity {
     @JoinColumn(name = "dunning_policy_id")
     private DunningPolicy dunningPolicy;
 
-    @OneToMany(mappedBy = "dunningPolicyRule", fetch = LAZY)
+    @OneToMany(mappedBy = "dunningPolicyRule", fetch = LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<DunningPolicyRuleLine> dunningPolicyRuleLines;
 
     public String getRuleJoint() {

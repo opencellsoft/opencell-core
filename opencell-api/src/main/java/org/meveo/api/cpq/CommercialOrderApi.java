@@ -192,7 +192,12 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
-		order.setDeliveryDate(orderDto.getDeliveryDate());
+		
+    	if(orderDto.getDeliveryDate()!=null && orderDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	order.setDeliveryDate(orderDto.getDeliveryDate());
+        
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
 		order.setExternalReference(orderDto.getExternalReference());
@@ -327,8 +332,12 @@ public class CommercialOrderApi extends BaseApi {
 			order.setProgressDate(orderDto.getProgressDate());
 		if(orderDto.getOrderDate() != null)
 			order.setOrderDate(orderDto.getOrderDate());
-		if(orderDto.getDeliveryDate() != null)
-			order.setDeliveryDate(orderDto.getDeliveryDate());
+
+    	if(orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	order.setDeliveryDate(orderDto.getDeliveryDate());
+        
 		if(orderDto.getCustomerServiceBegin() != null)
 			order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		
@@ -468,6 +477,8 @@ public class CommercialOrderApi extends BaseApi {
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getBillingAccountCode()))
 			missingParameters.add("billingAccountCode");
+		if(Strings.isEmpty(order.getUserAccountCode()))
+			missingParameters.add("userAccountCode");
 		if(Strings.isEmpty(order.getOrderTypeCode()))
 			missingParameters.add("orderTypeCode");
 		
@@ -531,7 +542,7 @@ public class CommercialOrderApi extends BaseApi {
 	
 	
 	public OrderOfferDto createOrderOffer(OrderOfferDto orderOfferDto) throws MeveoApiException, BusinessException {
-
+		OrderOffer orderOffer = new OrderOffer();
 		if (orderOfferDto.getCommercialOrderId()==null) {
 			missingParameters.add("commercialOrderId");
 		}
@@ -550,6 +561,19 @@ public class CommercialOrderApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
 		}
+		UserAccount userAccount=null;
+		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
+			userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
+			if (userAccount == null) {
+				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
+			}
+		} else {
+			userAccount = commercialOrder.getUserAccount();
+			if(userAccount == null) {
+				throw new BusinessApiException("Could not create a OrderOffer with empty userAccount");
+			}
+		}
+		orderOffer.setUserAccount(userAccount);
 		DiscountPlan discountPlan=null;
 		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
 		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
@@ -557,11 +581,16 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());	
 		}
 		
-		OrderOffer orderOffer = new OrderOffer();
+		
 		orderOffer.setOrder(commercialOrder);
 		orderOffer.setOfferTemplate(offerTemplate);
 		orderOffer.setDiscountPlan(discountPlan);
-		orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+		
+    	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -578,32 +607,47 @@ public class CommercialOrderApi extends BaseApi {
     	if (orderOffer == null) {
     		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
     	}
-    	CommercialOrder commercialOrder=null;
-    	if(orderOfferDto.getCommercialOrderId()!=null) {
-    	 commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
-
-    	if ( commercialOrder== null) {
-    		throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
-    	}
-    	}
-    	OfferTemplate offerTemplate=null;
+    	
+		if (orderOfferDto.getCommercialOrderId() != null) {
+			CommercialOrder commercialOrder=null;
+			commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
+			if (commercialOrder == null) {
+				throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
+			}
+			orderOffer.setOrder(commercialOrder);
+		}
+    	
     	if(!StringUtils.isBlank(orderOfferDto.getOfferTemplateCode())) {
+    		OfferTemplate offerTemplate=null;
     		 offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
         	if (offerTemplate == null) {
         		throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
         	}	
+        	orderOffer.setOfferTemplate(offerTemplate);
     	}
-    	DiscountPlan discountPlan=null;
-		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
-		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
-		if (discountPlan == null)
-			throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());	
+    	
+		if (!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
+			DiscountPlan discountPlan=null;
+			discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());
+			if (discountPlan == null) {
+				throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());
+			}
+			orderOffer.setDiscountPlan(discountPlan);
 		}
-    	 
-    	orderOffer.setOrder(commercialOrder);
-    	orderOffer.setOfferTemplate(offerTemplate);
-    	orderOffer.setDiscountPlan(discountPlan);
+		
+		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
+			UserAccount userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
+			if (userAccount == null) {
+				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
+			}
+			orderOffer.setUserAccount(userAccount);
+		} 
+    	
+    	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
     	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
     	orderOfferService.update(orderOffer); 
@@ -804,7 +848,12 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity());
-		orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
+		
+    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
+        
 		orderProduct.updateAudit(currentUser); 
 		return orderProduct;
     }

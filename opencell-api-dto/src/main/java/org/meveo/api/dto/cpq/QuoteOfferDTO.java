@@ -144,6 +144,11 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	/** Delivery date */
 	@Schema(description = "the delivery date")
 	private Date deliveryDate;
+	
+	
+	/** User account */
+	@Schema(description = "The code of the user account")
+	private String userAccountCode;
    
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer) {
@@ -164,6 +169,7 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 		code = quoteOffer.getCode();
 		description = quoteOffer.getDescription();
 		deliveryDate = quoteOffer.getDeliveryDate();
+		userAccountCode=quoteOffer.getUserAccount()!=null?quoteOffer.getUserAccount().getCode():null;
 		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -188,12 +194,14 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
+				.filter(price -> PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()))
 				.collect(Collectors.groupingBy(QuotePrice::getTaxRate));
 
 
 		for (BigDecimal taxRate : pricesPerTax.keySet() ) {
 
 			Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = quotePrices.stream()
+					.filter(price -> PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()))
 					.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
 			List<PriceDTO> taxPrices = pricesPerType
@@ -426,6 +434,14 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
+	public String getUserAccountCode() {
+		return userAccountCode;
+	}
+	public void setUserAccountCode(String userAccountCode) {
+		this.userAccountCode = userAccountCode;
+	}
+	
+	
 	
    
 }

@@ -40,6 +40,9 @@ public class OrderOfferDto extends BaseEntityDto {
 	@Schema(description = "The delivery date") 
     private Date deliveryDate;
 	
+	/** The userAccount code. */
+	private String userAccountCode;
+	
 	public OrderOfferDto() {
 	}
  
@@ -59,6 +62,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.commercialOrderId = orderOffer.getOrder()!=null?orderOffer.getOrder().getId():null;
 		this.offerTemplateCode = orderOffer.getOfferTemplate()!=null?orderOffer.getOfferTemplate().getCode():null;
 		this.deliveryDate = orderOffer.getDeliveryDate();
+		this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
@@ -183,6 +187,24 @@ public class OrderOfferDto extends BaseEntityDto {
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+
+
+	/**
+	 * @return the userAccountCode
+	 */
+	public String getUserAccountCode() {
+		return userAccountCode;
+	}
+
+
+
+	/**
+	 * @param userAccountCode the userAccountCode to set
+	 */
+	public void setUserAccountCode(String userAccountCode) {
+		this.userAccountCode = userAccountCode;
 	}
  
 }

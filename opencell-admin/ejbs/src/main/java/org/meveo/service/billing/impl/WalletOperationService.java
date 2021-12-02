@@ -600,7 +600,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", isApplyInAdvance ? "start of period" : "end of period", chargeInstance.getId(), effectiveChargeFromDate,
                             effectiveChargeToDate, inputQuantity);
 
-                    if (!isVirtual && recurringChargeTemplate.isProrataOnPriceChange()) {
+                    if (recurringChargeTemplate.isProrataOnPriceChange()) {
                         walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectiveChargeFromDate, effectiveChargeToDate,
                             prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, inputQuantity, orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(),
                             isApplyInAdvance, isVirtual));

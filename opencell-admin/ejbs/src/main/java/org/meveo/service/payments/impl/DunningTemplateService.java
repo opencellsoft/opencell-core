@@ -63,7 +63,7 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
     public void duplicate(DunningTemplate template) {
         detach(template);
         template.setId(null);
-        template.setCode(template.getCode() + " - copy");
+        template.setCode(findDuplicateCode(template));
         template.setActive(false);
         super.create(template);
     }

@@ -23,11 +23,15 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.catalog.GenericChargeTemplateApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ChargeTemplateRs;
-import org.meveo.api.rest.catalog.ChargeTemplateV2Rs;
+import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 
 /**
  * @author Edward P. Legaspi
@@ -56,4 +60,29 @@ public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
     public GetChargeTemplateResponseDto findV2(String chargeTemplateCode) {
         return find(chargeTemplateCode);
     }
+    
+    @Override
+    public ActionStatus updateStatus(String chargeTemplateCode, String status) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+        	chargeTemplateApi.updateStatus(chargeTemplateCode, status);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public GetChargeTemplateResponseDto duplicateCharge(String chargeTemplateCode) {
+        GetChargeTemplateResponseDto result = new GetChargeTemplateResponseDto();
+
+        try {
+        	result = chargeTemplateApi.duplicateCharge(chargeTemplateCode);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
 }

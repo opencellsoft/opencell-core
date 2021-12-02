@@ -522,4 +522,11 @@ public class EdrService extends PersistenceService<EDR> {
     public static boolean isDuplicateCheckOn() {
         return deduplicateEdrs;
     }
+
+    public boolean isEDRExistByOriginRecord(String originRecord) {
+        Long count = ((Long) getEntityManager().createNamedQuery("EDR.countNbrEdrByOriginRecord")
+                        .setParameter("originRecord", originRecord)
+                        .getSingleResult());
+        return count > 0;
+    }
 }
