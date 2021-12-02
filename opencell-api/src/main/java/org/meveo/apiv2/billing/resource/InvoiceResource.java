@@ -66,6 +66,17 @@ public interface InvoiceResource {
 			@Context Request request);
 
 	@GET
+	@Path("/{invoiceType}/{invoiceNumber}/matchedOperations")
+	@Operation(summary = "Get all operations matched to the given invoice", tags = {
+			"Invoices" }, description = "Get all operations matched to the given invoice", responses = { @ApiResponse(headers = {
+					@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back", schema = @Schema(type = "integer", format = "int64")) }, description = "the searched invoice", content = @Content(schema = @Schema(implementation = Invoice.class))),
+					@ApiResponse(responseCode = "404", description = "invoice not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
+	Response getInvoiceMatchedOperations(
+			@Parameter(description = "type of the Invoice", required = true) @PathParam("invoiceType") Long invoiceTypeId,
+			@Parameter(description = "invoice number", required = true) @PathParam("invoiceNumber") String invoiceNumber,
+			@Context Request request);
+
+	@GET
 	@Path("/{id}/pdf")
 	@Operation(summary = "Returns the invoice PDF", tags = {
 			"Invoices" }, description = "Returns the invoice pdf if exists. feberation may be forced using 'generateIfMissing' parameter", responses = {

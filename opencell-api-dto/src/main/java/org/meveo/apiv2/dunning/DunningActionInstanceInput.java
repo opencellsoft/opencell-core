@@ -40,7 +40,9 @@ public interface DunningActionInstanceInput {
         return DunningActionInstanceStatusEnum.TO_BE_DONE;
     }
 
+    @Nullable
     Resource getCollectionPlan();
-    
+
+    @Nullable
     Resource getDunningLevelInstance();
 }
