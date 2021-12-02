@@ -74,7 +74,7 @@ JSF tag to display a pair of field label and field entry/output value in a SINGL
 
     <h:panelGroup layout="block" styleClass="formFieldGroup #{styleClass} #{newLine?'clearLeft':''}" style="width:#{componentWidth}%; #{style} "
         rendered="#{rendered==null?true:rendered}">
-        <p:outputLabel for="#{fieldId}" styleClass="#{labelStyleClass}" style="width:#{labelWidth}%; #{labelStyle}" value="#{label}" rendered="#{label!=null and fieldId!=null}" />
+        <p:outputLabel for="#{fieldId}" styleClass="#{labelStyleClass}" style="width:#{labelWidth}%; #{labelStyle}" value="#{label}" rendered="#{label!=null and fieldId!=null}" indicateRequired="${required}" />
         <p:outputLabel styleClass="#{labelStyleClass}" style="width:#{labelWidth}%; #{labelStyle}" value="#{label}" rendered="#{label!=null and fieldId==null}" />
         <h:panelGroup layout="block" styleClass="#{displayOneLine?'formFieldItem':'formFieldItem2Lines'} #{inputStyleClass}" style="width:#{inputWidth}%;  #{inputStyle}">
             <ui:insert />

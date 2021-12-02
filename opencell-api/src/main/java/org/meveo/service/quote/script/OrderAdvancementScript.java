@@ -74,6 +74,9 @@ OrderAdvancementScript extends ModuleScript {
 
             if (pricesToBill.isEmpty()) {
                 log.info("No order prices to bill related to a one shot charge were found for commercial order: " + commercialOrder.getId());
+                if(orderProgress == 100) {
+                	commercialOrderApi.validateOrder(commercialOrder, true);
+                }
                 return;
             }
 
