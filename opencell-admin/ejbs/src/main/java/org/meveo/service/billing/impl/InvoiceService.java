@@ -4823,8 +4823,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             InvoiceType invoiceType = postPaidInvoiceType;
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
-            Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-            String invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
+            Seller seller = getSelectedSeller(invoiceLine);
+            String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
             if (ilGroup == null) {
                 ilGroup = new InvoiceLinesGroup(billingAccount, billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), seller, invoiceType, false, invoiceKey, paymentMethod);
@@ -4865,6 +4865,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private List<InvoiceLine> getInvoiceLines(IBillableEntity entityToInvoice, Filter filter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
         return invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter, rtPaginationSize);
+    }
+    
+    private Seller getSelectedSeller(InvoiceLine invoiceLine) {
+    	Seller seller = null;
+    	Invoice invoice=invoiceLine.getInvoice();
+    	if(invoice!=null) {
+    		if(invoice.getSubscription()!=null) {
+    			if(invoice.getSubscription().getSeller()!=null)
+    				seller=invoice.getSubscription().getSeller();
+    		}
+    		if(seller==null && invoice.getCommercialOrder()!=null) {
+    			if(invoice.getCommercialOrder().getSeller()!=null)
+    				seller=invoice.getCommercialOrder().getSeller();
+    		} 
+    		if(seller==null && invoice.getCpqQuote()!=null) {
+    			if(invoice.getCpqQuote().getSeller()!=null) {
+    				seller=invoice.getCpqQuote().getSeller();
+    			}
+    		}
+    	}else {	
+    		seller=invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	}
+    	return seller;
     }
 
     /**
