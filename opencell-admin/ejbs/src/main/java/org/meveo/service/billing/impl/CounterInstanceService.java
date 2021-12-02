@@ -31,7 +31,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -67,6 +66,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
@@ -78,6 +78,7 @@ import java.util.stream.Collectors;
 @Singleton
 @Lock(LockType.WRITE)
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
+
     private static final String CHARGE = "charge";
     private static final String SERVICE = "service";
     private static final String SERVICE_INSTANCE = "serviceInstance";
@@ -274,40 +275,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
-     * Instantiate AND persist counter period for a given date
-     *
-     * @param counterInstance Counter instance
-     * @param chargeDate Charge date - to match the period validity dates
-     * @param initDate Initial date, used for period start/end date calculation
-     * @param chargeInstance Charge instance to associate counter with
-     * @param serviceInstance the Service instance of charge instance
-     * @return CounterPeriod instance
-     * @throws BusinessException Business exception
-     */
-    // we must make sure the counter period is persisted in db before storing it in cache
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
-    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
-
-        CounterPeriod counterPeriod = null;
-
-        if (counterInstance != null) {
-            CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
-
-            counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, chargeInstance, serviceInstance);
-
-            if (counterPeriod != null) {
-                counterPeriod.setCounterInstance(counterInstance);
-                counterPeriodService.create(counterPeriod);
-
-                counterInstance.getCounterPeriods().add(counterPeriod);
-                counterInstance.updateAudit(currentUser);
-            }
-        }
-
-        return counterPeriod;
-    }
-
-    /**
      * Instantiate AND persist <b>for duration of the request</b> a counter period for a given date
      *
      * @param counterInstance Counter instance
@@ -332,7 +299,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
             // It is a real counter instance, just need to create a copy of the counte rperiod for a virtual rating purpose
         } else {
-System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getCounter() == null) );
+
             CounterPeriod realCounterPeriod = getOrCreateCounterPeriod(chargeInstance.getCounter(), chargeDate, initDate, chargeInstance);
 
             if (realCounterPeriod != null) {
@@ -367,7 +334,8 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
         if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
             cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance);
         }
-        cal.setInitDate(initDate);
+        cal = CalendarService.initializeCalendar(cal, initDate, chargeInstance, chargeInstance.getServiceInstance());
+
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
             log.warn("cannot create counter for the date {} (not in calendar)", chargeDate);
@@ -392,54 +360,6 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
         counterPeriod.setAccumulator(counterTemplate.getAccumulator());
         counterPeriod.setAccumulatorType(counterTemplate.getAccumulatorType());
         counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
-
-        return counterPeriod;
-    }
-
-    /**
-     * Instantiate only a counter period. Note: Will not be persisted
-     *
-     * @param counterTemplate Counter template
-     * @param chargeDate Charge date
-     * @param initDate Initial date, used for period start/end date calculation
-     * @param chargeInstance charge instance to associate counter with
-     * @param serviceInstance the service instance of charge instance
-     * @return a counter period.
-     * @throws BusinessException the business exception
-     */
-    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
-
-        CounterPeriod counterPeriod = new CounterPeriod();
-        Calendar cal = counterTemplate.getCalendar();
-        if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
-            cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance, serviceInstance, chargeInstance.getSubscription());
-        }
-        cal.setInitDate(initDate);
-        Date startDate = cal.previousCalendarDate(chargeDate);
-        if (startDate == null) {
-            log.warn("cannot create counter for the date {} (not in calendar)", chargeDate);
-            return null;
-        }
-        Date endDate = cal.nextCalendarDate(startDate);
-        counterPeriod.setPeriodStartDate(startDate);
-        counterPeriod.setPeriodEndDate(endDate);
-        log.debug("create counter period from {} to {}", startDate, endDate);
-
-        BigDecimal initialValue = counterTemplate.getCeiling();
-
-        if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
-            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance);
-        }
-
-        counterPeriod.setValue(initialValue);
-        counterPeriod.setCode(counterTemplate.getCode());
-        counterPeriod.setDescription(counterTemplate.getDescription());
-        counterPeriod.setLevel(initialValue);
-        counterPeriod.setCounterType(counterTemplate.getCounterType());
-        counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
-        counterPeriod.setAccumulator(counterTemplate.getAccumulator());
-        counterPeriod.isCorrespondsToPeriod(chargeDate);
-        counterPeriod.setAccumulatorType(counterTemplate.getAccumulatorType());
 
         return counterPeriod;
     }
@@ -450,33 +370,14 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
      * @param counterPeriod the counter period
      * @param counterPeriodEventLevels the counter period event levels
      */
-    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<Map.Entry<String, BigDecimal>> counterPeriodEventLevels) {
-        for (Map.Entry<String, BigDecimal> counterValue : counterPeriodEventLevels) {
+    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<Entry<String, BigDecimal>> counterPeriodEventLevels) {
+        for (Entry<String, BigDecimal> counterValue : counterPeriodEventLevels) {
             try {
                 CounterPeriodEvent event = new CounterPeriodEvent(counterPeriod, counterValue.getValue(), counterValue.getKey());
                 event.setCounterPeriod(counterPeriod);
                 counterPeriodEvent.fire(event);
             } catch (Exception e) {
                 log.error("Failed to executing trigger counterPeriodEvent", e);
-            }
-        }
-    }
-
-    /**
-     * trigger counter period event
-     *
-     * @param counterValueChangeInfo the counter value
-     * @param counterPeriod the counter period
-     */
-    public void triggerCounterPeriodEvent(CounterValueChangeInfo counterValueChangeInfo, CounterPeriod counterPeriod) {
-        // Fire notifications if counter value matches trigger value and counter value is tracked
-        if (counterValueChangeInfo != null && counterPeriod.getNotificationLevels() != null) {
-            // Need to refresh counterPeriod as it is stale object if it was updated in counterInstanceService.deduceCounterValue()
-            counterPeriod = emWrapper.getEntityManager().find(CounterPeriod.class, counterPeriod.getId());
-            List<Map.Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
-
-            if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
-                triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
             }
         }
     }
@@ -509,45 +410,6 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
      */
     private CounterPeriod getCounterPeriodVirtualByDate(Long counterInstanceId, String counterCode, Date date) {
         return virtualCounterInstances.getCounterPeriod(counterInstanceId, counterCode, date);
-    }
-
-    /**
-     * Find a counter period for a given date.
-     *
-     * @param counterInstance Counter instance
-     * @param date Date to match
-     * @return Found counter period
-     * @throws BusinessException business exception
-     */
-    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
-        try {
-            CounterPeriod counterPeriod = null;
-            if (counterInstance != null) {
-                counterPeriod = getCounterPeriodByDate(counterInstance, date);
-            }
-            return counterPeriod;
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Find or create a counter period for a given date.
-     *
-     * @param counterInstance Counter instance
-     * @param date Date to match
-     * @param initDate initial date.
-     * @param chargeInstance Charge instance to associate counter with
-     * @param serviceInstance the Service instance of charge instance
-     * @return Found or created counter period
-     * @throws BusinessException business exception
-     */
-    public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
-        try {
-            return getCounterPeriodByDate(counterInstance, date);
-        } catch (NoResultException e) {
-            return createPeriod(counterInstance, date, initDate, chargeInstance, serviceInstance);
-        }
     }
 
     /**
@@ -655,7 +517,7 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
 
         // Fire notifications if counter value matches trigger value and counter value is tracked
         if (!isVirtual && counterPeriod.getNotificationLevels() != null) {
-            List<Map.Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
+            List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
 
             if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
                 triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
@@ -675,7 +537,7 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      * @throws BusinessException business exception
      */
-    public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {
+    private CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {
 
         BigDecimal deducedQuantity = null;
         BigDecimal previousValue = counterPeriod.getValue();
@@ -729,55 +591,6 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
         return calendar;
     }
 
-    /**
-     * Gets the calendar from EL
-     *
-     * @param calendarCodeEl the calendar code EL
-     * @param chargeInstance
-     * @param serviceInstance
-     * @param subscription
-     * @return
-     * @throws BusinessException
-     */
-    public Calendar getCalendarFromEl(String calendarCodeEl, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
-        String calendarCode = evaluateCalendarElExpression(calendarCodeEl, chargeInstance, serviceInstance, subscription);
-        Calendar calendar = calendarService.findByCode(calendarCode);
-        if (calendar == null) {
-            throw new BusinessException("Cant found calendar by code:" + calendarCode);
-        }
-        return calendar;
-    }
-
-    public String evaluateCalendarElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
-            throws BusinessException {
-
-        String result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf(CHARGE) >= 0 || expression.indexOf("ci") >= 0) {
-            userMap.put(CHARGE, chargeInstance);
-            userMap.put("ci", chargeInstance);
-        }
-        if (expression.indexOf(SERVICE) >= 0 || expression.indexOf(SERVICE_INSTANCE) >= 0) {
-            userMap.put(SERVICE, serviceInstance);
-            userMap.put(SERVICE_INSTANCE, serviceInstance);
-        }
-        if (expression.indexOf("sub") >= 0) {
-            userMap.put("sub", subscription);
-        }
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
-        }
-        return result;
-    }
-
     private String evaluateCalendarElExpression(String expression, ChargeInstance chargeInstance) throws BusinessException {
 
         String result = null;
@@ -785,7 +598,7 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
             return result;
         }
 
-        Map<Object, Object> userMap = new HashMap<>();
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
         if (expression.indexOf(CHARGE) >= 0 || expression.indexOf("ci") >= 0) {
             userMap.put(CHARGE, chargeInstance);
             userMap.put("ci", chargeInstance);
@@ -918,7 +731,7 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<CounterValueChangeInfo> incrementAccumulatorCounterValue(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) throws BusinessException {
 
-        List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<>();
+        List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<CounterValueChangeInfo>();
 
         for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
 
@@ -946,7 +759,7 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
 
                 // Fire notifications if counter value matches trigger value and counter value is tracked
                 if (!isVirtual && counterPeriod.getNotificationLevels() != null) {
-                    List<Map.Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
+                    List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
 
                     if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
                         triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
@@ -955,83 +768,6 @@ System.out.println( "chargeInstance.getCounter() null : " + (chargeInstance.getC
             }
         }
         return counterValueChangeInfos;
-    }
-
-    /**
-     * Set the accumulator counter period value.
-     *
-     * @param counterPeriod the counter period
-     * @param walletOperation the wallet operation
-     * @param reservation the reservation
-     * @param isVirtual whether the operation is virtual or not
-     */
-    public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
-        BigDecimal value = BigDecimal.ZERO;
-        BigDecimal previousValue = counterPeriod.getValue();
-        CounterInstance counterInstance = counterPeriod.getCounterInstance();
-        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
-        boolean isMultiValuesAccumulator = counterPeriod.getAccumulatorType() != null && counterPeriod.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE);
-        boolean isMultiValuesApplied = isMultiValuesAccumulator && evaluateFilterElExpression(counterTemplate.getFilterEl(),walletOperation);
-        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
-            if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
-                value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
-                log.debug("Increment counter period value {} by amount {}", counterPeriod, value);
-            } else if (CounterTypeEnum.USAGE.equals(counterPeriod.getCounterType())) {
-                value = walletOperation.getQuantity();
-                log.debug("Increment counter period value {} by quantity {}", counterPeriod, value);
-            }
-            if (isMultiValuesApplied) {
-                value = applyMultiAccumulatedValues(counterPeriod, walletOperation);
-            } else{
-                counterPeriod.setValue(counterPeriod.getValue().add(value));
-            }
-
-            if (reservation != null) {
-                previousValue = reservation.getCounterPeriodValues().get(counterPeriod.getId());
-                if (previousValue == null) {
-                    previousValue = BigDecimal.ZERO;
-                }
-                reservation.getCounterPeriodValues().put(counterPeriod.getId(), previousValue.add(value));
-                counterPeriod.setValue(reservation.getCounterPeriodValues().get(counterPeriod.getId()));
-            }
-            if (!isVirtual) {
-                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterPeriod.getValue());
-                counterPeriodService.update(counterPeriod);
-            }
-            CounterValueChangeInfo counterValueChangeInfo = new CounterValueChangeInfo(counterPeriod.getId(),
-                    counterPeriod.getAccumulator(), previousValue, value, counterPeriod.getValue());
-            triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
-        }
-
-    }
-
-    /**
-     * Accumulate counter multi values, Each value is stored in map with a key evaluated for an EL expression
-     * @param counterPeriod the counter period
-     * @param walletOperation the wallet operation
-     * @return
-     */
-    private BigDecimal applyMultiAccumulatedValues(CounterPeriod counterPeriod, WalletOperation walletOperation) {
-        CounterInstance counterInstance = counterPeriod.getCounterInstance();
-        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
-        BigDecimal value = evaluateValueElExpression(counterTemplate.getValueEl(), walletOperation);
-        log.debug("Extract the multi accumulator counter period value {}", value);
-        String key = evaluateKeyElExpression(counterTemplate.getKeyEl(), walletOperation);
-        log.debug("Extract the multi accumulator counter period key {}", key);
-        if(counterPeriod.getAccumulatedValues() == null){
-            Map<String, BigDecimal> accumulatedValues = new HashMap<>();
-            accumulatedValues.put(key, value);
-            counterPeriod.setAccumulatedValues(accumulatedValues);
-        }else{
-            BigDecimal accumulatedValue = counterPeriod.getAccumulatedValues().get(key);
-            if(accumulatedValue == null){
-                counterPeriod.getAccumulatedValues().put(key, value);
-            }else{
-                counterPeriod.getAccumulatedValues().put(key, accumulatedValue.add(value));
-            }
-        }
-        log.debug("Icrement the multi accumulator counter period values {}", counterPeriod.getAccumulatedValues());
-        return value;
     }
 
     private CounterValueChangeInfo accumulateCounterValue(CounterPeriod counterPeriod, WalletOperation walletOperation, boolean isVirtual) {

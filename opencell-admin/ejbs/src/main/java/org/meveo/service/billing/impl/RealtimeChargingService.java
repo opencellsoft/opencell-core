@@ -18,13 +18,6 @@
 
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
@@ -46,6 +39,12 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class RealtimeChargingService.

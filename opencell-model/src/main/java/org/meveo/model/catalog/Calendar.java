@@ -17,7 +17,11 @@
  */
 package org.meveo.model.catalog;
 
-import java.util.Date;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -29,12 +33,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ObservableEntity;
+import java.util.Date;
 
 /**
  * Calendar
@@ -133,6 +132,22 @@ public abstract class Calendar extends BusinessEntity {
      */
     public Date truncateDateTime(Date dateToTruncate) {
         return dateToTruncate;
+    }
+
+    /**
+     * @return Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    public String getInitDateEL() {
+        return null;
+    }
+
+    /**
+     * Is calendar initialization with a starting date required to determine calendar dates
+     *
+     * @return True it setInitDate() method should be called before nextCalendarDate(), previousCalendarDate(), nextPeriodStarDate(), previousPeriodEndDate()
+     */
+    public boolean isInitializationRequired() {
+        return false;
     }
 
     protected Date nextCalendarDate(Date date, Date initDate) {
