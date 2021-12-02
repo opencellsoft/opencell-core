@@ -4,6 +4,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -140,7 +141,7 @@ public interface DunningCollectionPlanResource {
     })
     Response addDunningLevelInstance(@Parameter(required = true) DunningLevelInstanceInput dunningLevelInstanceInput);
 
-	@POST
+	@PUT
     @Path("/updateDunningLevelInstance/{levelInstanceId}")
     @Operation(summary = "Update DunningLevelInstance",
     tags = {"Collection Plan"},
@@ -155,9 +156,9 @@ public interface DunningCollectionPlanResource {
 	
 	@POST
     @Path("/addDunningActionInstance")
-    @Operation(summary = "Add addDunningActionInstance",
+    @Operation(summary = "Add DunningActionInstance",
     tags = {"Collection Plan"},
-    description = "Add addDunningActionInstance",
+    description = "Add DunningActionInstance",
     responses = {
             @ApiResponse(responseCode = "200",
                    description = "Add action success"),
@@ -178,4 +179,17 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response removeDunningActionInstance(@Parameter(required = true) RemoveActionInstanceInput removeActionInstanceInput);
+	
+	@PUT
+    @Path("/updateDunningActionInstance/{actionInstanceId}")
+    @Operation(summary = "Update DunningActionInstance",
+    tags = {"Collection Plan"},
+    description = "Update DunningActionInstance",
+    responses = {
+            @ApiResponse(responseCode = "200",
+                   description = "Update action success"),
+            @ApiResponse(responseCode = "404",
+                    description = "Entity does not exist")
+    })
+    Response updateDunningActionInstance(@Parameter(required = true) DunningActionInstanceInput dunningActionInstanceInput, @PathParam("actionInstanceId") Long actionInstanceId);
 }
