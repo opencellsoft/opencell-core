@@ -469,7 +469,7 @@ public class Product extends ServiceCharge {
 				}
 			}
 		}
-		return this.serviceSubscriptionCharges;
+		return serviceSubscriptionCharges;
 	}
 
 	@Override
@@ -490,7 +490,7 @@ public class Product extends ServiceCharge {
 				}
 			}
 		}
-		return this.serviceTerminationCharges;
+		return serviceTerminationCharges;
 	}
 
 	@Override
