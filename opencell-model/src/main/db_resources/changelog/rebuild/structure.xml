@@ -11046,8 +11046,8 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="number" type="int4" />
-            <column name="start_date" type="datetime" />
-			<column name="end_date" type="datetime" />
+            <column name="start_date" type="date" />
+			<column name="end_date" type="date" />
             <column name="regular_users_sub_period_status" type="varchar(255)"/>
             <column name="regular_users_closed_date" type="datetime"/>
             <column name="effective_closed_date" type="datetime"/>
@@ -16869,7 +16869,8 @@
     <changeSet id="#INTRD-3250_20211123" author="HatimOUDAD"/>
 	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA" />
 	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
-    
+    <changeSet id="#INTRD-3426_202112012" author="ZBariki" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
