@@ -1,11 +1,27 @@
 package org.meveo.service.script;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.*;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.*;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -13,11 +29,6 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class OrderValidationScript extends Script {
 
@@ -53,7 +64,7 @@ public class OrderValidationScript extends Script {
 
         for(OrderOffer offer : validOffers){
             Subscription subscription = new Subscription();
-            subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            subscription.setSeller(getSelectedSeller(order));
 
             subscription.setOffer(offer.getOfferTemplate());
             subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
@@ -78,6 +89,20 @@ public class OrderValidationScript extends Script {
         order.setStatusDate(new Date());
         order = commercialOrderService.update(order);
         context.put(Script.RESULT_VALUE, order);
+    }
+    
+    private Seller getSelectedSeller(CommercialOrder order) {
+    	Seller seller = null;
+        if(order.getSeller()!=null) {
+        	seller = order.getSeller();
+        }
+        else if(order.getQuote()!=null) {
+        	if( order.getQuote().getSeller()!=null)
+        		seller = order.getQuote().getSeller();
+        }else {
+        	seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        return seller;
     }
 
     private void processProduct(Subscription subscription, OrderProduct orderProduct, MeveoUser currentUser) {
