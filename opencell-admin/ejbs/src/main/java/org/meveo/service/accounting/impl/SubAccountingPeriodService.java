@@ -13,6 +13,7 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
@@ -231,7 +232,7 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
             return getEntityManager()
 						.createNamedQuery("SubAccountingPeriod.findByAPAndAfterEndDate", entityClass)
 						.setParameter("apId", accountingPeriod.getId())
-						.setParameter("endDate", endDate)
+						.setParameter("endDate", endDate, TemporalType.DATE)
 						.getResultList();
         } catch (NoResultException e) {
             log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
