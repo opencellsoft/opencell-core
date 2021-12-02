@@ -22,6 +22,7 @@ import org.meveo.apiv2.dunning.DunningMassSwitchInput;
 import org.meveo.apiv2.dunning.ImmutableCheckSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableDunningCollectionPlan;
 import org.meveo.apiv2.dunning.ImmutableDunningLevelInstanceSuccessResponse;
+import org.meveo.apiv2.dunning.ImmutableMassOperationSuccessResponse;
 import org.meveo.apiv2.dunning.ImmutableDunningActionInstanceSuccessResponse;
 import org.meveo.apiv2.dunning.ImmutableMassSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableSwitchCollectionSuccessResponse;
@@ -128,7 +129,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
     @Override
     public Response massStopCollectionPlan(MassStopDunningCollectionPlan massStopDunningCollectionPlan) {
         dunningCollectionPlanApiService.massStopCollectionPlan(massStopDunningCollectionPlan);
-        return Response.ok(ImmutableSuccessResponse.builder()
+        return Response.ok(ImmutableMassOperationSuccessResponse.builder()
                 .status("SUCCESS")
                 .build()).build();
     }	
