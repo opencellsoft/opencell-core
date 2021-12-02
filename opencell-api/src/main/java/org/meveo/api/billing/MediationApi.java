@@ -184,7 +184,7 @@ public class MediationApi extends BaseApi {
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public ChargeCDRListResponseDto chargeCdrList(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
 
         if (chargeCDRDto.getCdrs() == null || chargeCDRDto.getCdrs().isEmpty()) {
