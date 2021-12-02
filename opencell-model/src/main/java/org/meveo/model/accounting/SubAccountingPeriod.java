@@ -39,11 +39,11 @@ public class SubAccountingPeriod extends AuditableEntity {
     @Column(name = "number")
     private Integer number;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "start_date")
     private Date startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "end_date")
     private Date endDate;
 
