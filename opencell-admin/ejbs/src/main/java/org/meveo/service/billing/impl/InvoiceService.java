@@ -1899,7 +1899,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice produceInvoiceXml(Invoice invoice) throws BusinessException {
 
         produceInvoiceXmlNoUpdate(invoice);
-        invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        if(!InvoiceStatusEnum.PAID.equals(invoice.getStatus())){
+        	invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        }
         invoice = updateNoCheck(invoice);
         entityUpdatedEventProducer.fire(invoice);
         return invoice;

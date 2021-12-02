@@ -408,7 +408,9 @@ public class PaymentService extends PersistenceService<Payment> {
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
-			
+			AccountOperation accountOperation =accountOperationService.findById(aoPaymentId);
+			accountOperation.setReference(doPaymentResponseDto.getPaymentID());
+			accountOperationService.update(accountOperation);
 			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
 					errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
