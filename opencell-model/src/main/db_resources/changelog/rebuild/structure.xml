@@ -14667,8 +14667,11 @@
                                  constraintName="fk_dunning_settings_collection_plan_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
+         <!--                    
         <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
+                                 -->     
+                                 
          <createTable tableName="invoice_dunning_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
@@ -14742,11 +14745,14 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
+		<!-- 
         <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+                                  
 
         <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
+                                
 
         <addForeignKeyConstraint constraintName="fk_dunning_pause_reasons_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons" referencedColumnNames="id" />
@@ -14756,6 +14762,8 @@
 
         <addForeignKeyConstraint constraintName="fk_dunning_stop_reasons_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
+                                 
+                                  -->
 
     </changeSet>
 
@@ -14878,8 +14886,9 @@
     							 baseColumnNames="dunning_settings_id"
     							 baseTableName="collection_plan_status"
     							 referencedColumnNames="id"/>
+    							 <!-- 
         <addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="collection_plan_status" referencedColumnNames="id" />
+                                 baseColumnNames="dunning_settings_id" baseTableName="collection_plan_status" referencedColumnNames="id" />  -->
 
     </changeSet>
 
