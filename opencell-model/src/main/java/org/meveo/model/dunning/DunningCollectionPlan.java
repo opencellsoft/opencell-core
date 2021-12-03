@@ -34,7 +34,8 @@ import org.meveo.model.billing.Invoice;
         @Parameter(name = "sequence_name", value = "dunning_collection_plan_seq")})
 @NamedQueries({
 		@NamedQuery(name = "DunningCollectionPlan.DCPtoResume", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.status.status='PAUSED' and dcp.pausedUntilDate <= :resumeDate"),
-		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.relatedInvoice.id = :invoiceID")
+		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.relatedInvoice.id = :invoiceID"),
+		@NamedQuery(name = "DunningCollectionPlan.activeCollectionPlansIds", query = "SELECT dcp.id FROM DunningCollectionPlan dcp where dcp.status.status = 'ACTIVE'")
 })
 public class DunningCollectionPlan extends AuditableEntity {
 	
