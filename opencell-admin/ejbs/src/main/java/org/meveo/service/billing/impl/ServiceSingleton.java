@@ -299,6 +299,7 @@ public class ServiceSingleton {
 		if (SequenceTypeEnum.RUM == type) {
 			provider.setRumSequence(sequence);
 		}
+        providerService.updateNoCheck(provider);
 		return sequence;
 	}
 
@@ -308,6 +309,7 @@ public class ServiceSingleton {
 	public void updateCustomerNumberSequence(GenericSequence genericSequence) {
 		Provider provider = providerService.findById(appProvider.getId());
 		provider.setCustomerNoSequence(genericSequence);
+        providerService.updateNoCheck(provider);
 
 	}
 
