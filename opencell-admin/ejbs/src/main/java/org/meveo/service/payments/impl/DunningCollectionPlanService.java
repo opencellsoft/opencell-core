@@ -260,6 +260,9 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		
 		Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToResume.getDunningLevelInstances()
 				.stream().max(Comparator.comparing(DunningLevelInstance::getId));
+		if(dunningLevelInstance.isEmpty()) {
+			throw new BusinessApiException("No dunning level instances found for the collection plan with id "+collectionPlanToResume.getId());
+		}
 		DunningCollectionPlanStatus collectionPlanStatus=null;
 		if(collectionPlanToResume.getPausedUntilDate() != null && collectionPlanToResume.getPausedUntilDate().after(DateUtils.addDaysToDate(collectionPlanToResume.getStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
 			collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.FAILED);
