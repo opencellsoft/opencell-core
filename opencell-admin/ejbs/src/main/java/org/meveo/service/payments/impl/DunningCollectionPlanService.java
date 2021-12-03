@@ -294,15 +294,25 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     }
     
     public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
-        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
         AuditLog auditLog = new AuditLog();
+        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
+        String userName;
+        
+        if (currentUser.getFullNameOrUserName() != null && currentUser.getFullNameOrUserName().length() > 0) {
+        	userName = currentUser.getFullNameOrUserName();
+        } else if (currentUser.getEmail() != null && currentUser.getEmail().length() > 0) {
+        	userName = currentUser.getEmail();
+        } else {
+        	userName = currentUser.getUserName();
+        }
+        
         auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
         auditLog.setCreated(operationDate);
         auditLog.setActor(currentUser.getUserName());
         auditLog.setAction(operationType);
         StringBuilder parameters = new StringBuilder()
                 .append(formatter.format(operationDate)).append(" - ")
-                .append(currentUser.getUserName()).append(" - ")
+                .append(userName).append(" - ")
                 .append(" apply ")
                 .append(operationType)
                 .append(" to collection Plan id=")
