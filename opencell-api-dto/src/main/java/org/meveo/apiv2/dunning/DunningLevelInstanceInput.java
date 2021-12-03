@@ -3,6 +3,8 @@ package org.meveo.apiv2.dunning;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -27,6 +29,8 @@ public interface DunningLevelInstanceInput {
 
     Integer getDaysOverdue();
 
+    @Value.Default
+    @Nullable
     default DunningLevelInstanceStatusEnum getLevelStatus() {
         return DunningLevelInstanceStatusEnum.TO_BE_DONE;
     }
