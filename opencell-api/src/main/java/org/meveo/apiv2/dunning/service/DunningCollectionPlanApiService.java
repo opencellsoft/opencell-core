@@ -27,6 +27,7 @@ import org.meveo.apiv2.dunning.DunningActionInstanceInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
+import org.meveo.apiv2.dunning.MassStopDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.RemoveActionInstanceInput;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
@@ -262,6 +263,25 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 		return of(collectionPlanToStop);
 	}
 	
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void massStopCollectionPlan(MassStopDunningCollectionPlan massStopDunningCollectionPlan) {
+    	DunningStopReason stopReason = dunningStopReasonService.findById(massStopDunningCollectionPlan.getDunningStopReason().getId());
+        if (stopReason == null) {
+            throw new NotFoundException("Dunning Stop Reason with id " + massStopDunningCollectionPlan.getDunningStopReason().getId() + " does not exits");
+        }
+
+        List<Resource> collectionPlanList = massStopDunningCollectionPlan.getCollectionPlans();
+        if (collectionPlanList != null) {
+            for (Resource collectionPlanResource : collectionPlanList) {
+                DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanResource.getId());
+                if (collectionPlan == null) {
+                    throw new NotFoundException("Dunning collection plan with id " + collectionPlanResource.getId() + " does not exits");
+                }
+                dunningCollectionPlanService.stopCollectionPlan(collectionPlan, stopReason);
+            }
+        }
+    }
+    
 	public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
 		var collectionPlanToResume = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
 		collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
