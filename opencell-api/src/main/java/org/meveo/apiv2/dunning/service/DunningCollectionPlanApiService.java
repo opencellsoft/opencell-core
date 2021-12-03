@@ -125,10 +125,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     @Override
     public Optional<DunningCollectionPlan> findById(Long id) {
         DunningCollectionPlan dunningCollectionPlan = dunningCollectionPlanService.findById(id);
-        if (dunningCollectionPlan == null) {
-            throw new NotFoundException("Collection plan with id" + id + "does not exits");
-        }
-        return of(dunningCollectionPlan);
+        return ofNullable(dunningCollectionPlan);
     }
 
     @Override
