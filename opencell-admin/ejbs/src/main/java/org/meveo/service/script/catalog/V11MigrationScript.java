@@ -5,10 +5,12 @@ import java.util.Calendar;
 import java.util.stream.Collectors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.article.*;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.*;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.tax.TaxClass;
@@ -22,7 +24,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class V11MigrationScript extends Script {
 	public static final String DEFAULT_TAX_CLASS_CODE = "CMP_DATA";
-	public static final long ARTICLE_MAPPING_ID = 1L;
+	public static final String ARTICLE_MAPPING_ID = "mainArticleMapping";
 	private static final Integer PAGE_COUNT = 100;
 	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
 			ServiceInstanceService.class.getSimpleName());
@@ -41,6 +43,12 @@ public class V11MigrationScript extends Script {
 			ServiceTemplateService.class.getSimpleName());
 	private TaxClassService taxClassService = (TaxClassService) getServiceInterface(
 			TaxClassService.class.getSimpleName());
+	private PricePlanMatrixVersionService pricePlanMatrixVersionService = (PricePlanMatrixVersionService) getServiceInterface(
+			PricePlanMatrixVersionService.class.getSimpleName());
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService = (ChargeTemplateService) getServiceInterface(
+			ChargeTemplateService.class.getSimpleName());
+	private PricePlanMatrixService pricePlanMatrixService = (PricePlanMatrixService) getServiceInterface(
+			PricePlanMatrixService.class.getSimpleName());
 
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -59,7 +67,31 @@ public class V11MigrationScript extends Script {
 				}
 			}
 		}
+		
+		long count = offerTemplateService.count(new PaginationConfiguration(null, null, null, null, null, "id", SortOrder.ASCENDING));
+		if (PAGE_COUNT < count) {
+			offerTemplateService.list(new PaginationConfiguration(null, null)).forEach(this::map);
+		} else {
+			for (int index = 0; index < count; index = index + PAGE_COUNT) {
+				offerTemplateService.list(
+						new PaginationConfiguration(index, PAGE_COUNT, null, null, null, "id", SortOrder.ASCENDING))
+						.forEach(this::map);
+			}
+		}
+		
+		 count = chargeTemplateService.count(new PaginationConfiguration(null, null, null, null, null, "id", SortOrder.ASCENDING));
+		if (PAGE_COUNT < count) {
+			chargeTemplateService.list(new PaginationConfiguration(null, null)).forEach(this::map);
+		} else {
+			for (int index = 0; index < count; index = index + PAGE_COUNT) {
+				chargeTemplateService.list(
+						new PaginationConfiguration(index, PAGE_COUNT, null, null, null, "id", SortOrder.ASCENDING))
+						.forEach(this::map);
+			}
+		}
+		
 	}
+
 
 	public Product map(ServiceTemplate serviceTemplate) {
 		Product product = createProduct(serviceTemplate);
@@ -70,16 +102,34 @@ public class V11MigrationScript extends Script {
 			serviceInstance.setProductVersion(productVersion);
 			serviceInstance.setServiceTemplate(null);
 			serviceInstanceService.update(serviceInstance);
-			OfferTemplate offer = serviceInstance.getSubscription().getOffer();
-			OfferComponent offerComponent = new OfferComponent();
-			offerComponent.setProduct(product);
-			offerComponent.setOfferTemplate(offer);
-			offer.getOfferComponents().add(offerComponent);
-			offer.getOfferServiceTemplates()
-					.removeIf(o -> o.getServiceTemplate().getId().equals(serviceTemplate.getId()));
-			offerTemplateService.update(offer);
 		});
 		return product;
+	}
+	
+	
+	public OfferTemplate map(OfferTemplate offerTemplate) {
+		Product product=null;
+		for(OfferServiceTemplate offerServiceTemplate:offerTemplate.getOfferServiceTemplates()) {
+			OfferComponent offerComponent = new OfferComponent();
+			product=productService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
+			if(product!=null) {
+				offerComponent.setProduct(product);
+				offerComponent.setOfferTemplate(offerTemplate);
+				offerTemplate.getOfferComponents().add(offerComponent);
+			}
+			
+		}
+			offerTemplate.getOfferServiceTemplates().clear();
+			offerTemplateService.update(offerTemplate);
+		
+		return offerTemplate;
+	}
+	public ChargeTemplate map(ChargeTemplate chargeTemplate) {
+		List<PricePlanMatrix> ppmList=pricePlanMatrixService.listByChargeCode(chargeTemplate.getCode());
+		for(PricePlanMatrix ppm:ppmList) {
+			createPPMVersion(ppm);
+		}
+		return chargeTemplate;
 	}
 
 	private void createArticle(Product product) {
@@ -95,7 +145,13 @@ public class V11MigrationScript extends Script {
 			} else {
 				accountingArticle = accountingArticles.get(0);
 			}
-			ArticleMapping defaultArticleMapping = articleMappingService.findById(ARTICLE_MAPPING_ID);
+			ArticleMapping defaultArticleMapping = articleMappingService.findByCode(ARTICLE_MAPPING_ID);
+			if(defaultArticleMapping==null) {
+				defaultArticleMapping=new ArticleMapping();
+				defaultArticleMapping.setCode(ARTICLE_MAPPING_ID);
+				defaultArticleMapping.setDescription("default ArticleMapping");
+				articleMappingService.create(defaultArticleMapping);
+			}
 			ArticleMappingLine articleMappingLine = new ArticleMappingLine();
 			articleMappingLine.setChargeTemplate(chargeTemplate);
 			articleMappingLine.setArticleMapping(defaultArticleMapping);
@@ -109,12 +165,14 @@ public class V11MigrationScript extends Script {
 		Product product = new Product();
 		product.setCode(serviceTemplate.getCode());
 		product.setDescription(serviceTemplate.getDescription());
-		List<ProductChargeTemplateMapping> productCharges = getProductCharges(serviceTemplate);
+		List<ProductChargeTemplateMapping> productCharges = getProductCharges(product,serviceTemplate);
 		product.setProductCharges(productCharges);
 		product.setCfValues(serviceTemplate.getCfValues());
 		product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues());
 		product.setDisabled(serviceTemplate.isDisabled());
 		productService.create(product);
+		product.setStatus(ProductStatusEnum.ACTIVE);
+		productService.update(product);
 		return product;
 	}
 
@@ -127,54 +185,45 @@ public class V11MigrationScript extends Script {
 		productVersionService.create(productVersion);
 		return productVersion;
 	}
-
-	private ProductChargeTemplateMapping<OneShotChargeTemplate> mapToProductChargeTemplateSubscription(ServiceChargeTemplateSubscription serviceCharge) {
-		ProductChargeTemplateMapping<OneShotChargeTemplate> productChargeTemplateMapping = new ProductChargeTemplateMapping<OneShotChargeTemplate>();
-		productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate());
-		productChargeTemplateMapping.setCounterTemplate(serviceCharge.getCounterTemplate());
-		if(serviceCharge.getAccumulatorCounterTemplates()!=null && !serviceCharge.getAccumulatorCounterTemplates().isEmpty())
-			productChargeTemplateMapping.setAccumulatorCounterTemplates(serviceCharge.getAccumulatorCounterTemplates());
-		productChargeTemplateMapping.setWalletTemplates(serviceCharge.getWalletTemplates());
-		return productChargeTemplateMapping;
-	}
-
-	private ProductChargeTemplateMapping<RecurringChargeTemplate> mapToProductChargeTemplateRecurring(ServiceChargeTemplateRecurring serviceCharge) {
-		ProductChargeTemplateMapping<RecurringChargeTemplate> productChargeTemplateMapping = new ProductChargeTemplateMapping<RecurringChargeTemplate>();
-		productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate());
-		productChargeTemplateMapping.setCounterTemplate(serviceCharge.getCounterTemplate());
-		if(serviceCharge.getAccumulatorCounterTemplates()!=null && !serviceCharge.getAccumulatorCounterTemplates().isEmpty())
-		productChargeTemplateMapping.setAccumulatorCounterTemplates(serviceCharge.getAccumulatorCounterTemplates());
-		productChargeTemplateMapping.setWalletTemplates(serviceCharge.getWalletTemplates());
-		return productChargeTemplateMapping;
-	}
 	
-	private ProductChargeTemplateMapping<UsageChargeTemplate> mapToProductChargeTemplateUsage(ServiceChargeTemplateUsage serviceCharge) {
-		ProductChargeTemplateMapping<UsageChargeTemplate> productChargeTemplateMapping = new ProductChargeTemplateMapping<UsageChargeTemplate>();
+	private PricePlanMatrixVersion createPPMVersion(PricePlanMatrix ppm) {
+		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
+		ppmv.setPricePlanMatrix(ppm);
+		ppmv.setAmountWithoutTax(ppm.getAmountWithoutTax());
+		ppmv.setAmountWithoutTaxEL(ppm.getAmountWithoutTaxEL());
+		ppmv.setAmountWithTax(ppm.getAmountWithTax());
+		ppmv.setAmountWithTaxEL(ppm.getAmountWithTaxEL());
+		ppmv.setLabel(ppm.getDescription());
+		ppmv.setMatrix(false);
+		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
+		ppmv.setStatusDate(Calendar.getInstance().getTime());
+		ppmv.setVersion(1);
+		DatePeriod validity=new DatePeriod(new Date(),null);
+		ppmv.setValidity(validity);
+		pricePlanMatrixVersionService.create(ppmv);
+		return ppmv;
+	}
+
+	private ProductChargeTemplateMapping<ChargeTemplate> mapToProductChargeTemplate(Product product,ServiceChargeTemplate serviceCharge) {
+		ProductChargeTemplateMapping<ChargeTemplate> productChargeTemplateMapping = new ProductChargeTemplateMapping<ChargeTemplate>();
 		productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate());
 		productChargeTemplateMapping.setCounterTemplate(serviceCharge.getCounterTemplate());
-		if(serviceCharge.getAccumulatorCounterTemplates()!=null && !serviceCharge.getAccumulatorCounterTemplates().isEmpty())
-		productChargeTemplateMapping.setAccumulatorCounterTemplates(serviceCharge.getAccumulatorCounterTemplates());
-		productChargeTemplateMapping.setWalletTemplates(serviceCharge.getWalletTemplates());
+		productChargeTemplateMapping.setProduct(product);
+		//productChargeTemplateMapping.setAccumulatorCounterTemplates(serviceCharge.getAccumulatorCounterTemplates());
 		return productChargeTemplateMapping;
 	}
-	private ProductChargeTemplateMapping<OneShotChargeTemplate> mapToProductTemplateTermination(ServiceChargeTemplateTermination serviceCharge) {
-		ProductChargeTemplateMapping<OneShotChargeTemplate> productChargeTemplateMapping = new ProductChargeTemplateMapping<OneShotChargeTemplate>();
-		productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate());
-		productChargeTemplateMapping.setCounterTemplate(serviceCharge.getCounterTemplate());
-		if(serviceCharge.getAccumulatorCounterTemplates()!=null && !serviceCharge.getAccumulatorCounterTemplates().isEmpty())
-		productChargeTemplateMapping.setAccumulatorCounterTemplates(serviceCharge.getAccumulatorCounterTemplates());
-		productChargeTemplateMapping.setWalletTemplates(serviceCharge.getWalletTemplates());
-		return productChargeTemplateMapping;
-	}
-	private List<ProductChargeTemplateMapping> getProductCharges(ServiceTemplate serviceTemplate) {
+
+	private List<ProductChargeTemplateMapping> getProductCharges(Product product,ServiceTemplate serviceTemplate) {
 		List<ProductChargeTemplateMapping> productCharges = serviceTemplate.getServiceSubscriptionCharges().stream()
-				.map(this::mapToProductChargeTemplateSubscription).collect(Collectors.toList());
+				.map(key ->mapToProductChargeTemplate(product,key)).collect(Collectors.toList());
 		productCharges.addAll(serviceTemplate.getServiceRecurringCharges().stream()
-				.map(this::mapToProductChargeTemplateRecurring).collect(Collectors.toList()));
+				.map(key ->mapToProductChargeTemplate(product,key)).collect(Collectors.toList()));
 		productCharges.addAll(serviceTemplate.getServiceTerminationCharges().stream()
-				.map(this::mapToProductTemplateTermination).collect(Collectors.toList()));
-		productCharges.addAll(serviceTemplate.getServiceUsageCharges().stream().map(this::mapToProductChargeTemplateUsage)
+				.map(key ->mapToProductChargeTemplate(product,key)).collect(Collectors.toList()));
+		productCharges.addAll(serviceTemplate.getServiceUsageCharges().stream().map(key ->mapToProductChargeTemplate(product,key))
 				.collect(Collectors.toList()));
+	
+		
 		return productCharges;
 	}
 }
