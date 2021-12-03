@@ -16,6 +16,7 @@ import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
 import org.meveo.apiv2.dunning.DunningMassSwitchInput;
+import org.meveo.apiv2.dunning.MassPauseDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.RemoveActionInstanceInput;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
@@ -89,7 +90,17 @@ public interface DunningCollectionPlanResource {
     }) 
 	Response pauseCollectionPlan(@Parameter(required = true) DunningCollectionPlanPause dunningCollectionPlan, @PathParam("id") Long id);
 
-	@POST
+    @POST
+	@Path("/massPause")
+	@Operation(summary = "Mass Pause list of Collection plan",
+    tags = {"Collection Plan"},
+    description = "Mass Pause list of collection plan",
+    responses = {
+            @ApiResponse(responseCode = "200", description = "list of collection plan successfully paused"),
+            @ApiResponse(responseCode = "404", description = "Entity does not exits") }) 
+	Response massPauseCollectionPlan(@Parameter(description = "MassPauseDunningCollectionPlan input", required = true) MassPauseDunningCollectionPlan massPauseDunningCollectionPlan);
+
+    @POST
 	@Path("/stop/{id}")
 	@Operation(summary = "Stop Collection plan",
     tags = {"Collection Plan"},

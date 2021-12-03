@@ -27,6 +27,7 @@ import org.meveo.apiv2.dunning.DunningActionInstanceInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
+import org.meveo.apiv2.dunning.MassPauseDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.RemoveActionInstanceInput;
 import org.meveo.apiv2.dunning.RemoveLevelInstanceInput;
@@ -251,6 +252,24 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 		return of(collectionPlanToPause);
 	}
 	
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void massPauseCollectionPlan(MassPauseDunningCollectionPlan massPauseDunningCollectionPlan) {
+    	DunningPauseReason pauseReason = dunningPauseReasonService.findById(massPauseDunningCollectionPlan.getDunningPauseReason().getId());
+        if (pauseReason == null) {
+            throw new NotFoundException("Dunning Pause Reason with id " + massPauseDunningCollectionPlan.getDunningPauseReason().getId() + " does not exits");
+        }
+
+        List<Resource> collectionPlanList = massPauseDunningCollectionPlan.getCollectionPlans();
+        if (collectionPlanList != null) {
+            for (Resource collectionPlanResource : collectionPlanList) {
+                DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanResource.getId());
+                if (collectionPlan == null) {
+                    throw new NotFoundException("Dunning collection plan with id " + collectionPlanResource.getId() + " does not exits");
+                }
+        		dunningCollectionPlanService.pauseCollectionPlan(massPauseDunningCollectionPlan.getForcePause(), massPauseDunningCollectionPlan.getPauseUntil(), collectionPlan, pauseReason);
+            }
+        }
+    }    
 	
 	public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlanStop, Long id) {
 		var collectionPlanToStop = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));

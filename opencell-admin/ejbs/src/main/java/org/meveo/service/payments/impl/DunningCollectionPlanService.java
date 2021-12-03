@@ -215,6 +215,12 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 				throw new BusinessApiException("Collection Plan with id "+collectionPlanToPause.getId()+" cannot be paused, the pause until date is after the planned trigger date of the last level");
 			}
 		}
+		
+		DunningCollectionPlanStatus dunningCollectionPlanStatus = dunningCollectionPlanStatusService.refreshOrRetrieve(collectionPlanToPause.getStatus());
+		if(!dunningCollectionPlanStatus.getStatus().equals(DunningCollectionPlanStatusEnum.ACTIVE)) {
+			throw new BusinessApiException("Collection Plan with id "+collectionPlanToPause.getId()+" cannot be paused, the collection plan status is not active");
+		}
+
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.PAUSED);
 		collectionPlanToPause.setStatus(collectionPlanStatus);
 		collectionPlanToPause.setPausedUntilDate(pauseUntil);
