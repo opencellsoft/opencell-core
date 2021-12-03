@@ -317,4 +317,10 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		dunningCollectionPlan.setDunningLevelInstances(dunningLevelInstances);
 		return dunningCollectionPlan;
 	}
+
+	public List<Long> getActiveCollectionPlansIds() {
+        return getEntityManager()
+                .createNamedQuery("DunningCollectionPlan.activeCollectionPlansIds", Long.class)
+                .getResultList();
+    }
 }
