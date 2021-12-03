@@ -300,7 +300,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             // It is a real counter instance, just need to create a copy of the counter period for a virtual rating purpose
         } else {
 
-            CounterPeriod realCounterPeriod = getOrCreateCounterPeriod(chargeInstance.getCounter(), chargeDate, initDate, chargeInstance);
+            CounterPeriod realCounterPeriod = getOrCreateCounterPeriod(counterInstance, chargeDate, initDate, chargeInstance);
 
             if (realCounterPeriod != null) {
                 try {
