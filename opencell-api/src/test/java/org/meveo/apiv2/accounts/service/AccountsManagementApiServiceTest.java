@@ -19,6 +19,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.crm.impl.AccountsManagementService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -29,7 +30,7 @@ public class AccountsManagementApiServiceTest {
 
     @Spy
     @InjectMocks
-    private AccountsManagementApiService accountsManagementApiService;
+    private AccountsManagementService accountsManagementService;
 
     @Mock
     private SubscriptionService subscriptionService;
@@ -69,25 +70,25 @@ public class AccountsManagementApiServiceTest {
 
     @Test(expected = ForbiddenException.class)
     public void test_transferSubscription_with_consumerInput_null() {
-        accountsManagementApiService.transferSubscription(null, null, OpenTransactionsActionEnum.NONE);
+        accountsManagementService.transferSubscription(null, null, OpenTransactionsActionEnum.NONE);
     }
 
     @Test(expected = ForbiddenException.class)
     public void test_transferSubscription_with_consumerInput_empty() {
         ConsumerInput input = builder().build();
-        accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
+        accountsManagementService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
     @Test(expected = ForbiddenException.class)
     public void test_transferSubscription_with_consumerInput_all_filled() {
         ConsumerInput input = builder().consumerId(1L).consumerCode("code").build();
-        accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
+        accountsManagementService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
     @Test(expected = NotFoundException.class)
     public void test_transferSubscription_with_a_non_existent_ua_id() {
         ConsumerInput input = builder().consumerId(0L).build();
-        accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
+        accountsManagementService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
     @Test
@@ -96,6 +97,6 @@ public class AccountsManagementApiServiceTest {
         expectedEx.expectMessage("Cannot move a terminated subscription {id=1, code=TR_SU}");
 
         ConsumerInput input = builder().consumerId(1L).build();
-        accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
+        accountsManagementService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
     }
 }
