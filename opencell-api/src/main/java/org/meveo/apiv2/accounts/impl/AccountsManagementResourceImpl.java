@@ -7,18 +7,18 @@ import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.apiv2.accounts.resource.AccountsManagementResource;
-import org.meveo.apiv2.accounts.service.AccountsManagementApiService;
+import org.meveo.service.crm.AccountsManagementService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class AccountsManagementResourceImpl implements AccountsManagementResource {
 
     @Inject
-    private AccountsManagementApiService accountsManagementApiService;
+    private AccountsManagementService accountsManagementService;
 
     @Override
     public Response transferSubscription(String subscriptionCode, ConsumerInput consumerInput, OpenTransactionsActionEnum action) {
-        int count = accountsManagementApiService.transferSubscription(subscriptionCode, consumerInput, action);
+        int count = accountsManagementService.transferSubscription(subscriptionCode, consumerInput, action);
         if (count > 0) {
             return Response.ok().build();
         }
@@ -27,7 +27,7 @@ public class AccountsManagementResourceImpl implements AccountsManagementResourc
 
     @Override
     public Response changeCustomerAccountParentAccount(String customerAccountCode, ParentInput parentInput) throws JsonProcessingException {
-        accountsManagementApiService.changeCustomerAccountParentAccount(customerAccountCode, parentInput);
+        accountsManagementService.changeCustomerAccountParentAccount(customerAccountCode, parentInput);
         return Response.noContent().build();
     }
 }
