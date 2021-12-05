@@ -1,4 +1,4 @@
-package org.meveo.service.crm.impl;
+package org.meveo.service.crm;
 
 import java.util.Arrays;
 import java.util.List;
