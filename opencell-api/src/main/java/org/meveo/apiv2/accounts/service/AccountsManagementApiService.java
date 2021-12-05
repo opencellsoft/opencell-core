@@ -1,10 +1,9 @@
-package org.meveo.service.crm;
+package org.meveo.apiv2.accounts.service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
@@ -34,8 +33,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Stateless
-public class AccountsManagementService {
+public class AccountsManagementApiService {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
