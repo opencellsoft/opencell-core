@@ -1,4 +1,4 @@
-package org.meveo.service.crm.impl;
+package org.meveo.apiv2.accounts.service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
-public class AccountsManagementService {
+public class AccountsManagementApiService {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
