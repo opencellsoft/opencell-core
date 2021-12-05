@@ -7,7 +7,7 @@ import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.apiv2.accounts.resource.AccountsManagementResource;
-import org.meveo.service.crm.impl.AccountsManagementService;
+import org.meveo.service.crm.AccountsManagementService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

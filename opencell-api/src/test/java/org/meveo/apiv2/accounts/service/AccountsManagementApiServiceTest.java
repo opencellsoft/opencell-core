@@ -19,7 +19,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.crm.impl.AccountsManagementService;
+import org.meveo.service.crm.AccountsManagementService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
