@@ -31,7 +31,7 @@ public class MediationStepDef {
         actor.attemptsTo(ActivateService.called(dataTable));
     }
 
-    @And("I register CDR and create Wallet Operations")
+    @And("I charge following CDR")
     public void actorChargeCDR(String cdr) {
         actor.attemptsTo(ChargeCDR.called(cdr));
     }
