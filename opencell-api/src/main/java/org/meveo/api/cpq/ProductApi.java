@@ -583,7 +583,7 @@ public class ProductApi extends BaseApi {
 	        	var overloppingExist = productVersions
 	        									.stream()
 	        									.filter(pv -> {
-	        										return pv.getId() != productVersion.getId();
+	        										return pv.getId() != productVersion.getId() && pv.getStatus() == VersionStatusEnum.PUBLISHED;
 	        									})
 	        									.filter(pv -> {
 	        										return productVersion.getValidity().isCorrespondsToPeriod(pv.getValidity().getFrom(), pv.getValidity().getTo(), false);
@@ -1039,5 +1039,76 @@ public class ProductApi extends BaseApi {
         result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
         return result;
     }
+    
+    public GetProductDtoResponse addCharges(String productCode, List<ProductChargeTemplateMappingDto> productChargeTemplateMappings) {
+    	if (StringUtils.isBlank(productCode)) {
+			missingParameters.add("productCode");
+		}
+    	if (productChargeTemplateMappings == null || productChargeTemplateMappings.isEmpty()) {
+			missingParameters.add("productChargeTemplateMapping");
+		}
+		handleMissingParameters();
+		Product product = productService.findByCode(productCode);
+		if (product == null) {
+			throw new EntityDoesNotExistsException(Product.class,productCode);
+		}
+		productChargeTemplateMappings.forEach(pctm -> {
+			if(StringUtils.isBlank(pctm.getChargeCode())) {
+				missingParameters.add("chargeCode");
+				handleMissingParameters();
+			}
+			var charge = loadEntityByCode(chargeTemplateService, pctm.getChargeCode(), ChargeTemplate.class);
+			ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
+			chargeTemplateProductChargeTemplateMapping.setProduct(product);
+			chargeTemplateProductChargeTemplateMapping.setChargeTemplate(charge);
+			if(!Strings.isEmpty(pctm.getCounterCode()))
+				chargeTemplateProductChargeTemplateMapping.setCounterTemplate(loadEntityByCode(counterTemplateService, pctm.getCounterCode(), CounterTemplate.class));
+			if(pctm.getAccumulatorCounterCodes() != null && !pctm.getAccumulatorCounterCodes().isEmpty()) {
+				var accumulator = pctm.getAccumulatorCounterCodes().stream()
+									.map(counterCode -> loadEntityByCode(counterTemplateService, counterCode, CounterTemplate.class))
+										.collect(Collectors.toList());
+				chargeTemplateProductChargeTemplateMapping.setAccumulatorCounterTemplates(accumulator);
+			}
+			product.getProductCharges().removeIf(ptm -> ptm.getChargeTemplate() != null && ptm.getChargeTemplate().getCode().equalsIgnoreCase(pctm.getChargeCode()));
+			product.getProductCharges().add(chargeTemplateProductChargeTemplateMapping);
+			
+		});
+		productService.updateProduct(product);
+	    return findByCode(productCode);
+    }
+    
+    public GetProductDtoResponse removeCharges(String productCode, List<String> chargeCodes) {
+    	if (StringUtils.isBlank(productCode)) {
+			missingParameters.add("productCode");
+			handleMissingParameters();
+		}
+		Product product = productService.findByCode(productCode);
+		if (product == null) {
+			throw new EntityDoesNotExistsException(Product.class,productCode);
+		}
+		chargeCodes.forEach(charge -> {
+			product.getProductCharges().removeIf(ptm -> ptm.getChargeTemplate() != null && ptm.getChargeTemplate().getCode().equalsIgnoreCase(charge));
+		});
+    	return findByCode(productCode);
+    }
+    
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

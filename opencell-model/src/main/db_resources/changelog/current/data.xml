@@ -6016,4 +6016,10 @@ public class ProcessCustomerPaymentsFileScript extends Script {
             <column name="src_type" value="JAVA" />
         </insert>
     </changeSet>
+    <changeSet id="INTRD-2701_20211124" author="hichamElHaloui">
+        <update tableName="meveo_timer">
+            <column name="sc_d_o_week" value="*" />
+            <where>id=-2</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

@@ -2559,32 +2559,35 @@ public class SubscriptionApi extends BaseApi {
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
     	if(serviceInstanceDtos != null) {
     		serviceInstanceDtos.forEach(serviceInstanceDto -> {
-    			var serviceInstance = loadEntityByCode(serviceInstanceService, serviceInstanceDto.getCode(), ServiceInstance.class);
-    			serviceInstance.getAttributeInstances().clear();
-    			if(serviceInstanceDto.getAttributeInstances() != null) {
-    				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
-    					var attributeInstance = new AttributeInstance();
-    					attributeInstance.setSubscription(subscription);
-						attributeInstance.setServiceInstance(serviceInstance);
-    					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
-    						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
-    					}
-    					if(attributeInstanceDto.getParentAttributeValueId() != null) {
-    						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
-    					}
-    					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
-    						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
-    					}
-    					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
-    						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
-    					if(attributeInstanceDto.getDateValue() != null)
-    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
-    					if(attributeInstanceDto.getDoubleValue() != null)
-    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-    					attributeInstanceService.create(attributeInstance);
-    					serviceInstance.getAttributeInstances().add(attributeInstance);
-    				});
+    			var serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(serviceInstanceDto.getCode(), subscription.getCode());
+    			if(serviceInstances != null && !serviceInstances.isEmpty()) {
+	    			var serviceInstance = serviceInstances.get(0);
+	    			serviceInstance.getAttributeInstances().clear();
+	    			if(serviceInstanceDto.getAttributeInstances() != null) {
+	    				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
+	    					var attributeInstance = new AttributeInstance();
+	    					attributeInstance.setSubscription(subscription);
+							attributeInstance.setServiceInstance(serviceInstance);
+	    					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
+	    						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+	    					}
+	    					if(attributeInstanceDto.getParentAttributeValueId() != null) {
+	    						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
+	    					}
+	    					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
+	    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+	    						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
+	    					}
+	    					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
+	    						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+	    					if(attributeInstanceDto.getDateValue() != null)
+	    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+	    					if(attributeInstanceDto.getDoubleValue() != null)
+	    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+	    					attributeInstanceService.create(attributeInstance);
+	    					serviceInstance.getAttributeInstances().add(attributeInstance);
+	    				});
+	    			}
     			}
     		});
     	}

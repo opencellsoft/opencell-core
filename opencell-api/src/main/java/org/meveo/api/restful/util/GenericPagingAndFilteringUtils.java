@@ -181,6 +181,9 @@ public class GenericPagingAndFilteringUtils {
     }
 
     public PagingAndFiltering getPagingAndFiltering(){
+    	PagingAndFilteringRest pagingAndFilteringRest = null;
+    	if(pagingAndFiltering == null)
+    		constructPagingAndFiltering(pagingAndFilteringRest);
         return pagingAndFiltering;
     }
 

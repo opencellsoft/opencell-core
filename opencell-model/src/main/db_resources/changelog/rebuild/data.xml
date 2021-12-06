@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
     
     <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
      	<insert tableName="meveo_job_instance">
@@ -7287,7 +7288,7 @@
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
             <column name="sc_d_o_month" value="Last" />
-            <column name="sc_d_o_week" value="0" />
+            <column name="sc_d_o_week" value="*" />
             <column name="sc_hour" value="23" />
             <column name="sc_min" value="59" />
             <column name="sc_month" value="*" />
@@ -7873,6 +7874,8 @@
 		</insert>
     
     </changeSet>
+
+    <changeSet id="INTRD-2701_20211124" author="hichamElHaloui"/>
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
