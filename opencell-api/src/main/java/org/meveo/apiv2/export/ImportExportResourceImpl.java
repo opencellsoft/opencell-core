@@ -1,5 +1,6 @@
 package org.meveo.apiv2.export;
 
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.export.EntityExportImportService;
@@ -118,6 +119,6 @@ public class ImportExportResourceImpl implements ImportExportResource {
 
     private MeveoInstance retrieveInstance(String instanceCode) {
         return ofNullable(meveoInstanceService.findByCode(instanceCode))
-                .orElseThrow(() -> new EntityNotFoundException("Instance not found instance code : " + instanceCode));
+                .orElseThrow(() -> new EntityDoesNotExistsException("Instance not found instance code : " + instanceCode));
     }
 }
