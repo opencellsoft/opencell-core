@@ -359,6 +359,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         }
     }
 
+    @Deprecated
     @Override
     public Response matrixRating(String pricePlanMatrixCode, int pricePlanMatrixVersion, String chargeInstanceCode) {
         GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();

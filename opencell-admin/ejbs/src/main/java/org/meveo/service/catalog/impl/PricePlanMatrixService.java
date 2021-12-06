@@ -35,6 +35,7 @@ import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -44,10 +45,12 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.cpq.QuoteAttributeService;
 
 import javax.ejb.Stateless;
@@ -751,18 +754,48 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     }
 
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) throws BusinessException {
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws BusinessException {
+    	ChargeInstance chargeInstance=walletOperation.getChargeInstance();
         if( chargeInstance.getServiceInstance()!=null) {
         	String serviceCode=chargeInstance.getServiceInstance().getCode();
         	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
                        .stream()
-                       .map(attributeInstance -> (AttributeValue)attributeInstance)
+                       .map(attributeInstance -> getAttributeValue(attributeInstance, walletOperation))
                        .collect(Collectors.toSet());
+        	   
+        	   
         	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
         }
      
         return null; 
     }
+    
+    private AttributeValue getAttributeValue(AttributeInstance attributeInstance, WalletOperation walletOperation) {
+    	if(AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(attributeInstance.getAttribute().getAttributeType())) {
+    		if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
+
+    			Object value=ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, walletOperation);
+	    			if(value!=null) {
+	    				AttributeValue<AttributeValue> attributeValue= new AttributeValue<AttributeValue>();
+	       			 if(value instanceof Boolean) {
+	       				 attributeValue.setBooleanValue((Boolean)value);
+	       			 }else if(value instanceof Date) {
+	       					attributeValue.setDateValue((Date)value);
+	       			 }else if(value instanceof Number) {
+	       					attributeValue.setDoubleValue(((Number)value).doubleValue());
+	       			 }else {
+	       				attributeValue.setStringValue((String)value);
+	       			}
+	       			 return attributeValue;
+    			}
+    			
+    		  }
+    		}
+    	return (AttributeValue)attributeInstance;
+    	}
+    	
+    	
+    
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,Set<AttributeValue> attributeValues) {
         
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode);
