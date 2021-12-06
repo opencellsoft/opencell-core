@@ -15,8 +15,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 
 

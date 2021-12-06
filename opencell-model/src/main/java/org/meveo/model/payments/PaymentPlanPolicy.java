@@ -14,19 +14,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.dunning.DunningPauseReason;
-import org.meveo.model.dunning.DunningPaymentRetry;
 
 @Embeddable
 public class PaymentPlanPolicy implements Serializable, Cloneable {
@@ -351,4 +345,9 @@ public class PaymentPlanPolicy implements Serializable, Cloneable {
 		this.allowedCreditCategories = allowedCreditCategories;
 	}
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+    	PaymentPlanPolicy o = (PaymentPlanPolicy) super.clone();
+        return o;
+    }
 }
