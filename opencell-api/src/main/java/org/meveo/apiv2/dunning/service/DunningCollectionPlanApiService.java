@@ -311,7 +311,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	    if (levelInstanceResources != null) {
             for (Resource levelInstanceResource : levelInstanceResources) {
                 Long levelInstanceId = levelInstanceResource.getId();
-                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(levelInstanceId);
+                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions"));
                 if (dunningLevelInstance == null) {
                     throw new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
                 }
@@ -320,6 +320,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 if (dunningLevelInstance.getLevelStatus() != null && dunningLevelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.TO_BE_DONE) {
                     throw new BadRequestException("Cannot delete a level instance with status : " + dunningLevelInstance.getLevelStatus());
+                }
+                if (dunningLevelInstance.getActions() != null) {
+                    for (DunningActionInstance action : dunningLevelInstance.getActions()) {
+                        dunningActionInstanceService.remove(action);
+                    }
                 }
                 dunningLevelInstanceService.remove(dunningLevelInstance);
                 trackOperation("REMOVE DunningLevelInstance", new Date(), dunningLevelInstance.getCollectionPlan());
@@ -341,7 +346,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
 
                 // 1- User cannot either modify or delete the end level!
-                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningActionInstance.getDunningLevelInstance().getId(), Arrays.asList("actions"));
+                DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningActionInstance.getDunningLevelInstance().getId(), Arrays.asList("dunningLevel", "actions", "collectionPlan"));
                 if (dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
                     throw new BadRequestException("Cannot modify or delete the end level");
                 }
@@ -412,7 +417,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Optional<DunningLevelInstance> updateDunningLevelInstance(UpdateLevelInstanceInput updateLevelInstanceInput, Long levelInstanceId) {
 
-	    DunningLevelInstance dunningLevelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("actions"));
+	    DunningLevelInstance dunningLevelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions", "collectionPlan"));
         if (dunningLevelInstanceToUpdate == null) {
             throw new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
         }
@@ -452,7 +457,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             throw new BadRequestException("Attribut dunningLevelInstance is mandatory");
         }
         Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
-        DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId);
+        DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId, Arrays.asList("dunningLevel"));
         if (dunningLevelInstance == null) {
             throw new NotFoundException("No Dunning Level found with id : " + dunningLevelInstanceId);
         }else if(dunningLevelInstance.getDunningLevel().isEndOfDunningLevel() == true) {
@@ -639,40 +644,39 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
 	private void updateCollectionPlanActions(DunningLevelInstance dunningLevelInstance) {
     	if (dunningLevelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
-            
+
             DunningCollectionPlan collectionPlan = dunningLevelInstance.getCollectionPlan();
-            
+
             if (!dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
-                
+
                 Integer currentDunningLevelSequence = collectionPlan.getCurrentDunningLevelSequence();
                 if (currentDunningLevelSequence == null) {
                     currentDunningLevelSequence = 0;
                 }
                 collectionPlan.setCurrentDunningLevelSequence(++currentDunningLevelSequence);
-    
+
                 List<DunningActionInstance> lastLevelActions = dunningLevelInstance.getActions();
                 if (lastLevelActions != null && !lastLevelActions.isEmpty()) {
                     collectionPlan.setLastAction(lastLevelActions.stream()
                         .sorted(Comparator.comparing(a -> a.getAuditable().getLastModified(), Comparator.reverseOrder()))
                         .findFirst().get().getCode());
-                    
+
                     collectionPlan.setLastActionDate(new Date());
                 }
-    
+
                 DunningLevelInstance nextLevelInstance = dunningLevelInstanceService.findByCurrentLevelSequence(collectionPlan);
                 String nextLevelAction = null;
-                List<DunningActionInstance> nextLevelActions = nextLevelInstance.getActions();
-                if (nextLevelActions != null && !nextLevelActions.isEmpty()) {
-                    for (DunningActionInstance nextActionInstance : nextLevelActions) {
+                if (nextLevelInstance != null && nextLevelInstance.getActions() != null && !nextLevelInstance.getActions().isEmpty()) {
+                    for (DunningActionInstance nextActionInstance : nextLevelInstance.getActions()) {
                         if (nextActionInstance.getActionMode() == ActionModeEnum.AUTOMATIC) {
                             nextLevelAction = nextActionInstance.getCode();
                             break;
                         }
                     }
                     if (nextLevelAction == null) {
-                        nextLevelAction = nextLevelActions.get(0).getCode();
+                        nextLevelAction = nextLevelInstance.getActions().get(0).getCode();
                     }
-    
+
                     collectionPlan.setNextAction(nextLevelAction);
                     collectionPlan.setNextActionDate(DateUtils.addDaysToDate(collectionPlan.getStartDate(), nextLevelInstance.getDaysOverdue()));
                 }
@@ -682,11 +686,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 collectionPlan.setNextActionDate(null);
                 collectionPlan.setStatus(dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.FAILED));
             }
-    
+
             dunningCollectionPlanService.update(collectionPlan);
         }
 	}
-	
+
     public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
         final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
         AuditLog auditLog = new AuditLog();
