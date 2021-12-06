@@ -160,10 +160,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-    
+
     @Inject
     private ContractService contractService;
-    
+
     @Inject
     private ContractItemService contractItemService;
 
@@ -275,7 +275,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
                 defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
                 defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
@@ -528,7 +528,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         } else {
 
             RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
 
@@ -560,32 +560,32 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
                 ChargeTemplate  chargeTemplate=chargeInstance.getChargeTemplate();
                 OfferTemplate offerTemplate=subscription.getOffer();
-                ContractItem contractItem=null;  
+                ContractItem contractItem=null;
                 if(contract!=null && serviceInstance!=null) {
                 contractItem=contractItemService.getApplicableContractItem(contract ,offerTemplate,serviceInstance.getCode(),chargeTemplate);
-                } 
+                }
                 if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                	 
-                if(contractItem.getPricePlan()!=null){ 
+
+                if(contractItem.getPricePlan()!=null){
     				PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
     				PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
     				if(ppmVersion!=null) {
     					PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, bareWalletOperation);
     					unitPriceWithoutTaxOverridden=pricePlanMatrixLine.getPricetWithoutTax();
-    				} 
+    				}
 
     			}else {
-    				unitPriceWithoutTaxOverridden =contractItem.getAmountWithoutTax();	
-    			  } 
-                } 
-    			
-                
+    				unitPriceWithoutTaxOverridden =contractItem.getAmountWithoutTax();
+    			  }
+                }
+
+
                 if(unitPriceWithoutTaxOverridden==null) {
                 pricePlan = ratePrice(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
                 if (pricePlan == null) {
                     throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
 
-                } 
+                }
                 //for V11 needs
 //                else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
 //                    throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
@@ -655,9 +655,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 }
                 if (contractItem!=null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType() )&& contractItem.getRate()>0  ) {
        			 BigDecimal amount = unitPriceWithoutTaxOverridden.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
-       		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0) 
-       				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);    
-       			
+       		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0)
+       				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);
+
        		       }
                 }
 
@@ -776,7 +776,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
         if(unitPrice == null)
         	throw new BusinessException("No unit price found");
-        	
+
         // process ratingEL here
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
@@ -836,7 +836,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
@@ -1263,7 +1263,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             	if(quote!=null) {
             		userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
             	}
-                
+
             }
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
@@ -1273,12 +1273,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
             	if(quoteVersion!=null) {
             		userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
             	}
-                
+
             }
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE) >= 0) {
             ProductInstance productInstance = null;
-            if (chargeInstance instanceof ProductChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.PRODUCT) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }

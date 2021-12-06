@@ -201,7 +201,6 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.billing.TaxScriptService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
-import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -1472,7 +1471,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String INVOICE_TAG_NAME = "invoice";
 
-        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+        boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
         File invoiceXmlFile = new File(invoiceXmlFileName);
         if (!invoiceXmlFile.exists()) {
@@ -1965,7 +1964,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Default to invoiceDateOrBillingRunId/invoiceNumber.xml or invoiceDateOrBillingRunId/_IA_invoiceNumber.xml for adjustment invoice
         if (StringUtils.isBlank(xmlFileName)) {
 
-            boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+            boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
             BillingRun billingRun = invoice.getBillingRun();
             String brPath = billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId().toString();
@@ -2039,7 +2038,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Default to invoiceDate_invoiceNumber.pdf or invoiceDate_IA_invoiceNumber.pdf for adjustment invoice
         if (StringUtils.isBlank(pdfFileName)) {
 
-            boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+            boolean isInvoiceAdjustment = invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode());
 
             pdfFileName = formatInvoiceDate(invoice.getInvoiceDate()) + (isInvoiceAdjustment ? paramBeanFactory.getInstance().getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "_")
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
@@ -3946,6 +3945,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
+        }else if(entity instanceof CpqQuote){
+            CpqQuote quote = (CpqQuote) entity;
+            invoice.setCpqQuote(quote);
         }
         if (paymentMethod != null) {
             invoice.setPaymentMethodType(paymentMethod.getPaymentType());
@@ -4821,8 +4823,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             InvoiceType invoiceType = postPaidInvoiceType;
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
-            Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-            String invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
+            Seller seller = getSelectedSeller(invoiceLine);
+            String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
             if (ilGroup == null) {
                 ilGroup = new InvoiceLinesGroup(billingAccount, billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), seller, invoiceType, false, invoiceKey, paymentMethod);
@@ -4863,6 +4865,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private List<InvoiceLine> getInvoiceLines(IBillableEntity entityToInvoice, Filter filter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
         return invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter, rtPaginationSize);
+    }
+    
+    private Seller getSelectedSeller(InvoiceLine invoiceLine) {
+    	Invoice invoice=invoiceLine.getInvoice();
+    	if(invoice!=null) {
+    		if(invoice.getSubscription()!=null) {
+    			if(invoice.getSubscription().getSeller()!=null)
+    				return invoice.getSubscription().getSeller();
+    		}
+    		if(invoice.getCommercialOrder()!=null) {
+    			if(invoice.getCommercialOrder().getSeller()!=null)
+    				return invoice.getCommercialOrder().getSeller();
+    		} 
+    		if(invoice.getCpqQuote()!=null) {
+    			if(invoice.getCpqQuote().getSeller()!=null) {
+    				return invoice.getCpqQuote().getSeller();
+    			}
+    		}
+    	}
+    	return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     }
 
     /**
@@ -5665,6 +5687,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setCommercialOrder(commercialOrder);
         }
 
+        if(invoiceResource.getCpqQuote()!=null) {
+            final Long cpqQuoteId = invoiceResource.getCpqQuote().getId();
+            CpqQuote cpqQuote = (CpqQuote)tryToFindByEntityClassAndId(CpqQuote.class, cpqQuoteId);
+            toUpdate.setCpqQuote(cpqQuote);
+        }
         if (input.getCfValues() != null) {
             toUpdate.setCfValues(input.getCfValues());
         }

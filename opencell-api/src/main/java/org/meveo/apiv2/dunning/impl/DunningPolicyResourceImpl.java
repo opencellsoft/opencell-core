@@ -126,9 +126,19 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         if (!dunningPolicyLevelList.isEmpty()) {
             entity.setDunningLevels(dunningPolicyLevelList);
         }
+        
+        String operationType = "update";
+
+        if(dunningPolicy.isActivePolicy() !=null && entity.getActivePolicy() != dunningPolicy.isActivePolicy()){
+        	operationType = dunningPolicy.isActivePolicy()? "activation":"deactivation";
+        }
+        
         org.meveo.model.dunning.DunningPolicy policy =
                 dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedField)).get();
-        dunningPolicyApiService.trackOperation("update", new Date(), updatedField.toString(), policy.getPolicyName());
+        
+        dunningPolicyApiService.trackOperation(operationType, new Date(), updatedField.toString(), policy.getPolicyName());
+
+        
         ActionStatus actionStatus = new ActionStatus();
         actionStatus.setStatus(ActionStatusEnum.SUCCESS);
         actionStatus.setMessage("Entity successfully updated");

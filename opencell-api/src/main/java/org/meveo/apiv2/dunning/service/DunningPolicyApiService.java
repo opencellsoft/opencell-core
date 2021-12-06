@@ -60,8 +60,6 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Inject
     private DunningPolicyRuleLineService dunningPolicyRuleLineService;
 
-    private final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
     private DunningPolicyRuleLineMapper policyRuleLineMapper = new DunningPolicyRuleLineMapper();
@@ -212,6 +210,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public AuditLog trackOperation(String operationType, Date operationDate, String updatedField, String dunningPolicyCode) {
+        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         AuditLog auditLog = new AuditLog();
         auditLog.setEntity(DunningPolicy.class.getSimpleName());
         auditLog.setCreated(operationDate);

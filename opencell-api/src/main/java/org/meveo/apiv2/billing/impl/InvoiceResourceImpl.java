@@ -5,29 +5,42 @@ import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
+import org.meveo.apiv2.generic.core.filter.filtermapper.ObjectMapper;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.MatchingAmountService;
+import org.meveo.service.payments.impl.MatchingCodeService;
 
 public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
+
+	@Inject
+	private AccountOperationService accountOperationService;
+
+	@Inject
+	private MatchingCodeService matchingCodeService;
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	
@@ -89,6 +102,56 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
+	public Response getInvoiceMatchedOperations(Long invoiceTypeId, String invoiceNumber, Request request) {
+		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
+				.orElseThrow(NotFoundException::new);
+		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
+		List<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_LIST : accountOperations.stream()
+				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
+				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
+						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
+						.map(matchingCode -> {
+							for (MatchingAmount element : matchingCode.getMatchingAmounts()) {
+								if (!accountOperation.getId().equals(element.getAccountOperation().getId())) {
+									return toResponse(accountOperation, element, invoice);
+								}
+							}
+							return null;
+						})
+						.collect(Collectors.toList()))
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();
+	}
+
+	private Map<String, Object> buildResponse(List<InvoiceMatchedOperation> collect) {
+		Map<String, Object> response = new HashMap<>();
+		response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
+		response.put("invoiceMatchedOperations", collect);
+		return response;
+	}
+
+	private InvoiceMatchedOperation toResponse(AccountOperation accountOperation, MatchingAmount matchingAmountPrimary, Invoice invoice){
+		MatchingCode matchingCode = matchingAmountPrimary.getMatchingCode();
+		ImmutableInvoiceMatchedOperation.Builder builder = ImmutableInvoiceMatchedOperation.builder();
+		return builder
+				.paymentId(accountOperation.getId())
+				.paymentCode(accountOperation.getCode())
+				.paymentDescription(accountOperation.getDescription())
+				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
+				.paymentDate(accountOperation.getTransactionDate())
+				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
+				.paymentRef(accountOperation.getReference())
+				.amount(accountOperation.getMatchingAmount())
+				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax()))
+				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
+				.matchingDate(matchingCode.getMatchingDate())
+				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")
+				.rejectedDescription(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedDescription() : "")
+				.build();
+	}
+
+	@Override
 	public Response fetchPdfInvoice(@NotNull Long id, Boolean generateIfMissing, Request request) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		generateIfMissing = generateIfMissing == null? false : generateIfMissing;
@@ -98,6 +161,20 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.fileType("PDF").fileContent(content).build();
 		return Response.ok().entity(file).build();
 
+	}
+
+	@Override
+	public Response deleteInvoicePdf(@NotNull Long id) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+			invoiceApiService.deleteInvoicePdf(invoice);
+		return Response.ok().build();
+	}
+
+	@Override
+	public Response deleteInvoiceXml(@NotNull Long id) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		invoiceApiService.deleteInvoiceXml(invoice);
+		return Response.ok().build();
 	}
 
 	@Override

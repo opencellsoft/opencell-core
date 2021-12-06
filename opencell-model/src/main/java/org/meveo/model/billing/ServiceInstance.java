@@ -103,6 +103,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionId", query = "select s from ServiceInstance s where s.code = :code and s.subscription.id = :subscriptionId"),
+        @NamedQuery(name = "ServiceInstance.getPendingToActivate", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscriptionDate is not null and s.subscriptionDate<:date and s.status in (:statuses)"),
 })
 public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
 
@@ -1213,13 +1214,13 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
 
-            if (chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);
-            } else if (chargeInstance instanceof SubscriptionChargeInstance) {
+            } else if (chargeInstance.getChargeType().equals("S")) {
                 subscriptionChargeInstances.add((SubscriptionChargeInstance) chargeInstance);
-            } else if (chargeInstance instanceof TerminationChargeInstance) {
+            } else if (chargeInstance.getChargeType().equals("T")) {
                 terminationChargeInstances.add((TerminationChargeInstance) chargeInstance);
-            } else if (chargeInstance instanceof UsageChargeInstance) {
+            } else if (chargeInstance.getChargeType().equals("U")) {
                 usageChargeInstances.add((UsageChargeInstance) chargeInstance);
             }
         }

@@ -13,6 +13,7 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
@@ -226,17 +227,13 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		}
 	}
 	
-	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate, boolean isBefore) {
+	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate) {
         try {
-            String queryName = "SubAccountingPeriod.findByAPAndAfterEndDate";
-            if (isBefore) {
-                queryName = "SubAccountingPeriod.findByAPAndBeforeEndDate";
-            }
-            return (List<SubAccountingPeriod>) getEntityManager()
-                    .createNamedQuery(queryName, entityClass)
-                    .setParameter("apId", accountingPeriod.getId())
-                    .setParameter("endDate", endDate)
-                    .getResultList();
+            return getEntityManager()
+						.createNamedQuery("SubAccountingPeriod.findByAPAndAfterEndDate", entityClass)
+						.setParameter("apId", accountingPeriod.getId())
+						.setParameter("endDate", endDate, TemporalType.DATE)
+						.getResultList();
         } catch (NoResultException e) {
             log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
             return new ArrayList<>();

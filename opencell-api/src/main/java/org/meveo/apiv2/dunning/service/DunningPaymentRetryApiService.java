@@ -1,10 +1,10 @@
 package org.meveo.apiv2.dunning.service;
 
 import org.assertj.core.util.Lists;
-import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPaymentRetry;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.payments.impl.DunningPaymentRetriesService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
