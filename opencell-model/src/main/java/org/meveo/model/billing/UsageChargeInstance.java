@@ -17,7 +17,7 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
+import org.meveo.model.catalog.UsageChargeTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -29,8 +29,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.validation.constraints.Size;
-
-import org.meveo.model.catalog.UsageChargeTemplate;
+import java.math.BigDecimal;
 
 /**
  * Usage charge as part of subscribed service

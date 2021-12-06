@@ -21,11 +21,11 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
     @Override
     public ChargeCDRListResponseDto chargeCdrList(List<String> cdrs, boolean isVirtual, boolean rateTriggeredEdr, boolean returnWalletOperationDetails, Integer maxDepth,
-                                                  boolean returnEDRs, boolean returnWalletOperations) {
+                                                  boolean returnEDRs, boolean returnWalletOperations, boolean returnCounters) {
 
         try {
             ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdrs, httpServletRequest.getRemoteAddr(), isVirtual,
-                    rateTriggeredEdr, returnWalletOperationDetails, maxDepth, returnEDRs, returnWalletOperations);
+                    rateTriggeredEdr, returnWalletOperationDetails, maxDepth, returnEDRs, returnWalletOperations, returnCounters);
             return mediationApi.chargeCdrList(chargeCDRDto);
         } catch (Exception e) {
             ChargeCDRListResponseDto result = new ChargeCDRListResponseDto();

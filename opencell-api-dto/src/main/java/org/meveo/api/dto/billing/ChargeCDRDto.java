@@ -77,6 +77,11 @@ public class ChargeCDRDto extends BaseEntityDto {
     private boolean returnEDRs;
 
     /**
+     * If true, the API will return the list of counters.
+     */
+    private boolean returnCounters;
+
+    /**
      * The max deep used in triggered EDR.
      */
     private Integer maxDepth;
@@ -98,7 +103,7 @@ public class ChargeCDRDto extends BaseEntityDto {
     }
     
     public ChargeCDRDto(List<String> cdrs, String ip, boolean virtual, boolean rateTriggeredEdr, boolean returnWalletOperationDetails,
-                        Integer maxDepth, boolean returnEDRs, boolean returnWalletOperations) {
+                        Integer maxDepth, boolean returnEDRs, boolean returnWalletOperations, boolean returnCounters) {
         this.cdrs = cdrs;
         this.ip = ip;
         this.virtual = virtual;
@@ -107,6 +112,7 @@ public class ChargeCDRDto extends BaseEntityDto {
         this.maxDepth = maxDepth == null ? 1 : maxDepth;
         this.returnEDRs = returnEDRs;
         this.returnWalletOperations = returnWalletOperations;
+        this.returnCounters = returnCounters;
     }
 
     public String getCdr() {
@@ -213,6 +219,24 @@ public class ChargeCDRDto extends BaseEntityDto {
      */
     public void setReturnEDRs(boolean returnEDRs) {
         this.returnEDRs = returnEDRs;
+    }
+
+    /**
+     * check if returnCounters is enabled
+     *
+     * @return true if returnCounters is enabled, false else.
+     */
+    public boolean isReturnCounters() {
+        return returnCounters;
+    }
+
+    /**
+     * Sets returnCounters
+     *
+     * @param returnCounters
+     */
+    public void setReturnCounters(boolean returnCounters) {
+        this.returnCounters = returnCounters;
     }
 
     /**

@@ -54,9 +54,6 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = -7456322224120515575L;
 
-    /** The Constant CHARGE_TYPE. */
-    public static final String CHARGE_TYPE = "RECURRING";
-
     /**
      * The recurrence type
      */
@@ -275,8 +272,8 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     }
 
     @Override
-    public String getChargeType() {
-        return CHARGE_TYPE;
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.RECURRING;
     }
 
     /**

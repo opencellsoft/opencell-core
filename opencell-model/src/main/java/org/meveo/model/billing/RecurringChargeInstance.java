@@ -17,8 +17,10 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.hibernate.annotations.Type;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -29,11 +31,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.Type;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.RecurringChargeTemplate;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * One shot charge as part of subscribed service

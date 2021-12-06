@@ -63,7 +63,8 @@ public interface MediationRs extends IBaseRs {
             @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ChargeCDRListResponseDto.class))) })
     ChargeCDRListResponseDto chargeCdrList(List<String> cdrs, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr,
                                            @QueryParam("returnWalletOperationDetails") boolean returnWalletOperationDetails, @QueryParam("maxDepth") Integer maxDepth,
-                                           @QueryParam("returnEDRs") boolean returnEDRs, @QueryParam("returnWalletOperations") boolean returnWalletOperations);
+                                           @QueryParam("returnEDRs") boolean returnEDRs, @QueryParam("returnWalletOperations") boolean returnWalletOperations,
+                                           @QueryParam("returnCounters") boolean returnCounters);
 
 }
 

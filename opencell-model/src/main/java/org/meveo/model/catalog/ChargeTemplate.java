@@ -17,12 +17,22 @@
  */
 package org.meveo.model.catalog;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.tax.TaxClass;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -43,23 +53,12 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.finance.RevenueRecognitionRule;
-import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.tax.TaxClass;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Charge template/definition
@@ -84,6 +83,31 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     public enum ChargeTypeEnum {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
+    }
+
+    /**
+     * Main charge types
+     */
+    public enum ChargeMainTypeEnum {
+        /**
+         * Recurring charges
+         */
+        RECURRING,
+
+        /**
+         * One shot charges
+         */
+        ONESHOT,
+
+        /**
+         * Usage charges
+         */
+        USAGE,
+
+        /**
+         * Product charges
+         */
+        PRODUCT;
     }
 
     /**
@@ -272,7 +296,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.outputUnitEL = outputUnitEL;
     }
 
-    public abstract String getChargeType();
+    /**
+     * Get a charge main type
+     *
+     * @return Charge main type
+     */
+    public abstract ChargeMainTypeEnum getChargeMainType();
 
     public OperationTypeEnum getType() {
         return type;
