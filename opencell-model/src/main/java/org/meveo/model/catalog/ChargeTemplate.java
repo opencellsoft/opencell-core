@@ -296,7 +296,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.outputUnitEL = outputUnitEL;
     }
 
-    public abstract String getChargeType();
+    /**
+     * Get a charge main type
+     *
+     * @return Charge main type
+     */
+    public abstract ChargeMainTypeEnum getChargeMainType();
 
     public OperationTypeEnum getType() {
         return type;
