@@ -1993,7 +1993,22 @@ public class SubscriptionApi extends BaseApi {
             serviceToUpdate.setServiceRenewal(serviceRenewal);
 
             setServiceFutureTermination(serviceToUpdateDto, serviceToUpdate);
-
+            
+            
+            serviceToUpdate.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
+            
+            if (postData.getRateUntilDate() != null) {
+                serviceToUpdate.setRateUntilDate(postData.getRateUntilDate());
+            }
+            
+            if (postData.getMinimumAmountEl() != null) {
+                serviceToUpdate.setMinimumAmountEl(postData.getMinimumAmountEl());
+            }
+            
+            if (postData.getMinimumLabelEl() != null) {
+                serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
+            }
+           
             // populate customFields
             try {
                 populateCustomFields(serviceToUpdateDto.getCustomFields(), serviceToUpdate, false);
@@ -2004,6 +2019,33 @@ public class SubscriptionApi extends BaseApi {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw e;
             }
+            
+            serviceToUpdate.getAttributeInstances().clear();
+			if(postData.getAttributeInstances() != null) {
+				postData.getAttributeInstances().forEach(attributeInstanceDto -> {
+					var attributeInstance = new AttributeInstance();
+					attributeInstance.setSubscription(subscription);
+					attributeInstance.setServiceInstance(serviceToUpdate);
+					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
+						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+					}
+					if(attributeInstanceDto.getParentAttributeValueId() != null) {
+						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
+					}
+					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
+						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
+					}
+					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
+						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+					if(attributeInstanceDto.getDateValue() != null)
+						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+					if(attributeInstanceDto.getDoubleValue() != null)
+						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+					attributeInstanceService.create(attributeInstance);
+					serviceToUpdate.getAttributeInstances().add(attributeInstance);
+				});
+			}
 
             serviceInstanceService.update(serviceToUpdate);
         }
@@ -2027,33 +2069,6 @@ public class SubscriptionApi extends BaseApi {
         if (serviceInstance != null) {
             result = serviceInstanceToDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
         }
-        
-        serviceInstance.getAttributeInstances().clear();
-		if(serviceInstanceDto.getAttributeInstances() != null) {
-			serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
-				var attributeInstance = new AttributeInstance();
-				attributeInstance.setSubscription(subscription);
-				attributeInstance.setServiceInstance(serviceInstance);
-				if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
-					attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
-				}
-				if(attributeInstanceDto.getParentAttributeValueId() != null) {
-					attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
-				}
-				if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-					var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
-					attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
-				}
-				if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
-					attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
-				if(attributeInstanceDto.getDateValue() != null)
-					attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
-				if(attributeInstanceDto.getDoubleValue() != null)
-					attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-				attributeInstanceService.create(attributeInstance);
-				serviceInstance.getAttributeInstances().add(attributeInstance);
-			});
-		}
 
         return result;
     }
