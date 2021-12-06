@@ -11547,5 +11547,15 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
+    <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_account_operation">
+            <column name="payment_action" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="payment_deferral_count" type="int4">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 	
 </databaseChangeLog>

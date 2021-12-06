@@ -417,6 +417,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Enumerated(STRING)
     private AccountOperationRejectionReason reason;
 
+    @Column(name = "payment_action")
+    @Enumerated(STRING)
+    private PaymentActionEnum paymentAction;
+
+    @Column(name = "payment_deferral_count")
+    private Integer paymentDeferralCount;
     /**
      * Account export file
      */
@@ -967,5 +973,21 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     public void setAccountingDate(Date accountingDate) {
         this.accountingDate = accountingDate;
+    }
+
+    public PaymentActionEnum getPaymentAction() {
+        return paymentAction;
+    }
+
+    public void setPaymentAction(PaymentActionEnum paymentAction) {
+        this.paymentAction = paymentAction;
+    }
+
+    public Integer getPaymentDeferralCount() {
+        return paymentDeferralCount;
+    }
+
+    public void setPaymentDeferralCount(Integer paymentDeferralCount) {
+        this.paymentDeferralCount = paymentDeferralCount;
     }
 }
