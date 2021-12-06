@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
@@ -70,6 +69,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.InterBankTitle;
 
@@ -270,7 +270,18 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
-    /**
+    @Embedded
+    private PaymentPlanPolicy paymentPlanPolicy = new PaymentPlanPolicy();
+    
+    public PaymentPlanPolicy getPaymentPlanPolicy() {
+		return paymentPlanPolicy;
+	}
+
+	public void setPaymentPlanPolicy(PaymentPlanPolicy paymentPlanPolicy) {
+		this.paymentPlanPolicy = paymentPlanPolicy;
+	}
+
+	/**
      * Is application running in B2B or B2C mode. In B2B (enterprise=true) mode amounts without tax are used for rating and invoicing. In B2C mode amounts with tax are used.
      */
     @Type(type = "numeric_boolean")
