@@ -1296,22 +1296,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     /**
-     * Determine if charge should be applied in advance
-     *
-     * @param recurringChargeInstance Recurring charge instance
-     * @return True if charge is applied in advance
-     */
-    public boolean isApplyInAdvance(RecurringChargeInstance recurringChargeInstance) {
-        boolean isApplyInAdvance = recurringChargeInstance.getApplyInAdvance() != null && recurringChargeInstance.getApplyInAdvance();
-        if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
-            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(),
-                    recurringChargeInstance.getServiceInstance(), null, null);
-        }
-
-        return isApplyInAdvance;
-    }
-
-    /**
      * apply first recurring charge and the counter will be decremented by charge quantity if it's not equal to 0.
      * 
      * @param recurringChargeInstance the recurring charge instance
