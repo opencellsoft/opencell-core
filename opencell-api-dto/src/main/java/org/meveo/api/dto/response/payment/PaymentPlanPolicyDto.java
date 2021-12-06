@@ -51,9 +51,9 @@ public class PaymentPlanPolicyDto implements Serializable {
 	private RecurrenceUnitEnum defaultRecurrenceUnit;
 	private ActionOnRemainingAmountEnum actionOnRemainingAmount;
 	private ClearingPriorityEnum clearingPriority; 
-	public List<PaymentMethodEnum> allowedPaymentMethods;
-	public List<Long> dunningDefaultPauseReason;
-	public List<Long> allowedCreditCategories;
+	private List<PaymentMethodEnum> allowedPaymentMethods;
+	private List<Long> dunningDefaultPauseReason;
+	private List<Long> allowedCreditCategories;
 	
 	public List<PaymentMethodEnum> getAllowedPaymentMethods() {
 		return allowedPaymentMethods;
