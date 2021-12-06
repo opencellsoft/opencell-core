@@ -1118,6 +1118,30 @@ public class InvoiceServiceTest {
         Assert.assertEquals(invoiceLinesGroup.getBillingAccount(), ba);
         Assert.assertEquals(invoiceLinesGroup.getInvoiceKey().split("_").length, 4);
     }
+    
+
+    @Test
+    public void test_getInvoiceLinesGroups_Seller_fromSeller() {
+        Subscription subscription = mock(Subscription.class);
+        BillingAccount ba = mock(BillingAccount.class);
+        BillingCycle bc = mock(BillingCycle.class);
+        InvoiceType invoiceType = mock(InvoiceType.class);
+        PaymentMethod paymentMethod = mock(PaymentMethod.class);
+        CustomerAccount customerAccount = mock(CustomerAccount.class);
+        Customer customer = mock(Customer.class);
+        Seller sellerSub = new Seller();
+        sellerSub.setCode("Seller_code");
+        Seller sellerCust = new Seller();
+        sellerCust.setCode("Seller_Custom");
+        when(ba.getCustomerAccount()).thenReturn(customerAccount);
+        when(customerAccount.getCustomer()).thenReturn(customer);
+        when(subscription.getSeller()).thenReturn(sellerSub);
+        when(customer.getSeller()).thenReturn(sellerCust);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        assertThat(invoiceLinesToInvoice).isNotNull();
+        InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
+        Assert.assertEquals(invoiceLinesGroup.getSeller().getCode(), "Seller_code");
+    }
 
     @Test
     public void test_getInvoiceLinesGroups_EntityToInvoice_Order() {

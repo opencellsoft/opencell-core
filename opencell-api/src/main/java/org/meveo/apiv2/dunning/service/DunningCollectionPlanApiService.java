@@ -27,6 +27,7 @@ import org.meveo.apiv2.dunning.DunningActionInstanceInput;
 import org.meveo.apiv2.dunning.DunningCollectionPlanPause;
 import org.meveo.apiv2.dunning.DunningCollectionPlanStop;
 import org.meveo.apiv2.dunning.DunningLevelInstanceInput;
+import org.meveo.apiv2.dunning.MassStopDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassPauseDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.RemoveActionInstanceInput;
@@ -126,10 +127,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     @Override
     public Optional<DunningCollectionPlan> findById(Long id) {
         DunningCollectionPlan dunningCollectionPlan = dunningCollectionPlanService.findById(id);
-        if (dunningCollectionPlan == null) {
-            throw new NotFoundException("Collection plan with id" + id + "does not exits");
-        }
-        return of(dunningCollectionPlan);
+        return ofNullable(dunningCollectionPlan);
     }
 
     @Override
@@ -281,6 +279,25 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 		return of(collectionPlanToStop);
 	}
 	
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void massStopCollectionPlan(MassStopDunningCollectionPlan massStopDunningCollectionPlan) {
+    	DunningStopReason stopReason = dunningStopReasonService.findById(massStopDunningCollectionPlan.getDunningStopReason().getId());
+        if (stopReason == null) {
+            throw new NotFoundException("Dunning Stop Reason with id " + massStopDunningCollectionPlan.getDunningStopReason().getId() + " does not exits");
+        }
+
+        List<Resource> collectionPlanList = massStopDunningCollectionPlan.getCollectionPlans();
+        if (collectionPlanList != null) {
+            for (Resource collectionPlanResource : collectionPlanList) {
+                DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanResource.getId());
+                if (collectionPlan == null) {
+                    throw new NotFoundException("Dunning collection plan with id " + collectionPlanResource.getId() + " does not exits");
+                }
+                dunningCollectionPlanService.stopCollectionPlan(collectionPlan, stopReason);
+            }
+        }
+    }
+    
 	public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
 		var collectionPlanToResume = findById(id).orElseThrow(() -> new NotFoundException(NO_DUNNING_FOUND + id));
 		collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
@@ -289,19 +306,20 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	
 	public void removeDunningLevelInstance(RemoveLevelInstanceInput removeLevelInstanceInput) {
 
-	    List<Long> levels = removeLevelInstanceInput.getLevels();
+	    List<Resource> levelInstanceResources = removeLevelInstanceInput.getLevels();
 	    
-	    if (levels != null) {
-            for (Long levelInstanceId : levels) {
+	    if (levelInstanceResources != null) {
+            for (Resource levelInstanceResource : levelInstanceResources) {
+                Long levelInstanceId = levelInstanceResource.getId();
                 DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(levelInstanceId);
                 if (dunningLevelInstance == null) {
-                    new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
+                    throw new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
                 }
                 if (dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
-                    new BadRequestException("Cannot modify or delete the end level");
+                    throw new BadRequestException("Cannot modify or delete the end level");
                 }
                 if (dunningLevelInstance.getLevelStatus() != null && dunningLevelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.TO_BE_DONE) {
-                    new BadRequestException("Cannot delete a level instance with status : " + dunningLevelInstance.getLevelStatus());
+                    throw new BadRequestException("Cannot delete a level instance with status : " + dunningLevelInstance.getLevelStatus());
                 }
                 dunningLevelInstanceService.remove(dunningLevelInstance);
                 trackOperation("REMOVE DunningLevelInstance", new Date(), dunningLevelInstance.getCollectionPlan());
@@ -312,23 +330,24 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeDunningActionInstance(RemoveActionInstanceInput removeActionInstanceInput) {
 
-        List<Long> actionIds = removeActionInstanceInput.getActions();
+        List<Resource> actionInstanceResources = removeActionInstanceInput.getActions();
         
-        if (actionIds != null) {
-            for (Long actionInstanceId : actionIds) {
+        if (actionInstanceResources != null) {
+            for (Resource actionInstanceResource : actionInstanceResources) {
+                Long actionInstanceId = actionInstanceResource.getId();
                 DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
                 if (dunningActionInstance == null) {
-                    new NotFoundException("No Dunning Action Instance found with id : " + actionInstanceId);
+                    throw new NotFoundException("No Dunning Action Instance found with id : " + actionInstanceId);
                 }
-                
+
                 // 1- User cannot either modify or delete the end level!
                 DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningActionInstance.getDunningLevelInstance().getId(), Arrays.asList("actions"));
                 if (dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
-                    new BadRequestException("Cannot modify or delete the end level");
+                    throw new BadRequestException("Cannot modify or delete the end level");
                 }
                 // 2- If the dunningActionInstance status is DONE  ==> it can not be deleted.
                 if (dunningActionInstance.getActionStatus() != null && dunningActionInstance.getActionStatus() == DunningActionInstanceStatusEnum.DONE) {
-                    new BadRequestException("Cannot delete an action instance with status DONE");
+                    throw new BadRequestException("Cannot delete an action instance with status DONE");
                 }
                 // 3- If the remaining DunningActionInstance of the dunningLevelInstance are DONE 
                 List<DunningActionInstance> actions = dunningLevelInstance.getActions();
@@ -395,7 +414,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
 	    DunningLevelInstance dunningLevelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("actions"));
         if (dunningLevelInstanceToUpdate == null) {
-            new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
+            throw new NotFoundException("No Dunning Level Instance found with id : " + levelInstanceId);
         }
 
         if (updateLevelInstanceInput.getSequence() != null) {
@@ -430,25 +449,25 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         DunningActionInstance dunningActionInstance = new DunningActionInstance();
         
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
-            new BadRequestException("Attribut dunningLevelInstance is mandatory");
+            throw new BadRequestException("Attribut dunningLevelInstance is mandatory");
         }
         Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
         DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId);
         if (dunningLevelInstance == null) {
-            new NotFoundException("No Dunning Level found with id : " + dunningLevelInstanceId);
+            throw new NotFoundException("No Dunning Level found with id : " + dunningLevelInstanceId);
         }else if(dunningLevelInstance.getDunningLevel().isEndOfDunningLevel() == true) {
-            new BadRequestException("Cant not add actions at the end of dunning level with id : " + dunningLevelInstanceId);
+            throw new BadRequestException("Cant not add actions at the end of dunning level with id : " + dunningLevelInstanceId);
         }else {
             dunningActionInstance.setDunningLevelInstance(dunningLevelInstance);
         }
 
         if (dunningActionInstanceInput.getCollectionPlan() == null || dunningActionInstanceInput.getCollectionPlan().getId() == null) {
-            new BadRequestException("Attribut collectionPlan is mandatory");
+            throw new BadRequestException("Attribut collectionPlan is mandatory");
         }
         Long collectionPlanId = dunningActionInstanceInput.getCollectionPlan().getId();
         DunningCollectionPlan collectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
         if (collectionPlan == null) {
-            new NotFoundException("No Dunning Collection Plan found with id : " + collectionPlanId);
+            throw new NotFoundException("No Dunning Collection Plan found with id : " + collectionPlanId);
         }
         dunningActionInstance.setCollectionPlan(collectionPlan);
         
@@ -457,7 +476,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             Long dunningActionId = dunningActionInstanceInput.getDunningAction().getId();
             DunningAction dunningAction = dunningActionService.findById(dunningActionId);
             if (dunningAction == null) {
-                new NotFoundException("No Dunning action found with id : " + dunningActionId);
+                throw new NotFoundException("No Dunning action found with id : " + dunningActionId);
             }
             dunningActionInstance.setDunningAction(dunningAction);
         }
@@ -466,7 +485,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             Long dunningAgentId = dunningActionInstanceInput.getActionOwner().getId();
             DunningAgent dunningAgent = dunningAgentService.findById(dunningAgentId);
             if (dunningAgent == null) {
-                new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
+                throw new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
             }
             dunningActionInstance.setActionOwner(dunningAgent);
         }
@@ -488,20 +507,20 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         
 	    DunningActionInstance dunningActionInstanceToUpdate = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
         if (dunningActionInstanceToUpdate == null) {
-            new NotFoundException("No Dunning Action Instance found with id : " + actionInstanceId);
+            throw new NotFoundException("No Dunning Action Instance found with id : " + actionInstanceId);
         }
 
         if (dunningActionInstanceToUpdate.getActionStatus() == DunningActionInstanceStatusEnum.DONE) {
-            new BadRequestException("Can not update a DONE dunningActionInstace");
+            throw new BadRequestException("Can not update a DONE dunningActionInstace");
         }
 
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
-            new BadRequestException("Attribut dunningLevelInstance is mandatory");
+            throw new BadRequestException("Attribut dunningLevelInstance is mandatory");
         }
         Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
         DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId);
         if (dunningLevelInstance == null) {
-            new NotFoundException("No Dunning Level found with id : " + dunningLevelInstanceId);
+            throw new NotFoundException("No Dunning Level found with id : " + dunningLevelInstanceId);
         }
         else {
             dunningActionInstanceToUpdate.setDunningLevelInstance(dunningLevelInstance);
@@ -511,7 +530,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             Long dunningActionId = dunningActionInstanceInput.getDunningAction().getId();
             DunningAction dunningAction = dunningActionService.findById(dunningActionId);
             if (dunningAction == null) {
-                new NotFoundException("No Dunning action found with id : " + dunningActionId);
+                throw new NotFoundException("No Dunning action found with id : " + dunningActionId);
             }
             dunningActionInstanceToUpdate.setDunningAction(dunningAction);
         }
@@ -520,7 +539,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             Long dunningAgentId = dunningActionInstanceInput.getActionOwner().getId();
             DunningAgent dunningAgent = dunningAgentService.findById(dunningAgentId);
             if (dunningAgent == null) {
-                new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
+                throw new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
             }
             dunningActionInstanceToUpdate.setActionOwner(dunningAgent);
         }
@@ -558,7 +577,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             Long dunningActionId = actionInput.getDunningAction().getId();
             DunningAction dunningAction = dunningActionService.findById(dunningActionId);
             if (dunningAction == null) {
-                new NotFoundException("No Dunning action found with id : " + dunningActionId);
+                throw new NotFoundException("No Dunning action found with id : " + dunningActionId);
             }
 
             if (actionInput.getCode() != null) {
@@ -593,7 +612,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 Long dunningAgentId = actionInput.getActionOwner().getId();
                 DunningAgent dunningAgent = dunningAgentService.findById(dunningAgentId);
                 if (dunningAgent == null) {
-                    new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
+                    throw new NotFoundException("No Dunning agent found with id : " + dunningAgentId);
                 }
                 dunningActionInstance.setActionOwner(dunningAgent);
             }

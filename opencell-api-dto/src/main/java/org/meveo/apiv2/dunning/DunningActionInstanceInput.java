@@ -36,6 +36,8 @@ public interface DunningActionInstanceInput {
     @Nullable
     String getActionRestult();
 
+    @Value.Default
+    @Nullable
     default DunningActionInstanceStatusEnum getActionStatus() {
         return DunningActionInstanceStatusEnum.TO_BE_DONE;
     }

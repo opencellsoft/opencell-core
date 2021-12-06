@@ -10,6 +10,7 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.payments.PaymentPlanPolicy;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -71,6 +72,9 @@ public interface Provider {
     @Nullable
     BankCoordinates getBankCoordinates();
 
+    @Nullable
+    PaymentPlanPolicy getPaymentPlanPolicy();
+    
     @Nullable
     Set<String> getPaymentMethods();
 
@@ -165,6 +169,10 @@ public interface Provider {
         if (this.getBankCoordinates() != null) {
             provider.setBankCoordinates(this.getBankCoordinates());
         }
+
+        if (this.getPaymentPlanPolicy() != null) {
+            provider.setPaymentPlanPolicy(this.getPaymentPlanPolicy());
+        }        
         if (this.getMaximumDelay() != null) {
             provider.setMaximumDelay(this.getMaximumDelay());
         }

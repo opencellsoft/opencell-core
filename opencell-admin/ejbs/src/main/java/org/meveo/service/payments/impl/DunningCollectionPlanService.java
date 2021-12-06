@@ -238,6 +238,16 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 	public DunningCollectionPlan stopCollectionPlan(DunningCollectionPlan collectionPlanToStop, DunningStopReason dunningStopReason) {
 		collectionPlanToStop = dunningCollectionPlanService.refreshOrRetrieve(collectionPlanToStop);
 		collectionPlanToStop = refreshLevelInstances(collectionPlanToStop);
+
+		DunningCollectionPlanStatus dunningCollectionPlanStatus = dunningCollectionPlanStatusService.refreshOrRetrieve(collectionPlanToStop.getStatus());
+
+		if(dunningCollectionPlanStatus.getStatus().equals(DunningCollectionPlanStatusEnum.SUCCESS)) {
+			throw new BusinessApiException("Collection Plan with id "+collectionPlanToStop.getId()+" cannot be stoped, the collection plan status is success");
+		}
+		if(dunningCollectionPlanStatus.getStatus().equals(DunningCollectionPlanStatusEnum.FAILED)) {
+			throw new BusinessApiException("Collection Plan with id "+collectionPlanToStop.getId()+" cannot be stoped, the collection plan status is failed");
+		}
+		
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.STOPPED);
 		collectionPlanToStop.setStatus(collectionPlanStatus);
 		collectionPlanToStop.setCloseDate(new Date());
@@ -270,6 +280,9 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		
 		Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToResume.getDunningLevelInstances()
 				.stream().max(Comparator.comparing(DunningLevelInstance::getId));
+		if(dunningLevelInstance.isEmpty()) {
+			throw new BusinessApiException("No dunning level instances found for the collection plan with id "+collectionPlanToResume.getId());
+		}
 		DunningCollectionPlanStatus collectionPlanStatus=null;
 		if(collectionPlanToResume.getPausedUntilDate() != null && collectionPlanToResume.getPausedUntilDate().after(DateUtils.addDaysToDate(collectionPlanToResume.getStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
 			collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.FAILED);
@@ -291,15 +304,25 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     }
     
     public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
-        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
         AuditLog auditLog = new AuditLog();
+        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
+        String userName;
+        
+        if (currentUser.getFullNameOrUserName() != null && currentUser.getFullNameOrUserName().length() > 0) {
+        	userName = currentUser.getFullNameOrUserName();
+        } else if (currentUser.getEmail() != null && currentUser.getEmail().length() > 0) {
+        	userName = currentUser.getEmail();
+        } else {
+        	userName = currentUser.getUserName();
+        }
+        
         auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
         auditLog.setCreated(operationDate);
         auditLog.setActor(currentUser.getUserName());
         auditLog.setAction(operationType);
         StringBuilder parameters = new StringBuilder()
                 .append(formatter.format(operationDate)).append(" - ")
-                .append(currentUser.getUserName()).append(" - ")
+                .append(userName).append(" - ")
                 .append(" apply ")
                 .append(operationType)
                 .append(" to collection Plan id=")
@@ -327,4 +350,10 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		dunningCollectionPlan.setDunningLevelInstances(dunningLevelInstances);
 		return dunningCollectionPlan;
 	}
+
+	public List<Long> getActiveCollectionPlansIds() {
+        return getEntityManager()
+                .createNamedQuery("DunningCollectionPlan.activeCollectionPlansIds", Long.class)
+                .getResultList();
+    }
 }

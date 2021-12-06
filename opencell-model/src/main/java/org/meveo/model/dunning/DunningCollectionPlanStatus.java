@@ -57,7 +57,7 @@ public class DunningCollectionPlanStatus extends AuditableEntity {
     /**
      * description
      */
-    @Column(name = "description", length = 255)
+    @Column(name = "description")
     @NotNull
     private String description;
 

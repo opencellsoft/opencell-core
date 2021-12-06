@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning;
 import java.util.List;
 
 import org.immutables.value.Value;
+import org.meveo.apiv2.models.Resource;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,5 +12,5 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableRemoveActionInstanceInput.class)
 public interface RemoveActionInstanceInput {
 
-    List<Long> getActions();
+    List<Resource> getActions();
 }

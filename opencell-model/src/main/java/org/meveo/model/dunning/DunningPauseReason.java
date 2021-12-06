@@ -15,6 +15,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.Provider;
+
+
 /**
  * @author Mbarek-Ay
  * @version 11.0
@@ -59,7 +64,22 @@ public class DunningPauseReason extends AuditableEntity {
 	@Size(max = 255)
 	private String description;
 
+	/**
+	 * PaymentPlanPolicy associated to the entity
+	 */	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id")
+    protected Provider provider; 
+    
 	
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+
 	/**
 	 * dunning settings associated to the entity
 	 */

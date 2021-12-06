@@ -143,6 +143,10 @@ public class ProviderResourceImpl implements ProviderResource{
             providerByCode.setBankCoordinates(providerUpdateInfos.getBankCoordinates());
         }
 
+        if(provider.getPaymentPlanPolicy() != null) {
+            providerByCode.setPaymentPlanPolicy(providerUpdateInfos.getPaymentPlanPolicy());
+        }
+        
         if(provider.getMaximumDelay() != null) {
             providerByCode.setMaximumDelay(providerUpdateInfos.getMaximumDelay());
         }
