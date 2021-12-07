@@ -6,8 +6,6 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import org.meveo.model.dunning.DunningCollectionPlan;
-
 @Value.Immutable
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableSwitchCollectionSuccessResponse.class)

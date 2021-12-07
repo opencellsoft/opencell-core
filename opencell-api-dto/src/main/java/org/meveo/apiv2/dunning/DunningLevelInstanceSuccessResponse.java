@@ -3,7 +3,6 @@ package org.meveo.apiv2.dunning;
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
-import org.meveo.model.dunning.DunningLevelInstance;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -16,5 +15,5 @@ public interface DunningLevelInstanceSuccessResponse {
     String getStatus();
 
     @Nullable
-    DunningLevelInstance getNewDunningLevelInstance();
+    DunningLevelInstanceInput getNewDunningLevelInstance();
 }
