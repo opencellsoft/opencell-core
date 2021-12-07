@@ -4869,21 +4869,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     private Seller getSelectedSeller(InvoiceLine invoiceLine) {
     	Invoice invoice=invoiceLine.getInvoice();
-    	if(invoice!=null) {
-    		if(invoice.getSubscription()!=null) {
-    			if(invoice.getSubscription().getSeller()!=null)
-    				return invoice.getSubscription().getSeller();
-    		}
-    		if(invoice.getCommercialOrder()!=null) {
-    			if(invoice.getCommercialOrder().getSeller()!=null)
-    				return invoice.getCommercialOrder().getSeller();
-    		} 
-    		if(invoice.getCpqQuote()!=null) {
-    			if(invoice.getCpqQuote().getSeller()!=null) {
-    				return invoice.getCpqQuote().getSeller();
-    			}
-    		}
-    	}
+		if(invoiceLine.getSubscription() != null) {
+			if(invoiceLine.getSubscription().getSeller() != null)
+				return invoiceLine.getSubscription().getSeller();
+		}
+		if(invoiceLine.getCommercialOrder() != null) {
+			if(invoiceLine.getCommercialOrder().getSeller()!=null)
+				return invoiceLine.getCommercialOrder().getSeller();
+		}
+		if(invoiceLine.getQuote() != null) {
+			if(invoiceLine.getQuote().getSeller()!=null) {
+				return invoiceLine.getQuote().getSeller();
+			}
+		}
     	return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     }
 
