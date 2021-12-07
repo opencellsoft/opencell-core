@@ -6,6 +6,8 @@ import org.meveo.apiv2.provider.Provider;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningPauseReason;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -19,12 +21,17 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.DunningPauseReasonsService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.payments.impl.PaymentService;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,7 +62,13 @@ public class ProviderResourceImpl implements ProviderResource{
 
     @Inject
     private BaseEntityService baseEntityService;
+    
+    @Inject
+    private CreditCategoryService creditCategoryService;
 
+    @Inject
+    private DunningPauseReasonsService dunningPauseReasonsService;
+    
     @Override
     public Response updateDunningTemplate(String providerCode, Provider provider) {
         org.meveo.model.crm.Provider providerByCode = providerService.findByCode(providerCode);
@@ -141,9 +154,29 @@ public class ProviderResourceImpl implements ProviderResource{
 
         if(provider.getBankCoordinates() != null) {
             providerByCode.setBankCoordinates(providerUpdateInfos.getBankCoordinates());
-        }
-
+        }        
+    	
         if(provider.getPaymentPlanPolicy() != null) {
+        	List<CreditCategory> listAllowedCreditCategories = new ArrayList<CreditCategory>();
+            if (provider.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {         	
+            	for (CreditCategory elementAllowedCreditCategories : providerUpdateInfos.getPaymentPlanPolicy().getAllowedCreditCategories()) {
+            		CreditCategory creditCategory = creditCategoryService.findById(elementAllowedCreditCategories.getId());
+            		if(creditCategory == null) {
+                        throw new EntityDoesNotExistsException(CreditCategory.class.getName(), "creditCategory with id " + elementAllowedCreditCategories.getId() + " does not exist.");
+                    }
+            		creditCategory.setProvider(providerByCode);
+            		listAllowedCreditCategories.add(creditCategory);
+                }
+            	providerUpdateInfos.getPaymentPlanPolicy().setAllowedCreditCategories(listAllowedCreditCategories);
+            }
+            if (provider.getPaymentPlanPolicy().getDunningDefaultPauseReason() != null) {         	
+            	
+            	DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(providerUpdateInfos.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId());
+        		if(dunningPauseReason == null) {
+                    throw new EntityDoesNotExistsException(DunningPauseReason.class.getName(), "dunningPauseReason with id " + provider.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId() + " does not exist.");
+                }        		
+        		providerUpdateInfos.getPaymentPlanPolicy().setDunningDefaultPauseReason(dunningPauseReason);
+            }
             providerByCode.setPaymentPlanPolicy(providerUpdateInfos.getPaymentPlanPolicy());
         }
         

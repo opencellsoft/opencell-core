@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.ClearingPriorityEnum;
 import org.meveo.model.payments.CreditCategory;
@@ -52,8 +51,14 @@ public class PaymentPlanPolicyDto implements Serializable {
 	private ActionOnRemainingAmountEnum actionOnRemainingAmount;
 	private ClearingPriorityEnum clearingPriority; 
 	private List<PaymentMethodEnum> allowedPaymentMethods;
-	private List<Long> dunningDefaultPauseReason;
-	private List<Long> allowedCreditCategories;
+	private Long dunningDefaultPauseReason;
+	public Long getDunningDefaultPauseReason() {
+		return dunningDefaultPauseReason;
+	}
+
+	public void setDunningDefaultPauseReason(Long dunningDefaultPauseReason) {
+		this.dunningDefaultPauseReason = dunningDefaultPauseReason;
+	}	
 	
 	public List<PaymentMethodEnum> getAllowedPaymentMethods() {
 		return allowedPaymentMethods;
@@ -63,20 +68,13 @@ public class PaymentPlanPolicyDto implements Serializable {
 		this.allowedPaymentMethods = allowedPaymentMethods;
 	}
 	
+	private List<Long> allowedCreditCategories;
 	public List<Long> getAllowedCreditCategories() {
 		return allowedCreditCategories;
 	}
 
 	public void setAllowedCreditCategories(List<Long> allowedCreditCategories) {
 		this.allowedCreditCategories = allowedCreditCategories;
-	}
-
-	public List<Long> getDunningDefaultPauseReason() {
-		return dunningDefaultPauseReason;
-	}
-
-	public void setDunningDefaultPauseReason(List<Long> dunningDefaultPauseReason) {
-		this.dunningDefaultPauseReason = dunningDefaultPauseReason;
 	}
 
 	public Integer getDefaultInstallmentCount() {
@@ -261,17 +259,15 @@ public class PaymentPlanPolicyDto implements Serializable {
         for (PaymentMethodEnum elementPaymentMethodEnum : paymentPlanPolicy.getAllowedPaymentMethods()) {
         	allowedPaymentMethods.add(elementPaymentMethodEnum);
         }
-        List<Long> listDunningDefaultPauseReasonDto = new ArrayList<Long>();
-        for (DunningPauseReason elementDunningDefaultPauseReason : paymentPlanPolicy.getDunningDefaultPauseReason()) {
-        	listDunningDefaultPauseReasonDto.add(elementDunningDefaultPauseReason.getId());
-        }
-        dunningDefaultPauseReason = listDunningDefaultPauseReasonDto;
-        
+        if (paymentPlanPolicy.getDunningDefaultPauseReason() != null) {
+        	dunningDefaultPauseReason = paymentPlanPolicy.getDunningDefaultPauseReason().getId();
+        }         
         List<Long> listAllowedCreditCategoriesDto = new ArrayList<Long>();
         for (CreditCategory elementAllowedCreditCategories : paymentPlanPolicy.getAllowedCreditCategories()) {
         	listAllowedCreditCategoriesDto.add(elementAllowedCreditCategories.getId());
         }
         allowedCreditCategories = listAllowedCreditCategoriesDto;
+        
     }
 
     
@@ -325,6 +321,7 @@ public class PaymentPlanPolicyDto implements Serializable {
     		", requireInternalApproval=" + requireInternalApproval + 
     		", defaultRecurrenceUnit=" + defaultRecurrenceUnit + 
     		", actionOnRemainingAmount=" + actionOnRemainingAmount + 
-    		", clearingPriority=" + clearingPriority + "]";
+    		", clearingPriority=" + clearingPriority + 
+    		", DunningDefaultPauseReason" + dunningDefaultPauseReason + "]";
     }
 }

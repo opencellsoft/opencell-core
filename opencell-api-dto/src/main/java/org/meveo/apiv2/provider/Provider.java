@@ -10,9 +10,13 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentPlanPolicy;
 
 import javax.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

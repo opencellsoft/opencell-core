@@ -5115,6 +5115,7 @@
 			<column name="default_recurrence_unit" type="varchar(255)" />
 			<column name="action_on_remaining_amount" type="varchar(255)" />
 			<column name="clearing_priority" type="varchar(255)" />
+			<column name="dunning_default_pause_reason_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -10917,7 +10918,6 @@
             <column name="dunning_settings_id" type="bigint" >
                 <constraints nullable="false" />
             </column>
-            <column name="provider_id" type="BIGINT" />
         </createTable>
 
          <createTable tableName="dunning_stop_reasons">
@@ -13017,13 +13017,8 @@
         <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_token" constraintName="fk_ca_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
     </changeSet>
-    
-    <changeSet author="hhanine" id="rebuild-str-fk-11632">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="dunning_pause_reasons" constraintName="fk_dpr_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-    </changeSet>
  
-     <changeSet author="hhanine" id="rebuild-str-fk-11633">
+    <changeSet author="hhanine" id="rebuild-str-fk-11633">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_credit_category" constraintName="fk_acc_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
     </changeSet>
@@ -15196,8 +15191,11 @@
      	<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
     </changeSet>
-      
-      
+	<changeSet author="hhanine" id="rebuild-str-fk-1650-1418">
+		<addForeignKeyConstraint baseColumnNames="dunning_default_pause_reason_id" baseTableName="crm_provider" constraintName="fk_dunning_default_pause_reason_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />
+	</changeSet>
+	      
 	<changeSet id="rebuild-str-fk-refactoring" author="AbdelmounaimAkadid">
 	
 		<addForeignKeyConstraint baseColumnNames="id"
