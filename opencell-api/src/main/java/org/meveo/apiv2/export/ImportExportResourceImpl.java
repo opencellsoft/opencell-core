@@ -63,6 +63,9 @@ public class ImportExportResourceImpl implements ImportExportResource {
         var template = new ExportTemplate();
         if(exportConfig.getExportTemplateName() != null){
             template = entityExportImportService.getExportImportTemplate(exportConfig.getExportTemplateName());
+            if(template == null){
+                throw new InvalidParameterException("template with name "+ exportConfig.getExportTemplateName()+" does not exist.");
+            }
         }else if(exportConfig.getEntityClass() != null){
             try {
                 template.setEntityToExport((Class<? extends IEntity>) Class.forName(exportConfig.getEntityClass()));
