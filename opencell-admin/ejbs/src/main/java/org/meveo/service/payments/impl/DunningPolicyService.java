@@ -94,7 +94,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                     .append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
                     .append(" ")
                     .append(PolicyConditionOperatorEnum
-                            .valueOf(ruleLines.get(0).getPolicyConditionOperator()).getOperator())
+                            .valueOf(ruleLines.get(0).getPolicyConditionOperator().toUpperCase()).getOperator())
                     .append(" ")
                     .append(toQueryValue(ruleLines.get(0).getPolicyConditionTargetValue(),
                             ruleLines.get(0).getPolicyConditionTarget()))
