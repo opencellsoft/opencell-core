@@ -2585,6 +2585,11 @@ public class SubscriptionApi extends BaseApi {
 	    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
 	    					if(attributeInstanceDto.getDoubleValue() != null)
 	    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+	    					if(attributeInstanceDto.getBooleanValue() != null)
+	    						attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+	    					if(AttributeTypeEnum.BOOLEAN==attributeInstance.getAttribute().getAttributeType() && attributeInstance.getBooleanValue()==null && attributeInstance.getStringValue()!=null ) {
+	    			        	attributeInstance.setBooleanValue(Boolean.valueOf(attributeInstance.getStringValue()));
+	    			        }
 	    					attributeInstanceService.create(attributeInstance);
 	    					serviceInstance.getAttributeInstances().add(attributeInstance);
 	    				});
