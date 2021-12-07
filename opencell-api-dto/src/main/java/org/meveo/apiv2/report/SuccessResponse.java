@@ -1,10 +1,11 @@
 package org.meveo.apiv2.report;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.sun.istack.Nullable;
+import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
