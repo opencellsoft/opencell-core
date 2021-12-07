@@ -434,7 +434,8 @@ public interface PricePlanRs extends IBaseRs {
             })
     Response updatePricePlanMatrixLines(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
                                         @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
-
+    
+    @Deprecated
     @POST
     @Path("/{pricePlanMatrixCode}/pricePlanMatrixVersions/{pricePlanMatrixVersion}/chargeInstance/{chargeInstanceCode}/rating")
     @Operation(summary = "load prices",
