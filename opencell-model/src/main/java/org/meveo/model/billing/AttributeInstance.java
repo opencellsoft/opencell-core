@@ -64,6 +64,7 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         if(AttributeTypeEnum.BOOLEAN==attribute.getAttributeType() && booleanValue==null && stringValue!=null ) {
         	booleanValue=Boolean.valueOf(stringValue);
         }
+        System.out.println("AttributeInstance::attributeCode="+attribute+",booleanValue="+booleanValue);
         updateAudit(currentUser);
         if(orderAttribute.getAssignedAttributeValue() != null) {
             assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
@@ -76,7 +77,10 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
                     .collect(Collectors.toList());
         }
     }
-
+    public AttributeInstance(MeveoUser currentUser) {
+    	super();
+    	updateAudit(currentUser);
+    }
     public ServiceInstance getServiceInstance() {
         return serviceInstance;
     }

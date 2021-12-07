@@ -784,7 +784,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 	       			 }else {
 	       				attributeValue.setStringValue((String)value);
 	       			}
-	       			 return attributeValue;
+	       			log.debug("getAttributeValue value={}, String={},boolean={},double={}",value,attributeValue.getStringValue(),attributeValue.getBooleanValue(),attributeValue.getDoubleValue());
+	       			
+	       			return attributeValue;
     			}
     			
     		  }

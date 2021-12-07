@@ -239,40 +239,28 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
 			Attribute attribute=productVersionAttribute.getAttribute();
 			if(instantiatedAttributes.get(attribute.getCode())!=null) {
-				attributeInstance = new AttributeInstance();
+				attributeInstance = new AttributeInstance(currentUser);
 				attributeInstance.setAttribute(attribute);
 				attributeInstance.setServiceInstance(serviceInstance);
 				attributeInstance.setSubscription(subscription);
-				if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
-					switch (attribute.getAttributeType()) {
-					case BOOLEAN:
-						attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
-						break;
-					case NUMERIC:
-						attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
-						break;
-					default:
-						attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
-						break;
-					}
-				}
+			
 			}else {
 				attributeInstance=instantiatedAttributes.get(attribute.getCode());
-				if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
-					switch (attribute.getAttributeType()) {
-					case BOOLEAN:
-						if(attributeInstance.getBooleanValue()==null)
-							attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
-						break;
-					case NUMERIC:
-						if(attributeInstance.getDoubleValue()==null)
-							attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
-						break;	
-					default:
-						if(attributeInstance.getStringValue()==null)
-							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
-						break;
-					}
+			}
+			if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
+				switch (attribute.getAttributeType()) {
+				case BOOLEAN:
+					if(attributeInstance.getBooleanValue()==null)
+						attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
+					break;
+				case NUMERIC:
+					if(attributeInstance.getDoubleValue()==null)
+						attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+					break;
+				default:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+					break;
 				}
 			}
 			serviceInstance.addAttributeInstance(attributeInstance);
