@@ -776,11 +776,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     			Object value=ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, walletOperation);
 	    			if(value!=null) {
-	    				AttributeValue<AttributeValue> attributeValue= new AttributeValue<AttributeValue>();
+	    				AttributeValue<AttributeValue> attributeValue= (AttributeValue)attributeInstance;
 	       			 if(value instanceof Boolean) {
 	       				 attributeValue.setBooleanValue((Boolean)value);
-	       			 }else if(value instanceof Date) {
-	       					attributeValue.setDateValue((Date)value);
 	       			 }else if(value instanceof Number) {
 	       					attributeValue.setDoubleValue(((Number)value).doubleValue());
 	       			 }else {

@@ -146,6 +146,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -3023,11 +3024,12 @@ public class SubscriptionApi extends BaseApi {
                 .map(ai -> {
                 	OrderAttribute orderAttribute = new OrderAttribute();
                 	if(ai.getOrderAttributeCode()!=null) {
-                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
-                    orderAttribute.setAttribute(attribute);
-                    orderAttribute.setStringValue(ai.getStringValue());
-                    orderAttribute.setDoubleValue(ai.getDoubleValue());
-                    orderAttribute.setDateValue(ai.getDateValue());
+	                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
+	                    orderAttribute.setAttribute(attribute);
+	                    orderAttribute.setStringValue(ai.getStringValue());
+	                    orderAttribute.setDoubleValue(ai.getDoubleValue());
+	                    orderAttribute.setDateValue(ai.getDateValue());
+	                    orderAttribute.setBooleanValue(ai.getBooleanValue());
                 	}
                     return orderAttribute;
 
