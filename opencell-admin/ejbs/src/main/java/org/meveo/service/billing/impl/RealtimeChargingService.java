@@ -145,7 +145,7 @@ public class RealtimeChargingService {
         op.setSeller(seller);
 
         try {
-            ratingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
+            ratingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency, null);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a wallet operation {}: {}", op, e.getRejectionReason());
