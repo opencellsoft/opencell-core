@@ -277,7 +277,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         walletOperation.setEdr(edr);
 
         rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(),
-                chargeInstance.getCurrency());
+                chargeInstance.getCurrency(), isVirtual);
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.setWalletOperation(walletOperation);
@@ -463,10 +463,11 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param unitPriceWithTaxOverriden unit price with tax - An overridden price
      * @param buyerCountryId Buyer's country id
      * @param buyerCurrency Buyer's trading currency
+     * @param isVirtual Is this a simulation of rating
      * @throws BusinessException business exception
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency)
+    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency, Boolean isVirtual)
             throws BusinessException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
@@ -482,7 +483,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 bareWalletOperation.setUnitAmountWithTax(unitPriceWithTaxOverriden);
             }
 
-            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript());
+            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript(), isVirtual);
 
             // Use a standard price plan approach to rating
         } else {
@@ -585,14 +586,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
             if (pricePlan != null && pricePlan.getScriptInstance() != null) {
                 log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance());
+                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), isVirtual);
             }
         }
 
         // Execute a final rating script set on offer template
         if (bareWalletOperation.getOfferTemplate() != null && bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance() != null) {
             log.debug("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
-            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance());
+            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
 
     }
@@ -938,7 +939,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 operation.setUnitAmountWithTax(null);
                 operation.setUnitAmountTax(null);
 
-                rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(), priceplan.getTradingCurrency());
+                rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(), priceplan.getTradingCurrency(), null);
             }
             create(operation);
             updateNoCheck(operationToRerate);
@@ -1131,13 +1132,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
         return userMap;
     }
 
-    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws RatingScriptExecutionErrorException {
+    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance, Boolean isVirtual) throws RatingScriptExecutionErrorException {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
             log.debug("Will execute priceplan script " + scriptInstanceCode);
-
-            scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
+            Map<String, Object> context = new HashMap<>();
+            context.put("isVirtual", isVirtual);
+            scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, context);
 
         } catch (BusinessException e) {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
