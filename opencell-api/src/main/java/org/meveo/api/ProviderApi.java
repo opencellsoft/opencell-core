@@ -21,8 +21,6 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -44,7 +42,6 @@ import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
@@ -83,8 +80,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
@@ -562,21 +557,17 @@ public class ProviderApi extends BaseApi {
             	PaymentPlanPolicy.setAllowedPaymentMethods(postData.getPaymentPlanPolicy().getAllowedPaymentMethods());
             }
         	
-        	if (postData.getPaymentPlanPolicy().getDunningDefaultPauseReason() != null) {
-                List<DunningPauseReason> listDunningPauseReason = new ArrayList<DunningPauseReason>();
-                for (Long elementDunningDefaultPauseReasonDto : postData.getPaymentPlanPolicy().getDunningDefaultPauseReason()) {                	
-                	DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(elementDunningDefaultPauseReasonDto);                	
-                	if(dunningPauseReason == null) {
-                		throw new EntityDoesNotExistsException(DunningPauseReason.class.getName(), postData.getPaymentPlanPolicy().getDunningDefaultPauseReason().toString());
-                	}
-                	dunningPauseReason.setProvider(provider);
-                	listDunningPauseReason.add(dunningPauseReason);
-                }                
-                PaymentPlanPolicy.setDunningDefaultPauseReason(listDunningPauseReason);        		
-        	}        	
+        	if(postData.getPaymentPlanPolicy().getDunningDefaultPauseReason() != null) {          	
+        		DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(postData.getPaymentPlanPolicy().getDunningDefaultPauseReason());                	
+            	if(dunningPauseReason == null) {
+            		throw new EntityDoesNotExistsException(DunningPauseReason.class.getName(), postData.getPaymentPlanPolicy().getDunningDefaultPauseReason().toString());
+            	}
+        		PaymentPlanPolicy.setDunningDefaultPauseReason(dunningPauseReason);
+        	}
+
         	if (postData.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {
                 List<CreditCategory> listAllowedCreditCategories = new ArrayList<CreditCategory>();
-                for (Long elementAllowedCreditCategoriesDto : postData.getPaymentPlanPolicy().getAllowedCreditCategories()) {                	
+                for (Long elementAllowedCreditCategoriesDto : postData.getPaymentPlanPolicy().getAllowedCreditCategories()) {               	
                 	CreditCategory allowedCreditCategories = creditCategoryService.findById(elementAllowedCreditCategoriesDto);                	
                 	if(allowedCreditCategories == null) {
                 		throw new EntityDoesNotExistsException(CreditCategory.class.getName(), postData.getPaymentPlanPolicy().getAllowedCreditCategories().toString());
@@ -586,7 +577,8 @@ public class ProviderApi extends BaseApi {
                 }
                 
                 PaymentPlanPolicy.setAllowedCreditCategories(listAllowedCreditCategories);        		
-        	}  
+        	}
+        	
         	PaymentPlanPolicy.setSplitEvenly(postData.getPaymentPlanPolicy().isSplitEvenly());
        		PaymentPlanPolicy.setAllowCustomInstallmentPlan(postData.getPaymentPlanPolicy().isAllowCustomInstallmentPlan());
        		PaymentPlanPolicy.setAddInterestRate(postData.getPaymentPlanPolicy().isAddInterestRate());

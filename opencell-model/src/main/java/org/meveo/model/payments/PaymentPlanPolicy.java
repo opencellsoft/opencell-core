@@ -14,6 +14,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
@@ -29,72 +30,27 @@ public class PaymentPlanPolicy implements Serializable, Cloneable {
     }
 
     public PaymentPlanPolicy(PaymentPlanPolicy paymentPlanPolicy) {
-    	this(paymentPlanPolicy.minAllowedReceivableAmount
-    		,paymentPlanPolicy.maxAllowedReceivableAmount
-    		,paymentPlanPolicy.minInstallmentAmount
-    		,paymentPlanPolicy.maxPaymentPlanDuration
-    		,paymentPlanPolicy.defaultRecurrenceUnit
-    		,paymentPlanPolicy.defaultInstallmentCount
-    		,paymentPlanPolicy.splitEvenly
-    		,paymentPlanPolicy.allowCustomInstallmentPlan
-    		,paymentPlanPolicy.addInterestRate
-    		,paymentPlanPolicy.defaultInterestRate
-    		,paymentPlanPolicy.addInstallmentFee
-    		,paymentPlanPolicy.defaultFeePerInstallmentPlan
-    		,paymentPlanPolicy.installmentAmountRounding
-    		,paymentPlanPolicy.actionOnRemainingAmount
-    		,paymentPlanPolicy.clearingPriority
-    		,paymentPlanPolicy.defaultBlockPayments
-    		,paymentPlanPolicy.requireInternalApproval
-    		,paymentPlanPolicy.theresHoldForApproval
-    		,paymentPlanPolicy.allowedPaymentMethods
-    		,paymentPlanPolicy.dunningDefaultPauseReason
-    		,paymentPlanPolicy.allowedCreditCategories);
-    }
-
-    public PaymentPlanPolicy(BigDecimal minAllowedReceivableAmount,
-    		BigDecimal maxAllowedReceivableAmount,
-    		BigDecimal minInstallmentAmount,
-    		Integer maxPaymentPlanDuration,
-    		RecurrenceUnitEnum defaultRecurrenceUnit,
-    		Integer defaultInstallmentCount,
-    		boolean splitEvenly,
-    		boolean allowCustomInstallmentPlan,
-    		boolean addInterestRate,
-    		int defaultInterestRate,
-    		boolean addInstallmentFee,
-    		Integer defaultFeePerInstallmentPlan,
-    		Integer installmentAmountRounding ,
-    		ActionOnRemainingAmountEnum actionOnRemainingAmount,
-    		ClearingPriorityEnum clearingPriority,
-    		boolean defaultBlockPayments,
-    		boolean requireInternalApproval,
-    		BigDecimal theresHoldForApproval,
-    		List<PaymentMethodEnum> allowedPaymentMethods,
-    		List<DunningPauseReason> dunningDefaultPauseReason,
-    		List<CreditCategory> allowedCreditCategories) {
-        super();
-        this.minAllowedReceivableAmount = minAllowedReceivableAmount;
-        this.maxAllowedReceivableAmount = maxAllowedReceivableAmount;
-        this.minInstallmentAmount = minInstallmentAmount;
-        this.maxPaymentPlanDuration = maxPaymentPlanDuration;
-        this.defaultRecurrenceUnit = defaultRecurrenceUnit;
-        this.defaultInstallmentCount = defaultInstallmentCount;
-        this.splitEvenly = splitEvenly;
-        this.allowCustomInstallmentPlan = allowCustomInstallmentPlan;
-        this.addInterestRate = addInterestRate;
-        this.defaultInterestRate = defaultInterestRate;
-        this.addInstallmentFee = addInstallmentFee;
-        this.defaultFeePerInstallmentPlan = defaultFeePerInstallmentPlan;
-        this.installmentAmountRounding = installmentAmountRounding;
-        this.actionOnRemainingAmount = actionOnRemainingAmount;
-        this.clearingPriority = clearingPriority;
-        this.defaultBlockPayments = defaultBlockPayments;
-        this.requireInternalApproval = requireInternalApproval;
-        this.theresHoldForApproval = theresHoldForApproval;
-        this.setAllowedPaymentMethods(allowedPaymentMethods);
-        this.setDunningDefaultPauseReason(dunningDefaultPauseReason);
-        this.setAllowedCreditCategories(allowedCreditCategories);
+    	this.setMinAllowedReceivableAmount(minAllowedReceivableAmount);
+    	this.setMaxAllowedReceivableAmount(maxAllowedReceivableAmount);
+    	this.setMinInstallmentAmount(minInstallmentAmount);
+    	this.setMaxPaymentPlanDuration(maxPaymentPlanDuration);
+    	this.setDefaultRecurrenceUnit(defaultRecurrenceUnit);
+    	this.setDefaultInstallmentCount(defaultInstallmentCount);
+    	this.setSplitEvenly(splitEvenly);
+    	this.setAllowCustomInstallmentPlan(allowCustomInstallmentPlan);
+    	this.setAddInterestRate(addInterestRate);
+    	this.setDefaultInterestRate(defaultInterestRate);
+    	this.setAddInstallmentFee(addInstallmentFee);
+    	this.setDefaultFeePerInstallmentPlan(defaultFeePerInstallmentPlan);
+    	this.setInstallmentAmountRounding(installmentAmountRounding);
+    	this.setActionOnRemainingAmount(actionOnRemainingAmount);
+    	this.setClearingPriority(clearingPriority);
+    	this.setDefaultBlockPayments(defaultBlockPayments);
+    	this.setRequireInternalApproval(requireInternalApproval);
+    	this.setTheresHoldForApproval(theresHoldForApproval);
+    	this.setAllowedPaymentMethods(allowedPaymentMethods);
+    	this.setDunningDefaultPauseReason(dunningDefaultPauseReason);
+    	this.setAllowedCreditCategories(allowedCreditCategories);
     }
     
 	@Column(name = "min_allowed_receivable_amount")
@@ -323,19 +279,20 @@ public class PaymentPlanPolicy implements Serializable, Cloneable {
 		this.allowedPaymentMethods = allowedPaymentMethods;
 	}
 
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<DunningPauseReason> dunningDefaultPauseReason = new ArrayList<>();
+	@ManyToOne
+    @JoinColumn(name = "dunning_default_pause_reason_id")
+    private DunningPauseReason dunningDefaultPauseReason;
     
-	public List<DunningPauseReason> getDunningDefaultPauseReason() {
+    public DunningPauseReason getDunningDefaultPauseReason() {
 		return dunningDefaultPauseReason;
 	}
 
-	public void setDunningDefaultPauseReason(List<DunningPauseReason> dunningDefaultPauseReason) {
+	public void setDunningDefaultPauseReason(DunningPauseReason dunningDefaultPauseReason) {
 		this.dunningDefaultPauseReason = dunningDefaultPauseReason;
 	}
-    
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CreditCategory> allowedCreditCategories;
+	
+	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<CreditCategory> allowedCreditCategories = new ArrayList<CreditCategory>();
     
 	public List<CreditCategory> getAllowedCreditCategories() {
 		return allowedCreditCategories;
