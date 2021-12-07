@@ -309,7 +309,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .stream()
                 .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
                 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                .anyMatch(attributeInstance -> !attributeInstance.getBooleanValue());
+                .anyMatch(attributeInstance -> attributeInstance.getBooleanValue()==null || !attributeInstance.getBooleanValue());
 
         if(anyFalseAttribute) return false;
 
