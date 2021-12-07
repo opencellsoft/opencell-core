@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -222,22 +224,22 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setProductVersion(product.getCurrentVersion());
 
 		serviceInstance.setSubscription(subscription);
-		List<String> instantiatedAttributes=new ArrayList<String>();
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
 		
 		for (OrderAttribute orderAttribute : orderAttributes) {
 			if(orderAttribute.getAttribute()!=null) {
 			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 			attributeInstance.setServiceInstance(serviceInstance);
 			attributeInstance.setSubscription(subscription);
-			serviceInstance.addAttributeInstance(attributeInstance);
-			instantiatedAttributes.add(orderAttribute.getAttribute().getCode());
+			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
 			}
 		}
 		//add missing attribute instances
+		AttributeInstance attributeInstance=null;
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
 			Attribute attribute=productVersionAttribute.getAttribute();
-			if(!instantiatedAttributes.contains(attribute.getCode())) {
-				AttributeInstance attributeInstance = new AttributeInstance();
+			if(instantiatedAttributes.get(attribute.getCode())!=null) {
+				attributeInstance = new AttributeInstance();
 				attributeInstance.setAttribute(attribute);
 				attributeInstance.setServiceInstance(serviceInstance);
 				attributeInstance.setSubscription(subscription);
@@ -254,9 +256,27 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						break;
 					}
 				}
-				
-				serviceInstance.addAttributeInstance(attributeInstance);
+			}else {
+				attributeInstance=instantiatedAttributes.get(attribute.getCode());
+				if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
+					switch (attribute.getAttributeType()) {
+					case BOOLEAN:
+						if(attributeInstance.getBooleanValue()==null)
+							attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					case NUMERIC:
+						if(attributeInstance.getDoubleValue()==null)
+							attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+						break;	
+					default:
+						if(attributeInstance.getStringValue()==null)
+							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+						break;
+					}
+				}
 			}
+			serviceInstance.addAttributeInstance(attributeInstance);
+			
 		}
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
