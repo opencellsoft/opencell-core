@@ -18,8 +18,6 @@
 
 package org.meveo.model;
 
-import org.meveo.model.billing.CounterPeriod;
-
 import java.math.BigDecimal;
 
 /**
@@ -28,11 +26,6 @@ import java.math.BigDecimal;
  * @author Khalid HORRI
  */
 public class DeducedCounter {
-    /**
-     * Counter Period.
-     */
-    private CounterPeriod counterPeriod = null;
-
     /**
      * A deduced quantity of an EDR related to a counter.
      */
@@ -47,30 +40,10 @@ public class DeducedCounter {
     /**
      * Constructor.
      *
-     * @param counterPeriod   the counter period
      * @param deducedQuantity the deduced quantity
      */
-    public DeducedCounter(final CounterPeriod counterPeriod, final BigDecimal deducedQuantity) {
-        this.counterPeriod = counterPeriod;
+    public DeducedCounter(final BigDecimal deducedQuantity) {
         this.deducedQuantity = deducedQuantity;
-    }
-
-    /**
-     * Gets Counter Period.
-     *
-     * @return a counter period
-     */
-    public CounterPeriod getCounterPeriod() {
-        return counterPeriod;
-    }
-
-    /**
-     * Sets counter period.
-     *
-     * @param counterPeriod a counter period
-     */
-    public void setCounterPeriod(CounterPeriod counterPeriod) {
-        this.counterPeriod = counterPeriod;
     }
 
     /**
