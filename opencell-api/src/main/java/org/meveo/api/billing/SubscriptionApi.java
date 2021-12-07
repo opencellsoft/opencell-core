@@ -146,6 +146,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -2559,32 +2560,40 @@ public class SubscriptionApi extends BaseApi {
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
     	if(serviceInstanceDtos != null) {
     		serviceInstanceDtos.forEach(serviceInstanceDto -> {
-    			var serviceInstance = loadEntityByCode(serviceInstanceService, serviceInstanceDto.getCode(), ServiceInstance.class);
-    			serviceInstance.getAttributeInstances().clear();
-    			if(serviceInstanceDto.getAttributeInstances() != null) {
-    				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
-    					var attributeInstance = new AttributeInstance();
-    					attributeInstance.setSubscription(subscription);
-						attributeInstance.setServiceInstance(serviceInstance);
-    					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
-    						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
-    					}
-    					if(attributeInstanceDto.getParentAttributeValueId() != null) {
-    						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
-    					}
-    					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
-    						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
-    					}
-    					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
-    						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
-    					if(attributeInstanceDto.getDateValue() != null)
-    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
-    					if(attributeInstanceDto.getDoubleValue() != null)
-    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-    					attributeInstanceService.create(attributeInstance);
-    					serviceInstance.getAttributeInstances().add(attributeInstance);
-    				});
+    			var serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(serviceInstanceDto.getCode(), subscription.getCode());
+    			if(serviceInstances != null && !serviceInstances.isEmpty()) {
+	    			var serviceInstance = serviceInstances.get(0);
+	    			serviceInstance.getAttributeInstances().clear();
+	    			if(serviceInstanceDto.getAttributeInstances() != null) {
+	    				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
+	    					var attributeInstance = new AttributeInstance();
+	    					attributeInstance.setSubscription(subscription);
+							attributeInstance.setServiceInstance(serviceInstance);
+	    					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
+	    						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+	    					}
+	    					if(attributeInstanceDto.getParentAttributeValueId() != null) {
+	    						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
+	    					}
+	    					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
+	    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+	    						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
+	    					}
+	    					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
+	    						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+	    					if(attributeInstanceDto.getDateValue() != null)
+	    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+	    					if(attributeInstanceDto.getDoubleValue() != null)
+	    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+	    					if(attributeInstanceDto.getBooleanValue() != null)
+	    						attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+	    					if(AttributeTypeEnum.BOOLEAN==attributeInstance.getAttribute().getAttributeType() && attributeInstance.getBooleanValue()==null && attributeInstance.getStringValue()!=null ) {
+	    			        	attributeInstance.setBooleanValue(Boolean.valueOf(attributeInstance.getStringValue()));
+	    			        }
+	    					attributeInstanceService.create(attributeInstance);
+	    					serviceInstance.getAttributeInstances().add(attributeInstance);
+	    				});
+	    			}
     			}
     		});
     	}
@@ -3020,11 +3029,12 @@ public class SubscriptionApi extends BaseApi {
                 .map(ai -> {
                 	OrderAttribute orderAttribute = new OrderAttribute();
                 	if(ai.getOrderAttributeCode()!=null) {
-                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
-                    orderAttribute.setAttribute(attribute);
-                    orderAttribute.setStringValue(ai.getStringValue());
-                    orderAttribute.setDoubleValue(ai.getDoubleValue());
-                    orderAttribute.setDateValue(ai.getDateValue());
+	                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
+	                    orderAttribute.setAttribute(attribute);
+	                    orderAttribute.setStringValue(ai.getStringValue());
+	                    orderAttribute.setDoubleValue(ai.getDoubleValue());
+	                    orderAttribute.setDateValue(ai.getDateValue());
+	                    orderAttribute.setBooleanValue(ai.getBooleanValue());
                 	}
                     return orderAttribute;
 

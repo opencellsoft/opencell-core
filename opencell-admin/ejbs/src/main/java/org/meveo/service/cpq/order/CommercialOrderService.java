@@ -1,11 +1,14 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,7 +37,9 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
@@ -219,14 +224,47 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setProductVersion(product.getCurrentVersion());
 
 		serviceInstance.setSubscription(subscription);
-
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		
 		for (OrderAttribute orderAttribute : orderAttributes) {
 			if(orderAttribute.getAttribute()!=null) {
 			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 			attributeInstance.setServiceInstance(serviceInstance);
 			attributeInstance.setSubscription(subscription);
-			serviceInstance.addAttributeInstance(attributeInstance);
+			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
 			}
+		}
+		//add missing attribute instances
+		AttributeInstance attributeInstance=null;
+		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+			Attribute attribute=productVersionAttribute.getAttribute();
+			if(instantiatedAttributes.get(attribute.getCode())!=null) {
+				attributeInstance = new AttributeInstance(currentUser);
+				attributeInstance.setAttribute(attribute);
+				attributeInstance.setServiceInstance(serviceInstance);
+				attributeInstance.setSubscription(subscription);
+			
+			}else {
+				attributeInstance=instantiatedAttributes.get(attribute.getCode());
+			}
+			if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
+				switch (attribute.getAttributeType()) {
+				case BOOLEAN:
+					if(attributeInstance.getBooleanValue()==null)
+						attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
+					break;
+				case NUMERIC:
+					if(attributeInstance.getDoubleValue()==null)
+						attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+					break;
+				default:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+					break;
+				}
+			}
+			serviceInstance.addAttributeInstance(attributeInstance);
+			
 		}
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
