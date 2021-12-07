@@ -1976,7 +1976,13 @@
             <column name="accounting_export_file" type="varchar(255)"/>
             <column name="accounting_date" type="datetime"></column>
             <column name="operation_action" type="varchar(255)"/>
-		</createTable>
+            <column name="payment_action" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="payment_deferral_count" type="int4">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
         <createTable tableName="ar_action_dunning">
@@ -16921,7 +16927,7 @@
 	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA" />
 	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-3426_202112012" author="ZBariki" />
-
+    <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
