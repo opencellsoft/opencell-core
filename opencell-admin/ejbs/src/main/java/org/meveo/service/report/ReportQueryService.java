@@ -347,12 +347,13 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                 notifyUser(reportQuery.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
                         executionResult.getStartDate(), executionResult.getExecutionDuration(),
                         executionResult.getLineCount(), null);
+                for(String email : emails) {
+                	notifyUser(reportQuery.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
+                            executionResult.getStartDate(), executionResult.getExecutionDuration(),
+                            executionResult.getLineCount(), null);
+                }
             }
-            for(String email : emails) {
-            	notifyUser(reportQuery.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
-                        executionResult.getStartDate(), executionResult.getExecutionDuration(),
-                        executionResult.getLineCount(), null);
-            }
+            
         } catch (InterruptedException | CancellationException e) {
         } catch (Exception exception) {
         	if(sendNotification) {
