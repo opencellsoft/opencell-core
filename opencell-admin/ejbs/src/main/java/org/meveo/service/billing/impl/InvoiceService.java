@@ -4882,9 +4882,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				return invoiceLine.getQuote().getSeller();
 			}
 		}
-    	return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	if (invoiceLine.getBillingAccount() != null) {
+            return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+    	return null;
     }
-
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
@@ -5196,7 +5198,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceId
      */
     public void cleanInvoiceAggregates(Long invoiceId) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceSubCategoryAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 
