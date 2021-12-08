@@ -17,20 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.RatingException;
@@ -57,6 +43,19 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * RecurringChargeInstanceService
@@ -214,7 +213,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 log.debug("Accumulator counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
                 log.debug("Accumulator counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
-                chargeInstance.addCounterInstance(counterInstance);
+                chargeInstance.addAccumulatorCounterInstance(counterInstance);
             }
             log.debug("Counter template {}", serviceChargeTemplateRecurring.getCounterTemplate());
             CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplateRecurring.getCounterTemplate(), isVirtual);
