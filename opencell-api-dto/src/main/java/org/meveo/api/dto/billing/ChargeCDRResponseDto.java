@@ -23,6 +23,7 @@ import org.meveo.api.dto.response.BaseResponse;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +57,46 @@ public class ChargeCDRResponseDto extends BaseResponse {
     private Integer walletOperationCount;
 
     /**
+     * A list of EDR ids that were created
+     */
+    private List<Long> edrIds;
+
+    /**
      * A wallet operations list.
      */
     private List<WalletOperationDto> walletOperations;
+
+    /**
+     * CDR processing error
+     */
+    private CdrError cdrError;
+
+    public ChargeCDRResponseDto() {
+        setActionStatus(null);
+    }
+
+    public ChargeCDRResponseDto(CdrError processingError) {
+        this.cdrError = processingError;
+        setActionStatus(null);
+    }
+
+    /**
+     * Gets the cdrError.
+     *
+     * @return the cdrError
+     */
+    public CdrError getCdrError() {
+        return cdrError;
+    }
+
+    /**
+     * Sets the cdrError.
+     *
+     * @param cdrError the CdrError
+     */
+    public void setCdrError(CdrError cdrError) {
+        this.cdrError = cdrError;
+    }
 
     /**
      * Gets the amountWithoutTax.
@@ -125,6 +163,20 @@ public class ChargeCDRResponseDto extends BaseResponse {
     }
 
     /**
+     * @return the edrIds
+     */
+    public List<Long> getEdrIds() {
+        return edrIds;
+    }
+
+    /**
+     * @param edrIds the edrIds to set
+     */
+    public void setEdrIds(List<Long> edrIds) {
+        this.edrIds = edrIds;
+    }
+
+    /**
      * Gets  walletOperations list.
      * @return walletOperations list
      */
@@ -141,5 +193,48 @@ public class ChargeCDRResponseDto extends BaseResponse {
      */
     public void setWalletOperations(List<WalletOperationDto> walletOperations) {
         this.walletOperations = walletOperations;
+    }
+
+    public static class CdrError implements Serializable {
+        private static final long serialVersionUID = 5139169395026374653L;
+
+        private String errorCode;
+        private String errorMessage;
+        private String cdr;
+
+        public CdrError() {
+
+        }
+
+        public CdrError(String errorCode, String errorMessage, String cdr) {
+            super();
+            this.errorCode = errorCode;
+            this.errorMessage = errorMessage;
+            this.cdr = cdr;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        public void setErrorCode(String errorCode) {
+            this.errorCode = errorCode;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public String getCdr() {
+            return cdr;
+        }
+
+        public void setCdr(String cdr) {
+            this.cdr = cdr;
+        }
     }
 }

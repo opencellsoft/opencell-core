@@ -296,7 +296,7 @@ public class ServiceSingleton {
         if (SequenceTypeEnum.RUM == type) {
             provider.setRumSequence(sequence);
         }
-
+        providerService.updateNoCheck(provider);
         return sequence;
     }
 
