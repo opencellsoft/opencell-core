@@ -70,38 +70,43 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         int highestSequence = (dunningPolicy.getDunningPolicyLevels() != null
                 && !dunningPolicy.getDunningPolicyLevels().isEmpty())
                 ? dunningPolicy.getDunningPolicyLevels().get(0).getSequence() : 0;
-        for (org.meveo.apiv2.dunning.DunningPolicyLevel dunningPolicyLevel : dunningPolicy.getDunningPolicyLevels()) {
-            DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
-            dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
-            dunningPolicyApiService.refreshPolicyLevel(dunningPolicyLevelEntity);
-            if (!dunningPolicyLevelEntity.getDunningLevel().isReminder()) {
-                totalDunningLevels++;
-            } else {
-                countReminderLevels++;
-            }
-            if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
-                if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
-                    throw new BadRequestException("End of dunning level sequence must be the highest");
+        try {
+            for (org.meveo.apiv2.dunning.DunningPolicyLevel dunningPolicyLevel : dunningPolicy.getDunningPolicyLevels()) {
+                DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
+                dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
+                dunningPolicyApiService.refreshPolicyLevel(dunningPolicyLevelEntity);
+                if (!dunningPolicyLevelEntity.getDunningLevel().isReminder()) {
+                    totalDunningLevels++;
+                } else {
+                    countReminderLevels++;
                 }
-                highestSequence = dunningPolicyLevelEntity.getSequence();
-                countEndOfDunningLevel++;
+                if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
+                    if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
+                        throw new BadRequestException("End of dunning level sequence must be the highest");
+                    }
+                    highestSequence = dunningPolicyLevelEntity.getSequence();
+                    countEndOfDunningLevel++;
+                }
+                policyLevelApiService.create(dunningPolicyLevelEntity);
             }
-            policyLevelApiService.create(dunningPolicyLevelEntity);
-        }
-        if(countReminderLevels == 0 || totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
+            if(countReminderLevels == 0 || totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
+                dunningPolicyService.remove(savedEntity);
+            }
+            dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
+            savedEntity.setTotalDunningLevels(totalDunningLevels);
+            dunningPolicyApiService.updateTotalLevels(savedEntity);
+            ActionStatus actionStatus = new ActionStatus();
+            actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+            actionStatus.setMessage("Entity successfully created");
+            actionStatus.setEntityId(entity.getId());
+            return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
+                    .build())
+                    .entity(actionStatus)
+                    .build();
+        } catch (Exception exception) {
             dunningPolicyService.remove(savedEntity);
+            throw new BadRequestException(exception.getMessage());
         }
-        dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
-        savedEntity.setTotalDunningLevels(totalDunningLevels);
-        dunningPolicyApiService.updateTotalLevels(savedEntity);
-        ActionStatus actionStatus = new ActionStatus();
-        actionStatus.setStatus(ActionStatusEnum.SUCCESS);
-        actionStatus.setMessage("Entity successfully created");
-        actionStatus.setEntityId(entity.getId());
-        return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
-                .build())
-                .entity(actionStatus)
-                .build();
     }
 
     @Override

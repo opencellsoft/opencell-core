@@ -122,17 +122,24 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         Map<Object, Object> params = new HashMap<>();
         BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
         params.put("billingAccount.description", billingAccount.getDescription());
-        params.put("billingAccount.address.address1", billingAccount.getAddress().getAddress1());
-        params.put("billingAccount.address.zipCode", billingAccount.getAddress().getZipCode());
-        params.put("billingAccount.address.city", billingAccount.getAddress().getCity());
-        params.put("billingAccount.contactInformation.phone", billingAccount.getContactInformation().getPhone());
+        params.put("billingAccount.address.address1",
+                billingAccount.getAddress() != null ? billingAccount.getAddress().getAddress1() : "");
+        params.put("billingAccount.address.zipCode",
+                billingAccount.getAddress() != null ? billingAccount.getAddress().getZipCode() : "");
+        params.put("billingAccount.address.city",
+                billingAccount.getAddress() != null ? billingAccount.getAddress().getCity() : "");
+        params.put("billingAccount.contactInformation.phone",
+                billingAccount.getContactInformation() != null ? billingAccount.getContactInformation().getPhone() : "");
 
         CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
         params.put("customerAccount.legalEntityType.code",
                 ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-        params.put("customerAccount.address.address1", customerAccount.getAddress().getAddress1());
-        params.put("customerAccount.address.zipCode", customerAccount.getAddress().getZipCode());
-        params.put("customerAccount.address.city", customerAccount.getAddress().getCity());
+        params.put("customerAccount.address.address1",
+                customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
+        params.put("customerAccount.address.zipCode",
+               customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
+        params.put("customerAccount.address.city",
+               customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
 
         params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
         params.put("invoice.dueDate", invoice.getDueDate());
@@ -143,9 +150,13 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
         String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
         String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-        emailSender.send(appProvider.getEmail(), asList(appProvider.getEmail()),
-                asList(billingAccount.getContactInformation().getEmail()), null, null,
-                subject, content, contentHtml, null, null, false);
+        if(appProvider.getEmail() != null && !appProvider.getEmail().isBlank()) {
+            emailSender.send(appProvider.getEmail(), asList(appProvider.getEmail()),
+                    asList(billingAccount.getContactInformation().getEmail()), null, null,
+                    subject, content, contentHtml, null, null, false);
+        } else {
+            log.error("Configuration email is missing, email sending skipped");
+        }
     }
 
     private DunningLevelInstance createLevelInstance(DunningPolicyLevel policyLevel) {
