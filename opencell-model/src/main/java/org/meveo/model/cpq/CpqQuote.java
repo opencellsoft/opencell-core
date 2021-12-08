@@ -1,8 +1,8 @@
 package org.meveo.model.cpq;
 
-import static javax.persistence.FetchType.LAZY;
-
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -23,13 +23,16 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.quote.QuoteStatusEnum;
 
 
@@ -39,7 +42,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
-public class CpqQuote extends BusinessEntity  {
+public class CpqQuote extends BusinessEntity implements IBillableEntity {
 
 	/**
 	 * 
@@ -53,8 +56,7 @@ public class CpqQuote extends BusinessEntity  {
 		super.code = copy.code;
 		super.description = copy.description;
 		this.seller = copy.seller;
-		this.applicantAccount = copy.applicantAccount;
-		this.contract = copy.contract;
+		this.applicantAccount = copy.applicantAccount; 
 		//to move to quote version
 		this.sendDate = copy.sendDate;
 		this.quoteLotDateBegin = copy.quoteLotDateBegin;
@@ -69,8 +71,6 @@ public class CpqQuote extends BusinessEntity  {
 		//to move to quote version
 		this.validity = copy.validity;
 		this.orderInvoiceType = copy.orderInvoiceType;
-		//to move to quote version
-		this.discountPlan=copy.discountPlan;
 	}
 	/**
 	 * seller
@@ -87,12 +87,7 @@ public class CpqQuote extends BusinessEntity  {
 	@NotNull
 	private BillingAccount applicantAccount;
 	
-	/**
-	 * contract
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "contract_id")
-	private Contract contract;
+	
 	
 
     /**
@@ -193,12 +188,7 @@ public class CpqQuote extends BusinessEntity  {
     @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
     
-	/**
-	 * discountPlan attached to this quote
-	 */
-    @ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
-	private DiscountPlan discountPlan;
+	
     
     @Column(name = "quote_number", length = 50)
     private String quoteNumber;
@@ -208,20 +198,7 @@ public class CpqQuote extends BusinessEntity  {
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
-	
-	   /**
-	  * XML file name
-	  */
-	 @Column(name = "xml_filename", length = 255)
-	 @Size(max = 255)
-	 private String xmlFilename;
 	 
-	 /**
-	  * PDF file name
-	  */
-	@Column(name = "pdf_filename", length = 255)
-	@Size(max = 255)
-	private String pdfFilename;
 	    
 	/**
 	 * @return the seller
@@ -246,19 +223,7 @@ public class CpqQuote extends BusinessEntity  {
 	 */
 	public void setApplicantAccount(BillingAccount applicantAccount) {
 		this.applicantAccount = applicantAccount;
-	}
-	/**
-	 * @return the contract
-	 */
-	public Contract getContract() {
-		return contract;
-	}
-	/**
-	 * @param contract the contract to set
-	 */
-	public void setContract(Contract contract) {
-		this.contract = contract;
-	}
+	} 
 	/**
 	 * @return the statusDate
 	 */
@@ -413,21 +378,10 @@ public class CpqQuote extends BusinessEntity  {
 	 * @param status the status to set
 	 */
 	public void setStatus(String status) {
-		this.previousStatus = this.status;
+		if(!status.equals(this.status))
+			this.previousStatus = this.status;
 		this.status = status;
-	}
-	/**
-	 * @return the discountPlan
-	 */
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
-	/**
-	 * @param discountPlan the discountPlan to set
-	 */
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+	} 
 
 	/**
 	 * @return the quoteNumber
@@ -463,34 +417,7 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setQuoteDate(Date quoteDate) {
 		this.quoteDate = quoteDate;
-	}
-/**
-	 * @return the xmlFilename
-	 */
-	public String getXmlFilename() {
-		return xmlFilename;
-	}
-
-	/**
-	 * @param xmlFilename the xmlFilename to set
-	 */
-	public void setXmlFilename(String xmlFilename) {
-		this.xmlFilename = xmlFilename;
-	}
-
-	/**
-	 * @return the pdfFilename
-	 */
-	public String getPdfFilename() {
-		return pdfFilename;
-	}
-
-	/**
-	 * @param pdfFilename the pdfFilename to set
-	 */
-	public void setPdfFilename(String pdfFilename) {
-		this.pdfFilename = pdfFilename;
-	}
+	} 
 
 	public String getPreviousStatus() {
 		return previousStatus;
@@ -498,6 +425,84 @@ public class CpqQuote extends BusinessEntity  {
 
 	public void setPreviousStatus(String previousStatus) {
 		this.previousStatus = previousStatus;
+	}
+
+	@Override
+	public BillingRun getBillingRun() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBillingRun(BillingRun billingRun) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<RatedTransaction> getMinRatedTransactions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BillingCycle getBillingCycle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<InvoiceLine> getMinInvoiceLines() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

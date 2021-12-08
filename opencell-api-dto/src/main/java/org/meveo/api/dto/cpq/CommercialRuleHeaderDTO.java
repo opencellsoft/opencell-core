@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
+import org.meveo.model.cpq.enums.ScopeTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,6 +40,8 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	protected Integer productVersion;
     @Schema(description = "code of attribute")
 	protected String attributeCode;
+	@Schema(description = "commercial rule scope")
+	protected ScopeTypeEnum scope;
     @Schema(description = "code tag")
 	protected String tagCode;
     @Schema(description = "code of grouped attribute")
@@ -81,6 +84,7 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
     			return ruleItem;
     		}).collect(Collectors.toList());
     	}
+		this.scope = commercialRuleHeader.getScopeType();
 		this.disabled=commercialRuleHeader.isDisabled();
 		
 	}
@@ -230,9 +234,13 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
 	}
-	
-	
 
-	
-    
+
+	public ScopeTypeEnum getScope() {
+		return scope;
+	}
+
+	public void setScope(ScopeTypeEnum scope) {
+		this.scope = scope;
+	}
 }

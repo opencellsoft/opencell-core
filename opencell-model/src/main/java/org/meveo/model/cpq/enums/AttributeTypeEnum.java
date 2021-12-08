@@ -87,6 +87,10 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
+		}
 	},
 	
 	/** Date type**/

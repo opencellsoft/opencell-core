@@ -63,10 +63,12 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -523,6 +525,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "is_already_applied_minimum")
     private boolean isAlreadyAppliedMinimum;
+    
+    /**
+     * Cpq quote
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cpq_quote_id")
+    private CpqQuote cpqQuote;
 
     /**
      * Indicates if the invoice discounts have already been applied
@@ -615,6 +624,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();
+        
+        if(this.getBillingAccount() != null) {
+        	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
+        	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
+        	this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+        	this.tradingLanguage = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage() : customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
+        }
+		
     }
 
     public String getInvoiceNumber() {
@@ -1497,6 +1514,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setCommercialOrder(CommercialOrder commercialOrder) {
 		this.commercialOrder = commercialOrder;
+	}
+
+	public CpqQuote getCpqQuote() {
+		return cpqQuote;
+	}
+
+	public void setCpqQuote(CpqQuote cpqQuote) {
+		this.cpqQuote = cpqQuote;
 	}
 	
 	

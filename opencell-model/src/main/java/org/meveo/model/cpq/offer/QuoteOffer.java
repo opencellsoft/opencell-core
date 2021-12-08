@@ -15,11 +15,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.DiscountPlan;
@@ -33,14 +35,13 @@ import org.meveo.model.quote.QuoteVersion;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "QuoteOffer")
-@Table(name="quote_offer")
+@Table(name="quote_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion"),
-		@NamedQuery(name = "QuoteOffer.findQuoteAttribute", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  " + " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode")
+		@NamedQuery(name = "QuoteOffer.findByCodeAndQuoteVersion", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  where qv.id=:quoteVersionId and qf.code=:code")
 })
-public class QuoteOffer extends AuditableCFEntity {
+public class QuoteOffer extends BusinessCFEntity {
 
 
 	public QuoteOffer() {
@@ -55,6 +56,8 @@ public class QuoteOffer extends AuditableCFEntity {
 		this.quoteProduct = copy.quoteProduct;
 		this.contractCode = copy.contractCode;
 		this.position = copy.position;
+		this.cfValues = copy.getCfValues();
+		this.sequence=copy.sequence;
 	}
 
 
@@ -118,7 +121,7 @@ public class QuoteOffer extends AuditableCFEntity {
     protected Integer sequence=0;
     
     
-    @OneToMany(mappedBy = "quoteOffer")
+    @OneToMany(mappedBy = "quoteOffer", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuotePrice> quotePrices = new ArrayList<QuotePrice>();
 

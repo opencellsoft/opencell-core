@@ -124,19 +124,19 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 				if(isAdvancementExist) {
 					throw new BusinessApiException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
 				}
-				BigDecimal rateToBill =  items.stream().map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
+				/*BigDecimal rateToBill =  items.stream().map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal totalRate = rateToBill.add(postData.getRateToBill() != null ? postData.getRateToBill() : BigDecimal.ZERO);
 				totalRate.add(rateToBill);
 				if(totalRate.intValue() > 100) {
 					throw new BusinessApiException("Down payment of invoicing plan can not be more than 100, current down payment is : " + totalRate.intValue());
-				}
+				}*/
 			}
 			if(postData.getAdvancement() != null && postData.getAdvancement() > 100) {
 				throw new BusinessApiException("Advancement of invoicing plan can not be more than 100");
 			}
-			if(postData.getRateToBill() != null && postData.getRateToBill().intValue() > 100) {
+			/*if(postData.getRateToBill() != null && postData.getRateToBill().intValue() > 100) {
 				throw new BusinessApiException("Down payment of invoicing plan can not be more than 100");
-			}
+			}*/
 		}
 		invoicingPlanItem.setCode(
 				StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());

@@ -2,15 +2,13 @@ package org.meveo.api.dto.cpq.xml;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
-import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.model.quote.QuoteProduct;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -22,16 +20,18 @@ public class Product {
 	private BigDecimal quantity;  
 	private List<Attribute> attributes;
 	private CustomFieldsDto customFields;
+	private List<PriceDTO> prices;
 	
 	
 	
-	public  Product(QuoteProduct quoteProduct , CustomFieldsDto customFields) {
+	public  Product(QuoteProduct quoteProduct , CustomFieldsDto customFields, List<PriceDTO> prices) {
 		super();
 		if(quoteProduct.getProductVersion().getProduct().getProductLine() != null) {
 			this.productLine = quoteProduct.getProductVersion().getProduct().getProductLine().getCode();
 		}
 	    this.quantity = quoteProduct.getQuantity();
 		this.customFields = customFields;
+		this.prices = prices;
 	}
 	/**
 	 * @return the productLine
@@ -67,6 +67,18 @@ public class Product {
 	}
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+	/**
+	 * @return the prices
+	 */
+	public List<PriceDTO> getPrices() {
+		return prices;
+	}
+	/**
+	 * @param prices the prices to set
+	 */
+	public void setPrices(List<PriceDTO> prices) {
+		this.prices = prices;
 	}
 	
 	

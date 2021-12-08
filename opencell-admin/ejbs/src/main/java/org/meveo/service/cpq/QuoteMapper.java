@@ -60,7 +60,7 @@ public class QuoteMapper {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        org.meveo.model.cpq.contract.Contract contract = quote.getContract();
+        org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
         Contract ctr=null;
         if(contract!=null) {
          ctr = new Contract(contract,entityToDtoConverter.getCustomFieldsDTO(contract));
@@ -179,7 +179,13 @@ public class QuoteMapper {
     
     
     private org.meveo.api.dto.cpq.xml.Product mapToProduct(QuoteProduct quoteProduct) {
-    	org.meveo.api.dto.cpq.xml.Product quoteProductDto = new  org.meveo.api.dto.cpq.xml.Product(quoteProduct,entityToDtoConverter.getCustomFieldsDTO(quoteProduct));
+
+        List<QuotePrice> price = quoteProduct.getQuoteArticleLines().stream()
+                .map(line -> line.getQuotePrices().stream())
+                .flatMap(identity())
+                .collect(toList());
+        
+    	org.meveo.api.dto.cpq.xml.Product quoteProductDto = new  org.meveo.api.dto.cpq.xml.Product(quoteProduct,entityToDtoConverter.getCustomFieldsDTO(quoteProduct), aggregatePricesPerType(price));
 
     	quoteProductDto.setAttributes(quoteProduct.getQuoteAttributes().stream()
     			.map(product ->  mapToAttribute(product))
@@ -218,8 +224,8 @@ public class QuoteMapper {
             quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
-            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-            quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax());
+            quotePrice.setTaxRate(a.getTaxRate());
             return quotePrice;
         });
     }

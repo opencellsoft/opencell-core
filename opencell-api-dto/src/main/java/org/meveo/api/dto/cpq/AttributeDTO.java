@@ -35,6 +35,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -98,30 +99,30 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
     @Schema(description = "list of charge template code", example = "chargeTemplateCodes : [CODE_1, CODE_2,..]")
-    private List<String> chargeTemplateCodes = new ArrayList<String>();
+    private List<String> chargeTemplateCodes = new ArrayList<>();
  
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
     @Schema(description = "list of commercial rule code", example = "commercialRuleCodes : [CODE_1, CODE_2,..]")
-    protected List<String> commercialRuleCodes=new ArrayList<String>();
+    protected List<String> commercialRuleCodes=new ArrayList<>();
      
     /** The media codes. */
     @XmlElementWrapper(name = "mediaCodes")
     @XmlElement(name = "mediaCodes")
     @Schema(description = "list of media code", example = "mediaCodes : [CODE_1, CODE_2,..]")
-    protected Set<String> mediaCodes = new HashSet<String>();
+    protected Set<String> mediaCodes = new HashSet<>();
     
     
     /** The tags */
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     @Schema(description = "list of tag code", example = "tags : [CODE_1, CODE_2,..]")
-    protected List<String> tagCodes=new ArrayList<String>();
+    protected List<String> tagCodes=new ArrayList<>();
     
     @XmlElementWrapper(name = "assignedAttributeCodes")
     @XmlElement(name = "assignedAttributeCodes")
     @Schema(description = "list of assigned attribute code", example = "assignedAttributeCodes : [CODE_1, CODE_2,..]")
-    private List<String> assignedAttributeCodes=new ArrayList<String>();
+    private List<String> assignedAttributeCodes=new ArrayList<>();
 
     @Schema(description = "number of decimal for attribute if the type of attribute is a NUMBER")
     private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
@@ -139,6 +140,15 @@ public class AttributeDTO extends EnableBusinessDto {
 	@XmlElementWrapper(name = "groupedAttributes")
 	@XmlElement(name ="groupedAttributes")
 	private List<GroupedAttributeDto> groupedAttributes;
+
+	@Schema(description = "Validation type", example = "Possible value are: EL, REGEX")
+	protected AttributeValidationType validationType;
+
+	@Schema(description = "Validation pattern")
+	protected String validationPattern;
+
+	@Schema(description = "Validation label")
+	protected String validationLabel;
     
     public AttributeDTO() {
     }
@@ -172,8 +182,14 @@ public class AttributeDTO extends EnableBusinessDto {
 					.map(ga -> new GroupedAttributeDto(ga))
 					.collect(Collectors.toList());
 		}
-        
-        
+		if(attribute.getTags() != null){
+			this.tagCodes = attribute.getTags().stream()
+								.map(tag -> tag.getCode())
+								.collect(Collectors.toList());
+		}
+		validationType = attribute.getValidationType();
+		validationLabel = attribute.getValidationLabel();
+		validationPattern = attribute.getValidationPattern();
     }
     
     public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {
@@ -488,5 +504,29 @@ public class AttributeDTO extends EnableBusinessDto {
 
 	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
+	}
+
+	public AttributeValidationType getValidationType() {
+		return validationType;
+	}
+
+	public void setValidationType(AttributeValidationType validationType) {
+		this.validationType = validationType;
+	}
+
+	public String getValidationPattern() {
+		return validationPattern;
+	}
+
+	public void setValidationPattern(String validationPattern) {
+		this.validationPattern = validationPattern;
+	}
+
+	public String getValidationLabel() {
+		return validationLabel;
+	}
+
+	public void setValidationLabel(String validationLabel) {
+		this.validationLabel = validationLabel;
 	}
 }

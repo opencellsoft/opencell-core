@@ -38,7 +38,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id"),
-		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffer qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId"),
+		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffer qqo left join q.productVersion pv where qq.id=:quoteVersionId and qqo.code=:quoteOfferCode and pv.product.code=:productCode"),
 		@NamedQuery(name = "QuoteProduct.findQuoteAttribute", query = "select qp from QuoteProduct qp left join qp.quoteVersion qv left join qp.quoteOffer qf left join qp.productVersion pv "
 				+ " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode and pv.product.code=:productCode ")
 
@@ -84,7 +84,7 @@ public class QuoteProduct extends AuditableCFEntity {
 
     @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    private List<QuoteArticleLine> quoteArticleLines;
+    private List<QuoteArticleLine> quoteArticleLines = new ArrayList<QuoteArticleLine>();
     
 	/**
 	 * discountPlan attached to this quoteProduct
@@ -105,6 +105,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.discountPlan=copy.getDiscountPlan();
 		this.quoteOffer = copy.quoteOffer;
 		this.quoteAttributes = copy.quoteAttributes;
+		this.cfValues = copy.getCfValues();
 	}
 	
 	public void update(QuoteProduct other) {
@@ -116,6 +117,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.discountPlan=other.getDiscountPlan();
 		this.quoteOffer = other.quoteOffer;
 		this.quoteAttributes = other.quoteAttributes;
+		this.cfValues = other.getCfValues();
     }
 
 	public DiscountPlan getDiscountPlan() {

@@ -7,7 +7,24 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,14 +34,23 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
  * @author Tarik F.
@@ -65,7 +91,11 @@ import org.meveo.model.cpq.ProductVersion;
 		@NamedQuery(name = "InvoiceLine.sumPositiveILByBillingRun", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id FROM InvoiceLine il where il.billingRun.id=:billingRunId and il.amountWithoutTax > 0 and il.status='BILLED' group by il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
 		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null, il.accountingArticle=null where il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED and il.invoice.id IN (:invoiceIds)"),
 		@NamedQuery(name = "InvoiceLine.deleteSupplementalILByInvoiceIds", query = "DELETE from InvoiceLine il WHERE il.invoice.id IN (:invoicesIds)"),
-		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate ")
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByQuote", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND il.quote.id=:quoteId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuote", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name="InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote")
+		
 		
 
 })
@@ -204,6 +234,19 @@ public class InvoiceLine extends AuditableEntity {
 
 	@OneToMany(mappedBy = "invoiceLine", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions;
+	
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "cpq_quote_id")
+    private CpqQuote quote;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_offer_id")
+	private QuoteOffer quoteOffer;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_offer_id")
+	private OrderOffer orderOffer;
 
 	public InvoiceLine() {
 	}
@@ -505,4 +548,34 @@ public class InvoiceLine extends AuditableEntity {
 	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
 		this.ratedTransactions = ratedTransactions;
 	}
+
+	public CpqQuote getQuote() {
+		return quote;
+	}
+
+	public void setQuote(CpqQuote quote) {
+		this.quote = quote;
+	}
+
+	public QuoteOffer getQuoteOffer() {
+		return quoteOffer;
+	}
+
+	public void setQuoteOffer(QuoteOffer quoteOffer) {
+		this.quoteOffer = quoteOffer;
+	}
+
+	public OrderOffer getOrderOffer() {
+		return orderOffer;
+	}
+
+	public void setOrderOffer(OrderOffer orderOffer) {
+		this.orderOffer = orderOffer;
+	}
+	
+	
+	
+	
+	
+	
 }

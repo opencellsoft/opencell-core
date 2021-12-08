@@ -468,7 +468,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 prorateFirstPeriodFromDate = period.getFrom();
                 if (period.getFrom().before(applyChargeFromDate)) {
 
-                    boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() != null && recurringChargeTemplate.getSubscriptionProrata();
+                    boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() != null && recurringChargeTemplate.getSubscriptionProrata() && !isVirtual;
                     if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
                         prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate,
                             chargeInstance);
@@ -577,7 +577,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", isApplyInAdvance ? "start of period" : "end of period",
                                 chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate, inputQuantity);
 
-                    if (recurringChargeTemplate.isProrataOnPriceChange()) {
+                    if (!isVirtual && recurringChargeTemplate.isProrataOnPriceChange()) {
                         walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectiveChargeFromDate, effectiveChargeToDate,
                             prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, inputQuantity, orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(),
                             isApplyInAdvance, isVirtual));

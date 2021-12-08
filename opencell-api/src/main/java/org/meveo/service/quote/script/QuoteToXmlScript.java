@@ -72,7 +72,6 @@ public class QuoteToXmlScript extends ModuleScript {
             throw new BusinessException("No quote version is found");
         }
         byte[] xmlContent = null;
-        CpqQuote cpqQuote = quoteVersion.getQuote();
 
         String quoteXml = null;
         try {
@@ -88,8 +87,8 @@ public class QuoteToXmlScript extends ModuleScript {
             quoteXmlDir.mkdirs();
         }
         xmlContent = quoteXml.getBytes();
-        String fileName = cpqQuoteService.generateFileName(cpqQuote);
-        cpqQuote.setXmlFilename(fileName);
+        String fileName = cpqQuoteService.generateFileName(quoteVersion);
+        quoteVersion.setXmlFilename(fileName);
         String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
         try {
             Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
@@ -110,7 +109,7 @@ public class QuoteToXmlScript extends ModuleScript {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        org.meveo.model.cpq.contract.Contract contract = quote.getContract();
+        org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
         Contract ctr=null;
         if(contract!=null) {
          ctr = new Contract(contract,entityToDtoConverter.getCustomFieldsDTO(contract));
@@ -233,7 +232,13 @@ public class QuoteToXmlScript extends ModuleScript {
     
     
     private org.meveo.api.dto.cpq.xml.Product mapToProduct(QuoteProduct quoteProduct) {
-    	org.meveo.api.dto.cpq.xml.Product quoteProductDto = new  org.meveo.api.dto.cpq.xml.Product(quoteProduct,entityToDtoConverter.getCustomFieldsDTO(quoteProduct));
+
+        List<QuotePrice> prices = quoteProduct.getQuoteArticleLines().stream()
+                .map(line -> line.getQuotePrices().stream())
+                .flatMap(identity())
+                .collect(toList());
+        
+    	org.meveo.api.dto.cpq.xml.Product quoteProductDto = new  org.meveo.api.dto.cpq.xml.Product(quoteProduct,entityToDtoConverter.getCustomFieldsDTO(quoteProduct), aggregatePricesPerType(prices));
 
     	quoteProductDto.setAttributes(quoteProduct.getQuoteAttributes().stream()
     			.map(product ->  mapToAttribute(product))
@@ -272,8 +277,8 @@ public class QuoteToXmlScript extends ModuleScript {
             quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
-            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-            quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax());
+            quotePrice.setTaxRate(a.getTaxRate());
             return quotePrice;
         });
     }

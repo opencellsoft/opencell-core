@@ -53,17 +53,21 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
@@ -84,6 +88,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private MinAmountService minAmountService;
+    
+    @Inject
+    private CpqQuoteService cpqQuoteService;
+    
+    @Inject
+    private CommercialOrderService commercialOrderService;
+    
+    
+    public List<InvoiceLine> findByQuote(CpqQuote quote) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
+                .setParameter("quote", quote)
+                .getResultList();
+    }
 
     public List<InvoiceLine> findByCommercialOrder(CommercialOrder commercialOrder) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByCommercialOrder", InvoiceLine.class)
@@ -157,6 +174,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .setHint("org.hibernate.readOnly", true)
                     .setMaxResults(pageSize)
                     .getResultList();
+        }else if (entityToInvoice instanceof CpqQuote) {
+            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByQuote", InvoiceLine.class)
+                    .setParameter("quoteId", entityToInvoice.getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(pageSize)
+                    .getResultList();
         }
         return emptyList();
     }
@@ -171,24 +196,38 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-    
-
-    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        InvoiceLine invoiceLine = new InvoiceLine();
+    public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+        
+    	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
-        invoiceLine.setLabel(accountingArticle.getDescription());
+        invoiceLine.setLabel(accountingArticle.getDescription()); 
         invoiceLine.setProduct(productVersion.getProduct());
         invoiceLine.setProductVersion(productVersion);
-        invoiceLine.setCommercialOrder(commercialOrder);
         invoiceLine.setOrderLot(orderLot);
+        invoiceLine.setOfferTemplate(offerTemplate);
+        invoiceLine.setOrderOffer(orderOffer);
+        invoiceLine.setQuoteOffer(orderOffer.getQuoteOffer());
+        if (entityToInvoice instanceof CpqQuote) {
+        entityToInvoice = cpqQuoteService.retrieveIfNotManaged((CpqQuote) entityToInvoice);
+        CpqQuote quote =((CpqQuote) entityToInvoice);
+        invoiceLine.setQuote(quote);
+        invoiceLine.setBillingAccount(quote.getBillableAccount());
+        }
+        CommercialOrder commercialOrder=null;
+        if (entityToInvoice instanceof CommercialOrder) {
+        	entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
+        	commercialOrder = ((CommercialOrder) entityToInvoice);
+        	invoiceLine.setCommercialOrder(commercialOrder);
+        	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
+        	invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
+        }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
         invoiceLine.setTaxRate(totalTaxRate);
-        invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
-        invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
+      
         invoiceLine.setValueDate(new Date());
         if(accountingArticle!=null && commercialOrder!=null) {
          TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), commercialOrder.getSeller(), commercialOrder.getBillingAccount(),commercialOrder.getUserAccount() , commercialOrder.getOrderDate(), false, false);
@@ -199,45 +238,58 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public void calculateAmountsAndCreateMinAmountLines(IBillableEntity billableEntity, Date lastTransactionDate,
-                                                        boolean calculateAndUpdateTotalAmounts, MinAmountForAccounts minAmountForAccounts) throws BusinessException {
-        Amounts totalInvoiceableAmounts;
-        List<InvoiceLine> minAmountLines = new ArrayList<>();
-        List<ExtraMinAmount> extraMinAmounts = new ArrayList<>();
-        Date minRatingDate = addDaysToDate(lastTransactionDate, -1);
+    		boolean calculateAndUpdateTotalAmounts, MinAmountForAccounts minAmountForAccounts) throws BusinessException {
+    	Amounts totalInvoiceableAmounts;
+    	List<InvoiceLine> minAmountLines = new ArrayList<>();
+    	List<ExtraMinAmount> extraMinAmounts = new ArrayList<>();
+    	Date minRatingDate = addDaysToDate(lastTransactionDate, -1);
 
-        if (billableEntity instanceof Order) {
-            if (calculateAndUpdateTotalAmounts) {
-                totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
-            }
-        } else {
-            BillingAccount billingAccount =
-                    (billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
-            Class[] accountClasses = new Class[] { ServiceInstance.class, Subscription.class,
-                    UserAccount.class, BillingAccount.class, CustomerAccount.class, Customer.class };
-            for (Class accountClass : accountClasses) {
-                if (minAmountForAccounts.isMinAmountForAccountsActivated(accountClass, billableEntity)) {
-                    MinAmountsResult minAmountsResults = createMinILForAccount(billableEntity, billingAccount,
-                            lastTransactionDate, minRatingDate, extraMinAmounts, accountClass);
-                    extraMinAmounts = minAmountsResults.getExtraMinAmounts();
-                    minAmountLines.addAll(minAmountsResults.getMinAmountInvoiceLines());
-                }
-            }
-            totalInvoiceableAmounts =
-                    minAmountService.computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate, INVOICING_PROCESS_TYPE);
-            final Amounts totalAmounts = new Amounts();
-            extraMinAmounts.forEach(extraMinAmount -> {
-                extraMinAmount.getCreatedAmount().values().forEach(amounts -> {
-                    totalAmounts.addAmounts(amounts);
-                });
-            });
-            totalInvoiceableAmounts.addAmounts(totalAmounts);
-        }
+    	if (billableEntity instanceof Order) {
+    		if (calculateAndUpdateTotalAmounts) {
+    			totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
+    		}
+    	}else  if (billableEntity instanceof CpqQuote) {
+    		if (calculateAndUpdateTotalAmounts) {
+    			totalInvoiceableAmounts = computeTotalQuoteAmount((CpqQuote) billableEntity, new Date(0), lastTransactionDate);
+    		}
+    	}else {
+    		BillingAccount billingAccount =
+    				(billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
+    		Class[] accountClasses = new Class[] { ServiceInstance.class, Subscription.class,
+    				UserAccount.class, BillingAccount.class, CustomerAccount.class, Customer.class };
+    		for (Class accountClass : accountClasses) {
+    			if (minAmountForAccounts.isMinAmountForAccountsActivated(accountClass, billableEntity)) {
+    				MinAmountsResult minAmountsResults = createMinILForAccount(billableEntity, billingAccount,
+    						lastTransactionDate, minRatingDate, extraMinAmounts, accountClass);
+    				extraMinAmounts = minAmountsResults.getExtraMinAmounts();
+    				minAmountLines.addAll(minAmountsResults.getMinAmountInvoiceLines());
+    			}
+    		}
+    		totalInvoiceableAmounts =
+    				minAmountService.computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate, INVOICING_PROCESS_TYPE);
+    		final Amounts totalAmounts = new Amounts();
+    		extraMinAmounts.forEach(extraMinAmount -> {
+    			extraMinAmount.getCreatedAmount().values().forEach(amounts -> {
+    				totalAmounts.addAmounts(amounts);
+    			});
+    		});
+    		totalInvoiceableAmounts.addAmounts(totalAmounts);
+    	}
     }
 
     private Amounts computeTotalOrderInvoiceAmount(Order order, Date firstTransactionDate, Date lastTransactionDate) {
         String queryString = "InvoiceLine.sumTotalInvoiceableByOrderNumber";
         Query query = getEntityManager().createNamedQuery(queryString)
                 .setParameter("orderNumber", order.getOrderNumber())
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
+        return (Amounts) query.getSingleResult();
+    }
+    
+    private Amounts computeTotalQuoteAmount(CpqQuote quote, Date firstTransactionDate, Date lastTransactionDate) {
+        String queryString = "InvoiceLine.sumTotalInvoiceableByQuote";
+        Query query = getEntityManager().createNamedQuery(queryString)
+                .setParameter("quoteId", quote.getId())
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate);
         return (Amounts) query.getSingleResult();

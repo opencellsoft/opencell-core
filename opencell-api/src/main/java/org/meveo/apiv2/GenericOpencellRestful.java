@@ -1,6 +1,21 @@
 package org.meveo.apiv2;
 
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,23 +33,22 @@ import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
 import org.meveo.apiv2.generic.VersionImpl;
 import org.meveo.apiv2.generic.core.GenericHelper;
-import org.meveo.apiv2.generic.exception.*;
+import org.meveo.apiv2.generic.exception.BadRequestExceptionMapper;
+import org.meveo.apiv2.generic.exception.BusinessExceptionMapper;
+import org.meveo.apiv2.generic.exception.EJBTransactionRolledbackExceptionMapper;
+import org.meveo.apiv2.generic.exception.IllegalArgumentExceptionMapper;
+import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
+import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
+import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
+import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 
 @ApplicationPath("/api/rest/v2")
 public class GenericOpencellRestful extends Application {
@@ -71,8 +85,9 @@ public class GenericOpencellRestful extends Application {
 				GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
-				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, ValidationExceptionMapper.class,
-				BusinessExceptionMapper.class, InvoicingResourceImpl.class).collect(Collectors.toSet());
+				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, BusinessExceptionMapper.class,
+                InvoicingResourceImpl.class, QuoteOfferResourceImpl.class, FileUploadResourceImpl.class)
+                .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
 			log.info(

@@ -9141,4 +9141,184 @@ public class OrderAdvancement extends ModuleScript {
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
     
+    <changeSet id="#INTRD-1441_20210728" author="TarikFA.">
+    	<createTable tableName="cpq_quote_media">
+    		<column name="quote_id" type="bigint" />
+    		<column name="media_id" type="bigint" />
+    	</createTable>
+    	
+    	<addPrimaryKey columnNames="quote_id, media_id" tableName="cpq_quote_media"/>
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_quote_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_quote"/>  
+        <addForeignKeyConstraint baseColumnNames="media_id" baseTableName="cpq_quote_media"
+                                 constraintName="fk_cpq_quote_media_media_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cpq_media"/>  
+    	
+    </changeSet>
+    
+    
+    <changeSet id="INTRD-1221_20210803" author="TarikFA.">
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_SUBSCRIPTION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'SUBSCRIPTION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_TERMINATION" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'TERMINATION')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  in (select id from cat_charge_template where type = 'OTHER')</where>
+    	</update>
+    	
+    	<update tableName="cpq_quote_price">
+    		<column name="price_type" value="ONE_SHOT_OTHER" />
+    		<where>charge_template_id  is null</where>
+    	</update>
+    </changeSet>
+    <changeSet id="INTRD-1310_050821" author="Mbarek-Ay">
+     <addColumn tableName="billing_subscription">
+            <column name="order_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_order_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
+
+    <changeSet id="#INTRD-1396_20210812" author="ZBariki">
+        <addColumn tableName="cpq_attribute">
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
+    
+     <changeSet author="TarikFA." id="INTRD_1687_20210906">
+          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-1386_05092021" author="Mbarek-Ay">
+	
+	 <preConditions onFail="MARK_RAN">
+     <foreignKeyConstraintExists foreignKeyName="fk__ord_quote__cat_discount_plan"/>
+     <foreignKeyConstraintExists foreignKeyName="fk_cpq_quote_contract_id"/>
+     <tableExists tableName="cpq_quote_media"/>
+      </preConditions>
+      
+	<addColumn tableName="cpq_quote_version">
+	<column name="discount_plan_id" type="bigint"/>
+	<column name="xml_filename" type="varchar(255)" />
+	<column name="pdf_filename" type="varchar(255)" />
+	<column name="contract_id" type="bigint"/>
+	</addColumn>
+	
+	<createTable tableName="cpq_quote_version_media">
+	<column name="cpq_quote_version_id" type="bigint" />
+	<column name="cpq_media_id" type="bigint" />
+	</createTable>
+	
+	<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_discount_plan" deferrable="false" initiallyDeferred="false"
+	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+	
+	<addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_contract_id" deferrable="false" initiallyDeferred="false"
+	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+	
+	
+	<addPrimaryKey columnNames="cpq_quote_version_id, cpq_media_id" tableName="cpq_quote_version_media"/>
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_version_media"
+	                                 constraintName="fk_cpq_quote_version_media_id" deferrable="false"
+	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+	                                 referencedColumnNames="id" referencedTableName="cpq_quote_version"/>  
+	        <addForeignKeyConstraint baseColumnNames="cpq_media_id" baseTableName="cpq_quote_version_media"
+	                                 constraintName="fk_cpq_media_quote_version_id" deferrable="false"
+	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+	                                 referencedColumnNames="id" referencedTableName="cpq_media"/>
+	                                 
+	<sql>update ${db.schema.adapted}cpq_quote_version  set discount_plan_id=q.discount_plan_id from cpq_quote q where  cpq_quote_version.cpq_quote_id=q.id  and q.discount_plan_id is not null</sql> 
+	
+	<sql>update ${db.schema.adapted}cpq_quote_version  set xml_filename=q.xml_filename from cpq_quote q where  cpq_quote_version.cpq_quote_id=q.id  and q.xml_filename is not null</sql>
+	
+	<sql>update ${db.schema.adapted}cpq_quote_version  set pdf_filename=q.pdf_filename from cpq_quote q where  cpq_quote_version.cpq_quote_id=q.id  and q.pdf_filename is not null</sql>
+	
+	<sql>update ${db.schema.adapted}cpq_quote_version  set contract_id=q.contract_id from cpq_quote q where  cpq_quote_version.cpq_quote_id=q.id  and q.contract_id is not null</sql>
+	
+	<sql>INSERT INTO  ${db.schema.adapted}cpq_quote_version_media(cpq_quote_version_id, cpq_media_id) SELECT quote_id, media_id FROM cpq_quote_media </sql> 
+	
+	
+      
+	 <dropColumn tableName="cpq_quote">
+     <column name="discount_plan_id"></column>
+     <column name="xml_filename"></column>
+     <column name="pdf_filename"></column>
+     <column name="contract_id"></column>
+     </dropColumn>  
+     
+     <dropForeignKeyConstraint baseTableName="cpq_quote" constraintName="fk__ord_quote__cat_discount_plan"/> 
+     <dropForeignKeyConstraint baseTableName="cpq_quote" constraintName="fk_cpq_quote_contract_id"/>  
+     <dropTable tableName="cpq_quote_media"/>
+	
+   </changeSet>
+   
+   <changeSet id="INTRD_1985_20210923" author="TarikFA.">
+   		<addColumn tableName="quote_offer">
+			<column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+   		</addColumn>
+   		<addUniqueConstraint columnNames="code, quote_version_id" tableName="quote_offer"/>
+   		
+   		<addColumn tableName="cpq_order_offer">
+			<column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+   		</addColumn>
+   		<addUniqueConstraint columnNames="code, order_id" tableName="cpq_order_offer"/>
+   </changeSet>
+   
+      <changeSet id="INTRD-2046_20210927" author="Mbarek-Ay">
+     <addColumn tableName="cpq_invoice_line">
+            <column name="cpq_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    
+    <changeSet id="INTRD-2252_20211006" author="TarikFA.">
+    	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
+    </changeSet>
+    
+     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
+     <addColumn tableName="billing_invoice">
+            <column name="cpq_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+
+    <changeSet id="INTRD-2498_20211019" author="Mbarek-Ay">
+     <addColumn tableName="cpq_invoice_line">
+            <column name="quote_offer_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+
+       <addColumn tableName="cpq_invoice_line">
+         <column name="order_offer_id" type="bigint" />
+     </addColumn>
+     <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+    </changeSet>
+
+    <changeSet id="INTRD-2535_20211021" author="NabilOuachi">
+        <addColumn tableName="cpq_commercial_rule_header">
+            <column name="scope_type" type="varchar(25)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

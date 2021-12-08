@@ -30,6 +30,7 @@ import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
+import org.meveo.model.cpq.enums.ScopeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -43,7 +44,7 @@ import org.meveo.model.cpq.tags.Tag;
  @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq")})
 @NamedQueries({ 
 	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct is null and c.targetOfferTemplate.code=:offerTemplateCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetOfferTemplate.code=:offerTemplateCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getProductAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
@@ -67,6 +68,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 		this.disabled = copy.disabled;
 		this.code = copy.code;
 		this.description = copy.description;
+		this.scopeType = copy.scopeType;
 	}
 	
 	public CommercialRuleHeader() {
@@ -158,6 +160,11 @@ public class CommercialRuleHeader extends BusinessEntity {
     @Column(name = "disabled", nullable = false)
     @NotNull
     protected boolean disabled;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "scope_type")
+	private ScopeTypeEnum scopeType;
+
 
 	/**
 	 * @return the ruleType
@@ -313,13 +320,13 @@ public class CommercialRuleHeader extends BusinessEntity {
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
 	}
-	
-	
 
- 
-	
-	
-	
-	
 
+	public ScopeTypeEnum getScopeType() {
+		return scopeType;
+	}
+
+	public void setScopeType(ScopeTypeEnum scopeType) {
+		this.scopeType = scopeType;
+	}
 }

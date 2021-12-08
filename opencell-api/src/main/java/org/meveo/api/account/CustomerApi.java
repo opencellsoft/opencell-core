@@ -44,6 +44,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.api.sequence.GenericSequenceApi;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -56,6 +57,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -186,6 +188,7 @@ public class CustomerApi extends AccountEntityApi {
         return customer;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "code", entityClass = Customer.class, parser = ObjectPropertyParser.class))
     public Customer update(CustomerDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
@@ -697,6 +700,7 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "code", entityClass = Customer.class, parser = ObjectPropertyParser.class))
     public Customer createOrUpdate(CustomerDto postData) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             return update(postData);

@@ -123,7 +123,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 * Credit category
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "credit_category_id", nullable = false)
+	@JoinColumn(name = "credit_category_id")
 	private CreditCategory creditCategory;
 
 	// TODO : Add orphanRemoval annotation.
