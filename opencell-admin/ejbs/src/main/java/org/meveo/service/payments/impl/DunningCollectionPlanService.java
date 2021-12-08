@@ -53,18 +53,24 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     @Inject
     private DunningCollectionPlanStatusService dunningCollectionPlanStatusService;
-    
+
     @Inject
     private DunningCollectionPlanService dunningCollectionPlanService;
 
     @Inject
     private InvoiceService invoiceService;
-    
+
     @Inject
     private AuditLogService auditLogService;
 
+    @Inject
+    private DunningPolicyService policyService;
+
+    private static final String STOP_REASON = "Changement de politique de recouvrement";
+
     public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
-        DunningStopReason stopReason = dunningStopReasonsService.findByStopReason("Changement de politique de recouvrement");
+        DunningStopReason stopReason = dunningStopReasonsService.findByStopReason(STOP_REASON);
+        policy = policyService.refreshOrRetrieve(policy);
         oldCollectionPlan.setStopReason(stopReason);
         oldCollectionPlan.setCloseDate(new Date());
 
@@ -189,14 +195,13 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         for (DunningAction action : policyLevel.getDunningLevel().getDunningActions()) {
             DunningActionInstance actionInstance = new DunningActionInstance();
             actionInstance.setDunningAction(action);
-            actionInstance.setCode(action.getCode());
             actionInstance.setActionType(action.getActionType());
             actionInstance.setActionMode(action.getActionMode());
             actionInstance.setActionOwner(action.getAssignedTo());
             actionInstance.setActionStatus(DunningActionInstanceStatusEnum.TO_BE_DONE);
             actionInstance.setCollectionPlan(collectionPlan);
             actionInstance.setDunningLevelInstance(levelInstance);
-            actionInstance.setCode(action.getCode());
+            actionInstance.setCode(action.getCode() + "_" + collectionPlan.getId());
             actionInstance.setDescription(action.getDescription());
             actionInstanceService.create(actionInstance);
             actionInstances.add(actionInstance);

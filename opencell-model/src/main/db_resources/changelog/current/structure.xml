@@ -11380,16 +11380,15 @@ order by date_trunc('month', i.invoice_date) DESC
 	</changeSet>
 	<changeSet id="#INTRD-1418_20211202" author="HHanine">
 	    <createTable tableName="crm_provider_payment_plan_policy_pay_methods">
-            <column name="provider_id" type="bigint" />
+            <column name="provider_id" type="BIGINT" />
             <column name="payment_method" type="varchar(255)" />
         </createTable>
-	   	<addColumn tableName="dunning_pause_reasons">
-			<column name="provider_id" type="BIGINT" />
-	    </addColumn>
+        <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_paym_plan_policy_pay_meth" tableName="crm_provider_payment_plan_policy_pay_methods" />
 	   	<addColumn tableName="ar_credit_category">
 			<column name="provider_id" type="BIGINT" />
 	    </addColumn>	    
-	    <addColumn tableName="crm_provider">
+	    <addColumn tableName="crm_provider">	    
+	   		<column name="dunning_default_pause_reason_id" type="BIGINT" />
 			<column name="min_allowed_receivable_amount" type="numeric(23, 12)" />
 			<column name="max_allowed_receivable_amount" type="numeric(23, 12)" />
 			<column name="min_installment_amount" type="numeric(23, 12)" />
@@ -11423,6 +11422,10 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="action_on_remaining_amount" type="varchar(255)" />
 			<column name="clearing_priority" type="varchar(255)" />
 	    </addColumn>
+		<addForeignKeyConstraint baseColumnNames="dunning_default_pause_reason_id" baseTableName="crm_provider" constraintName="fk_dunning_default_pause_reason_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />	
+	    <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_credit_category" constraintName="fk_acc_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 	</changeSet>
 
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza">
@@ -11543,6 +11546,16 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_account_operation">
+            <column name="payment_action" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="payment_deferral_count" type="int4">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
     </changeSet>
 	
 </databaseChangeLog>

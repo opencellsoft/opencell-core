@@ -67,6 +67,22 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         remove(ppmColumn);
     }
     
+    public void removePricePlanColumn(Long id) {
+        PricePlanMatrixColumn ppmColumn = findById(id);
+        if(ppmColumn == null)
+            return;
+        Set<Long> valuesId = ppmColumn.getPricePlanMatrixValues().stream().map(BaseEntity::getId).collect(Collectors.toSet());
+        if(!valuesId.isEmpty())
+            pricePlanMatrixValueService.remove(valuesId);
+        deleteById(ppmColumn.getId());
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void deleteById(Long id) {
+			this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.deleteById")
+																			.setParameter("id", id).executeUpdate();
+	}
+    
 
 	@SuppressWarnings("unchecked")
 	public List<PricePlanMatrixColumn> findByCodeAndPlanMaptrixVersion(String code, PricePlanMatrixVersion pricePlanMatrixVersion) {
