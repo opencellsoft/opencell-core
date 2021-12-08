@@ -26,8 +26,8 @@ import org.meveo.apiv2.dunning.ImmutableDunningLevelInstanceSuccessResponse;
 import org.meveo.apiv2.dunning.ImmutableMassOperationSuccessResponse;
 import org.meveo.apiv2.dunning.ImmutableMassSwitchResult;
 import org.meveo.apiv2.dunning.ImmutableSwitchCollectionSuccessResponse;
-import org.meveo.apiv2.dunning.MassStopDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassPauseDunningCollectionPlan;
+import org.meveo.apiv2.dunning.MassStopDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchDunningCollectionPlan;
 import org.meveo.apiv2.dunning.MassSwitchResult;
 import org.meveo.apiv2.dunning.RemoveActionInstanceInput;
@@ -46,6 +46,8 @@ import org.meveo.model.dunning.DunningPolicy;
 public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanResource {
 
     private final DunningCollectionPlanMapper collectionPlanMapper = new DunningCollectionPlanMapper();
+    private final DunningLevelInstanceMapper levelInstanceMapper = new DunningLevelInstanceMapper();
+    private final DunningActionInstanceMapper actionInstanceMapper = new DunningActionInstanceMapper();
 
     @Inject
     private DunningCollectionPlanApiService dunningCollectionPlanApiService;
@@ -58,7 +60,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
         DunningCollectionPlan newCollectionPlan = dunningCollectionPlanApiService.switchCollectionPlan(collectionPlanId, switchDunningCollectionPlan).get();
         return Response.ok(ImmutableSwitchCollectionSuccessResponse.builder()
             .status("SUCCESS")
-            .newCollectionPlan(newCollectionPlan)
+            .newCollectionPlan(collectionPlanMapper.toResource(newCollectionPlan))
             .build()).build();
     }
 
@@ -165,7 +167,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 	    DunningLevelInstance newDunningLevelInstance = dunningCollectionPlanApiService.addDunningLevelInstance(dunningLevelInstanceInput).get();
 	    return Response.ok(ImmutableDunningLevelInstanceSuccessResponse.builder()
             .status("SUCCESS")
-            .newDunningLevelInstance(newDunningLevelInstance)
+            .newDunningLevelInstance(levelInstanceMapper.toResource(newDunningLevelInstance))
             .build()).build();
 	}
 
@@ -174,7 +176,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
         DunningLevelInstance updatedDunningLevelInstance = dunningCollectionPlanApiService.updateDunningLevelInstance(updateLevelInstanceInput, levelInstanceId).get();
         return Response.ok(ImmutableDunningLevelInstanceSuccessResponse.builder()
             .status("SUCCESS")
-            .newDunningLevelInstance(updatedDunningLevelInstance)
+            .newDunningLevelInstance(levelInstanceMapper.toResource(updatedDunningLevelInstance))
             .build()).build();
     }
 
@@ -191,7 +193,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
 	    DunningActionInstance newDunningActionInstance = dunningCollectionPlanApiService.addDunningActionInstance(dunningActionInstanceInput).get();
 	    return Response.ok(ImmutableDunningActionInstanceSuccessResponse.builder()
             .status("SUCCESS")
-            .newDunningActionInstance(newDunningActionInstance)
+            .newDunningActionInstance(actionInstanceMapper.toResource(newDunningActionInstance))
             .build()).build();
 	}
 	
@@ -200,7 +202,7 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
         DunningActionInstance updatedDunningActionInstance = dunningCollectionPlanApiService.updateDunningActionInstance(dunningActionInstanceInput, actionInstanceId).get();
         return Response.ok(ImmutableDunningActionInstanceSuccessResponse.builder()
             .status("SUCCESS")
-            .newDunningActionInstance(updatedDunningActionInstance)
+            .newDunningActionInstance(actionInstanceMapper.toResource(updatedDunningActionInstance))
             .build()).build();
     }
 

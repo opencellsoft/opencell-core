@@ -6,10 +6,14 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningPolicy;
@@ -18,10 +22,6 @@ import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.ws.rs.NotFoundException;
-import java.util.Arrays;
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningCollectionPlanApiServiceTest {
@@ -62,13 +62,13 @@ public class DunningCollectionPlanApiServiceTest {
         assertEquals(1, availablePolicies.size());
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = EntityDoesNotExistsException.class)
     public void shouldThrowNotFoundIfCollectionPlanNotFound() {
         when(dunningCollectionPlanService.findById(anyLong())).thenReturn(null);
         collectionPlanApiService.availableDunningPolicies(1L);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = EntityDoesNotExistsException.class)
     public void shouldThrowNotFoundIfNoInvoiceFoundForCollectionPlan() {
         DunningCollectionPlan collectionPlan = new DunningCollectionPlan();
         collectionPlan.setId(1L);

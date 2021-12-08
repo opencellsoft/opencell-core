@@ -77,7 +77,7 @@ public interface DunningCollectionPlanResource {
             })
     Response availableDunningPolicies(@Parameter(description = "available dunning policies input", required = true)
                                               AvailablePoliciesInput availablePoliciesInput);
-    
+
     @POST
 	@Path("/pause/{id}")
 	@Operation(summary = "Pause Collection plan",
@@ -178,7 +178,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response updateDunningLevelInstance(@Parameter(required = true) UpdateLevelInstanceInput updateLevelInstanceInput, @PathParam("levelInstanceId") Long levelInstanceId);
-	
+
 	@POST
     @Path("/addDunningActionInstance")
     @Operation(summary = "Add DunningActionInstance",
@@ -191,7 +191,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response addDunningActionInstance(@Parameter(required = true) DunningActionInstanceInput dunningActionInstanceInput);
-	
+
 	@POST
     @Path("/removeDunningActionInstance")
     @Operation(summary = "Remove DunningActionInstance",
@@ -204,7 +204,7 @@ public interface DunningCollectionPlanResource {
                     description = "Entity does not exist")
     })
     Response removeDunningActionInstance(@Parameter(required = true) RemoveActionInstanceInput removeActionInstanceInput);
-	
+
 	@PUT
     @Path("/updateDunningActionInstance/{actionInstanceId}")
     @Operation(summary = "Update DunningActionInstance",

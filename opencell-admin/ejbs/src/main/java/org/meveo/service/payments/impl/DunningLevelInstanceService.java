@@ -19,13 +19,25 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
             return null;
         }
     }
-    
+
     public DunningLevelInstance findByCurrentLevelSequence(DunningCollectionPlan collectionPlan) {
         try {
             return getEntityManager()
                     .createNamedQuery("DunningLevelInstance.findByCurrentLevelSequence", entityClass)
                     .setParameter("collectionPlan", collectionPlan)
                     .setParameter("sequence", collectionPlan.getCurrentDunningLevelSequence())
+                    .getSingleResult();
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+    
+    public DunningLevelInstance findBySequence(DunningCollectionPlan collectionPlan, Integer sequence) {
+        try {
+            return getEntityManager()
+                    .createNamedQuery("DunningLevelInstance.findByCurrentLevelSequence", entityClass)
+                    .setParameter("collectionPlan", collectionPlan)
+                    .setParameter("sequence", sequence)
                     .getSingleResult();
         } catch (Exception exception) {
             return null;
@@ -41,5 +53,37 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
         } catch (Exception exception) {
             return null;
         }
+    }
+
+    public boolean checkDaysOverdueIsAlreadyExist(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+        return getEntityManager()
+                .createNamedQuery("DunningLevelInstance.checkDaysOverdueIsAlreadyExist", Long.class)
+                .setParameter("collectionPlan", collectionPlan)
+                .setParameter("daysOverdue", daysOverdue)
+                .getSingleResult() > 0;
+    }
+
+    public Long getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+        return getEntityManager()
+                .createNamedQuery("DunningLevelInstance.checkDaysOverdueIsAlreadyExist", Long.class)
+                .setParameter("collectionPlan", collectionPlan)
+                .setParameter("daysOverdue", daysOverdue)
+                .getSingleResult();
+    }
+
+    public void incrementSequecesGreaterThanDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+        getEntityManager()
+            .createNamedQuery("DunningLevelInstance.incrementSequecesByDaysOverdue")
+            .setParameter("collectionPlan", collectionPlan)
+            .setParameter("daysOverdue", daysOverdue)
+            .executeUpdate();
+    }
+
+    public void decrementSequecesGreaterThanDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+        getEntityManager()
+            .createNamedQuery("DunningLevelInstance.decrementSequecesByDaysOverdue")
+            .setParameter("collectionPlan", collectionPlan)
+            .setParameter("daysOverdue", daysOverdue)
+            .executeUpdate();
     }
 }
