@@ -1,19 +1,5 @@
 package org.meveo.api.cpq;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -24,6 +10,7 @@ import org.meveo.api.dto.cpq.OrderProductDto;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -40,44 +27,32 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.ProductVersionService;
-import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.cpq.order.InvoicingPlanService;
-import org.meveo.service.cpq.order.OrderAttributeService;
-import org.meveo.service.cpq.order.OrderLotService;
-import org.meveo.service.cpq.order.OrderOfferService;
-import org.meveo.service.cpq.order.OrderProductService;
-import org.meveo.service.cpq.order.OrderTypeService;
+import org.meveo.service.cpq.order.*;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -192,12 +167,12 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
 		order.setProgressDate(new Date());
 		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
-		if (orderDto.getDeliveryDate()!=null) {
-        	if(orderDto.getDeliveryDate().before(new Date())) {
-        		throw new MeveoApiException("Delivery date should be in the future");	
-        	}
-        	order.setDeliveryDate(orderDto.getDeliveryDate());
-        }
+		
+    	if(orderDto.getDeliveryDate()!=null && orderDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	order.setDeliveryDate(orderDto.getDeliveryDate());
+        
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
 		order.setExternalReference(orderDto.getExternalReference());
@@ -332,12 +307,12 @@ public class CommercialOrderApi extends BaseApi {
 			order.setProgressDate(orderDto.getProgressDate());
 		if(orderDto.getOrderDate() != null)
 			order.setOrderDate(orderDto.getOrderDate());
-		if (orderDto.getDeliveryDate()!=null) {
-        	if(orderDto.getDeliveryDate().before(new Date())) {
-        		throw new MeveoApiException("Delivery date should be in the future");	
-        	}
-        	order.setDeliveryDate(orderDto.getDeliveryDate());
-        }
+
+    	if(orderDto.getDeliveryDate() != null && orderDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	order.setDeliveryDate(orderDto.getDeliveryDate());
+        
 		if(orderDto.getCustomerServiceBegin() != null)
 			order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		
@@ -498,7 +473,7 @@ public class CommercialOrderApi extends BaseApi {
 
 	public CommercialOrderDto validateOrder(CommercialOrder order, boolean orderCompleted) {
 		ParamBean paramBean = ParamBean.getInstance();
-		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
+		String sellerCode = getSelectedSeller(order).getCode();
 		String orderScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
 		if (!StringUtils.isBlank(orderScriptCode)) {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(orderScriptCode);
@@ -524,6 +499,20 @@ public class CommercialOrderApi extends BaseApi {
 			throw new BusinessApiException(e.getMessage());
 		}
 	}
+	
+	private Seller getSelectedSeller(CommercialOrder order) {
+    	Seller seller = null;
+        if(order.getSeller()!=null) {
+        	seller = order.getSeller();
+        }
+        else if(order.getQuote()!=null) {
+        	if( order.getQuote().getSeller()!=null)
+        		seller = order.getQuote().getSeller();
+        }else {
+        	seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        return seller;
+    }
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
 		Set<String> orderLots = postData.getOrderLotCodes(); 
@@ -585,12 +574,12 @@ public class CommercialOrderApi extends BaseApi {
 		orderOffer.setOrder(commercialOrder);
 		orderOffer.setOfferTemplate(offerTemplate);
 		orderOffer.setDiscountPlan(discountPlan);
-		if (orderOfferDto.getDeliveryDate()!=null) {
-        	if(orderOfferDto.getDeliveryDate().before(new Date())) {
-        		throw new MeveoApiException("Delivery date should be in the future");	
-        	}
-        	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
-        }
+		
+    	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -642,13 +631,12 @@ public class CommercialOrderApi extends BaseApi {
 			}
 			orderOffer.setUserAccount(userAccount);
 		} 
-    	if (orderOfferDto.getDeliveryDate()!=null) {
-        	if(orderOfferDto.getDeliveryDate().before(new Date())) {
-        		throw new MeveoApiException("Delivery date should be in the future");	
-        	}
-        	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
-        } 
-    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate()); 
+    	
+    	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
     	orderOfferService.update(orderOffer); 
@@ -793,11 +781,9 @@ public class CommercialOrderApi extends BaseApi {
   
 	
     private OrderProduct getOrderProductFromDto(OrderProductDto orderProductDTO, OrderOffer orderOffer) { 
-    	 if (orderProductDTO.getOrderProductId()==null) {
-             missingParameters.add("orderProductId");
-         handleMissingParameters();
-         }
-            OrderProduct orderProduct = orderProductService.findById(orderProductDTO.getOrderProductId());  
+
+		OrderProduct orderProduct = orderProductDTO.getOrderProductId()!= null  ?
+					orderProductService.findById(orderProductDTO.getOrderProductId()) : null;
         if (orderProduct == null) {  
         	orderProduct= populateOrderProduct(orderProductDTO, orderOffer,orderProduct);
         	orderProductService.create(orderProduct);
@@ -849,12 +835,12 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity());
-		if (orderProductDto.getDeliveryDate()!=null) {
-        	if(orderProductDto.getDeliveryDate().before(new Date())) {
-        		throw new MeveoApiException("Delivery date should be in the future");	
-        	}
-        	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
-        }
+		
+    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date())) {
+    		throw new MeveoApiException("Delivery date should be in the future");	
+    	}
+    	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
+        
 		orderProduct.updateAudit(currentUser); 
 		return orderProduct;
     }

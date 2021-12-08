@@ -1,12 +1,11 @@
 package org.meveo.api.dto.cpq.xml;
 
+import org.meveo.api.dto.CustomFieldsDto;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-
-import org.meveo.api.dto.CustomFieldsDto;
-
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +18,7 @@ public class Quote {
     private String quoteNumber;
     private Date quoteDate;
     private CustomFieldsDto customFields;
+    private String defaultConsumer;
     
 
     public Quote(List<BillableAccount> billableAccounts, String quoteNumber, Date quoteDate, CustomFieldsDto customFields) {
@@ -26,6 +26,14 @@ public class Quote {
         this.quoteNumber = quoteNumber;
         this.quoteDate = quoteDate;
         this.customFields=customFields;
+    }
+
+    public Quote(List<BillableAccount> billableAccounts, String quoteNumber, Date quoteDate, CustomFieldsDto customFields, String defaultCustomer) {
+        this.billableAccounts = billableAccounts;
+        this.quoteNumber = quoteNumber;
+        this.quoteDate = quoteDate;
+        this.customFields = customFields;
+        this.defaultConsumer = defaultCustomer;
     }
 
     public List<BillableAccount> getBillableAccounts() {
@@ -59,6 +67,12 @@ public class Quote {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
-    
-    
+
+    public String getDefaultConsumer() {
+        return defaultConsumer;
+    }
+
+    public void setDefaultConsumer(String defaultConsumer) {
+        this.defaultConsumer = defaultConsumer;
+    }
 }

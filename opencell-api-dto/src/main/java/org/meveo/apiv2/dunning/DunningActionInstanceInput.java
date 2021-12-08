@@ -13,13 +13,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @Value.Immutable
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableDunningActionInstanceInput.class)
-public interface DunningActionInstanceInput {
+public interface DunningActionInstanceInput extends Resource {
 
     @Nullable
     ActionTypeEnum getActionType();
-
-    @Nullable
-    String getCode();
 
     @Nullable
     String getDescription();
@@ -30,15 +27,18 @@ public interface DunningActionInstanceInput {
     @Nullable
     Resource getActionOwner();
 
+    @Nullable
     Resource getDunningAction();
 
     @Nullable
     String getActionRestult();
 
-    default DunningActionInstanceStatusEnum getActionStatus() {
-        return DunningActionInstanceStatusEnum.TO_BE_DONE;
-    }
+    @Nullable
+    DunningActionInstanceStatusEnum getActionStatus();
 
     @Nullable
     Resource getCollectionPlan();
+
+    @Nullable
+    Resource getDunningLevelInstance();
 }

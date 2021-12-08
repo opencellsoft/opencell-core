@@ -103,7 +103,8 @@ import org.meveo.model.finance.AccountingEntry;
                 "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount")
+        @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao,MatchingAmount ma where :invoice MEMBER OF ao.invoices")
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
@@ -416,6 +417,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Enumerated(STRING)
     private AccountOperationRejectionReason reason;
 
+    @Column(name = "payment_action")
+    @Enumerated(STRING)
+    private PaymentActionEnum paymentAction;
+
+    @Column(name = "payment_deferral_count")
+    private Integer paymentDeferralCount;
     /**
      * Account export file
      */
@@ -966,5 +973,21 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     public void setAccountingDate(Date accountingDate) {
         this.accountingDate = accountingDate;
+    }
+
+    public PaymentActionEnum getPaymentAction() {
+        return paymentAction;
+    }
+
+    public void setPaymentAction(PaymentActionEnum paymentAction) {
+        this.paymentAction = paymentAction;
+    }
+
+    public Integer getPaymentDeferralCount() {
+        return paymentDeferralCount;
+    }
+
+    public void setPaymentDeferralCount(Integer paymentDeferralCount) {
+        this.paymentDeferralCount = paymentDeferralCount;
     }
 }

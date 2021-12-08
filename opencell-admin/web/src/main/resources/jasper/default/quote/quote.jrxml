@@ -265,8 +265,7 @@
 			<fieldDescription><![CDATA[recurrencePeriodicity]]></fieldDescription>
 		</field>
 		<field name="consumer" class="java.lang.String">
-			<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/@consumer"/>
-			<fieldDescription><![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/@consumer]]></fieldDescription>
+			<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/details/quote/defaultConsumer"/>
 		</field>
 	</subDataset>
 	<subDataset name="line_prices" uuid="f4a51d10-a40b-44a8-ab1f-124785a429d2">

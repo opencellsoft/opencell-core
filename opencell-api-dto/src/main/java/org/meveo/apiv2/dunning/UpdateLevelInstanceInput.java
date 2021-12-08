@@ -15,9 +15,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public interface UpdateLevelInstanceInput {
 
     @Nullable
-    Integer getSequence();
-
-    @Nullable
     Integer getDaysOverdue();
 
     @Nullable

@@ -1,31 +1,21 @@
 package org.meveo.apiv2.billing.resource;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-
-import org.meveo.api.dto.response.InvoicesDto;
-import org.meveo.apiv2.billing.*;
-import org.meveo.apiv2.models.ApiException;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.api.dto.response.InvoicesDto;
+import org.meveo.apiv2.billing.*;
+import org.meveo.apiv2.models.ApiException;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
 @Path("/billing/invoices")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -76,6 +66,17 @@ public interface InvoiceResource {
 			@Context Request request);
 
 	@GET
+	@Path("/{invoiceType}/{invoiceNumber}/matchedOperations")
+	@Operation(summary = "Get all operations matched to the given invoice", tags = {
+			"Invoices" }, description = "Get all operations matched to the given invoice", responses = { @ApiResponse(headers = {
+					@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back", schema = @Schema(type = "integer", format = "int64")) }, description = "the searched invoice", content = @Content(schema = @Schema(implementation = Invoice.class))),
+					@ApiResponse(responseCode = "404", description = "invoice not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
+	Response getInvoiceMatchedOperations(
+			@Parameter(description = "type of the Invoice", required = true) @PathParam("invoiceType") Long invoiceTypeId,
+			@Parameter(description = "invoice number", required = true) @PathParam("invoiceNumber") String invoiceNumber,
+			@Context Request request);
+
+	@GET
 	@Path("/{id}/pdf")
 	@Operation(summary = "Returns the invoice PDF", tags = {
 			"Invoices" }, description = "Returns the invoice pdf if exists. feberation may be forced using 'generateIfMissing' parameter", responses = {
@@ -85,6 +86,25 @@ public interface InvoiceResource {
 	Response fetchPdfInvoice(
 			@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id,
 			@QueryParam("generateIfMissing") Boolean generateIfMissing, @Context Request request);
+
+	@POST
+	@Path("/{id}/deletePdfFile")
+	@Operation(summary = "Delete existing invoice PDF file", tags = {
+			"Invoices" }, description = "Delete existing invoice  PDF from the invoice ",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "the PDF file successfully deleted"),
+					@ApiResponse(responseCode = "404", description = "The PDF file does not exist on the invoice") })
+	Response deleteInvoicePdf(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id);
+
+	@POST
+	@Path("/{id}/deleteXmlFile")
+	@Operation(summary = "Delete existing invoice XML file", tags = {
+			"Invoices" }, description = "Delete existing invoice  XML from the invoice ",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "the XML file successfully deleted"),
+					@ApiResponse(responseCode = "404", description = "The PDF file does not exist on the invoice") })
+
+	Response deleteInvoiceXml(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id);
 
 	@POST
 	@Path("/basicInvoices")

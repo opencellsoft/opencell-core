@@ -59,7 +59,6 @@ public class DunningPauseReason extends AuditableEntity {
 	@Size(max = 255)
 	private String description;
 
-	
 	/**
 	 * dunning settings associated to the entity
 	 */

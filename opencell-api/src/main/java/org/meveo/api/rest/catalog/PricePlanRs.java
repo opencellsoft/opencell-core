@@ -357,7 +357,7 @@ public interface PricePlanRs extends IBaseRs {
      * @return Request processing status
      */
     @DELETE
-    @Path("/pricePlanMatrixColumns/{pricePlanMatrixColumnCode}")
+    @Path("/{pricePlanMatrixCode}/pricePlanMatrixVersions/{pricePlanMatrixVersion}/pricePlanMatrixColumns/{pricePlanMatrixColumnCode}")
     @Operation(summary = "delete a price plan matrix column",
             tags = { "Price Plan" },
             description ="delete a price plan matrix column",
@@ -365,7 +365,9 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="200", description = "the price plan column successfully deleted"),
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
-    Response removePricePlanMatrixColumnCode(@Parameter(description = "The price plan matrix column code", required = true) @PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
+    Response removePricePlanMatrixColumnCode(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+            @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion,
+            @Parameter(description = "The price plan matrix column code", required = true) @PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
 
     @DELETE

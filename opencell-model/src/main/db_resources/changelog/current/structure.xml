@@ -11378,6 +11378,55 @@ order by date_trunc('month', i.invoice_date) DESC
 	        <column name="maximum_deferral_per_invoice" type="int4" />
 	    </addColumn>
 	</changeSet>
+	<changeSet id="#INTRD-1418_20211202" author="HHanine">
+	    <createTable tableName="crm_provider_payment_plan_policy_pay_methods">
+            <column name="provider_id" type="BIGINT" />
+            <column name="payment_method" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_paym_plan_policy_pay_meth" tableName="crm_provider_payment_plan_policy_pay_methods" />
+	   	<addColumn tableName="ar_credit_category">
+			<column name="provider_id" type="BIGINT" />
+	    </addColumn>	    
+	    <addColumn tableName="crm_provider">	    
+	   		<column name="dunning_default_pause_reason_id" type="BIGINT" />
+			<column name="min_allowed_receivable_amount" type="numeric(23, 12)" />
+			<column name="max_allowed_receivable_amount" type="numeric(23, 12)" />
+			<column name="min_installment_amount" type="numeric(23, 12)" />
+			<column name="theres_hold_for_approval" type="numeric(23, 12)" />
+			<column name="max_payment_plan_duration" type="int4" />
+			<column name="default_installment_count" type="int4" />
+			<column name="default_fee_per_installment_plan" type="int4" defaultValueNumeric="0" />
+			<column name="installment_amount_rounding" type="int4" defaultValueNumeric="2" />
+			<column name="split_evenly" type="${type.boolean}" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>	
+			<column name="allow_custom_installment_plan" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>	
+			<column name="add_interest_rate" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>	
+			<column name="add_installment_fee" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>	
+			<column name="default_block_payments" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>	
+			<column name="require_internal_approval" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>	
+			<column name="default_interest_rate" type="int4" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="default_recurrence_unit" type="varchar(255)" />
+			<column name="action_on_remaining_amount" type="varchar(255)" />
+			<column name="clearing_priority" type="varchar(255)" />
+	    </addColumn>
+		<addForeignKeyConstraint baseColumnNames="dunning_default_pause_reason_id" baseTableName="crm_provider" constraintName="fk_dunning_default_pause_reason_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />	
+	    <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_credit_category" constraintName="fk_acc_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
 
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza">
         <dropTable tableName="invoice_dunning_statuses" cascadeConstraints="true"/>
@@ -11485,5 +11534,28 @@ order by date_trunc('month', i.invoice_date) DESC
         	deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
 	</changeSet>
+
+    <changeSet id="#INTRD-3426_202112012" author="ZBariki">
+        <modifyDataType columnName="start_date" newDataType="date" tableName="sub_accounting_period"/>
+        <modifyDataType columnName="end_date" newDataType="date" tableName="sub_accounting_period"/>
+    </changeSet>
+	
+	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
+     <addColumn tableName="billing_invoice">
+            <column name="cpq_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
+    <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_account_operation">
+            <column name="payment_action" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="payment_deferral_count" type="int4">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 	
 </databaseChangeLog>

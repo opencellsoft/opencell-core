@@ -44,7 +44,7 @@ public class DunningActionInstance extends BusinessEntity {
     @Column(name = "action_status", length = 255)
     @Enumerated(EnumType.STRING)
     @NotNull
-    private DunningActionInstanceStatusEnum actionStatus;
+    private DunningActionInstanceStatusEnum actionStatus = DunningActionInstanceStatusEnum.TO_BE_DONE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_collection_plan_id")

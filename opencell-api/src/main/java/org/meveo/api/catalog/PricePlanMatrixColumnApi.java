@@ -79,8 +79,16 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
     }
 
-    public void removePricePlanColumn(String code){
-        pricePlanMatrixColumnService.removePricePlanColumn(code);
+    public void removePricePlanColumn(String pricePlanMatrixCode, int version, String code){
+    	
+    	PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixCode, version);
+        
+        if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())) {
+            log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixCode,version);
+            throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
+        }
+        PricePlanMatrixColumn pricePlanMatrixColumn = loadEntityByCode(pricePlanMatrixColumnService, code, PricePlanMatrixColumn.class);
+        pricePlanMatrixColumnService.removePricePlanColumn(pricePlanMatrixColumn.getId());
     }
 
     private void checkMissingParameters(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) {
