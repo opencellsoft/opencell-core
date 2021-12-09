@@ -82,8 +82,8 @@ public class MediationApiService {
 
         ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
 
-//        int nbThreads = Runtime.getRuntime().availableProcessors();
-        int nbThreads = 1;
+        int nbThreads = Runtime.getRuntime().availableProcessors();
+//        int nbThreads = 1;
 
         List<Runnable> tasks = new ArrayList<>(nbThreads);
         List<Future> futures = new ArrayList<>();
@@ -162,8 +162,6 @@ public class MediationApiService {
                                 boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult,
                                 Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
 
-        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
-
         while (true) {
 
             SynchronizedIterator<String>.NextItem<String> nextCDR = cdrLineIterator.nextWPosition();
@@ -186,6 +184,8 @@ public class MediationApiService {
                                    boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
                                    boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult,
                                    Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
+
+        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
         try {
 //                CDR cdr = cdrParser.parse(cdrLine);
