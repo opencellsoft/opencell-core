@@ -536,7 +536,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             throw new BusinessApiException("Price Plan Matrix: (code: " + ppmCode + ", version: " + ppmVersion + ") is not published");
         return ppm;
     }
-
+    @Deprecated
     public PricePlanMatrixLineDto loadPrices(String ppmCode, int version, String chargeInstanceCode) {
         if (StringUtils.isBlank(ppmCode)) {
             missingParameters.add("ppmCode");
@@ -553,7 +553,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, chargeInstanceCode, ChargeInstance.class);
         try {
-        	return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
+        	return new PricePlanMatrixLineDto();
         }catch(BusinessException e) {
         	throw new MeveoApiException(e.getMessage());
         }

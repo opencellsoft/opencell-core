@@ -163,7 +163,7 @@ public enum AttributeTypeEnum {
 	EXPRESSION_LANGUAGE {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
-			return ColumnTypeEnum.String;
+			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.String;
 		}
 	},
 	BOOLEAN {

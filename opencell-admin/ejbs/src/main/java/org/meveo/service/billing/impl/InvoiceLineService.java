@@ -11,6 +11,7 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -77,7 +78,6 @@ import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
-import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
 
 @Stateless
@@ -650,17 +650,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public List<InvoiceLine> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public Map<Long, Long> createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         List<InvoiceLine> invoiceLines = new ArrayList<>();
-        //Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
             create(invoiceLine);
             invoiceLines.add(invoiceLine);
-            //iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
         }
-        return invoiceLines;  
+        return iLIdsRtIdsCorrespondence;
     }
 }
