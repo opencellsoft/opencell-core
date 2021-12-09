@@ -158,7 +158,15 @@ public class ProviderResourceImpl implements ProviderResource{
     	
         if(provider.getPaymentPlanPolicy() != null) {
         	List<CreditCategory> listAllowedCreditCategories = new ArrayList<CreditCategory>();
-            if (provider.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {         	
+            if (provider.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {   
+            	for (CreditCategory elementCreditCategorie : creditCategoryService.list()) {   
+            		if (elementCreditCategorie.getProvider() != null) { 
+            			if (elementCreditCategorie.getProvider().getId() == providerByCode.getId()) { 
+                			elementCreditCategorie.setProvider(null);
+                			creditCategoryService.update(elementCreditCategorie);
+                		}
+            		}            		
+                }
             	for (CreditCategory elementAllowedCreditCategories : providerUpdateInfos.getPaymentPlanPolicy().getAllowedCreditCategories()) {
             		CreditCategory creditCategory = creditCategoryService.findById(elementAllowedCreditCategories.getId());
             		if(creditCategory == null) {
