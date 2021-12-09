@@ -174,6 +174,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @Inject
+    private InvoiceLineService invoiceLineService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -1446,7 +1449,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT rt.billing_account__id, \n" +
+        String query = "SELECT rt.id, rt.billing_account__id, \n" +
                 "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, \n"
                 + "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
                 + "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, \n"
@@ -1459,7 +1462,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "         rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
                 + "         rt.offer_id, rt.service_instance_id, rt.usage_date, rt.start_date,\n"
                 + "         rt.end_date, rt.order_number, rt.subscription_id, rt.tax_percent, rt.tax_id, "
-                + "         rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
+                + "         rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.id";
         return executeNativeSelectQuery(query, params);
     }
 
@@ -1468,7 +1471,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT rt.billing_account__id,  \n"
+        String query = "SELECT rt.id, rt.billing_account__id,  \n"
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity,  \n"
                 + "              sum(rt.amount_without_tax) as sum_amount_without_tax, \n"
                 + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price, \n"
@@ -1480,7 +1483,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description,  \n"
                 + "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, \n"
                 + "             rt.end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
+                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.id";
         return executeNativeSelectQuery(query, params);
     }
 
@@ -1489,5 +1492,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .createNamedQuery("RatedTransaction.markAsProcessed")
                     .setParameter("listOfIds", ratedTransactionIds)
                     .executeUpdate();
+    }
+
+    public void linkRTWithInvoiceLine(Map<Long, Long> iLIdsRtIdsCorrespondence) {
+        for (Map.Entry<Long, Long> entry : iLIdsRtIdsCorrespondence.entrySet()) {
+            getEntityManager()
+                    .createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
+                    .setParameter("il", invoiceLineService.findById(entry.getKey()))
+                    .setParameter("id", entry.getValue())
+                    .executeUpdate();
+        }
     }
 }

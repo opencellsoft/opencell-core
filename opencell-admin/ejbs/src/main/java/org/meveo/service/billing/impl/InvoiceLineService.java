@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 import static java.util.Collections.emptyList;
@@ -628,17 +629,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public List<InvoiceLine> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public Map<Long, Long> createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         List<InvoiceLine> invoiceLines = new ArrayList<>();
-        //Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
             create(invoiceLine);
             invoiceLines.add(invoiceLine);
-            //iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
         }
-        return invoiceLines;  
+        return iLIdsRtIdsCorrespondence;
     }
 }
