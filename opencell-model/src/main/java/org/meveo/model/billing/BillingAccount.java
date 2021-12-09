@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,6 +47,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
@@ -71,6 +74,7 @@ import org.meveo.model.tax.TaxCategory;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@DynamicUpdate
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "BillingAccount", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
@@ -78,8 +82,36 @@ import org.meveo.model.tax.TaxCategory;
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
+        
+        @NamedQuery(name = "BillingAccount.findBillableEntitiesWithDetailsForInvoicingByStartAndEndDate", query = "select b FROM BillingAccount b "
+        		+ " join fetch b.billingRun left join fetch b.customerAccount ca left join fetch ca.paymentMethods m left join fetch b.ratedTransactions r "
+        		+ " left join fetch r.wallet left join fetch r.invoiceSubCategory left join fetch r.userAccount left join fetch r.taxClass left join fetch r.tax"
+        		+ " where b.billingRun=:billingRun and r.status='OPEN' AND :startDate<=r.usageDate AND r.usageDate<:endDate and m.preferred=true order by b.id"),
+
+        @NamedQuery(name = "BillingAccount.findBillableEntitiesWithDetailsForInvoicingByStartDate", query = "select b FROM BillingAccount b "
+        		+ " join fetch b.billingRun left join fetch b.customerAccount ca left join fetch ca.paymentMethods m left join fetch b.ratedTransactions r "
+        		+ " left join fetch r.wallet left join fetch r.invoiceSubCategory left join fetch r.userAccount left join fetch r.taxClass left join fetch r.tax"
+        		+ " where b.billingRun=:billingRun and r.status='OPEN' AND :startDate<=r.usageDate AND m.preferred=true order by b.id"),
+
+        @NamedQuery(name = "BillingAccount.findBillableEntitiesWithDetailsForInvoicingByEndDate", query = "select b FROM BillingAccount b "
+        		+ " join fetch b.billingRun left join fetch b.customerAccount ca left join fetch ca.paymentMethods m left join fetch b.ratedTransactions r "
+        		+ " left join fetch r.wallet left join fetch r.invoiceSubCategory left join fetch r.userAccount left join fetch r.taxClass left join fetch r.tax"
+        		+ " where b.billingRun=:billingRun and r.status='OPEN' AND r.usageDate<:endDate and m.preferred=true order by b.id"),
+
+        @NamedQuery(name = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing", query = "select distinct b FROM BillingAccount b "
+        		+ " join fetch b.billingRun br left join fetch br.billingCycle "
+        		+ " left join fetch b.customerAccount ca left join fetch ca.customer left join fetch ca.paymentMethods m left join fetch ca.accountOperations ao "
+        		+ " left join fetch b.ratedTransactions r left join fetch r.wallet left join fetch r.invoiceSubCategory left join fetch r.userAccount left join fetch r.taxClass left join fetch r.tax"
+        		+ " left join fetch b.discountPlanInstances left join fetch b.usersAccounts ua left join fetch ua.subscriptions s left join fetch s.discountPlanInstances "
+        		+ " where br=:billingRun and (r is null or r.status='OPEN') and (m is null or m.preferred=true) AND (ao is null or ao.matchingStatus in('O','P','I')) order by b.id"),
+
+        
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
+        
+        @NamedQuery(name = "BillingAccount.updateBR", query = "update BillingAccount ba set ba.billingRun =:billingRun where id in (SELECT distinct r.billingAccount.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle)"),
+
+        
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount")})
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
@@ -142,7 +174,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      * User accounts
      */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<UserAccount> usersAccounts = new ArrayList<>();
+    private Set<UserAccount> usersAccounts = new TreeSet<>();
 
     /**
      * Invoices
@@ -291,7 +323,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<DiscountPlanInstance> discountPlanInstances;
+    private Set<DiscountPlanInstance> discountPlanInstances;
 
     /**
      * Total invoicing amount with tax
@@ -363,6 +395,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
+    
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<RatedTransaction> ratedTransactions = new TreeSet<>();
 
     public boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -377,11 +412,11 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
     public List<UserAccount> getUsersAccounts() {
-        return usersAccounts;
+        return usersAccounts==null?null:new ArrayList<UserAccount>(usersAccounts);
     }
 
     public void setUsersAccounts(List<UserAccount> usersAccounts) {
-        this.usersAccounts = usersAccounts;
+        this.usersAccounts = new TreeSet(usersAccounts);
     }
 
     public CustomerAccount getCustomerAccount() {
@@ -676,7 +711,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
     public List<DiscountPlanInstance> getDiscountPlanInstances() {
-        return discountPlanInstances;
+        return new ArrayList<>(discountPlanInstances);
     }
 
     @Override
@@ -693,7 +728,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
     public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
-        this.discountPlanInstances = discountPlanInstances;
+        this.discountPlanInstances = new TreeSet<>(discountPlanInstances);
     }
 
     public DiscountPlan getDiscountPlan() {
@@ -829,4 +864,18 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
+
+	/**
+	 * @return the ratedTransactions
+	 */
+	public Set<RatedTransaction> getRatedTransactions() {
+		return ratedTransactions;
+	}
+
+	/**
+	 * @param ratedTransactions the ratedTransactions to set
+	 */
+	public void setRatedTransactions(Set<RatedTransaction> ratedTransactions) {
+		this.ratedTransactions = ratedTransactions;
+	}
 }

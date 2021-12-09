@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -118,7 +120,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
      * Account's subscriptions
      */
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Subscription> subscriptions = new ArrayList<>();
+    private Set<Subscription> subscriptions = new TreeSet<>();
 
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -216,11 +218,11 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     }
 
     public List<Subscription> getSubscriptions() {
-        return subscriptions;
+        return subscriptions==null? null: new ArrayList<Subscription>(subscriptions);
     }
 
     public void setSubscriptions(List<Subscription> subscriptions) {
-        this.subscriptions = subscriptions;
+        this.subscriptions = new TreeSet(subscriptions);
     }
 
     public WalletInstance getWallet() {

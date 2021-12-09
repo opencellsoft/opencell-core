@@ -612,7 +612,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
                 return orderService.findOrders(billingCycle, startDate, endDate);
             }
-            return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);           
+            return billingAccountService.findAccountsToInvoice(billingRun, startDate, endDate);           
 
         } else {
         	
@@ -696,46 +696,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     }
 
-    /**
-     * Creates the agregates and invoice.
-     *
-     * @param billingRun           billing run
-     * @param nbRuns               nb of runs
-     * @param waitingMillis        waiting millis
-     * @param jobInstanceId        the job instance id
-     * @param entities             list of entities
-     * @param minAmountForAccounts Check if min amount is enabled in any account level
-     * @throws BusinessException business exception.
-     */
-    private void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<? extends IBillableEntity> entities,
-            MinAmountForAccounts minAmountForAccounts) throws BusinessException {
-        SubListCreator subListCreator = null;
-        try {
-            subListCreator = new SubListCreator(entities, (int) nbRuns);
-        } catch (Exception e1) {
-            throw new BusinessException("cannot create agregates and invoice with nbRuns=" + nbRuns);
-        }
-
-        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-        while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, minAmountForAccounts, lastCurrentUser));
-            try {
-                Thread.sleep(waitingMillis);
-            } catch (InterruptedException e) {
-                log.error("Failed to create agregates and invoice waiting for thread", e);
-                throw new BusinessException(e);
-            }
-        }
-        for (Future<String> futureItsNow : asyncReturns) {
-            try {
-                futureItsNow.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Failed to create agregates and invoice getting future", e);
-                throw new BusinessException(e);
-            }
-        }
-    }
 
     /**
      * Assign invoice number and increment BA invoice dates.
@@ -750,6 +710,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
             throws BusinessException {
+    	log.info("================= 8-1");
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
@@ -758,7 +719,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             invoicesToNumberInfo.getNrOfInvoices());
             invoicesToNumberInfo.setNumberingSequence(sequence);
         }
-
+        log.info("================= 8-2");
         // Find and process invoices
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
             List<Long> invoices = invoiceService
@@ -776,11 +737,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             processBAInvoiceDatesIncrementAsync(billingRun, nbRuns, waitingMillis, jobInstanceId, result, invoicesToNumberInfo, baIDs);
 
         }
+        log.info("================= 8-4");
     }
 	private void processBAInvoiceDatesIncrementAsync(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
 			JobExecutionResultImpl result, InvoicesToNumberInfo invoicesToNumberInfo, List<Long> baIDs) {
 		SubListCreator subListCreator = null;
-
+		log.info("================= 8-3-2");
 		try {
 		    subListCreator = new SubListCreator(baIDs, (int) nbRuns);
 		} catch (Exception e1) {
@@ -812,6 +774,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	private void processInvoiceNumberAssignements(BillingRun billingRun, long nbRuns, long waitingMillis,
 			Long jobInstanceId, JobExecutionResultImpl result, InvoicesToNumberInfo invoicesToNumberInfo,
 			List<Long> invoices) {
+		 log.info("================= 8-3-1");
 		SubListCreator subListCreator = null;
 
 		try {
@@ -947,7 +910,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         commit();
         return billingRun;
     }
-
+    
     /**
      * Invoicing process for the billingRun, launched by invoicingJob.
      *
@@ -961,7 +924,130 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
         log.info("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
+        log.info("==================== 1");
+        //List<IBillableEntity> a = new ArrayList<>();
 
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        BillingEntityTypeEnum type = null;
+        if (billingCycle != null) {
+            type = billingCycle.getType();
+        }
+
+
+        MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts();
+        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) || BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
+
+            minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
+        }
+        boolean includesFirstRun = false;
+
+        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+        	log.info("==================== 2");
+            int totalEntityCount = 0;
+
+            // Use billable amount calculation one billable entity at a time when minimum billable amount rule is used or billable entities are provided as parameter of billing run
+            // (billingCycle=null)
+            // NOTE: invoice by order is also included here as there is no FK between Order and RT
+            if (billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER || minAmountForAccounts.isMinAmountCalculationActivated()) {
+            	log.info("==================== 0");
+            	List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+
+                totalEntityCount = entities != null ? entities.size() : 0;
+                log.info("Will create min RTs and update billable amount totals for Billing run {} for {} entities of type {}. Minimum invoicing amount is used for accounts hierarchy {}",
+                        billingRun.getId(), totalEntityCount, type, minAmountForAccounts);
+                if ((entities != null) && (entities.size() > 0)) {
+                    SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
+                    List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();
+                    MeveoUser lastCurrentUser = currentUser.unProxy();
+                    while (subListCreator.isHasNext()) {
+                        Future<List<IBillableEntity>> billableEntitiesAsynReturn = invoicingAsync
+                                .calculateBillableAmountsAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, minAmountForAccounts, lastCurrentUser);
+                        asyncReturns.add(billableEntitiesAsynReturn);
+                        try {
+                            Thread.sleep(waitingMillis);
+                        } catch (InterruptedException e) {
+                            log.error("", e);
+                        }
+                    }
+//#MEL remove billableEntities
+                  //  for (Future<List<IBillableEntity>> futureItsNow : asyncReturns) {
+                    //    billableEntities.addAll(futureItsNow.get());
+                    //}
+                }
+
+                // A simplified form of calculating of total amounts when no need to worry about minimum amounts
+            } else {
+            	log.info("==================== 3");
+                AmountsToInvoice billableAmountSummary = getBRSummury(billingRun);
+                billingAccountService.linkBillableEntitiesToBR(billingRun);
+                totalEntityCount=billableAmountSummary.getEntityToInvoiceId().intValue();
+                billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableAmountSummary);
+                log.info("Minimum invoicing amount is skipped.");
+
+
+            }
+            log.info("==================== 4");
+            //MEL BE<>
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), totalEntityCount, totalEntityCount, BillingRunStatusEnum.PREINVOICED, new Date());
+        }
+
+        boolean proceedToInvoiceGenerating = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && (
+                (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider
+                        .isAutomaticInvoicing()));
+        
+        if (proceedToInvoiceGenerating) {
+        	log.info("==================== 5");
+
+           // boolean instantiateMinRts = !includesFirstRun && (minAmountForAccounts.isMinAmountCalculationActivated());
+
+
+            //MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!includesFirstRun);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
+            billingRun = billingRunExtensionService.findById(billingRun.getId());
+        }
+        if (BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus())) {
+        	log.info("==================== 6");
+            log.info("apply threshold rules for all invoices generated with {}", billingRun);
+            billingRunService.applyThreshold(billingRun);
+            rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
+            if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                billingRun = billingRunExtensionService.findById(billingRun.getId());
+            }
+
+        }
+
+        if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+        	log.info("==================== 7");
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
+            billingRun = billingRunExtensionService.findById(billingRun.getId());
+        }
+
+        if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+        	log.info("==================== 8");
+            log.info("Will assign invoice numbers to invoices of Billing run {} of type {}", billingRun.getId(), type);
+            invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
+        }
+        log.info("==================== 9");
+    }
+
+    /**
+     * Invoicing process for the billingRun, launched by invoicingJob.
+     *
+     * @param billingRun    the billing run to process
+     * @param nbRuns        the nb runs
+     * @param waitingMillis the waiting millis
+     * @param jobInstanceId the job instance
+     * @param result        the Job execution result
+     * @throws Exception the exception
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void validate2(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
+        log.info("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
+        log.info("==================== 1");
         List<IBillableEntity> billableEntities = new ArrayList<>();
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -979,7 +1065,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         boolean includesFirstRun = false;
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-
+        	log.info("==================== 2");
             int totalEntityCount = 0;
 
             // Use billable amount calculation one billable entity at a time when minimum billable amount rule is used or billable entities are provided as parameter of billing run
@@ -1014,6 +1100,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
                 // A simplified form of calculating of total amounts when no need to worry about minimum amounts
             } else {
+            	log.info("==================== 3");
                 List<AmountsToInvoice> billableAmountSummary = getAmountsToInvoice(billingRun);
 
                 totalEntityCount = billableAmountSummary != null ? billableAmountSummary.size() : 0;
@@ -1027,7 +1114,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     MeveoUser lastCurrentUser = currentUser.unProxy();
                     while (subListCreator.isHasNext()) {
                         Future<List<IBillableEntity>> billableEntitiesAsynReturn = invoicingAsync
-                                .calculateBillableAmountsAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser);
+                                .calculateBillableAmountsAsync(subListCreator.getNextWorkSet(), billingRun, type, jobInstanceId, lastCurrentUser);
                         asyncReturns.add(billableEntitiesAsynReturn);
                         try {
                             Thread.sleep(waitingMillis);
@@ -1042,6 +1129,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
             }
+            log.info("==================== 4");
             includesFirstRun = true;
 
             log.info("Will update BR amount totals for Billing run {}. Will invoice {} out of {} entities of type {}", billingRun.getId(),
@@ -1053,9 +1141,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         boolean proceedToInvoiceGenerating = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && (
                 (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider
                         .isAutomaticInvoicing()));
-
+        
         if (proceedToInvoiceGenerating) {
-
+        	log.info("==================== 5");
             if (!includesFirstRun) {
                 billableEntities = (List<IBillableEntity>) getEntitiesByBillingRun(billingRun);
             }
@@ -1068,11 +1156,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             "Minimum invoicing amount is used for serviceInstance " + minAmountForAccounts.isServiceHasMinAmount() + ", subscription " + minAmountForAccounts
                                     .isSubscriptionHasMinAmount() + ", billingAccount " + minAmountForAccounts.isBaHasMinAmount());
             MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!includesFirstRun);
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, minAmountForAccountsIncludesFirstRun);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
             billingRun = billingRunExtensionService.findById(billingRun.getId());
         }
         if (BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus())) {
+        	log.info("==================== 6");
             log.info("apply threshold rules for all invoices generated with {}", billingRun);
             billingRunService.applyThreshold(billingRun);
             rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
@@ -1084,16 +1173,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+        	log.info("==================== 7");
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
             billingRun = billingRunExtensionService.findById(billingRun.getId());
         }
 
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+        	log.info("==================== 8");
             log.info("Will assign invoice numbers to invoices of Billing run {} of type {}", billingRun.getId(), type);
             invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
         }
+        log.info("==================== 9");
     }
 
     /**
@@ -1103,6 +1195,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void applyThreshold(BillingRun billingRun) {
+    	log.info("================= 6-1");
         log.info("Applying the invoicing threshold for the billing run {}", billingRun.getId());
         Set<Long> invoicesToRemove = new HashSet<>();
         Map<Class, Map<Long, Map<Long, Amounts>>> discountAmounts = getAmountsMap(invoiceAgregateService.getTotalDiscountAmountByBR(billingRun));
@@ -1118,6 +1211,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
                 invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts));
         if (invoicesToRemove != null && !invoicesToRemove.isEmpty()) {
+        	log.info("================= 6-2");
             // Exclude prepaid invoice from applying threshold rules.
             List<Long> excludedPrepaidInvoices = invoiceService.excludePrepaidInvoices(invoicesToRemove);
             log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
@@ -1131,7 +1225,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 rejectedBillingAccountService
                         .create(ba.getId(), getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
             });
-        }       
+        }    
+        log.info("================= 6-3");
     }
     
     
@@ -1302,6 +1397,36 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     }
 
+    
+    private AmountsToInvoice getBRSummury(BillingRun billingRun) {
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+        if ((startDate != null) && (endDate == null)) {
+            endDate = new Date();
+        }
+        if (endDate != null && startDate == null) {
+        	startDate = new Date(0);
+        }
+        String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ? "RatedTransaction.sumBRBySubscription" :
+                startDate == null ? "RatedTransaction.sumBRByBA" : "RatedTransaction.sumBRByBALimitByNextInvoiceDate";
+        TypedQuery<AmountsToInvoice> query = getEntityManager().createNamedQuery(sqlName, AmountsToInvoice.class).setParameter("firstTransactionDate", new Date(0))
+                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+
+        if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
+            startDate = DateUtils.setDateToEndOfDay(startDate);
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+            	endDate= DateUtils.setDateToEndOfDay(endDate);
+            } else {
+            	endDate= DateUtils.setDateToStartOfDay(endDate);
+            }
+
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+        }
+        return query.getSingleResult();
+    }
+    
     /**
      * Get amounts to invoice grouped by a billable entity a configured in billing run
      *
@@ -1324,7 +1449,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ?
                 "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch" :
-                startDate == null ? "RatedTransaction.sumTotalInvoiceableByBAInBatch" : "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
+                startDate == null ? "RatedTransaction.sumTotalInvoiceableByBAInBatch" : 
+                	"RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
 
         TypedQuery<AmountsToInvoice> query = getEntityManager().createNamedQuery(sqlName, AmountsToInvoice.class).setParameter("firstTransactionDate", new Date(0))
                 .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);

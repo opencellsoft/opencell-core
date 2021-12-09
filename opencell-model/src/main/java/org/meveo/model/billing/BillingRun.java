@@ -29,6 +29,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -45,6 +46,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@DynamicUpdate
 @ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
 @CustomFieldEntity(cftCodePrefix = "BillingRun")
 @Table(name = "billing_billing_run")

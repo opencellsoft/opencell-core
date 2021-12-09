@@ -24,32 +24,36 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.*;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.*;
 
 /**
  * The Class BillingAccountService.
@@ -67,9 +71,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @Inject
     private UserAccountService userAccountService;
 
-    /** The billing run service. */
-    @EJB
-    private BillingRunService billingRunService;
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
@@ -485,5 +486,66 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
+
+	/**
+	 * @param billingRun
+	 */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void linkBillableEntitiesToBR(BillingRun billingRun) {
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+        if ((startDate != null) && (endDate == null)) {
+            endDate = new Date();
+        }
+        if (endDate != null && startDate == null) {
+        	startDate = new Date(0);
+        }
+        String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ? "Subscription.updateBR" :
+                startDate == null ? "BillingAccount.updateBR" : "BillingAccount.updateBRLimitByNextInvoiceDate";
+        Query query = getEntityManager().createNamedQuery(sqlName).setParameter("firstTransactionDate", new Date(0))
+                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+
+        if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
+            startDate = DateUtils.setDateToEndOfDay(startDate);
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+            	endDate= DateUtils.setDateToEndOfDay(endDate);
+            } else {
+            	endDate= DateUtils.setDateToStartOfDay(endDate);
+            }
+
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+        }
+        query.setParameter("billingRun", billingRun);
+        query.executeUpdate();
+    }
+
+	/**
+	 * @param billingCycle
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<? extends IBillableEntity> findAccountsToInvoice(BillingRun billingRun, Date startDate,
+			Date endDate) {
+		boolean useStart = startDate != null;
+		boolean useEnd = endDate != null;
+		String queryName = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing";
+		if (useStart && useEnd) {
+			queryName = queryName + "ByStartAndEndDate";
+		} else if (useStart) {
+			queryName = queryName + "ByStartDate";
+		} else if (useEnd) {
+			queryName = queryName + "ByEndDate";
+		}
+		Query query = getEntityManager().createNamedQuery(queryName).setParameter("billingRun", billingRun);
+		if (useStart) {
+			query.setParameter("startDate", startDate);
+		} else if (useEnd) {
+			query.setParameter("endDate", endDate);
+		}
+		return query.getResultList();
+	}
 
 }

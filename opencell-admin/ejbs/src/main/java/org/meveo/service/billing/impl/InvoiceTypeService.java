@@ -17,6 +17,9 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -55,6 +58,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     @Inject
     private ProviderService providerService;
+    
+    private static Map<String, InvoiceType> DefaultTypes = new TreeMap<>();
 
     /**
      * Gets the default type.
@@ -64,9 +69,12 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @throws BusinessException the business exception
      */
     public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
-
+    	if(DefaultTypes.containsKey(invoiceTypeCode)) {
+    		return DefaultTypes.get(invoiceTypeCode);
+    	}
         InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode);
         if (defaultInvoiceType != null) {
+        	DefaultTypes.put(invoiceTypeCode, defaultInvoiceType);
             return defaultInvoiceType;
         }
 
@@ -78,9 +86,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
             occCodeDefaultValue = "INV_CRN";
             operationCategory = OperationCategoryEnum.CREDIT;
         }
-
         defaultInvoiceType = serviceSingleton.createInvoiceType(occCode, occCodeDefaultValue, invoiceTypeCode, operationCategory);
-
+        DefaultTypes.put(invoiceTypeCode, defaultInvoiceType);
         return defaultInvoiceType;
     }
 

@@ -17,12 +17,61 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
-import org.meveo.model.*;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
@@ -38,19 +87,6 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Subscription
@@ -295,7 +331,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Instance of discount plans.
      */
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<DiscountPlanInstance> discountPlanInstances;
+    private Set<DiscountPlanInstance> discountPlanInstances;
 
     /**
      * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
@@ -963,7 +999,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     }
 
     public List<DiscountPlanInstance> getDiscountPlanInstances() {
-        return discountPlanInstances;
+        return discountPlanInstances==null?null: new ArrayList<DiscountPlanInstance>(discountPlanInstances);
     }
 
     @Override
@@ -980,7 +1016,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     }
 
     public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
-        this.discountPlanInstances = discountPlanInstances;
+        this.discountPlanInstances = new TreeSet<DiscountPlanInstance>(discountPlanInstances);
     }
 
     public DiscountPlan getDiscountPlan() {

@@ -447,6 +447,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      *
      * @param entity Entity to invoice
      * @param billingRun the billing run
+     * @param type 
+     * @param minAmountForAccounts 
      * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
      * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
      * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
@@ -459,25 +461,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         log.info("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
-        BillingAccount billingAccount = null;
-        if (entity instanceof BillingAccount) {
-            entity = billingAccountService.findById((Long) entity.getId());
-            billingAccount = (BillingAccount) entity;
-        }
-
-        if (entity instanceof Subscription) {
-            entity = subscriptionService.findById((Long) entity.getId());
-            billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
-        }
-
-        if (entity instanceof Order) {
-            entity = orderService.findById((Long) entity.getId());
-            if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
-                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
-                        null;
-            }
-        }
         // MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
 
         calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, minAmountForAccounts);
@@ -511,48 +494,40 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(Long entityId, BillingRun billingRun, Amounts totalAmounts) throws BusinessException {
-
+    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(Long entityId, BillingRun billingRun, BillingEntityTypeEnum type, Amounts totalAmounts) throws BusinessException {
         IBillableEntity entity = null;
-        BillingAccount billingAccount = null;
-
-        switch (billingRun.getBillingCycle().getType()) {
+        //#MEL direct update
+        log.info("================ 3-1");
+        switch (type) {
         case BILLINGACCOUNT:
             entity = billingAccountService.findById(entityId);
-            billingAccount = (BillingAccount) entity;
             break;
-
         case SUBSCRIPTION:
             entity = subscriptionService.findById(entityId);
-            billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
             break;
 
         case ORDER:
             entity = orderService.findById(entityId);
-            if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
-                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
-                        null;
-            }
             break;
         }
         entity.setTotalInvoicingAmountWithoutTax(totalAmounts.getAmountWithoutTax());
         entity.setTotalInvoicingAmountWithTax(totalAmounts.getAmountWithTax());
         entity.setTotalInvoicingAmountTax(totalAmounts.getAmountTax());
-
         BigDecimal invoiceAmount = totalAmounts.getAmountWithoutTax();
-
-        entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-
+        entity.setBillingRun(billingRun);
         if (entity instanceof BillingAccount) {
             ((BillingAccount) entity).setBrAmountWithoutTax(invoiceAmount);
+            log.info("================ 3-2");
             billingAccountService.updateNoCheck((BillingAccount) entity);
+            
         } else if (entity instanceof Order) {
+        	log.info("================ 3-3");
             orderService.updateNoCheck((Order) entity);
         } else if (entity instanceof Subscription) {
+        	log.info("================ 3-4");
             subscriptionService.updateNoCheck((Subscription) entity);
         }
-
+        log.info("================ 3-5");
         return entity;
     }
 
@@ -681,7 +656,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
 
             TaxInfo taxInfo = taxMappingService.determineTax(oneShotChargeTemplate.getTaxClass(), seller, billingAccount, null, minRatingDate, true, false);
-
             String code = getMinAmountRTCode(entity, accountClass);
             RatedTransaction ratedTransaction = getNewRatedTransaction(billableEntity, billingAccount, minRatingDate, minAmountLabel, entity, seller, invoiceSubCategory, taxInfo, diff, code, RatedTransactionTypeEnum.MINIMUM);
 
@@ -1561,22 +1535,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException General exception
      */
     @SuppressWarnings("unchecked")
-    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter, int rtPageSize) throws BusinessException {
+    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
 
-        if (ratedTransactionFilter != null) {
-            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
 
-        } else if (entityToInvoice instanceof Subscription) {
+        if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
 
         } else if (entityToInvoice instanceof Order) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
         }
 
         return new ArrayList<>();

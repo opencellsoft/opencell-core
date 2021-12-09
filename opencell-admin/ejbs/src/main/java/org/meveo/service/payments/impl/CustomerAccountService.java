@@ -17,6 +17,20 @@
  */
 package org.meveo.service.payments.impl;
 
+import static org.meveo.model.payments.OperationCategoryEnum.DEBIT;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -38,19 +52,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Customer Account service implementation.
@@ -167,6 +168,41 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         Query query = queryBuilder.getQuery(getEntityManager());
         return (BigDecimal) Optional.ofNullable(query.getSingleResult()).orElse(BigDecimal.ZERO);
     }
+    
+	public BigDecimal customerAccountFutureBalanceExigibleWithoutLitigationForInvoicing(List<AccountOperation> accountOperations) {
+		BigDecimal result = BigDecimal.ZERO;
+		accountOperations.stream()
+				.filter(ao -> isStatusMatched(ao, MatchingStatusEnum.O, MatchingStatusEnum.P))
+				.forEach(ao -> includeUnmatchedOperaion(result, ao));
+		return finaliseBalance(result);
+	}
+    
+	public BigDecimal customerAccountBalanceDueForInvoicing(List<AccountOperation> accountOperations) {
+		BigDecimal result = BigDecimal.ZERO;
+		Date endDate = new Date();
+		accountOperations.stream()
+				.filter(ao -> isStatusMatched(ao, MatchingStatusEnum.I, MatchingStatusEnum.O, MatchingStatusEnum.P) 
+						&& endDate.after(ao.getDueDate()))
+				.forEach(ao -> includeUnmatchedOperaion(result, ao));
+		return finaliseBalance(result);
+	}
+
+	private void includeUnmatchedOperaion(BigDecimal result, AccountOperation ao) {
+		if (DEBIT.equals(ao.getTransactionCategory())) {
+			result.add(ao.getUnMatchingAmount());
+		} else {
+			result.subtract(ao.getUnMatchingAmount());
+		}
+	}
+	
+	Boolean isStatusMatched(AccountOperation ao,  MatchingStatusEnum... status) {
+		for(MatchingStatusEnum s :status) {
+			if(s.equals(ao.getMatchingStatus())){
+				return true;
+			}
+		}
+		return false;
+	}
 
     QueryBuilder getQueryBuilder(String sql) {
         return new QueryBuilder(sql);
@@ -228,17 +264,20 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             throw new BusinessException("toDate is null");
         }
         BigDecimal balance = computeCreditDebitBalances(customerAccount, isFuture, isDue, to, status);
-        try {
+        return finaliseBalance(balance);
+
+    }
+
+	private BigDecimal finaliseBalance(BigDecimal balance) {
+		try {
             ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
             balance = balance.multiply(new BigDecimal(balanceFlag));
-            log.debug("end computeBalance customerAccount code:{} , balance:{}", customerAccount.getCode(), balance);
         } catch (Exception e) {
             throw new BusinessException("Internal error");
         }
         return balance;
-
-    }
+	}
 
     /**
      * Customer account balance due.

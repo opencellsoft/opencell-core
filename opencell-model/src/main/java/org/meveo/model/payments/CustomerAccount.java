@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -137,7 +139,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 * Account operations associated with a Customer account
 	 */
 	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<AccountOperation> accountOperations = new ArrayList<>();
+	private Set<AccountOperation> accountOperations = new TreeSet<>();
 
 	/**
 	 * List of ca's dunning docs
@@ -354,11 +356,11 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	}
 
 	public List<AccountOperation> getAccountOperations() {
-		return accountOperations;
+		return accountOperations == null ? null : new ArrayList<AccountOperation>(accountOperations);
 	}
 
 	public void setAccountOperations(List<AccountOperation> accountOperations) {
-		this.accountOperations = accountOperations;
+		this.accountOperations = accountOperations == null ? null : new TreeSet<AccountOperation>(accountOperations);
 	}
 
 	public void setDunningLevel(DunningLevelEnum dunningLevel) {
