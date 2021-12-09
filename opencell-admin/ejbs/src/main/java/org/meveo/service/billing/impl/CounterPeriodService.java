@@ -45,7 +45,6 @@ import org.meveo.service.base.PersistenceService;
  */
 
 @Stateless
-
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
 
     /**
@@ -145,11 +144,5 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
         } catch (NoResultException e) {
             return null;
         }
-    }
-    
-    @Override
-    public CounterPeriod update(CounterPeriod entity) throws BusinessException {
-    	entity=refreshOrRetrieve(entity);
-    	return super.update(entity);
-    }
+    }    
 }

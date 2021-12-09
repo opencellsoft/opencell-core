@@ -1,9 +1,11 @@
 package org.meveo.apiv2.billing.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
@@ -11,6 +13,7 @@ import org.meveo.apiv2.billing.resource.MediationResource;
 import org.meveo.apiv2.billing.service.MediationApiService;
 import org.meveo.commons.utils.StringUtils;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class MediationResourceImpl implements MediationResource {
 
     @Context
