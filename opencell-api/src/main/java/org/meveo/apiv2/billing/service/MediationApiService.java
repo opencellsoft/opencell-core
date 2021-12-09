@@ -104,7 +104,7 @@ public class MediationApiService {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                thisNewTX.processCDRsInTx(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(),
+                processCDRs(cdrLineIterator, cdrParser, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(),
                         chargeCDRDto.getMaxDepth(), chargeCDRDto.isReturnWalletOperationDetails(), chargeCDRDto.isReturnWalletOperations(),
                         chargeCDRDto.isReturnEDRs(), cdrListResult, virtualCounters, counterUpdates);
 
@@ -156,14 +156,11 @@ public class MediationApiService {
      * @param counterUpdates Counter udpate tracking
      * @param cdrProcessingResult CDR processing result tracking
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, ICdrParser cdrParser, boolean isVirtual,
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void processCDRs(SynchronizedIterator<String> cdrLineIterator, ICdrParser cdrParser, boolean isVirtual,
                                 boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
                                 boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult,
                                 Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
-
-        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
         while (true) {
 
@@ -174,41 +171,68 @@ public class MediationApiService {
             int position = nextCDR.getPosition();
             String cdrLine = nextCDR.getValue();
 
-            try {
+            thisNewTX.processEachCDRInTx(cdrLine, cdrParser, position, isVirtual,
+                    rateTriggeredEdrs, maxDepth, returnWalletOperationDetails,
+                    returnWalletOperations, returnEDRs, cdrProcessingResult,
+                    virtualCounters, counterUpdates);
+        }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void processEachCDRInTx(String cdrLine, ICdrParser cdrParser, int position, boolean isVirtual,
+                                   boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperationDetails,
+                                   boolean returnWalletOperations, boolean returnEDRs, ChargeCDRListResponseDto cdrProcessingResult,
+                                   Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
+
+        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
+
+        try {
 //                CDR cdr = cdrParser.parse(cdrLine);
-                CDR cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), null);
+            CDR cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), null);
 //                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
-                List<EDR> edrs = cdrParsingService.getEDRList(cdr);
-                List<WalletOperation> walletOperations = new ArrayList<>();
-                for (EDR edr : edrs) {
-                    log.debug("edr={}", edr);
-                    edr.setSubscription(edr.getSubscription());
-                    if (!isVirtual) {
-                        edrService.create(edr);
-                    }
-                    List<WalletOperation> wo = rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth);
-                    if (wo != null) {
-                        walletOperations.addAll(wo);
-                    }
+            List<EDR> edrs = cdrParsingService.getEDRList(cdr);
+            List<WalletOperation> walletOperations = new ArrayList<>();
+            for (EDR edr : edrs) {
+                log.debug("edr={}", edr);
+                edr.setSubscription(edr.getSubscription());
+                if (!isVirtual) {
+                    edrService.create(edr);
                 }
-                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations, returnEDRs));
-                cdrProcessingResult.getStatistics().addSuccess();
-
-            } catch (CDRParsingException e) {
-                log.error("Error parsing cdr={}", e.getRejectionCause());
-
-                cdrProcessingResult.getStatistics().addFail();
-                cdrProcessingResult.addChargedCdr(position,
-                        new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getClass().getSimpleName(), e.getRejectionCause() != null ? e.getRejectionCause().toString() : e.getMessage(), cdrLine)));
-
-            } catch (MeveoApiException e) {
-                log.error("Error Code Meveo Api={}", e.getErrorCode());
-
-                cdrProcessingResult.getStatistics().addFail();
-                cdrProcessingResult.addChargedCdr(position,
-                        new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getErrorCode().toString(), e.getCause() != null ? e.getCause().toString() : e.getMessage(), cdrLine)));
-
+                List<WalletOperation> wo = rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth);
+                if (wo != null) {
+                    walletOperations.addAll(wo);
+                }
             }
+            cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations, returnEDRs));
+            cdrProcessingResult.getStatistics().addSuccess();
+
+        } catch (CDRParsingException e) {
+            log.error("Error parsing cdr={}", e.getRejectionCause());
+
+            cdrProcessingResult.getStatistics().addFail();
+            cdrProcessingResult.addChargedCdr(position,
+                    new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getClass().getSimpleName(), e.getRejectionCause() != null ? e.getRejectionCause().toString() : e.getMessage(), cdrLine)));
+        } catch (RatingException e) {
+            log.error("Error parsing cdr: {}", e.getRejectionReason(), e);
+
+            cdrProcessingResult.getStatistics().addFail();
+            cdrProcessingResult.addChargedCdr(position,
+                    new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getClass().getSimpleName(), e.getRejectionReason() != null ? e.getRejectionReason().toString() : e.getMessage(), cdrLine)));
+
+        } catch (MeveoApiException e) {
+            log.error("Error Code Meveo Api={}", e.getErrorCode());
+
+            cdrProcessingResult.getStatistics().addFail();
+            cdrProcessingResult.addChargedCdr(position,
+                    new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getErrorCode().toString(), e.getCause() != null ? e.getCause().toString() : e.getMessage(), cdrLine)));
+
+        } catch (BusinessException e) {
+            log.error("Error parsing cdr", e);
+
+            cdrProcessingResult.getStatistics().addFail();
+            cdrProcessingResult.addChargedCdr(position,
+                    new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getClass().getSimpleName(), e.getMessage(), cdrLine)));
         }
     }
 
