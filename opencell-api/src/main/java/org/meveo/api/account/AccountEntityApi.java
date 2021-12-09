@@ -29,6 +29,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -115,25 +116,36 @@ public class AccountEntityApi extends BaseApi {
             Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
 
             if (postData.getAddress().getAddress1() != null) {
-                address.setAddress1(postData.getAddress().getAddress1());
+                address.setAddress1(StringUtils.isBlank(postData.getAddress().getAddress1()) ? null : postData.getAddress().getAddress1());
             }
             if (postData.getAddress().getAddress2() != null) {
-                address.setAddress2(postData.getAddress().getAddress2());
+                address.setAddress2(StringUtils.isBlank(postData.getAddress().getAddress2()) ? null : postData.getAddress().getAddress2());
             }
             if (postData.getAddress().getAddress3() != null) {
-                address.setAddress3(postData.getAddress().getAddress3());
+                address.setAddress3(StringUtils.isBlank(postData.getAddress().getAddress3()) ? null : postData.getAddress().getAddress3());
             }
             if (postData.getAddress().getZipCode() != null) {
-                address.setZipCode(postData.getAddress().getZipCode());
+                address.setZipCode(StringUtils.isBlank(postData.getAddress().getZipCode()) ? null : postData.getAddress().getZipCode());
             }
             if (postData.getAddress().getCity() != null) {
-                address.setCity(postData.getAddress().getCity());
+                address.setCity(StringUtils.isBlank(postData.getAddress().getCity()) ? null : postData.getAddress().getCity());
             }
+
             if (postData.getAddress().getCountry() != null) {
-                address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
+                if (StringUtils.isBlank(postData.getAddress().getCountry())) {
+                    address.setCountry(null);
+                } else {
+                    Country country = countryService.findByCode(postData.getAddress().getCountry());
+                    if (country == null) {
+                        throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+                    } else {
+                        address.setCountry(country);
+                    }
+                }
             }
+
             if (postData.getAddress().getState() != null) {
-                address.setState(postData.getAddress().getState());
+                address.setState(StringUtils.isBlank(postData.getAddress().getState()) ? null : postData.getAddress().getState());
             }
 
             accountEntity.setAddress(address);
