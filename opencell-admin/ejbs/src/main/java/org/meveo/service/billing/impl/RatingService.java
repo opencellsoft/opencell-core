@@ -80,7 +80,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
@@ -1134,7 +1133,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount, null);
+        Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount, walletOperation.getEdr());
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
 
