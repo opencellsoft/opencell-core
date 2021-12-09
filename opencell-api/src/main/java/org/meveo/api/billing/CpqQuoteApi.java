@@ -42,6 +42,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.print.attribute.standard.Media;
+import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -156,6 +157,7 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
  * @lastModifiedVersion 11.0
  */
 @Stateless
+@Transactional
 public class CpqQuoteApi extends BaseApi {
 
     @Inject
