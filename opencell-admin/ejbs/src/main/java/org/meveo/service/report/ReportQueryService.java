@@ -379,8 +379,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         params.put("reportQueryName", reportQueryName);
         params.put("startDate", format.format(startDate));
         params.put("portalResultLink", portalResultLink);
-        format = new SimpleDateFormat("hh'h' mm'm' ss's'");
-        params.put("duration", format.format(duration));
+        params.put("duration", String.format("%02d",duration / 3600)+"h "+String.format("%02d",duration / 60 % 60)+"m "+String.format("%02d",duration % 60)+"s");
         try {
         	
             if(success) {
