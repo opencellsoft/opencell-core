@@ -114,25 +114,25 @@ public class AccountEntityApi extends BaseApi {
         if (postData.getAddress() != null) {
             Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
 
-            if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
+            if (postData.getAddress().getAddress1() != null) {
                 address.setAddress1(postData.getAddress().getAddress1());
             }
-            if (!StringUtils.isBlank(postData.getAddress().getAddress2())) {
+            if (postData.getAddress().getAddress2() != null) {
                 address.setAddress2(postData.getAddress().getAddress2());
             }
-            if (!StringUtils.isBlank(postData.getAddress().getAddress3())) {
+            if (postData.getAddress().getAddress3() != null) {
                 address.setAddress3(postData.getAddress().getAddress3());
             }
-            if (!StringUtils.isBlank(postData.getAddress().getZipCode())) {
+            if (postData.getAddress().getZipCode() != null) {
                 address.setZipCode(postData.getAddress().getZipCode());
             }
-            if (!StringUtils.isBlank(postData.getAddress().getCity())) {
+            if (postData.getAddress().getCity() != null) {
                 address.setCity(postData.getAddress().getCity());
             }
-            if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
+            if (postData.getAddress().getCountry() != null) {
                 address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
             }
-            if (!StringUtils.isBlank(postData.getAddress().getState())) {
+            if (postData.getAddress().getState() != null) {
                 address.setState(postData.getAddress().getState());
             }
 
