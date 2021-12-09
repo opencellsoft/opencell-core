@@ -133,6 +133,13 @@ public class FileServlet extends HttpServlet {
             return;
         }
 
+        //Only content "media" Folder  is Valide
+        boolean isFolderOrFileValide = (requestedFile.length() > 7) && ("/media/".equals(requestedFile.substring(0, 7)));        
+        if (!isFolderOrFileValide) {
+        	response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
         // URL-decode the file name (might contain spaces and on) and prepare file
         // object.
         File fileOrFolder = new File(basePath, URLDecoder.decode(requestedFile, "UTF-8"));
