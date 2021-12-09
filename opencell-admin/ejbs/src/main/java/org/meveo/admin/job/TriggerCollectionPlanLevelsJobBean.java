@@ -101,7 +101,7 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
         boolean updateCollectionPlan = false;
         for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
             dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
-                    collectionPlan.getPauseDuration() + levelInstance.getDaysOverdue());
+                    ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
             if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
                     && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)
                     && today.before(dateToCompare)) {
