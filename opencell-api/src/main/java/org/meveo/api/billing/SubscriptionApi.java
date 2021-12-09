@@ -1970,7 +1970,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
-
+        	// Allow all services to be updated regardless of the status
             ServiceInstance serviceToUpdate = getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription);
 
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
