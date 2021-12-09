@@ -72,9 +72,7 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
         if(dunningTemplateUpdatedInfos.getLanguage() != null){
             dunningTemplateEntity.setLanguage(dunningTemplateUpdatedInfos.getLanguage());
         }
-        if(!dunningTemplateUpdatedInfos.isActive()){
-            dunningTemplateEntity.setActive(false);
-        }
+        dunningTemplateEntity.setActive(dunningTemplateUpdatedInfos.isActive());
         if(dunningTemplateUpdatedInfos.getChannel()!=null){
             dunningTemplateEntity.setChannel(dunningTemplateUpdatedInfos.getChannel());
         }
