@@ -205,15 +205,14 @@ public class MediationApiService {
             cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperationDetails, returnWalletOperations, returnEDRs));
             cdrProcessingResult.getStatistics().addSuccess();
 
-        }
-        catch (CDRParsingException e) {
+        } catch (CDRParsingException e) {
             log.error("Error parsing cdr: {}", e.getRejectionCause());
 
             cdrProcessingResult.getStatistics().addFail();
             cdrProcessingResult.addChargedCdr(position,
                     new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getClass().getSimpleName(), e.getRejectionCause() != null ? e.getRejectionCause().toString() : e.getMessage(), cdrLine)));
         } catch (RatingException e) {
-            log.error("Error parsing cdr: {}", e.getRejectionReason(), e);
+            log.error("Error rating cdr: {}", e.getRejectionReason(), e);
 
             cdrProcessingResult.getStatistics().addFail();
             cdrProcessingResult.addChargedCdr(position,
@@ -226,7 +225,7 @@ public class MediationApiService {
             cdrProcessingResult.addChargedCdr(position,
                     new ChargeCDRResponseDto(new ChargeCDRResponseDto.CdrError(e.getErrorCode().toString(), e.getCause() != null ? e.getCause().toString() : e.getMessage(), cdrLine)));
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             log.error("Error parsing cdr", e);
 
             cdrProcessingResult.getStatistics().addFail();
