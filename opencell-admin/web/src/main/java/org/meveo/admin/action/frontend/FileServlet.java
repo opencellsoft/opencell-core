@@ -146,10 +146,10 @@ public class FileServlet extends HttpServlet {
         }
 
         if(!currentUser.isAuthenticated()) {//Not Authenticated
-            //Only Content "media" Folder  is Valid
+            //Only files in "media" Folder is Valid
             boolean isFolderOrFileValide = (requestedFile.length() > 7) && ("/media/".equalsIgnoreCase(requestedFile.substring(0, 7)));
             if (!isFolderOrFileValide || fileOrFolder.isDirectory()) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         }
