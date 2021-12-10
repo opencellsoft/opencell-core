@@ -525,10 +525,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	 * @param billingCycle
 	 * @param startDate
 	 * @param endDate
+	 * @param pageSize 
+	 * @param pageIndex 
 	 * @return
 	 */
 	public List<? extends IBillableEntity> findAccountsToInvoice(BillingRun billingRun, Date startDate,
-			Date endDate) {
+			Date endDate, int pageSize, int pageIndex) {
 		boolean useStart = startDate != null;
 		boolean useEnd = endDate != null;
 		String queryName = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing";
@@ -545,7 +547,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		} else if (useEnd) {
 			query.setParameter("endDate", endDate);
 		}
-		return query.getResultList();
+		return query.setMaxResults(pageSize)
+	      .setFirstResult(pageIndex * pageSize)
+	      .getResultList();
 	}
 
 }

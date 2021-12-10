@@ -594,10 +594,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * Gets entities.
      *
      * @param billingRun the billing run
+     * @param pageIndex 
+     * @param pageSize 
      * @return the entity objects
      */
-    private List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
-
+    private List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun, int pageSize, int pageIndex) {
+    	log.info("getEntitiesToInvoice ====== > "+pageSize+"-"+pageIndex);
         BillingCycle billingCycle = billingRun.getBillingCycle();       
         if (billingCycle != null) {
 
@@ -612,7 +614,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
                 return orderService.findOrders(billingCycle, startDate, endDate);
             }
-            return billingAccountService.findAccountsToInvoice(billingRun, startDate, endDate);           
+            return billingAccountService.findAccountsToInvoice(billingRun, startDate, endDate, pageSize, pageIndex);           
 
         } else {
         	
@@ -661,39 +663,45 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
-
-        List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
-
-        SubListCreator<IBillableEntity> subListCreator = null;
-
-        try {
-            subListCreator = new SubListCreator(entities, (int) nbRuns);
-        } catch (Exception e1) {
-            throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
-        }
-
-        //boolean[] minRTsUsed = ratedTransactionService.isMinRTsUsed();
-        MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
-        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-        while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, minAmountForAccounts, lastCurrentUser));
-            try {
-                Thread.sleep(waitingMillis);
-            } catch (InterruptedException e) {
-                log.error("Failed to create agregates and invoice waiting for thread", e);
-                throw new BusinessException(e);
-            }
-        }
-        for (Future<String> futureItsNow : asyncReturns) {
-            try {
-                futureItsNow.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Failed to create agregates and invoice getting future", e);
-                throw new BusinessException(e);
-            }
-        }
-
+    	final int pageSise = 10000;
+		int count=pageSise;
+    	int index=0;
+    	List<? extends IBillableEntity> entities = null;
+    	while(count==pageSise) {
+	        entities = getEntitiesToInvoice(billingRun, pageSise, index);
+	
+	        SubListCreator<IBillableEntity> subListCreator = null;
+	
+	        try {
+	            subListCreator = new SubListCreator(entities, (int) nbRuns);
+	        } catch (Exception e1) {
+	            throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
+	        }
+	
+	        //boolean[] minRTsUsed = ratedTransactionService.isMinRTsUsed();
+	        MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
+	        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+	        MeveoUser lastCurrentUser = currentUser.unProxy();
+	        while (subListCreator.isHasNext()) {
+	            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, minAmountForAccounts, lastCurrentUser));
+	            try {
+	                Thread.sleep(waitingMillis);
+	            } catch (InterruptedException e) {
+	                log.error("Failed to create agregates and invoice waiting for thread", e);
+	                throw new BusinessException(e);
+	            }
+	        }
+	        for (Future<String> futureItsNow : asyncReturns) {
+	            try {
+	                futureItsNow.get();
+	            } catch (InterruptedException | ExecutionException e) {
+	                log.error("Failed to create agregates and invoice getting future", e);
+	                throw new BusinessException(e);
+	            }
+	        }
+	        count=entities.size();
+	    	index+=1;
+    	}
     }
 
 
@@ -950,7 +958,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             // NOTE: invoice by order is also included here as there is no FK between Order and RT
             if (billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER || minAmountForAccounts.isMinAmountCalculationActivated()) {
             	log.info("==================== 0");
-            	List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+            	List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun,0,0);
 
                 totalEntityCount = entities != null ? entities.size() : 0;
                 log.info("Will create min RTs and update billable amount totals for Billing run {} for {} entities of type {}. Minimum invoicing amount is used for accounts hierarchy {}",
@@ -1072,7 +1080,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             // (billingCycle=null)
             // NOTE: invoice by order is also included here as there is no FK between Order and RT
             if (billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER || minAmountForAccounts.isMinAmountCalculationActivated()) {
-                List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+                List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun, 1000, 0);
 
                 totalEntityCount = entities != null ? entities.size() : 0;
                 log.info(
