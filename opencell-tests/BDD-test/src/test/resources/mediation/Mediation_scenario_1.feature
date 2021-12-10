@@ -8,8 +8,8 @@
      Scenario: Testing mediation process
 
        Given  I create entity "Subscription", with field and value
-         | /code          | /description                   | /userAccount | /offerTemplate |
-         | subCodeThang_1 | a description for Subscription | OPENSOFT-01  | OF_BASIC       |
+         | code           | description                    | userAccount | offerTemplate |
+         | subCodeThang_1 | a description for Subscription | OPENSOFT-01 | OF_BASIC      |
        When   I activate services (which services??? to simplify) on subscription
          | /subscription  | /servicesToActivate/service/0/subscriptionDate | /servicesToActivate/service/0/code | /servicesToActivate/service/0/quantity |
          | subCodeThang_1 | 2019-12-15T01:23:45.678Z                       | SE_USG_UNIT                        | 1                                      |
