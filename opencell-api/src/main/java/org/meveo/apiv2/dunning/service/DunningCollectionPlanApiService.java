@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.dunning.DunningActionInstanceInput;
@@ -549,6 +550,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     public Optional<DunningActionInstance> addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
         DunningActionInstance dunningActionInstance = new DunningActionInstance();
+        
+        if(dunningActionInstanceInput.getCode() != null) {
+            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCode(dunningActionInstanceInput.getCode());
+            if(dunningActionInstanceExist != null) {
+                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
+            }
+        }
 
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
             throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
