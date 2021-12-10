@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.vfs2.FileNotFolderException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.Provider;
@@ -133,12 +132,14 @@ public class FileServlet extends HttpServlet {
             return;
         }
 
-        //Only content "media" Folder  is Valide
-        boolean isFolderOrFileValide = (requestedFile.length() > 7) && ("/media/".equals(requestedFile.substring(0, 7)));        
-        if (!isFolderOrFileValide) {
-        	response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
+        if(!currentUser.isAuthenticated()) {//Not Authenticated
+        	//Only Content "media" Folder  is Valid
+        	boolean isFolderOrFileValide = (requestedFile.length() > 7) && ("/media/".equalsIgnoreCase(requestedFile.substring(0, 7)));
+    		if (!isFolderOrFileValide) {
+    			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    			return;
+    		}
+		}
         
         // URL-decode the file name (might contain spaces and on) and prepare file
         // object.
