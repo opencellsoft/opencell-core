@@ -3,6 +3,7 @@ package org.meveo.apiv2.quote.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -11,8 +12,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
 import org.meveo.service.cpq.QuoteProductService;
@@ -26,51 +29,65 @@ public class QuoteOfferApiService {
 	/** Logger. */
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Inject	private QuoteOfferService quoteOfferService;
-	@Inject	private QuoteVersionService quoteVersionService;
-	@Inject	private QuoteProductService quoteProductService;
-	@Inject	private QuoteAttributeService quoteAttributeService;
-    @Inject private QuoteArticleLineService articleLineService;
+    @Inject
+	private QuoteOfferService quoteOfferService;
+	@Inject
+	private QuoteVersionService quoteVersionService;
+	@Inject
+	private QuoteProductService quoteProductService;
+	@Inject
+	private QuoteAttributeService quoteAttributeService;
+	@Inject
+	private QuoteArticleLineService articleLineService;
+	@Inject
+	private CpqQuoteService cpqQuoteService;
 	
 	public Optional<QuoteOffer> findById(Long quoteOfferId) {
 		return Optional.ofNullable(quoteOfferService.findById(quoteOfferId));
 	}
 	
 	public QuoteOffer duplicate(QuoteOffer quoteOffer, String quoteCode, Integer quoteCurrentVersion) {
-		var quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, quoteCurrentVersion); 
-		if(quoteVersion == null) {
-			throw new EntityDoesNotExistsException(QuoteVersion.class, "("+quoteCode+", "+quoteCurrentVersion+")");
+		var quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, quoteCurrentVersion);
+		if (quoteVersion == null) {
+			throw new EntityDoesNotExistsException(QuoteVersion.class,
+					"(" + quoteCode + ", " + quoteCurrentVersion + ")");
 		}
 		quoteOffer.getQuoteProduct().size();
 		quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
 			quoteProduct.getQuoteAttributes().size();
-			quoteProduct.getQuoteArticleLines().size(); 
+			quoteProduct.getQuoteArticleLines().size();
 		});
 		quoteOffer.getQuoteAttributes().size();
-		
+
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
-		
+
 		QuoteOffer duplicate = null;
-		
+
 		try {
 			duplicate = (QuoteOffer) BeanUtils.cloneBean(quoteOffer);
 			duplicate.setId(null);
+			duplicate.setUuid(UUID.randomUUID().toString());
+			quoteOfferService.detach(duplicate);
+			String code = cpqQuoteService.findDuplicateCode(quoteOffer);
+			duplicate.setCode(code);
+			duplicate.setDescription(code);
 			duplicate.setQuoteVersion(quoteVersion);
 			duplicate.setSequence(quoteOffer.getSequence());
 			duplicate.setDeliveryDate(quoteOffer.getDeliveryDate());
-			
+			duplicate.setQuotePrices(new ArrayList<QuotePrice>());
 			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
-			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
-			
+			duplicate.setQuoteAttributes(quoteAttributes);
+			duplicate.setOfferTemplate(quoteOffer.getOfferTemplate());
+
 			quoteOfferService.create(duplicate);
-			
+
 			duplicateQuoteProduct(duplicate, quoteProducts);
 			duplicateQuoteAttribute(null, duplicate, quoteAttributes);
-
+			
 		} catch (Exception e) {
-            log.error("Error when trying to cloneBean quoteOffer : ", e);
-        }
+			log.error("Error when trying to cloneBean quoteOffer : ", e);
+		}
 
 		return duplicate;
 	}
