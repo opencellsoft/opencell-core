@@ -74,7 +74,6 @@ public class QuoteOfferApiService {
 			duplicate.setDescription(code);
 			duplicate.setQuoteVersion(quoteVersion);
 			duplicate.setSequence(quoteOffer.getSequence());
-			duplicate.setDeliveryDate(quoteOffer.getDeliveryDate());
 			duplicate.setQuotePrices(new ArrayList<QuotePrice>());
 			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
 			duplicate.setQuoteAttributes(quoteAttributes);
