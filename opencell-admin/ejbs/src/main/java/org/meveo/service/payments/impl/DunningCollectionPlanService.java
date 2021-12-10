@@ -1,5 +1,6 @@
 package org.meveo.service.payments.impl;
 
+import static java.lang.System.currentTimeMillis;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
@@ -201,7 +202,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
             actionInstance.setActionStatus(DunningActionInstanceStatusEnum.TO_BE_DONE);
             actionInstance.setCollectionPlan(collectionPlan);
             actionInstance.setDunningLevelInstance(levelInstance);
-            actionInstance.setCode(action.getCode() + "_" + collectionPlan.getId());
+            actionInstance.setCode(action.getCode() + "_" + currentTimeMillis());
             actionInstance.setDescription(action.getDescription());
             actionInstanceService.create(actionInstance);
             actionInstances.add(actionInstance);
