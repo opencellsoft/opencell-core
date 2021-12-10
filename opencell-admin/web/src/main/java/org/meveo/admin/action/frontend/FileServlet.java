@@ -131,15 +131,6 @@ public class FileServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
-        if(!currentUser.isAuthenticated()) {//Not Authenticated
-        	//Only Content "media" Folder  is Valid
-        	boolean isFolderOrFileValide = (requestedFile.length() > 7) && ("/media/".equalsIgnoreCase(requestedFile.substring(0, 7)));
-    		if (!isFolderOrFileValide) {
-    			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    			return;
-    		}
-		}
         
         // URL-decode the file name (might contain spaces and on) and prepare file
         // object.
@@ -154,6 +145,15 @@ public class FileServlet extends HttpServlet {
             return;
         }
 
+        if(!currentUser.isAuthenticated()) {//Not Authenticated
+            //Only Content "media" Folder  is Valid
+            boolean isFolderOrFileValide = (requestedFile.length() > 7) && ("/media/".equalsIgnoreCase(requestedFile.substring(0, 7)));
+            if (!isFolderOrFileValide || fileOrFolder.isDirectory()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        }
+        
         // Prepare some variables. The ETag is an unique identifier of the file.
         String fileName = fileOrFolder.getName();
 
