@@ -19,6 +19,7 @@
 package org.meveo.api.billing;
 
 import java.io.File;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -157,7 +158,6 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
  * @lastModifiedVersion 11.0
  */
 @Stateless
-@Transactional
 public class CpqQuoteApi extends BaseApi {
 
     @Inject

@@ -19,6 +19,7 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +39,6 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -50,7 +50,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @XmlRootElement(name = "AttributeDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class AttributeDTO extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
