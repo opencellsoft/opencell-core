@@ -663,7 +663,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
-    	final int pageSise = 10000;
+    	final int pageSise = 1000;
 		int count=pageSise;
     	int index=0;
     	List<? extends IBillableEntity> entities = null;
