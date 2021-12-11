@@ -402,6 +402,12 @@
             <java-class>org.meveo.model.catalog.DiscountPlan</java-class>
             <java-class>org.meveo.model.module.MeveoModule</java-class>
             <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
+            <java-class>org.meveo.model.cpq.offer.OfferComponent</java-class>
+            <java-class>org.meveo.model.cpq.OfferTemplateAttribute</java-class>
+            <java-class>org.meveo.model.cpq.tags.Tag</java-class>
+            <java-class>org.meveo.model.cpq.trade.CommercialRuleHeader</java-class>
+            <java-class>org.meveo.model.catalog.PricePlanMatrixColumn</java-class>
+            <java-class>org.meveo.model.catalog.PricePlanMatrixVersion</java-class>
         </classesToExportAsFull>
         <relatedEntities>
             <relatedEntity pathToEntityRelatedTo="businessOfferModel">
@@ -439,22 +445,15 @@
                 </parameters>
             </relatedEntity>
             <relatedEntity>
-                <entityClass>org.meveo.model.cpq.offer.OfferComponent</entityClass>
-                <selection>select cft from CustomFieldTemplate cft where cft.disabled=false and cft.appliesTo=:appliesTo</selection>
+                <entityClass>org.meveo.model.cpq.Product</entityClass>
+                <selection>
+                    select p from Product p
+                    where p.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                </selection>
                 <parameters>
                     <entry>
-                        <string>appliesTo</string>
-                        <string>#{entity.appliesTo}</string>
-                    </entry>
-                </parameters>
-            </relatedEntity>
-            <relatedEntity>
-                <entityClass>org.meveo.model.cpq.OfferTemplateAttribute</entityClass>
-                <selection>select ota from OfferTemplateAttribute ota where ota.offerTemplate=:offerTemplate</selection>
-                <parameters>
-                    <entry>
-                        <string>offerTemplate</string>
-                        <string>#{entity}</string>
+                        <string>offerTemplateId</string>
+                        <string>#{entity.id}</string>
                     </entry>
                 </parameters>
             </relatedEntity>
