@@ -4,8 +4,6 @@ import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -20,7 +18,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningActionInstance;
@@ -35,7 +32,6 @@ import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 
@@ -59,9 +55,6 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     @Inject
     private InvoiceService invoiceService;
-
-    @Inject
-    private AuditLogService auditLogService;
 
     @Inject
     private DunningPolicyService policyService;
@@ -101,7 +94,6 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
         create(newCollectionPlan);
         update(oldCollectionPlan);
-        trackOperation("SWITCH", new Date(), oldCollectionPlan);
         return newCollectionPlan;
     }
 
@@ -236,7 +228,6 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		collectionPlanToPause.setPauseReason(dunningPauseReason);
 		collectionPlanToPause.addPauseDuration((int)DateUtils.daysBetween(new Date(),collectionPlanToPause.getPausedUntilDate()));
 		update(collectionPlanToPause);
-		trackOperation("PAUSE", new Date(), collectionPlanToPause);
 		return collectionPlanToPause; 
 	}
 	
@@ -258,7 +249,6 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		collectionPlanToStop.setCloseDate(new Date());
 		collectionPlanToStop.setStopReason(dunningStopReason);
 		update(collectionPlanToStop);
-		trackOperation("STOP", new Date(), collectionPlanToStop);
 		return collectionPlanToStop; 
 	}
 
@@ -298,44 +288,12 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		collectionPlanToResume.setStatus(collectionPlanStatus);
 		collectionPlanToResume.addPauseDuration((int)DateUtils.daysBetween(collectionPlanToResume.getPausedUntilDate(), new Date()));
 		update(collectionPlanToResume);
-		trackOperation("RESUME", new Date(), collectionPlanToResume);
 		return collectionPlanToResume;
 	}
 	
     @Override
     public void remove(DunningCollectionPlan entity) throws BusinessException {
-    	trackOperation("DELETE", new Date(), entity);
     	super.remove(entity);
-    }
-    
-    public AuditLog trackOperation(String operationType, Date operationDate, DunningCollectionPlan dunningCollectionPlan) {
-        AuditLog auditLog = new AuditLog();
-        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
-        String userName;
-        
-        if (currentUser.getFullNameOrUserName() != null && currentUser.getFullNameOrUserName().length() > 0) {
-        	userName = currentUser.getFullNameOrUserName();
-        } else if (currentUser.getEmail() != null && currentUser.getEmail().length() > 0) {
-        	userName = currentUser.getEmail();
-        } else {
-        	userName = currentUser.getUserName();
-        }
-        
-        auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
-        auditLog.setCreated(operationDate);
-        auditLog.setActor(currentUser.getUserName());
-        auditLog.setAction(operationType);
-        StringBuilder parameters = new StringBuilder()
-                .append(formatter.format(operationDate)).append(" - ")
-                .append(userName).append(" - ")
-                .append(" apply ")
-                .append(operationType)
-                .append(" to collection Plan id=")
-                .append(dunningCollectionPlan.getId());
-        auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin("DunningCollectionPlan: " + dunningCollectionPlan.getId());
-        auditLogService.create(auditLog);
-        return auditLog;
     }
 
 	public List<DunningCollectionPlan> findDunningCollectionPlansToResume() {

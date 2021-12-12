@@ -1,11 +1,24 @@
 package org.meveo.apiv2.dunning.impl;
 
 import static java.util.Arrays.asList;
-import static org.meveo.apiv2.ordering.common.LinkGenerator.*;
+import static org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.apiv2.dunning.*;
+import org.meveo.apiv2.dunning.DunningPolicy;
+import org.meveo.apiv2.dunning.DunningPolicyInput;
+import org.meveo.apiv2.dunning.DunningPolicyRules;
+import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
+import org.meveo.apiv2.dunning.PolicyRule;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
@@ -14,16 +27,9 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.apiv2.report.SuccessResponse;
 import org.meveo.model.dunning.DunningPolicyLevel;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
@@ -38,12 +44,15 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Inject
     private DunningPolicyService dunningPolicyService;
+    
+    @Inject
+    private AuditLogService auditLogService;
 
     private final DunningPolicyMapper mapper = new DunningPolicyMapper();
 
     private final DunningPolicyLevelMapper policyLevelMapper = new DunningPolicyLevelMapper();
 
-    private DunningPolicyRuleMapper dunningPolicyRuleMapper = new DunningPolicyRuleMapper();
+    private final DunningPolicyRuleMapper dunningPolicyRuleMapper = new DunningPolicyRuleMapper();
 
     @Override
     public Response create(DunningPolicy dunningPolicy) {
@@ -115,10 +124,9 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         if (entity == null) {
             throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
         }
-        StringBuilder updatedField = new StringBuilder();
+        List<String> updatedFields = new ArrayList<>();
         List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
         if (dunningPolicy.getDunningPolicyLevels() != null && !dunningPolicy.getDunningPolicyLevels().isEmpty()) {
-            updatedField.append("dunningLevels;");
             entity.getDunningLevels().clear();
             for (Resource resource : dunningPolicy.getDunningPolicyLevels()) {
                 DunningPolicyLevel level = dunningPolicyLevelService.findById(resource.getId());
@@ -129,19 +137,20 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             }
         }
         if (!dunningPolicyLevelList.isEmpty()) {
+            updatedFields.add("dunningLevels");
             entity.setDunningLevels(dunningPolicyLevelList);
         }
         
         String operationType = "update";
 
         if(dunningPolicy.isActivePolicy() !=null && entity.getActivePolicy() != dunningPolicy.isActivePolicy()){
-        	operationType = dunningPolicy.isActivePolicy()? "activation":"deactivation";
+        	operationType = dunningPolicy.isActivePolicy()? "activation" : "deactivation";
         }
         
         org.meveo.model.dunning.DunningPolicy policy =
-                dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedField)).get();
-        
-        dunningPolicyApiService.trackOperation(operationType, new Date(), updatedField.toString(), policy.getPolicyName());
+                dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedFields)).get();
+
+        auditLogService.trackOperation(operationType, new Date(), policy, updatedFields);
 
         
         ActionStatus actionStatus = new ActionStatus();
