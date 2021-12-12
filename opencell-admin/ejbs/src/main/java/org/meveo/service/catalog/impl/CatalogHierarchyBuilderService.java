@@ -1281,7 +1281,7 @@ public class CatalogHierarchyBuilderService {
     
     private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
     	for (QuoteOffer quoteOffer : offers) {
-    		duplicateQuoteOffer(quoteOffer);
+    		duplicateQuoteOffer(quoteOffer,entity);
 		}
     }
     
@@ -1316,7 +1316,8 @@ public class CatalogHierarchyBuilderService {
 		}
     }
     
-    public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer) {
+    public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
+    	
     	quoteOffer.getQuoteProduct().size();
 		quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
 			quoteProduct.getQuoteAttributes().size();
@@ -1333,6 +1334,7 @@ public class CatalogHierarchyBuilderService {
 			duplicate = (QuoteOffer) BeanUtils.cloneBean(quoteOffer);
 			duplicate.setId(null);
 			duplicate.setUuid(UUID.randomUUID().toString());
+			duplicate.setQuoteVersion(quoteVersion);
 			quoteOfferService.detach(quoteOffer);
 			String code = cpqQuoteService.findDuplicateCode(quoteOffer);
 			duplicate.setCode(code);
