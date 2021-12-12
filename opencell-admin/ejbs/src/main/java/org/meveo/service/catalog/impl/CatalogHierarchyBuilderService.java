@@ -85,6 +85,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
@@ -93,6 +94,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.CommercialRuleItemService;
 import org.meveo.service.cpq.CommercialRuleLineService;
+import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
@@ -189,6 +191,9 @@ public class CatalogHierarchyBuilderService {
     @Inject private CommercialRuleItemService commercialRuleItemService;
     
     @Inject private CommercialRuleLineService commercialRuleLineService;
+    
+    @Inject
+    private CpqQuoteService cpqQuoteService;
 
     @Inject
     @CurrentUser
@@ -1280,15 +1285,7 @@ public class CatalogHierarchyBuilderService {
     
     private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
     	for (QuoteOffer quoteOffer : offers) {
-    		final var duplicate = new QuoteOffer(quoteOffer);
-    		quoteOfferService.detach(quoteOffer);
-    		var quoteProducts = quoteOffer.getQuoteProduct();
-    		duplicate.setQuoteVersion(entity);
-    		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
-    		quoteOfferService.create(duplicate);
-    		duplicateQuoteProduct(quoteProducts, duplicate);
-
-			duplicateQuoteAttribute(quoteOffer.getQuoteAttributes(), null, duplicate);
+    		duplicateQuoteOffer(quoteOffer);
 		}
     }
     
@@ -1297,15 +1294,14 @@ public class CatalogHierarchyBuilderService {
 			final var duplicate = new QuoteProduct(quoteProduct);
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
-			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
 			duplicate.setQuoteOffer(offer);
 			duplicate.setQuote(offer.getQuoteVersion().getQuote());
 			duplicate.setQuoteVersion(offer.getQuoteVersion());
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
+			duplicate.setQuoteArticleLines(new ArrayList<QuoteArticleLine>());
 			quoteProductService.create(duplicate);
 			
 			duplicateQuoteAttribute(quoteAttributes, duplicate, null);
-			duplicateArticleLine(quoteArticleLines, duplicate);
 			
 		}
     }
@@ -1331,5 +1327,41 @@ public class CatalogHierarchyBuilderService {
 				duplicate.setQuoteOffer(offer);
 			quoteAttributeService.create(duplicate);
 		}
+    }
+    
+    public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer) {
+    	quoteOffer.getQuoteProduct().size();
+		quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
+			quoteProduct.getQuoteAttributes().size();
+			quoteProduct.getQuoteArticleLines().size();
+		});
+		quoteOffer.getQuoteAttributes().size();
+
+		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
+		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
+
+		QuoteOffer duplicate = null;
+
+		try {
+			duplicate = (QuoteOffer) BeanUtils.cloneBean(quoteOffer);
+			duplicate.setId(null);
+			duplicate.setUuid(UUID.randomUUID().toString());
+			quoteOfferService.detach(quoteOffer);
+			String code = cpqQuoteService.findDuplicateCode(quoteOffer);
+			duplicate.setCode(code);
+			duplicate.setQuotePrices(new ArrayList<QuotePrice>());
+			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
+			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
+
+			quoteOfferService.create(duplicate);
+
+			duplicateQuoteProduct(quoteProducts,duplicate );
+			duplicateQuoteAttribute(quoteAttributes,null, duplicate);
+			
+		} catch (Exception e) {
+			log.error("Error when trying to cloneBean quoteOffer : ", e);
+		}
+
+		return duplicate;
     }
 }
