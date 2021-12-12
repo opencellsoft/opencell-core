@@ -132,10 +132,10 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     } else {
                         pricePlanMatrixValue = new PricePlanMatrixValue();
                     }
-                    PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCode(value.getPpmColumnCode());
-                    if (pricePlanMatrixColumn == null)
+                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
+                    if (pricePlanMatrixColumns.isEmpty())
                         throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
-                    pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
+                    pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumns.get(0));
                     pricePlanMatrixValue.setDoubleValue(value.getDoubleValue());
                     pricePlanMatrixValue.setLongValue(value.getLongValue());
                     pricePlanMatrixValue.setStringValue(value.getStringValue());

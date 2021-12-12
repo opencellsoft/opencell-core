@@ -118,7 +118,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
     	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
     	
-    	//this.detach(pricePlanMatrixVersion);
     	
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
         if(validity!=null) {
@@ -179,10 +178,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	var ids = new HashMap<Long, PricePlanMatrixColumn>();
     	if(columns != null && !columns.isEmpty()) {
     		
-    		var duplicateColumns = new HashSet<PricePlanMatrixColumn>();
-    		
     		for (PricePlanMatrixColumn ppmc : columns) {
-				
+    			ppmc.getPricePlanMatrixValues().size();
         		//pricePlanMatrixColumnService.detach(ppmc);
         		
         		var duplicatePricePlanMatrixColumn = new PricePlanMatrixColumn(ppmc);
@@ -190,15 +187,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         			var product = productService.findById(ppmc.getProduct().getId());
         			duplicatePricePlanMatrixColumn.setProduct(product);
         		}
-        		duplicatePricePlanMatrixColumn.setCode(pricePlanMatrixColumnService.findDuplicateCode(ppmc));
+//        		duplicatePricePlanMatrixColumn.setCode(pricePlanMatrixColumnService.findDuplicateCode(ppmc));
         		duplicatePricePlanMatrixColumn.setPricePlanMatrixVersion(entity);
         		pricePlanMatrixColumnService.create(duplicatePricePlanMatrixColumn);
         		
-        		ids.put(ppmc.getId(), duplicatePricePlanMatrixColumn);
+        		ids.put(ppmc.getId().longValue(), duplicatePricePlanMatrixColumn);
         		
-        		duplicateColumns.add(duplicatePricePlanMatrixColumn);
+        		entity.getColumns().add(duplicatePricePlanMatrixColumn);
     		}
-    		entity.getColumns().addAll(duplicateColumns);
     	}
     	return ids;
     }
@@ -216,7 +212,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     			
     			pricePlanMatrixLineService.create(duplicateLine);
     			
-    			ids.put(ppml.getId(), duplicateLine);
+    			ids.put(ppml.getId().longValue(), duplicateLine);
     			
     			entity.getLines().add(duplicateLine);
     		});
@@ -227,10 +223,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private void duplicatePricePlanMatrixValue(Map<Long,PricePlanMatrixColumn> columnsId, Map<Long,PricePlanMatrixLine> lineIds) {
     	var pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
     	columnsId.forEach((key, value) -> {
-    		var ppmv = pricePlanMatrixValueService.findByPricePlanMatrixColumn(key);
+    		var ppmv = new HashSet<>(pricePlanMatrixValueService.findByPricePlanMatrixColumn(key));
     		ppmv.forEach(tmpValue -> {
-        		tmpValue.setPricePlanMatrixColumn(value);
-        		pricePlanMatrixValues.add(tmpValue);
+    			var pricePlanMatrixValue = new PricePlanMatrixValue(tmpValue);
+    			pricePlanMatrixValue.setPricePlanMatrixColumn(value);
+        		pricePlanMatrixValues.add(pricePlanMatrixValue);
     		});
     	});
     	pricePlanMatrixValues.stream()
