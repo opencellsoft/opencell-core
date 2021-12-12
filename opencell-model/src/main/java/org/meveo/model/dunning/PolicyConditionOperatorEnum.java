@@ -1,8 +1,6 @@
-package org.meveo.service.payments.impl;
+package org.meveo.model.dunning;
 
 import static java.util.Arrays.stream;
-
-import org.meveo.admin.exception.BusinessException;
 
 public enum PolicyConditionOperatorEnum {
 
@@ -27,6 +25,6 @@ public enum PolicyConditionOperatorEnum {
         return stream(values())
                         .filter(operator -> operator.operator.equalsIgnoreCase(value))
                         .findFirst()
-                        .orElseThrow(() -> new BusinessException("No operator " + value + " found"));
+                        .orElseThrow(() -> new IllegalArgumentException("No operator " + value + " found"));
     }
 }
