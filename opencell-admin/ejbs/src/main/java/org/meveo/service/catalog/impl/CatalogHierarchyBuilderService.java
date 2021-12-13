@@ -1330,12 +1330,7 @@ public class CatalogHierarchyBuilderService {
     }
     
     public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
-    	quoteOffer.getQuoteProduct().size();
-		quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
-			quoteProduct.getQuoteAttributes().size();
-			quoteProduct.getQuoteArticleLines().size();
-		});
-		quoteOffer.getQuoteAttributes().size();
+
 
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
