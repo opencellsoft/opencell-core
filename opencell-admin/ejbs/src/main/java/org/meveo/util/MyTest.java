@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -87,6 +88,8 @@ public class MyTest {
 		AttributeValueService.validateValue(quoteAttr, quote, null, null, null);
 		//boolean a=ValueExpressionWrapper.evaluateExpression("#{date < quote.quoteDate}", Boolean.class, DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"),quote);
 		//System.out.println(a);
+		
+		System.out.println( Pattern.compile("[0-5]").matcher("7").find());
 		
 		/*********
 		 * 

@@ -1333,7 +1333,7 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setUuid(UUID.randomUUID().toString());
 
 			duplicate.setQuoteVersion(quoteVersion);
-
+			
 			quoteOfferService.detach(quoteOffer);
 
 			String code = cpqQuoteService.findDuplicateCode(quoteOffer);
