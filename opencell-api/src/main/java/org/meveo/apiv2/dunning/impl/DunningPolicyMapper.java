@@ -2,6 +2,8 @@ package org.meveo.apiv2.dunning.impl;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.List;
+
 import org.hibernate.Hibernate;
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
@@ -55,32 +57,33 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
     }
 
     public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicyInput resource,
-                                                                org.meveo.model.dunning.DunningPolicy toUpdate, StringBuilder fieldToUpdate) {
+                                                                org.meveo.model.dunning.DunningPolicy toUpdate,
+                                                                List<String> updatedFields) {
         ofNullable(resource.getPolicyName()).ifPresent(policyName -> {
             toUpdate.setPolicyName(policyName);
-            fieldToUpdate.append("policyName;"); });
+            updatedFields.add("policyName"); });
         ofNullable(resource.getPolicyDescription()).ifPresent(description
-                -> { toUpdate.setPolicyDescription(description); fieldToUpdate.append("policyDescription;"); });
+                -> { toUpdate.setPolicyDescription(description); updatedFields.add("policyDescription"); });
         ofNullable(resource.isActivePolicy()).ifPresent(activePolicy
-                -> { toUpdate.setActivePolicy(activePolicy); fieldToUpdate.append("activePolicy;"); });
+                -> { toUpdate.setActivePolicy(activePolicy); updatedFields.add("activePolicy"); });
         ofNullable(resource.isDefaultPolicy()).ifPresent(defaultPolicy -> {
-            toUpdate.setDefaultPolicy(defaultPolicy); fieldToUpdate.append("defaultPolicy;");});
+            toUpdate.setDefaultPolicy(defaultPolicy); updatedFields.add("defaultPolicy");});
         ofNullable(resource.isAttachInvoicesToEmails())
                 .ifPresent(attachInvoicesToEmails -> {
-                    toUpdate.setAttachInvoicesToEmails(attachInvoicesToEmails); fieldToUpdate.append("attachInvoicesToEmails;");});
+                    toUpdate.setAttachInvoicesToEmails(attachInvoicesToEmails); updatedFields.add("attachInvoicesToEmails");});
         ofNullable(resource.isIncludeDueInvoicesInThreshold())
                 .ifPresent(includeDueInvoices -> {
-                    toUpdate.setIncludeDueInvoicesInThreshold(includeDueInvoices); fieldToUpdate.append("includeDueInvoicesInThreshold;"); });
+                    toUpdate.setIncludeDueInvoicesInThreshold(includeDueInvoices); updatedFields.add("includeDueInvoicesInThreshold"); });
         ofNullable(resource.isIncludePayReminder())
                 .ifPresent(includePayReminder -> {
-                    toUpdate.setIncludePayReminder(includePayReminder); fieldToUpdate.append("includePayReminder;"); });
+                    toUpdate.setIncludePayReminder(includePayReminder); updatedFields.add("includePayReminder"); });
         ofNullable(resource.getInterestForDelaySequence())
                 .ifPresent(interestForDelaySequence -> {
-                    toUpdate.setInterestForDelaySequence(interestForDelaySequence); fieldToUpdate.append("interestForDelaySequence;"); });
+                    toUpdate.setInterestForDelaySequence(interestForDelaySequence); updatedFields.add("interestForDelaySequence"); });
         ofNullable(resource.getMinBalanceTrigger()).ifPresent(minBalance -> {
-            toUpdate.setMinBalanceTrigger(minBalance); fieldToUpdate.append("minBalanceTrigger;"); });
+            toUpdate.setMinBalanceTrigger(minBalance); updatedFields.add("minBalanceTrigger"); });
         ofNullable(resource.getDetermineLevelBy()).ifPresent(determineLevelBy -> {
-            toUpdate.setDetermineLevelBy(determineLevelBy); fieldToUpdate.append("determineLevelBy;"); });
+            toUpdate.setDetermineLevelBy(determineLevelBy); updatedFields.add("determineLevelBy"); });
         return toUpdate;
     }
 }

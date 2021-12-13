@@ -253,7 +253,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     public Response duplicatePricePlanVersion(String pricePlanMatrixCode, int pricePlanMatrixVersion,DatePeriodDto periodDto) {
         GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
         try {
-            result = pricePlanMatrixVersionApi.duplicateProductVersion(pricePlanMatrixCode, pricePlanMatrixVersion,periodDto);
+            result = pricePlanMatrixVersionApi.duplicatePricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion,periodDto);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
             return errorResponse(e, result.getActionStatus());

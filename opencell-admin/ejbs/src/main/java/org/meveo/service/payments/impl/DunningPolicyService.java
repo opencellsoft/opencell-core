@@ -4,7 +4,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Optional.*;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
-import static org.meveo.service.payments.impl.PolicyConditionTargetEnum.valueOf;
+import static org.meveo.model.dunning.PolicyConditionTargetEnum.valueOf;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -15,11 +15,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.dunning.DunningCollectionPlanStatus;
-import org.meveo.model.dunning.DunningDetermineLevelBy;
-import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.DunningPolicyRule;
-import org.meveo.model.dunning.DunningPolicyRuleLine;
+import org.meveo.model.dunning.*;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;

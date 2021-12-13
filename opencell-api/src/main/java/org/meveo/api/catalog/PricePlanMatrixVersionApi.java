@@ -176,7 +176,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
     }
 
-    public GetPricePlanVersionResponseDto duplicateProductVersion(String pricePlanMatrixCode, int currentVersion,DatePeriodDto periodDto) {
+    public GetPricePlanVersionResponseDto duplicatePricePlanMatrixVersion(String pricePlanMatrixCode, int currentVersion,DatePeriodDto periodDto) {
         try {  
         	 PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
              if (pricePlanMatrixVersion == null) {
@@ -212,7 +212,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
         	}
 			 });
-            
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion,validity, null));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
