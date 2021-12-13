@@ -1317,55 +1317,29 @@ public class CatalogHierarchyBuilderService {
     }
     
     public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
-
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
-
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
-
 		QuoteOffer duplicate = null;
 
 		try {
-
 			duplicate = (QuoteOffer) BeanUtils.cloneBean(quoteOffer);
-
 			duplicate.setId(null);
-
 			duplicate.setUuid(UUID.randomUUID().toString());
-
-			duplicate.setQuoteVersion(quoteVersion);
-			
+			duplicate.setQuoteVersion(quoteVersion);	
 			quoteOfferService.detach(quoteOffer);
-
 			String code = cpqQuoteService.findDuplicateCode(quoteOffer);
-
 			duplicate.setCode(code);
-
 			duplicate.setQuotePrices(new ArrayList<QuotePrice>());
-
 			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
-
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
-
-
 			quoteOfferService.create(duplicate);
-
 			duplicateQuoteProduct(quoteProducts,duplicate );
-
-			duplicateQuoteAttribute(quoteAttributes,null, duplicate);
-
-			
-
+			duplicateQuoteAttribute(quoteAttributes,null, duplicate);			
 		} catch (Exception e) {
-
 			log.error("Error when trying to cloneBean quoteOffer : ", e);
-
 		}
-
-
-
 		return duplicate;
 
     }
-
 }
 
