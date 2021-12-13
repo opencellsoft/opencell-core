@@ -27,6 +27,7 @@ import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
@@ -53,6 +54,9 @@ public class DunningPolicyResourceImplTest {
 
     @Mock
     private DunningPolicyService dunningPolicyService;
+    
+    @Mock
+    private AuditLogService auditLogService;
 
     @Before
     public void setUp() {

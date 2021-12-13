@@ -18,9 +18,18 @@
 
 package org.meveo.service.audit.logging;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import javax.ejb.Stateless;
 
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -37,4 +46,46 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         getEntityManager().createQuery(hqlQuery).executeUpdate();
     }
 
+    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity) {
+        trackOperation(operationType, operationDate, entity, null);
+    }
+
+    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, List<String> fields) {
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
+        String actor = getActor();
+        AuditLog auditLog = new AuditLog();
+        auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
+        auditLog.setCreated(operationDate);
+        auditLog.setActor(getActor());
+        auditLog.setAction(operationType);
+        StringBuilder parameters = new StringBuilder()
+                .append(formatter.format(operationDate))
+                .append(" - ").append(actor).append(" - ")
+                .append(" apply ").append(operationType)
+                .append(" to ").append(entity.getClass().getSimpleName()).append(" with ").append(getCodeOrId(entity))
+                .append(fields != null && !fields.isEmpty() ? ", fields (" + String.join(",", fields) + ")" : "");
+        auditLog.setParameters(parameters.toString());
+        auditLog.setOrigin("API");
+        create(auditLog);
+    }
+
+    private String getActor() {
+        if (StringUtils.isNotBlank(currentUser.getFullNameOrUserName())) {
+            return currentUser.getFullNameOrUserName();
+        } else if (StringUtils.isNotBlank(currentUser.getEmail())) {
+            return currentUser.getEmail();
+        }
+        return currentUser.getUserName();
+    }
+
+    private <T extends BaseEntity> String getCodeOrId(T entity) {
+        String codeOrId = null;
+        if (entity instanceof BusinessEntity) {
+            codeOrId = ((BusinessEntity) entity).getCode();
+        }
+        if (StringUtils.isNotBlank(codeOrId)) {
+            return "code " + codeOrId;
+        }
+        return "id " + entity.getId();
+    }
 }

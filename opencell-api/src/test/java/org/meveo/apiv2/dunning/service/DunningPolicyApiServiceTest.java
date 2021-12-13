@@ -85,7 +85,6 @@ public class DunningPolicyApiServiceTest {
         when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
-        when(currentUser.getUserName()).thenReturn("opencell.admin");
     }
 
     @Test
