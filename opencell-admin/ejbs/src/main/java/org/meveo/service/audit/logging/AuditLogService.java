@@ -51,7 +51,7 @@ public class AuditLogService extends PersistenceService<AuditLog> {
     }
 
     public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, List<String> fields) {
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH'h'mm");
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
         String actor = getActor();
         AuditLog auditLog = new AuditLog();
         auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
