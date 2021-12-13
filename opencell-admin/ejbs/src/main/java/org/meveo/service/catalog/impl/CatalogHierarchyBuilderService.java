@@ -1307,15 +1307,7 @@ public class CatalogHierarchyBuilderService {
     }
     
     
-    private void duplicateArticleLine(List<QuoteArticleLine> quoteArticleLines, QuoteProduct quoteProduct) {
-    	for (QuoteArticleLine quoteArticleLine : quoteArticleLines) {
-			var quotePrices = quoteArticleLine.getQuotePrices();
-			final var duplicate = new QuoteArticleLine(quoteArticleLine);
-			duplicate.setQuoteProduct(quoteProduct);
-			articleLineService.create(duplicate);
-		}
-    }
-    
+   
     
     private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct, QuoteOffer offer) {
     	for (QuoteAttribute quoteAttribute : attributes) {
