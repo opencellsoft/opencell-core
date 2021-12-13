@@ -106,6 +106,8 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
      * @param jobExecutionResult Job execution result
      */
     private void rateEDRBatch(List<Long> edrIds, JobExecutionResultImpl jobExecutionResult) {
+
+        // In case of no need to rollback when rating fails, an error will be recorded directly in EDR, error will never be thrown and only batch mode will be used
         usageRatingService.ratePostpaidUsage(edrIds);
     }
 

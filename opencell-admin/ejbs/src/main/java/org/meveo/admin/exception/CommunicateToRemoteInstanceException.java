@@ -17,23 +17,34 @@
  */
 package org.meveo.admin.exception;
 
+import javax.ejb.ApplicationException;
+
 /**
- * @author Andrius Karpavicius
+ * Failed to communicate to a remote Opencell instance
  * 
+ * @author Andrius Karpavicius
  */
-public class ElementNotFoundException extends ValidationException {
+@ApplicationException(rollback = false)
+public class CommunicateToRemoteInstanceException extends BusinessException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7048199432468647599L;
 
-    public ElementNotFoundException(String message) {
+    /**
+     * Constructor
+     * 
+     * @param opencellInstance Opencell instance code
+     * @param cause The cause
+     */
+    public CommunicateToRemoteInstanceException(String opencellInstance, Throwable cause) {
+        super("Failed to communicate " + opencellInstance, cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message Error message
+     */
+    public CommunicateToRemoteInstanceException(String message) {
         super(message);
-    }
-    
-    public ElementNotFoundException(String code, String elementName) {
-        super(elementName + " with code=" + code + " not found");
-    }
-    
-    public ElementNotFoundException(Number id, String elementName) {
-        super(elementName + " with id=" + id + " not found");
     }
 }

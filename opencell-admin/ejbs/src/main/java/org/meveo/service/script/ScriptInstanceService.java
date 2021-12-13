@@ -34,6 +34,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.infinispan.Cache;
@@ -374,6 +375,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
+    @Transactional(dontRollbackOn = BusinessException.class)
     public Map<String, Object> executeCached(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
 
         if (context == null) {
@@ -395,6 +397,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
+    @Transactional(dontRollbackOn = BusinessException.class)
     public Map<String, Object> executeCached(String scriptCode, Map<String, Object> context) throws BusinessException {
 
         log.trace("Script (cached) {} to be executed with parameters {}", scriptCode, context);
@@ -427,6 +430,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
+    @Transactional(dontRollbackOn = BusinessException.class)
     public Map<String, Object> executeWInitAndFinalize(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
 
         if (context == null) {
@@ -449,6 +453,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
+    @Transactional(dontRollbackOn = BusinessException.class)
     public Map<String, Object> execute(Object entityOrEvent, String scriptCode, Map<String, Object> context,boolean isToInit, boolean isToExecute, boolean isToTerminate) throws BusinessException {
 
         if (context == null) {
@@ -470,6 +475,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
+    @Transactional(dontRollbackOn = BusinessException.class)
     public Map<String, Object> executeWInitAndFinalize(String scriptCode, Map<String, Object> context) throws BusinessException {
 
        return execute(scriptCode, context, true, true, true);
@@ -489,6 +495,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
+    @Transactional(dontRollbackOn = BusinessException.class)
 	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, boolean isToInit, boolean isToExecute, boolean isToTerminate)
 			throws BusinessException {
 

@@ -277,7 +277,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             isExonerated = billingAccountService.isExonerated(billingAccount);
         }
         Object[] applicableTax = taxMappingService
-                .getApplicableTax(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
+                .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
         boolean taxRecalculated = (boolean) applicableTax[1];
         if (taxRecalculated) {
             Tax tax = (Tax) applicableTax[0];

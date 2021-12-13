@@ -108,6 +108,7 @@ import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
@@ -155,8 +156,27 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.*;
-import org.meveo.service.catalog.impl.*;
+import org.meveo.service.billing.impl.AttributeInstanceService;
+import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
@@ -1106,7 +1126,7 @@ public class SubscriptionApi extends BaseApi {
         try {
 
             oneShotChargeInstanceService
-                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
+                    .instantiateAndApplyOneShotCharge(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
@@ -2332,8 +2352,8 @@ public class SubscriptionApi extends BaseApi {
         // Recurring charges :
         List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionId(InstanceStatusEnum.ACTIVE, rateUntillDate, subscription.getId());
         for (Long chargeId : activeRecurringChargeIds) {
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate, false).getNbRating();
-            result.addResult(chargeId, nbRating);
+            RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate, false, null);
+            result.addResult(chargeId, ratingResult.getWalletOperations().size());
         }
         return result;
     }

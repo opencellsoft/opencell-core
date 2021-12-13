@@ -298,9 +298,6 @@ public class EDR extends BaseEntity {
     @Column(name = "times_tried")
     private Integer timesTried = 0;
 
-    @Transient
-    private String ratingRejectionReason;
-
     /**
      * Tracks quantity left to rate. Initialized with quantity field value on the first call.
      */
@@ -543,20 +540,6 @@ public class EDR extends BaseEntity {
 
     public void setExtraParameter(String extraParameter) {
         this.extraParameter = extraParameter;
-    }
-
-    /**
-     * @param ratingRejectionReason Rejection reason why EDR was rejected during rating. A transient value. A persisted value is available in procesingStatus.rejectionReason.
-     */
-    public void setRatingRejectionReason(String ratingRejectionReason) {
-        this.ratingRejectionReason = ratingRejectionReason;
-    }
-
-    /**
-     * @return Rejection reason why EDR was rejected during rating. A transient value. A persisted value is available in procesingStatus.rejectionReason.
-     */
-    public String getRatingRejectionReason() {
-        return ratingRejectionReason;
     }
 
     @Override

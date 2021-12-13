@@ -23,8 +23,8 @@ import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.IEntity;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -54,8 +54,9 @@ public class CalendarService extends PersistenceService<Calendar> {
      * @param calendar Calendar to initialize
      * @param defaultInitDate Default date to initialize with
      * @return Calendar initialized with a starting date
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static Calendar initializeCalendar(Calendar calendar, Date defaultInitDate, Object... elParameters) {
+    public static Calendar initializeCalendar(Calendar calendar, Date defaultInitDate, Object... elParameters) throws InvalidELException{
 
         if (calendar == null) {
             return null;

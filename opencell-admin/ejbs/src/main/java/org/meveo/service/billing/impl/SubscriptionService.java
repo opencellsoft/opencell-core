@@ -43,6 +43,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.ValidationException;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
@@ -86,7 +87,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 
 /**
@@ -366,7 +366,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                         continue;
                     }
                     log.info("Reimbursing the OTHER type subscription charge {}", oneShotChargeInstance.getId());
-                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber, ChargeApplicationModeEnum.REIMBURSMENT);
+                    oneShotChargeInstanceService.applyOneShotCharge(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber, ChargeApplicationModeEnum.REIMBURSMENT);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
                 }

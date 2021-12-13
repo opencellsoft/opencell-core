@@ -18,9 +18,22 @@
 
 package org.meveo.export;
 
-public class RemoteAuthenticationException extends Exception {
+import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
+
+/**
+ * Failed to authenticate to a remote Opencell instance
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
+public class RemoteAuthenticationException extends CommunicateToRemoteInstanceException {
     private static final long serialVersionUID = -5887178902695780010L;
 
+    /**
+     * Constructor
+     * 
+     * @param message Error message
+     */
     public RemoteAuthenticationException(String message) {
         super(message);
     }

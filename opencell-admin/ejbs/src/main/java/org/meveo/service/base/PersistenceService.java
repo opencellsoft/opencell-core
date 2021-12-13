@@ -263,7 +263,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @return Updated entity
      * @throws BusinessException General business exception
      */
-    public E updateNoCheck(E entity) throws BusinessException {
+    public E updateNoCheck(E entity) throws ValidationException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
         if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
@@ -435,7 +435,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     @Override
-    public void remove(E entity) throws BusinessException {
+    public void remove(E entity) {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
         deletionService.checkEntityIsNotreferenced(entity);
         entity = retrieveIfNotManaged(entity);
@@ -449,11 +449,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             // Remove entity from Elastic Search
             if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
                 elasticClient.remove((BusinessEntity) entity);
-            }
-
-            // Remove custom field values from cache if applicable
-            if (entity instanceof ICustomFieldEntity) {
-                customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
             }
 
             if (entity instanceof IImageUpload) {
@@ -506,7 +501,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#update(org.meveo.model.IEntity)
      */
     @Override
-    public E update(E entity) throws BusinessException {
+    public E update(E entity)  {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
         if (entity instanceof ISearchable) {
@@ -559,7 +554,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entity;
     }
 
-    private boolean validateCode(ISearchable entity) throws BusinessException {
+    private boolean validateCode(ISearchable entity) throws ValidationException {
         // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
         // throw new BusinessException("Invalid characters found in entity code.");
         // }
@@ -571,7 +566,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
      */
     @Override
-    public void create(E entity) throws BusinessException {
+    public void create(E entity)  {
         log.debug("start of create {}", entity.getClass().getSimpleName());
 
         if (entity instanceof ISearchable) {
