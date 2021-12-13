@@ -231,10 +231,11 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public Optional<DunningPolicyRule> addPolicyRule(DunningPolicyRule dunningPolicyRule,
-                                                     List<org.meveo.apiv2.dunning.DunningPolicyRuleLine> policyRules) {
+                                                     List<org.meveo.apiv2.dunning.DunningPolicyRuleLine> policyRuleLines) {
         dunningPolicyRuleService.create(dunningPolicyRule);
-        for (org.meveo.apiv2.dunning.DunningPolicyRuleLine line : policyRules) {
-            org.meveo.model.dunning.DunningPolicyRuleLine dunningPolicyRuleLine = policyRuleLineMapper.toEntity(line);
+        for (org.meveo.apiv2.dunning.DunningPolicyRuleLine line : policyRuleLines) {
+            org.meveo.model.dunning.DunningPolicyRuleLine dunningPolicyRuleLine =
+                    policyRuleLineMapper.toEntity(line);
             dunningPolicyRuleLine.setDunningPolicyRule(dunningPolicyRule);
             dunningPolicyRuleLineService.create(dunningPolicyRuleLine);
         }

@@ -204,7 +204,10 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     public Response addPolicyRule(Long dunningPolicyId, DunningPolicyRules policyRules) {
         org.meveo.model.dunning.DunningPolicy dunningPolicy = dunningPolicyApiService.findById(dunningPolicyId)
                 .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + "does not exits"));
-        validateResource(policyRules);
+        if(policyRules.getPolicyRules() == null && policyRules.getPolicyRules().isEmpty()) {
+            throw new BadRequestException("Policy rules null or empty");
+        }
+        validatePolicyRule(policyRules.getPolicyRules());
         dunningPolicyApiService.removePolicyRuleWithPolicyId(dunningPolicy.getId());
         for (PolicyRule policyRule : policyRules.getPolicyRules()) {
             org.meveo.model.dunning.DunningPolicyRule dunningPolicyRuleEntity =
@@ -222,16 +225,31 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 .build();
     }
 
-    private void validateResource(DunningPolicyRules policyRules) {
-        if(policyRules.getPolicyRules() != null && !policyRules.getPolicyRules().isEmpty()) {
-            if(policyRules.getPolicyRules().get(0).getRuleJoint() != null) {
-                throw new BadRequestException("First policy rule should have a null ruleJoint");
+    private void validatePolicyRule(List<PolicyRule> policyRules) {
+        if(policyRules != null && !policyRules.isEmpty()) {
+            for(int index = 0; index < policyRules.size(); index++) {
+                if(index > 0 && policyRules.get(index).getRuleJoint() == null) {
+                    throw new BadRequestException("Policy rule ruleJoint should not be null");
+                }
+                if(index == 0 && policyRules.get(index).getRuleJoint() != null) {
+                    throw new BadRequestException("First policy rule should have a null ruleJoint");
+                }
+                List<DunningPolicyRuleLine> ruleLines = policyRules.get(index).getRuleLines();
+                if(ruleLines != null && !ruleLines.isEmpty()) {
+                    for(int subIndex = 0; subIndex < ruleLines.size(); subIndex++) {
+                        if(subIndex > 0 && ruleLines.get(subIndex).getRuleLineJoint() == null) {
+                            throw new BadRequestException("Policy rule line ruleJoint should not be null");
+                        }
+                        if(subIndex == 0 && ruleLines.get(subIndex).getRuleLineJoint() != null) {
+                            throw new BadRequestException("First policy rule line should have a null ruleJoint");
+                        }
+                    }
+                } else {
+                    throw new BadRequestException("Policy rule lines are null or empty");
+                }
             }
-            if (policyRules.getPolicyRules().get(0).getRuleLines() != null
-                    && !policyRules.getPolicyRules().get(0).getRuleLines().isEmpty()
-                    && policyRules.getPolicyRules().get(0).getRuleLines().get(0).getRuleLineJoint() != null) {
-                throw new BadRequestException("First policy rule line should have a null ruleJoint");
-            }
+        } else {
+            throw new BadRequestException("Policy rules are null or empty");
         }
     }
 

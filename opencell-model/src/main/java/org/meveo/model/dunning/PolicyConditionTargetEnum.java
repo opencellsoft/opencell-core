@@ -1,4 +1,4 @@
-package org.meveo.service.payments.impl;
+package org.meveo.model.dunning;
 
 public enum PolicyConditionTargetEnum {
 

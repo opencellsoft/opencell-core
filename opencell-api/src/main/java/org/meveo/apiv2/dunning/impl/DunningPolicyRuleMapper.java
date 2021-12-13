@@ -13,7 +13,9 @@ public class DunningPolicyRuleMapper extends ResourceMapper<PolicyRule, org.meve
     @Override
     protected org.meveo.model.dunning.DunningPolicyRule toEntity(PolicyRule resource) {
         org.meveo.model.dunning.DunningPolicyRule dunningPolicyRule = new org.meveo.model.dunning.DunningPolicyRule();
-        dunningPolicyRule.setRuleJoint(resource.getRuleJoint());
+        if(resource.getRuleJoint() != null) {
+            dunningPolicyRule.setRuleJoint(resource.getRuleJoint().name());
+        }
         return dunningPolicyRule;
     }
 }

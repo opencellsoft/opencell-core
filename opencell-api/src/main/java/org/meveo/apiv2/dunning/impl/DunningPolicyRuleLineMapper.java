@@ -13,10 +13,16 @@ public class DunningPolicyRuleLineMapper extends ResourceMapper<DunningPolicyRul
     @Override
     public org.meveo.model.dunning.DunningPolicyRuleLine toEntity(DunningPolicyRuleLine resource) {
         org.meveo.model.dunning.DunningPolicyRuleLine dunningPolicyRuleLine = new org.meveo.model.dunning.DunningPolicyRuleLine();
-        dunningPolicyRuleLine.setRuleLineJoint(resource.getRuleLineJoint());
-        dunningPolicyRuleLine.setPolicyConditionTarget(resource.getPolicyConditionTarget());
+        if(resource.getRuleLineJoint() != null) {
+            dunningPolicyRuleLine.setRuleLineJoint(resource.getRuleLineJoint().name());
+        }
+        if(resource.getPolicyConditionTarget() != null) {
+            dunningPolicyRuleLine.setPolicyConditionTarget(resource.getPolicyConditionTarget().name());
+        }
         dunningPolicyRuleLine.setPolicyConditionTargetValue(resource.getPolicyConditionTargetValue());
-        dunningPolicyRuleLine.setPolicyConditionOperator(resource.getPolicyConditionOperator());
+        if(resource.getPolicyConditionOperator() != null) {
+            dunningPolicyRuleLine.setPolicyConditionOperator(resource.getPolicyConditionOperator().name());
+        }
         return dunningPolicyRuleLine;
     }
 }
