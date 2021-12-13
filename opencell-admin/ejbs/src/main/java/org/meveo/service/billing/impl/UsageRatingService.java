@@ -23,13 +23,11 @@ import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -44,14 +42,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoChargeException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
-import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.DeducedCounter;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
@@ -117,9 +113,6 @@ public class UsageRatingService implements Serializable {
     private WalletOperationService walletOperationService;
 
     @Inject
-    private Event<CounterPeriodEvent> counterPeriodEvent;
-
-    @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
@@ -145,36 +138,22 @@ public class UsageRatingService implements Serializable {
 
 
     /**
-     * This method first look if there is a counter and a counter period for an event date.
+     * Decrease a usage charge counter by EDR quantity. A new counter period matching EDR event date will be instantiated if does not exist yet.
      *
      * @param edr EDR to process
      * @param usageChargeInstance Usage charge instance definition
      * @param reservation Is charge event part of reservation
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @return if EDR quantity fits partially in the counter, returns the remaining quantity. NOTE: counter and EDR units might differ - translation is performed.
+     * @return Deducted EDR quantity. NOTE: counter and EDR units might differ - translation is performed.
      * @throws BusinessException Business exception
      */
     private DeducedCounter deduceCounter(EDR edr, UsageChargeInstance usageChargeInstance, Reservation reservation, boolean isVirtual) throws BusinessException {
 
-        CounterPeriod counterPeriod;
-        BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
-
-        // In case of virtual operation only instantiate a counter period, don't create it
-        if (isVirtual) {
-            counterPeriod = counterInstanceService.instantiateCounterPeriod(usageChargeInstance.getCounter().getCounterTemplate(), edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(),
-                usageChargeInstance, usageChargeInstance.getServiceInstance());
-
-        } else {
-            counterPeriod = counterInstanceService.getOrCreateCounterPeriod(usageChargeInstance.getCounter(), edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance,
-                usageChargeInstance.getServiceInstance());
-        }
-
-        if (counterPeriod == null) {
+        if (usageChargeInstance.getCounter()==null) {
             return new DeducedCounter();
         }
 
-        CounterValueChangeInfo counterValueChangeInfo = null;
-
+        BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
         UsageChargeTemplate chargeTemplate = null;
         if (usageChargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
@@ -183,13 +162,14 @@ public class UsageRatingService implements Serializable {
         }
 
         BigDecimal quantityToDeduce = usageChargeTemplateService.evaluateRatingQuantity(chargeTemplate, edr.getQuantityLeftToRate());
-        log.trace("Deduce counter instance {} current value {} by  {} * {} = {} ", isVirtual ? usageChargeInstance.getCounter().getCode() : usageChargeInstance.getCounter().getId(), counterPeriod.getValue(),
+        log.trace("Attempt to deduce counter instance {} for {} by  {} * {} = {} ", isVirtual ? usageChargeInstance.getCounter().getCode() : usageChargeInstance.getCounter().getId(), edr.getEventDate(),
             edr.getQuantityLeftToRate(), chargeTemplate.getUnitMultiplicator(), quantityToDeduce);
 
-        // synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
-        counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);
-        // Quantity is not tracked in counter (no initial value)
-        if (counterValueChangeInfo == null) {
+        CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(usageChargeInstance.getCounter(), edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(),
+            usageChargeInstance, quantityToDeduce, isVirtual);
+        
+        // Quantity is not tracked in counter (no initial/new value)
+        if (counterValueChangeInfo.getNewValue() == null) {
             deducedQuantityInEDRUnit = edr.getQuantityLeftToRate();
 
         } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) != 0) {
@@ -203,41 +183,18 @@ public class UsageRatingService implements Serializable {
             } else {
                 deducedQuantityInEDRUnit = edr.getQuantityLeftToRate();
             }
-            if (reservation != null && (counterPeriod.getAccumulator() == null || !counterPeriod.getAccumulator())) {
-                reservation.getCounterPeriodValues().put(counterPeriod.getId(), deducedQuantity);
+
+            // Remember what counter was consumed, so in case of reservation cancellation counter value could be restored.
+            if (reservation != null && !counterValueChangeInfo.isAccumulator()) {
+                reservation.getCounterPeriodValues().put(counterValueChangeInfo.getCounterPeriodId(), counterValueChangeInfo.getDeltaValue());
             }
         }
 
         log.trace("In original EDR units EDR {} deduced by {}", edr.getId(), deducedQuantityInEDRUnit);
 
-        // Fire notifications if counter value matches trigger value and counter value is tracked
-        if (counterValueChangeInfo != null && counterPeriod.getNotificationLevels() != null) {
-            // Need to refresh counterPeriod as it is stale object if it was updated in counterInstanceService.deduceCounterValue()
-            counterPeriod = getEntityManager().find(CounterPeriod.class, counterPeriod.getId());
-            List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getNewValue());
+    
 
-            if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
-                triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
-            }
-        }
-
-        return new DeducedCounter(counterPeriod, deducedQuantityInEDRUnit);
-    }
-
-    /**
-     * @param counterPeriod
-     * @param counterPeriodEventLevels
-     */
-    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<Entry<String, BigDecimal>> counterPeriodEventLevels) {
-        for (Entry<String, BigDecimal> counterValue : counterPeriodEventLevels) {
-            try {
-                CounterPeriodEvent event = new CounterPeriodEvent(counterPeriod, counterValue.getValue(), counterValue.getKey());
-                event.setCounterPeriod(counterPeriod);
-                counterPeriodEvent.fire(event);
-            } catch (Exception e) {
-                log.error("Failed to executing trigger counterPeriodEvent", e);
-            }
-        }
+        return new DeducedCounter(deducedQuantityInEDRUnit);
     }
 
     /**
@@ -254,35 +211,27 @@ public class UsageRatingService implements Serializable {
      */
     private RatingResult rateEDRonChargeAndCounters(EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
 
-        BigDecimal deducedQuantity = null;
-        DeducedCounter deducedCounter = null;
+        BigDecimal quantityToCharge = edr.getQuantityLeftToRate();
 
-        boolean fullyRated = false;
+        boolean fullyRated = usageChargeInstance.getCounter() == null;
+
         if (usageChargeInstance.getCounter() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
             // If decremented partially or none - proceed with another charge
-            deducedCounter = deduceCounter(edr, usageChargeInstance, null, isVirtual);
-            deducedQuantity = deducedCounter.getDeducedQuantity();
-            if (edr.getQuantityLeftToRate().compareTo(deducedQuantity) == 0) {
-                fullyRated = true;
-            }
-
+            DeducedCounter deducedCounter = deduceCounter(edr, usageChargeInstance, null, isVirtual);
+            BigDecimal deducedQuantity = deducedCounter.getDeducedQuantity();
+            
             if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
                 // we continue the rating to have a WO that its needed in pricePlan.script
                 return new RatingResult();
             }
-        } else {
-            fullyRated = true;
-        }
-
-        BigDecimal quantityToCharge;
-        if (useFullQuantity(deducedCounter)) {
-            quantityToCharge = edr.getQuantityLeftToRate();
-
-        } else {
+            if (edr.getQuantityLeftToRate().compareTo(deducedQuantity) == 0) {
+                fullyRated = true;
+            }
             edr.deduceQuantityLeftToRate(deducedQuantity);
             quantityToCharge = deducedQuantity;
-        }
+        } 
+
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, false, isVirtual);
         ratingResult.setFullyRated(fullyRated);
@@ -292,16 +241,6 @@ public class UsageRatingService implements Serializable {
         }
 
         return ratingResult;
-    }
-
-    private boolean useFullQuantity(DeducedCounter deducedCounter) {
-        if (deducedCounter == null) {
-            return true;
-        }
-        if (deducedCounter.getDeducedQuantity() == null) {
-            return true;
-        }
-        return deducedCounter.getCounterPeriod() != null && deducedCounter.getCounterPeriod().getAccumulator() != null && deducedCounter.getCounterPeriod().getAccumulator();
     }
 
     /**
@@ -316,33 +255,27 @@ public class UsageRatingService implements Serializable {
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     private boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, UsageChargeInstance usageChargeInstance) throws BusinessException, RatingException {
-        boolean stopEDRRating = false;
-        BigDecimal deducedQuantity = null;
-        DeducedCounter deducedCounter = null;
+        
+        BigDecimal quantityToCharge = edr.getQuantityLeftToRate();
+
+        boolean fullyRated = usageChargeInstance.getCounter() == null;
 
         if (usageChargeInstance.getCounter() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
             // If decremented partially or none - proceed with another charge
-            deducedCounter = deduceCounter(edr, usageChargeInstance, reservation, false);
-            deducedQuantity = deducedCounter.getDeducedQuantity();
-            if (edr.getQuantityLeftToRate().compareTo(deducedQuantity) == 0) {
-                stopEDRRating = true;
+            DeducedCounter deducedCounter = deduceCounter(edr, usageChargeInstance, reservation, false);
+            BigDecimal deducedQuantity = deducedCounter.getDeducedQuantity();
+            if (deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
+                // we continue the rating to have a WO that its needed in pricePlan.script
+                return false;
             }
-        } else {
-            stopEDRRating = true;
-        }
+            if (edr.getQuantityLeftToRate().compareTo(deducedQuantity) == 0) {
+                fullyRated = true;
+            }
 
-        if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
-            return stopEDRRating;
-        }
-
-        //
-        BigDecimal quantityToCharge = null;
-        if (deducedQuantity == null) {
-            quantityToCharge = edr.getQuantityLeftToRate();
-        } else {
             edr.deduceQuantityLeftToRate(deducedQuantity);
             quantityToCharge = deducedQuantity;
+
         }
 
         RatingResult ratingResult = ratingService.rateCharge(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, true, false);
@@ -351,16 +284,17 @@ public class UsageRatingService implements Serializable {
 
         walletReservation.setReservation(reservation);
 
-        // Set the amount instead of quantity if the counter is an accumulator.
-        if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
-            counterInstanceService.accumulatorCounterPeriodValue(deducedCounter.getCounterPeriod(), walletReservation, reservation, false);
-        }
+        // AK this code does not make sense as usage counter can not be accumulator counter
+        // // Set the amount instead of quantity if the counter is an accumulator.
+        // if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
+        // counterInstanceService.accumulatorCounterPeriodValue(deducedCounter.getCounterPeriod(), walletReservation, reservation, false);
+        // }
         reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletReservation.getAmountWithoutTax()));
         reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletReservation.getAmountWithTax()));
 
         walletOperationService.chargeWalletOperation(walletReservation);
 
-        return stopEDRRating;
+        return fullyRated;
     }
 
     /**
@@ -540,8 +474,8 @@ public class UsageRatingService implements Serializable {
                 ratedEDRResult = rateEDRonChargeAndCounters(edr, usageChargeInstance, isVirtual);
                 if (ratedEDRResult.getWalletOperation() != null) {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
-                    if (usageChargeInstance.getCounter() != null) {
-                        walletOperationService.applyAccumulatorCounter(usageChargeInstance, Collections.singletonList(ratedEDRResult.getWalletOperation()), isVirtual);
+                    if (usageChargeInstance.getAccumulatorCounterInstances() != null && !usageChargeInstance.getAccumulatorCounterInstances().isEmpty()) {
+                        counterInstanceService.incrementAccumulatorCounterValue(usageChargeInstance, Collections.singletonList(ratedEDRResult.getWalletOperation()), isVirtual);
                     }
                 }
 

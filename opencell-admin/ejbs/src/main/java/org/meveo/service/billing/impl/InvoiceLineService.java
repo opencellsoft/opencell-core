@@ -70,6 +70,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -77,7 +78,6 @@ import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
-import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
 
 @Stateless
@@ -117,6 +117,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @ApplicationProvider
     protected Provider appProvider;
 
+    @Inject
+    private SellerService sellerService;
+
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
                 .setParameter("quote", quote)
@@ -150,7 +153,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     		 billingAccount=entity.getBillingAccount();
     	 }
     	
-    	 if (accountingArticle != null ) {
+    	 if (accountingArticle != null) {
+             billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+             seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
     	super.create(entity);

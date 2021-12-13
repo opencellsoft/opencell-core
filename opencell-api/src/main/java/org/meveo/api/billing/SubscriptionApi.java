@@ -831,11 +831,11 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        		    if (serviceInstance.getDeliveryDate() != null && serviceInstance.getDeliveryDate().after(new Date())) {
-        				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
-        			}else {
-        				serviceInstanceService.serviceActivation(serviceInstance);
-        			}
+        		    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
+        				serviceInstance.setDeliveryDate(new Date());
+        		    }
+        			serviceInstanceService.serviceActivation(serviceInstance);
+        			
         		} catch (BusinessException e) {
         			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
         			throw e;
@@ -2594,12 +2594,12 @@ public class SubscriptionApi extends BaseApi {
     				});
     			}
     			if (!serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-    				 if (serviceInstanceDto.getDeliveryDate() != null) {
-     		        	if(serviceInstanceDto.getDeliveryDate().before(new Date())) {
-     		        		throw new MeveoApiException("Delivery date should be in the future");	
-     		        	}
-     		        	  serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
-    				 }
+    				 
+ 		        	if(serviceInstanceDto.getDeliveryDate() != null && serviceInstanceDto.getDeliveryDate().before(new Date())) {
+ 		        		throw new MeveoApiException("Delivery date should be in the future");	
+ 		        	}
+ 		        	serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+    				 
     			    serviceInstanceService.update(serviceInstance);
                 }
     		});
