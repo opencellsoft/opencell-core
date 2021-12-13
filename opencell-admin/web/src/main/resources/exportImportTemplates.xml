@@ -469,11 +469,15 @@
             <java-class>org.meveo.model.crm.CustomerBrand</java-class>
             <java-class>org.meveo.model.cpq.ProductVersion</java-class>
             <java-class>org.meveo.model.cpq.offer.OfferComponent</java-class>
+            <java-class>org.meveo.model.catalog.OfferTemplate</java-class>
             <java-class>org.meveo.model.catalog.ProductChargeTemplateMapping</java-class>
             <java-class>org.meveo.model.cpq.trade.CommercialRuleLine</java-class>
             <java-class>org.meveo.model.cpq.trade.CommercialRuleHeader</java-class>
             <java-class>org.meveo.model.article.ArticleMappingLine</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixColumn</java-class>
+            <java-class>org.meveo.model.cpq.ProductVersion</java-class>
+            <java-class>org.meveo.model.cpq.tags.Tag</java-class>
+            <java-class>org.meveo.model.cpq.ProductVersionAttribute</java-class>
         </classesToExportAsFull>
     </template>
 
