@@ -6,6 +6,7 @@ import static org.meveo.apiv2.models.ImmutableResource.builder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -78,14 +79,14 @@ public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanR
         policy.setId(massSwitchInput.getPolicy().getId());
         List<DunningCollectionPlan> collectionPlans =
                 collectionPlanMapper.toEntities(massSwitchInput.getCollectionPlans());
-        Map<String, List<Long>> massCheckResult =
+        Map<String, Set<Long>> massCheckResult =
                 dunningCollectionPlanApiService.checkMassSwitch(policy, collectionPlans).get();
         return Response.ok()
                     .entity(buildMassCheckResponse(massCheckResult, massSwitchInput.getCollectionPlans().size()))
                     .build();
     }
 
-    private MassSwitchResult buildMassCheckResponse(Map<String, List<Long>> massCheckResult, long total) {
+    private MassSwitchResult buildMassCheckResponse(Map<String, Set<Long>> massCheckResult, long total) {
         CheckSwitchResult canBeSwitched = ImmutableCheckSwitchResult.builder()
                 .total(valueOf(massCheckResult.get("canBESwitched").size()))
                 .collectionPlans(massCheckResult.get("canBESwitched")
