@@ -18,22 +18,6 @@
 
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.RatingException;
@@ -41,11 +25,13 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
+import org.meveo.api.dto.billing.ChargeCDRListResponseDto;
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.billing.service.MediationApiService;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
@@ -65,6 +51,23 @@ import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.notification.DefaultObserver;
+
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * API for CDR processing and mediation handling in general
@@ -99,6 +102,9 @@ public class MediationApi extends BaseApi {
     private CDRService cdrService;
 
     Map<Long, Timer> timers = new HashMap<Long, Timer>();
+
+    @Inject
+    private MediationApiService mediationApiService;
 
     /**
      * Register EDRS
@@ -197,6 +203,24 @@ public class MediationApi extends BaseApi {
                 cdrService.create(cdr);
             }
         }
+    }
+
+    /**
+     * Register and rate EDRS
+     *
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException business exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public ChargeCDRListResponseDto chargeCdrList(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
+
+        if (chargeCDRDto.getCdrs() == null || chargeCDRDto.getCdrs().isEmpty()) {
+            missingParameters.add("cdrs");
+        }
+
+        handleMissingParameters();
+
+        return mediationApiService.processCdrList(chargeCDRDto);
     }
 
     private ChargeCDRResponseDto createChargeCDRResultDto(List<WalletOperation> walletOperations, boolean returnWalletOperations) {

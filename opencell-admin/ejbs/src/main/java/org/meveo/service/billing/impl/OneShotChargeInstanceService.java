@@ -17,17 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
@@ -54,6 +43,16 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Stateless
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
@@ -174,7 +173,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
                 log.debug("Counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, (CounterTemplate) counterTemplate, isVirtual);
                 log.debug("Counter instance {} will be add to charge instance {}", counterInstance, oneShotChargeInstance);
-                oneShotChargeInstance.addCounterInstance(counterInstance);
+                oneShotChargeInstance.addAccumulatorCounterInstance(counterInstance);
             }
 
             if (!isVirtual) {

@@ -17,12 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
@@ -36,6 +30,11 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author khalid HORRI
@@ -91,7 +90,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
                 log.debug("Accumulator counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
                 log.debug("Accumulator counter instance {} will be add to charge instance {}", counterInstance, usageChargeInstance);
-                usageChargeInstance.addCounterInstance(counterInstance);
+                usageChargeInstance.addAccumulatorCounterInstance(counterInstance);
             }
             if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
                 log.debug("Counter template {}", serviceUsageChargeTemplate.getCounterTemplate());

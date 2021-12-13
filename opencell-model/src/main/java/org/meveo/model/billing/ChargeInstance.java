@@ -17,12 +17,20 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
+import org.meveo.model.tax.TaxClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -50,21 +58,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
-import org.meveo.model.tax.TaxClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Instantiated/subscribed charge
@@ -269,7 +268,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "counter_instance_id"))
     @OrderColumn(name = "INDX")
-    protected List<CounterInstance> counterInstances = new ArrayList<>();
+    protected List<CounterInstance> accumulatorCounterInstances = new ArrayList<>();
 
     /**
      * Resolved taxClass
@@ -592,21 +591,21 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     }
 
     /**
-     * Gets counter instances.
+     * Gets accumulator type counter instances.
      *
      * @return counter instances
      */
-    public List<CounterInstance> getCounterInstances() {
-        return counterInstances;
+    public List<CounterInstance> getAccumulatorCounterInstances() {
+        return accumulatorCounterInstances;
     }
 
     /**
-     * Sets counter instances.
+     * Sets accumulator type counter instances.
      *
      * @param counterInstances counter instances
      */
-    public void setCounterInstances(List<CounterInstance> counterInstances) {
-        this.counterInstances = counterInstances;
+    public void setAccumulatorCounterInstances(List<CounterInstance> counterInstances) {
+        this.accumulatorCounterInstances = counterInstances;
     }
 
     /**
@@ -614,11 +613,11 @@ public abstract class ChargeInstance extends BusinessCFEntity {
      *
      * @param counterInstance the counter instance
      */
-    public void addCounterInstance(CounterInstance counterInstance) {
-        if (this.counterInstances == null) {
-            this.counterInstances = new ArrayList<>();
+    public void addAccumulatorCounterInstance(CounterInstance counterInstance) {
+        if (this.accumulatorCounterInstances == null) {
+            this.accumulatorCounterInstances = new ArrayList<>();
         }
-        this.counterInstances.add(counterInstance);
+        this.accumulatorCounterInstances.add(counterInstance);
     }
 
     /**
