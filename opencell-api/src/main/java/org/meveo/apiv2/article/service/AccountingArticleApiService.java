@@ -159,6 +159,10 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if (!StringUtils.isBlank(baseEntity.getAnalyticCode3())) {
             accountingArticle.setAnalyticCode3(baseEntity.getAnalyticCode3());
         }
+        
+        if (baseEntity.getUnitPrice() != null) {
+        	accountingArticle.setUnitPrice(baseEntity.getUnitPrice());
+        }
 
         if (baseEntity.getCfValues() != null) {
             accountingArticle.setCfValues(baseEntity.getCfValues());

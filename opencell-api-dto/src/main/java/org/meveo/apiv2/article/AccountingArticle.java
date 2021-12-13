@@ -1,5 +1,6 @@
 package org.meveo.apiv2.article;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -57,13 +58,15 @@ public interface AccountingArticle extends Resource {
     String getAnalyticCode3();
 
     @Nullable
+	@Schema(description = "Unit Price")
+    BigDecimal getUnitPrice();
+
+    @Nullable
 	@Schema(description = "list of language description")
     List<LanguageDescriptionDto> getLanguageDescriptions();
 
     @Nullable
 	@Schema(description = "custom field associated to accounting article")
     CustomFieldsDto getCustomFields();
-
-
 
 }
