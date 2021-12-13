@@ -16,6 +16,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
+import org.meveo.apiv2.dunning.DunningPolicyRuleLine;
 import org.meveo.apiv2.dunning.DunningPolicyRules;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
 import org.meveo.apiv2.dunning.PolicyRule;
