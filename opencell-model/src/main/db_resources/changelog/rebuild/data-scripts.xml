@@ -1203,7 +1203,7 @@ public class DeleteCustomersScript extends Script {
     
 
     <changeSet author="AmineBENAICHA" id="#6048_20210611">
-        <insert tableName="meveo_script_instance">
+        <insert tableName="meveo_script_instance" dbms="postgresql">
             <column name="id" valueNumeric="-30"/>
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
@@ -1638,7 +1638,7 @@ public class ServiceTemplateToProductScript extends Script {
             /
             ]]>
         </sql>
-        <insert tableName="meveo_job_instance">
+        <insert tableName="meveo_job_instance" dbms="postgresql">
             <column name="id" valueNumeric="-40" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />

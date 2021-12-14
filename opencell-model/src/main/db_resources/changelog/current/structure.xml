@@ -289,7 +289,7 @@
 
     </changeSet>
 
-    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgresql">
         <sql>DROP INDEX rt_ba_invoice_index</sql>
         <sql>DROP INDEX rt_subscription_index</sql>
         <sql>DROP INDEX transaction_billing_index</sql>
@@ -710,7 +710,7 @@
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>
     </changeSet>
-    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}meveo_script_instance set reuse=0 where reuse is null</sql>
         <sql>update ${db.schema.adapted}meveo_script_instance set is_error=0 where is_error is null</sql>
         <sql>update ${db.schema.adapted}adm_notification set run_async=0 where run_async is null</sql>
