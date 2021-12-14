@@ -119,6 +119,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		String[] firstLine = line.split(";");
 		for(int i = 0; i < firstLine.length; i++) {
 			String column = firstLine[i].split("\\(")[0];
+			boolean isRange = firstLine[i].split("\\(").length > 1 ? firstLine[i].split("\\(")[1].toLowerCase().contains("range") : false;
 			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("pricetWithoutTax"))) {
 				List<PricePlanMatrixColumn> PricePlanMatrixColumnList = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion);
 				if (PricePlanMatrixColumnList.isEmpty()) {
@@ -128,7 +129,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 				PricePlanMatrixColumn pricePlanMatrixColumn = PricePlanMatrixColumnList.get(0);
 				ColumnTypeEnum columnType;
 				
-				columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(false);
+				columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(isRange);
 				
 				AttributeTypeEnum attributeType = pricePlanMatrixColumn.getAttribute().getAttributeType();
 				
