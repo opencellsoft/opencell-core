@@ -18,14 +18,17 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -50,6 +53,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceCharge;
@@ -394,24 +398,28 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     private void instanciateCharges(ServiceInstance serviceInstance, ServiceCharge serviceCharge, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) {
-        for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceCharge.getServiceRecurringCharges()) { //
+        final List<ServiceChargeTemplateRecurring> recurringServices = CollectionUtils.isEmpty(serviceCharge.getServiceRecurringCharges())? new ArrayList<>() : serviceCharge.getServiceRecurringCharges().stream().filter(service->ChargeTemplateStatusEnum.ACTIVE.equals(service.getChargeTemplate().getStatus())).collect(Collectors.toList());
+		for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : recurringServices) { //
             RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(serviceInstance, serviceCharge, serviceChargeTemplateRecurring, isVirtual);
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
-
-        for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceCharge.getServiceSubscriptionCharges()) {
+		
+        final List<ServiceChargeTemplateSubscription> subscriptionServices = CollectionUtils.isEmpty(serviceCharge.getServiceSubscriptionCharges())? new ArrayList<>() : serviceCharge.getServiceSubscriptionCharges().stream().filter(service->ChargeTemplateStatusEnum.ACTIVE.equals(service.getChargeTemplate().getStatus())).collect(Collectors.toList());
+        for (ServiceChargeTemplateSubscription serviceChargeTemplate : subscriptionServices) {
             SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceCharge, serviceChargeTemplate, subscriptionAmount,
                 null, true, isVirtual || (serviceChargeTemplate.getChargeTemplate().getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER));
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
-
-        for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceCharge.getServiceTerminationCharges()) {
+        
+        final List<ServiceChargeTemplateTermination> services = CollectionUtils.isEmpty(serviceCharge.getServiceTerminationCharges())? new ArrayList<>() : serviceCharge.getServiceTerminationCharges().stream().filter(service->ChargeTemplateStatusEnum.ACTIVE.equals(service.getChargeTemplate().getStatus())).collect(Collectors.toList());
+        for (ServiceChargeTemplateTermination serviceChargeTemplate : services) {
             TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceCharge, serviceChargeTemplate, terminationAmount, null,
                 false, isVirtual);
             serviceInstance.getTerminationChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceCharge.getServiceUsageCharges()) {
+        final List<ServiceChargeTemplateUsage> usageServices = CollectionUtils.isEmpty(serviceCharge.getServiceUsageCharges())? new ArrayList<>() : serviceCharge.getServiceUsageCharges().stream().filter(service->ChargeTemplateStatusEnum.ACTIVE.equals(service.getChargeTemplate().getStatus())).collect(Collectors.toList());
+        for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : usageServices) {
             UsageChargeInstance chargeInstance = usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate, isVirtual);
             serviceInstance.getUsageChargeInstances().add(chargeInstance);
         }
@@ -540,6 +548,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
         }
+        
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance = update(serviceInstance);
@@ -986,6 +995,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.SUSPENDED)) //
             .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList();
+        
+        ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getPendingToActivate", Long.class) //
+                .setParameter("date", new Date()) //
+                .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.PENDING)) //
+                .setParameter("statuses", Arrays.asList(InstanceStatusEnum.PENDING)) //
+                .getResultList());
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
             .setParameter("date", untillDate) //

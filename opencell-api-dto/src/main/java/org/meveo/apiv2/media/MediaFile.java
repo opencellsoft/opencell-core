@@ -3,6 +3,7 @@ package org.meveo.apiv2.media;
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
+import java.net.URL;
 
 
 public class MediaFile {
@@ -17,6 +18,10 @@ public class MediaFile {
     @FormParam("filename")
     @PartType(MediaType.TEXT_PLAIN)
     private String fileName;
+
+    @FormParam("fileUrl")
+    @PartType(MediaType.TEXT_PLAIN)
+    private URL fileUrl;
 
     @FormParam("level")
     @PartType(MediaType.TEXT_PLAIN)
@@ -36,6 +41,14 @@ public class MediaFile {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public URL getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(URL fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     public LevelEnum getLevel() {

@@ -17,13 +17,19 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -32,13 +38,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -61,6 +60,8 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     private String mode;
 
     private DualListModel<PaymentMethodEnum> paymentMethodsModel;
+    
+    private boolean deduplicatedKeyEl;
 
     public ProviderBean() {
         super(Provider.class);
@@ -160,4 +161,12 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     public void setPaymentMethodsModel(DualListModel<PaymentMethodEnum> paymentMethodsModel) {
         this.paymentMethodsModel = paymentMethodsModel;
     }
+
+	/**
+	 * @return the deduplicatedKeyEl
+	 */
+	public boolean isDeduplicatedKeyEl() {
+		this.deduplicatedKeyEl = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("mediation.api.deduplicationKeyEL", "false"));
+		return deduplicatedKeyEl;
+	}
 }

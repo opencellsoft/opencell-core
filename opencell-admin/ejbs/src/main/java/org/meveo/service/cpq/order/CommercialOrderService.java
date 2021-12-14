@@ -19,9 +19,11 @@ import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -29,6 +31,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -153,6 +156,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
 			throw new BusinessException("Can not validate order with status different than DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
 		}
+		UserAccount userAccount = order.getUserAccount();
+		if(userAccount==null) {
+			throw new BusinessException("Can not validate order with empty user account: " + order.getId());
+		}
 		
 		List<OrderOffer> validOffers = validateOffers(order.getOffers());
 		
@@ -165,9 +172,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		for(OrderOffer offer : validOffers){
 			Subscription subscription = new Subscription();
-			subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+			subscription.setSeller(getSelectedSeller(order));
 			subscription.setUserAccount(order.getUserAccount());
-            subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
+			subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
 			subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
 			if (subscription.getSubscriptionDate().after(new Date())) {
@@ -204,6 +211,20 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return order;
 	}
 	
+	private Seller getSelectedSeller(CommercialOrder order) {
+    	Seller seller = null;
+        if(order.getSeller()!=null) {
+        	seller = order.getSeller();
+        }
+        else if(order.getQuote()!=null) {
+        	if( order.getQuote().getSeller()!=null)
+        		seller = order.getQuote().getSeller();
+        }else {
+        	seller = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        return seller;
+    }
+	
 	private void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
 	     // instantiate the discounts
             for (DiscountPlan dp : discountPlans) {
@@ -222,6 +243,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
 		if (deliveryDate != null) {
+			if(deliveryDate.before(new Date())) {
+				throw new MeveoApiException("Delivery date should be in the future");
+			}
 			serviceInstance.setDeliveryDate(deliveryDate);
 		} else {
 			serviceInstance.setDeliveryDate(getServiceDeliveryDate(subscription.getOrder(), subscription.getOrderOffer(), orderProduct));

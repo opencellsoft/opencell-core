@@ -648,13 +648,14 @@ public class SubscriptionApi extends BaseApi {
 
             } else {
                 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription, InstanceStatusEnum.INACTIVE,
-                        InstanceStatusEnum.ACTIVE);
+                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.PENDING);
 
                 if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
                     for (ServiceInstance alreadyInstantiatedService : alreadyInstantiatedServices) {
                         if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.ACTIVE) {
                             throw new MeveoApiException("ServiceInstance with code=" + alreadyInstantiatedService.getCode() + " is already activated.");
-                        } else if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.INACTIVE) {
+                        } else if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.INACTIVE
+                        		|| alreadyInstantiatedService.getStatus() == InstanceStatusEnum.PENDING) {
                             serviceInstance = alreadyInstantiatedService;
                             break;
                         }
@@ -830,11 +831,11 @@ public class SubscriptionApi extends BaseApi {
 
         		try {
         		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        		    if (serviceInstance.getDeliveryDate() != null && serviceInstance.getDeliveryDate().after(new Date())) {
-        				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
-        			}else {
-        				serviceInstanceService.serviceActivation(serviceInstance);
-        			}
+        		    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
+        				serviceInstance.setDeliveryDate(new Date());
+        		    }
+        			serviceInstanceService.serviceActivation(serviceInstance);
+        			
         		} catch (BusinessException e) {
         			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
         			throw e;
@@ -2441,6 +2442,21 @@ public class SubscriptionApi extends BaseApi {
         subscriptionService.cancelSubscriptionRenewal(subscription);
     }
 
+    public void cancelSubscriptionTermination(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        handleMissingParameters();
+
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
+        }
+
+        subscriptionService.cancelSubscriptionTermination(subscription);
+    }
+
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) throws MeveoApiException, BusinessException {
 
         SubscriptionForCustomerResponseDto result = new SubscriptionForCustomerResponseDto();
@@ -2578,7 +2594,12 @@ public class SubscriptionApi extends BaseApi {
     				});
     			}
     			if (!serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-    			    serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+    				 
+ 		        	if(serviceInstanceDto.getDeliveryDate() != null && serviceInstanceDto.getDeliveryDate().before(new Date())) {
+ 		        		throw new MeveoApiException("Delivery date should be in the future");	
+ 		        	}
+ 		        	serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+    				 
     			    serviceInstanceService.update(serviceInstance);
                 }
     		});

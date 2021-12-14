@@ -140,6 +140,7 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setQuoteVersion(quoteVersion);
 		order.setDiscountPlan(quoteVersion.getDiscountPlan());
 		order.setDeliveryDate(cpqQuote.getDeliveryDate());
+		order.setUserAccount(cpqQuote.getUserAccount());
 		//order.setCfValues(quoteVersion.getCfValues());
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
@@ -181,6 +182,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setDiscountPlan(quoteOffer.getDiscountPlan());
 		offer.setQuoteOffer(quoteOffer);
 		offer.setDeliveryDate(quoteOffer.getDeliveryDate());
+		offer.setUserAccount(quoteOffer.getUserAccount());
 		orderOfferService.create(offer);
 		return offer;
 	}

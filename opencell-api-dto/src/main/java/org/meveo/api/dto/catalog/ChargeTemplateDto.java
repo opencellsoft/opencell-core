@@ -33,6 +33,7 @@ import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 
@@ -151,7 +152,8 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     @Schema(description = "Sorting index EL")
     private String sortIndexEl = null;
 
-
+    @Schema(description = "ChargeTemplate status")
+    private ChargeTemplateStatusEnum status;
 
     private List<String> linkedAttributes;
 
@@ -210,6 +212,9 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         }
         dropZeroWo = chargeTemplate.isDropZeroWo();
         sortIndexEl = chargeTemplate.getSortIndexEl();
+        if(chargeTemplate.getStatus()!=null) {
+        	status=chargeTemplate.getStatus();
+        }
     }
 
     /**
@@ -571,4 +576,18 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     public void setLinkedAttributes(List<String> linkedAttributes) {
         this.linkedAttributes = linkedAttributes;
     }
+
+	/**
+	 * @return the status
+	 */
+	public ChargeTemplateStatusEnum getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(ChargeTemplateStatusEnum status) {
+		this.status = status;
+	}
 }

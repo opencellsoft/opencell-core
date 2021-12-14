@@ -288,7 +288,7 @@
         <createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createSequence sequenceName="query_result_seq" startValue="1" />
         <createSequence sequenceName="query_execution_result_seq" startValue="1" />
-         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
+        <createSequence sequenceName="dunning_settings_seq" startValue="1" />
         <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_stop_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_collection_plan_statuses_seq" startValue="1" />
@@ -297,12 +297,16 @@
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
+        <createSequence sequenceName="dunning_policy_level_seq" startValue="1" />
         <createSequence sequenceName="dunning_policy_seq" startValue="1" />
         <createSequence sequenceName="dunning_policy_rule_seq" startValue="1" />
         <createSequence sequenceName="dunning_policy_rule_line_seq" startValue="1" />
+        <createSequence sequenceName="dunning_level_seq" startValue="1" />
+        <createSequence sequenceName="offer_template_attribute_seq" startValue="1" />
+	    <createSequence sequenceName="collection_plan_status_seq" startValue="1" />
+        <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
+    	<createSequence sequenceName="accounting_period_seq" startValue="1" />
     </changeSet>
-    
-     
 
 
     <changeSet id="rebuild-str-seq-2" author="AndriusKarpavicius" dbms="mysql">
@@ -2888,6 +2892,7 @@
             <column name="has_minimum" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="commercial_order_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
+            <column name="cpq_quote_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3806,6 +3811,9 @@
             <column name="description" type="varchar(255)" />
             <column name="amount_editable" type="${type.boolean}" />
             <column name="credit_debit_flag" type="int4" />
+            <column name="status" type="varchar(255)" >
+                <constraints nullable="false" />
+            </column>
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -5067,6 +5075,11 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
+    		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
+            <column name="payment_deferral" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="maximum_delay" type="int4" />
+			<column name="maximum_deferral_per_invoice" type="int4" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -9371,6 +9384,7 @@
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
+            <column name="user_account_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9540,6 +9554,7 @@
             <column name="valid_to" type="datetime" />
             <column name="quote_number" type="varchar(50)" />
             <column name="invoice_type_id" type="bigint" />
+            <column name="user_account_id" type="bigint" />
          
         </createTable>
     </changeSet>
@@ -10057,7 +10072,11 @@
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
+            <column name="user_account_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+
     </changeSet>
     <changeSet id="rebuild-str-tbl-482" author="NabilOUACHI">
         <createTable tableName="order_article_line">
@@ -10682,7 +10701,581 @@
             <column name="rated_transaction_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    
+    
+    <changeSet id="rebuild-str-tbl-2021204" author="ZBariki">
+        <createTable tableName="cat_discount_applicable_entity">
+            <column name="disount_plan_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
+    </changeSet>
+    
+     <changeSet id="#INTRD-257_20210625-rebuild" author="ZBariki">
+        <createTable tableName="report_query">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="visibility" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filters" type="${type.json}" />
+            <column name="generated_query" type="${type.text}" />
+            <column name="sort_by" type="varchar(255)" />
+            <column name="sort_order" type="varchar(15)" />
+        </createTable>
 
+        <createTable tableName="report_query_fields">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="field" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+    
+    
+    <changeSet id="#INTRD-682_20210707-rebuild" author="HatimOUDAD">
+
+        <createTable tableName="query_scheduler">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="query_scheduler_pkey" />
+            </column>
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="file_format" type="varchar(255)" />
+            <column name="year" type="varchar(255)" />
+            <column name="month" type="varchar(255)" />
+            <column name="every_month" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="day_month" type="varchar(255)" />
+            <column name="every_day_month" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="day_week" type="varchar(255)" />
+            <column name="every_day_week" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="hour" type="varchar(255)" />
+            <column name="every_hour" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="minute" type="varchar(255)" />
+            <column name="every_minute" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="second" type="varchar(255)" />
+            <column name="every_second" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="job_instance_id" type="bigint" />
+            <column name="report_query_id" type="bigint" />
+            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+
+        <createTable tableName="query_scheduler_users">
+			<column name="query_scheduler_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+		</createTable>
+		<addPrimaryKey columnNames="query_scheduler_id, user_id" constraintName="adm_query_scheduler_user_pkey" tableName="query_scheduler_users" />
+
+        <createTable tableName="query_scheduler_emails">
+            <column name="query_scheduler_id"  type="bigint"/>
+            <column name="emails"  type="varchar(100)"/>
+        </createTable>
+
+        <createTable tableName="query_execution_result">
+        <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="query_result_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+			<column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+			<column name="execution_duration" type="bigint"/>
+			<column name="file_path" type="varchar(255)" />
+			<column name="line_count" type="int4"/>
+			<column name="error_message" type="varchar(255)"/>
+			<column name="status" type="varchar(255)">
+	           <constraints nullable="false" />
+	        </column>
+	        <column name="query_execution_mode" type="varchar(255)">
+	           <constraints nullable="false" />
+	        </column>
+	        <column name="query_scheduler_id" type="bigint" />
+	        <column name="report_query_id" type="bigint" />
+		</createTable>
+
+    </changeSet>
+
+    <changeSet id="#INTRD-634_20210706-rebuild" author="Mbarek-Ay">
+
+        <createTable tableName="dunning_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_settings_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="dunning_mode" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="max_dunning_levels" type="int"/>
+            <column name="max_days_outstanding" type="int"/>
+            <column name="allow_interest_for_delay" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="interest_for_delay_rate" type="numeric(23, 12)" />
+            <column name="allow_dunning_charges" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="apply_dunning_charge_fx_exchange_rate" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="accounting_article_id" type="bigint" />
+        </createTable>
+
+         <createTable tableName="dunning_pause_reasons">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_pause_reasons_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="pause_reason" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+         <createTable tableName="dunning_stop_reasons">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_stop_reasons_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="stop_reason" type="varchar(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="dunning_collection_plan_statuses">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_plan_statuses_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(50)" >
+            	<constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="color_code" type="varchar(50)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+       
+         <createTable tableName="invoice_dunning_statuses">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(255)" >
+            	<constraints unique="false"/>
+            </column>
+            <column name="context" type="varchar(255)" >
+            	<constraints unique="false"/>
+            </column>
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+         <createTable tableName="dunning_agent">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_agent_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+             <column name="external" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="collection_agency" type="varchar(100)" />
+            <column name="agent_first_name_item" type="varchar(100)" />
+            <column name="agent_last_name_item" type="varchar(100)" />
+            <column name="agent_email_item" type="varchar(100)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+       <createTable tableName="dunning_payment_retries">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_method" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="psp" type="varchar(255)"/>
+            <column name="num_pay_retries" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_retry_frequency_unit" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_retry_frequency" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dunning_settings_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
+	    <createTable tableName="cpq_quote_version_media">
+			<column name="cpq_quote_version_id" type="bigint" />
+			<column name="cpq_media_id" type="bigint" />
+		</createTable>
+		<addPrimaryKey columnNames="cpq_quote_version_id, cpq_media_id" tableName="cpq_quote_version_media"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-1291_20210804-rebuild" author="HatimOUDAD">
+        <createTable tableName="accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="accounting_period_year" type="varchar(20)"><constraints nullable="false"/></column>
+            <column name="start_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
+            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(255)"/>
+            <column name="sub_accounting_period_type" type="varchar(255)"/>
+            <column name="sub_accounting_period_progress" type="varchar(255)"/>
+            <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
+            <column name="accounting_operation_action" type="varchar(255)" />
+            <column name="regular_user_lock_option" type="varchar(255)" />
+            <column name="custom_lock_number_days" type="int4" />
+            <column name="custom_lock_option" type="varchar(255)" />
+    		<column name="force_option" type="varchar(50)" />
+    		<column name="force_custom_day" type="int4" />
+        </createTable>
+
+        <createTable tableName="sub_accounting_period">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sub_accounting_period_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="number" type="int4" />
+            <column name="start_date" type="date" />
+			<column name="end_date" type="date" />
+            <column name="regular_users_sub_period_status" type="varchar(255)"/>
+            <column name="regular_users_closed_date" type="datetime"/>
+            <column name="effective_closed_date" type="datetime"/>
+            <column name="accounting_period_id" type="bigint"/>
+            <column name="all_users_sub_period_status" type="varchar(255)"/>
+            <column name="regularusers_reopening_reason" type="varchar(2000)" />
+            <column name="allusers_reopening_reason" type="varchar(2000)" />
+        </createTable>
+	</changeSet>
+
+	<changeSet id="#INTRD-1313_20210809-rebuild" author="HatimOUDAD">
+        <createTable tableName="journal">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="journal_pkey" />
+            </column>
+           	<column name="code" type="varchar(255)"/>
+         	<column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="INTRD-1901_20210920_build" author="TarikFA.">
+    	<createTable tableName="offer_template_attribute">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_offer_template_attribute_pk"/>
+            </column>
+            <column name="version" type="int4" defaultValue="0" />
+    		<column name="mandatorwith_el" type="varchar(255)"/>
+            <column name="offer_template_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_value" type="varchar(255)" />
+            <column name="validation_type" type="varchar(10)" />
+            <column name="validation_pattern" type="varchar(2000)" />
+            <column name="validation_label" type="varchar(255)" />
+    	</createTable>
+    </changeSet>
+    
+    <changeSet id="#INTRD-2364-create_data_model_build" author="AbdelkaderBouazza">
+        <createTable tableName="dunning_action_notification_template">
+            <column name="dunning_action_id"  type="bigint"/>
+            <column name="action_notification_template"  type="varchar(200)"/>
+        </createTable>
+        <createTable tableName="ar_dunning_level">
+            <column name="level_id" type="bigint" />
+            <column name="related_levels" type="varchar(255)" />
+        </createTable>
+        <createTable tableName="ar_dunning_action">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_action_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="action_type" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_mode" type="varchar(255)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_channel" type="varchar(255)"/>
+            <column name="script_instance_id" type="bigint"/>
+            <column name="action_notification_template_id" type="bigint"/>
+            <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
+            <column name="dunning_agent_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="INTRD-2444_20211018-rebuild" author="ZBariki">
+        <createTable tableName="dunning_policy">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_name" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_dp_dunning_policy_name" />
+            </column>
+            <column name="policy_description" type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="interest_for_delay_sequence" type="int4" />
+            <column name="min_balance_trigger" type="${type.float}" defaultValue="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="total_dunning_levels" type="int4" />
+            <column name="include_pay_reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="attach_invoices_to_emails" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="policy_priority" type="int4" />
+            <column name="is_default_policy" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="is_active_policy" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="min_balance_trigger_currency_id" type="bigint"/>
+            <column name="determine_level_by" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <createTable tableName="dunning_policy_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="rule_joint" type="varchar(255)" />
+            <column name="dunning_policy_id" type="bigint" />
+        </createTable>
+       
+        <createTable tableName="dunning_policy_rule_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="policy_condition_operator" type="varchar(255)" />
+            <column name="policy_condition_target" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="policy_condition_target_value" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_policy_rule_id" type="bigint" />
+            <column name="rule_line_joint" type="varchar(255)" />
+        </createTable>
+    </changeSet>    
+    
+    <changeSet id="rebuild-str-tbl-431" author="AbdelmounaimAkadid">
+    	<createTable tableName="dunning_level">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_level_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="reminder" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="active" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="days_overdue" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="soft_decline" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="min_balance" type="numeric(23, 12)" />
+            <column name="min_balance_currency_id" type="bigint" />
+            <column name="charge_type" type="varchar(255)" />
+            <column name="charge_value" type="numeric(23, 12)" />
+            <column name="charge_currency_id" type="bigint" />
+            <column name="end_dunning_level" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="rebuild-str-tbl-432" author="AbdelmounaimAkadid">    
+    	<createTable tableName="dunning_level_dunning_action">
+            <column name="dunning_level_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="dunning_action_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="dunning_level_id, dunning_action_id" constraintName="dunning_level_dunning_action_pkey" tableName="dunning_level_dunning_action" />
+    </changeSet>
+
+    <changeSet id="rebuild-str-tbl-433" author="AbdelmounaimAkadid">        
+    	<createTable tableName="dunning_policy_level">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_level_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="sequence" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="dunning_level_id" type="bigint" />
+            <column name="collection_plan_status_id" type="bigint" />
+            <column name="invoice_dunning_statuses_id" type="bigint" />
+            <column name="dunning_policy_id" type="bigint"/>
+        </createTable>
+	</changeSet>
+	
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -11043,7 +11636,23 @@
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
-
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-548">
+	    <addUniqueConstraint
+				columnNames="code, creator, visibility"
+				constraintName="uk_report_query_composed" deferrable="false"
+				disabled="false" initiallyDeferred="false" tableName="report_query" />
+	</changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-549">
+		<addUniqueConstraint columnNames="code"
+			constraintName="uk_dunning_settings" deferrable="false"
+			disabled="false" initiallyDeferred="false"
+			tableName="dunning_settings" />
+	</changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-550">
+		<addUniqueConstraint tableName="accounting_period"
+			columnNames="accounting_period_year"
+			constraintName="uc_accounting_period_year" />
+	</changeSet>
     <!-- end uk -->
     <!-- start fk -->
 
@@ -14418,20 +15027,346 @@
                                  baseColumnNames="previous_version" baseTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
 
-      <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
+    <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
 
     <changeSet id="rebuild-str-fk-540-1639" author="Mbarek-Ay">
-     <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+     	<addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
     </changeSet> 
     
-     <changeSet id="rebuild-str-fk-540-1640" author="Mbarek-Ay">
-     <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+    <changeSet id="rebuild-str-fk-540-1640" author="Mbarek-Ay">
+     	<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
-      </changeSet>
+    </changeSet>
+      
+      
+	<changeSet id="rebuild-str-fk-refactoring" author="AbdelmounaimAkadid">
+	
+		<addForeignKeyConstraint baseColumnNames="id"
+			baseTableName="report_query_fields"
+			constraintName="fk_report_query_fields_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="report_query" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="report_query_id" baseTableName="query_scheduler"
+			constraintName="fk_report_query_scheduler" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="report_query" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="job_instance_id" baseTableName="query_scheduler"
+			constraintName="fk_job_instance_scheduler" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="meveo_job_instance" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="query_scheduler_id"
+			baseTableName="meveo_job_instance"
+			constraintName="fk_job_query_scheduler_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="query_scheduler" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="query_scheduler_id"
+			baseTableName="query_scheduler_users"
+			constraintName="fk_usr_query_scheduler_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="query_scheduler" />
+		<addForeignKeyConstraint
+			baseColumnNames="user_id" baseTableName="query_scheduler_users"
+			constraintName="fk_user_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="adm_user" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="query_scheduler_id"
+			baseTableName="query_scheduler_emails"
+			constraintName="fk_query_scheduler_emails" deferrable="false"
+			initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+			referencedColumnNames="id" referencedTableName="query_scheduler" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="query_scheduler_id"
+			baseTableName="query_execution_result"
+			constraintName="fk_scheduler_result" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="query_scheduler" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="report_query_id"
+			baseTableName="query_execution_result"
+			constraintName="fk_report_query_execution" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="report_query" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="accounting_article_id"
+			baseTableName="dunning_settings"
+			constraintName="fk_dunning_settings_accounting_article_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_accounting_article" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_pause_reasons"
+			constraintName="fk_dunning_settings_pause_reasons_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_settings" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_stop_reasons"
+			constraintName="fk_dunning_settings_stop_reasons_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_settings" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_collection_plan_statuses"
+			constraintName="fk_dunning_settings_collection_plan_statuses_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_settings" />
+		
+		<!-- 
+		<addForeignKeyConstraint
+			constraintName="fk_collection_plan_statuses_dunning_settings"
+			referencedTableName="dunning_settings"
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_collection_plan_statuses"
+			referencedColumnNames="id" />
+		 -->
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_settings_id"
+			baseTableName="invoice_dunning_statuses"
+			constraintName="fk_dunning_settings_invoice_statuses_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_settings" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
+			constraintName="fk_dunning_settings_collection_management_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_settings" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_payment_retries"
+			constraintName="fk_dunning_settings_payment_retries_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_settings" />
+	
+		<!-- 
+		<addForeignKeyConstraint
+			constraintName="fk_dunning_agent_dunning_settings"
+			referencedTableName="dunning_settings"
+			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
+			referencedColumnNames="id" />
+		
+	
+		<addForeignKeyConstraint
+			constraintName="fk_dunning_collection_plan_statuses_dunning_settings"
+			referencedTableName="dunning_settings"
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_collection_plan_statuses"
+			referencedColumnNames="id" />
+	
+		<addForeignKeyConstraint
+			constraintName="fk_dunning_pause_reasons_dunning_settings"
+			referencedTableName="dunning_settings"
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_pause_reasons" referencedColumnNames="id" />
+	
+		<addForeignKeyConstraint
+			constraintName="fk_dunning_payment_retries_dunning_settings"
+			referencedTableName="dunning_settings"
+			baseColumnNames="dunning_settings_id"
+			baseTableName="dunning_payment_retries" referencedColumnNames="id" />
+	
+		<addForeignKeyConstraint
+			constraintName="fk_dunning_stop_reasons_dunning_settings"
+			referencedTableName="dunning_settings"
+			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
+			referencedColumnNames="id" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="cpq_quote_version_id"
+			baseTableName="cpq_quote_version_media"
+			constraintName="fk_cpq_quote_version_media_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="cpq_media_id" baseTableName="cpq_quote_version_media"
+			constraintName="fk_cpq_media_quote_version_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="cpq_media" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="accounting_period_id"
+			baseTableName="sub_accounting_period"
+			constraintName="fk_accounting_period" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="accounting_period" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="journal_id" baseTableName="ar_occ_template"
+			constraintName="fk_journal_template_scheduler" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="journal" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="journal_id" baseTableName="ar_account_operation"
+			constraintName="fk_journal_account_operation_scheduler"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="journal" />
+	
+	
+		<addForeignKeyConstraint
+			baseColumnNames="attribute_id"
+			baseTableName="offer_template_attribute"
+			constraintName="offer_template_attribute_attribute_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cpq_attribute" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="offer_template_id"
+			baseTableName="offer_template_attribute"
+			constraintName="offer_template_attribute_offer_template_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cat_offer_template" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="script_instance_id" baseTableName="ar_dunning_action"
+			constraintName="fk_ar_dunning_action_meveo_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="meveo_script_instance" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="action_notification_template_id"
+			baseTableName="ar_dunning_action"
+			constraintName="fk_ar_dunning_action_email_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="com_message_template" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action"
+			constraintName="fk_dunning_agent" referencedColumnNames="id"
+			referencedTableName="dunning_agent" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_policy_id"
+			baseTableName="dunning_policy_rule"
+			constraintName="fk_dunning_determine_level_by_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="dunning_policy" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_policy_rule_id"
+			baseTableName="dunning_policy_rule_line"
+			constraintName="fk_dunning_policy_rule_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="dunning_policy_rule" />
+   	
+		<addForeignKeyConstraint
+			baseColumnNames="min_balance_currency_id" baseTableName="dunning_level"
+			constraintName="fk_dunning_level_min_balance_currency"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="adm_currency" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="charge_currency_id" baseTableName="dunning_level"
+			constraintName="fk_dunning_level_charge_currency" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="adm_currency" />
+	
+		<addForeignKeyConstraint
+			baseTableName="dunning_level_dunning_action"
+			baseColumnNames="dunning_level_id"
+			constraintName="dunning_level_dunning_action_pkey_const"
+			referencedTableName="dunning_level" referencedColumnNames="id" />
+			
+		<addForeignKeyConstraint
+			baseTableName="dunning_level_dunning_action"
+			baseColumnNames="dunning_action_id"
+			constraintName="dunning_action_dunning_level_pkey_const"
+			referencedTableName="ar_dunning_action" referencedColumnNames="id" />
+	
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_level_id"
+			baseTableName="dunning_policy_level"
+			constraintName="fk_dunning_policy_level_dunning_level"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_level" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="collection_plan_status_id"
+			baseTableName="dunning_policy_level"
+			constraintName="fk_dunning_policy_level_collection_plan_status"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="dunning_collection_plan_statuses" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="invoice_dunning_statuses_id"
+			baseTableName="dunning_policy_level"
+			constraintName="fk_dunning_policy_level_invoice_dunning_statuses"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="invoice_dunning_statuses" />
+			
+		<addForeignKeyConstraint
+			baseColumnNames="dunning_policy_id"
+			baseTableName="dunning_policy_level"
+			constraintName="fk_dunning_policy_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="dunning_policy" />
+			
+		 -->
+			
+    </changeSet>
+    <changeSet id="rebuild-str-fk-540-1641" author="ZBariki">
+    <!-- 
+        <addForeignKeyConstraint baseColumnNames="min_balance_trigger_currency_id" baseTableName="dunning_policy"
+                                 constraintName="fk_dunning_min_balance_currency_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="adm_currency"/>
+                                  -->
+    </changeSet>
+    
+     <changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay"> 
+        <!--  <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
+                                  -->
+    </changeSet>
+      
+      
+       <changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+    </changeSet>
     
     <!-- end fk -->
 
@@ -14737,673 +15672,9 @@
         ]]></sql>
     </changeSet>
 
-    <changeSet id="rebuild-str-tbl-2021204" author="ZBariki">
-        <createTable tableName="cat_discount_applicable_entity">
-            <column name="disount_plan_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="entity_class" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
-    </changeSet>
-
-    <changeSet id="#INTRD-257_20210625-rebuild" author="ZBariki">
-        <createTable tableName="report_query">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="target_entity" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="visibility" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="filters" type="${type.json}" />
-            <column name="generated_query" type="${type.text}" />
-            <column name="sort_by" type="varchar(255)" />
-            <column name="sort_order" type="varchar(15)" />
-        </createTable>
-        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_report_query_composed"
-                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="report_query" />
-
-        <createTable tableName="report_query_fields">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="field" type="varchar(255)" />
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="report_query_fields"
-                                 constraintName="fk_report_query_fields_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="report_query"/>
-
-    </changeSet>
-
-    <changeSet id="#INTRD-682_20210707-rebuild" author="HatimOUDAD">
-
-        <createTable tableName="query_scheduler">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="query_scheduler_pkey" />
-            </column>
-            <column name="code" type="varchar(255)"/>
-            <column name="description" type="varchar(255)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="file_format" type="varchar(255)" />
-            <column name="year" type="varchar(255)" />
-            <column name="month" type="varchar(255)" />
-            <column name="every_month" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="day_month" type="varchar(255)" />
-            <column name="every_day_month" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="day_week" type="varchar(255)" />
-            <column name="every_day_week" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="hour" type="varchar(255)" />
-            <column name="every_hour" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="minute" type="varchar(255)" />
-            <column name="every_minute" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="second" type="varchar(255)" />
-            <column name="every_second" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="job_instance_id" type="bigint" />
-            <column name="report_query_id" type="bigint" />
-            <column name="is_query_scheduler" type="${type.boolean}" defaultValueNumeric="0" />
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_scheduler" constraintName="fk_report_query_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="report_query" />
-        <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="query_scheduler" constraintName="fk_job_instance_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="meveo_job_instance" />
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="meveo_job_instance" constraintName="fk_job_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-        	referencedColumnNames="id" referencedTableName="query_scheduler" />
-
-        <createTable tableName="query_scheduler_users">
-			<column name="query_scheduler_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="user_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-		</createTable>
-		<addPrimaryKey columnNames="query_scheduler_id, user_id" constraintName="adm_query_scheduler_user_pkey" tableName="query_scheduler_users" />
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_users" constraintName="fk_usr_query_scheduler_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="query_scheduler" />
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="query_scheduler_users" constraintName="fk_user_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-        						onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
-
-        <createTable tableName="query_scheduler_emails">
-            <column name="query_scheduler_id"  type="bigint"/>
-            <column name="emails"  type="varchar(100)"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_scheduler_emails" constraintName="fk_query_scheduler_emails" deferrable="false"
-            initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="query_scheduler" />
-
-
-        <createTable tableName="query_execution_result">
-        <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="query_result_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-			<column name="start_date" type="datetime" />
-			<column name="end_date" type="datetime" />
-			<column name="execution_duration" type="bigint"/>
-			<column name="file_path" type="varchar(255)" />
-			<column name="line_count" type="int4"/>
-			<column name="error_message" type="varchar(255)"/>
-			<column name="status" type="varchar(255)">
-	           <constraints nullable="false" />
-	        </column>
-	        <column name="query_execution_mode" type="varchar(255)">
-	           <constraints nullable="false" />
-	        </column>
-	        <column name="query_scheduler_id" type="bigint" />
-	        <column name="report_query_id" type="bigint" />
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="query_scheduler_id" baseTableName="query_execution_result" constraintName="fk_scheduler_result" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="query_scheduler" />
-        <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="report_query" />
-    </changeSet>
-
-    <changeSet id="#INTRD-634_20210706-rebuild" author="Mbarek-Ay">
-
-        <createTable tableName="dunning_settings">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_settings_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="dunning_mode" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="max_dunning_levels" type="int"/>
-            <column name="max_days_outstanding" type="int"/>
-            <column name="allow_interest_for_delay" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="interest_for_delay_rate" type="numeric(23, 12)" />
-            <column name="allow_dunning_charges" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="apply_dunning_charge_fx_exchange_rate" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="accounting_article_id" type="bigint" />
-        </createTable>
-        <addUniqueConstraint columnNames="code" constraintName="uk_dunning_settings" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_settings" />
-        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="dunning_settings"
-                                 constraintName="fk_dunning_settings_accounting_article_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="billing_accounting_article"/>
-
-         <createTable tableName="dunning_pause_reasons">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_pause_reasons_pkey" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="pause_reason" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons"
-                                 constraintName="fk_dunning_settings_pause_reasons_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
-
-         <createTable tableName="dunning_stop_reasons">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_stop_reasons_pkey" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="stop_reason" type="varchar(255)" >
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_stop_reasons"
-                                 constraintName="fk_dunning_settings_stop_reasons_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
-
-        <createTable tableName="dunning_collection_plan_statuses">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_plan_statuses_pkey" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="status" type="varchar(50)" >
-            	<constraints nullable="false" />
-            </column>
-            <column name="context" type="varchar(255)">
-            	<constraints nullable="false" />
-            </column>
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses"
-                                 constraintName="fk_dunning_settings_collection_plan_statuses_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
-        <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
-         <createTable tableName="invoice_dunning_statuses">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="status" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-            <column name="context" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses"
-                                 constraintName="fk_dunning_settings_invoice_statuses_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
-
-         <createTable tableName="dunning_agent">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_agent_pkey" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-             <column name="external" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="collection_agency" type="varchar(100)" />
-            <column name="agent_first_name_item" type="varchar(100)" />
-            <column name="agent_last_name_item" type="varchar(100)" />
-            <column name="agent_email_item" type="varchar(100)" />
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
-                                 constraintName="fk_dunning_settings_collection_management_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
-
-       <createTable tableName="dunning_payment_retries">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey"/>
-            </column>
-            <column name="updated" type="datetime"/>
-            <column name="creator" type="varchar(100)"/>
-            <column name="updater" type="varchar(100)"/>
-            <column name="version" type="int4"/>
-            <column name="created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="payment_method" type="varchar(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="psp" type="varchar(255)"/>
-            <column name="num_pay_retries" type="int4">
-                <constraints nullable="false"/>
-            </column>
-            <column name="pay_retry_frequency_unit" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="pay_retry_frequency" type="int4">
-                <constraints nullable="false"/>
-            </column>
-            <column name="dunning_settings_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries"
-                                 constraintName="fk_dunning_settings_payment_retries_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
-
-        <addForeignKeyConstraint constraintName="fk_dunning_agent_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
-
-        <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
-
-        <addForeignKeyConstraint constraintName="fk_dunning_pause_reasons_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons" referencedColumnNames="id" />
-
-        <addForeignKeyConstraint constraintName="fk_dunning_payment_retries_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries" referencedColumnNames="id" />
-
-        <addForeignKeyConstraint constraintName="fk_dunning_stop_reasons_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
-
-    </changeSet>
-
-    <changeSet id="#INTRD-1441_20210728-rebuild" author="TarikFA.">
    
-    <createTable tableName="cpq_quote_version_media">
-	<column name="cpq_quote_version_id" type="bigint" />
-	<column name="cpq_media_id" type="bigint" />
-	</createTable>
-	
-	<addPrimaryKey columnNames="cpq_quote_version_id, cpq_media_id" tableName="cpq_quote_version_media"/>
-	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_version_media"
-	                                 constraintName="fk_cpq_quote_version_media_id" deferrable="false"
-	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-	                                 referencedColumnNames="id" referencedTableName="cpq_quote_version"/>  
-	        <addForeignKeyConstraint baseColumnNames="cpq_media_id" baseTableName="cpq_quote_version_media"
-	                                 constraintName="fk_cpq_media_quote_version_id" deferrable="false"
-	                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-	                                 referencedColumnNames="id" referencedTableName="cpq_media"/>
-    </changeSet>
 
-    <changeSet id="#INTRD-1291_20210804-rebuild" author="HatimOUDAD">
-    	<createSequence sequenceName="accounting_period_seq" startValue="1" />
-        <createTable tableName="accounting_period">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_period_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime"/>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="accounting_period_year" type="varchar(20)" />
-            <column name="start_date" type="datetime"><constraints nullable="false" unique="true"/></column>
-            <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
-            <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="status" type="varchar(255)"/>
-            <column name="sub_accounting_period_type" type="varchar(255)"/>
-            <column name="sub_accounting_period_progress" type="varchar(255)"/>
-            <column name="ongoing_sub_accounting_periods" type="varchar(255)"/>
-            <column name="accounting_operation_action" type="varchar(255)" />
-            <column name="regular_user_lock_option" type="varchar(255)" />
-            <column name="custom_lock_number_days" type="int4" />
-            <column name="custom_lock_option" type="varchar(255)" />
-    		<column name="force_option" type="varchar(50)" />
-    		<column name="force_custom_day" type="int4" />
-        </createTable>
-        <addNotNullConstraint tableName="accounting_period" columnName="accounting_period_year" columnDataType="varchar(20)"/>
-        <addUniqueConstraint tableName="accounting_period" columnNames="accounting_period_year" constraintName="uc_accounting_period_year" />
-
-        <createSequence sequenceName="sub_accounting_period_seq" startValue="1" />
-        <createTable tableName="sub_accounting_period">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="sub_accounting_period_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime"/>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="number" type="int4" />
-            <column name="start_date" type="datetime" />
-			<column name="end_date" type="datetime" />
-            <column name="regular_users_sub_period_status" type="varchar(255)"/>
-            <column name="regular_users_closed_date" type="datetime"/>
-            <column name="effective_closed_date" type="datetime"/>
-            <column name="accounting_period_id" type="bigint"/>
-            <column name="all_users_sub_period_status" type="varchar(255)"/>
-            <column name="regularusers_reopening_reason" type="varchar(2000)" />
-            <column name="allusers_reopening_reason" type="varchar(2000)" />
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="accounting_period_id" baseTableName="sub_accounting_period" constraintName="fk_accounting_period" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="accounting_period" />
-	</changeSet>
-
-	<changeSet id="#INTRD-1313_20210809-rebuild" author="HatimOUDAD">
-
-        <createTable tableName="journal">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="journal_pkey" />
-            </column>
-           	<column name="code" type="varchar(255)"/>
-         	<column name="description" type="varchar(255)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-
-        </createTable>
-       <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_occ_template" constraintName="fk_journal_template_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="journal" />
-        <addForeignKeyConstraint baseColumnNames="journal_id" baseTableName="ar_account_operation" constraintName="fk_journal_account_operation_scheduler" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="journal" />
-    </changeSet>
-
-    <changeSet id="INTRD_1629_20210914_build" author="TarikFA.">
-	    <createSequence sequenceName="collection_plan_status_seq"/>
-    	<createTable tableName="collection_plan_status">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collection_plan_status" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="dunning_settings_id" type="bigint" />
-            <column name="language" type="${type.json}" />
-            <column name="status" type="varchar(255)"  >
-            	<constraints unique="true"/>
-            </column>
-            <column name="context" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-    	</createTable>
-    	<addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings_id"
-    							 referencedTableName="dunning_settings"
-    							 baseColumnNames="dunning_settings_id"
-    							 baseTableName="collection_plan_status"
-    							 referencedColumnNames="id"/>
-        <addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="collection_plan_status" referencedColumnNames="id" />
-
-    </changeSet>
-
-    <changeSet id="INTRD-1901_20210920_build" author="TarikFA.">
-    	<createSequence sequenceName="offer_template_attribute_seq"/>
-    	<createTable tableName="offer_template_attribute">
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_offer_template_attribute_pk"/>
-            </column>
-            <column name="version" type="int4" defaultValue="0" />
-    		<column name="mandatorwith_el" type="varchar(255)"/>
-            <column name="offer_template_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="sequence" type="INT4" defaultValue="0" />
-            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="default_value" type="varchar(255)" />
-            <column name="validation_type" type="varchar(10)" />
-            <column name="validation_pattern" type="varchar(2000)" />
-            <column name="validation_label" type="varchar(255)" />
-    	</createTable>
-
-        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-
-        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="offer_template_attribute" constraintName="offer_template_attribute_offer_template_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
-
-    </changeSet>
-    <changeSet id="#INTRD-2364-create_data_model_build" author="AbdelkaderBouazza">
-        <createTable tableName="dunning_action_notification_template">
-            <column name="dunning_action_id"  type="bigint"/>
-            <column name="action_notification_template"  type="varchar(200)"/>
-        </createTable>
-        <createTable tableName="ar_dunning_level">
-            <column name="level_id" type="bigint" />
-            <column name="related_levels" type="varchar(255)" />
-        </createTable>
-        <createTable tableName="ar_dunning_action">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_action_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
-            <column name="action_type" type="varchar(255)" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="action_mode" type="varchar(255)" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="action_channel" type="varchar(255)"/>
-            <column name="script_instance_id" type="bigint"/>
-            <column name="action_notification_template_id" type="bigint"/>
-            <column name="attach_overdue_invoices" type="${type.boolean}" defaultValueNumeric="1"/>
-            <column name="attach_due_invoices" type="${type.boolean}"  defaultValueNumeric="0"/>
-            <column name="dunning_agent_id" type="bigint"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_meveo_script_instance"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-        <addForeignKeyConstraint baseColumnNames="action_notification_template_id" baseTableName="ar_dunning_action" constraintName="fk_ar_dunning_action_email_template"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
-        <addForeignKeyConstraint baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action" constraintName="fk_dunning_agent"
-					            referencedColumnNames="id" referencedTableName="dunning_agent"
-								deferrable="false" initiallyDeferred="false"
-					            onDelete="NO ACTION" onUpdate="NO ACTION"/>
-    </changeSet>
-
-    <changeSet id="INTRD-2444_20211018-rebuild" author="ZBariki">
-        <createTable tableName="dunning_policy">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="policy_name" type="varchar(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_dp_dunning_policy_name" />
-            </column>
-            <column name="policy_description" type="varchar(2000)">
-                <constraints nullable="false" />
-            </column>
-            <column name="interest_for_delay_sequence" type="int4" />
-            <column name="min_balance_trigger" type="float8" defaultValue="0" >
-                <constraints nullable="false" />
-            </column>
-            <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="total_dunning_levels" type="int4" />
-            <column name="include_pay_reminder" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="attach_invoices_to_emails" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="policy_priority" type="int4" />
-            <column name="is_default_policy" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="is_active_policy" type="${type.boolean}" defaultValueNumeric="1" />
-        </createTable>
-        <createTable tableName="dunning_min_balance_trigger_currency">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="min_balance_trigger_currency" type="varchar(255)" />
-        </createTable>
-        <createTable tableName="dunning_determine_level_by">
-            <column name="id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="determine_level_by" type="varchar(255)" />
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_min_balance_trigger_currency"
-                                 constraintName="fk_dunning_min_balance_trigger_currency_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="dunning_determine_level_by"
-                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
-        <createTable tableName="dunning_policy_rule">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="rule_joint" type="varchar(255)" />
-            <column name="dunning_policy_id" type="bigint" />
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_rule"
-                                 constraintName="fk_dunning_determine_level_by_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
-        <createTable tableName="dunning_policy_rule_line">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_rule_line_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="policy_condition_operator" type="varchar(255)" />
-            <column name="policy_condition_target" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="policy_condition_target_value" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="dunning_policy_rule_id" type="bigint" />
-            <column name="rule_line_joint" type="varchar(255)" defaultValue="AND"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_policy_rule_id" baseTableName="dunning_policy_rule_line"
-                                 constraintName="fk_dunning_policy_rule_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_policy_rule"/>
-    </changeSet>
+    
 
     <!-- end procedure -->
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
@@ -16412,95 +16683,7 @@
     <changeSet id="#INTRD-2421_20211012-end" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_2021012-reports" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-2421_20211018-reports" author="AndriusKarpavicius"/>
-
-    <changeSet id="#INTRD-2322-20211018" author="khalidHORRI">
-        <createSequence sequenceName="dunning_level_seq" startValue="1" />
-        <createTable tableName="dunning_level">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_level_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="reminder" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="active" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="days_overdue" type="int4" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="soft_decline" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="min_balance" type="numeric(23, 12)" />
-            <column name="min_balance_currency_id" type="bigint" />
-            <column name="charge_type" type="varchar(255)" />
-            <column name="charge_value" type="numeric(23, 12)" />
-            <column name="charge_currency_id" type="bigint" />
-            <column name="end_dunning_level" type="${type.boolean}" defaultValueNumeric="0" />
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="min_balance_currency_id" baseTableName="dunning_level" constraintName="fk_dunning_level_min_balance_currency"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
-        <addForeignKeyConstraint baseColumnNames="charge_currency_id" baseTableName="dunning_level" constraintName="fk_dunning_level_charge_currency"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
-
-        <createTable tableName="dunning_level_dunning_action">
-            <column name="dunning_level_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="dunning_action_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="dunning_level_id, dunning_action_id" constraintName="dunning_level_dunning_action_pkey" tableName="dunning_level_dunning_action" />
-        <addForeignKeyConstraint baseTableName="dunning_level_dunning_action" baseColumnNames="dunning_level_id"
-                                 constraintName="dunning_level_dunning_action_pkey_const" referencedTableName="dunning_level"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="dunning_level_dunning_action" baseColumnNames="dunning_action_id"
-                                 constraintName="dunning_action_dunning_level_pkey_const" referencedTableName="ar_dunning_action"
-                                 referencedColumnNames="id"/>
-
-        <createSequence sequenceName="dunning_policy_level_seq" startValue="1" />
-        <createTable tableName="dunning_policy_level">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_policy_level_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="sequence" type="int4" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="dunning_level_id" type="bigint" />
-            <column name="collection_plan_status_id" type="bigint" />
-            <column name="invoice_dunning_statuses_id" type="bigint" />
-            <column name="dunning_policy_id" type="bigint"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="dunning_level_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
-        <addForeignKeyConstraint baseColumnNames="collection_plan_status_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_collection_plan_status"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="collection_plan_status" />
-        <addForeignKeyConstraint baseColumnNames="invoice_dunning_statuses_id" baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_invoice_dunning_statuses"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="invoice_dunning_statuses" />
-        <addForeignKeyConstraint baseColumnNames="dunning_policy_id" baseTableName="dunning_policy_level"
-                                 constraintName="fk_dunning_policy_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="dunning_policy"/>
-    </changeSet>
-
+	<changeSet id="#INTRD-2322-20211018" author="khalidHORRI" />
     <changeSet id="INTRD-2444_20211019" author="ZBariki" />
     <changeSet id="#INTRD-2364-create_data_model" author="AbdelkaderBouazza"/>
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza"/>
@@ -16515,9 +16698,21 @@
    	<changeSet id="INTRD-2431_20211021_fix" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-2548_20211027" author="YoussefIZEM" />
     <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA" />
-    <changeSet id="#2333_20211021" author="anasseh"/>
     <changeSet id="#INTRD-1166_20211018_Business_attributes_default_value" author="MohammedELAZZOUZI" />
-    
+    <changeSet id="#2333_20211021" author="anasseh"/>
+    <changeSet id="INTRD-30_2021114" author="ZBariki" />
+    <changeSet id="INTRD-2449_2021114" author="ZBariki" />
+    <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI"/>
+    <changeSet id="INTRD-2868_20211105" author="TarikFA." />
+    <changeSet id="INTRD-2418_20211105" author="TarikFA." />
+    <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889"/>
+    <changeSet id="#INTRD-1419_20211108" author="HHanine"/>
+    <changeSet id="#INTRD-2800_04112021" author="AbdelkaderBouazza"/>
+    <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA"/>
+    <changeSet id="INTRD-2959_11082021" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza"/>
+	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-3426_202112012" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.ChargeInstance;
@@ -25,7 +26,9 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -34,46 +37,36 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
 
 public class InvoiceLinesFactory {
 
-    private BillingAccountService billingAccountService =
-            (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
-    private BillingRunService billingRunService =
-            (BillingRunService) getServiceInterface(BillingRunService.class.getSimpleName());
-    private AccountingArticleService accountingArticleService =
-            (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
-    private OfferTemplateService offerTemplateService =
-            (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
-    private ServiceInstanceService instanceService =
-            (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
-    private SubscriptionService subscriptionService =
-            (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
-    private CommercialOrderService commercialOrderService = 
-    		(CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
-    private ProductVersionService productVersionService = 
-    		(ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
-    private OrderLotService orderLotService = 
-    		(OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
-    private ChargeInstanceService chargeInstanceService =
-            (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
-    private RatedTransactionService ratedTransactionService =
-            (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+    private BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
+    private BillingRunService billingRunService = (BillingRunService) getServiceInterface(BillingRunService.class.getSimpleName());
+    private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
+    private OfferTemplateService offerTemplateService = (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
+    private ServiceInstanceService instanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
+    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
+    private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
+    private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+
+    private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
 
     /**
-     *
-     * @param record map of ratedTransaction
+     * @param record        map of ratedTransaction
      * @param configuration aggregation configuration
-     * @param result JobExecutionResultImpl
+     * @param result        JobExecutionResultImpl
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record,
-                              AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
-        InvoiceLine invoiceLine = initInvoiceLine(record, result);
-        if(configuration.getAggregationOption() == NO_AGGREGATION) {
+    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider) throws BusinessException {
+        InvoiceLine invoiceLine = initInvoiceLine(record, result, appProvider);
+        if (configuration.getAggregationOption() == NO_AGGREGATION) {
             withNoAggregationOption(invoiceLine, record, configuration.isEnterprise());
         } else {
             withAggregationOption(invoiceLine, record, configuration.isEnterprise());
@@ -81,66 +74,50 @@ public class InvoiceLinesFactory {
         return invoiceLine;
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report) {
+    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        ofNullable(record.get("billing_account__id"))
-                .ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("id"))
-                .ifPresent(id ->
-                        invoiceLine.setRatedTransactions(of(ratedTransactionService.findById(((BigInteger) id).longValue()))));
-        ofNullable(record.get("billing_run_id"))
-                .ifPresent(id -> invoiceLine.setBillingRun(billingRunService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("service_instance_id"))
-                .ifPresent(id -> invoiceLine.setServiceInstance(instanceService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("service_instance_id"))
-                .ifPresent(id -> invoiceLine.setServiceInstance(instanceService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("offer_id"))
-                .ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("order_id"))
-        .ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("product_version_id"))
-        .ifPresent(id -> invoiceLine.setProductVersion(productVersionService.findById(((BigInteger) id).longValue())));
-        ofNullable(record.get("order_lot_id"))
-        .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("id")).ifPresent(id -> invoiceLine.setRatedTransactions(of(ratedTransactionService.findById(((BigInteger) id).longValue()))));
+        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.findById(((BigInteger) id).longValue())));
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));
-        if(invoiceLine.getValueDate()==null) {
-        	invoiceLine.setValueDate(new Date());
+        if (invoiceLine.getValueDate() == null) {
+            invoiceLine.setValueDate(new Date());
         }
         invoiceLine.setOrderNumber((String) record.get("order_number"));
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));
         invoiceLine.setDiscountAmount(ZERO);
         invoiceLine.setDiscountRate(ZERO);
-        BigDecimal taxPercent = (BigDecimal) record.get("tax_percent");
+        BigDecimal taxPercent = invoiceLine.getTax() != null ? invoiceLine.getTax().getPercent() : (BigDecimal) record.get("tax_percent");
         invoiceLine.setTaxRate(taxPercent);
-        BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax"))
-                .orElse(ZERO);
-        invoiceLine.setAmountWithTax(amountWithTax);
-        BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_Tax"))
-                .orElse(ZERO);
-        if(BigDecimal.ZERO.compareTo(amountWithoutTax)==0) {
-        	BigDecimal coef=(new BigDecimal(100).add((taxPercent))).divide(new BigDecimal(100));
-        	amountWithoutTax=amountWithTax.divide(coef, 2, RoundingMode.HALF_UP);
-        }
-        invoiceLine.setAmountWithoutTax(amountWithoutTax);
-        
-        invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithoutTax));
-    	
-       
-        ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
-                .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
+        BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_tax")).orElse(ZERO);
+        BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax")).orElse(ZERO);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
+                appProvider.getRoundingMode().getRoundingMode());
+        invoiceLine.setAmountWithoutTax(amounts[0]);
+        invoiceLine.setAmountWithTax(amounts[1]);
+        invoiceLine.setAmountTax(amounts[2]);
+
+        ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id")).map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
         if (chargeInstance != null) {
-                ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-                Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ?
-                        invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
-                List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-                Map<String, Object> attributes = fromAttributeValue(attributeValues);
-                if(invoiceLine.getAccountingArticle()==null) {
-                    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
-                            .orElseThrow(() -> new BusinessException("No accountingArticle found"));
-                    invoiceLine.setAccountingArticle(accountingArticle);
-                }
+            ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+            Product product =
+                    serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
+            List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+            Map<String, Object> attributes = fromAttributeValue(attributeValues);
+            if (invoiceLine.getAccountingArticle() == null) {
+                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
+                        .orElseThrow(() -> new BusinessException("No accountingArticle found"));
+                invoiceLine.setAccountingArticle(accountingArticle);
+            }
         }
 
         return invoiceLine;
@@ -176,11 +153,10 @@ public class InvoiceLinesFactory {
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
-    	if(serviceInstance == null) return Collections.emptyList();
-        return serviceInstance.getAttributeInstances()
-                    .stream()
-                    .map(attributeInstance -> (AttributeValue) attributeInstance)
-                    .collect(toList());
+        if (serviceInstance == null) {
+            return Collections.emptyList();
+        }
+        return serviceInstance.getAttributeInstances().stream().map(attributeInstance -> (AttributeValue) attributeInstance).collect(toList());
     }
 
     private Map<String, Object> fromAttributeValue(List<AttributeValue> attributeValues) {

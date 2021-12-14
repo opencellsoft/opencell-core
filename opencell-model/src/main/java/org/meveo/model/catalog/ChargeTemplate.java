@@ -46,6 +46,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
+import javax.xml.bind.ValidationException;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -277,8 +278,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Transient
     private int roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
     
-    
-	
+    /**
+     * ChargeTemplate status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ChargeTemplateStatusEnum status = ChargeTemplateStatusEnum.DRAFT;
     
     public String getInputUnitEL() {
         return inputUnitEL;
@@ -575,4 +580,24 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setAttributes(Set<Attribute> attributes) {
         this.attributes = attributes;
     }
+
+	/**
+	 * @return the status
+	 */
+	public ChargeTemplateStatusEnum getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 * @throws ValidationException 
+	 */
+	public void setStatus(ChargeTemplateStatusEnum status) throws ValidationException {
+		if ((ChargeTemplateStatusEnum.ACTIVE.equals(this.status) && ChargeTemplateStatusEnum.DRAFT.equals(status))
+				|| (ChargeTemplateStatusEnum.ARCHIVED.equals(this.status) && ChargeTemplateStatusEnum.ACTIVE.equals(status))
+				|| (ChargeTemplateStatusEnum.DRAFT.equals(this.status) && ChargeTemplateStatusEnum.ARCHIVED.equals(status))) {
+			throw new ValidationException("Could not change status from '" + this.status + "' to '" + status + "'");
+		}
+		this.status = status;
+	}
 }

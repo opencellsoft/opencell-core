@@ -18,11 +18,12 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import static java.util.Optional.of;
+import static org.meveo.model.accounting.CustomLockOption.BEFORE_END_OF_SUB_AP_PERIOD;
+import static org.meveo.model.accounting.RegularUserLockOption.CUSTOM;
+import static org.meveo.model.shared.DateUtils.addDaysToDate;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -37,7 +38,6 @@ import org.meveo.model.accounting.RegularUserLockOption;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 
@@ -61,7 +61,8 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::closeSubAccountingPeriods, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
+                null, this::closeSubAccountingPeriods, null, null);
     }
 
     /**
@@ -71,30 +72,28 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
      * @return An iterator over a list of SubAccountingPeriod
      */
     private Optional<Iterator<SubAccountingPeriod>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-
-        Date date = new Date();
-
-        AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(date);
+        Date endDate = new Date();
+        AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(endDate);
         if (accountingPeriod == null) {
-            log.warn("No accounting period has been defined for date : {}", date);
-            return Optional.of(new SynchronizedIterator<SubAccountingPeriod>(new ArrayList<>()));
+            log.warn("No accounting period has been defined for date : {}", endDate);
+            return of(new SynchronizedIterator<>(new ArrayList<>()));
         }
 
         RegularUserLockOption regularUserLockOption = accountingPeriod.getRegularUserLockOption();
-        if (regularUserLockOption != null && regularUserLockOption == RegularUserLockOption.CUSTOM) {
+        if (regularUserLockOption != null && regularUserLockOption == CUSTOM) {
             Integer days = accountingPeriod.getCustomLockNumberDays();
             CustomLockOption customLockOption = accountingPeriod.getCustomLockOption();
-            Date endDate = accountingPeriod.getEndDate();
-            if (customLockOption != null && endDate != null) {
-                if (customLockOption == CustomLockOption.BEFORE_END_OF_SUB_AP_PERIOD) {
+            if (customLockOption != null) {
+                if (customLockOption == BEFORE_END_OF_SUB_AP_PERIOD) {
                     days *= -1;
                 }
-                date = DateUtils.addDaysToDate(endDate, days);
+                endDate = addDaysToDate(endDate, days);
             }
         }
 
-        List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, date);
-        return Optional.of(new SynchronizedIterator<SubAccountingPeriod>(subAccountingPeriods));
+        List<SubAccountingPeriod> subAccountingPeriods =
+                subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, endDate);
+        return of(new SynchronizedIterator<>(subAccountingPeriods));
     }
 
     /**
