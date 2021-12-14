@@ -5,6 +5,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -106,25 +107,23 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
-		List<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_LIST : accountOperations.stream()
+		Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
 				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
 				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
 						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
-						.map(matchingCode -> {
-							for (MatchingAmount element : matchingCode.getMatchingAmounts()) {
-								if (!accountOperation.getId().equals(element.getAccountOperation().getId())) {
-									return toResponse(accountOperation, element, invoice);
-								}
-							}
-							return null;
-						})
-						.collect(Collectors.toList()))
+						.map(matchingCode -> matchingCode.getMatchingAmounts())
+						.flatMap(Collection::stream)
+						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
+						.collect(Collectors.toSet())
+				)
 				.flatMap(Collection::stream)
-				.collect(Collectors.toList());
+				.distinct()
+				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
+				.collect(Collectors.toSet());
 		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();
 	}
 
-	private Map<String, Object> buildResponse(List<InvoiceMatchedOperation> collect) {
+	private Map<String, Object> buildResponse(Set<InvoiceMatchedOperation> collect) {
 		Map<String, Object> response = new HashMap<>();
 		response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
 		response.put("invoiceMatchedOperations", collect);
@@ -143,7 +142,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
 				.paymentRef(accountOperation.getReference())
 				.amount(accountOperation.getMatchingAmount())
-				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax()))
+				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
 				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
 				.matchingDate(matchingCode.getMatchingDate())
 				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")
