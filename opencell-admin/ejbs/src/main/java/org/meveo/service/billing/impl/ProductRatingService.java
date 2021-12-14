@@ -3,6 +3,7 @@ package org.meveo.service.billing.impl;
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
@@ -21,6 +22,9 @@ import org.meveo.model.billing.WalletOperation;
 public class ProductRatingService extends RatingService implements Serializable {
 
     private static final long serialVersionUID = -950153661737115704L;
+
+    @Inject
+    protected WalletOperationService walletOperationService;
 
     /**
      * Apply/rate product charge instance

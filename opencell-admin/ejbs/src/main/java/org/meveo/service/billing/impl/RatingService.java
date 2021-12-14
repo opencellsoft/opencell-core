@@ -127,9 +127,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     @EJB
     private SubscriptionService subscriptionService;
 
-    @EJB
-    private RatedTransactionService ratedTransactionService;
-
     @Inject
     private TaxMappingService taxMappingService;
 
@@ -147,9 +144,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-
-    @Inject
-    protected WalletOperationService walletOperationService;
 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
@@ -514,7 +508,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         } catch (RatingException e) {
             throw e;
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptCode + ", info " + e.getMessage(), e);
         }
     }
@@ -601,7 +595,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
                             if (ppmVersion != null) {
-                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, bareWalletOperation);
+                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                                 unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                             }
 
@@ -1290,7 +1284,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         } catch (RatingException e) {
             throw e;
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
         }
     }

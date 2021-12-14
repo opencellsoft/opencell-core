@@ -36,6 +36,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
@@ -329,6 +330,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @return A list of wallet operations. For postpaid wallets, it will contain the same wallet operation as passed in. For postpaid wallets, additional wallet operations might be returned.
      * @throws InsufficientBalanceException Insufficient balance to charge for prepaid wallets
      */
+    @Transactional(dontRollbackOn = InsufficientBalanceException.class)
     public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws InsufficientBalanceException {
 
         List<WalletOperation> result = new ArrayList<>();

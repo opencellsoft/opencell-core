@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -174,20 +175,22 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      * @param url url
      * @param meveoInstanceCode meveo instance
      * @param body body of content to be sent.
-     * @return reponse
+     * @return reponse HTTP response
      * @throws BusinessException business exception.
      */
-  public Response callTextServiceMeveoInstance(String url, String meveoInstanceCode, String body) throws CommunicateToRemoteInstanceException {
-	  MeveoInstance meveoInstance = findByCode(meveoInstanceCode);
-	  return callTextServiceMeveoInstance(url,meveoInstance,body);
-  }
-  
-  public Response callTextServiceMeveoInstance(String url, MeveoInstance meveoInstance, String body) throws CommunicateToRemoteInstanceException {
-     String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
-     String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
-     String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
-     try {
-         ResteasyClient client = new ResteasyClientProxyBuilder().build();
+    @Transactional(dontRollbackOn = CommunicateToRemoteInstanceException.class)
+    public Response callTextServiceMeveoInstance(String url, String meveoInstanceCode, String body) throws CommunicateToRemoteInstanceException {
+        MeveoInstance meveoInstance = findByCode(meveoInstanceCode);
+        return callTextServiceMeveoInstance(url, meveoInstance, body);
+    }
+
+    @Transactional(dontRollbackOn = CommunicateToRemoteInstanceException.class)
+    public Response callTextServiceMeveoInstance(String url, MeveoInstance meveoInstance, String body) throws CommunicateToRemoteInstanceException {
+        String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
+        String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
+        String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
+        try {
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
          ResteasyWebTarget target = client.target(baseurl + url);
          log.debug("call {} with body:{}", (baseurl + url), body);
          BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);

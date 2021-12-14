@@ -32,6 +32,9 @@ public class OneShotRatingService extends RatingService implements Serializable 
     @Inject
     private BillingAccountService billingAccountService;
 
+    @Inject
+    private WalletOperationService walletOperationService;
+
     /**
      * Apply/rate a one shot charge. Change charge instance status to CLOSED.
      * 
