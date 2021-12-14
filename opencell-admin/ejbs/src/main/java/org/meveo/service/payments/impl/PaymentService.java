@@ -397,6 +397,7 @@ public class PaymentService extends PersistenceService<Payment> {
                      matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
                      doPaymentResponseDto.setMatchingCreated(true);
                  } catch (Exception e) {
+                	 aoPaymentId = null;
                      log.warn("Cant create matching :", e);
                  }
              }
