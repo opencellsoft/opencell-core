@@ -4,6 +4,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.*;
 
@@ -201,11 +202,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 for (Invoice invoice : eligibleInvoice) {
                     if (invoice.getId() == collectionPlan.getRelatedInvoice().getId()) {
                         canBeSwitched.add(collectionPlan.getId());
-                    } else {
-                        canNotBeSwitched.add(collectionPlan.getId());
                     }
                 }
             }
+            canNotBeSwitched = collectionPlans.stream()
+                                    .map(DunningCollectionPlan::getId)
+                                    .filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId))
+                                    .collect(toSet());
         } else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
