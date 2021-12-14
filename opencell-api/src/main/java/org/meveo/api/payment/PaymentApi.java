@@ -319,13 +319,10 @@ public class PaymentApi extends BaseApi {
 	/**
 	 * @param cardPaymentRequestDto card payment request
 	 * @return payment by card response
-	 * @throws BusinessException                business exception
-	 * @throws NoAllOperationUnmatchedException no all operation matched exception
-	 * @throws UnbalanceAmountException         balance exception
-	 * @throws MeveoApiException                opencell's api exception
+	 * @throws Exception 
 	 */
 	public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
-			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
+			throws Exception {
 
 		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
 			missingParameters.add("ctsAmount");
