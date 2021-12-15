@@ -1338,7 +1338,7 @@ public class QueryBuilder {
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
             Object[] orderings = paginationConfiguration.getOrderings();
-            Object defaultOrder = orderings[1];
+            Object defaultOrder = orderings[1] instanceof String ? SortOrder.valueOf((String) orderings[1]) : orderings[1];
             String[] fields = orderings[0].toString().split(", ");
             for (String field : fields){
                 String[] fieldAndOrder = field.split(" ");
