@@ -4,7 +4,7 @@
 
      Background:  Opencell dataset has been configured
 
-     @MediationProcess2
+     @MediationProcess2Old
      Scenario Outline: Testing mediation process
 
 #       Given  Thang creates entity "<SubscriptionDto>"
