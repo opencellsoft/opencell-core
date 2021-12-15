@@ -1400,18 +1400,16 @@ public class ValidateBRScript extends Script {
             <column name="description" value="Report query result" />
             <column name="subject" value="[opencell] Query result #{reportQueryName} #{startDate}" />
             <column name="htmlcontent">
-                <![CDATA[Dear #{userName},
-
-The result for your query is ready.
-Check the result on <a href="#{portalResultLink}">Opencell Portal</a>
-
-Query : #{reportQueryName}
-Started : #{startDate}
-Duration : #{duration}
-Line count : #{lineCount}
-
-Best regards,
-
+                <![CDATA[Dear #{userName},<br>
+<br>
+The result for your query is ready.<br>
+Check the result on <a href="#{portalResultLink}">Opencell Portal</a><br>
+Query : #{reportQueryName}<br>
+Started : #{startDate}<br>
+Duration : #{duration}<br>
+Line count : #{lineCount}<br>
+<br>
+Best regards,<br>
 Opencell team.
                 ]]>
             </column>
