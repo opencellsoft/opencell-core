@@ -624,6 +624,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, bareWalletOperation);
                         if(pricePlanMatrixLine!=null) {
                         unitPriceWithoutTaxOverridden = pricePlanMatrixLine.getPricetWithoutTax();
+                        String amountEL=appProvider.isEntreprise()?ppmVersion.getAmountWithoutTaxEL():ppmVersion.getAmountWithTaxEL();
+                        if (!StringUtils.isBlank(amountEL)) {
+                            unitPriceWithoutTaxOverridden = evaluateAmountExpression(amountEL,
+                                    bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(),
+                                    null, unitPriceWithoutTaxOverridden);
+                            if (unitPriceWithoutTaxOverridden == null) {
+                                throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
+                                        + " EL:" + ppmVersion.getAmountWithoutTaxEL());
+                            }
+                        }
                         }
                         if (unitPriceWithoutTaxOverridden == null) {
                             throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId()

@@ -238,7 +238,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		AttributeInstance attributeInstance=null;
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
 			Attribute attribute=productVersionAttribute.getAttribute();
-			if(instantiatedAttributes.get(attribute.getCode())!=null) {
+			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 				attributeInstance = new AttributeInstance(currentUser);
 				attributeInstance.setAttribute(attribute);
 				attributeInstance.setServiceInstance(serviceInstance);
