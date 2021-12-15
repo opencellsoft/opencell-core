@@ -230,6 +230,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	seller=commercialOrder.getSeller();
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
+        amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null)?amountWithoutTaxToBeInvoiced:accountingArticle.getUnitPrice();
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
@@ -457,7 +458,23 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
-
+		
+		if(invoiceLine.getUnitPrice() == null) {
+			if (resource.getAccountingArticleCode() != null){
+				AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
+				if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
+					invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
+					if(resource.getQuantity() != null) {
+						invoiceLine.setAmountWithoutTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
+					}
+				}else {
+					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
+				}
+			}else {
+				throw new BusinessException("You cannot create an invoice line without a price");
+			}
+		}
+		
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
 		}

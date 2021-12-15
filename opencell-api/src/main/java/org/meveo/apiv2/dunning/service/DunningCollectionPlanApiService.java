@@ -4,15 +4,9 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -194,11 +188,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
     }
 
-    public Optional<Map<String, List<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
+    public Optional<Map<String, Set<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
         List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
-        List<Long> canBeSwitched = new ArrayList<>();
-        List<Long> canNotBeSwitched = new ArrayList<>();
-        Map<String, List<Long>> massSwitchResult = new HashMap<>();
+        Set<Long> canBeSwitched = new TreeSet<>();
+        Set<Long> canNotBeSwitched = new TreeSet<>();
+        Map<String, Set<Long>> massSwitchResult = new HashMap<>();
         if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
                 collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
@@ -208,11 +202,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 for (Invoice invoice : eligibleInvoice) {
                     if (invoice.getId() == collectionPlan.getRelatedInvoice().getId()) {
                         canBeSwitched.add(collectionPlan.getId());
-                    } else {
-                        canNotBeSwitched.add(collectionPlan.getId());
                     }
                 }
             }
+            canNotBeSwitched = collectionPlans.stream()
+                                    .map(DunningCollectionPlan::getId)
+                                    .filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId))
+                                    .collect(toSet());
         } else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
