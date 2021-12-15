@@ -230,6 +230,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	seller=commercialOrder.getSeller();
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
+        amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null)?amountWithoutTaxToBeInvoiced:accountingArticle.getUnitPrice();
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
