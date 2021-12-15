@@ -151,7 +151,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         org.meveo.model.dunning.DunningPolicy policy =
                 dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedFields)).get();
 
-        auditLogService.trackOperation(operationType, new Date(), policy, updatedFields);
+        auditLogService.trackOperation(getClass().getSimpleName(), operationType, new Date(), policy, updatedFields);
 
         
         ActionStatus actionStatus = new ActionStatus();

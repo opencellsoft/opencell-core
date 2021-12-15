@@ -46,11 +46,11 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         getEntityManager().createQuery(hqlQuery).executeUpdate();
     }
 
-    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity) {
-        trackOperation(operationType, operationDate, entity, null);
+    public <T extends BaseEntity> void trackOperation(String origin, String operationType, Date operationDate, T entity) {
+        trackOperation(origin, operationType, operationDate, entity, null);
     }
 
-    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, List<String> fields) {
+    public <T extends BaseEntity> void trackOperation(String origin, String operationType, Date operationDate, T entity, List<String> fields) {
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
         String actor = getActor();
         AuditLog auditLog = new AuditLog();
@@ -65,7 +65,7 @@ public class AuditLogService extends PersistenceService<AuditLog> {
                 .append(" to ").append(entity.getClass().getSimpleName()).append(" with ").append(getCodeOrId(entity))
                 .append(fields != null && !fields.isEmpty() ? ", fields (" + String.join(",", fields) + ")" : "");
         auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin("API");
+        auditLog.setOrigin(origin);
         create(auditLog);
     }
 

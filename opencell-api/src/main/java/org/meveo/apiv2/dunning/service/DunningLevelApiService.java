@@ -69,7 +69,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
     public Optional<DunningLevel> delete(Long id) {
         DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
         dunningLevelService.remove(dunningLevel);
-        auditLogService.trackOperation("DELETE", new Date(), dunningLevel);
+        auditLogService.trackOperation(getClass().getSimpleName(), "DELETE", new Date(), dunningLevel);
         return Optional.ofNullable(dunningLevel);
     }
 
@@ -82,7 +82,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
         setDefaultValues(newDunningLevel);
         validateParameters(newDunningLevel);
         dunningLevelService.create(newDunningLevel);
-        auditLogService.trackOperation("CREATE", new Date(), newDunningLevel);
+        auditLogService.trackOperation(getClass().getSimpleName(), "CREATE", new Date(), newDunningLevel);
         return newDunningLevel;
     }
 
@@ -113,7 +113,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
         }
         if (dunningLevel.isActive() != null) {
             if (!dunningLevel.isActive().equals(dunningLevelToUpdate.isActive())) {
-                auditLogService.trackOperation("CHANGE_STATUS", new Date(), dunningLevelToUpdate);
+                auditLogService.trackOperation(getClass().getSimpleName(), "CHANGE_STATUS", new Date(), dunningLevelToUpdate);
             }
             dunningLevelToUpdate.setActive(dunningLevel.isActive());
         }
@@ -175,7 +175,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
         validateParameters(dunningLevelToUpdate);
         dunningLevelService.update(dunningLevelToUpdate);
         if (!updatedFields.isEmpty()) {
-            auditLogService.trackOperation("UPDATE", new Date(), dunningLevelToUpdate, updatedFields);
+            auditLogService.trackOperation(getClass().getSimpleName(), "UPDATE", new Date(), dunningLevelToUpdate, updatedFields);
         }
         return Optional.of(dunningLevelToUpdate);
     }
