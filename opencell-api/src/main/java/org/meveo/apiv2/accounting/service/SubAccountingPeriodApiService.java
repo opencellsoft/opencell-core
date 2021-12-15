@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 

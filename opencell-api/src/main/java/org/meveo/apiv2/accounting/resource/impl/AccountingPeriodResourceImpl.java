@@ -39,7 +39,7 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	@Override
 	public Response update(String fiscalYear, org.meveo.apiv2.accounting.AccountingPeriod accountingPeriodResource) {
 		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
-		accountingPeriodApiService.update(accountingPeriodMapper.toEntity(accountingPeriod, accountingPeriodResource), accountingPeriodResource);
+		accountingPeriodApiService.update(accountingPeriod, accountingPeriodResource);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear).build())
                 .build();
 	}
