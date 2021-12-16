@@ -8334,4 +8334,18 @@ Opencell team.
 		</update>
     </changeSet>
 
+	<changeSet id="INTRD-3751_20211216" author="AmineBENAICHA">
+		<update tableName="cpq_order_offer" >
+            <column name="order_line_type"
+                    value="CREATE"/>
+            <where>orderLineType is null</where>
+        </update>
+        
+        <update tableName="quote_offer" >
+            <column name="quote_line_type"
+                    value="CREATE"/>
+            <where>quoteLineType is null</where>
+        </update>
+	</changeSet>
+
 </databaseChangeLog>

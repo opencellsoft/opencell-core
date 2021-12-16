@@ -9683,13 +9683,14 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+    <changeSet id="INTRD-3316_20211129_query_notification_template" author="TarikRabeh" />
+	<changeSet id="INTRD-3316_20211215_query_notification_template" author="TarikRabeh" />
     <changeSet id="INTRD-3678_20211214" author="AmineBENAICHA" />
+    <changeSet id="INTRD-3751_20211216" author="AmineBENAICHA" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-    <changeSet id="INTRD-3316_20211129_query_notification_template" author="TarikRabeh" />
-	<changeSet id="INTRD-3316_20211215_query_notification_template" author="TarikRabeh" />
-
+    
 </databaseChangeLog>

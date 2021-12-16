@@ -98,7 +98,7 @@ public class OrderOffer extends BusinessCFEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "order_line_type", length = 10)
-    private OfferLineTypeEnum orderLineType;
+    private OfferLineTypeEnum orderLineType = OfferLineTypeEnum.CREATE;
 	
     @Override
 	public ICustomFieldEntity[] getParentCFEntities() {
