@@ -161,6 +161,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             throw new EntityDoesNotExistsException("Policy level with id " + switchDunningCollectionPlan.getPolicyLevel().getId() + " does not exits");
         }
         Optional<DunningCollectionPlan> optional = of(dunningCollectionPlanService.switchCollectionPlan(oldCollectionPlan, policy, policyLevel));
+
         auditLogService.trackOperation("SWITCH", new Date(), oldCollectionPlan, oldCollectionPlan.getCollectionPlanNumber());
         return optional;
     }
@@ -236,6 +237,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
         collectionPlanToPause = dunningCollectionPlanService.pauseCollectionPlan(dunningCollectionPlanPause.getForcePause(), dunningCollectionPlanPause.getPauseUntil(),
             collectionPlanToPause, dunningPauseReason);
+
         auditLogService.trackOperation("PAUSE Reason : " + dunningPauseReason.getPauseReason(), new Date(), collectionPlanToPause, collectionPlanToPause.getCollectionPlanNumber());
         return of(collectionPlanToPause);
     }
@@ -256,6 +258,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 dunningCollectionPlanService.pauseCollectionPlan(massPauseDunningCollectionPlan.getForcePause(), massPauseDunningCollectionPlan.getPauseUntil(), collectionPlan,
                     pauseReason);
+
                 auditLogService.trackOperation("PAUSE Reason : " + pauseReason.getPauseReason(), new Date(), collectionPlan, collectionPlan.getCollectionPlanNumber());
             }
         }
@@ -268,6 +271,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             throw new EntityDoesNotExistsException("dunning Pause Reason with id " + dunningCollectionPlanStop.getDunningStopReason().getId() + " does not exits");
         }
         collectionPlanToStop = dunningCollectionPlanService.stopCollectionPlan(collectionPlanToStop, dunningStopReason);
+
         String origine = (collectionPlanToStop!=null) ? collectionPlanToStop.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("STOP Reason : " + dunningStopReason.getStopReason(), new Date(), collectionPlanToStop, origine);
         return of(collectionPlanToStop);
@@ -296,6 +300,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
         var collectionPlanToResume = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
+
         String origine = (collectionPlanToResume!=null) ? collectionPlanToResume.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("RESUME", new Date(), collectionPlanToResume, origine);
         return of(collectionPlanToResume);
@@ -363,7 +368,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     dunningCollectionPlanService.update(collectionPlan);
                     // update the sequence of other levels
                     dunningLevelInstanceService.decrementSequecesGreaterThanDaysOverdue(collectionPlan, levelInstanceToRemove.getDaysOverdue());
-                    
+   
                     String origine = (levelInstanceToRemove.getCollectionPlan()!=null) ? levelInstanceToRemove.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningLevelInstance", new Date(), levelInstanceToRemove.getCollectionPlan(), origine);
                 }
@@ -419,6 +424,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     }
 
                     dunningActionInstanceService.remove(dunningActionInstance);
+
                     String origine = (dunningActionInstance.getCollectionPlan()!=null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningActionInstance", new Date(), dunningActionInstance.getCollectionPlan(), origine);
                 }
@@ -541,7 +547,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             updateCollectionPlanActions(levelInstanceToUpdate);
-            
+           
             String origine = (levelInstanceToUpdate.getCollectionPlan()!=null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
             auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), levelInstanceToUpdate.getCollectionPlan(), origine, fields);
             return of(levelInstanceToUpdate);

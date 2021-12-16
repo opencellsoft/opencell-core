@@ -49,10 +49,10 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	}
 
 	public AccountingPeriod updateAccountingPeriod(AccountingPeriod entity, Date startDateInput, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
-	    if (startDateInput !=null && entity.getStartDate().compareTo(startDateInput) != 0) {
+	    if (startDateInput != null && entity.getStartDate().compareTo(startDateInput) != 0) {
             throw new ValidationException("Once the start date is set, it CANNOT be modified");
         }
-	    if (endDateInput !=null && entity.getEndDate().compareTo(endDateInput) != 0) {
+	    if (endDateInput != null && entity.getEndDate().compareTo(endDateInput) != 0) {
 			throw new ValidationException("Once the end date is set, it CANNOT be modified");
 		}
 		if (entity.isUseSubAccountingCycles() && !Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
