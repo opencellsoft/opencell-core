@@ -9717,5 +9717,11 @@ public class OrderAdvancement extends ModuleScript {
             <column name="token_3ds_id" type="varchar(250)"/>
    		</addColumn>
     </changeSet>
+    
+     <changeSet id="INTRD-2868_20211105" author="TarikFA.">
+    	<addColumn tableName="crm_provider">
+    		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
+    	</addColumn>
+    </changeSet>
 
 </databaseChangeLog>

@@ -4891,6 +4891,7 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
+            <column name="cdr_deduplicationkey_el" type="varchar(500)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -15970,6 +15971,7 @@
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#2333_20211021" author="anasseh"/>
+    <changeSet id="INTRD-2868_20211105" author="TarikFA." />
 
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
