@@ -72,7 +72,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
     private CdrError cdrError;
 
     public ChargeCDRResponseDto() {
-        setActionStatus(null);
+
     }
 
     public ChargeCDRResponseDto(CdrError processingError) {
