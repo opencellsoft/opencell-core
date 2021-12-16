@@ -144,7 +144,7 @@ public class QuoteOffer extends BusinessCFEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "quote_line_type", length = 10)
-    private OfferLineTypeEnum quoteLineType;
+    private OfferLineTypeEnum quoteLineType = OfferLineTypeEnum.CREATE;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;

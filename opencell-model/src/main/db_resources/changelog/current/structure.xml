@@ -11564,7 +11564,7 @@ order by date_trunc('month', i.invoice_date) DESC
 	    </addColumn>
 	</changeSet>
 
-	<changeSet id="INTRD-37210_20211216" author="AmineBENAICHA">
+	<changeSet id="INTRD-3721_20211216" author="AmineBENAICHA">
 	    <addColumn tableName="cpq_order_offer">
 	        <column name ="order_line_type" type="varchar(10)" />
 	    </addColumn>
