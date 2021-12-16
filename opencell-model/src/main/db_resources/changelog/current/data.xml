@@ -8314,4 +8314,24 @@ public class ServiceTemplateToProductScript extends Script {
 			</column>
 		</update>
 	</changeSet>
+	<changeSet id="INTRD-3316_20211215_query_notification_template" author="TarikRabeh">
+		<update tableName="com_message_template">
+            <column name="htmlcontent">
+                <![CDATA[Dear #{userName},<br>
+<br>
+The result for your query is ready.<br>
+Check the result on <a href="#{portalResultLink}">Opencell Portal</a><br>
+Query : #{reportQueryName}<br>
+Started : #{startDate}<br>
+Duration : #{duration}<br>
+Line count : #{lineCount}<br>
+<br>
+Best regards,<br>
+Opencell team.
+                ]]>
+            </column>
+            <where>code='REPORT_QUERY_RESULT_SUCCESS'</where>
+		</update>
+    </changeSet>
+
 </databaseChangeLog>
