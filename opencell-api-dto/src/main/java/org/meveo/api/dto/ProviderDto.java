@@ -147,6 +147,8 @@ public class ProviderDto extends AuditableEntityDto {
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
 
+    /** if set to expression, will create cdr.originRecord dynamically**/
+    private String cdrDeduplicationKeyEL;
     /**
      * Instantiates a new provider dto.
      */
@@ -608,5 +610,19 @@ public class ProviderDto extends AuditableEntityDto {
                 + ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates="
                 + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
     }
+
+	/**
+	 * @return the cdrDeduplicationKeyEL
+	 */
+	public String getCdrDeduplicationKeyEL() {
+		return cdrDeduplicationKeyEL;
+	}
+
+	/**
+	 * @param cdrDeduplicationKeyEL the cdrDeduplicationKeyEL to set
+	 */
+	public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
+		this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
+	}
 
 }
