@@ -11573,4 +11573,11 @@ order by date_trunc('month', i.invoice_date) DESC
 	    </addColumn>
 	</changeSet>
 
+    <changeSet id="INTRD-3707_20211216" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="dunning_level_instance" constraintName="fk_dunning_policy_level"/>
+        <dropColumn tableName="dunning_level_instance">
+            <column name="dunning_policy_level_id" />
+        </dropColumn>
+    </changeSet>
+
 </databaseChangeLog>
