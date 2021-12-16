@@ -27,9 +27,7 @@ public interface AccountingPeriod extends Resource{
 	
 	@Schema(description = "Indicate the start date")
     @Nullable
-    default Date getStartDate() {
-	    return new Date();
-	}
+    Date getStartDate();
 
 	@Schema(description = "Indicate the end date")
 	@Nullable
