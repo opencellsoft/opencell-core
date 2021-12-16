@@ -9428,6 +9428,7 @@
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint" />
+            <column name ="quote_line_type" type="varchar(10)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -10117,6 +10118,7 @@
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint"/>
+            <column name ="order_line_type" type="varchar(10)" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -16930,6 +16932,8 @@
     <changeSet id="#INTRD-3426_202112012" author="ZBariki" />
     <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-3610_20211210" author="TarikRabeh" />
+    <changeSet id="INTRD-37210_20211216" author="AmineBENAICHA" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
