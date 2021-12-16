@@ -678,7 +678,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             // The counter will be decremented by charge quantity
             CounterInstance counterInstance = chargeInstance.getCounter();
-            if (!isVirtual && chargeInstance != null) {
+            if (!isVirtual && counterInstance != null) {
                 CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
                         chargeInstance, chargeInstance.getQuantity(), isVirtual);
 
