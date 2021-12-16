@@ -45,6 +45,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
+import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -69,6 +70,9 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
     private AccessService accessService;
+    
+    @Inject
+    private CDRService cdrService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -261,6 +265,9 @@ public class MEVEOCdrParser implements ICdrParser {
         	}catch(BusinessException e) {
         		throw new BusinessException("Error detected in dedudplicationKeyEL : " + e.getMessage());
         	}
+        	 if (cdrService.isCDRExistByOriginRecord(cdr.getOriginRecord())) {
+                 cdr.setRejectReasonException(new BusinessException("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist"));
+             }
         }else
             cdr.setOriginRecord(userName + "_" + new Date().getTime());
         return cdr;
