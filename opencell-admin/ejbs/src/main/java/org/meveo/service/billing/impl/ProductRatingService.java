@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -38,7 +39,7 @@ public class ProductRatingService extends RatingService implements Serializable 
      */
     public RatingResult rateProductCharge(ProductChargeInstance chargeInstance, boolean isVirtual, boolean failSilently) throws BusinessException, RatingException {
 
-        if (!isORChargeMatch(chargeInstance)) {
+        if (!RatingService.isORChargeMatch(chargeInstance)) {
             log.debug("Not rating product chargeInstance {}/{}, filter expression or service attributes evaluated to FALSE", chargeInstance.getId(), chargeInstance.getCode());
             return new RatingResult();
         }
@@ -63,6 +64,10 @@ public class ProductRatingService extends RatingService implements Serializable 
             }
 
             return ratingResult;
+
+        } catch (EJBTransactionRolledbackException e) {
+            revertCounterChanges(ratingResult.getCounterChanges());
+            throw e;
 
         } catch (Exception e) {
             revertCounterChanges(ratingResult.getCounterChanges());

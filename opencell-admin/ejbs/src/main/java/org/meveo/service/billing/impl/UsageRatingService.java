@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -267,11 +268,8 @@ public class UsageRatingService extends RatingService implements Serializable {
         try {
             List<EDR> edrs = findEdrsListByIdsandSubscription(edrIds);
 
-            // In case of no need to rollback, an error will be recorded directly in EDR, error will never be thrown
-            boolean noNeedToRollback = true;
-
             for (EDR edr : edrs) {
-                rateUsage(edr, false, false, 0, 0, null, noNeedToRollback);
+                rateUsage(edr, false, false, 0, 0, null, false);
             }
 
         } catch (RatingException e) {
@@ -460,12 +458,15 @@ public class UsageRatingService extends RatingService implements Serializable {
                 }
             }
 
+        } catch (EJBTransactionRolledbackException e) {
+            revertCounterChanges(ratingResult.getCounterChanges());
+            throw e;
+
         } catch (Exception e) {
             rejectEDR(edr, e, currentRatingDepth > 0, currentRatingDepth > 0);
             revertCounterChanges(ratingResult.getCounterChanges());
 
             if (failSilently) {
-                log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
                 return new RatingResult(e);
             } else {
                 throw e;
@@ -653,7 +654,7 @@ public class UsageRatingService extends RatingService implements Serializable {
             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
         }
 
-        String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
+        String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage(), 255, true);
         edr.changeStatus(EDRStatusEnum.REJECTED);
         edr.setRejectReason(rejectReason);
 

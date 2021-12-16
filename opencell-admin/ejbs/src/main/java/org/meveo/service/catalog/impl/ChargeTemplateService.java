@@ -307,6 +307,10 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
             unitNbDecimal = 2;
         }
 
+        int i = 1;
+        if (i/1==1) {
+            throw new ValidationException("kuuu");
+        }
         inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
         outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
 

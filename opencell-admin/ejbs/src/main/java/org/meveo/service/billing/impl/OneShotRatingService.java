@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -61,7 +62,7 @@ public class OneShotRatingService extends RatingService implements Serializable 
             chargeMode = ChargeApplicationModeEnum.SUBSCRIPTION;
         }
 
-        if (!isORChargeMatch(chargeInstance)) {
+        if (!RatingService.isORChargeMatch(chargeInstance)) {
             log.debug("Not rating oneshot chargeInstance {}/{}, filter expression or service attributes evaluated to FALSE", chargeInstance.getId(), chargeInstance.getCode());
             return new RatingResult();
         }
@@ -119,7 +120,11 @@ public class OneShotRatingService extends RatingService implements Serializable 
             chargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 
             return ratingResult;
-
+        
+        } catch (EJBTransactionRolledbackException e) {
+            revertCounterChanges(ratingResult.getCounterChanges());
+            throw e;
+            
         } catch (Exception e) {
             revertCounterChanges(ratingResult.getCounterChanges());
 

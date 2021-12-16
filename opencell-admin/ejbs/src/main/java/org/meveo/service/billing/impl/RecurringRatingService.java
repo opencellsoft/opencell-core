@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -351,7 +352,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 boolean chargeDatesAlreadyAdvanced = false;
 
                 // If charge is not applicable for current period, skip it
-                if (!isORChargeMatch(chargeInstance)) {
+                if (!RatingService.isORChargeMatch(chargeInstance)) {
                     log.debug("Not rating recurring chargeInstance {}/{}, filter expression or service attributes evaluated to FALSE", chargeInstance.getId(), chargeInstance.getCode());
 
                 } else {
@@ -424,6 +425,10 @@ public class RecurringRatingService extends RatingService implements Serializabl
                     break;
                 }
             }
+            
+        } catch (EJBTransactionRolledbackException e) {
+            revertCounterChanges(ratingResult.getCounterChanges());
+            throw e;
 
         } catch (Exception e) {
 

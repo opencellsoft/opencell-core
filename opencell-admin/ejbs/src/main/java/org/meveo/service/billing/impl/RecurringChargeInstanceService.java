@@ -298,7 +298,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     public RatingResult applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual, ChargeApplicationModeEnum applicationMode)
             throws BusinessException {
 
-        if (RecurringRatingService.isORChargeMatch(recurringChargeInstance)) {
+        if (!RecurringRatingService.isORChargeMatch(recurringChargeInstance)) {
             return new RatingResult();
         }
 

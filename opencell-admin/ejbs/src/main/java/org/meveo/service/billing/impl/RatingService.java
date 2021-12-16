@@ -1319,9 +1319,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Map<ChargeInstance, List<WalletOperation>> groupedWOByChargeInstance = walletOperations.stream().collect(Collectors.groupingBy(wo -> wo.getChargeInstance()));
 
         for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
-            ChargeInstance usageChargeInstance = (UsageChargeInstance) groupedWos.getKey();
-            if (usageChargeInstance.getAccumulatorCounterInstances() != null && !usageChargeInstance.getAccumulatorCounterInstances().isEmpty()) {
-                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(usageChargeInstance, groupedWos.getValue(), isVirtual);
+            ChargeInstance chargeInstance = groupedWos.getKey();
+            if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
+                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
                 ratingResult.addCounterChange(counterChangeInfo);
             }
         }

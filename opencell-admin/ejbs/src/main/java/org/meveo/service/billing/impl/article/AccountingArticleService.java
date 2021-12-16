@@ -137,7 +137,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle = Optional.empty();
-        accountingArticle = getAccountingArticle(serviceInstance != null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes);
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }

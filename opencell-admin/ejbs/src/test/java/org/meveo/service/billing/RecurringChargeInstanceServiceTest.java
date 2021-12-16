@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +22,9 @@ import org.junit.runner.RunWith;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
@@ -90,13 +91,15 @@ public class RecurringChargeInstanceServiceTest {
 
         when(recurringRatingService.getRecurringPeriod(any(), any())).thenCallRealMethod();
         when(recurringRatingService.isApplyInAdvance(any())).thenCallRealMethod();
-        when(recurringRatingService.rateReccuringCharge(any(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<List<WalletOperation>>() {
+        when(recurringRatingService.rateReccuringCharge(any(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
             @SuppressWarnings("deprecation")
-            public List<WalletOperation> answer(InvocationOnMock invocation) throws Throwable {
+            public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 RecurringChargeInstance chargeInstance = (RecurringChargeInstance) invocation.getArguments()[0];
                 chargeInstance.getNextChargeDate().setMonth(chargeInstance.getNextChargeDate().getMonth() + 1);
-                return Arrays.asList(new WalletOperation());
+                RatingResult ratingResult = new RatingResult();
+                ratingResult.addWalletOperation(new WalletOperation());
+                return ratingResult;
             }
         });
 
@@ -122,6 +125,8 @@ public class RecurringChargeInstanceServiceTest {
         RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
         chargeTemplate.setSubscriptionProrata(prorateSubscription);
 
+        ServiceInstance serviceInstance = new ServiceInstance();
+
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
         chargeInstance.setApplyInAdvance(isCycleForward);
         chargeInstance.setRecurringChargeTemplate(chargeTemplate);
@@ -129,6 +134,8 @@ public class RecurringChargeInstanceServiceTest {
         chargeInstance.setChargedToDate(chargedToDate);
         chargeInstance.setSubscriptionDate(subscriptionDate);
         chargeInstance.setQuantity(BigDecimal.valueOf(100d));
+        chargeInstance.setServiceInstance(serviceInstance);
+        chargeInstance.setChargeTemplate(chargeTemplate);
 
         return chargeInstance;
     }
