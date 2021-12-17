@@ -814,7 +814,7 @@ public class QueryBuilder {
 
         Date start = calFrom.getTime();
 
-        String startDateParameterName = "start" + field.replace(".", "");
+        String startDateParameterName = "start" + field.replace(".", "").replace("(", "").replace(")", "").replace(",", "");
 
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + ">=:" + startDateParameterName + ")", startDateParameterName, start);
@@ -1059,7 +1059,7 @@ public class QueryBuilder {
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {
-            addSql("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (" + value + ")");
+            addSql("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (" + ((String) value).toLowerCase() + ")");
 
         } else if (value instanceof Collection) {
 
