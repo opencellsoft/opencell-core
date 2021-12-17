@@ -4809,7 +4809,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-            if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -4868,24 +4868,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     private Seller getSelectedSeller(InvoiceLine invoiceLine) {
-        Invoice invoice=invoiceLine.getInvoice();
-        if(invoiceLine.getSubscription() != null) {
-            if(invoiceLine.getSubscription().getSeller() != null)
-                return invoiceLine.getSubscription().getSeller();
-        }
-        if(invoiceLine.getCommercialOrder() != null) {
-            if(invoiceLine.getCommercialOrder().getSeller()!=null)
-                return invoiceLine.getCommercialOrder().getSeller();
-        }
-        if(invoiceLine.getQuote() != null) {
-            if(invoiceLine.getQuote().getSeller()!=null) {
-                return invoiceLine.getQuote().getSeller();
-            }
-        }
-        if (invoiceLine.getBillingAccount() != null) {
+    	Invoice invoice=invoiceLine.getInvoice();
+		if(invoiceLine.getSubscription() != null) {
+			if(invoiceLine.getSubscription().getSeller() != null)
+				return invoiceLine.getSubscription().getSeller();
+		}
+		if(invoiceLine.getCommercialOrder() != null) {
+			if(invoiceLine.getCommercialOrder().getSeller()!=null)
+				return invoiceLine.getCommercialOrder().getSeller();
+		}
+		if(invoiceLine.getQuote() != null) {
+			if(invoiceLine.getQuote().getSeller()!=null) {
+				return invoiceLine.getQuote().getSeller();
+			}
+		}
+    	if (invoiceLine.getBillingAccount() != null) {
             return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
-        return null;
+    	return null;
     }
     /**
      * Creates invoices and their aggregates - IN new transaction
