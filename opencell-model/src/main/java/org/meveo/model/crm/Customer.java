@@ -103,7 +103,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @JoinColumn(name = "customer_brand_id")
     private CustomerBrand customerBrand;
 
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
     /**

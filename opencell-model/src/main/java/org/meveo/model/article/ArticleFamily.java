@@ -1,6 +1,5 @@
 package org.meveo.model.article;
 
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 import java.util.Map;
@@ -30,7 +29,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_family_seq"), })
 public class ArticleFamily extends BusinessEntity implements ICustomFieldEntity {
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 

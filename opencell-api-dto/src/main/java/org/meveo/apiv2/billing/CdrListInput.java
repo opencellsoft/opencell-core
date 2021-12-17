@@ -19,8 +19,14 @@ public interface CdrListInput extends Resource {
     List<String> getCdrs();
 
     @Default
+    @Schema(description = "If true, the API will return the list of IDs of all EDRs produced. Applies to non-virtual mode only.")
+    default boolean isReturnEDRs() {
+        return false;
+    }
+
+    @Default
     @Schema(description = "How the CDR list is processed : STOP_ON_FIRST_FAIL, PROCESS_ALL, ROLLBACK_ON_ERROR")
-    default RegisterCdrListModeEnum getMode() {
-        return RegisterCdrListModeEnum.STOP_ON_FIRST_FAIL;
+    default ProcessCdrListModeEnum getMode() {
+        return ProcessCdrListModeEnum.STOP_ON_FIRST_FAIL;
     }
 }

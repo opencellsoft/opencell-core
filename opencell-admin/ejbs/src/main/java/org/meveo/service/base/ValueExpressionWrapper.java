@@ -63,6 +63,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -274,7 +275,7 @@ public class ValueExpressionWrapper {
     /**
      * EL expression variable - cpq quote - 'quote'
      */
-    public static final String VAR_ATRIBUTE_VALUE = "attributeValue";
+    public static final String VAR_ATTRIBUTE_VALUE = "attributeValue";
 
 	private static final String VAR_QUOTE_ATRIBUTE = "quoteAttribute";
 
@@ -633,6 +634,7 @@ public class ValueExpressionWrapper {
         QuoteAttribute quoteAttribute=null;
         OrderAttribute orderAttribute=null;
         AttributeInstance attributeInstance=null;
+        AttributeValue attributeValue=null;
         CommercialOrder order=null;
         List<Access> accessPoints = null;
 
@@ -694,6 +696,9 @@ public class ValueExpressionWrapper {
             }
             if (parameter instanceof AttributeInstance) {
             	attributeInstance = (AttributeInstance) parameter;
+            }
+            if(parameter instanceof AttributeValue){
+                attributeValue = (AttributeValue) parameter;
             }
             
             if (parameter instanceof CommercialOrder) {
@@ -901,6 +906,10 @@ public class ValueExpressionWrapper {
             if (invoice != null && invoice.getBillingRun() != null) {
                 contextMap.put(VAR_BILLING_RUN, invoice.getBillingRun());
             }
+        }
+
+        if(el.contains(VAR_ATTRIBUTE_VALUE) && !contextMap.containsKey(VAR_ATTRIBUTE_VALUE) && attributeValue != null){
+            contextMap.put(VAR_ATTRIBUTE_VALUE, attributeValue);
         }
 
         return contextMap;

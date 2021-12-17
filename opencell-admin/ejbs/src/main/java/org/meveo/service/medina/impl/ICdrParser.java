@@ -40,17 +40,6 @@ public interface ICdrParser {
     CDR parse(Object source) throws CDRParsingException;
 
     /**
-     * Parses the Cdr by api.
-     *
-     * @param line the line
-     * @param userName the user name
-     * @param ipAddress the ip address
-     * @return the cdr
-     * @throws CDRParsingException Failure to parse CDR
-     */
-    CDR parseByApi(String line, String userName, String ipAddress) throws CDRParsingException;
-
-    /**
      * Get a list of Access points CDR corresponds to
      * 
      * @param cdr CDR
