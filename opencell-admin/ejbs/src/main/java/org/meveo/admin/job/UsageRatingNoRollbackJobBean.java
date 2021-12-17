@@ -160,7 +160,7 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
         for (EDR edr : edrs) {
             RatingResult ratingResult = usageRatingService.rateUsage(edr, false, false, 0, 0, null, true);
             if (ratingResult.getRatingException() != null) {
-                jobExecutionResult.registerError(edr.getRejectReason());
+                jobExecutionResult.registerError(edr.getId(), edr.getRejectReason());
             } else {
                 jobExecutionResult.registerSucces();
             }
