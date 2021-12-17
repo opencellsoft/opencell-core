@@ -1099,9 +1099,20 @@ public class SubscriptionApi extends BaseApi {
             throw e;
         }
         try {
+        	ServiceInstance serviceInstance=null;
+        	if(!StringUtils.isBlank(postData.getProductCode())) {
+        		 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(postData.getProductCode(), subscription,
+                         InstanceStatusEnum.ACTIVE);
+            	 if (alreadyInstantiatedServices == null ||  alreadyInstantiatedServices.isEmpty()) {
+            		 throw new BusinessException("The product instance "+postData.getProductCode()+" doest not exist for this subscription or is not active");
+            	 }
+            	 serviceInstance=alreadyInstantiatedServices.get(0);
+        	}
+        	
+        	
 
             oneShotChargeInstanceService
-                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
+                    .oneShotChargeApplication(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 

@@ -50,6 +50,12 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
      */
     @XmlElement(required = true)
     private String subscription;
+    
+    
+    /**
+     * The product code.
+     */
+    private String productCode;
 
 
     private Date subscriptionValidityDate;
@@ -352,8 +358,18 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
         this.subscriptionValidityDate = subscriptionValidityDate;
     }
+    
+    
 
-    @Override
+    public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	@Override
     public String toString() {
         return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate
                 + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="
