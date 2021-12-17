@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -48,7 +50,6 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 })
 public class OrderOffer extends BusinessCFEntity {
 
-
 	/**
 	 * 
 	 */
@@ -71,14 +72,12 @@ public class OrderOffer extends BusinessCFEntity {
     @OrderBy("id")
 	private List<OrderAttribute> orderAttributes = new ArrayList<OrderAttribute>();
 	
-	
 	/**
 	 * discountPlan attached to this orderOffer
 	 */
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
-    
     
     /**
 	 * quote offer attached to this orderOffer
@@ -96,6 +95,10 @@ public class OrderOffer extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_line_type", length = 10)
+    private OfferLineTypeEnum orderLineType = OfferLineTypeEnum.CREATE;
 	
     @Override
 	public ICustomFieldEntity[] getParentCFEntities() {
@@ -192,5 +195,18 @@ public class OrderOffer extends BusinessCFEntity {
 	public void setUserAccount(UserAccount userAccount) {
 		this.userAccount = userAccount;
 	}
-	
+
+    /**
+     * @return the orderLineType
+     */
+    public OfferLineTypeEnum getOrderLineType() {
+        return orderLineType;
+    }
+
+    /**
+     * @param orderLineType the orderLineType to set
+     */
+    public void setOrderLineType(OfferLineTypeEnum orderLineType) {
+        this.orderLineType = orderLineType;
+    }
 }

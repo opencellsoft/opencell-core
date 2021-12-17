@@ -9428,6 +9428,7 @@
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint" />
+            <column name ="quote_line_type" type="varchar(10)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -10117,6 +10118,7 @@
             <column name="description" type="varchar(255)" />
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint"/>
+            <column name ="order_line_type" type="varchar(10)" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -15819,7 +15821,7 @@
     </changeSet>
 
     <!--    specific index for postgres -->
-    <changeSet id="rebuild-str-index-996-pg" author="MohamedSTITANE" dbms="postgres">
+    <changeSet id="rebuild-str-index-996-pg" author="MohamedSTITANE" dbms="postgresql">
         <sql>CREATE INDEX cat_chrg_edr_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
         <sql>CREATE INDEX cat_service_template_bsm_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
         <sql>CREATE INDEX billing_user_account_id_index ON ${db.schema.adapted} billing_user_account(id);</sql>
@@ -15962,7 +15964,7 @@
     <changeSet id="#39262_20190604" author="TonyAlejandro">
     </changeSet>
 
-    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
 
     <!-- MySQL currently doesn't support conditional indexes -->
@@ -16065,7 +16067,7 @@
 	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
     </changeSet>
 
-    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
 
     <!-- addNotNullConstraint generates SQL with the default numeric value missing, which blocks the insertions-->
@@ -16930,6 +16932,8 @@
     <changeSet id="#INTRD-3426_202112012" author="ZBariki" />
     <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-3610_20211210" author="TarikRabeh" />
+    <changeSet id="INTRD-3721_20211216" author="AmineBENAICHA" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

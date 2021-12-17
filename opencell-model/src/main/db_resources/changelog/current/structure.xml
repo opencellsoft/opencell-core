@@ -11563,5 +11563,14 @@ order by date_trunc('month', i.invoice_date) DESC
 	        <column name ="unit_price" type="numeric(23, 12)" />
 	    </addColumn>
 	</changeSet>
-	
+
+	<changeSet id="INTRD-3721_20211216" author="AmineBENAICHA">
+	    <addColumn tableName="cpq_order_offer">
+	        <column name ="order_line_type" type="varchar(10)" />
+	    </addColumn>
+	    <addColumn tableName="quote_offer">
+	        <column name ="quote_line_type" type="varchar(10)" />
+	    </addColumn>
+	</changeSet>
+
 </databaseChangeLog>

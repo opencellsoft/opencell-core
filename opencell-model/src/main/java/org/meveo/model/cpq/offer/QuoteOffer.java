@@ -8,6 +8,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,6 +32,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
@@ -47,8 +50,7 @@ import org.meveo.model.quote.QuoteVersion;
 public class QuoteOffer extends BusinessCFEntity {
 
 
-	public QuoteOffer() {
-	}
+	public QuoteOffer() {}
 
 
 	public QuoteOffer(QuoteOffer copy) {
@@ -102,6 +104,7 @@ public class QuoteOffer extends BusinessCFEntity {
     @OneToMany(mappedBy = "quoteOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
+    
     /**
 	 * opportunityRef
 	 */
@@ -138,6 +141,10 @@ public class QuoteOffer extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id") 
     private UserAccount userAccount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "quote_line_type", length = 10)
+    private OfferLineTypeEnum quoteLineType = OfferLineTypeEnum.CREATE;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -342,5 +349,19 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.userAccount = userAccount;
 	}
 
-	
+
+    /**
+     * @return the quoteLineType
+     */
+    public OfferLineTypeEnum getQuoteLineType() {
+        return quoteLineType;
+    }
+
+
+    /**
+     * @param quoteLineType the quoteLineType to set
+     */
+    public void setQuoteLineType(OfferLineTypeEnum quoteLineType) {
+        this.quoteLineType = quoteLineType;
+    }
 }
