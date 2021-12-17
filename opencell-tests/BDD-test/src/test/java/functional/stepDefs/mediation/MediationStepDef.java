@@ -1,6 +1,7 @@
 package functional.stepDefs.mediation;
 
 import functional.driver.actions.mediation.ChargeCDR;
+import functional.driver.actions.mediation.ChargeCDRList;
 import functional.driver.actions.subscription.ActivateService;
 import functional.driver.actions.subscription.UpdateService;
 import io.cucumber.datatable.DataTable;
@@ -31,9 +32,14 @@ public class MediationStepDef {
         actor.attemptsTo(ActivateService.called(dataTable));
     }
 
-    @And("I charge following CDR")
+    @And("I charge following {string}")
     public void actorChargeCDR(String cdr) {
         actor.attemptsTo(ChargeCDR.called(cdr));
+    }
+
+    @And("I charge following list of CDR")
+    public void actorChargeCDRList(String cdr) {
+        actor.attemptsTo(ChargeCDRList.called(cdr));
     }
 
     @And("I update service on subscription")

@@ -73,6 +73,9 @@ public class SQLiteManagement {
     }
 
     public static String selectTableEntityAndRs(String entityName) {
+        if (entityName.equals("AccessPoint"))
+            entityName = "Access";
+
         String sqlToSearchForTableName = "SELECT rs_path FROM " + TABLE_MAP_ENTITY_AND_RS
                 + " WHERE entityName = " + SINGLE_QUOTE + entityName + SINGLE_QUOTE;
 

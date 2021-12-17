@@ -34,13 +34,14 @@
          | 2020-10-05T03:15:46.000Z;1;acp2;UNIT;PS_SUPPORT |  |  |
          | 2020-10-05T03:15:47.000Z;1;acp1;UNIT;PS_SUPPORT |  |  |
 
-     // Voir sur Cucumber comment ils font les tests de combinaison
+     # Voir sur Cucumber comment ils font les tests de combinaison
 
 
        Given  I create entity "Subscription", with field and value
          | code           | description                    | userAccount | offerTemplate |
          | subCodeThang_4 | a description for Subscription | OPENSOFT-01 | OF_BASIC      |
-       // Define custom fields before activating services
+       # Define custom fields before activating services
+       Given  I create entity "Subscription", with field and value
     | name |	value	| code |
      |CF1 |	150	| CF_SE_DOUBLE |
      |CF2 |	180	| CF_SE_DOUBLE |

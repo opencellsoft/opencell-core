@@ -10,4 +10,9 @@ public class AssertionStepDef {
         BasicConfig.getActor().asksFor(GetAmountWithTaxOfWalletOperation.called(order, entity, field, expectedValue));
     }
 
+    @Then("{string} response has {string} whose value is {string}")
+    public void actorVerifyValue(String order, String entity, String field, String expectedValue) {
+        BasicConfig.getActor().asksFor(GetAmountWithTaxOfWalletOperation.called(order, entity, field, expectedValue));
+    }
+
 }

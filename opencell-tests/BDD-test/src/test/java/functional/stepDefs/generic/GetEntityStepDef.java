@@ -6,7 +6,7 @@ import io.cucumber.java.en.Given;
 
 public class GetEntityStepDef {
 
-    @Given("^([^ \"]*)$")
+    @Given("([^ \"]*) with (<[a-zA-Z]*>)*$")
     public void actorGetEntity(String entity, DataTable dataTable) throws Exception {
         BasicConfig.getActor().attemptsTo(GetEntity.called(entity, dataTable));
     }

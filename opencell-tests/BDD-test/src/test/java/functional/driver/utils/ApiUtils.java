@@ -44,18 +44,14 @@ public class ApiUtils {
         return null;
     }
 
-    public static String getCompleteUrl(String className, DataTable dataTable) {
-        String completeUrl = null;
-        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+    public static String getUrlForGet(String entityName, String baseUrl, Map<String, String> anInstance) {
+        StringBuilder completeUrl = new StringBuilder(baseUrl).append("?");
 
-        for (Map<String, String> columns : rows) {
-            for (Map.Entry<String, String> column : columns.entrySet()) {
-                System.out.println("column key : " + column.getKey() + " and its value : " +
-                        column.getValue());
-            }
+        for (Map.Entry<String, String> column : anInstance.entrySet()) {
+            if (entityName.equals("AccessPoint"))
+                completeUrl.append(column.getKey()).append("=").append(column.getValue()).append("&");
         }
 
-
-        return completeUrl;
+        return completeUrl.toString();
     }
 }
