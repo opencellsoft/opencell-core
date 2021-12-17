@@ -18,14 +18,16 @@
 
 package org.meveo.api.dto.billing;
 
-import org.meveo.api.dto.response.BaseResponse;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * The Class ChargeCDRResponseDto.
@@ -37,14 +39,18 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChargeCDRResponseDto extends BaseResponse {
 
+    private static final long serialVersionUID = 771726001135278144L;
+
     /**
      * The amount without Tax.
-      */
+     */
     private BigDecimal amountWithoutTax;
+
     /**
      * The tax amount.
      */
     private BigDecimal amountTax;
+
     /**
      * The amount with tax.
      */
@@ -56,12 +62,37 @@ public class ChargeCDRResponseDto extends BaseResponse {
     private Integer walletOperationCount;
 
     /**
+     * A list of EDR ids that were created
+     */
+    private List<Long> edrIds;
+
+    /**
+     * A list of Reservation ids
+     */
+    private List<Long> reservationIds;
+
+    /**
      * A wallet operations list.
      */
     private List<WalletOperationDto> walletOperations;
 
+    public ChargeCDRResponseDto() {
+        setActionStatus(null);
+    }
+
+    public ChargeCDRResponseDto(CdrError processingError) {
+        this.error = processingError;
+        setActionStatus(null);
+    }
+
+    /**
+     * CDR processing error
+     */
+    private CdrError error;
+
     /**
      * Gets the amountWithoutTax.
+     * 
      * @return The amount without Tax
      */
     public BigDecimal getAmountWithoutTax() {
@@ -70,6 +101,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the amountWithoutTax.
+     * 
      * @param amountWithoutTax The amount without Tax
      */
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
@@ -78,6 +110,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets the amountTax.
+     * 
      * @return the amountTax
      */
     public BigDecimal getAmountTax() {
@@ -86,6 +119,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the amountTax.
+     * 
      * @param amountTax the amountTax
      */
     public void setAmountTax(BigDecimal amountTax) {
@@ -94,6 +128,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets the amountWithTax.
+     * 
      * @return the amountWithTax.
      */
     public BigDecimal getAmountWithTax() {
@@ -102,6 +137,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the amountWithTax.
+     * 
      * @param amountWithTax the amountWithTax.
      */
     public void setAmountWithTax(BigDecimal amountWithTax) {
@@ -110,6 +146,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Gets total WO.
+     * 
      * @return total WO
      */
     public Integer getWalletOperationCount() {
@@ -118,6 +155,7 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets total WO.
+     * 
      * @param walletOperationCount total WO.
      */
     public void setWalletOperationCount(Integer walletOperationCount) {
@@ -125,11 +163,12 @@ public class ChargeCDRResponseDto extends BaseResponse {
     }
 
     /**
-     * Gets  walletOperations list.
+     * Gets walletOperations list.
+     * 
      * @return walletOperations list
      */
     public List<WalletOperationDto> getWalletOperations() {
-        if(walletOperations == null){
+        if (walletOperations == null) {
             walletOperations = new ArrayList<>();
         }
         return walletOperations;
@@ -137,9 +176,95 @@ public class ChargeCDRResponseDto extends BaseResponse {
 
     /**
      * Sets the walletOperations.
+     * 
      * @param walletOperations wallet operations list.
      */
     public void setWalletOperations(List<WalletOperationDto> walletOperations) {
         this.walletOperations = walletOperations;
+    }
+
+    /**
+     * @return CDR procesing error
+     */
+    public CdrError getError() {
+        return error;
+    }
+
+    /**
+     * @param error CDR processing error
+     */
+    public void setError(CdrError error) {
+        this.error = error;
+    }
+
+    /**
+     * @return the edrIds
+     */
+    public List<Long> getEdrIds() {
+        return edrIds;
+    }
+
+    /**
+     * @param edrIds the edrIds to set
+     */
+    public void setEdrIds(List<Long> edrIds) {
+        this.edrIds = edrIds;
+    }
+    
+    /**
+     * @return A list of Reservation ids
+     */
+    public List<Long> getReservationIds() {
+        return reservationIds;
+    }
+    
+    /**
+     * @param reservationIds A list of Reservation ids
+     */
+    public void setReservationIds(List<Long> reservationIds) {
+        this.reservationIds = reservationIds;
+    }
+
+    public static class CdrError implements Serializable {
+        private static final long serialVersionUID = 5139169395026374653L;
+
+        private String errorCode;
+        private String errorMessage;
+        private String cdr;
+
+        public CdrError() {
+
+        }
+
+        public CdrError(String errorCode, String errorMessage, String cdr) {
+            super();
+            this.errorCode = errorCode;
+            this.errorMessage = errorMessage;
+            this.cdr = cdr;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        public void setErrorCode(String errorCode) {
+            this.errorCode = errorCode;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public String getCdr() {
+            return cdr;
+        }
+
+        public void setCdr(String cdr) {
+            this.cdr = cdr;
+        }
     }
 }

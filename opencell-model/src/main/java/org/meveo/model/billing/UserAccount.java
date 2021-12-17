@@ -17,8 +17,6 @@
  */
 package org.meveo.model.billing;
 
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,7 +50,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.article.AccountingArticle;
 
 /**
  * User account
@@ -111,16 +108,12 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
      * Account's subscriptions
      */
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     private List<Subscription> subscriptions = new ArrayList<>();
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
      * Primary waller
      */
@@ -128,17 +121,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
      * Prepaid wallets
      */
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @MapKey(name = "code")
     private Map<String, WalletInstance> prepaidWallets = new HashMap<>();
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
      * Counters instantiated on the User account with Counter template code as a key
      */

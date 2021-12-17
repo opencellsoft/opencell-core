@@ -2,21 +2,21 @@ package org.meveo.apiv2.billing.service;
 
 import javax.ejb.ApplicationException;
 
-import org.meveo.apiv2.billing.CdrListResult;
+import org.meveo.apiv2.billing.ProcessCdrListResult;
 
 @ApplicationException(rollback = true)
 public class RollbackOnErrorException extends RuntimeException {
 
     private static final long serialVersionUID = -2412839308300692994L;
 
-    private CdrListResult cdrListResult;
+    private ProcessCdrListResult cdrListResult;
 
-    public RollbackOnErrorException(CdrListResult cdrListResult) {
+    public RollbackOnErrorException(ProcessCdrListResult cdrListResult) {
         super();
         this.cdrListResult = cdrListResult;
     }
 
-    public CdrListResult getCdrListResult() {
+    public ProcessCdrListResult getCdrListResult() {
         return cdrListResult;
     }
 }

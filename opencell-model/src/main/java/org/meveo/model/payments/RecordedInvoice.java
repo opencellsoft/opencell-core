@@ -55,7 +55,7 @@ public class RecordedInvoice extends AccountOperation {
     @Column(name = "net_to_pay", precision = 23, scale = 12)
     private BigDecimal netToPay;
 
-    @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates = new ArrayList<RecordedInvoiceCatAgregate>();
 
     @ManyToOne(fetch = FetchType.LAZY)
