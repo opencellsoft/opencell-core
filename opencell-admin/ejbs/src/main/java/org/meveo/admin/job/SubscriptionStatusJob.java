@@ -18,23 +18,18 @@
 
 package org.meveo.admin.job;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.jobs.*;
+import org.meveo.service.job.Job;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobExecutionResultStatusEnum;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.MeveoJobCategoryEnum;
-import org.meveo.service.job.Job;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Job definition to handle subscription renewal or termination once subscription expires, fire handles renewal notice events
@@ -52,6 +47,8 @@ public class SubscriptionStatusJob extends Job {
 
     @Inject
     private ServiceStatusJobBean serviceStatusJobBean;
+
+
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -89,6 +86,36 @@ public class SubscriptionStatusJob extends Job {
         untilDate.setValueRequired(false);
         untilDate.setGuiPosition("tab:Configuration:0;field:0");
         result.put("untilDate", untilDate);
+
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode(CF_NB_RUNS);
+        customFieldNbRuns.setAppliesTo("JobInstance_SubscriptionStatusJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue("1");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
+        result.put(CF_NB_RUNS, customFieldNbRuns);
+
+
+
+
+
+        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+        customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
+        customFieldNbWaiting.setAppliesTo("JobInstance_SubscriptionStatusJob");
+        customFieldNbWaiting.setActive(true);
+        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
+        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
+
+        result.put(CF_NB_RUNS, customFieldNbRuns);
+        result.put(CF_WAITING_MILLIS, customFieldNbWaiting);
+
 
         return result;
     }

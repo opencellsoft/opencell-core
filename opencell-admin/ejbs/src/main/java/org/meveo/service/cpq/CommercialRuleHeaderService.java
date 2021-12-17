@@ -90,7 +90,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getOfferRules(String offerCode) throws BusinessException {
-        OfferTemplate offer = offerTemplateService.findByCode(offerCode);
+        OfferTemplate offer = offerTemplateService.findByCodeIgnoringValidityDate(offerCode);
         if (offer == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode);
         }

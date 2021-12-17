@@ -19,15 +19,11 @@
 package org.meveo.admin.job;
 
 import static java.util.Optional.of;
-import static org.meveo.model.accounting.CustomLockOption.BEFORE_END_OF_SUB_AP_PERIOD;
+import static org.meveo.model.accounting.CustomLockOption.AFTER_END_OF_SUB_AP_PERIOD;
 import static org.meveo.model.accounting.RegularUserLockOption.CUSTOM;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -77,7 +73,6 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
      */
     private Optional<Iterator<SubAccountingPeriod>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
         Date endDate = new Date();
-
         AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(endDate);
         if (accountingPeriod == null) {
             log.warn("No accounting period has been defined for date : {}", endDate);
@@ -89,7 +84,7 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
             Integer days = accountingPeriod.getCustomLockNumberDays();
             CustomLockOption customLockOption = accountingPeriod.getCustomLockOption();
             if (customLockOption != null) {
-                if (customLockOption == BEFORE_END_OF_SUB_AP_PERIOD) {
+                if (customLockOption == AFTER_END_OF_SUB_AP_PERIOD) {
                     days *= -1;
                 }
                 endDate = addDaysToDate(endDate, days);

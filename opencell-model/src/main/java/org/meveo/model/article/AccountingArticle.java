@@ -20,6 +20,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -66,6 +68,9 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 
     @Column(name = "analytic_code_3")
     private String analyticCode3;
+
+    @Column(name = "unit_price")
+    private BigDecimal unitPrice;
 
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "jsonb")
@@ -156,13 +161,21 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     public void setAnalyticCode3(String analyticCode3) {
         this.analyticCode3 = analyticCode3;
     }
+    
+	public BigDecimal getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(BigDecimal unitPrice) {
+		this.unitPrice = unitPrice;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass());
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice());
 		return result;
 	}
 

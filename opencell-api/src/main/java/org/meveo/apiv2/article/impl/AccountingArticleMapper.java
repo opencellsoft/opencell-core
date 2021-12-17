@@ -29,6 +29,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .analyticCode1(entity.getAnalyticCode1())
                 .analyticCode2(entity.getAnalyticCode2())
                 .analyticCode3(entity.getAnalyticCode3())
+                .unitPrice(entity.getUnitPrice())
                 .languageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(entity.getDescriptionI18n()))
                 .customFields(entityToDtoConverter.getCustomFieldsDTO(entity))
                 .build();
@@ -58,6 +59,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
         accountingArticleEntity.setAnalyticCode1(resource.getAnalyticCode1());
         accountingArticleEntity.setAnalyticCode2(resource.getAnalyticCode2());
         accountingArticleEntity.setAnalyticCode3(resource.getAnalyticCode3());
+        accountingArticleEntity.setUnitPrice(resource.getUnitPrice());
         if( resource.getLanguageDescriptions()!=null && ! resource.getLanguageDescriptions().isEmpty()) {
         for(LanguageDescriptionDto languageDescription : resource.getLanguageDescriptions()) {
         	accountingArticleEntity.getDescriptionI18n().put(languageDescription.getLanguageCode(), languageDescription.getDescription());

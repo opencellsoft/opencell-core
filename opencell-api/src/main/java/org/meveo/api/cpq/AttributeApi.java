@@ -35,7 +35,6 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleLineService;
-import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -49,10 +48,7 @@ import org.meveo.service.cpq.TagService;
 public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 
 	@Inject
-	private AttributeService attributeService; 
-
-	@Inject
-	private GroupedAttributeService groupedAttributeService;
+	private AttributeService attributeService;
 
 	@Inject
 	private ChargeTemplateService<ChargeTemplate>   chargeTemplateService;

@@ -4809,7 +4809,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-        	if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+            if ((entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -4868,28 +4868,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     private Seller getSelectedSeller(InvoiceLine invoiceLine) {
-    	Seller seller = null;
-    	Invoice invoice=invoiceLine.getInvoice();
-    	if(invoice!=null) {
-    		if(invoice.getSubscription()!=null) {
-    			if(invoice.getSubscription().getSeller()!=null)
-    				seller=invoice.getSubscription().getSeller();
-    		}
-    		if(seller==null && invoice.getCommercialOrder()!=null) {
-    			if(invoice.getCommercialOrder().getSeller()!=null)
-    				seller=invoice.getCommercialOrder().getSeller();
-    		} 
-    		if(seller==null && invoice.getCpqQuote()!=null) {
-    			if(invoice.getCpqQuote().getSeller()!=null) {
-    				seller=invoice.getCpqQuote().getSeller();
-    			}
-    		}
-    	}else {	
-    		seller=invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	}
-    	return seller;
+        Invoice invoice=invoiceLine.getInvoice();
+        if(invoiceLine.getSubscription() != null) {
+            if(invoiceLine.getSubscription().getSeller() != null)
+                return invoiceLine.getSubscription().getSeller();
+        }
+        if(invoiceLine.getCommercialOrder() != null) {
+            if(invoiceLine.getCommercialOrder().getSeller()!=null)
+                return invoiceLine.getCommercialOrder().getSeller();
+        }
+        if(invoiceLine.getQuote() != null) {
+            if(invoiceLine.getQuote().getSeller()!=null) {
+                return invoiceLine.getQuote().getSeller();
+            }
+        }
+        if (invoiceLine.getBillingAccount() != null) {
+            return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        return null;
     }
-
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
@@ -5201,7 +5198,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceId
      */
     public void cleanInvoiceAggregates(Long invoiceId) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceSubCategoryAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 

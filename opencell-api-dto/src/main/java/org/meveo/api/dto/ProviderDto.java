@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
+import org.meveo.api.dto.response.payment.PaymentPlanPolicyDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Provider;
@@ -136,8 +137,11 @@ public class ProviderDto extends AuditableEntityDto {
 
     /** The bank coordinates. */
     private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
+    
+    /** The Payment Plan Policy Dto. */
+    private PaymentPlanPolicyDto paymentPlanPolicy = new PaymentPlanPolicyDto();
 
-    /** The recognize revenue. */
+	/** The recognize revenue. */
     private Boolean recognizeRevenue;
 
     /** The invoice configuration. */
@@ -206,8 +210,11 @@ public class ProviderDto extends AuditableEntityDto {
 
             if (provider.getBankCoordinates() != null) {
                 this.setBankCoordinates(new BankCoordinatesDto(provider.getBankCoordinates()));
-            }
+            }            
 
+            if (provider.getPaymentPlanPolicy() != null) {
+                this.setPaymentPlanPolicy(new PaymentPlanPolicyDto(provider.getPaymentPlanPolicy()));
+            }
             if (provider.getInvoiceConfiguration() != null) {
                 this.setInvoiceConfiguration(new InvoiceConfigurationDto(provider.getInvoiceConfiguration()));
             } else {
@@ -624,6 +631,14 @@ public class ProviderDto extends AuditableEntityDto {
 	 */
 	public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
 		this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
+	}
+
+	public PaymentPlanPolicyDto getPaymentPlanPolicy() {
+		return paymentPlanPolicy;
+	}
+
+	public void setPaymentPlanPolicy(PaymentPlanPolicyDto paymentPlanPolicy) {
+		this.paymentPlanPolicy = paymentPlanPolicy;
 	}
 
 }

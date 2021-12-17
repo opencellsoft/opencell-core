@@ -17,6 +17,8 @@ import static javax.persistence.FetchType.LAZY;
         @NamedQuery(name = "DunningPolicyRule.findByDunningPolicyId", query = "SELECT dpr from DunningPolicyRule dpr where dpr.dunningPolicy.id = :policyId") })
 public class DunningPolicyRule extends AuditableEntity {
 
+    private static final long serialVersionUID = 1L;
+
     @Column(name = "rule_joint")
     private String ruleJoint;
 
