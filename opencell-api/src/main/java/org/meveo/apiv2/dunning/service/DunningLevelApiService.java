@@ -69,7 +69,8 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
     public Optional<DunningLevel> delete(Long id) {
         DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
         dunningLevelService.remove(dunningLevel);
-        auditLogService.trackOperation(getClass().getSimpleName(), "DELETE", new Date(), dunningLevel);
+        String origine = (dunningLevel!=null) ? dunningLevel.getCode() : "";
+        auditLogService.trackOperation("DELETE", new Date(), dunningLevel, origine);
         return Optional.ofNullable(dunningLevel);
     }
 
@@ -81,8 +82,8 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
         setDefaultValues(newDunningLevel);
         validateParameters(newDunningLevel);
-        dunningLevelService.create(newDunningLevel);
-        auditLogService.trackOperation(getClass().getSimpleName(), "CREATE", new Date(), newDunningLevel);
+        dunningLevelService.create(newDunningLevel);        
+        auditLogService.trackOperation("CREATE", new Date(), newDunningLevel, newDunningLevel.getCode());
         return newDunningLevel;
     }
 
@@ -113,7 +114,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
         }
         if (dunningLevel.isActive() != null) {
             if (!dunningLevel.isActive().equals(dunningLevelToUpdate.isActive())) {
-                auditLogService.trackOperation(getClass().getSimpleName(), "CHANGE_STATUS", new Date(), dunningLevelToUpdate);
+                auditLogService.trackOperation("CHANGE_STATUS", new Date(), dunningLevelToUpdate, dunningLevelToUpdate.getCode());
             }
             dunningLevelToUpdate.setActive(dunningLevel.isActive());
         }
@@ -175,7 +176,8 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
         validateParameters(dunningLevelToUpdate);
         dunningLevelService.update(dunningLevelToUpdate);
         if (!updatedFields.isEmpty()) {
-            auditLogService.trackOperation(getClass().getSimpleName(), "UPDATE", new Date(), dunningLevelToUpdate, updatedFields);
+            String origine = (dunningLevelToUpdate!=null) ? dunningLevelToUpdate.getCode() : "";
+            auditLogService.trackOperation("UPDATE", new Date(), dunningLevelToUpdate, origine, updatedFields);
         }
         return Optional.of(dunningLevelToUpdate);
     }

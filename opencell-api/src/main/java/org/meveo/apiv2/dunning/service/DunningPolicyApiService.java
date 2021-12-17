@@ -77,7 +77,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     public DunningPolicy create(DunningPolicy dunningPolicy) {
         try {
             dunningPolicyService.create(dunningPolicy);
-            auditLogService.trackOperation(getClass().getSimpleName(), "create", new Date(), dunningPolicy);
+            auditLogService.trackOperation("create", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
             return findByCode(dunningPolicy.getPolicyName()).get();
         } catch (Exception exception) {
             checkNameConstraint(exception);
@@ -168,7 +168,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
         if(dunningPolicy != null) {
             dunningPolicyService.remove(id);
-            auditLogService.trackOperation(getClass().getSimpleName(), "delete", new Date(), dunningPolicy);
+            auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
             return of(dunningPolicy);
         } else {
             return empty();
@@ -201,7 +201,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
         dunningPolicy.setActivePolicy(FALSE);
-        auditLogService.trackOperation(getClass().getSimpleName(), "archive", new Date(), dunningPolicy, Arrays.asList("isActive"));
+        auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("isActive"));
         return of(dunningPolicyService.update(dunningPolicy));
     }
 
