@@ -305,13 +305,16 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public boolean isChargeMatch(ChargeInstance chargeInstance, String filterExpression) throws BusinessException {
-        boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances()
-                .stream()
-                .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                .anyMatch(attributeInstance -> attributeInstance.getBooleanValue()==null || !attributeInstance.getBooleanValue());
+    	if(chargeInstance.getServiceInstance()!=null) {
+    		 boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances()
+    	                .stream()
+    	                .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+    	                .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+    	                .anyMatch(attributeInstance -> attributeInstance.getBooleanValue()==null || !attributeInstance.getBooleanValue());
 
-        if(anyFalseAttribute) return false;
+    	        if(anyFalseAttribute) return false;
+    	}
+       
 
         if (StringUtils.isBlank(filterExpression)) {
             return true;

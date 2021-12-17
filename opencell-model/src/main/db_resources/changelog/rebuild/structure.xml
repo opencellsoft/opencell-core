@@ -4891,6 +4891,7 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
+            <column name="cdr_deduplicationkey_el" type="varchar(500)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -14347,7 +14348,7 @@
     </changeSet>
 
     <!--    specific index for postgres -->
-    <changeSet id="rebuild-str-index-996-pg" author="MohamedSTITANE" dbms="postgres">
+    <changeSet id="rebuild-str-index-996-pg" author="MohamedSTITANE" dbms="postgresql">
         <sql>CREATE INDEX cat_chrg_edr_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
         <sql>CREATE INDEX cat_service_template_bsm_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
         <sql>CREATE INDEX billing_user_account_id_index ON ${db.schema.adapted} billing_user_account(id);</sql>
@@ -15045,7 +15046,7 @@
     <changeSet id="#39262_20190604" author="TonyAlejandro">
     </changeSet>
 
-    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
 
     <!-- MySQL currently doesn't support conditional indexes -->
@@ -15148,7 +15149,7 @@
 	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
     </changeSet>
 
-    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
 
     <!-- addNotNullConstraint generates SQL with the default numeric value missing, which blocks the insertions-->
@@ -15970,6 +15971,7 @@
     <changeSet id="INTRD-2431_20211014" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#2333_20211021" author="anasseh"/>
+    <changeSet id="INTRD-2868_20211105" author="TarikFA." />
 
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 

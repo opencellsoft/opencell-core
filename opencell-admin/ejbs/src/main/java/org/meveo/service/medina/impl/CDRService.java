@@ -168,4 +168,8 @@ public class CDRService extends PersistenceService<CDR> {
     public List<CDR> getCDRsToReprocess() { 
         return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
     }
+    
+    public boolean isCDRExistByOriginRecord(String originRecord) {
+    	return getEntityManager().createNamedQuery("CDR.findByOrginRecord").setParameter("originRecord", originRecord).getResultList().size() > 0;
+    }
 }
