@@ -1,4 +1,4 @@
-package org.meveo.apiv2.accountreceivable;
+package org.meveo.apiv2.accountreceivable.accountOperation;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,6 +12,8 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.accountreceivable.AccountOperationApiService;
+import org.meveo.apiv2.accountreceivable.ChangeStatusDto;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;

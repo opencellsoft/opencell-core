@@ -19,11 +19,11 @@
 package org.meveo.export;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -104,7 +104,6 @@ import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
@@ -154,6 +153,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 public class EntityExportImportService implements Serializable {
 
     private static final long serialVersionUID = 5141462881249084547L;
+    public static final String EXPORT_PARAM_XML = "xml";
 
     public static String EXPORT_PARAM_DELETE = "delete";
     public static String EXPORT_PARAM_ZIP = "zip";
@@ -460,7 +460,7 @@ public class EntityExportImportService implements Serializable {
         }
 
         String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
-        boolean asZip = (parameters.get(EXPORT_PARAM_ZIP) != null && ((boolean) parameters.get(EXPORT_PARAM_ZIP)));
+        boolean asZip =  (boolean) parameters.getOrDefault(EXPORT_PARAM_ZIP, false);
 
         String path = paramBeanFactory.getChrootDir();
         if (!path.endsWith(File.separator)) {
@@ -508,6 +508,7 @@ public class EntityExportImportService implements Serializable {
             if (asZip) {
                 zos.closeEntry();
             }
+
             writer.close();
 
             // Upload file to a remote meveo instance if was requested so
@@ -533,6 +534,9 @@ public class EntityExportImportService implements Serializable {
             if (fileWriter != null) {
                 try {
                     fileWriter.close();
+                    if ((boolean) parameters.getOrDefault(EXPORT_PARAM_XML, false)) {
+                        exportStats.setFileContent(Files.readAllBytes(Path.of(filename)));
+                    }
                 } catch (IOException e) {
                     log.error("Failed to export data to a file {}. Failed to close a writer.", filename, e);
                 }
@@ -1758,7 +1762,7 @@ public class EntityExportImportService implements Serializable {
             ParameterizedType aType = (ParameterizedType) field.getGenericType();
             Type[] fieldArgTypes = aType.getActualTypeArguments();
             for (Type fieldArgType : fieldArgTypes) {
-                if (fieldArgType instanceof ParameterizedType) { // Handles cases such as Map<Class<?>, Set<SecuredEntity>> where parameterized types used inside another one
+                if (fieldArgType instanceof ParameterizedType || fieldArgType instanceof TypeVariable) { // Handles cases such as Map<Class<?>, Set<SecuredEntity>> where parameterized types used inside another one
                     continue;
                 }
                 Class fieldArgClass = (Class) fieldArgType;

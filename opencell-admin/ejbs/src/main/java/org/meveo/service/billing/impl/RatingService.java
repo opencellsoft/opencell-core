@@ -80,7 +80,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
@@ -160,10 +159,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-    
+
     @Inject
     private ContractService contractService;
-    
+
     @Inject
     private ContractItemService contractItemService;
 
@@ -275,7 +274,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
                 defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
                 defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
@@ -317,7 +316,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
 
-        rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency());
+        rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency(), isVirtual);
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.setWalletOperation(walletOperation);
@@ -504,10 +503,11 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param unitPriceWithTaxOverriden unit price with tax - An overridden price
      * @param buyerCountryId Buyer's country id
      * @param buyerCurrency Buyer's trading currency
+     * @param isVirtual Is this a simulation of rating
      * @throws BusinessException business exception
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency)
+    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency, Boolean isVirtual)
             throws BusinessException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
@@ -522,13 +522,13 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 bareWalletOperation.setUnitAmountWithTax(unitPriceWithTaxOverriden);
             }
 
-            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript());
+            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript(), isVirtual);
 
             // Use a standard price plan approach to rating
         } else {
 
             RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
 
@@ -560,32 +560,32 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
                 ChargeTemplate  chargeTemplate=chargeInstance.getChargeTemplate();
                 OfferTemplate offerTemplate=subscription.getOffer();
-                ContractItem contractItem=null;  
+                ContractItem contractItem=null;
                 if(contract!=null && serviceInstance!=null) {
                 contractItem=contractItemService.getApplicableContractItem(contract ,offerTemplate,serviceInstance.getCode(),chargeTemplate);
-                } 
+                }
                 if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                	 
-                if(contractItem.getPricePlan()!=null){ 
+
+                if(contractItem.getPricePlan()!=null){
     				PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
     				PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
     				if(ppmVersion!=null) {
     					PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, bareWalletOperation);
     					unitPriceWithoutTaxOverridden=pricePlanMatrixLine.getPricetWithoutTax();
-    				} 
+    				}
 
     			}else {
-    				unitPriceWithoutTaxOverridden =contractItem.getAmountWithoutTax();	
-    			  } 
-                } 
-    			
-                
+    				unitPriceWithoutTaxOverridden =contractItem.getAmountWithoutTax();
+    			  }
+                }
+
+
                 if(unitPriceWithoutTaxOverridden==null) {
                 pricePlan = ratePrice(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
                 if (pricePlan == null) {
                     throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
 
-                } 
+                }
                 //for V11 needs
 //                else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
 //                    throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
@@ -655,9 +655,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 }
                 if (contractItem!=null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType() )&& contractItem.getRate()>0  ) {
        			 BigDecimal amount = unitPriceWithoutTaxOverridden.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
-       		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0) 
-       				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);    
-       			
+       		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0)
+       				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);
+
        		       }
                 }
 
@@ -705,14 +705,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
             if (pricePlan != null && pricePlan.getScriptInstance() != null) {
                 log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance());
+                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), isVirtual);
             }
         }
 
         // Execute a final rating script set on offer template
         if (bareWalletOperation.getOfferTemplate() != null && bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance() != null) {
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
-            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance());
+            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
 
     }
@@ -776,7 +776,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
         if(unitPrice == null)
         	throw new BusinessException("No unit price found");
-        	
+
         // process ratingEL here
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
@@ -836,7 +836,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
@@ -1109,7 +1109,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             operation.setChargeMode(ChargeApplicationModeEnum.RERATING);
 
             rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
-                priceplan != null ? priceplan.getTradingCurrency() : null);
+                priceplan != null ? priceplan.getTradingCurrency() : null, null);
         }
         create(operation);
 
@@ -1133,7 +1133,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount, null);
+        Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount, walletOperation.getEdr());
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
 
@@ -1263,7 +1263,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             	if(quote!=null) {
             		userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
             	}
-                
+
             }
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
@@ -1273,12 +1273,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
             	if(quoteVersion!=null) {
             		userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
             	}
-                
+
             }
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE) >= 0) {
             ProductInstance productInstance = null;
-            if (chargeInstance instanceof ProductChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.PRODUCT) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
@@ -1324,15 +1324,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param scriptInstance Script to execute
      * @throws RatingException Rating exception
      */
-    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws RatingException {
+    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance, Boolean isVirtual) throws RatingException {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Will execute {} script {} for charge {}", bareWalletOperation.getPriceplan() != null ? "priceplan" : "rating", scriptInstanceCode, bareWalletOperation.getChargeInstance().getId());
             }
-
-            scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
+            Map<String, Object> context = new HashMap<>();
+            context.put("isVirtual", isVirtual);
+            scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, context);
 
         } catch (RatingException e) {
             throw e;

@@ -18,43 +18,36 @@
 
 package org.meveo.service.tax;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tax mapping service implementation.
@@ -76,6 +69,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
     @Inject 
     private AccountingArticleService accountingArticleService;
+
+    @Inject
+    private SellerService sellerService;
     
     private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = true;
 
@@ -416,6 +412,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         if (seller == null) {
             throw new BusinessException("Seller is mandatory for finding a tax mapping");
         }
+        seller = sellerService.findById(seller.getId());
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 

@@ -37,6 +37,7 @@ import org.meveo.model.cpq.Product;
         @NamedQuery(name = "PricePlanMatrixColumn.findByAttributes", query = "select p from PricePlanMatrixColumn p where p.attribute in :attribute"),
         @NamedQuery(name = "PricePlanMatrixColumn.findByProduct", query = "select p from PricePlanMatrixColumn p where p.product in :product"),
         @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select pv from PricePlanMatrixColumn pv LEFT JOIN   pv.pricePlanMatrixVersion pp where pv.code=:code and pp.id=:pricePlanMatrixVersionId"),
+        @NamedQuery(name = "PricePlanMatrixColumn.deleteById", query = "delete from PricePlanMatrixColumn where id =:id"),
 })
 public class PricePlanMatrixColumn extends BusinessEntity {
 
@@ -89,7 +90,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @Column(name = "is_range")
     private Boolean isRange;
 
-    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.PERSIST}, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
