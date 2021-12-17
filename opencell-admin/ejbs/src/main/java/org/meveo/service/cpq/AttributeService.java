@@ -7,6 +7,7 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
@@ -91,6 +92,9 @@ public class AttributeService extends BusinessService<Attribute>{
     }
 
     private String createErrorMessage(Attribute attribute) {
+    	 if(StringUtils.isNotBlank(attribute.getValidationLabel())){
+             return evaluateExpression(attribute.getValidationLabel(), String.class, attribute);
+         }
         String value = attribute.getDefaultValue().length() <= 30
                 ? attribute.getDefaultValue() : attribute.getDefaultValue().substring(0, 27) + "...";
         StringBuilder errorMessage = new StringBuilder("Value ")
