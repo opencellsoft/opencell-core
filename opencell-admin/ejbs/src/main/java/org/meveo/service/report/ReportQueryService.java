@@ -344,9 +344,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
             Future<QueryExecutionResult> asyncResult = executeReportQueryAndSaveResult(reportQuery, targetEntity, startDate);
             QueryExecutionResult executionResult = asyncResult.get();
             if(executionResult != null && sendNotification) {
-                notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
-                        executionResult.getStartDate(), executionResult.getExecutionDuration(),
-                        executionResult.getLineCount(), null);
+            	if(currentUser.getEmail() != null) {
+                    notifyUser(executionResult.getId(), reportQuery.getCode(), currentUser.getEmail(), currentUser.getFullNameOrUserName(), true,
+                            executionResult.getStartDate(), executionResult.getExecutionDuration(),
+                            executionResult.getLineCount(), null);
+            	}
                 for(String email : emails) {
                 	notifyUser(executionResult.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
                             executionResult.getStartDate(), executionResult.getExecutionDuration(),
@@ -380,8 +382,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         params.put("startDate", format.format(startDate));
         params.put("portalResultLink", portalResultLink);
 
-        duration = duration / 1000;
 	    long durationMiliSecond = duration % 1000;
+        duration = duration / 1000;
 	    
         params.put("duration", String.format("%02d",duration / 3600)+"h "+String.format("%02d",duration / 60 % 60)+"m "+String.format("%02d",duration % 60)+"s "+String.format("%03d",durationMiliSecond)+"ms");
         try {
