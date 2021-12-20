@@ -1,5 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static javax.ws.rs.core.Response.ok;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -21,21 +23,24 @@ public class DunningLevelResourceImpl implements DunningLevelResource {
 	public Response create(org.meveo.apiv2.dunning.DunningLevel dunningLevel) {
 		var entity = mapper.toEntity(dunningLevel);
 		var savedDunningLevel = dunningLevelApiService.create(entity);
-		return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, savedDunningLevel.getId()).build()).entity(mapper.toResource(savedDunningLevel))
-			.build();
+		return ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, savedDunningLevel.getId()).build())
+				.entity(mapper.toResource(savedDunningLevel))
+				.build();
 	}
 
 	@Override
 	public Response update(org.meveo.apiv2.dunning.DunningLevel dunningLevel, Long dunningLevelId) {
 		var entity = mapper.toEntity(dunningLevel);
 		var updated = dunningLevelApiService.update(dunningLevelId, entity).get();
-		return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, updated.getId()).build()).entity(mapper.toResource(updated)).build();
+		return ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, updated.getId()).build())
+				.entity(mapper.toResource(updated))
+				.build();
 	}
 
 	@Override
 	public Response delete(Long dunningLevelId) {
 		Optional<DunningLevel> dunningLevel = dunningLevelApiService.delete(dunningLevelId);
-		ResponseBuilder response = Response.ok();
+		ResponseBuilder response = ok();
 		if( dunningLevel.isPresent()) {
 			response.entity(mapper.toResource(dunningLevel.get()));
 		}
@@ -45,7 +50,7 @@ public class DunningLevelResourceImpl implements DunningLevelResource {
 	@Override
 	public Response findByCode(String dunningLevelCode) {
 		Optional<DunningLevel> dunningLevel = dunningLevelApiService.findByCode(dunningLevelCode);
-		ResponseBuilder response = Response.ok();
+		ResponseBuilder response = ok();
 		if( dunningLevel.isPresent()) {
 			response.entity(mapper.toResource(dunningLevel.get()));
 		}
