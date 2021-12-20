@@ -87,6 +87,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -114,6 +115,8 @@ import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -122,6 +125,8 @@ import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.UsageChargeInstanceService;
+import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -244,6 +249,13 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private MediaService mediaService;
+    
+
+    @Inject
+    UsageChargeInstanceService usageChargeInstanceService;
+    
+    @Inject
+    UsageRatingService usageRatingService;
 
 
 
@@ -1487,7 +1499,39 @@ public class CpqQuoteApi extends BaseApi {
 
                     }
                 }
+                
+                // Add subscription charges
+                EDR edr =null;
+                for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
+                	edr =new EDR();
+                	 try {
+                		 
+                		 edr.setAccessCode(null);
+                		 edr.setEventDate(usageCharge.getChargeDate());
+                		 edr.setSubscription(subscription);
+                		 edr.setStatus(EDRStatusEnum.OPEN);
+                		 edr.setCreated(new Date());
+                		 edr.setOriginBatch("QUOTE");
+                		 edr.setOriginRecord(System.currentTimeMillis()+"");
+                		 UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
+                		 Double quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                		 edr.setQuantity(new BigDecimal(quantity));
+                         List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+                         walletOperations.addAll(walletOperationsFromEdr);
+
+                     } catch (RatingException e) {
+                         log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+
+
+                     } catch (BusinessException e) {
+                         log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+
+                     }
+                }
             }
+            
 
         }
         return walletOperations;
@@ -1586,6 +1630,11 @@ public class CpqQuoteApi extends BaseApi {
                 recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
                 recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
                 recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+            }
+            List<UsageChargeInstance> usageChargeInstances = serviceInstance.getUsageChargeInstances();
+            for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
+            	usageChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+                usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
             }
         }
     }
