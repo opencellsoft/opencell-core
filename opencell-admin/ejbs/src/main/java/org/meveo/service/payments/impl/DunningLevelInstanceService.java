@@ -9,11 +9,11 @@ import javax.ejb.Stateless;
 @Stateless
 public class DunningLevelInstanceService extends PersistenceService<DunningLevelInstance> {
 
-    public DunningLevelInstance findByPolicyLevelId(Long policyLevelId) {
+    public DunningLevelInstance findByLevelId(Long levelId) {
         try {
             return getEntityManager()
-                    .createNamedQuery("DunningLevelInstance.findByPolicyLevelId", entityClass)
-                    .setParameter("policyLevelId", policyLevelId)
+                    .createNamedQuery("DunningLevelInstance.findByLevelId", entityClass)
+                    .setParameter("levelId", levelId)
                     .getSingleResult();
         } catch (Exception exception) {
             return null;

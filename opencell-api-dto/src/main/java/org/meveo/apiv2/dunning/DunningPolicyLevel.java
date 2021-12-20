@@ -12,10 +12,6 @@ import javax.annotation.Nullable;
 @JsonDeserialize(as = ImmutableDunningPolicyLevel.class)
 public interface DunningPolicyLevel extends Resource {
 
-    @Schema(description = "Dunning policy level sequence")
-    @Nullable
-    Integer getSequence();
-
     @Schema(description = "Dunning level id")
     @Nullable
     Long getDunningLevelId();
