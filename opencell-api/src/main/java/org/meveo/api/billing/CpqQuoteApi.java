@@ -1329,12 +1329,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
                 quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getDescription());
                 overrideAmounts(quotePrice, recurrenceDuration);
-            } else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum())){
-                UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
-                Long quantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, wo.getServiceInstance().getQuoteProduct()));
-                quotePrice.setRecurrenceDuration(quantity);
-                overrideAmounts(quotePrice, quantity);
-            }
+            } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
             quotePriceService.create(quotePrice);
@@ -1515,7 +1510,7 @@ public class CpqQuoteApi extends BaseApi {
                 		 edr.setOriginRecord(System.currentTimeMillis()+"");
                 		 UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
                 		 Double quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                		 edr.setQuantity(new BigDecimal(quantity));
+                		 edr.setQuantity(quantity!=null?new BigDecimal(quantity):BigDecimal.ZERO);
                          List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
                          
                          if (walletOperationsFromEdr != null) {
