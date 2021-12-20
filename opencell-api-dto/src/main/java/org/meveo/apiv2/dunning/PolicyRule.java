@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.dunning.PolicyConditionRuleJointEnum;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface PolicyRule extends Resource {
 
     @Schema(description = "Policy rule's rule join")
     @Nullable
-    String getRuleJoint();
+    PolicyConditionRuleJointEnum getRuleJoint();
 
     @Schema(description = "List of policy rule lines")
     @Nullable

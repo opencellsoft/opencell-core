@@ -67,6 +67,23 @@ public class UpdateServicesRequestDto extends BaseEntityDto {
 
     /** The order item action. */
     private OrderItemActionEnum orderItemAction;
+    
+    /** auto end of engagement */
+    private Boolean autoEndOfEngagement;
+    
+    /** rate until date */
+    private Date rateUntilDate;
+    
+    /** minimum Amount El */
+    private String minimumAmountEl;
+    
+    /** minimum label El */
+    private String minimumLabelEl;
+    
+    /** attribute Instances */
+    private List<AttributeInstanceDto> attributeInstances;
+    
+    
 
     /**
      * Gets the subscription code.
@@ -177,4 +194,45 @@ public class UpdateServicesRequestDto extends BaseEntityDto {
     public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
         this.subscriptionValidityDate = subscriptionValidityDate;
     }
+
+	public Boolean getAutoEndOfEngagement() {
+		return autoEndOfEngagement;
+	}
+
+	public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+		this.autoEndOfEngagement = autoEndOfEngagement;
+	}
+
+	public Date getRateUntilDate() {
+		return rateUntilDate;
+	}
+
+	public void setRateUntilDate(Date rateUntilDate) {
+		this.rateUntilDate = rateUntilDate;
+	}
+
+	public String getMinimumAmountEl() {
+		return minimumAmountEl;
+	}
+
+	public void setMinimumAmountEl(String minimumAmountEl) {
+		this.minimumAmountEl = minimumAmountEl;
+	}
+
+	public String getMinimumLabelEl() {
+		return minimumLabelEl;
+	}
+
+	public void setMinimumLabelEl(String minimumLabelEl) {
+		this.minimumLabelEl = minimumLabelEl;
+	}
+
+	public List<AttributeInstanceDto> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	public void setAttributeInstances(List<AttributeInstanceDto> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
+
 }

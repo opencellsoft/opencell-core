@@ -1,4 +1,4 @@
-package org.meveo.apiv2.accountreceivable;
+package org.meveo.apiv2.accountreceivable.accountOperation;
 
 
 import java.util.Map;
@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.accountreceivable.ChangeStatusDto;
 
 @Path("/accountReceivable/accountOperation")
 @Consumes(MediaType.APPLICATION_JSON)

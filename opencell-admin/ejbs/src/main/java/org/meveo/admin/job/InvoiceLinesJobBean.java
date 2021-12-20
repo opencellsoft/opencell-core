@@ -19,7 +19,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -35,7 +34,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.math.BigInteger;
 import java.util.*;
 
 @Stateless
@@ -102,9 +100,10 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         } else {
                             groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
                         }
-                        invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
+                        Map<Long, Long> iLIdsRtIdsCorrespondence
+                                = invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
                         ratedTransactionService.makeAsProcessed(ratedTransactionIds);
-                        //linkRTWithInvoiceLine(iLIdsRtIdsCorrespondence);
+                        ratedTransactionService.linkRTWithInvoiceLine(iLIdsRtIdsCorrespondence);
                         result.setNbItemsCorrectlyProcessed(groupedRTs.size());
                     }
                 }

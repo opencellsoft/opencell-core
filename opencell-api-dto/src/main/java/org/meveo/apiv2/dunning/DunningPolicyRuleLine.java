@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.dunning.PolicyConditionOperatorEnum;
+import org.meveo.model.dunning.PolicyConditionRuleJointEnum;
+import org.meveo.model.dunning.PolicyConditionTargetEnum;
 
 import javax.annotation.Nullable;
 
@@ -14,11 +17,11 @@ public interface DunningPolicyRuleLine extends Resource {
 
     @Schema(description = "Policy condition operation")
     @Nullable
-    String getPolicyConditionOperator();
+    PolicyConditionOperatorEnum getPolicyConditionOperator();
 
     @Schema(description = "Policy condition target")
     @Nullable
-    String getPolicyConditionTarget();
+    PolicyConditionTargetEnum getPolicyConditionTarget();
 
     @Schema(description = "Policy condition target value")
     @Nullable
@@ -26,5 +29,5 @@ public interface DunningPolicyRuleLine extends Resource {
 
     @Schema(description = "Rule line joint")
     @Nullable
-    String getRuleLineJoint();
+    PolicyConditionRuleJointEnum getRuleLineJoint();
 }

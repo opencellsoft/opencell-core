@@ -18,15 +18,6 @@
 
 package org.meveo.service.tax;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -51,12 +42,21 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tax mapping service implementation.
@@ -79,6 +79,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     @Inject
     private AccountingArticleService accountingArticleService;
 
+    @Inject
+    private SellerService sellerService;
+    
     private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = true;
 
     static {
@@ -424,6 +427,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         if (seller == null) {
             throw new InvalidParameterException("Seller is mandatory for finding a tax mapping");
         }
+
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 
