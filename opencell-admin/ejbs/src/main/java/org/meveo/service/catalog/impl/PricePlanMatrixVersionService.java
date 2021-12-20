@@ -44,8 +44,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version is %s, it can not be updated nor removed";
 
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
     @Inject 
 	private PricePlanMatrixColumnService pricePlanMatrixColumnService;
     @Inject
@@ -166,7 +164,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return result.isEmpty()?null:result.get(0);
     }
 
-    @Transactional(dontRollbackOn = NoPricePlanException.class)
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if (chargeInstance.getServiceInstance() != null) {
@@ -179,7 +176,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return null;
     }
 
-    @Transactional(dontRollbackOn = NoPricePlanException.class)
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode, Set<AttributeValue> attributeValues) throws NoPricePlanException {
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode, null);
     }

@@ -263,7 +263,7 @@ public class MediationApiService {
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
         // In case of no need to rollback, an error will be recorded directly in EDR
-        boolean noNeedToRollback = true;
+        boolean noNeedToRollback = false;
 
         while (true) {
 
@@ -303,6 +303,7 @@ public class MediationApiService {
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                                 reservation = usageRatingService.reserveUsageWithinTransaction(edr);
+                                // For other cases, rate each EDR in a separate TX
                             } else {
                                 reservation = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.reserveUsageWithinTransaction(edr));
                             }
@@ -457,13 +458,13 @@ public class MediationApiService {
 
         result.setError(cdrError);
 
-        if (returnEDRs && edrs.get(0).getId() != null) {
+        if (returnEDRs && edrs != null && edrs.get(0).getId() != null) {
             result.setEdrIds(new ArrayList<Long>(edrs.size()));
             for (EDR edr : edrs) {
                 result.getEdrIds().add(edr.getId());
             }
         }
-        if (walletOperations != null) {
+        if (walletOperations != null && !walletOperations.isEmpty()) {
             BigDecimal amountWithTax = BigDecimal.ZERO;
             BigDecimal amountWithoutTax = BigDecimal.ZERO;
             BigDecimal amountTax = BigDecimal.ZERO;

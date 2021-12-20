@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -222,7 +221,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws NoTaxException Unable to determine a tax
      */
-    @Transactional(dontRollbackOn = NoTaxException.class)
     public TaxInfo determineTax(ChargeInstance chargeInstance, Date date) throws NoTaxException {
 
         TaxClass taxClass = chargeInstance.getTaxClassResolved();
@@ -257,7 +255,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws NoTaxException Unable to determine a tax
      */
-    @Transactional(dontRollbackOn = NoTaxException.class)
     public TaxInfo determineTax(WalletOperation walletOperation) throws NoTaxException {
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
@@ -298,7 +295,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws NoTaxException Unable to determine a tax
      */
-    @Transactional(dontRollbackOn = NoTaxException.class)
     public TaxInfo determineTax(ChargeTemplate chargeTemplate, Seller seller, UserAccount userAccount, Date date) throws NoTaxException {
 
         TaxClass taxClass = chargeTemplate.getTaxClass();
@@ -319,7 +315,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws NoTaxException Unable to determine a tax
      */
-    @Transactional(dontRollbackOn = NoTaxException.class)
     public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, boolean checkExoneration, boolean ignoreNoTax) throws NoTaxException {
         return determineTax(taxClass, seller, billingAccount, userAccount, date, null, checkExoneration, ignoreNoTax, null);
     }
@@ -339,7 +334,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws NoTaxException Unable to determine a tax
      */
-    @Transactional(dontRollbackOn = NoTaxException.class)
     public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, WalletOperation walletoperation, boolean checkExoneration, boolean ignoreNoTax,
             Tax defaultTax) throws NoTaxException {
 
@@ -661,7 +655,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return An array containing applicable tax and True/false if tax % has changed from a previous tax
      * @throws NoTaxException Were not able to determine a tax
      */
-    @Transactional(dontRollbackOn = NoTaxException.class)
     public Object[] checkIfTaxHasChanged(Tax tax, boolean isExonerated, Seller seller, BillingAccount billingAccount, Date operationDate, TaxClass taxClass, UserAccount userAccount, Tax taxZero) throws NoTaxException {
 
         if (isExonerated) {

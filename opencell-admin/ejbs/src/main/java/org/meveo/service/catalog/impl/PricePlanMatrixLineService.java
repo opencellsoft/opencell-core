@@ -12,7 +12,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
@@ -169,9 +168,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return List.of(matchedPrices.get(0));
     }
     
-    @Transactional(dontRollbackOn = NoPricePlanException.class)
     public PricePlanMatrixLine loadMatchedLinesForServiceInstance(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, String serviceInstanceCode, WalletOperation walletOperation)
-            throws BusinessException {
+            throws NoPricePlanException {
         List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, walletOperation);
        
         if (matchedPrices.isEmpty()) {

@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -294,7 +293,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @return Quantity converted into rating quantity
      * @throws ValidationException Any failure to convert quantity to a rating quantity due to EL expression or invalid EL results
      */
-    @Transactional(dontRollbackOn = ValidationException.class)
     public BigDecimal evaluateRatingQuantity(ChargeTemplate chargeTemplate, BigDecimal quantity) throws ValidationException {
 
         UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
@@ -307,10 +305,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
             unitNbDecimal = 2;
         }
 
-        int i = 1;
-        if (i/1==1) {
-            throw new ValidationException("kuuu");
-        }
         inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
         outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
 

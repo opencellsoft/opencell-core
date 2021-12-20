@@ -30,7 +30,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
@@ -39,7 +38,6 @@ import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.RatingException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -476,7 +474,6 @@ public class RecurringRatingService extends RatingService implements Serializabl
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Calendar, as resolved from EL expression was not found
      */
-    @Transactional(dontRollbackOn = ValidationException.class)
     public Date getRecurringPeriodStartDate(RecurringChargeInstance chargeInstance, Date date) throws IncorrectChargeTemplateException, ElementNotFoundException, InvalidELException {
 
         Calendar cal = resolveRecurrenceCalendar(chargeInstance);
@@ -500,7 +497,6 @@ public class RecurringRatingService extends RatingService implements Serializabl
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Calendar, as resolved from EL expression was not found
      */
-    @Transactional(dontRollbackOn = ValidationException.class)
     public Date getRecurringPeriodEndDate(RecurringChargeInstance chargeInstance, Date date) throws IncorrectChargeTemplateException, ElementNotFoundException, InvalidELException {
 
         Calendar cal = resolveRecurrenceCalendar(chargeInstance);
@@ -524,7 +520,6 @@ public class RecurringRatingService extends RatingService implements Serializabl
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Calendar, as resolved from EL expression was not found
      */
-    @Transactional(dontRollbackOn = ValidationException.class)
     public DatePeriod getRecurringPeriod(RecurringChargeInstance chargeInstance, Date date) throws IncorrectChargeTemplateException, ElementNotFoundException, InvalidELException {
 
         Calendar cal = resolveRecurrenceCalendar(chargeInstance);
