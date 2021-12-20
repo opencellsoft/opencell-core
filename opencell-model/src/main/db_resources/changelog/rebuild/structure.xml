@@ -11391,7 +11391,6 @@
 				<column name="days_overdue" type="int4" >
 	                <constraints nullable="false" />
 	            </column>
-	            <column name="dunning_policy_level_id" type="bigint" />
 	            <column name="dunning_collection_plan_id" type="bigint" />
 	            <column name="dunning_collection_plan_status_id" type="bigint"/>
 	            <column name="level_status" type="varchar(255)" />
@@ -15545,10 +15544,6 @@
       </changeSet>
       
       <changeSet id="#INTRD-2973_20211110-rebuild-str-fk" author="AmineBENAICHA">
-	   	<addForeignKeyConstraint baseColumnNames="dunning_policy_level_id" baseTableName="dunning_level_instance"
-			constraintName="fk_dunning_policy_level" deferrable="false" initiallyDeferred="false"
-			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy_level" />
-		
 		<addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
 			constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
@@ -16933,7 +16928,7 @@
     <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-3610_20211210" author="TarikRabeh" />
     <changeSet id="INTRD-3721_20211216" author="AmineBENAICHA" />
-
+    <changeSet id="INTRD-3707_20211216" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

@@ -153,8 +153,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         List<DunningLevelInstance> levelInstances = new ArrayList<>();
         for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
             DunningLevelInstance levelInstance;
-            if (policyLevel.getSequence() == 1) {
-                levelInstance = levelInstanceService.findByPolicyLevelId(policyLevel.getId());
+            if (policyLevel.getDunningLevel().isReminder()) {
+                levelInstance = levelInstanceService.findByLevelId(policyLevel.getDunningLevel().getId());
                 if (levelInstance == null) {
                     levelInstance = createLevelInstance(collectionPlan, collectionPlanStatus, dayOverDue, policyLevel, DONE);
                 }
@@ -173,7 +173,6 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         DunningLevelInstance levelInstance = new DunningLevelInstance();
         levelInstance.setCollectionPlan(collectionPlan);
         levelInstance.setCollectionPlanStatus(collectionPlanStatus);
-        levelInstance.setPolicyLevel(policyLevel);
         levelInstance.setLevelStatus(status);
         levelInstance.setSequence(policyLevel.getSequence());
         levelInstance.setDunningLevel(policyLevel.getDunningLevel());
