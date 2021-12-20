@@ -1,6 +1,7 @@
 package functional.stepDefs.generic;
 
 import functional.driver.assertions.GetAmountWithTaxOfWalletOperation;
+import functional.driver.assertions.VerifyResponseOfLastRequest;
 import io.cucumber.java.en.Then;
 
 public class AssertionStepDef {
@@ -10,9 +11,9 @@ public class AssertionStepDef {
         BasicConfig.getActor().asksFor(GetAmountWithTaxOfWalletOperation.called(order, entity, field, expectedValue));
     }
 
-    @Then("{string} response has {string} whose value is {string}")
-    public void actorVerifyValue(String order, String entity, String field, String expectedValue) {
-        BasicConfig.getActor().asksFor(GetAmountWithTaxOfWalletOperation.called(order, entity, field, expectedValue));
+    @Then("^last response has field ([^ \"]*) whose value is ([^ \"]*)")
+    public void actorVerifyResponseOfLastRequest(String field, String expectedValue) {
+        BasicConfig.getActor().asksFor(VerifyResponseOfLastRequest.called(field, expectedValue));
     }
 
 }

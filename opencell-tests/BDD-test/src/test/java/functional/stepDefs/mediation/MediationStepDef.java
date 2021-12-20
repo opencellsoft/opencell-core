@@ -32,7 +32,7 @@ public class MediationStepDef {
         actor.attemptsTo(ActivateService.called(dataTable));
     }
 
-    @And("I charge following {string}")
+    @And("^I charge following cdr ([^ \"]*)")
     public void actorChargeCDR(String cdr) {
         actor.attemptsTo(ChargeCDR.called(cdr));
     }
