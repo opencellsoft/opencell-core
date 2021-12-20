@@ -359,7 +359,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
                 // For subscription mode rating can be partial
-                RatingResult localRatingResult = recurringRatingService.rateReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual, applicationMode==ChargeApplicationModeEnum.SUBSCRIPTION);
+                RatingResult localRatingResult = recurringRatingService.rateReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual, false); // TODO AKK solution to allow incomplete rating: applicationMode==ChargeApplicationModeEnum.SUBSCRIPTION);
                 ratingResult.add(localRatingResult);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();

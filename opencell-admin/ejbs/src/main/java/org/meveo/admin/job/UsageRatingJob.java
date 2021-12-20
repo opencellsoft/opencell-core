@@ -61,12 +61,12 @@ public class UsageRatingJob extends Job {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-        boolean needToRollback = (boolean) getParamOrCFValue(jobInstance, CF_ROLLBACK_ON_FAILURE, true);
-        if (needToRollback) {
+//        boolean needToRollback = (boolean) getParamOrCFValue(jobInstance, CF_ROLLBACK_ON_FAILURE, true);
+//        if (needToRollback) {
             usageRatingJobBean.execute(result, jobInstance);
-        } else {
-            usageRatingNoRollbackJobBean.execute(result, jobInstance);
-        }
+//        } else {
+//            usageRatingNoRollbackJobBean.execute(result, jobInstance);
+//        }
 
         return result;
     }
@@ -137,16 +137,16 @@ public class UsageRatingJob extends Job {
         batchSize.setGuiPosition("tab:Configuration:0;field:4");
         result.put(batchSize.getCode(), batchSize);
 
-        CustomFieldTemplate noRollback = new CustomFieldTemplate();
-        noRollback.setCode(CF_ROLLBACK_ON_FAILURE);
-        noRollback.setAppliesTo("JobInstance_UsageRatingJob");
-        noRollback.setActive(true);
-        noRollback.setDescription(resourceMessages.getString("jobExecution.rollbackOnFailure"));
-        noRollback.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        noRollback.setValueRequired(false);
-        noRollback.setDefaultValue("true");
-        noRollback.setGuiPosition("tab:Configuration:0;field:5");
-        result.put(noRollback.getCode(), noRollback);
+//        CustomFieldTemplate noRollback = new CustomFieldTemplate();
+//        noRollback.setCode(CF_ROLLBACK_ON_FAILURE);
+//        noRollback.setAppliesTo("JobInstance_UsageRatingJob");
+//        noRollback.setActive(true);
+//        noRollback.setDescription(resourceMessages.getString("jobExecution.rollbackOnFailure"));
+//        noRollback.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+//        noRollback.setValueRequired(false);
+//        noRollback.setDefaultValue("true");
+//        noRollback.setGuiPosition("tab:Configuration:0;field:5");
+//        result.put(noRollback.getCode(), noRollback);
 
         return result;
     }
