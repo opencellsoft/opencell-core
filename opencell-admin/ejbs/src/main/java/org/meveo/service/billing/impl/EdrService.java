@@ -519,7 +519,7 @@ public class EdrService extends PersistenceService<EDR> {
      * 
      * @return True if EDR deduplication is turned on
      */
-    public static boolean isDuplicateCheckOn() {
+    public boolean isDuplicateCheckOn() {
         return deduplicateEdrs;
     }
     
