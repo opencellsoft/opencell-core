@@ -11425,6 +11425,21 @@
 	            <column name="dunning_action_id" type="bigint" />
 			</createTable>
         </changeSet>
+
+    <changeSet id="INTRD-3781_20211217" author="hichamElHaloui">
+        <createSequence sequenceName="security_deposit_settings_seq" startValue="1" />
+        <createTable tableName="security_deposit_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_settings_pkey" />
+            </column>
+            <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
+            <column name="max_amount_consumer" type="numeric(23, 12)"  />
+            <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allow_renew" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allow_transfer" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+    </changeSet>
 	
 
     <!-- end tables -->
@@ -16933,7 +16948,6 @@
     <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-3610_20211210" author="TarikRabeh" />
     <changeSet id="INTRD-3721_20211216" author="AmineBENAICHA" />
-
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

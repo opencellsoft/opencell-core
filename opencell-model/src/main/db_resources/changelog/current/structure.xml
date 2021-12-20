@@ -11572,5 +11572,19 @@ order by date_trunc('month', i.invoice_date) DESC
 	        <column name ="quote_line_type" type="varchar(10)" />
 	    </addColumn>
 	</changeSet>
+    <changeSet id="INTRD-3781_20211217" author="hichamElHaloui">
+        <createSequence sequenceName="security_deposit_settings_seq" startValue="1" />
+        <createTable tableName="security_deposit_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_settings_pkey" />
+            </column>
+            <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
+            <column name="max_amount_consumer" type="numeric(23, 12)"  />
+            <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allow_renew" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allow_transfer" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+    </changeSet>
 
 </databaseChangeLog>
