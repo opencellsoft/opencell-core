@@ -1517,7 +1517,16 @@ public class CpqQuoteApi extends BaseApi {
                 		 Double quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
                 		 edr.setQuantity(new BigDecimal(quantity));
                          List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-                         walletOperations.addAll(walletOperationsFromEdr);
+                         
+                         if (walletOperationsFromEdr != null) {
+                        	 for(WalletOperation walletOperation:walletOperationsFromEdr) {
+                        		 walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                                         .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
+                                 walletOperations.addAll(walletOperationsFromEdr);
+                        	 }
+                        	 
+                         }
+                        
 
                      } catch (RatingException e) {
                          log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
