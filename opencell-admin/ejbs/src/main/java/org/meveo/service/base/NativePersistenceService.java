@@ -802,7 +802,12 @@ public class NativePersistenceService extends BaseService {
         return fields
                 .stream()
                 .filter(predicate)
-                .map(x -> "a." + x)
+                .map(x -> {
+                    if (x.contains("->>")) 
+                        return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                       else 
+                        return "a." + x;
+                      })
                 .collect(joining(","));
     }
 
