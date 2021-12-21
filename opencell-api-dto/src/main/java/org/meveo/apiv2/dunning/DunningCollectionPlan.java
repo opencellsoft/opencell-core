@@ -75,4 +75,7 @@ public interface DunningCollectionPlan extends Resource {
 
 	@Nullable
 	Integer getTotalDunningLevels();
+
+	@Nullable
+	String getCollectionPlanNumber();
 }
