@@ -77,8 +77,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                         .append(checkRuleLineJoint(rules.get(index).getRuleJoint()))
                         .append(" ")
                         .append(buildRuleLinesFilter(rules.get(index).getDunningPolicyRuleLines()));
-                rules.sort(Comparator.comparing(DunningPolicyRule::getId));
-}
+            }
         }
         return ruleFilter.toString();
     }
