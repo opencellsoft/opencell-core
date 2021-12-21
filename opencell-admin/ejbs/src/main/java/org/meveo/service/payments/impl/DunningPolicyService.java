@@ -69,6 +69,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
+        rules.sort(Comparator.comparing(DunningPolicyRule::getId));
         if(rules != null && !rules.isEmpty()) {
             ruleFilter.append(buildRuleLinesFilter(rules.get(0).getDunningPolicyRuleLines()));
             for (int index = 1; index < rules.size(); index++) {
@@ -76,7 +77,8 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                         .append(checkRuleLineJoint(rules.get(index).getRuleJoint()))
                         .append(" ")
                         .append(buildRuleLinesFilter(rules.get(index).getDunningPolicyRuleLines()));
-            }
+                rules.sort(Comparator.comparing(DunningPolicyRule::getId));
+}
         }
         return ruleFilter.toString();
     }
@@ -92,6 +94,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildRuleLinesFilter(List<DunningPolicyRuleLine> ruleLines) {
         StringBuilder lineFilter = new StringBuilder();
         if(ruleLines != null && !ruleLines.isEmpty()) {
+            ruleLines.sort(Comparator.comparing(DunningPolicyRuleLine::getId));            
             lineFilter.append("(")
                     .append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
                     .append(" ")
