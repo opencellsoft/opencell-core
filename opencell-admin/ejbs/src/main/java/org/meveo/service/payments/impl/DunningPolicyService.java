@@ -69,8 +69,8 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
-        rules.sort(Comparator.comparing(DunningPolicyRule::getId));
         if(rules != null && !rules.isEmpty()) {
+            rules.sort(Comparator.comparing(DunningPolicyRule::getId));
             ruleFilter.append(buildRuleLinesFilter(rules.get(0).getDunningPolicyRuleLines()));
             for (int index = 1; index < rules.size(); index++) {
                 ruleFilter.append(" ")
