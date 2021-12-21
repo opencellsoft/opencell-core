@@ -246,7 +246,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel,paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getTaxClass());
 
         try {
-            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), null, oneShot, null, new Date(),
+            oneShotChargeInstanceService.instantiateAndApplyOneShotCharge(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), null, oneShot, null, new Date(),
                 new BigDecimal((isPaymentRejected ? "" : "-") + amounts.getAmountWithoutTax()), null, new BigDecimal(1), null, null, null, paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
         } catch (RatingException e) {

@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.BusinessService;
 
@@ -55,13 +56,13 @@ public class TaxService extends BusinessService<Tax> {
      * Find a tax with ZERO percent
      * 
      * @return A tax with zero percent
-     * @throws BusinessException When no tax with ZERO % was found.
+     * @throws ElementNotFoundException When no tax with ZERO % was found.
      */
-    public Tax getZeroTax() throws BusinessException {
+    public Tax getZeroTax() throws ElementNotFoundException {
         try {
             return getEntityManager().createNamedQuery("Tax.getZeroTax", Tax.class).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
-            throw new BusinessException("No tax defined with ZERO %");
+            throw new ElementNotFoundException("No tax defined with ZERO %");
         }
     }
 

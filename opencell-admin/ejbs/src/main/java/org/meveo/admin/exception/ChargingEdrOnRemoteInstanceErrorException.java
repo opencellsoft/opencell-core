@@ -17,6 +17,8 @@
  */
 package org.meveo.admin.exception;
 
+import javax.ejb.ApplicationException;
+
 import org.meveo.model.rating.EDRRejectReasonEnum;
 
 /**
@@ -25,6 +27,7 @@ import org.meveo.model.rating.EDRRejectReasonEnum;
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.1
  */
+@ApplicationException(rollback = false)
 public class ChargingEdrOnRemoteInstanceErrorException extends RatingException {
 
     private static final long serialVersionUID = 7048199432468647599L;

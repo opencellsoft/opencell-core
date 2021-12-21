@@ -44,14 +44,30 @@ import org.meveo.service.job.Job;
 @Stateless
 public class UsageRatingJob extends Job {
 
-    /** The usage rating job bean. */
+    /** The usage rating job bean when rollback IS needed when rating fails. */
     @Inject
     private UsageRatingJobBean usageRatingJobBean;
+
+    /** The usage rating job bean when rollback IS NOT needed when rating fails */
+    @Inject
+    private UsageRatingNoRollbackJobBean usageRatingNoRollbackJobBean;
+
+    /**
+     * Custom field denoting if rollback is required when usage rating fails
+     */
+    private static final String CF_ROLLBACK_ON_FAILURE = "rollback";
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        usageRatingJobBean.execute(result, jobInstance);
+
+//        boolean needToRollback = (boolean) getParamOrCFValue(jobInstance, CF_ROLLBACK_ON_FAILURE, true);
+//        if (needToRollback) {
+            usageRatingJobBean.execute(result, jobInstance);
+//        } else {
+//            usageRatingNoRollbackJobBean.execute(result, jobInstance);
+//        }
+
         return result;
     }
 
@@ -120,6 +136,17 @@ public class UsageRatingJob extends Job {
         batchSize.setMaxValue(10000L);
         batchSize.setGuiPosition("tab:Configuration:0;field:4");
         result.put(batchSize.getCode(), batchSize);
+
+//        CustomFieldTemplate noRollback = new CustomFieldTemplate();
+//        noRollback.setCode(CF_ROLLBACK_ON_FAILURE);
+//        noRollback.setAppliesTo("JobInstance_UsageRatingJob");
+//        noRollback.setActive(true);
+//        noRollback.setDescription(resourceMessages.getString("jobExecution.rollbackOnFailure"));
+//        noRollback.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+//        noRollback.setValueRequired(false);
+//        noRollback.setDefaultValue("true");
+//        noRollback.setGuiPosition("tab:Configuration:0;field:5");
+//        result.put(noRollback.getCode(), noRollback);
 
         return result;
     }
