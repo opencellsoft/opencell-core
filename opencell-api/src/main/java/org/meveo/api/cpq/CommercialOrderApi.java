@@ -844,9 +844,11 @@ public class CommercialOrderApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(Attribute.class, orderAttributeDTO.getOrderAttributeCode());
 	        }
         }
-        List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
-        if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
-            throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+        if (productVersionAttributes != null) {
+            List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
+            if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
+                throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+            }
         }
         CommercialOrder commercialOrder =null;
     	if(!StringUtils.isBlank(orderAttributeDTO.getCommercialOrderId())) {
