@@ -908,7 +908,7 @@ public class InvoiceService2 extends PersistenceService<Invoice> {
 	                    Boolean test=false;
 	                    if (thresholdAfterDiscount!=null) {
 	        				BigDecimal amount = (appProvider.isEntreprise()) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax();
-	        				if(thresholdAfterDiscount.compareTo(amount)<0) {
+	        				if(thresholdAfterDiscount.compareTo(amount)>0) {
 	        					invoice=null;
 	        					invoiceList.remove(invoice);
 	        					rtGroupToInvoiceMap.remove(invoiceKey);
@@ -1024,19 +1024,18 @@ public class InvoiceService2 extends PersistenceService<Invoice> {
 		CustomerAccount ca = ba.getCustomerAccount();
 		Customer c = ca.getCustomer();
 		BillingCycle bc = ba.getBillingCycle();
-		if (!ba.isThresholdPerEntity() && ba.getInvoicingThreshold() != null && type == null
-				|| type == ba.getCheckThreshold()) {
+		if (!ba.isThresholdPerEntity() && ba.getInvoicingThreshold() != null && (type == null || type == ba.getCheckThreshold())) {
 			threshold = ba.getInvoicingThreshold();
 		}
-		if (!ca.isThresholdPerEntity() && ca.getInvoicingThreshold() != null && type == null
-				|| type == ca.getCheckThreshold() && ca.getInvoicingThreshold().compareTo(threshold) > 0) {
+		if (!ca.isThresholdPerEntity() && ca.getInvoicingThreshold() != null
+				&& (type == null || type == ca.getCheckThreshold()) && (threshold == null || ca.getInvoicingThreshold().compareTo(threshold) > 0)) {
 			threshold = ca.getInvoicingThreshold();
 		}
-		if (!c.isThresholdPerEntity() && c.getInvoicingThreshold() != null && type == null
-				|| type == c.getCheckThreshold() && c.getInvoicingThreshold().compareTo(threshold) > 0) {
+		if (!c.isThresholdPerEntity() && c.getInvoicingThreshold() != null
+				&& (type == null || type == c.getCheckThreshold()) && (threshold == null || c.getInvoicingThreshold().compareTo(threshold) > 0)) {
 			threshold = c.getInvoicingThreshold();
 		}
-		if (threshold == null && bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null) {
+		if (threshold == null && !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (type == null || type == bc.getCheckThreshold())) {
 			threshold = bc.getInvoicingThreshold();
 		}
 		return threshold;
