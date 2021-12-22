@@ -74,6 +74,8 @@ import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
 import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
+import org.meveo.apiv2.securityDeposit.securityDepositSettings.SecurityDepositSettingsResource;
+import org.meveo.apiv2.securityDeposit.securityDepositSettings.impl.SecurityDepositSettingsResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
@@ -124,7 +126,7 @@ public class GenericOpencellRestful extends Application {
                 StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class,
                 DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class,
                 RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class, ImportExportResourceImpl.class,
-                DunningCollectionPlanResourceImpl.class, AccountReceivableDeferralPaymentsResourceImpl.class)
+                DunningCollectionPlanResourceImpl.class, AccountReceivableDeferralPaymentsResourceImpl.class, SecurityDepositSettingsResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
