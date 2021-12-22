@@ -475,10 +475,30 @@
             <java-class>org.meveo.model.cpq.trade.CommercialRuleHeader</java-class>
             <java-class>org.meveo.model.article.ArticleMappingLine</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixColumn</java-class>
+            <java-class>org.meveo.model.catalog.PricePlanMatrixVersion</java-class>
             <java-class>org.meveo.model.cpq.ProductVersion</java-class>
             <java-class>org.meveo.model.cpq.tags.Tag</java-class>
             <java-class>org.meveo.model.cpq.ProductVersionAttribute</java-class>
         </classesToExportAsFull>
+        <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.PricePlanMatrixVersion</entityClass>
+                <selection>
+                    select ppmv from PricePlanMatrixVersion ppmv 
+                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
+                    	where pctm.product.id = :productId
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>productId</string>
+                        <string>#{entity.id}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+        </relatedEntities>        
+        
     </template>
 
 </list>
