@@ -2,15 +2,18 @@ package functional.driver.actions.mediation;
 
 import functional.driver.utils.Constants;
 import functional.driver.utils.KeyCloakAuthenticationHook;
+import net.serenitybdd.rest.SerenityRest;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.rest.interactions.Post;
-import net.serenitybdd.screenplay.rest.questions.ResponseConsequence;
 import net.thucydides.core.annotations.Step;
+import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ChargeCDR implements Task {
 
@@ -37,8 +40,8 @@ public class ChargeCDR implements Task {
                         )
         );
 
-        actor.should(
-                ResponseConsequence.seeThatResponse(response -> response.statusCode(200))
-        );
+        if (SerenityRest.lastResponse().statusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR){
+            assertThat(SerenityRest.lastResponse().jsonPath().get("status").toString()).isEqualTo("FAIL");
+        }
     }
 }

@@ -16,7 +16,8 @@ public class CreateEntityStepDef {
     public void actorCreateEntityFromFeature(String featurePath) {
     }
 
-    @Given("^I create entity \"([^\"]*)\", with field and value$")
+//    @Given("^I create \"([^\"]*)\"$")
+    @Given("^I create ([^ \"]*)$")
     public void actorCreateEntityInline(String entity, DataTable dataTable) throws Exception {
         BasicConfig.getActor().attemptsTo(CreateEntityInline.called(entity, dataTable));
     }

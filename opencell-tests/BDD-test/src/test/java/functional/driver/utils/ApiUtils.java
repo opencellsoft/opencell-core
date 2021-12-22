@@ -1,21 +1,24 @@
 package functional.driver.utils;
 
-import io.cucumber.datatable.DataTable;
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import functional.stepDefs.generic.BasicConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Map;
 
 public class ApiUtils {
 
-    public static String getJsonBody(Class<?> dtoMapperClass, DataTable dataTable) {
-        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+    public static Object getJsonBody(Class<?> dtoClass, Map<String, String> anInstance) {
         Constructor<?> constructor = null;
         Object newInstance = null;
 
         try {
-            constructor = dtoMapperClass.getDeclaredConstructor();
+            constructor = dtoClass.getDeclaredConstructor();
             newInstance = constructor.newInstance();
         }
         catch (NoSuchMethodException | InvocationTargetException | InstantiationException
@@ -23,11 +26,10 @@ public class ApiUtils {
             e.printStackTrace();
         }
 
-        for (Map<String, String> columns : rows) {
-            for (Map.Entry<String, String> column : columns.entrySet()) {
-                if (constructor != null && newInstance != null) {
-                    ReflectionUtils.invokeSetter(newInstance, column.getKey(), column.getValue());
-                }
+        for (Map.Entry<String, String> column : anInstance.entrySet()) {
+            if (constructor != null && newInstance != null) {
+                ReflectionUtils.invokeSetter(newInstance, column.getKey(), column.getValue());
+            }
 //                try {
 //                    Field field = aClass.getDeclaredField(column.getKey());
 //                    FieldMapper annotation = field.getDeclaredAnnotation(FieldMapper.class);
@@ -38,10 +40,9 @@ public class ApiUtils {
 //                catch (NoSuchFieldException e) {
 //                    e.printStackTrace();
 //                }
-            }
         }
 
-        return null;
+        return newInstance;
     }
 
     public static String getUrlForGet(String entityName, String baseUrl, Map<String, String> anInstance) {
@@ -53,5 +54,36 @@ public class ApiUtils {
         }
 
         return completeUrl.toString();
+    }
+
+    public static Object createJson(Map<String, String> anInstance, boolean isArray) {
+        ObjectNode rootNode = new ObjectMapper().createObjectNode();
+
+        for (Map.Entry<String, String> entry : anInstance.entrySet()) {
+            if (! entry.getKey().equalsIgnoreCase("/name")) {
+                String[] arrNames = entry.getValue().split(",");
+                int idxArr = 0;
+                for (String name : arrNames) {
+                    if (BasicConfig.getMapNameAndJsonObject().containsKey(name)) {
+                        if (isArray) {
+                            JsonObjectGenerator.setJsonPointerValue(rootNode, JsonPointer.compile(entry.getKey() + "/" + idxArr),
+                                    (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
+                            idxArr++;
+                        }
+                        else
+                            JsonObjectGenerator.setJsonPointerValue(rootNode, JsonPointer.compile(entry.getKey()),
+                                    (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
+                    }
+                    else {
+                        JsonObjectGenerator.setJsonPointerValue(rootNode, JsonPointer.compile(entry.getKey()),
+                                new TextNode(name));
+                    }
+                }
+            }
+        }
+
+        BasicConfig.getMapNameAndJsonObject().put(anInstance.get("/name"), rootNode);
+
+        return rootNode;
     }
 }

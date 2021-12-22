@@ -1,14 +1,23 @@
 package functional.driver.actions.subscription;
 
+import functional.driver.utils.ApiUtils;
+import functional.driver.utils.Constants;
+import functional.driver.utils.KeyCloakAuthenticationHook;
 import io.cucumber.datatable.DataTable;
+import net.serenitybdd.rest.SerenityRest;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
-import net.serenitybdd.screenplay.rest.questions.ResponseConsequence;
+import net.serenitybdd.screenplay.rest.interactions.Post;
 import net.thucydides.core.annotations.Step;
+import org.apache.http.HttpStatus;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ActivateService implements Task {
 
@@ -27,32 +36,25 @@ public class ActivateService implements Task {
     public <T extends Actor> void performAs(T actor) {
         final String url = "/billing/subscription/activateServices";
 
-        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-//        Class<?> dtoClass = ReflectionUtils.getDtoMapperClassByName(entity);
-//        String jsonBody = ApiUtils.getJsonBody(dtoClass, dataTable);
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        for (Map<String, String> columns : rows) {
-//            ObjectNode rootNode = mapper.createObjectNode();
-//
-//            for (Map.Entry<String, String> entry : columns.entrySet()) {
-//                JsonObjectGenerator.setJsonPointerValue(rootNode, JsonPointer.compile(entry.getKey()),
-//                        new TextNode(entry.getValue()));
-//            }
-//        }
-//
-//        actor.attemptsTo(
-//                Post.to(url)
-//                        .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
-//                        .with(request -> request.header(
-//                                HttpHeaders.AUTHORIZATION, Constants.OAUTH2 + " " + KeyCloakAuthenticationHook.getToken())
-//                                .body(rootNode)
-//                        )
-//        );
+        List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
-        actor.should(
-                ResponseConsequence.seeThatResponse(response -> response.statusCode(200))
-        );
+        for (Map<String, String> anInstance : table) {
+            Object jsonBody = ApiUtils.createJson(anInstance, false);
+
+            actor.attemptsTo(
+                    Post.to(url)
+                            .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                            .with(request -> request.header(
+                                    HttpHeaders.AUTHORIZATION, Constants.OAUTH2 + " " + KeyCloakAuthenticationHook.getToken())
+                                    .body(jsonBody)
+                            )
+            );
+
+            // Always add this piece of code in each task to verify whether or not the request is successfully executed (i.e. status code 200)
+            if (SerenityRest.lastResponse().statusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
+                    SerenityRest.lastResponse().statusCode() == HttpStatus.SC_CONFLICT){
+                assertThat(SerenityRest.lastResponse().jsonPath().get("status").toString()).isEqualTo("FAIL");
+            }
+        }
     }
 }

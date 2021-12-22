@@ -26,7 +26,7 @@ public class VerifyResponseOfLastRequest implements Question<Object> {
 
         JsonPath aResponse = SerenityRest.lastResponse().jsonPath();
 
-        assertThat(Float.toString(aResponse.get(field))).isEqualTo(expectedValue);
+        assertThat(aResponse.get(field).toString()).isEqualTo(expectedValue);
 
         return null;
     }

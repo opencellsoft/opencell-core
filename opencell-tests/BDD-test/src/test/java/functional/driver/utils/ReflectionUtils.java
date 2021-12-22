@@ -9,19 +9,19 @@ import java.util.Map;
 
 public class ReflectionUtils {
 
-    private static final String DTO_MAPPER_PREFIX = "functional.dto.";
-    private static final String DTO_MAPPER_SUFFIX = "DtoMapper";
+    private static final String DTO_PREFIX = "org.meveo.api.dto.billing.";
+    private static final String DTO_SUFFIX = "Dto";
 
-    public static Class<?> getDtoMapperClassByName(String className) {
-        Class<?> dtoMapperClass = null;
+    public static Class<?> getDtoClassByName(String className) {
+        Class<?> dtoClass = null;
 
         try {
-            dtoMapperClass = Class.forName(DTO_MAPPER_PREFIX + className + DTO_MAPPER_SUFFIX);
+            dtoClass = Class.forName(DTO_PREFIX + className + DTO_SUFFIX);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        return dtoMapperClass;
+        return dtoClass;
     }
 
     private static Map removeEmptyValues(Map<String, Object> data) {
