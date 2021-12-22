@@ -83,7 +83,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.description = description;
     }
 
-    public BigDecimal getPricetWithoutTax() {
+    public BigDecimal getPriceWithoutTax() {
         return pricetWithoutTax;
     }
 
@@ -125,12 +125,12 @@ public class PricePlanMatrixLine extends AuditableEntity {
         PricePlanMatrixLine that = (PricePlanMatrixLine) o;
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
-                Objects.equals(getPricetWithoutTax(), that.getPricetWithoutTax()) &&
+                Objects.equals(getPriceWithoutTax(), that.getPriceWithoutTax()) &&
                 Objects.equals(getPriority(), that.getPriority());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPricetWithoutTax(), getPriority());
+        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPriceWithoutTax(), getPriority());
     }
 }

@@ -1,8 +1,31 @@
 package org.meveo.service.cpq;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.api.dto.cpq.PriceDTO;
+import org.meveo.api.dto.cpq.xml.BillableAccount;
+import org.meveo.api.dto.cpq.xml.BillingAccount;
+import org.meveo.api.dto.cpq.xml.Category;
+import org.meveo.api.dto.cpq.xml.Contract;
+import org.meveo.api.dto.cpq.xml.Details;
+import org.meveo.api.dto.cpq.xml.Header;
+import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Quote;
-import org.meveo.api.dto.cpq.xml.*;
+import org.meveo.api.dto.cpq.xml.QuoteLine;
+import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
+import org.meveo.api.dto.cpq.xml.SubCategory;
 import org.meveo.common.UtilsDto;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
@@ -12,22 +35,12 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
-import org.meveo.model.quote.*;
+import org.meveo.model.quote.QuotePrice;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.api.EntityToDtoConverter;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 @Stateless
 public class QuoteMapper {

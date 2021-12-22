@@ -28,6 +28,11 @@ import java.math.BigDecimal;
 public class DeducedCounter {
 
     /**
+     * Counter period change information
+     */
+    private CounterValueChangeInfo counterValueChangeInfo;
+
+    /**
      * A deduced quantity of an EDR related to a counter.
      */
     private BigDecimal deducedQuantity = BigDecimal.ZERO;
@@ -41,9 +46,11 @@ public class DeducedCounter {
     /**
      * Constructor.
      *
+     * @param counterValueChangeInfo Counter period change information
      * @param deducedQuantity the deduced quantity
      */
-    public DeducedCounter(final BigDecimal deducedQuantity) {
+    public DeducedCounter(CounterValueChangeInfo counterValueChangeInfo, final BigDecimal deducedQuantity) {
+        this.counterValueChangeInfo = counterValueChangeInfo;
         this.deducedQuantity = deducedQuantity;
     }
 
@@ -63,5 +70,19 @@ public class DeducedCounter {
      */
     public void setDeducedQuantity(BigDecimal deducedQuantity) {
         this.deducedQuantity = deducedQuantity;
+    }
+
+    /**
+     * @return Counter period change information
+     */
+    public CounterValueChangeInfo getCounterValueChangeInfo() {
+        return counterValueChangeInfo;
+    }
+    
+    /**
+     * @param counterValueChangeInfo
+     */
+    public void setCounterValueChangeInfo(CounterValueChangeInfo counterValueChangeInfo) {
+        this.counterValueChangeInfo = counterValueChangeInfo;
     }
 }

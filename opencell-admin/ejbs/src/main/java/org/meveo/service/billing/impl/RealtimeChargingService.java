@@ -20,20 +20,21 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
-import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
@@ -44,7 +45,6 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
 
 /**
@@ -61,23 +61,17 @@ public class RealtimeChargingService {
     @Inject
     protected Logger log;
 
-    /** The charge application rating service. */
     @Inject
-    private RatingService ratingService;
-
-    /** The wallet operation service. */
-    @Inject
-    private WalletOperationService walletOperationService;
-
-    /** The recurring charge template service. */
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
-    
-    @Inject
-	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+    private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+
+    @Inject
+    private RecurringRatingService recurringRatingService;
+
+    @Inject
+    private OneShotRatingService oneShotRatingService;
 
     /**
      * Gets the application price.
@@ -135,30 +129,46 @@ public class RealtimeChargingService {
     public Amounts getApplicationPrice(Seller seller, BillingAccount ba, TradingCurrency currency, TradingCountry buyersCountry, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate,
             BigDecimal inputQuantity, String param1, String param2, String param3, boolean ignoreNoTax) throws BusinessException {
 
+        Subscription subscription = new Subscription();
+        subscription.setSubscriptionDate(subscriptionDate);
+        subscription.setOffer(offerTemplate);
+        subscription.setSeller(seller);
+
+        ServiceInstance serviceInstance = new ServiceInstance();
+        serviceInstance.setSubscription(subscription);
+
         OneShotChargeInstance ci = new OneShotChargeInstance();
         ci.setCountry(buyersCountry);
         ci.setCurrency(currency);
         ci.setChargeTemplate(chargeTemplate);
+        ci.setServiceInstance(serviceInstance);
+        ci.setSubscription(subscription);
+        ci.setSeller(seller);
 
         BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeTemplate, inputQuantity);
-        
-        WalletOperation op = new WalletOperation(ci, inputQuantity, ratingQuantity, subscriptionDate, null, param1, param2, param3, null, null, null, null,null, null);
-        op.setOfferTemplate(offerTemplate);
-        op.setSeller(seller);
 
-        try {
-            ratingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency, null);
+//        WalletOperation op = new WalletOperation(ci, inputQuantity, ratingQuantity, subscriptionDate, null, param1, param2, param3, null, null, null, null, null, null);
+//        op.setOfferTemplate(offerTemplate);
+//        op.setSeller(seller);
 
-        } catch (RatingException e) {
-            log.trace("Failed to rate a wallet operation {}: {}", op, e.getRejectionReason());
-            throw e; // e.getBusinessException();
+//        try {
+//            oneShotRatingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
+//
+//        } catch (RatingException e) {
+//            log.trace("Failed to rate a wallet operation {}: {}", op, e.getRejectionReason());
+//            throw e; // e.getBusinessException();
+//
+//        } catch (BusinessException e) {
+//            log.error("Failed to rate a wallet operation {}: {}", op, e.getMessage(), e);
+//            throw e;
+//        }
+//
 
-        } catch (BusinessException e) {
-            log.error("Failed to rate a wallet operation {}: {}", op, e.getMessage(), e);
-            throw e;
-        }
+        RatingResult ratingResult = oneShotRatingService.rateOneShotCharge(ci, inputQuantity, ratingQuantity, subscriptionDate, null, null, true, false);
+        WalletOperation op = ratingResult.getWalletOperations().get(0);
 
         return new Amounts(op.getAmountWithoutTax(), op.getAmountWithTax(), op.getAmountTax(), op.getTax());
+
     }
 
     /**
@@ -181,21 +191,12 @@ public class RealtimeChargingService {
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(), ba.getTradingCountry(),
             ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
-        Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
-        List<WalletOperation> ops;
-        try {
-            ops = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, true, true, null);
+        Date nextApplicationDate = recurringRatingService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
 
-        } catch (RatingException e) {
-            log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());
-            throw e; // e.getBusinessException();
+        RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, true, true, null);
 
-        } catch (BusinessException e) {
-            log.error("Failed to rate a recurring charge {}: {}", chargeInstance, e.getMessage(), e);
-            throw e;
-        }
-        return ops.stream().filter(walletOperation -> walletOperation != null).map(walletOperation -> priceWithoutTax ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax()).reduce(BigDecimal.ZERO,
-            BigDecimal::add);
+        return ratingResult.getWalletOperations().stream().filter(walletOperation -> walletOperation != null)
+            .map(walletOperation -> priceWithoutTax ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
 
     }
 
@@ -234,8 +235,9 @@ public class RealtimeChargingService {
             for (ServiceChargeTemplate<RecurringChargeTemplate> charge : serviceTemplate.getServiceRecurringCharges()) {
                 boolean isApplyInAdvance = (charge.getChargeTemplate().getApplyInAdvance() == null) ? false : charge.getChargeTemplate().getApplyInAdvance();
                 if (!StringUtils.isBlank(charge.getChargeTemplate().getApplyInAdvanceEl())) {
-                    isApplyInAdvance = recurringChargeTemplateService.matchExpression(charge.getChargeTemplate().getApplyInAdvanceEl(), null, serviceTemplate, charge.getChargeTemplate(), null);
+                    isApplyInAdvance = recurringRatingService.matchExpression(charge.getChargeTemplate().getApplyInAdvanceEl(), null, serviceTemplate, charge.getChargeTemplate(), null);
                 }
+
                 if (isApplyInAdvance) {
                     result = result.add(getFirstRecurringPrice(ba, charge.getChargeTemplate(), subscriptionDate, quantity, param1, param2, param3, priceWithoutTax));
                 }
@@ -244,5 +246,4 @@ public class RealtimeChargingService {
 
         return result;
     }
-
 }

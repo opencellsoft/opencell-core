@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -118,7 +119,7 @@ public class QuoteService extends BusinessService<Quote> {
 
         for (Entry<String, List<QuoteInvoiceInfo>> invoiceInfoEntry : quoteInvoiceInfos.entrySet()) {
 
-            List<WalletOperation> walletOperations = new ArrayList<>();
+            RatingResult ratingResult = new RatingResult();
             List<RatedTransaction> ratedTransactions = new ArrayList<>();
             BillingAccount billingAccount = null;
 
@@ -135,8 +136,9 @@ public class QuoteService extends BusinessService<Quote> {
                         List<ProductChargeInstance> productChargeInstances = productInstance.getProductChargeInstances();
                         for (ProductChargeInstance productChargeInstance : productChargeInstances) {
                             try {
-                                walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, true));
-
+                                RatingResult localRatingResult = productChargeInstanceService.applyProductChargeInstance(productChargeInstance, true);
+                                ratingResult.add(localRatingResult);
+                                
                             } catch (RatingException e) {
                                 log.trace("Failed to apply a product charge {}: {}", productChargeInstance, e.getRejectionReason());
                                 throw e; // e.getBusinessException();
@@ -160,10 +162,8 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             try {
-                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
-                                if (wo != null) {
-                                    walletOperations.add(wo);
-                                }
+                                RatingResult localRatingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                                ratingResult.add(localRatingResult);
 
                             } catch (RatingException e) {
                                 log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge, e.getRejectionReason());
@@ -179,10 +179,8 @@ public class QuoteService extends BusinessService<Quote> {
                         if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
                                 try {
-                                    WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
-                                    if (wo != null) {
-                                        walletOperations.add(wo);
-                                    }
+                                    RatingResult localRatingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
+                                    ratingResult.add(localRatingResult);
 
                                 } catch (RatingException e) {
                                     log.trace("Failed to apply a termination charge {}: {}", terminationCharge, e.getRejectionReason());
@@ -198,10 +196,8 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             try {
-                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true, null);
-                                if (walletOps != null && !walletOps.isEmpty()) {
-                                    walletOperations.addAll(walletOps);
-                                }
+                                RatingResult localRatingResult = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true, null);
+                                ratingResult.add(localRatingResult);
 
                             } catch (RatingException e) {
                                 log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
@@ -237,8 +233,8 @@ public class QuoteService extends BusinessService<Quote> {
                         for (EDR edr : edrs) {
                             log.debug("edr={}", edr);
                             try {
-                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-                                walletOperations.addAll(walletOperationsFromEdr);
+                                RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
+                                ratingResult.add(localRatingResult);
 
                             } catch (RatingException e) {
                                 log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
@@ -252,8 +248,9 @@ public class QuoteService extends BusinessService<Quote> {
                     }
                 }
             }
+            
             // Create rated transactions from wallet operations
-            for (WalletOperation walletOperation : walletOperations) {
+            for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());

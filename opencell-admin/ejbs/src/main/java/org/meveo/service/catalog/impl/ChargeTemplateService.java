@@ -30,6 +30,9 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -40,7 +43,6 @@ import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
-
 /**
  * Charge Template service implementation.
  * 
@@ -50,7 +52,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 
     @Inject
     private TriggeredEDRTemplateService edrTemplateService;
-    
+
     @Inject
     private UnitOfMeasureService unitOfMeasureService;
 
@@ -260,115 +262,112 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     public synchronized int removeServiceLinkChargeUsage(Long chargeId) throws BusinessException {
         return this.remove("cat_serv_usage_charge_template", chargeId);
     }
-    
-    
+
     @Override
     public void create(P entity) throws BusinessException {
-    	validateEntity(entity);
-    	super.create(entity);
+        validateEntity(entity);
+        super.create(entity);
     }
-    
+
     @Override
     public P updateNoCheck(P entity) throws BusinessException {
-    	validateEntity(entity);
-    	return super.updateNoCheck(entity);
+        validateEntity(entity);
+        return super.updateNoCheck(entity);
     }
-    
+
     @Override
     public P update(P entity) throws BusinessException {
-    	validateEntity(entity);
-    	return super.update(entity);
+        validateEntity(entity);
+        return super.update(entity);
     }
-    
-    
-	/**
-	 * calculate rating quantity to be used based on chargeTemplate:
-	 * 
-	 * First evaluate inputUnitEl and ratingUnitEl When an EL is not defined, then
-	 * use the corresponding unit field (resp input and rating) if we have both
-	 * units (from ELs or reference fields), then ignore unitMultiplicator and
-	 * compute multiplicator from units. if we don't have both units, then use
-	 * unitMultiplicator from ChargeTemplate ultimately, if unitMultiplicator is not
-	 * set, then use default value of 1
-	 * 
-	 * 
-	 * @param chargeTemplate
-	 * @param quantity
-	 * @return
-	 * @throws BusinessException
-	 */
-	public BigDecimal evaluateRatingQuantity(ChargeTemplate chargeTemplate, BigDecimal quantity) throws BusinessException {
-		UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
-		UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
-		BigDecimal multiplicator = chargeTemplate.getUnitMultiplicator();
-		RoundingModeEnum roundingMode = chargeTemplate.getRoundingMode();
-		int unitNbDecimal = chargeTemplate.getUnitNbDecimal();
+
+    /**
+     * Calculate rating quantity to be used based on chargeTemplate:
+     * 
+     * First evaluate inputUnitEl and ratingUnitEl When an EL is not defined, then use the corresponding unit field (resp input and rating) if we have both units (from ELs or reference fields), then ignore
+     * unitMultiplicator and compute multiplicator from units. if we don't have both units, then use unitMultiplicator from ChargeTemplate ultimately, if unitMultiplicator is not set, then use default value of 1
+     * 
+     * 
+     * @param chargeTemplate Charge template
+     * @param quantity Quantity to convert
+     * @return Quantity converted into rating quantity
+     * @throws ValidationException Any failure to convert quantity to a rating quantity due to EL expression or invalid EL results
+     */
+    public BigDecimal evaluateRatingQuantity(ChargeTemplate chargeTemplate, BigDecimal quantity) throws ValidationException {
+
+        UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
+        UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
+
+        BigDecimal multiplicator = chargeTemplate.getUnitMultiplicator();
+        RoundingModeEnum roundingMode = chargeTemplate.getRoundingMode();
+        int unitNbDecimal = chargeTemplate.getUnitNbDecimal();
         if (unitNbDecimal == 0) {
             unitNbDecimal = 2;
         }
 
-		inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
-		outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
+        inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
+        outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
 
-		if (inputUnitFromEL != null || outputUnitFromEL != null) {
-			if (inputUnitFromEL != null && outputUnitFromEL != null) {
-				if (inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
-					BigDecimal outputMultiplicator = BigDecimal.valueOf(outputUnitFromEL.getMultiplicator());
-					BigDecimal inputMultiplicator = BigDecimal.valueOf(inputUnitFromEL.getMultiplicator());
-					Integer scale = calculateNeededScale(inputMultiplicator, outputMultiplicator);
-					return quantity.multiply(inputMultiplicator).divide(outputMultiplicator, scale, RoundingMode.HALF_UP);
-				} else {
-					throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitFromEL 
-							+ "/" + outputUnitFromEL +" for chargeTemplate "+chargeTemplate.getCode());
-				}
-			} else {
-				throw new BusinessException("null value not accepted on input/rating UnitOfMeasures: "
-							+ inputUnitFromEL + "/" + outputUnitFromEL);
-			}
-		} else if (multiplicator != null) {
-			return quantity.multiply(multiplicator).setScale(unitNbDecimal, roundingMode.getRoundingMode());
-		}
-		return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
-	}
+        if (inputUnitFromEL != null || outputUnitFromEL != null) {
+            if (inputUnitFromEL != null && outputUnitFromEL != null) {
+                if (inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
+                    BigDecimal outputMultiplicator = BigDecimal.valueOf(outputUnitFromEL.getMultiplicator());
+                    BigDecimal inputMultiplicator = BigDecimal.valueOf(inputUnitFromEL.getMultiplicator());
+                    Integer scale = calculateNeededScale(inputMultiplicator, outputMultiplicator);
+                    return quantity.multiply(inputMultiplicator).divide(outputMultiplicator, scale, RoundingMode.HALF_UP);
+                } else {
+                    throw new ValidationException("incompatible input/rating UnitOfMeasures: " + inputUnitFromEL + "/" + outputUnitFromEL + " for chargeTemplate " + chargeTemplate.getCode());
+                }
+            } else {
+                throw new ValidationException("null value not accepted on input/rating UnitOfMeasures: " + inputUnitFromEL + "/" + outputUnitFromEL);
+            }
+        } else if (multiplicator != null) {
+            return quantity.multiply(multiplicator).setScale(unitNbDecimal, roundingMode.getRoundingMode());
+        }
+        return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
+    }
 
-	/**
-	 * This method calculate the needed scale based on default scale + the difference of precision from the two numbers
-	 * 
-	 * @param inputMultiplicator
-	 * @param outputMultiplicator
-	 * 
-	 * @return scale
-	 */
-	private Integer calculateNeededScale(BigDecimal inputMultiplicator, BigDecimal outputMultiplicator) {
-		return BaseEntity.NB_DECIMALS + Math.abs(inputMultiplicator.toBigInteger().toString().length() - outputMultiplicator.toBigInteger().toString().length()) ;
-		
-	} 
-	
-	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
-		UnitOfMeasure unitFromEL = null;
-		if (!StringUtils.isBlank(expression)) {
-			String code = "";
-			code = ValueExpressionWrapper.evaluateToStringMultiVariable(expression);
-			unitFromEL = unitOfMeasureService.findByCode(code);
-			if (unitFromEL == null) {
-				throw new BusinessException("Cannot find unitOfMeasure by code '" + code + "', el was : " + expression);
-			}
-		}
-		return unitFromEL;
-	}
-	
-	private void validateEntity(P entity) throws BusinessException {
-		UnitOfMeasure ratingUnitOfMeasure = entity.getRatingUnitOfMeasure();
-		UnitOfMeasure inputUnitOfMeasure = entity.getInputUnitOfMeasure();
-		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null) {
-			if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
-				throw new BusinessException( "incompatible input/rating UnitOfMeasures: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
-			}
-		} else if (inputUnitOfMeasure != null || ratingUnitOfMeasure != null) {
-			throw new BusinessException("input/rating UnitOfMeasures must both be specified or both null: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
-		}
-	}
-	public Set<ChargeTemplate> getChargeTemplatesByCodes(List<String> chargeTemplateCodes) throws EntityDoesNotExistsException {
+    /**
+     * This method calculate the needed scale based on default scale + the difference of precision from the two numbers
+     * 
+     * @param inputMultiplicator
+     * @param outputMultiplicator
+     * 
+     * @return scale
+     */
+    private Integer calculateNeededScale(BigDecimal inputMultiplicator, BigDecimal outputMultiplicator) {
+        return BaseEntity.NB_DECIMALS + Math.abs(inputMultiplicator.toBigInteger().toString().length() - outputMultiplicator.toBigInteger().toString().length());
+
+    }
+
+    private UnitOfMeasure getUOMfromEL(String expression) throws ElementNotFoundException, InvalidELException {
+
+        if (!StringUtils.isBlank(expression)) {
+            String code = ValueExpressionWrapper.evaluateToStringMultiVariable(expression);
+            if (code != null) {
+                UnitOfMeasure unitFromEL = unitOfMeasureService.findByCode(code);
+                if (unitFromEL == null) {
+                    throw new ElementNotFoundException(code + " from EL '" + expression + "'", "UnitOfMeasure");
+                }
+                return unitFromEL;
+            }
+        }
+        return null;
+    }
+
+    private void validateEntity(P entity) throws BusinessException {
+        UnitOfMeasure ratingUnitOfMeasure = entity.getRatingUnitOfMeasure();
+        UnitOfMeasure inputUnitOfMeasure = entity.getInputUnitOfMeasure();
+        if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null) {
+            if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
+                throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
+            }
+        } else if (inputUnitOfMeasure != null || ratingUnitOfMeasure != null) {
+            throw new BusinessException("input/rating UnitOfMeasures must both be specified or both null: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
+        }
+    }
+
+    public Set<ChargeTemplate> getChargeTemplatesByCodes(List<String> chargeTemplateCodes) throws EntityDoesNotExistsException {
         Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
         if (chargeTemplateCodes == null) {
             return chargeTemplates;

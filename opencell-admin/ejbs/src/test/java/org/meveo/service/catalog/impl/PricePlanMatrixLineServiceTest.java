@@ -49,7 +49,7 @@ public class PricePlanMatrixLineServiceTest {
 
         assertThat(ppmLines.size()).isEqualTo(1);
         assertThat(ppmLines.get(0).getDescription()).isEqualTo("Price1");
-        assertThat(ppmLines.get(0).getPricetWithoutTax()).isEqualTo(valueOf(24));
+        assertThat(ppmLines.get(0).getPriceWithoutTax()).isEqualTo(valueOf(24));
     }
 
     private PricePlanMatrixVersion createPricePlanMatrixVersion() {

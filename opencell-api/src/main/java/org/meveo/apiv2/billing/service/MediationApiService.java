@@ -45,10 +45,12 @@ import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ProcessCdrListModeEnum;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
@@ -112,6 +114,9 @@ public class MediationApiService {
 
     @Inject
     private ReservationService reservationService;
+
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     @Resource
     private TimerService timerService;
@@ -196,8 +201,9 @@ public class MediationApiService {
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-                thisNewTX.processCDRsInTx(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
                     cdrListResult, virtualCounters, counterUpdates);
+
             });
         }
 
@@ -246,15 +252,18 @@ public class MediationApiService {
      * @param returnWalletOperations Shall wallet operation details be returned
      * @param cdrProcessingResult CDR processing result tracking
      * @param virtualCounters Virtual counters
-     * @param counterUpdates Counter udpate tracking
+     * @param counterUpdates Counter update tracking
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void processCDRsInTx(SynchronizedIterator<String> cdrLineIterator, ICdrReader cdrReader, ICdrParser cdrParser, boolean isDuplicateCheckOn, boolean isVirtual, boolean rate, boolean reserve,
+    public void processCDRs(SynchronizedIterator<String> cdrLineIterator, ICdrReader cdrReader, ICdrParser cdrParser, boolean isDuplicateCheckOn, boolean isVirtual, boolean rate, boolean reserve,
             boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, ProcessCdrListResult cdrProcessingResult,
             Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
 
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
+
+        // In case of no need to rollback, an error will be recorded directly in EDR
+        boolean noNeedToRollback = false;
 
         while (true) {
 
@@ -270,57 +279,91 @@ public class MediationApiService {
                 break;
             }
 
+            List<EDR> edrs = null;
+            List<WalletOperation> walletOperations = new ArrayList<>();
+            List<Reservation> reservations = new ArrayList<>();
+
             if (cdr.getRejectReason() == null) {
                 try {
                     if (isDuplicateCheckOn) {
                         cdrParser.deduplicate(cdr);
                     }
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
+                    edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
                     if (!isVirtual) {
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
 
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
-                        List<Reservation> reservations = new ArrayList<>();
 
                         // TODO this could be a problem if one CDR results in multiple EDRs and some fail to rate, while others are rated successfully
                         for (EDR edr : edrs) {
-                            Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr);
-                            if (edr.getRatingRejectionReason() != null) {
-                                cdr.setRejectReason(edr.getRatingRejectionReason());
+                            Reservation reservation = null;
+                            // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
+                            if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+                                reservation = usageRatingService.reserveUsageWithinTransaction(edr);
+                                // For other cases, rate each EDR in a separate TX
+                            } else {
+                                reservation = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.reserveUsageWithinTransaction(edr));
+                            }
+
+                            if (edr.getRejectReason() != null) {
+                                cdr.setRejectReason(edr.getRejectReason());
                                 cdr.setStatus(CDRStatusEnum.ERROR);
                             } else {
                                 reservations.add(reservation);
 
                             }
-                            // schedule cancellation at expiry
+                            // schedule cancellation at expire
                             TimerConfig timerConfig = new TimerConfig();
                             Object[] objs = { reservation.getId(), currentUser };
                             timerConfig.setInfo(objs);
                             Timer timer = timerService.createSingleActionTimer(appProvider.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
 //                            timers.put(reservation.getId(), timer);
+
                         }
 
-                        cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, null, false, false, returnEDRs, reservations));
+                        cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, null, false, false, returnEDRs, reservations, null));
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-                        List<WalletOperation> walletOperations = new ArrayList<>();
-                        for (EDR edr : edrs) {
-                            List<WalletOperation> wos = usageRatingService.rateUsageWithinTransaction(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0);
 
-                            if (wos != null) {
-                                walletOperations.addAll(wos);
+                        for (EDR edr : edrs) {
+                            RatingResult ratingResult = null;
+
+                            // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
+                            if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
+                                if (ratingResult.getRatingException() != null) {
+                                    throw ratingResult.getRatingException();
+                                }
+
+                                // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if no rollback is needed (no additional unforeseen data can be created/updated during rating)
+                                // when rating fails, error is not thrown but is simply handled
+                            } else if (noNeedToRollback) {
+                                ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, noNeedToRollback);
+                                if (ratingResult.getRatingException() != null) {
+                                    throw ratingResult.getRatingException();
+                                }
+                                if (ratingResult.getWalletOperations() != null) {
+                                    walletOperations.addAll(ratingResult.getWalletOperations());
+                                }
+
+                                // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
+                            } else {
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false));
+
+                                if (ratingResult.getWalletOperations() != null) {
+                                    walletOperations.addAll(ratingResult.getWalletOperations());
+                                }
                             }
                         }
-
-                        cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperations, returnWalletOperationDetails, returnEDRs, null));
+                        cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperations, returnWalletOperationDetails, returnEDRs, null, null));
 
                         // Just convert CDR to EDR - applies to non-virtual requests only
                     } else if (!isVirtual) {
-                        cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, null, false, false, returnEDRs, null));
+                        cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, null, false, false, returnEDRs, null, null));
                     }
 
                 } catch (Exception e) {
@@ -353,14 +396,15 @@ public class MediationApiService {
                     log.error("Failed to process a CDR line: {} from api. Reason: {}", cdr.getLine(), errorReason);
                 }
 
+                // In case of rollback only an error will be reported, irrelevant of how many CDRs were processed already
                 if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                     cdrProcessingResult.setChargedCDRs(new ChargeCDRResponseDto[1]);
                     position = 0;
                 }
 
                 cdrProcessingResult.getStatistics().addFail();
-                cdrProcessingResult.addChargedCdr(position,
-                    new ChargeCDRResponseDto(new CdrError(cdr.getRejectReasonException() != null ? cdr.getRejectReasonException().getClass().getSimpleName() : null, cdr.getRejectReason(), cdr.getLine())));
+                cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperations, returnWalletOperationDetails, returnEDRs, reservations,
+                    new CdrError(cdr.getRejectReasonException() != null ? cdr.getRejectReasonException().getClass().getSimpleName() : null, cdr.getRejectReason(), cdr.getLine())));
 
                 if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                     if (cdr.getRejectReasonException() != null && cdr.getRejectReasonException() instanceof BusinessException) {
@@ -376,8 +420,9 @@ public class MediationApiService {
                 if (cdrProcessingResult.getMode() == PROCESS_ALL) {
                     continue;
                 }
-                if (cdrProcessingResult.getMode() == STOP_ON_FIRST_FAIL) {
 
+                // Trim array to the last populated position, so not to return null elemenst in array more than needed
+                if (cdrProcessingResult.getMode() == STOP_ON_FIRST_FAIL) {
                     cdrProcessingResult.setChargedCDRs(Arrays.copyOf(cdrProcessingResult.getChargedCDRs(), position + 1));
                     break;
                 }
@@ -407,17 +452,19 @@ public class MediationApiService {
     }
 
     private ChargeCDRResponseDto createChargeCDRResultDto(List<EDR> edrs, List<WalletOperation> walletOperations, boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs,
-            List<Reservation> reservations) {
+            List<Reservation> reservations, CdrError cdrError) {
 
         ChargeCDRResponseDto result = new ChargeCDRResponseDto();
 
-        if (returnEDRs && edrs.get(0).getId() != null) {
+        result.setError(cdrError);
+
+        if (returnEDRs && edrs != null && edrs.get(0).getId() != null) {
             result.setEdrIds(new ArrayList<Long>(edrs.size()));
             for (EDR edr : edrs) {
                 result.getEdrIds().add(edr.getId());
             }
         }
-        if (walletOperations != null) {
+        if (walletOperations != null && !walletOperations.isEmpty()) {
             BigDecimal amountWithTax = BigDecimal.ZERO;
             BigDecimal amountWithoutTax = BigDecimal.ZERO;
             BigDecimal amountTax = BigDecimal.ZERO;
