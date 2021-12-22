@@ -840,6 +840,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
 	public BigDecimal customerAccountFutureBalanceExigibleWithoutLitigation(CustomerAccount customerAccount) throws BusinessException {
 		return computeBalance(customerAccount, null, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+		
 	}
 
 

@@ -100,10 +100,22 @@ import org.meveo.model.tax.TaxCategory;
 
         @NamedQuery(name = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing", query = "select distinct b FROM BillingAccount b "
         		+ " join fetch b.billingRun br left join fetch br.billingCycle "
-        		+ " left join fetch b.customerAccount ca left join fetch ca.customer left join fetch ca.paymentMethods m left join fetch ca.accountOperations ao "
+        		+ " left join fetch b.customerAccount ca left join fetch ca.customer left join fetch ca.paymentMethods m "
         		+ " left join fetch b.ratedTransactions r left join fetch r.wallet left join fetch r.invoiceSubCategory left join fetch r.userAccount left join fetch r.taxClass left join fetch r.tax"
-        		+ " left join fetch b.discountPlanInstances left join fetch b.usersAccounts ua left join fetch ua.subscriptions s left join fetch s.discountPlanInstances "
-        		+ " where br=:billingRun and (r is null or r.status='OPEN') and (m is null or m.preferred=true) AND (ao is null or ao.matchingStatus in('O','P','I')) order by b.id"),
+        		+ " left join fetch b.discountPlanInstances dpi left join fetch dpi.discountPlan dp left join fetch dp.discountPlanItems "
+        		+ " left join fetch b.usersAccounts ua left join fetch ua.subscriptions s left join fetch s.discountPlanInstances "
+        		+ " left join fetch b.tradingLanguage tl left join fetch tl.language "
+        		+ " where b.id in (:ids) and (r is null or r.status='OPEN') and (m is null or m.preferred=true) order by b.id"),
+        
+        @NamedQuery(name = "BillingAccount.findEntitiesToInvoiceHavingThresholdPerEntity", query = "SELECT new org.meveo.model.billing.ThresholdSummary( (case when c.invoicingThreshold is not null then c.id else null end), (case when ca.invoicingThreshold is not null then ca.id else null end), count(ba.id))" + 
+        		" from BillingAccount ba join ba.customerAccount ca join ca.customer c " + 
+        		" where ba.billingRun.id=:billingRunId and (c.thresholdPerEntity=true and c.invoicingThreshold is not null) or (ca.thresholdPerEntity=true and ca.invoicingThreshold is not null)" +
+        		" group by (case when c.invoicingThreshold is not null then c.id else null end), (case when ca.invoicingThreshold is not null then ca.id else null end)"),
+        
+        @NamedQuery(name = "BillingAccount.findBillableEntityIdsForInvoicing", query = "select b.id FROM BillingAccount b where b.billingRun=:billingRun order by b.id"),
+        
+        @NamedQuery(name = "BillingAccount.findBillableEntityIdsForInvoicingExcludingThresholdEntities", query = "select b.id FROM BillingAccount b join b.customerAccount ca join ca.customer c "
+        		+ " where b.billingRun=:billingRun and not ((c.thresholdPerEntity=true and c.invoicingThreshold is not null) or (ca.thresholdPerEntity=true and ca.invoicingThreshold is not null))"),
 
         
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),

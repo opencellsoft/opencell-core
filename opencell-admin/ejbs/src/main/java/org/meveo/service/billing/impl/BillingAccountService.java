@@ -527,29 +527,41 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	 * @param endDate
 	 * @param pageSize 
 	 * @param pageIndex 
+	 * @param thresholdPerEntityFound 
 	 * @return
 	 */
 	public List<? extends IBillableEntity> findAccountsToInvoice(BillingRun billingRun, Date startDate,
-			Date endDate, int pageSize, int pageIndex) {
+			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
+		
+		String idsQueryName = "BillingAccount.findBillableEntityIdsForInvoicing";
+		if(thresholdPerEntityFound) {
+			idsQueryName = idsQueryName+"ExcludingThresholdEntities";
+		} 
+		
+
 		boolean useStart = startDate != null;
 		boolean useEnd = endDate != null;
-		String queryName = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing";
+		String entitiesQueryName = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing";
 		if (useStart && useEnd) {
-			queryName = queryName + "ByStartAndEndDate";
+			entitiesQueryName = entitiesQueryName + "ByStartAndEndDate";
 		} else if (useStart) {
-			queryName = queryName + "ByStartDate";
+			entitiesQueryName = entitiesQueryName + "ByStartDate";
 		} else if (useEnd) {
-			queryName = queryName + "ByEndDate";
+			entitiesQueryName = entitiesQueryName + "ByEndDate";
 		}
-		Query query = getEntityManager().createNamedQuery(queryName).setParameter("billingRun", billingRun);
+		//split to 2 queries to avoid hibernate 'firstResult/maxResults specified with collection fetch; applying in memory!' 
+		List<Long> ids = getEntityManager().createNamedQuery(idsQueryName).setParameter("billingRun", billingRun).setMaxResults(pageSize)
+			      .setFirstResult(pageIndex * pageSize).getResultList();
+		if(ids==null || ids.isEmpty()) {
+			return new ArrayList<IBillableEntity>();
+		}
+		Query query = getEntityManager().createNamedQuery(entitiesQueryName).setParameter("ids", ids);
 		if (useStart) {
 			query.setParameter("startDate", startDate);
 		} else if (useEnd) {
 			query.setParameter("endDate", endDate);
 		}
-		return query.setMaxResults(pageSize)
-	      .setFirstResult(pageIndex * pageSize)
-	      .getResultList();
+		return query.getResultList();
 	}
 
 }

@@ -18,15 +18,22 @@
 
 package org.meveo.service.tax;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
@@ -67,17 +74,20 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
     @Inject
     private TaxScriptService taxScriptService;
+    
+    private static Map<Long,List<TaxMapping>> taxMappingLists = new TreeMap<Long,List<TaxMapping>>();
 
     @Override
     public void create(TaxMapping entity) throws BusinessException {
         validateValidityDates(entity);
+        taxMappingLists = new TreeMap<Long,List<TaxMapping>>();
         super.create(entity);
     }
 
     @Override
     public TaxMapping update(TaxMapping entity) throws BusinessException {
         validateValidityDates(entity);
-
+        taxMappingLists = new TreeMap<Long,List<TaxMapping>>();
         return super.update(entity);
     }
 
@@ -358,6 +368,50 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                         + ", buyer's country=" + buyersCountry.getCode() + "/" + buyersCountry.getId() 
                         + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
     }
+    
+    /**
+     * Find Tax mapping with the highest priority (highest number)
+     * 
+     * @param taxCategory Tax category
+     * @param taxClass Tax class
+     * @param seller Seller
+     * @param billingAccount Billing account
+     * @param applicationDate Date to consider for match
+     * @return A best matched Tax mapping
+     */
+    public TaxMapping findBestTaxMappingMatchForJob(TaxCategory taxCategory, TaxClass taxClass, Seller seller,BillingAccount billingAccount, Long sellersCountryId, Long billingAccountCountryId, Date applicationDate) {
+        log.info("try to find Tax mapping with parameters {}/{}/{}/{}/{}", taxCategory.getId(), taxClass.getId(), sellersCountryId, billingAccountCountryId, applicationDate);
+
+    	if(taxMappingLists.isEmpty()) {
+    		 List<TaxMapping> taxMappings = getEntityManager().createNamedQuery("TaxMapping.findAll", TaxMapping.class).getResultList();
+    		 taxMappingLists = taxMappings.stream().collect(Collectors.groupingBy(m->m.getAccountTaxCategory().getId()));
+    	}
+        //TradingCountry sellersCountry = seller.getTradingCountry();
+        //TradingCountry buyersCountry = billingAccount.getTradingCountry();
+    	List<TaxMapping> matchedCategoryList = taxMappingLists.get(taxCategory.getId());
+		if(matchedCategoryList!=null) {
+			matchedCategoryList = matchedCategoryList.stream().filter(x->x.getChargeTaxClass()==null||x.getChargeTaxClass().getId().equals(taxClass.getId()))
+			.filter(x->x.getChargeTaxClass()==null||x.getChargeTaxClass().getId().equals(taxClass.getId()))
+			.filter(x->x.getSellerCountry()==null||x.getSellerCountry().getId().equals(sellersCountryId))
+			.filter(x->x.getBuyerCountry()==null||x.getBuyerCountry().getId().equals(billingAccountCountryId))
+			.filter(x->x.getValid()==null||( (x.getValid().getTo()==null || x.getValid().getTo().after(applicationDate))
+					|| (x.getValid().getFrom()==null || x.getValid().getFrom().equals(applicationDate) || x.getValid().getFrom().before(applicationDate))))
+			.collect(Collectors.toList());
+
+	        for (TaxMapping taxMapping : matchedCategoryList) {
+	            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
+	                return taxMapping;
+	            }
+	        }
+		}
+	    log.info("tax not found with params {}/{}/{}/{}/{}", taxCategory.getId(), taxClass.getId(), sellersCountryId, billingAccountCountryId, applicationDate);
+
+        throw new IncorrectChargeTemplateException(
+                "No Tax mapping matched for tax category="+ (taxCategory != null ? taxCategory.getCode() : null )+ "/" + (taxCategory != null ? taxCategory.getId() : null)
+                		+ ", tax class=" + (taxClass != null ? taxClass.getCode() : null )+ "/" + (taxClass != null ? taxClass.getId() : null) 
+                		+ ", seller's country=" + sellersCountryId + ", buyer's country=" + billingAccountCountryId 
+                        + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+    }
 
     /**
      * Evaluate tax EL expression
@@ -568,5 +622,17 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
          * Tax
          */
         public Tax tax;
+    }
+    
+    @Override
+    public void remove(TaxMapping entity) throws BusinessException {
+    	super.remove(entity);
+    	taxMappingLists = new TreeMap<Long,List<TaxMapping>>();
+    }
+    
+    @Override
+    public void remove(Long id) throws BusinessException {
+    	super.remove(id);
+    	taxMappingLists = new TreeMap<Long,List<TaxMapping>>();
     }
 }
