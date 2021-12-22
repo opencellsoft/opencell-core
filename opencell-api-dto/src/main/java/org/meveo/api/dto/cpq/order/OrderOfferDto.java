@@ -7,6 +7,7 @@ import java.util.List;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
@@ -43,7 +44,11 @@ public class OrderOfferDto extends BaseEntityDto {
 	/** The userAccount code. */
 	private String userAccountCode;
 	
-	public OrderOfferDto() {
+	/** Order line type */
+    @Schema(description = "The order line type")
+    private OfferLineTypeEnum orderLineType;
+
+    public OrderOfferDto() {
 	}
  
 	
@@ -53,7 +58,8 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.orderOfferId = orderOffer.getId();
 		this.commercialOrderId = orderOffer.getOrder().getId();
 		this.offerTemplateCode = orderOffer.getOfferTemplate().getCode();
-		this.deliveryDate = orderOffer.getDeliveryDate();
+        this.deliveryDate = orderOffer.getDeliveryDate();
+        this.orderLineType = orderOffer.getOrderLineType();
 	}
  
 
@@ -62,7 +68,8 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.commercialOrderId = orderOffer.getOrder()!=null?orderOffer.getOrder().getId():null;
 		this.offerTemplateCode = orderOffer.getOfferTemplate()!=null?orderOffer.getOfferTemplate().getCode():null;
 		this.deliveryDate = orderOffer.getDeliveryDate();
-		this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
+        this.orderLineType = orderOffer.getOrderLineType();
+        this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
@@ -206,5 +213,13 @@ public class OrderOfferDto extends BaseEntityDto {
 	public void setUserAccountCode(String userAccountCode) {
 		this.userAccountCode = userAccountCode;
 	}
+
+    public void setOrderLineType(OfferLineTypeEnum orderLineType) {
+        this.orderLineType = orderLineType;
+    }
+
+    public OfferLineTypeEnum getOrderLineType() {
+        return orderLineType;
+    }
  
 }
