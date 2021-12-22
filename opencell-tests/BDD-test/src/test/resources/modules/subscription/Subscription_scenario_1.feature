@@ -13,22 +13,22 @@
          | <codeSub> | <description> | <userAccount> | <offerTemplate> |
        ########### Define fields before activating services
        When   I define
-         | /name     | /code     | /doubleValue |
-         | <nameCF1> | <codeCF1> | <valueCF1>   |
-         | <nameCF2> | <codeCF2> | <valueCF2>   |
+         | name      | code      | doubleValue |
+         | <nameCF1> | <codeCF1> | <valueCF1>  |
+         | <nameCF2> | <codeCF2> | <valueCF2>  |
        And    I define following list
-         | /name     | /customField        |
+         | name      | customField         |
          | <listCFs> | <nameCF1>,<nameCF2> |
        And    I define
-         | /name      | /code         | /quantity  | /subscriptionDate  | /customFields |
-         | <nameSer>  | <codeService> | <quantity> | <subscriptionDate> | <listCFs>     |
+         | name      | code          | quantity   | subscriptionDate   | customFields |
+         | <nameSer> | <codeService> | <quantity> | <subscriptionDate> | <listCFs>    |
        And    I define following list
-         | /name      | /service  |
+         | name       | service   |
          | <listSers> | <nameSer> |
        ########### Now activate services on subscription
        And    I activate services on subscription
-         | /subscription | /servicesToActivate |
-         | <codeSub>     | <listSers>          |
+         | subscription | servicesToActivate |
+         | <codeSub>    | <listSers>         |
        Then last response has field <field> whose value is <value>
 
        Examples:

@@ -1,7 +1,7 @@
 package functional.driver.actions.generic;
 
 import functional.SQLite.SQLiteManagement;
-import functional.driver.utils.ApiUtils;
+import functional.driver.utils.JsonUtils;
 import functional.driver.utils.Constants;
 import functional.driver.utils.KeyCloakAuthenticationHook;
 import functional.driver.utils.ReflectionUtils;
@@ -43,7 +43,7 @@ public class CreateEntityInline implements Task {
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> anInstance : table) {
-            Object jsonBody = ApiUtils.getJsonBody(dtoClass, anInstance);
+            Object jsonBody = JsonUtils.getJsonBody(dtoClass, anInstance);
             actor.attemptsTo(
                     Post.to(url)
                             .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))

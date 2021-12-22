@@ -1,6 +1,6 @@
 package functional.driver.actions.generic;
 
-import functional.driver.utils.ApiUtils;
+import functional.driver.utils.JsonUtils;
 import io.cucumber.datatable.DataTable;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
@@ -28,7 +28,7 @@ public class DefineEntity implements Task {
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> anInstance : table) {
-            ApiUtils.createJson(anInstance, false);
+            JsonUtils.createJson(anInstance, false);
         }
     }
 

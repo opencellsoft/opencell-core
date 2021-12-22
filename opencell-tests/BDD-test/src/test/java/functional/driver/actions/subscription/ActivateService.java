@@ -1,6 +1,6 @@
 package functional.driver.actions.subscription;
 
-import functional.driver.utils.ApiUtils;
+import functional.driver.utils.JsonUtils;
 import functional.driver.utils.Constants;
 import functional.driver.utils.KeyCloakAuthenticationHook;
 import io.cucumber.datatable.DataTable;
@@ -39,7 +39,7 @@ public class ActivateService implements Task {
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> anInstance : table) {
-            Object jsonBody = ApiUtils.createJson(anInstance, false);
+            Object jsonBody = JsonUtils.createJson(anInstance, false);
 
             actor.attemptsTo(
                     Post.to(url)
