@@ -5785,7 +5785,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 }
             }
-            ;
         }
 
         if (invoiceLines != null) {
