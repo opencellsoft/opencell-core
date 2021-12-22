@@ -19,11 +19,9 @@ import java.math.BigDecimal;
     @NotNull Boolean getUseSecurityDeposit();
     @Schema(description = "")
     @NotNull
-    @Min(value = 1)
      BigDecimal getMaxAmountPerSecurityDeposit();
     @Schema(description = "")
     @NotNull
-    @Min(value = 1)
      BigDecimal getMaxAmountPerCustomer();
     @Schema(description = "")
     @NotNull
