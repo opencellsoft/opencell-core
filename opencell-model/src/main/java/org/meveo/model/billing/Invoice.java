@@ -607,7 +607,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
 	 * invoiceLines attached to the invoice
 	 */
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<InvoiceLine>  invoiceLines;
 
 
