@@ -244,6 +244,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	seller=commercialOrder.getSeller();
 
         }
+        if (entityToInvoice instanceof BillingAccount) {
+        	entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
+        	billingAccount = ((BillingAccount) entityToInvoice);
+        	invoiceLine.setBillingAccount(billingAccount);
+        	seller=billingAccount.getCustomerAccount().getCustomer().getSeller();
+
+        }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
@@ -255,7 +262,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      if (accountingArticle != null ) {
          setApplicableTax(accountingArticle, operationDate, seller, billingAccount, invoiceLine);
      }
-        create(invoiceLine);
+     create(invoiceLine);
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
