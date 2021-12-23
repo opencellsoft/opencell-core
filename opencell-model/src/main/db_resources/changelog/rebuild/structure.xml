@@ -1982,7 +1982,7 @@
             <column name="payment_deferral_count" type="int4">
                 <constraints nullable="true"/>
             </column>
-		</createTable>
+        </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
         <createTable tableName="ar_action_dunning">
@@ -11391,6 +11391,7 @@
 				<column name="days_overdue" type="int4" >
 	                <constraints nullable="false" />
 	            </column>
+	            <column name="dunning_policy_level_id" type="bigint" />
 	            <column name="dunning_collection_plan_id" type="bigint" />
 	            <column name="dunning_collection_plan_status_id" type="bigint"/>
 	            <column name="level_status" type="varchar(255)" />
@@ -15531,7 +15532,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="adm_currency"/>
     </changeSet>
-     <changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay">
+	<changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
                                  
@@ -15570,6 +15571,10 @@
       </changeSet>
       
       <changeSet id="#INTRD-2973_20211110-rebuild-str-fk" author="AmineBENAICHA">
+	   	<addForeignKeyConstraint baseColumnNames="dunning_policy_level_id" baseTableName="dunning_level_instance"
+			constraintName="fk_dunning_policy_level" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy_level" />
+
 		<addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
 			constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
