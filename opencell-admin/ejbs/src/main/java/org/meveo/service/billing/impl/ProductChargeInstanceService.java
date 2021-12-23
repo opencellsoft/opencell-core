@@ -17,11 +17,9 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -29,31 +27,20 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.rating.RatingResult;
 import org.meveo.service.base.BusinessService;
 
 /**
  * Product charge instance service
  * 
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.1 Candidate
  */
 @Stateless
 public class ProductChargeInstanceService extends BusinessService<ProductChargeInstance> {
 
-    @EJB
-    private WalletService walletService;
-
-    @EJB
-    private WalletOperationService walletOperationService;
-
     @Inject
-    private RatingService ratingService;
+    private ProductRatingService productRatingService;
 
     /**
      * @param code code of product charge instance
@@ -82,37 +69,13 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
      * 
      * @param productChargeInstance product charge instance
      * @param isVirtual indicates that it is virtual operation
-     * @return list of wallet operations
+     * @return Rating result with wallet operations
      * @throws BusinessException business exception.
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
-     * @lastModifiedVersion 5.1 Candidate
      */
-    public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
+    public RatingResult applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
 
-        List<WalletOperation> walletOperations = null;
-        ProductChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
-
-        if (!walletOperationService.isChargeMatch(productChargeInstance, chargeTemplate.getFilterExpression())) {
-            log.debug("not rating productChargeInstance with code={}, filter expression not evaluated to true", productChargeInstance.getCode());
-            return new ArrayList<WalletOperation>();
-        }
-
-        UserAccount userAccount = productChargeInstance.getUserAccount();
-        Subscription subscription = productChargeInstance.getSubscription();
-        log.debug("Apply product charge. User account {}, subscription {}, charge {}, quantity {}, date {}", userAccount != null ? userAccount.getCode() : null, subscription != null ? subscription.getCode() : null,
-            chargeTemplate.getCode(), productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
-
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(productChargeInstance, productChargeInstance.getChargeDate(), productChargeInstance.getQuantity(), null, null, null, null, null, null, null,
-            false, isVirtual);
-
-        WalletOperation walletOperation = ratingResult.getWalletOperation();
-        if (!isVirtual) {
-            walletOperations = walletOperationService.chargeWalletOperation(walletOperation);
-        } else {
-            walletOperations = new ArrayList<>();
-            walletOperations.add(walletOperation);
-        }
-        return walletOperations;
+        return productRatingService.rateProductCharge(productChargeInstance, isVirtual, false);
     }
 
     @SuppressWarnings("unchecked")

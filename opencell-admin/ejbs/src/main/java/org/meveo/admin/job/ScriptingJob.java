@@ -104,7 +104,7 @@ public class ScriptingJob extends Job {
         listValues.put("NEVER", "NEVER");
         transactionTypeCF.setListValues(listValues);
         transactionTypeCF.setDefaultValue("REQUIRES_NEW");
-        transactionTypeCF.setValueRequired(false);
+        transactionTypeCF.setValueRequired(true);
         transactionTypeCF.setGuiPosition("tab:Configuration:0;field:2");
         result.put("ScriptingJob_TransactionType", transactionTypeCF);
 

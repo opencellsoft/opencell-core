@@ -18,7 +18,6 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,23 +37,21 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RatingStatus;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
@@ -90,6 +87,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     @EJB
     private RecurringChargeInstanceService recurringChargeInstanceServiceNewTx;
 
+    @Inject
+    private RecurringRatingService recurringRatingService;
+
     public RecurringChargeInstance findByCodeAndService(String code, Long serviceInstanceId) {
         RecurringChargeInstance chargeInstance = null;
         try {
@@ -110,7 +110,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
         qb.addCriterionEnum("c.status", status);
         qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate, false, false);
-        qb.addValueIsEqualToField("c.subscription.id", subscriptionId, false,  false);
+        qb.addValueIsEqualToField("c.subscription.id", subscriptionId, false, false);
 
         List<Long> ids = qb.getIdQuery(getEntityManager()).getResultList();
         log.trace("Found recurring charges by status {} and subscriptionId {} . Result size found={}.", status, subscriptionId, (ids != null ? ids.size() : "NULL"));
@@ -151,7 +151,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInstance, ServiceCharge serviceCharge, ServiceChargeTemplateRecurring serviceChargeTemplateRecurring, boolean isVirtual) throws BusinessException {
+    public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInstance, ServiceCharge serviceCharge, ServiceChargeTemplateRecurring serviceChargeTemplateRecurring, boolean isVirtual)
+            throws BusinessException {
 
         if (serviceInstance == null) {
             throw new BusinessException("service instance does not exist.");
@@ -263,17 +264,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             // INTRD-279 fix: if reactivate a suspended recurring charge then update its next charge date
             // and charged to date. Maybe to review this fix when implementing suspension prorata evol
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-                DatePeriod reactivationCurrentPeriod = walletOperationService.getRecurringPeriod(recurringChargeInstance, reactivationDate);
+                DatePeriod reactivationCurrentPeriod = recurringRatingService.getRecurringPeriod(recurringChargeInstance, reactivationDate);
                 recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
-                if (walletOperationService.isApplyInAdvance(recurringChargeInstance)) {
+                if (recurringRatingService.isApplyInAdvance(recurringChargeInstance)) {
                     recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getTo());
                 } else {
                     recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getFrom());
                 }
-                log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " +
-                        "its chargedToDate and nextChargeDate are reajusted to {}, {}.",
-                        recurringChargeInstance.getCode(), recurringChargeInstance.getId(),
-                        recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
+                log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " + "its chargedToDate and nextChargeDate are reajusted to {}, {}.", recurringChargeInstance.getCode(),
+                    recurringChargeInstance.getId(), recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
             }
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                 recurringChargeInstance.setTerminationDate(null);
@@ -293,23 +292,22 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * @param applicationMode Charge application mode. Optional. Defaults to Subscription if not specified.
-     * @return A list of wallet operations created
+     * @return Rating status summary
      * @throws BusinessException General business exception
      */
-    public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual, ChargeApplicationModeEnum applicationMode)
+    public RatingResult applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual, ChargeApplicationModeEnum applicationMode)
             throws BusinessException {
 
-        if(walletOperationService.ignoreChargeTemplate(recurringChargeInstance)){
-            return new ArrayList<>();
+        if (!RecurringRatingService.isORChargeMatch(recurringChargeInstance)) {
+            return new RatingResult();
         }
 
         if (applicationMode == null) {
             applicationMode = ChargeApplicationModeEnum.SUBSCRIPTION;
         }
 
-        List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
         boolean chargeWasUpdated = false;
-        boolean isApplyInAdvance = walletOperationService.isApplyInAdvance(recurringChargeInstance) || isVirtual;
+        boolean isApplyInAdvance = recurringRatingService.isApplyInAdvance(recurringChargeInstance) || isVirtual;
 
         // MIGRATE for pre-v.10.0.0 cases when chargedToDate is not set yet
         // Determine a date until which a charge was rated.
@@ -325,18 +323,17 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             // be calculated as null when calendar periods reach the end
             if (recurringChargeInstance.getChargeDate() == null && recurringChargeInstance.getNextChargeDate() == null) {
 
-                DatePeriod period = walletOperationService.getRecurringPeriod(recurringChargeInstance, recurringChargeInstance.getSubscriptionDate());
+                DatePeriod period = recurringRatingService.getRecurringPeriod(recurringChargeInstance, recurringChargeInstance.getSubscriptionDate());
 
                 Date nextChargeDate = period.getTo();
                 if (nextChargeDate == null) {
-                    throw new BusinessException(
-                        "Can not determine a next charge period for charge instance " + recurringChargeInstance.getId() + " and subscription date " + recurringChargeInstance.getSubscriptionDate());
+                    throw new RatingException("Can not determine a next charge period for charge instance " + recurringChargeInstance.getId() + " and subscription date " + recurringChargeInstance.getSubscriptionDate());
                 }
                 recurringChargeInstance.setChargeDate(recurringChargeInstance.getSubscriptionDate());
                 recurringChargeInstance.setNextChargeDate(isApplyInAdvance && !recurringChargeInstance.getSubscriptionDate().after(period.getFrom()) ? recurringChargeInstance.getSubscriptionDate() : nextChargeDate);
                 chargeWasUpdated = true;
 
-                log.debug("Initializing recurring charge nextChargeDate to {} for chargeInstance id {} chargeCode {}, quantity {}, subscriptionDate {}", recurringChargeInstance.getNextChargeDate(),
+                log.debug("Initialized recurring charge nextChargeDate to {} for chargeInstance id {} chargeCode {}, quantity {}, subscriptionDate {}", recurringChargeInstance.getNextChargeDate(),
                     recurringChargeInstance.getId(), recurringChargeInstance.getCode(), recurringChargeInstance.getQuantity(), recurringChargeInstance.getSubscriptionDate());
             }
 
@@ -357,17 +354,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
             log.debug("Will apply recurring charge {} for missing periods {} - {} {}", recurringChargeInstance.getId(), nextChargeToDate, maxDate, isMaxDateInclusive ? "inclusive" : "exclusive");
             int i = 0;
+            RatingResult ratingResult = new RatingResult();
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
-                List<WalletOperation> wos = walletOperationService.applyReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual);
-                walletOperations.addAll(wos);
+                // For subscription mode rating can be partial
+                RatingResult localRatingResult = recurringRatingService.rateReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual, false); // TODO AKK solution to allow incomplete rating: applicationMode==ChargeApplicationModeEnum.SUBSCRIPTION);
+                ratingResult.add(localRatingResult);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
                 i++;
 
             }
-            if (!isVirtual && (chargeWasUpdated || !walletOperations.isEmpty())) {
+            if (!isVirtual && (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty())) {
                 recurringChargeInstance = updateNoCheck(recurringChargeInstance);
             }
 
@@ -383,10 +382,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
                     while (nextChargeToDate != null && nextChargeToDate.getTime() <= endContractDate.getTime()) {
                         log.debug("Schedule applicationDate={}", nextChargeToDate);
+                        
                         nextChargeToDate = DateUtils.setTimeToZero(nextChargeToDate);
-                        walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, true, null, null, false);
+                        recurringRatingService.rateReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, true, null, null, false, false);
 
-                        log.debug("chargeDate {},nextChargeDate {}", recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate());
+                        log.debug("chargeDate {}, nextChargeDate {}", recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate());
                         nextChargeToDate = recurringChargeInstance.getNextChargeDate();
 
                     }
@@ -399,34 +399,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 }
             }
 
-            return walletOperations;
+            return ratingResult;
 
         } catch (Exception e) {
             rejectededChargeProducer.fire("RecurringCharge rejected " + recurringChargeInstance.getId());
             throw e;
         }
-
-    }
-
-    /**
-     * Rate recurring charge up to a given date
-     * 
-     * @param chargeInstanceId Recurring charge instance id
-     * @param maxDate Date to rate until. Only full periods will be considered.
-     * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
-     * @return Rating status summary
-     * @throws BusinessException General business exception
-     */
-    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive) throws BusinessException {
-
-        RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false, null);
-
-        RatingStatus ratingStatus = new RatingStatus();
-        if (!wos.isEmpty()) {
-            ratingStatus.setNbRating(1);
-        }
-        return ratingStatus;
     }
 
     /**
@@ -439,16 +417,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @return Rating status summary
      * @throws BusinessException General business exception
      */
-    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive, ChargeApplicationModeEnum applicationMode) throws BusinessException {
+    public RatingResult applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive, ChargeApplicationModeEnum applicationMode) throws BusinessException {
 
         RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false, applicationMode);
+        RatingResult ratingResult = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false, applicationMode);
 
-        RatingStatus ratingStatus = new RatingStatus();
-        if (!wos.isEmpty()) {
-            ratingStatus.setNbRating(1);
-        }
-        return ratingStatus;
+        return ratingResult;
     }
 
     /**
@@ -462,7 +436,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public RatingStatus applyRecurringChargeInNewTx(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive, ChargeApplicationModeEnum applicationMode) throws BusinessException {
+    public RatingResult applyRecurringChargeInNewTx(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive, ChargeApplicationModeEnum applicationMode) throws BusinessException {
 
         return applyRecurringCharge(chargeInstanceId, maxDate, isMaxDateInclusive, applicationMode);
     }
@@ -488,16 +462,16 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         // Determine a date until which a charge was rated.
         // For Apply in advance cases it is the nextChargeDate field. For rating at the end of recurring period it is chargeDate field
         if (chargeInstance.getChargeDate() != null && chargeInstance.getChargedToDate() == null) {// This check will consider old charges only
-            boolean isApplyInAdvance = walletOperationService.isApplyInAdvance(chargeInstance);
+            boolean isApplyInAdvance = recurringRatingService.isApplyInAdvance(chargeInstance);
             chargeInstance.setChargedToDate(isApplyInAdvance ? chargeInstance.getNextChargeDate() : chargeInstance.getChargeDate());
             chargeWasUpdated = true;
         }
 
         log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getChargeToDateOnTermination(), chargeInstance.getChargedToDate());
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, orderNumber, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, orderNumber, false, false);
 
-        if (chargeWasUpdated || !wos.isEmpty()) {
+        if (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);
         }
 
@@ -521,16 +495,16 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         // Determine a date until which a charge was rated.
         // For Apply in advance cases it is the nextChargeDate field. For rating at the end of recurring period it is chargeDate field
         if (chargeInstance.getChargeDate() != null && chargeInstance.getChargedToDate() == null) {// This check will consider old charges only
-            boolean isApplyInAdvance = walletOperationService.isApplyInAdvance(chargeInstance);
+            boolean isApplyInAdvance = recurringRatingService.isApplyInAdvance(chargeInstance);
             chargeInstance.setChargedToDate(isApplyInAdvance ? chargeInstance.getNextChargeDate() : chargeInstance.getChargeDate());
             chargeWasUpdated = true;
         }
 
         log.debug("Will apply recurring charge {} to supplement charge agreement for {} - {}", chargeInstance.getId(), chargeInstance.getChargedToDate(), endAgreementDate);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, endAgreementDate, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, endAgreementDate, null, false, false);
 
-        if (chargeWasUpdated || !wos.isEmpty()) {
+        if (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);
         }
 
@@ -607,8 +581,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     }
 
     /**
-     * Re-rate recurring charge up to a given date. Existing Wallet operations and Rated transactions will be marked as canceled. Other Wallet operations related through RT
-     * aggregation will be marked as open. Already invoiced wallet operations will be refunded if rerateInvoiced=true.
+     * Re-rate recurring charge up to a given date. Existing Wallet operations and Rated transactions will be marked as canceled. Other Wallet operations related through RT aggregation will be marked as open. Already
+     * invoiced wallet operations will be refunded if rerateInvoiced=true.
      * 
      * Recurring charge will be reset to a given date and existing wallet operations canceled independently of new wallet operations recreated
      * 
@@ -629,7 +603,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
             // Reimbursement is applied directly as application end date is fixed and can not be changed
             if (chargeToDateOnTermination != null && chargeToDateOnTermination.before(chargeInstance.getChargedToDate())) {
-                walletOperationService.applyReccuringChargeInNewTx(chargeInstanceId, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false);
+                recurringRatingService.rateReccuringChargeInNewTx(chargeInstanceId, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false, false);
 
                 // Regular re-rating goes though applyRecurringCharge() as recurring calendar might change in mid rating and end date is not a strict date, but rather a period
                 // indicator
@@ -640,8 +614,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     }
 
     /**
-     * Re-rate recurring charge up to a given date. Existing Wallet operations and Rated transactions will be marked as canceled. Other Wallet operations related through RT
-     * aggregation will be marked as open. Already invoiced wallet operations will be refunded if rerateInvoiced=true.
+     * Re-rate recurring charge up to a given date. Existing Wallet operations and Rated transactions will be marked as canceled. Other Wallet operations related through RT aggregation will be marked as open. Already
+     * invoiced wallet operations will be refunded if rerateInvoiced=true.
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param fromDate Date to reset recurring charge to (chargedToDate value)
@@ -663,7 +637,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             // As in resetRecurringCharge() chargedToDate will be reset to a fromDate or a later date (depending on rerateInvoiced flag), need to reimburse not from
             // chargeToDateOnTermination, but from what chargedToDate was reset to.
             if (chargeToDateOnTermination != null && chargeToDateOnTermination.before(chargeInstance.getChargedToDate())) {
-                walletOperationService.applyReccuringCharge(findById(chargeInstanceId), ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false);
+                recurringRatingService.rateReccuringCharge(findById(chargeInstanceId), ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false, false);
 
                 // Regular re-rating goes though applyRecurringCharge() as recurring calendar might change in mid rating and end date is not a strict date, but rather a period
                 // indicator

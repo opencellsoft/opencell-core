@@ -175,7 +175,11 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                                 processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult);
                             }
 
-                            globalI = jobExecutionResult.registerSucces(nrOfItemsInBatch);
+                            if (!isProcessMultipleItemFunctionUpdateProgress()) {
+                                globalI = jobExecutionResult.registerSucces(nrOfItemsInBatch);
+                            } else {
+                                globalI = globalI + nrOfItemsInBatch;
+                            }
 
                             // Batch processing has failed, so process item one by one
                         } catch (Exception e) {
@@ -327,5 +331,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      */
     protected boolean isProcessItemInNewTx() {
         return true;
+    }
+
+    /**
+     * Is "Process multiple items" function updates job progress itself
+     * 
+     * @return True if "Process multiple items" function updates job progress itself
+     */
+    protected boolean isProcessMultipleItemFunctionUpdateProgress() {
+        return false;
     }
 }

@@ -1,5 +1,25 @@
 package org.meveo.service.billing.impl;
 
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CUST;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SE;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SU;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
+import static org.meveo.model.shared.DateUtils.addDaysToDate;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
@@ -12,7 +32,22 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ExtraMinAmount;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.MinAmountsResult;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -39,19 +74,6 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.util.ApplicationProvider;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.*;
-import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -245,14 +267,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
-        billingAccount = billingAccountService.findById(billingAccount.getId());
+
         Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
         Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
         if (isExonerated == null) {
             isExonerated = billingAccountService.isExonerated(billingAccount);
         }
         Object[] applicableTax = taxMappingService
-                .getApplicableTax(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
+                .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
         boolean taxRecalculated = (boolean) applicableTax[1];
         if (taxRecalculated) {
             Tax tax = (Tax) applicableTax[0];
@@ -646,16 +668,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public Map<Long, Long> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public Map<Long, List<Long>> createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
-        List<InvoiceLine> invoiceLines = new ArrayList<>();
-        Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
             create(invoiceLine);
-            invoiceLines.add(invoiceLine);
-            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+            commit();
+            List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
+                    .split(","))
+                    .map(Long::parseLong)
+                    .collect(toList());
+            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
         }
         return iLIdsRtIdsCorrespondence;
     }

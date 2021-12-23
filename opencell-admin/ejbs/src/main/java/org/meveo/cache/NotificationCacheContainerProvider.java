@@ -292,8 +292,9 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
     private CacheKeyStr getCacheKey(Notification notif, boolean isUpdate) {
         String key = notif.getOldEventTypeFilter().name() + "_" + notif.getOldClassNameFilter();
-        if(!isUpdate)
+        if(!isUpdate) {
         	key = notif.getEventTypeFilter().name() + "_" + notif.getClassNameFilter();
+        }
         return new CacheKeyStr(currentUser.getProviderCode(), key);
     }
 

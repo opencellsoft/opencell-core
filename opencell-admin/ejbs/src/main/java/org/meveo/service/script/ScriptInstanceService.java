@@ -626,7 +626,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
 
         return compiledScript.getScriptClass();
     }
-
+    
     /**
      * Get a compiled script class
      * 

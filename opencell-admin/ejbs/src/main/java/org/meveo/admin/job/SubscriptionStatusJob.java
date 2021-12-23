@@ -95,12 +95,8 @@ public class SubscriptionStatusJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("1");
-        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:1");
         result.put(CF_NB_RUNS, customFieldNbRuns);
-
-
-
-
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
@@ -110,12 +106,8 @@ public class SubscriptionStatusJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
-        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
-        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
-
-        result.put(CF_NB_RUNS, customFieldNbRuns);
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:2");
         result.put(CF_WAITING_MILLIS, customFieldNbWaiting);
-
 
         return result;
     }
