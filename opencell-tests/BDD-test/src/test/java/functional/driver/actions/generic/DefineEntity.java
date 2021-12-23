@@ -12,14 +12,20 @@ import java.util.Map;
 
 public class DefineEntity implements Task {
 
+    private final String dataField;
+
+    private final String intention;
+
     private final DataTable dataTable;
 
-    public DefineEntity(DataTable dataTable) {
+    public DefineEntity(String dataField, String intention, DataTable dataTable) {
+        this.dataField = dataField;
+        this.intention = intention;
         this.dataTable = dataTable;
     }
 
-    public static DefineEntity called(DataTable dataTable) {
-        return Tasks.instrumented(DefineEntity.class, dataTable);
+    public static DefineEntity called(String dataField, String intention, DataTable dataTable) {
+        return Tasks.instrumented(DefineEntity.class, dataField, intention, dataTable);
     }
 
     @Override
@@ -28,7 +34,7 @@ public class DefineEntity implements Task {
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> anInstance : table) {
-            JsonUtils.createJson(anInstance, false);
+            JsonUtils.defineJson(anInstance, dataField, intention, false);
         }
     }
 

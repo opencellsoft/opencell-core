@@ -39,7 +39,7 @@ public class ActivateService implements Task {
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> anInstance : table) {
-            Object jsonBody = JsonUtils.createJson(anInstance, false);
+            Object jsonBody = JsonUtils.defineJson(anInstance, "", "", false);
 
             actor.attemptsTo(
                     Post.to(url)

@@ -28,7 +28,7 @@ public class DefineListEntity implements Task {
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> anInstance : table) {
-            JsonUtils.createJson(anInstance, true);
+            JsonUtils.defineJson(anInstance, "", "", true);
         }
     }
 

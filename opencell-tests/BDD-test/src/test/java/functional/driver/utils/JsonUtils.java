@@ -47,8 +47,29 @@ public class JsonUtils {
         return newInstance;
     }
 
-    public static Object createJson(Map<String, String> anInstance, boolean isArray) {
+    public static Object defineJson(Map<String, String> anInstance, String dataField, String intention, boolean isArray) {
         ObjectNode rootNode = new ObjectMapper().createObjectNode();
+
+
+// Need to create a map which predefine couples (key, value) defined as follows : (intention.dataField, realJsonPathOfDataField)
+// for example: (activate services on subscription.custom field, /servicesToActivate/service/0/customFields/customField)
+// Then the Json that will be created will be as follows :
+//
+//         "servicesToActivate": {
+//            "service": [
+//            {
+//              "customFields": {
+//                "customField": [
+//                {
+//                    "code": "CF_SE_DOUBLE",
+//                     "doubleValue": 150
+//                }
+//                ]
+//            }
+//            }
+//          ]
+//        }
+        String realJsonPath = "/servicesToActivate/service/0/customFields/customField/0";
 
         for (Map.Entry<String, String> entry : anInstance.entrySet()) {
             if (! entry.getKey().equalsIgnoreCase("name")) {
@@ -57,25 +78,43 @@ public class JsonUtils {
                 for (String name : arrNames) {
                     if (BasicConfig.getMapNameAndJsonObject().containsKey(name)) {
                         if (isArray) {
-                            JsonObjectGenerator.setJsonPointerValue(rootNode,
-                                    JsonPointer.compile(JSON_POINTER_START + entry.getKey() + "/" + idxArr),
-                                    (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
+                            if (intention.equalsIgnoreCase("activate services on subscription"))
+                                JsonObjectGenerator.setJsonPointerValue(rootNode,
+                                        JsonPointer.compile(realJsonPath + JSON_POINTER_START + entry.getKey() + "/" + idxArr),
+                                        (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
+                            else
+                                JsonObjectGenerator.setJsonPointerValue(rootNode,
+                                        JsonPointer.compile(JSON_POINTER_START + entry.getKey() + "/" + idxArr),
+                                        (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
                             idxArr++;
                         }
+                        else {
+                            if (intention.equalsIgnoreCase("activate services on subscription")) {
+                                JsonObjectGenerator.setJsonPointerValue(rootNode,
+                                        JsonPointer.compile(realJsonPath + JSON_POINTER_START + entry.getKey()),
+                                        (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
+                            }
+                            else
+                                JsonObjectGenerator.setJsonPointerValue(rootNode,
+                                        JsonPointer.compile(JSON_POINTER_START + entry.getKey()),
+                                        (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
+                        }
+                    }
+                    else {
+System.out.println( "DAY NE : " + realJsonPath + JSON_POINTER_START + entry.getKey() );
+                        if (intention.equalsIgnoreCase("activate services on subscription"))
+                            JsonObjectGenerator.setJsonPointerValue(rootNode,
+                                    JsonPointer.compile(realJsonPath + JSON_POINTER_START + entry.getKey()),
+                                    new TextNode(name));
                         else
                             JsonObjectGenerator.setJsonPointerValue(rootNode,
                                     JsonPointer.compile(JSON_POINTER_START + entry.getKey()),
-                                    (JsonNode) BasicConfig.getMapNameAndJsonObject().get(name));
-                    }
-                    else {
-                        JsonObjectGenerator.setJsonPointerValue(rootNode,
-                                JsonPointer.compile(JSON_POINTER_START + entry.getKey()),
-                                new TextNode(name));
+                                    new TextNode(name));
                     }
                 }
             }
         }
-
+System.out.println( "rootNode DAY NE : " + rootNode );
         BasicConfig.getMapNameAndJsonObject().put(anInstance.get("/name"), rootNode);
 
         return rootNode;
