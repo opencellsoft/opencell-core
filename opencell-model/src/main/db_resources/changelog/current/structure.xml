@@ -11205,7 +11205,7 @@ order by date_trunc('month', i.invoice_date) DESC
    		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
-    
+
     <changeSet id="INTRD-2868_20211105" author="TarikFA.">
     	<addColumn tableName="crm_provider">
     		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
@@ -11213,7 +11213,7 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
 	<changeSet id="#INTRD-2764-20211104" author="HatimOUDAD">
-        
+
         <createSequence sequenceName="dunning_collection_plan_seq" startValue="1" />
         <createTable tableName="dunning_collection_plan">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -11226,7 +11226,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            
+
             <column name="collection_plan_number" type="varchar(255)" />
             <column name="related_policy_id" type="bigint" />
             <column name="initial_collection_plan_id" type="bigint" />
@@ -11234,59 +11234,59 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="related_invoice_id" type="bigint" />
             <column name="pause_reason_id" type="bigint" />
             <column name="stop_reason_id" type="bigint" />
-            
+
             <column name="current_dunning_level_sequence" type="int4" />
-            
-            
-            
+
+
+
             <column name="start_date" type="datetime" />
             <column name="days_open" type="int4" />
              <column name="close_date" type="datetime" />
-            
+
             <column name="status_id" type="bigint" />
             <column name="paused_until_date" type="datetime" />
             <column name="balance" type="numeric(23, 12)"/>
             <column name="retry_payment_on_resume_date" type="${type.boolean}" defaultValueNumeric="0"/>
-            
+
             <column name="next_action" type="varchar(255)" />
             <column name="next_action_date" type="datetime" />
             <column name="last_action" type="varchar(255)" />
             <column name="last_action_date" type="datetime" />
             <column name="total_dunning_levels" type="int4" />
             <column name="pause_duration" type="int4" />
-            
-            
+
+
         </createTable>
-        
-        
+
+
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-        						 
+
 		<addForeignKeyConstraint baseColumnNames="pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" /> 
-        						        
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />
+
         <addForeignKeyConstraint baseColumnNames="stop_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_stop_reason"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_stop_reasons" /> 
-        						 
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_stop_reasons" />
+
         <addForeignKeyConstraint baseColumnNames="related_policy_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_related_policy"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" /> 
-        
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" />
+
         <addForeignKeyConstraint baseColumnNames="status_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_plan_status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan_statuses" />
-                                 
+
         <addForeignKeyConstraint baseColumnNames="initial_collection_plan_id" baseTableName="dunning_collection_plan" constraintName="fk_initial_collection_plan"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
-                                 
+
         <addForeignKeyConstraint baseColumnNames="related_invoice_id" baseTableName="dunning_collection_plan" constraintName="fk_collection_plan_related_invoice"
                                  deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />                        
-        
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+
     </changeSet>
     <changeSet id="INTRD-30_2021114" author="ZBariki">
         <dropForeignKeyConstraint baseTableName="dunning_min_balance_trigger_currency"
@@ -11346,19 +11346,19 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
-    
+
       <changeSet id="INTRD-2959_11082021" author="Mbarek-Ay">
      <addColumn tableName="cpq_quote">
             <column name="user_account_id" type="bigint" />
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-                                 
+
       <addColumn tableName="quote_offer">
       <column name="user_account_id" type="bigint" />
       </addColumn>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
 
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889">
@@ -11386,8 +11386,8 @@ order by date_trunc('month', i.invoice_date) DESC
         <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_paym_plan_policy_pay_meth" tableName="crm_provider_payment_plan_policy_pay_methods" />
 	   	<addColumn tableName="ar_credit_category">
 			<column name="provider_id" type="BIGINT" />
-	    </addColumn>	    
-	    <addColumn tableName="crm_provider">	    
+	    </addColumn>
+	    <addColumn tableName="crm_provider">
 	   		<column name="dunning_default_pause_reason_id" type="BIGINT" />
 			<column name="min_allowed_receivable_amount" type="numeric(23, 12)" />
 			<column name="max_allowed_receivable_amount" type="numeric(23, 12)" />
@@ -11399,22 +11399,22 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="installment_amount_rounding" type="int4" defaultValueNumeric="2" />
 			<column name="split_evenly" type="${type.boolean}" defaultValueNumeric="1">
 				<constraints nullable="false" />
-			</column>	
+			</column>
 			<column name="allow_custom_installment_plan" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>	
+			</column>
 			<column name="add_interest_rate" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>	
+			</column>
 			<column name="add_installment_fee" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>	
+			</column>
 			<column name="default_block_payments" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>	
+			</column>
 			<column name="require_internal_approval" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>	
+			</column>
 			<column name="default_interest_rate" type="int4" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
@@ -11423,7 +11423,7 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="clearing_priority" type="varchar(255)" />
 	    </addColumn>
 		<addForeignKeyConstraint baseColumnNames="dunning_default_pause_reason_id" baseTableName="crm_provider" constraintName="fk_dunning_default_pause_reason_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />	
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />
 	    <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_credit_category" constraintName="fk_acc_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 	</changeSet>
@@ -11431,7 +11431,7 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza">
         <dropTable tableName="invoice_dunning_statuses" cascadeConstraints="true"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA">
 		<renameColumn tableName="dunning_collection_plan_statuses"
 			newColumnName="description" oldColumnName="context"
@@ -11510,22 +11510,22 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addForeignKeyConstraint baseColumnNames="dunning_agent_id" baseTableName="dunning_action_instance"
         	constraintName="fk_dunning_agent" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" />
-            
+
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_action_instance"
         	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
-            
+
         <addForeignKeyConstraint baseColumnNames="dunning_level_instance_id" baseTableName="dunning_action_instance"
         	constraintName="fk_dunning_level_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-3250_20211123" author="HatimOUDAD">
 	    <addColumn tableName="dunning_action_instance">
 	        <column name="dunning_action_id" type="bigint" />
 	    </addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA">
 	    <addColumn tableName="dunning_level_instance">
 	        <column name="dunning_level_id" type="bigint" />
@@ -11539,7 +11539,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <modifyDataType columnName="start_date" newDataType="date" tableName="sub_accounting_period"/>
         <modifyDataType columnName="end_date" newDataType="date" tableName="sub_accounting_period"/>
     </changeSet>
-	
+
 	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
      <addColumn tableName="billing_invoice">
             <column name="cpq_quote_id" type="bigint" />
@@ -11578,6 +11578,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_settings_pkey" />
             </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description" type="varchar(255)" />
             <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
             <column name="max_amount_consumer" type="numeric(23, 12)"  />

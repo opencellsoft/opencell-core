@@ -11432,6 +11432,17 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_settings_pkey" />
             </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description" type="varchar(255)" />
             <column name="use_security_deposit" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
@@ -11440,7 +11451,7 @@
             <column name="allow_transfer" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
-	
+
 
     <!-- end tables -->
 
@@ -13041,7 +13052,7 @@
         <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_token" constraintName="fk_ca_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
     </changeSet>
- 
+
     <changeSet author="hhanine" id="rebuild-str-fk-11633">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_credit_category" constraintName="fk_acc_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -15219,7 +15230,7 @@
 		<addForeignKeyConstraint baseColumnNames="dunning_default_pause_reason_id" baseTableName="crm_provider" constraintName="fk_dunning_default_pause_reason_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />
 	</changeSet>
-	      
+
 	<changeSet id="rebuild-str-fk-refactoring" author="AbdelmounaimAkadid">
 	
 		<addForeignKeyConstraint baseColumnNames="id"
@@ -15311,7 +15322,7 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="dunning_settings" />
-			
+
 		<addForeignKeyConstraint
 			constraintName="fk_collection_plan_statuses_dunning_settings"
 			referencedTableName="dunning_settings"
@@ -15347,7 +15358,7 @@
 			referencedTableName="dunning_settings"
 			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
 			referencedColumnNames="id" />
-	
+
 		<addForeignKeyConstraint
 			constraintName="fk_dunning_collection_plan_statuses_dunning_settings"
 			referencedTableName="dunning_settings"
@@ -15521,7 +15532,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="adm_currency"/>
     </changeSet>
-	<changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay"> 
+	<changeSet id="rebuild-str-fk-INTRD-2959" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
                                  
@@ -15533,7 +15544,7 @@
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-        						 
+
 		<addForeignKeyConstraint baseColumnNames="pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
         						 deferrable="false" initiallyDeferred="false"
         						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" /> 
@@ -15563,7 +15574,7 @@
 	   	<addForeignKeyConstraint baseColumnNames="dunning_policy_level_id" baseTableName="dunning_level_instance"
 			constraintName="fk_dunning_policy_level" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy_level" />
-		
+
 		<addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
 			constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
