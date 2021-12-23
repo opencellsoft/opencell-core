@@ -578,7 +578,8 @@ public class CommercialOrderApi extends BaseApi {
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
-    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
         
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
@@ -636,6 +637,7 @@ public class CommercialOrderApi extends BaseApi {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
         
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
