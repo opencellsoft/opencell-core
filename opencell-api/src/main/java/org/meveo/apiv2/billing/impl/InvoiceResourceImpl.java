@@ -1,5 +1,6 @@
 package org.meveo.apiv2.billing.impl;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
@@ -7,9 +8,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -21,7 +20,6 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
-import org.meveo.apiv2.generic.core.filter.filtermapper.ObjectMapper;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -29,7 +27,6 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
 public class InvoiceResourceImpl implements InvoiceResource {
@@ -140,7 +137,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
 				.paymentDate(accountOperation.getTransactionDate())
 				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
-				.paymentRef(accountOperation.getReference())
+				.paymentRef(ofNullable(accountOperation.getReference()).orElse(""))
 				.amount(accountOperation.getMatchingAmount())
 				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
 				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
