@@ -5154,7 +5154,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
                         em.createNamedQuery("InvoiceLine.updateWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
                             .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", ilIds).executeUpdate();
-                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("invoice", invoice).setParameter("ids", ilIds).executeUpdate();
+                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
+                            .setParameter("ids", ilIds).executeUpdate();
                     }
 
                     for (Object[] aggregateAndILs : ilUpdates) {
