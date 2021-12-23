@@ -90,6 +90,7 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ConfigurationException;
 import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.ValidationException;
@@ -3422,7 +3423,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (changedToTax == null) {
 
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(), invoice.getBillingAccount(), invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(), invoice.getBillingAccount(), invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
 
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
@@ -4647,8 +4648,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param el EL expression to resolve
      * @param parameters A list of parameters
      * @return An integer value
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) {
+    public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) throws InvalidELException{
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, parameters);
     }
 
@@ -4868,28 +4870,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     private Seller getSelectedSeller(InvoiceLine invoiceLine) {
-    	Seller seller = null;
     	Invoice invoice=invoiceLine.getInvoice();
-    	if(invoice!=null) {
-    		if(invoice.getSubscription()!=null) {
-    			if(invoice.getSubscription().getSeller()!=null)
-    				seller=invoice.getSubscription().getSeller();
-    		}
-    		if(seller==null && invoice.getCommercialOrder()!=null) {
-    			if(invoice.getCommercialOrder().getSeller()!=null)
-    				seller=invoice.getCommercialOrder().getSeller();
-    		} 
-    		if(seller==null && invoice.getCpqQuote()!=null) {
-    			if(invoice.getCpqQuote().getSeller()!=null) {
-    				seller=invoice.getCpqQuote().getSeller();
-    			}
-    		}
-    	}else {	
-    		seller=invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	}
-    	return seller;
+		if(invoiceLine.getSubscription() != null) {
+			if(invoiceLine.getSubscription().getSeller() != null)
+				return invoiceLine.getSubscription().getSeller();
+		}
+		if(invoiceLine.getCommercialOrder() != null) {
+			if(invoiceLine.getCommercialOrder().getSeller()!=null)
+				return invoiceLine.getCommercialOrder().getSeller();
+		}
+		if(invoiceLine.getQuote() != null) {
+			if(invoiceLine.getQuote().getSeller()!=null) {
+				return invoiceLine.getQuote().getSeller();
+			}
+		}
+    	if (invoiceLine.getBillingAccount() != null) {
+            return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+    	return null;
     }
-
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
@@ -5201,7 +5200,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceId
      */
     public void cleanInvoiceAggregates(Long invoiceId) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceSubCategoryAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 
@@ -5277,7 +5277,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
@@ -5785,7 +5785,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 }
             }
-            ;
         }
 
         if (invoiceLines != null) {

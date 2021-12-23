@@ -56,7 +56,6 @@ public class ImportExportResponseDto extends BaseResponse {
 
     /** Occurred error message key. */
     private String errorMessageKey;
-
     /**
      * Instantiates a new import export response dto.
      */
@@ -209,7 +208,6 @@ public class ImportExportResponseDto extends BaseResponse {
     public void setFieldsNotImported(Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported) {
         this.fieldsNotImported = fieldsNotImported;
     }
-    
     /**
      * To string.
      *

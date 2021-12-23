@@ -1,19 +1,5 @@
 package org.meveo.api.cpq;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -24,6 +10,7 @@ import org.meveo.api.dto.cpq.OrderProductDto;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -40,44 +27,32 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.ProductVersionService;
-import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.cpq.order.InvoicingPlanService;
-import org.meveo.service.cpq.order.OrderAttributeService;
-import org.meveo.service.cpq.order.OrderLotService;
-import org.meveo.service.cpq.order.OrderOfferService;
-import org.meveo.service.cpq.order.OrderProductService;
-import org.meveo.service.cpq.order.OrderTypeService;
+import org.meveo.service.cpq.order.*;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -603,7 +578,8 @@ public class CommercialOrderApi extends BaseApi {
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
-    	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
         
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
@@ -661,6 +637,7 @@ public class CommercialOrderApi extends BaseApi {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
         
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
@@ -806,11 +783,9 @@ public class CommercialOrderApi extends BaseApi {
   
 	
     private OrderProduct getOrderProductFromDto(OrderProductDto orderProductDTO, OrderOffer orderOffer) { 
-    	 if (orderProductDTO.getOrderProductId()==null) {
-             missingParameters.add("orderProductId");
-         handleMissingParameters();
-         }
-            OrderProduct orderProduct = orderProductService.findById(orderProductDTO.getOrderProductId());  
+
+		OrderProduct orderProduct = orderProductDTO.getOrderProductId()!= null  ?
+					orderProductService.findById(orderProductDTO.getOrderProductId()) : null;
         if (orderProduct == null) {  
         	orderProduct= populateOrderProduct(orderProductDTO, orderOffer,orderProduct);
         	orderProductService.create(orderProduct);

@@ -38,6 +38,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.RatingResult;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -104,6 +105,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
+    
+    @Inject
+    private OneShotRatingService oneShotRatingService;
 
     /**
      * UsageChargeInstanceService
@@ -482,7 +486,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
-
+        
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
         if (serviceInstance.getSubscriptionDate() == null) {
@@ -501,17 +505,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
                 if (applySubscriptionCharges) {
 
-                    try {
-                        oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
+                    RatingResult ratingResult = oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, oneShotChargeInstance.getQuantity(), null, serviceInstance.getSubscriptionDate(),
+                        serviceInstance.getOrderNumber(), ChargeApplicationModeEnum.SUBSCRIPTION, false, false);
 
-                    } catch (RatingException e) {
-                        log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
-                        throw e; // e.getBusinessException();
-
-                    } catch (BusinessException e) {
-                        log.error("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getMessage(), e);
-                        throw e;
-                    }
+                    // Uncomment if want to rate with failSilently=true and there is a job that that will rate failed to rate one shot charges afterwards
+//                    // If failed to rate, charge instance status is left as active
+//                    if (ratingResult.getRatingException() != null) {
+//                        oneShotChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+//                    }
 
                 } else {
                     log.debug("ServiceActivation: subscription charges were not applied/rated.");
@@ -659,21 +660,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
                     // #3174 Setting termination informations which will be also reachable from within the "rating scripts"
                     oneShotChargeInstance.setChargeDate(terminationDate);
-                    oneShotChargeInstance.getServiceInstance().setSubscriptionTerminationReason(terminationReason);
-
-                    try {
-                        oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity(), orderNumber);
-
-                    } catch (RatingException e) {
-                        log.trace("Failed to apply termination charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
-                        throw e; // e.getBusinessException();
-
-                    } catch (BusinessException e) {
-                        log.error("Failed to apply termination charge {}: {}", oneShotChargeInstance, e.getMessage(), e);
-                        throw e;
+                    if (orderNumber != null) {
+                        oneShotChargeInstance.setOrderNumber(orderNumber);
                     }
 
-                    oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+                    RatingResult ratingResult = oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, oneShotChargeInstance.getQuantity(), null, terminationDate, orderNumber,
+                        ChargeApplicationModeEnum.SUBSCRIPTION, false, false);
+
+                    // Uncomment if want to rate with failSilently=true and there is a job that that will rate failed to rate one shot charges afterwards
+//                    // If failed to rate, charge instance status is left as active
+//                    if (ratingResult.getRatingException() != null) {
+//                        oneShotChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+//                    }
+
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
 
                 } else {
@@ -692,7 +691,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.CLOSED) {
                     log.info("Reimbursing the subscription charge {}", oneShotChargeInstance.getId());
 
-                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber, ChargeApplicationModeEnum.REIMBURSMENT);
+                    // Left as failSilently=false, as currently there is no way of applying a one shot charge in another way that mode=SUBSCRIPTION
+                    oneShotRatingService.rateOneShotCharge(oneShotChargeInstance,  oneShotChargeInstance.getQuantity().negate(), null, terminationDate, orderNumber, ChargeApplicationModeEnum.REIMBURSMENT, false, false);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
                 }

@@ -1,5 +1,10 @@
 package org.meveo.api.catalog;
 
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -20,9 +25,6 @@ import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 @Stateless
 public class PricePlanMatrixColumnApi extends BaseApi {
@@ -71,7 +73,13 @@ public class PricePlanMatrixColumnApi extends BaseApi {
             log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixCode,version);
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
-        PricePlanMatrixColumn pricePlanMatrixColumn = loadEntityByCode(pricePlanMatrixColumnService, dtoData.getCode(), PricePlanMatrixColumn.class);
+        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(dtoData.getCode(), pricePlanMatrixVersion);
+        PricePlanMatrixColumn pricePlanMatrixColumn = null;
+        if (!pricePlanMatrixColumns.isEmpty()) {
+        	pricePlanMatrixColumn = pricePlanMatrixColumns.get(0);
+		}else {
+			throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode().toLowerCase() + ", " + version + ")");
+		}
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn,pricePlanMatrixVersion);
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
@@ -79,8 +87,22 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
     }
 
-    public void removePricePlanColumn(String code){
-        pricePlanMatrixColumnService.removePricePlanColumn(code);
+    public void removePricePlanColumn(String pricePlanMatrixCode, int version, String code){
+    	
+    	PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixCode, version);
+        
+        if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())) {
+            log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixCode,version);
+            throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
+        }
+        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(code, pricePlanMatrixVersion);
+        PricePlanMatrixColumn pricePlanMatrixColumn = null;
+        if (!pricePlanMatrixColumns.isEmpty()) {
+        	pricePlanMatrixColumn = pricePlanMatrixColumns.get(0);
+		}else {
+			throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + code.toLowerCase() + ", " + version + ")");
+		}
+        pricePlanMatrixColumnService.removePricePlanColumn(pricePlanMatrixColumn.getId());
     }
 
     private void checkMissingParameters(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) {

@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -132,10 +133,10 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     } else {
                         pricePlanMatrixValue = new PricePlanMatrixValue();
                     }
-                    PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCode(value.getPpmColumnCode());
-                    if (pricePlanMatrixColumn == null)
+                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
+                    if (pricePlanMatrixColumns.isEmpty())
                         throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
-                    pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
+                    pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumns.get(0));
                     pricePlanMatrixValue.setDoubleValue(value.getDoubleValue());
                     pricePlanMatrixValue.setLongValue(value.getLongValue());
                     pricePlanMatrixValue.setStringValue(value.getStringValue());
@@ -166,12 +167,19 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             throw new BusinessException("Many prices lines with the same priority match with quote product id: "+ productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
         return List.of(matchedPrices.get(0));
     }
-    public PricePlanMatrixLine loadMatchedLinesForServiceInstance(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, String serviceInstanceCode, WalletOperation walletOperation) throws BusinessException {
+    
+    public PricePlanMatrixLine loadMatchedLinesForServiceInstance(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, String serviceInstanceCode, WalletOperation walletOperation)
+            throws NoPricePlanException {
         List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, walletOperation);
+       
         if (matchedPrices.isEmpty()) {
-            throw new BusinessApiException("No price match with service instance code: " + serviceInstanceCode + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
-        }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority())
-            throw new BusinessException("Many prices lines with the same priority match with service instance code: "+ serviceInstanceCode + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
+            throw new NoPricePlanException("No price match with service instance code: " + serviceInstanceCode + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode()
+                    + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
+        
+        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority()) {
+            throw new NoPricePlanException("Many prices lines with the same priority match with service instance code: " + serviceInstanceCode + " using price plan matrix: (code : "
+                    + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
+        }
         return matchedPrices.get(0);
     }
 

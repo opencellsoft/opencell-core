@@ -1,6 +1,7 @@
 package org.meveo.apiv2.dunning.service;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,19 +49,21 @@ public class DunningPolicyApiServiceTest {
     public void setUp() {
         dunningPolicy.setId(1L);
         dunningPolicy.setPolicyName("policy");
-        dunningPolicy.setDefaultPolicy(Boolean.TRUE);
+        dunningPolicy.setDefaultPolicy(TRUE);
         dunningPolicy.setPolicyDescription("Description");
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(1L);
         dunningLevel.setCode("L01");
         dunningLevel.setDescription("Level 01");
-        dunningLevel.setEndOfDunningLevel(Boolean.TRUE);
+        dunningLevel.setEndOfDunningLevel(TRUE);
+        dunningLevel.setDaysOverdue(27);
 
         DunningLevel dunningLevel1 = new DunningLevel();
         dunningLevel1.setId(2L);
         dunningLevel1.setCode("L02");
         dunningLevel1.setDescription("Level 02");
-        dunningLevel1.setReminder(Boolean.TRUE);
+        dunningLevel1.setReminder(TRUE);
+        dunningLevel1.setDaysOverdue(-1);
 
         DunningPolicyLevel dunningPolicyLevel = new DunningPolicyLevel();
         dunningPolicyLevel.setId(1L);
@@ -85,7 +88,6 @@ public class DunningPolicyApiServiceTest {
         when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
-        when(currentUser.getUserName()).thenReturn("opencell.admin");
     }
 
     @Test

@@ -52,7 +52,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public PricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.ppmLineId = pricePlanMatrixLine.getId();
-		this.pricetWithoutTax = pricePlanMatrixLine.getPricetWithoutTax();
+		this.pricetWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
 		this.description = pricePlanMatrixLine.getDescription();
 		this.priority = pricePlanMatrixLine.getPriority();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();

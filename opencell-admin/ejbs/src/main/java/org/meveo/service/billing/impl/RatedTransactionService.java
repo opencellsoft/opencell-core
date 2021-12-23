@@ -175,6 +175,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @Inject
+    private InvoiceLineService invoiceLineService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -1450,7 +1453,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT rt.billing_account__id, \n" +
+        String query = "SELECT  string_agg(concat(id), ',') as rated_transaction_ids, rt.billing_account__id, \n" +
                 "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, \n"
                 + "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
                 + "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, \n"
@@ -1472,7 +1475,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT rt.billing_account__id,  \n"
+        String query = "SELECT  string_agg(concat(id), ',') as rated_transaction_ids, rt.billing_account__id,  \n"
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity,  \n"
                 + "              sum(rt.amount_without_tax) as sum_amount_without_tax, \n"
                 + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price, \n"
@@ -1493,5 +1496,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .createNamedQuery("RatedTransaction.markAsProcessed")
                     .setParameter("listOfIds", ratedTransactionIds)
                     .executeUpdate();
+    }
+
+    public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
+        for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
+            getEntityManager()
+                    .createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
+                    .setParameter("il", invoiceLineService.findById(entry.getKey()))
+                    .setParameter("ids", entry.getValue())
+                    .executeUpdate();
+        }
     }
 }

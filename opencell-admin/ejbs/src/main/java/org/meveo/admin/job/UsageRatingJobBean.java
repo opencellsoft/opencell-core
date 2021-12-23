@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.EdrService;
@@ -38,11 +39,6 @@ import org.meveo.service.billing.impl.UsageRatingService;
 public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
 
     private static final long serialVersionUID = 6091764740338888327L;
-
-    /**
-     * Number of EDRS to process in a single job run
-     */
-    private static final int PROCESS_NR_IN_JOB_RUN = 2000000;
 
     @Inject
     private EdrService edrService;
@@ -83,8 +79,11 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
             log.warn("Can't get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
         }
 
-        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
-        hasMore = ids.size() == PROCESS_NR_IN_JOB_RUN;
+        // Number of EDRs to process in a single job run
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("usageRatingJob.processNrInJobRun", 2000000);
+
+        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, processNrInJobRun);
+        hasMore = ids.size() == processNrInJobRun;
 
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
@@ -106,6 +105,8 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
      * @param jobExecutionResult Job execution result
      */
     private void rateEDRBatch(List<Long> edrIds, JobExecutionResultImpl jobExecutionResult) {
+
+        // In case of no need to rollback when rating fails, an error will be recorded directly in EDR, error will never be thrown and only batch mode will be used
         usageRatingService.ratePostpaidUsage(edrIds);
     }
 

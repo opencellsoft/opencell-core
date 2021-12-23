@@ -8,16 +8,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Mbarek-Ay
@@ -63,7 +59,6 @@ public class DunningPauseReason extends AuditableEntity {
 	@Size(max = 255)
 	private String description;
 
-	
 	/**
 	 * dunning settings associated to the entity
 	 */

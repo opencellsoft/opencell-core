@@ -18,6 +18,7 @@
 
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,7 +78,9 @@ import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -98,6 +101,8 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CreditCategoryService;
+import org.meveo.service.payments.impl.DunningPauseReasonsService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
@@ -163,6 +168,12 @@ public class ProviderApi extends BaseApi {
     @Inject
     private AccountingArticleService accountingArticleService;
 
+	@Inject
+	private PaymentMethodService paymentMethodService; 
+	
+	@Inject
+	private DunningPauseReasonsService dunningPauseReasonsService;
+	
     public ProviderDto find() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
@@ -499,6 +510,81 @@ public class ProviderApi extends BaseApi {
             if (postData.getBankCoordinates().getIcs() != null) {
                 bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
             }
+        }
+        if (postData.getPaymentPlanPolicy() != null) {
+        	if (provider.getPaymentPlanPolicy() == null) {
+        		provider.setPaymentPlanPolicy(new PaymentPlanPolicy());
+        	}
+        	PaymentPlanPolicy PaymentPlanPolicy = provider.getPaymentPlanPolicy();
+        	if (postData.getPaymentPlanPolicy().getMinAllowedReceivableAmount() != null) {
+        		PaymentPlanPolicy.setMinAllowedReceivableAmount(postData.getPaymentPlanPolicy().getMinAllowedReceivableAmount());
+        	}
+        	if (postData.getPaymentPlanPolicy().getMaxAllowedReceivableAmount() != null) {
+        		PaymentPlanPolicy.setMaxAllowedReceivableAmount(postData.getPaymentPlanPolicy().getMaxAllowedReceivableAmount());
+        	}
+        	if (postData.getPaymentPlanPolicy().getMinInstallmentAmount() != null) {
+        		PaymentPlanPolicy.setMinInstallmentAmount(postData.getPaymentPlanPolicy().getMinInstallmentAmount());
+        	}
+        	if (postData.getPaymentPlanPolicy().getMaxPaymentPlanDuration() != null) {
+        		PaymentPlanPolicy.setMaxPaymentPlanDuration(postData.getPaymentPlanPolicy().getMaxPaymentPlanDuration());
+        	}
+        	if (postData.getPaymentPlanPolicy().getDefaultRecurrenceUnit() != null) {
+        		PaymentPlanPolicy.setDefaultRecurrenceUnit(postData.getPaymentPlanPolicy().getDefaultRecurrenceUnit());
+        	}
+        	if (postData.getPaymentPlanPolicy().getDefaultInstallmentCount() != null) {
+        		PaymentPlanPolicy.setDefaultInstallmentCount(postData.getPaymentPlanPolicy().getDefaultInstallmentCount());
+        	}        	
+        	if (postData.getPaymentPlanPolicy().getDefaultFeePerInstallmentPlan() != null) {
+        		PaymentPlanPolicy.setDefaultFeePerInstallmentPlan(postData.getPaymentPlanPolicy().getDefaultFeePerInstallmentPlan());
+        	}
+        	if (postData.getPaymentPlanPolicy().getInstallmentAmountRounding() != null) {
+        		PaymentPlanPolicy.setInstallmentAmountRounding(postData.getPaymentPlanPolicy().getInstallmentAmountRounding());
+        	}
+        	if (postData.getPaymentPlanPolicy().getActionOnRemainingAmount() != null) {
+        		PaymentPlanPolicy.setActionOnRemainingAmount(postData.getPaymentPlanPolicy().getActionOnRemainingAmount());
+        	}
+        	if (postData.getPaymentPlanPolicy().getClearingPriority() != null) {
+        		PaymentPlanPolicy.setClearingPriority(postData.getPaymentPlanPolicy().getClearingPriority());
+        	}
+        	if (postData.getPaymentPlanPolicy().getTheresHoldForApproval() != null) {
+        		PaymentPlanPolicy.setTheresHoldForApproval(postData.getPaymentPlanPolicy().getTheresHoldForApproval());
+        	}
+        	if (postData.getPaymentPlanPolicy().getDefaultInterestRate() != null) {
+        		PaymentPlanPolicy.setDefaultInterestRate(postData.getPaymentPlanPolicy().getDefaultInterestRate());
+        	}
+        	
+        	if(postData.getPaymentPlanPolicy().getAllowedPaymentMethods() != null) {
+            	PaymentPlanPolicy.setAllowedPaymentMethods(postData.getPaymentPlanPolicy().getAllowedPaymentMethods());
+            }
+        	
+        	if(postData.getPaymentPlanPolicy().getDunningDefaultPauseReason() != null) {          	
+        		DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(postData.getPaymentPlanPolicy().getDunningDefaultPauseReason());                	
+            	if(dunningPauseReason == null) {
+            		throw new EntityDoesNotExistsException(DunningPauseReason.class.getName(), postData.getPaymentPlanPolicy().getDunningDefaultPauseReason().toString());
+            	}
+        		PaymentPlanPolicy.setDunningDefaultPauseReason(dunningPauseReason);
+        	}
+
+        	if (postData.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {
+                List<CreditCategory> listAllowedCreditCategories = new ArrayList<CreditCategory>();
+                for (Long elementAllowedCreditCategoriesDto : postData.getPaymentPlanPolicy().getAllowedCreditCategories()) {               	
+                	CreditCategory allowedCreditCategories = creditCategoryService.findById(elementAllowedCreditCategoriesDto);                	
+                	if(allowedCreditCategories == null) {
+                		throw new EntityDoesNotExistsException(CreditCategory.class.getName(), postData.getPaymentPlanPolicy().getAllowedCreditCategories().toString());
+                	}
+                	allowedCreditCategories.setProvider(provider);
+                	listAllowedCreditCategories.add(allowedCreditCategories);
+                }
+                
+                PaymentPlanPolicy.setAllowedCreditCategories(listAllowedCreditCategories);        		
+        	}
+        	
+        	PaymentPlanPolicy.setSplitEvenly(postData.getPaymentPlanPolicy().isSplitEvenly());
+       		PaymentPlanPolicy.setAllowCustomInstallmentPlan(postData.getPaymentPlanPolicy().isAllowCustomInstallmentPlan());
+       		PaymentPlanPolicy.setAddInterestRate(postData.getPaymentPlanPolicy().isAddInterestRate());
+       		PaymentPlanPolicy.setAddInstallmentFee(postData.getPaymentPlanPolicy().isAddInstallmentFee());
+       		PaymentPlanPolicy.setDefaultBlockPayments(postData.getPaymentPlanPolicy().isDefaultBlockPayments());
+    		PaymentPlanPolicy.setRequireInternalApproval(postData.getPaymentPlanPolicy().isRequireInternalApproval());
         }
         if (postData.isRecognizeRevenue() != null) {
             provider.setRecognizeRevenue(postData.isRecognizeRevenue());

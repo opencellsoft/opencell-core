@@ -18,6 +18,9 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,22 +48,14 @@ import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.AccountOperationRejectionReason;
-import org.meveo.model.payments.AccountOperationStatus;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.Refund;
-import org.meveo.model.payments.RejectedPayment;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * AccountOperation service implementation.
@@ -88,7 +83,37 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     private AccountingPeriodService accountingPeriodService;
 
     @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+
+    @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
+
+    public AccountOperation createDeferralPayments(AccountOperation accountOperation, PaymentMethodEnum selectedPaymentMethod, Date paymentDate) {
+        if(selectedPaymentMethod != null
+                && accountOperation.getCustomerAccount().getPaymentMethods().stream().noneMatch(paymentMethod1 -> paymentMethod1.getPaymentType().equals(selectedPaymentMethod))){
+            throw new BusinessException("the selected paymentMethod does not belong to the account operation customer account");
+        }
+        LocalDate paymentLocalDate = LocalDate.ofInstant(paymentDate.toInstant(), ZoneId.systemDefault());
+        if((paymentLocalDate.toEpochDay() - LocalDate.now().toEpochDay()) > appProvider.getMaximumDelay()){
+            throw new BusinessException("the paymentDate should not exceed " + appProvider.getMaximumDelay());
+        }
+        if(accountOperation.getPaymentDeferralCount() +1 > appProvider.getMaximumDeferralPerInvoice()){
+            throw new BusinessException("the payment deferral count should not exceeds the configured maximum deferral per invoice.");
+        }
+        if(selectedPaymentMethod != null){
+            DayOfWeek paymentDateDayOfWeek = paymentLocalDate.plusDays(3).getDayOfWeek();
+            if(PaymentMethodEnum.DIRECTDEBIT.equals(selectedPaymentMethod)
+                    && (DayOfWeek.SATURDAY.equals(paymentDateDayOfWeek) || DayOfWeek.SUNDAY.equals(paymentDateDayOfWeek))){
+                throw new BusinessException("the paymentDate plus three days must not be a saturday or sunday.");
+            }
+            accountOperation.setPaymentMethod(selectedPaymentMethod);
+        }
+        accountOperation.setPaymentDeferralCount(accountOperation.getPaymentDeferralCount()+1);
+        accountOperation.setCollectionDate(paymentDate);
+        accountOperation.setPaymentAction(PaymentActionEnum.PENDING_PAYMENT);
+        return update(accountOperation);
+    }
 
     /**
      * Account operation action Enum
@@ -628,4 +653,18 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			ao.setStatus(status);
 			update(ao);});
 	}
+
+    public List<AccountOperation> listByInvoice(Invoice invoice) {
+        if(invoice == null){
+            return null;
+        }
+        try {
+            Query query = getEntityManager().createNamedQuery("AccountOperation.listByInvoice", AccountOperation.class);
+            query.setParameter("invoice", invoice);
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list AccountOperation by invoice", e);
+            return null;
+        }
+    }
 }

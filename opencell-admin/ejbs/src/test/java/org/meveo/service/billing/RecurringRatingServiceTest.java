@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -29,9 +30,8 @@ import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.MonthEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.rating.RatingResult;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.billing.impl.RecurringRatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,14 +41,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WalletOperationServiceTest {
+public class RecurringRatingServiceTest {
 
     @Spy
     @InjectMocks
-    private WalletOperationService walletOperationService;
+    private RecurringRatingService recurringRatingService;
 
     @Mock
-    private RatingService ratingService;
+    private WalletOperationService walletOperationService;
 
     private CalendarYearly calendar = null;
 
@@ -67,7 +67,26 @@ public class WalletOperationServiceTest {
         }
         calendar.setDays(days);
 
-        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+//        when(recurringRatingService.rateChargeAndInstantiateTriggeredEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+//            public RatingResult answer(InvocationOnMock invocation) throws Throwable {
+//
+//                WalletOperation wo = new WalletOperation();
+//                wo.setChargeInstance((ChargeInstance) invocation.getArguments()[0]);
+//                wo.setOperationDate((Date) invocation.getArguments()[1]);
+//                wo.setQuantity((BigDecimal) invocation.getArguments()[2]);
+//                wo.setStartDate((Date) invocation.getArguments()[5]);
+//                wo.setEndDate((Date) invocation.getArguments()[6]);
+//                wo.setFullRatingPeriod((DatePeriod) invocation.getArgument(7));
+//
+//                RatingResult ratingResult = new RatingResult();
+//                ratingResult.addWalletOperation(wo);
+//
+//                return ratingResult;
+//            }
+//        });
+
+        // Use the form "doAnswer().when().method" instead of "when().thenAnswer()" because on spied object the later will call a real method at the setup time, which will fail because of null values being passed.
+        doAnswer(new Answer<RatingResult>() {
             public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 WalletOperation wo = new WalletOperation();
@@ -79,11 +98,11 @@ public class WalletOperationServiceTest {
                 wo.setFullRatingPeriod((DatePeriod) invocation.getArgument(7));
 
                 RatingResult ratingResult = new RatingResult();
-                ratingResult.setWalletOperation(wo);
+                ratingResult.addWalletOperation(wo);
 
                 return ratingResult;
             }
-        });
+        }).when(recurringRatingService).rateChargeAndInstantiateTriggeredEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean());
 
         doAnswer(new Answer<List<WalletOperation>>() {
             public List<WalletOperation> answer(InvocationOnMock invocation) throws Throwable {
@@ -102,11 +121,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 1, 0, 0, 0), true, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
 
         assertThat(wos.size()).isEqualTo(1);
 
@@ -122,12 +143,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 1, 0, 0, 0), true, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -142,12 +164,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 16, 0, 0, 0), true, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 16, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -162,12 +185,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 16, 0, 0, 0), true, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 16, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(50d);
@@ -185,12 +209,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 1, 0, 0, 0), false, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -205,12 +230,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 1, 0, 0, 0), false, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -225,12 +251,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 16, 0, 0, 0), false, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -245,12 +272,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(null, DateUtils.newDate(2019, 5, 16, 0, 0, 0), false, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(50d);
@@ -267,12 +295,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -287,12 +316,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -307,12 +337,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 16, 0, 0, 0), true, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -327,12 +358,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 16, 0, 0, 0), true, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -349,12 +381,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -369,12 +402,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -389,12 +423,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 16, 0, 0, 0), false, false, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -409,12 +444,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 16, 0, 0, 0), false, true, false, null, null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 7, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -443,7 +479,7 @@ public class WalletOperationServiceTest {
         }
         newCalendar.setDays(days);
 
-        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+        when(recurringRatingService.rateChargeAndInstantiateTriggeredEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
             public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 WalletOperation wo = new WalletOperation();
@@ -459,22 +495,23 @@ public class WalletOperationServiceTest {
                     ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getOperationDate(), wo.getFullRatingPeriod().getTo(), wo.getFullRatingPeriod().getTo());
                 } else {
                     ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getFullRatingPeriod().getTo(),
-                        walletOperationService.getRecurringPeriodEndDate(((RecurringChargeInstance) wo.getChargeInstance()), wo.getFullRatingPeriod().getTo()), wo.getFullRatingPeriod().getTo());
+                        recurringRatingService.getRecurringPeriodEndDate(((RecurringChargeInstance) wo.getChargeInstance()), wo.getFullRatingPeriod().getTo()), wo.getFullRatingPeriod().getTo());
                 }
 
                 RatingResult ratingResult = new RatingResult();
-                ratingResult.setWalletOperation(wo);
+                ratingResult.addWalletOperation(wo);
 
                 return ratingResult;
             }
         });
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -501,7 +538,7 @@ public class WalletOperationServiceTest {
         }
         newCalendar.setDays(days);
 
-        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+        when(recurringRatingService.rateChargeAndInstantiateTriggeredEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
             public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 WalletOperation wo = new WalletOperation();
@@ -517,22 +554,23 @@ public class WalletOperationServiceTest {
                     ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getOperationDate(), wo.getFullRatingPeriod().getTo(), wo.getFullRatingPeriod().getTo());
                 } else {
                     ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getFullRatingPeriod().getTo(),
-                        walletOperationService.getRecurringPeriodEndDate(((RecurringChargeInstance) wo.getChargeInstance()), wo.getFullRatingPeriod().getTo()), wo.getFullRatingPeriod().getTo());
+                        recurringRatingService.getRecurringPeriodEndDate(((RecurringChargeInstance) wo.getChargeInstance()), wo.getFullRatingPeriod().getTo()), wo.getFullRatingPeriod().getTo());
                 }
 
                 RatingResult ratingResult = new RatingResult();
-                ratingResult.setWalletOperation(wo);
+                ratingResult.addWalletOperation(wo);
 
                 return ratingResult;
             }
         });
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 8, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(1);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -551,12 +589,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -577,12 +616,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 10, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().setScale(2, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(67.86d).setScale(2, RoundingMode.HALF_UP));// 19/28 days
@@ -603,12 +643,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -629,12 +670,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -655,12 +697,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -684,12 +727,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -711,12 +755,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -738,12 +783,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -765,12 +811,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getServiceInstance().getEndAgreementDate(), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -795,12 +842,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2018, 11, 10, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         // Will reimburse period 2019/1/1 to 2019/3/1
@@ -822,12 +870,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 1, 10, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -848,12 +897,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 1, 10, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -874,12 +924,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 1, 10, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -903,12 +954,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         // Will reimburse period 2019/1/1 to 2019/3/1
@@ -931,12 +983,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         // Will reimburse period 2019/1/1 to 2019/3/1
@@ -959,12 +1012,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -986,12 +1040,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1016,12 +1071,13 @@ public class WalletOperationServiceTest {
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         // Will reimburse period 2019/1/1 to 2019/3/1
@@ -1045,12 +1101,13 @@ public class WalletOperationServiceTest {
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         // Will reimburse period 2019/1/1 to 2019/3/1
@@ -1074,12 +1131,13 @@ public class WalletOperationServiceTest {
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1102,12 +1160,13 @@ public class WalletOperationServiceTest {
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1132,12 +1191,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1158,12 +1218,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1184,12 +1245,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1210,12 +1272,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
@@ -1238,12 +1301,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1264,12 +1328,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1290,12 +1355,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1316,12 +1382,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
@@ -1347,12 +1414,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1374,12 +1442,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1401,12 +1470,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1428,12 +1498,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
@@ -1457,12 +1528,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1484,12 +1556,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1511,12 +1584,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
@@ -1537,12 +1611,13 @@ public class WalletOperationServiceTest {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
         chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
@@ -1568,12 +1643,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1595,12 +1671,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1622,12 +1699,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1649,12 +1727,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1678,12 +1757,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1705,12 +1785,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 4, 1, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1732,12 +1813,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1759,12 +1841,13 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 2, 10, 0, 0, 0),
             DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
 
+        List<WalletOperation> wos = ratingResult.getWalletOperations();
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
@@ -1790,6 +1873,7 @@ public class WalletOperationServiceTest {
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
         chargeInstance.setApplyInAdvance(isCycleForward);
         chargeInstance.setRecurringChargeTemplate(chargeTemplate);
+        chargeInstance.setChargeTemplate(chargeTemplate);
         chargeInstance.setCalendar(calendar);
         chargeInstance.setChargedToDate(chargedToDate);
         chargeInstance.setSubscriptionDate(subscriptionDate);
@@ -1817,4 +1901,5 @@ public class WalletOperationServiceTest {
     private DatePeriod getPeriod(String date1, String date2) {
         return new DatePeriod(date1 != null ? DateUtils.parseDateWithPattern(date1, DateUtils.DATE_PATTERN) : null, date2 != null ? DateUtils.parseDateWithPattern(date2, DateUtils.DATE_PATTERN) : null);
     }
+
 }

@@ -21,7 +21,6 @@ import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Contract;
 import org.meveo.api.dto.cpq.xml.Details;
 import org.meveo.api.dto.cpq.xml.Header;
-import org.meveo.api.dto.cpq.xml.Offer;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteLine;
@@ -86,7 +85,8 @@ public class QuoteMapper {
                 .collect(Collectors.toList());
 
         List<QuotePrice> allQuotesPrice = quoteVersion.getQuoteArticleLines().stream().map(p -> p.getQuotePrices().stream()).flatMap(identity()).collect(toList());
-        Details details = new Details(new Quote(billableAccounts, quote.getQuoteNumber(), quote.getQuoteDate(),entityToDtoConverter.getCustomFieldsDTO(quoteVersion)), aggregatePricesPerType(allQuotesPrice));
+        String defaultConsumer = quoteVersion.getQuote().getUserAccount() != null ? quoteVersion.getQuote().getUserAccount().getCode() : null;
+        Details details = new Details(new Quote(billableAccounts, quote.getQuoteNumber(), quote.getQuoteDate(),entityToDtoConverter.getCustomFieldsDTO(quoteVersion), defaultConsumer), aggregatePricesPerType(allQuotesPrice));
 
         return new QuoteXmlDto(header, details);
     }

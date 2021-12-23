@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
         @Parameter(name = "sequence_name", value = "dunning_policy_rule_line_seq")})
 public class DunningPolicyRuleLine extends AuditableEntity {
 
+    private static final long serialVersionUID = 1L;
+
     @Column(name = "policy_condition_operator")
     @NotNull
     private String policyConditionOperator;

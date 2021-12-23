@@ -25,40 +25,46 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
+import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
+import org.meveo.admin.exception.CounterInstantiationException;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCountry;
@@ -66,7 +72,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -80,17 +85,16 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.RatingResult;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -105,28 +109,22 @@ import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.catalog.TriggeredEdrScriptService;
+import org.meveo.service.script.catalog.TriggeredEdrScript;
+import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
 /**
- * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and
- * {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
+ * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
+ * {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
  *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
-@Stateless
-public class RatingService extends PersistenceService<WalletOperation> {
-
-    @Inject
-    private EdrService edrService;
+public abstract class RatingService extends PersistenceService<WalletOperation> {
 
     @EJB
     private SubscriptionService subscriptionService;
-
-    @EJB
-    private RatedTransactionService ratedTransactionService;
 
     @Inject
     private TaxMappingService taxMappingService;
@@ -147,25 +145,19 @@ public class RatingService extends PersistenceService<WalletOperation> {
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
-    private TriggeredEdrScriptService triggeredEdrScriptService;
-
-    @Inject
-    private WalletOperationService walletOperationService;
-
-    @EJB
-    private RatingService ratingServiceNewTX;
-
-    @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-    
+
     @Inject
     private ContractService contractService;
-    
+
     @Inject
     private ContractItemService contractItemService;
+
+    @Inject
+    protected CounterInstanceService counterInstanceService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -182,25 +174,25 @@ public class RatingService extends PersistenceService<WalletOperation> {
             String strQuery = "select SUM(r.serviceInstance.quantity) from " + RecurringChargeInstance.class.getSimpleName() + " r " + "WHERE r.code=:chargeCode " + "AND r.subscriptionDate<=:chargeDate "
                     + "AND (r.serviceInstance.terminationDate is NULL OR r.serviceInstance.terminationDate>:chargeDate) ";
             switch (level) {
-                case BILLING_ACCOUNT:
-                    strQuery += "AND r.subscription.userAccount.billingAccount=:billingAccount ";
-                    break;
-                case CUSTOMER:
-                    strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount.customer=:customer ";
-                    break;
-                case CUSTOMER_ACCOUNT:
-                    strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount=:customerAccount ";
-                    break;
-                case PROVIDER:
-                    break;
-                case SELLER:
-                    strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
-                    break;
-                case USER_ACCOUNT:
-                    strQuery += "AND r.subscription.userAccount=:userAccount ";
-                    break;
-                default:
-                    break;
+            case BILLING_ACCOUNT:
+                strQuery += "AND r.subscription.userAccount.billingAccount=:billingAccount ";
+                break;
+            case CUSTOMER:
+                strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount.customer=:customer ";
+                break;
+            case CUSTOMER_ACCOUNT:
+                strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount=:customerAccount ";
+                break;
+            case PROVIDER:
+                break;
+            case SELLER:
+                strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
+                break;
+            case USER_ACCOUNT:
+                strQuery += "AND r.subscription.userAccount=:userAccount ";
+                break;
+            default:
+                break;
 
             }
             Query query = getEntityManager().createQuery(strQuery);
@@ -211,25 +203,25 @@ public class RatingService extends PersistenceService<WalletOperation> {
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             Customer customer = customerAccount.getCustomer();
             switch (level) {
-                case BILLING_ACCOUNT:
-                    query.setParameter("billingAccount", billingAccount);
-                    break;
-                case CUSTOMER:
-                    query.setParameter("customer", customer);
-                    break;
-                case CUSTOMER_ACCOUNT:
-                    query.setParameter("customerAccount", customerAccount);
-                    break;
-                case PROVIDER:
-                    break;
-                case SELLER:
-                    query.setParameter("seller", customer.getSeller());
-                    break;
-                case USER_ACCOUNT:
-                    query.setParameter("userAccount", userAccount);
-                    break;
-                default:
-                    break;
+            case BILLING_ACCOUNT:
+                query.setParameter("billingAccount", billingAccount);
+                break;
+            case CUSTOMER:
+                query.setParameter("customer", customer);
+                break;
+            case CUSTOMER_ACCOUNT:
+                query.setParameter("customerAccount", customerAccount);
+                break;
+            case PROVIDER:
+                break;
+            case SELLER:
+                query.setParameter("seller", customer.getSeller());
+                break;
+            case USER_ACCOUNT:
+                query.setParameter("userAccount", userAccount);
+                break;
+            default:
+                break;
 
             }
             Number sharedQuantity = (Number) query.getSingleResult();
@@ -237,33 +229,32 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 result = sharedQuantity.intValue();
             }
         } catch (Exception e) {
-            log.error("faile to get shared quantity", e);
+            log.error("failed to get shared quantity", e);
         }
         return result;
     }
 
     /**
-     * Rate a charge. Note: DOES NOT persist walletOperation to DB.
+     * Rate a charge - instantiate a wallet operation. Note: DOES NOT persist walletOperation to DB.
      *
      * @param chargeInstance Charge instance to rate
      * @param applicationDate Date of application
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
-     * @param orderNumberOverride Order number to overrite. If not provided, will default to an order number from a charge instance
+     * @param orderNumberOverride Order number to override. If not provided, will default to an order number from a charge instance
      * @param startdate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
      * @param chargeMode Charge mode
-     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata
-     *        is not applied.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param edr EDR being rated
-     * @param isReservation - is this a reservation instead of a real wallet operation
+     * @param reservation - Reservation the rating is for
      * @param isVirtual Is this a virtual charge - simulation of rating, charge instance will be matched by code to the charge instantiated in subscription
      * @return Rating result containing a rated wallet operation (NOT persisted)
-     * @throws BusinessException General business exception
+     * @throws InvalidELException Failure to evaluate EL expression
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride, Date startdate, Date endDate,
-                                   DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
+    protected RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride, Date startdate, Date endDate,
+            DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, Reservation reservation, boolean isVirtual) throws InvalidELException, RatingException {
 
         WalletOperation walletOperation = null;
 
@@ -275,7 +266,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (chargeInstance.getInvoicingCalendar() != null) {
 
             Date defaultInitDate = null;
-            if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+            if (chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
                 defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
             } else if (chargeInstance.getServiceInstance() != null) {
                 defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
@@ -287,28 +278,27 @@ public class RatingService extends PersistenceService<WalletOperation> {
             invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
         }
 
-        if (isReservation) {
-            if (orderNumberOverride != null)
-                walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
-                        orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
-                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
-            else
-                walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
-                        chargeInstance.getOrderNumber(),
-                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+        if (reservation != null) {
+            if (orderNumberOverride != null) {
+                walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
+                    edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate, reservation);
+            } else {
+                walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, chargeInstance.getOrderNumber(),
+                    edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate, reservation);
+            }
+
         } else {
-            if (orderNumberOverride != null)
-                walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
-                        orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
-                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
-            else
-                walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
-                        chargeInstance.getOrderNumber(),
-                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            if (orderNumberOverride != null) {
+                walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
+                    edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            } else {
+                walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, chargeInstance.getOrderNumber(),
+                    edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            }
         }
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
@@ -317,16 +307,28 @@ public class RatingService extends PersistenceService<WalletOperation> {
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
 
-        rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency());
+        rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency(), isVirtual);
+
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+
+        if (walletOperation.getInputUnitDescription() == null) {
+            walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+        }
+        if (walletOperation.getRatingUnitDescription() == null) {
+            walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+        }
+        if (walletOperation.getInvoiceSubCategory() == null) {
+            walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+        }
 
         RatingResult ratedEDRResult = new RatingResult();
-        ratedEDRResult.setWalletOperation(walletOperation);
+        ratedEDRResult.addWalletOperation(walletOperation);
 
         return ratedEDRResult;
 
     }
 
-    public static Integer getSortIndex(WalletOperation wo) {
+    public static Integer getSortIndex(WalletOperation wo) throws InvalidELException {
         if (wo.getChargeInstance() == null) {
             return null;
         }
@@ -344,9 +346,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     /**
-     * Rate a charge and triggerEDR. Same as rateCharge but in addition triggers EDRs, unless its a virtual operation. NOTE: Does not persist WO.
-     *
-     *
+     * Rate a charge and instantiate triggered EDRs. Same as rateCharge but in addition instantiates triggered EDRs, unless its a virtual operation. NOTE: Does not persist WO nor EDRs.
      *
      * @param chargeInstance Charge instance to rate
      * @param applicationDate Date of application
@@ -355,45 +355,50 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param orderNumberOverride Order number to override. If not provided, will default to an order number from a charge instance
      * @param startDate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
-     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata
-     *        is not applied.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param chargeMode Charge mode
      * @param edr EDR being rated
+     * @param reservation - Reservation the rating is for
      * @param forSchedule - is it to be scheduled
-     * @param isVirtual Is this a virtual charge - simulation of rating. Charge instance will be matched by code to the charge instantiated in subscription, EDRS will not be
-     *        triggered.
-     * @return Rating result containing a rated wallet operation (NOT persisted) and triggered EDRs
-     * @throws BusinessException business exception
-     * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
+     * @param isVirtual Is this a virtual charge - simulation of rating. Charge instance will be matched by code to the charge instantiated in subscription, EDRS will not be triggered.
+     * @return Rating result containing a rated wallet operation (NOT persisted) and triggered EDRs (NOT persisted)
+     * @throws ValidationException Failure to rate due to data or EL validation exceptions
+     * @throws RatingException Failure to rate charge due to lack of funds, inconsistency or other rating related failure
+     * @throws CommunicateToRemoteInstanceException Failed to communicate to a remote Opencell instance when sending Triggered EDRs
      */
-    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride, Date startDate, Date endDate,
-                                                 DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
+    public RatingResult rateChargeAndInstantiateTriggeredEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride, Date startDate,
+            Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, Reservation reservation, boolean forSchedule, boolean isVirtual)
+            throws ValidationException, RatingException, CommunicateToRemoteInstanceException {
 
-        RatingResult ratedEDRResult = rateCharge(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod, chargeMode, edr, false, isVirtual);
+        RatingResult ratedEDRResult = rateCharge(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod, chargeMode, edr, reservation, isVirtual);
 
         // Do not trigger EDRs for virtual or Scheduled operations
         if (forSchedule || isVirtual) {
             return ratedEDRResult;
         }
 
-        WalletOperation walletOperation = ratedEDRResult.getWalletOperation();
-
-        List<EDR> triggeredEdrs = triggerEDRs(walletOperation, edr, isVirtual);
-        ratedEDRResult.setTriggeredEDRs(triggeredEdrs);
+        for (WalletOperation walletOperation : ratedEDRResult.getWalletOperations()) {
+            List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, edr, isVirtual);
+            ratedEDRResult.addTriggeredEDRs(triggeredEdrs);
+        }
         return ratedEDRResult;
     }
 
     /**
-     * Create new EDRs if charge has triggerEDRTemplate
+     * Instantiate new EDRs if charge has triggerEDRTemplate. EDRs are NOT persisted.
      *
      * @param walletOperation Wallet operation
      * @param edr The original event record
-     * @param isVirtual do not persist EDR if isVirtual = true
+     * @param isVirtual Do not send EDR to a remote server if isVirtual = true
      * @return A list of triggered EDRs
-     * @throws BusinessException business exception
-     * @throws ChargingEdrOnRemoteInstanceErrorException Failure to communicate with a remote Opencell instance
+     * @throws RatingException Failed to run a script to update EDR
+     * @throws CommunicateToRemoteInstanceException Failure to communicate with a remote Opencell instance
+     * @throws ChargingEdrOnRemoteInstanceErrorException Failure to charge CDR on a remote Opencell instance
+     * @throws InvalidELException Failed to evaluate EL expression
+     * @throws ElementNotFoundException Subscription as resolved from EL expression was not found
      */
-    private List<EDR> triggerEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual) throws BusinessException, ChargingEdrOnRemoteInstanceErrorException {
+    private List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual)
+            throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
         List<EDR> triggredEDRs = new ArrayList<>();
 
@@ -401,114 +406,131 @@ public class RatingService extends PersistenceService<WalletOperation> {
         UserAccount ua = chargeInstance.getUserAccount();
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
-        EntityManager em = getEntityManager();
-
         List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeTemplate.getEdrTemplates();
+
         for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
 
-            if (StringUtils.isBlank(triggeredEDRTemplate.getConditionEl()) || evaluateBooleanExpression(triggeredEDRTemplate.getConditionEl(), walletOperation, null, walletOperation.getPriceplan(), edr)) {
+            if (!StringUtils.isBlank(triggeredEDRTemplate.getConditionEl()) && !evaluateBooleanExpression(triggeredEDRTemplate.getConditionEl(), walletOperation, null, walletOperation.getPriceplan(), edr)) {
+                continue;
+            }
 
-                MeveoInstance meveoInstance = null;
+            MeveoInstance meveoInstance = null;
 
-                if (triggeredEDRTemplate.getMeveoInstance() != null) {
-                    meveoInstance = triggeredEDRTemplate.getMeveoInstance();
-                }
-                if (!StringUtils.isBlank(triggeredEDRTemplate.getOpencellInstanceEL())) {
-                    String opencellInstanceCode = evaluateStringExpression(triggeredEDRTemplate.getOpencellInstanceEL(), walletOperation, ua, null, null);
-                    meveoInstance = meveoInstanceService.findByCode(opencellInstanceCode);
-                }
+            if (triggeredEDRTemplate.getMeveoInstance() != null) {
+                meveoInstance = triggeredEDRTemplate.getMeveoInstance();
+            }
+            if (!StringUtils.isBlank(triggeredEDRTemplate.getOpencellInstanceEL())) {
+                String opencellInstanceCode = evaluateStringExpression(triggeredEDRTemplate.getOpencellInstanceEL(), walletOperation, ua, null, null);
+                meveoInstance = meveoInstanceService.findByCode(opencellInstanceCode);
+            }
 
-                if (meveoInstance == null) {
-                    EDR newEdr = new EDR();
-                    newEdr.setCreated(new Date());
-                    newEdr.setEventDate(walletOperation.getOperationDate());
-                    newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
-                    newEdr.setOriginRecord("CHRG_" + chargeInstance.getId() + "_" + walletOperation.getOperationDate().getTime());
-                    newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua, null, edr));
-                    newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua, null, edr));
-                    newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
-                    newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
-                    newEdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
+            if (meveoInstance == null) {
+                EDR newEdr = new EDR();
+                newEdr.setCreated(new Date());
+                newEdr.setEventDate(walletOperation.getOperationDate());
+                newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+                newEdr.setOriginRecord("CHRG_" + chargeInstance.getId() + "_" + walletOperation.getOperationDate().getTime());
+                newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua, null, edr));
+                newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua, null, edr));
+                newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
+                newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
+                newEdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
 
-                    Subscription sub = null;
+                Subscription sub = null;
 
-                    if (!StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
-                        String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
+                if (!StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+                    String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
+                    if (subCode != null) {
                         sub = subscriptionService.findByCode(subCode);
                         if (sub == null) {
-                            log.info("Could not find subscription for code={} (EL={}) in triggered EDR with code {}", subCode, triggeredEDRTemplate.getSubscriptionEl(), triggeredEDRTemplate.getCode());
+                            throw new ElementNotFoundException(subCode + " from EL " + triggeredEDRTemplate.getSubscriptionEl() + " in Triggered EDR " + triggeredEDRTemplate.getCode(), "Subscription");
                         }
-                    } else if (walletOperation.getSubscription() != null) {
-                        sub = em.getReference(Subscription.class, walletOperation.getSubscription().getId());
                     }
+                }
+                if (sub == null) {
+                    sub = walletOperation.getSubscription();
+                }
 
-                    if (sub != null) {
-                        newEdr.setSubscription(sub);
-                        log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
+                newEdr.setSubscription(sub);
 
-                        if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
-                            newEdr = triggeredEdrScriptService.updateEdr(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr, walletOperation);
-                        }
+                log.debug("trigger EDR from code {}", triggeredEDRTemplate.getCode());
 
-                        if (!isVirtual) {
-                            edrService.create(newEdr);
-                        }
+                if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
+                    newEdr = updateTriggeredEdrByScript(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr, walletOperation);
+                }
 
-                        triggredEDRs.add(newEdr);
+                triggredEDRs.add(newEdr);
 
-                    } else {
-                        // removed for the case of product instance on user account without subscription
-                        // throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
-                    }
+            } else if (!isVirtual) {
+                if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+                    throw new InvalidParameterException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
+                }
 
-                } else {
-                    if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
-                        throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
-                    }
+                CDR cdr = new CDR();
+                String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
+                cdr.setAccessCode(subCode);
+                cdr.setEventDate(walletOperation.getOperationDate());
+                cdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua, null, edr));
+                cdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua, null, edr));
+                cdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
+                cdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
+                cdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
 
-                    CDR cdr = new CDR();
-                    String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
-                    cdr.setAccessCode(subCode);
-                    cdr.setEventDate(walletOperation.getOperationDate());
-                    cdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua, null, edr));
-                    cdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua, null, edr));
-                    cdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
-                    cdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
-                    cdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
+                String url = "api/rest/billing/mediation/chargeCdr";
+                Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
+                ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+                log.trace("Triggered remote EDR response {}", actionStatus);
 
-                    String url = "api/rest/billing/mediation/chargeCdr";
-                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
-                    ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-                    log.trace("Triggered remote EDR response {}", actionStatus);
+                if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+                    throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. Error code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
 
-                    if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. Error code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
-
-                    } else if (actionStatus == null) {
-                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. No response code from API.");
-                    }
+                } else if (actionStatus == null) {
+                    throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. No response code from API.");
                 }
             }
         }
         return triggredEDRs;
+
+    }
+
+    private EDR updateTriggeredEdrByScript(String scriptCode, EDR newEdr, WalletOperation walletOperation) throws RatingException {
+
+        try {
+            TriggeredEdrScriptInterface scriptInterface = (TriggeredEdrScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+
+            Map<String, Object> scriptContext = new HashMap<>();
+            scriptContext.put(TriggeredEdrScript.CONTEXT_ENTITY, newEdr);
+            scriptContext.put(TriggeredEdrScript.CONTEXT_WO, walletOperation);
+
+            return scriptInterface.updateEdr(scriptContext);
+
+        } catch (RatingException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new RatingScriptExecutionErrorException("Failed when run script " + scriptCode + ", info " + e.getMessage(), e);
+        }
     }
 
     /**
-     * Rate or rerate a Wallet operation - determine a unit price, lookup tax and calculate total amounts. Unless price is overridden, consults price plan for a unit price to
-     * charge.
+     * Rate a Wallet operation - determine a unit price, lookup tax and calculate total amounts. Unless price is overridden, consults price plan for a unit price to charge.
      *
      * THIS IS A SINGLE PLACE WHERE RATING SHOULD OCCUR
      *
      * @param bareWalletOperation operation
      * @param unitPriceWithoutTaxOverridden Unit price without tax - An overridden price
-     * @param unitPriceWithTaxOverriden unit price with tax - An overridden price
+     * @param unitPriceWithTaxOverridden unit price with tax - An overridden price
      * @param buyerCountryId Buyer's country id
      * @param buyerCurrency Buyer's trading currency
-     * @throws BusinessException business exception
+     * @param isVirtual Is this a virtual rating
+     * @throws PriceELErrorException Priceplan amount EL expression resolves to NULL
+     * @throws InvalidELException Failed to resolve EL expression
+     * @throws NoTaxException Unable to determine a tax to apply
+     * @throws NoPricePlanException No price plan matched for a charge
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency)
-            throws BusinessException, RatingException {
+    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
+            boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
 
@@ -518,17 +540,20 @@ public class RatingService extends PersistenceService<WalletOperation> {
             if (unitPriceWithoutTaxOverridden != null) {
                 bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTaxOverridden);
             }
-            if (unitPriceWithTaxOverriden != null) {
-                bareWalletOperation.setUnitAmountWithTax(unitPriceWithTaxOverriden);
+            if (unitPriceWithTaxOverridden != null) {
+                bareWalletOperation.setUnitAmountWithTax(unitPriceWithTaxOverridden);
             }
 
-            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript());
+            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript(), isVirtual);
 
             // Use a standard price plan approach to rating
         } else {
 
+            BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
+            BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
+
             RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
 
@@ -537,223 +562,224 @@ public class RatingService extends PersistenceService<WalletOperation> {
             if (bareWalletOperation.getTax() == null) {
 
                 TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
-                if(taxInfo==null) {
-                	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
-                }
                 bareWalletOperation.setTaxClass(taxInfo.taxClass);
                 bareWalletOperation.setTax(taxInfo.tax);
                 bareWalletOperation.setTaxPercent(taxInfo.tax.getPercent());
             }
 
             PricePlanMatrix pricePlan = null;
-            if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverriden == null && !appProvider.isEntreprise())) {
+            // Unit price was not overridden
+            if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 
-                List<PricePlanMatrix> chargePricePlans = getActivePricePlansByChargeCode(bareWalletOperation.getCode());
+                List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                     throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
                 }
-                Subscription subscription=bareWalletOperation.getSubscription();
-                BillingAccount billingAccount=subscription.getUserAccount().getBillingAccount();
-                CustomerAccount customerAccount=billingAccount.getCustomerAccount();
-                Customer customer=customerAccount.getCustomer();
-                Contract contract=contractService.getContractByAccount(customer, billingAccount, customerAccount);
-                ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
-                ChargeTemplate  chargeTemplate=chargeInstance.getChargeTemplate();
-                OfferTemplate offerTemplate=subscription.getOffer();
-                ContractItem contractItem=null;  
-                if(contract!=null && serviceInstance!=null) {
-                contractItem=contractItemService.getApplicableContractItem(contract ,offerTemplate,serviceInstance.getCode(),chargeTemplate);
-                } 
-                if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                	 
-                if(contractItem.getPricePlan()!=null){ 
-    				PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
-    				PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
-    				if(ppmVersion!=null) {
-    					PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, bareWalletOperation);
-    					unitPriceWithoutTaxOverridden=pricePlanMatrixLine.getPricetWithoutTax();
-    				} 
 
-    			}else {
-    				unitPriceWithoutTaxOverridden =contractItem.getAmountWithoutTax();	
-    			  } 
-                } 
-    			
-                
-                if(unitPriceWithoutTaxOverridden==null) {
-                pricePlan = ratePrice(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
-                if (pricePlan == null) {
-                    throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+                // Check if unit price was not overridden by a contract
+                Subscription subscription = bareWalletOperation.getSubscription();
+                BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                Customer customer = customerAccount.getCustomer();
+                Contract contract = contractService.getContractByAccount(customer, billingAccount, customerAccount);
+                ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
+                ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+                OfferTemplate offerTemplate = subscription.getOffer();
+                ContractItem contractItem = null;
+                if (contract != null && serviceInstance != null) {
+                    contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate);
 
-                } 
-                //for V11 needs
-//                else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
-//                    throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
-//                }
-                log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+                    if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
-                PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
-                if (ppmVersion != null) {
-
-                    if (!ppmVersion.isMatrix()) {
-                        if (appProvider.isEntreprise()) {
-                            unitPriceWithoutTaxOverridden = ppmVersion.getAmountWithoutTax();
-                            if (ppmVersion.getAmountWithoutTaxEL() != null) {
-                                unitPriceWithoutTaxOverridden = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(),
-                                        bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(),
-                                        null, unitPriceWithoutTaxOverridden);
-                                if (unitPriceWithoutTaxOverridden == null) {
-                                    throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
-                                            + " EL:" + ppmVersion.getAmountWithoutTaxEL());
-                                }
+                        if (contractItem.getPricePlan() != null) {
+                            PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
+                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
+                            if (ppmVersion != null) {
+                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
+                                unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                             }
 
                         } else {
-                            unitPriceWithTaxOverriden = ppmVersion.getAmountWithTax();
-                            if (ppmVersion.getAmountWithTaxEL() != null) {
-                                unitPriceWithTaxOverriden = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(),
-                                        bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), null,
-                                        unitPriceWithoutTaxOverridden);
-                                if (unitPriceWithTaxOverriden == null) {
-                                    throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
-                                            + " EL:" + ppmVersion.getAmountWithTaxEL());
-                                }
-                            }
-                        }
-                    } else {
-                        PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                        if(pricePlanMatrixLine!=null) {
-                        unitPriceWithoutTaxOverridden = pricePlanMatrixLine.getPricetWithoutTax();
-                        }
-                        if (unitPriceWithoutTaxOverridden == null) {
-                            throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId()
-                                    + "and charge instance : " + bareWalletOperation.getChargeInstance());
-                        }
-                    }
-
-                } else {
-                    if (appProvider.isEntreprise()) {
-                        unitPriceWithoutTaxOverridden = pricePlan.getAmountWithoutTax();
-                        if (pricePlan.getAmountWithoutTaxEL() != null) {
-                            unitPriceWithoutTaxOverridden = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(), pricePlan,
-                                    unitPriceWithoutTaxOverridden);
-                            if (unitPriceWithoutTaxOverridden == null) {
-                                throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
-                            }
-                        }
-
-                    } else {
-                        unitPriceWithTaxOverriden = pricePlan.getAmountWithTax();
-                        if (pricePlan.getAmountWithTaxEL() != null) {
-                            unitPriceWithTaxOverriden = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), pricePlan,
-                                    unitPriceWithoutTaxOverridden);
-                            if (unitPriceWithTaxOverriden == null) {
-                                throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
-                            }
+                            unitPriceWithoutTax = contractItem.getAmountWithoutTax();
                         }
                     }
                 }
-                if (contractItem!=null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType() )&& contractItem.getRate()>0  ) {
-       			 BigDecimal amount = unitPriceWithoutTaxOverridden.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
-       		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0) 
-       				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);    
-       			
-       		       }
-                }
 
+                if (unitPriceWithoutTax == null) {
+                    pricePlan = matchPricePlan(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
+                    if (pricePlan == null) {
+                        throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+                    }
+
+                    log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+
+                    Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                    unitPriceWithTax = unitPrices.getAmountWithTax();
+
+                    // A price discount is applied to a default price by a contract
+                    if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) && contractItem.getRate() > 0) {
+                        BigDecimal amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+                        if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
+                            unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
+
+                    }
+                }
             }
 
-            // if the wallet operation correspond to a recurring charge that is
-            // shared, we divide the price by the number of
-            // shared charges
+            // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
             if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
                 RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
                 int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
                 if (sharedQuantity > 0) {
                     if (appProvider.isEntreprise()) {
-                        unitPriceWithoutTaxOverridden = unitPriceWithoutTaxOverridden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                        unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     } else {
-                        unitPriceWithTaxOverriden = unitPriceWithTaxOverriden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                        unitPriceWithTax = unitPriceWithTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     }
-                    log.info("charge is shared {} times, so unit price is {}", sharedQuantity, unitPriceWithoutTaxOverridden);
+                    log.trace("charge is shared {} times, so unit price is {}", sharedQuantity, unitPriceWithoutTax);
                 }
             }
             // Override wallet operation parameters using PP EL parameters
-            bareWalletOperation = overrideWalletOperationParameters(bareWalletOperation, pricePlan);
+            setWalletOperationPropertiesFromAPriceplan(bareWalletOperation, pricePlan);
 
-            calculateAmounts(bareWalletOperation, unitPriceWithoutTaxOverridden, unitPriceWithTaxOverriden);
-
-            // calculate WO description based on EL from Price plan
-            if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {
-                String woDescription = evaluateStringExpression(pricePlan.getWoDescriptionEL(), bareWalletOperation, null, null, null);
-                if (woDescription != null) {
-                    bareWalletOperation.setDescription(woDescription);
-                }
-            }
-
-            // get invoiceSubCategory based on EL from Price plan
-            if (pricePlan != null && pricePlan.getInvoiceSubCategoryEL() != null) {
-                String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
-                        bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
-                if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
-                    InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
-                    if (invoiceSubCategory != null) {
-                        bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
-                    }
-                }
-            }
+            calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
             if (pricePlan != null && pricePlan.getScriptInstance() != null) {
                 log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance());
+                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), isVirtual);
             }
         }
 
         // Execute a final rating script set on offer template
         if (bareWalletOperation.getOfferTemplate() != null && bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance() != null) {
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
-            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance());
+            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
-
     }
 
     /**
-     * Override wallet operation parameters using EL paramaters in the price plan.
+     * Determine unit price from a priceplan
+     * 
+     * @param pricePlan Price plan
+     * @param wo Wallet operation
+     * @return Amount without and with tax
+     * @throws InvalidELException Failed to evaluate EL expression
+     * @throws PriceELErrorException Amount EL expression evaluated to null
+     */
+    private Amounts determineUnitPrice(PricePlanMatrix pricePlan, WalletOperation wo) throws PriceELErrorException, InvalidELException {
+
+        BigDecimal priceWithoutTax = null;
+        BigDecimal priceWithTax = null;
+
+        PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
+        if (ppmVersion != null) {
+
+            if (!ppmVersion.isMatrix()) {
+                if (appProvider.isEntreprise()) {
+                    priceWithoutTax = ppmVersion.getAmountWithoutTax();
+                    if (ppmVersion.getAmountWithoutTaxEL() != null) {
+                        priceWithoutTax = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                        if (priceWithoutTax == null) {
+                            throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getAmountWithoutTaxEL());
+                        }
+                    }
+
+                } else {
+                    priceWithTax = ppmVersion.getAmountWithTax();
+                    if (ppmVersion.getAmountWithTaxEL() != null) {
+                        priceWithTax = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), null, priceWithoutTax);
+                        if (priceWithTax == null) {
+                            throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getAmountWithTaxEL());
+                        }
+                    }
+                }
+            } else {
+                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
+                if (pricePlanMatrixLine != null) {
+                    priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                }
+                if (priceWithoutTax == null) {
+                    throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
+                }
+            }
+
+        } else {
+            if (appProvider.isEntreprise()) {
+                priceWithoutTax = pricePlan.getAmountWithoutTax();
+                if (pricePlan.getAmountWithoutTaxEL() != null) {
+                    priceWithoutTax = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), wo, wo.getChargeInstance().getUserAccount(), pricePlan, priceWithoutTax);
+                    if (priceWithoutTax == null) {
+                        throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
+                    }
+                }
+
+            } else {
+                priceWithTax = pricePlan.getAmountWithTax();
+                if (pricePlan.getAmountWithTaxEL() != null) {
+                    priceWithTax = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), pricePlan, priceWithoutTax);
+                    if (priceWithTax == null) {
+                        throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
+                    }
+                }
+            }
+        }
+        return new Amounts(priceWithoutTax, priceWithTax);
+    }
+
+    /**
+     * Set wallet operation properties using EL parameters in the price plan.
      *
      * @param bareWalletOperation the wallet operation
      * @param pricePlan the Price plan
      * @return a wallet operation
      */
-    private WalletOperation overrideWalletOperationParameters(WalletOperation bareWalletOperation, PricePlanMatrix pricePlan) {
-        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter1El())) {
+    private void setWalletOperationPropertiesFromAPriceplan(WalletOperation bareWalletOperation, PricePlanMatrix pricePlan) {
+        if (pricePlan == null) {
+            return;
+        }
+        if (StringUtils.isNotBlank(pricePlan.getParameter1El())) {
             String parameter1 = evaluateStringExpression(pricePlan.getParameter1El(), bareWalletOperation, null, pricePlan, null);
             if (parameter1 != null) {
                 bareWalletOperation.setParameter1(parameter1);
             }
         }
-        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter2El())) {
+        if (StringUtils.isNotBlank(pricePlan.getParameter2El())) {
             String parameter2 = evaluateStringExpression(pricePlan.getParameter2El(), bareWalletOperation, null, pricePlan, null);
             if (parameter2 != null) {
                 bareWalletOperation.setParameter2(parameter2);
             }
         }
-        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter3El())) {
+        if (StringUtils.isNotBlank(pricePlan.getParameter3El())) {
             String parameter3 = evaluateStringExpression(pricePlan.getParameter3El(), bareWalletOperation, null, pricePlan, null);
             if (parameter3 != null) {
                 bareWalletOperation.setParameter3(parameter3);
             }
         }
 
-        return bareWalletOperation;
-    }
+        // calculate WO description based on EL from Price plan
+        if (pricePlan.getWoDescriptionEL() != null) {
+            String woDescription = evaluateStringExpression(pricePlan.getWoDescriptionEL(), bareWalletOperation, null, null, null);
+            if (woDescription != null) {
+                bareWalletOperation.setDescription(woDescription);
+            }
+        }
 
-    public List<PricePlanMatrix> getActivePricePlansByChargeCode(String code) {
-        return pricePlanMatrixService.getActivePricePlansByChargeCode(code);
+        // get invoiceSubCategory based on EL from Price plan
+        if (pricePlan.getInvoiceSubCategoryEL() != null) {
+            String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
+                bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
+            if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
+                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+                if (invoiceSubCategory != null) {
+                    bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
+                }
+            }
+        }
     }
 
     /**
-     * Calculate, round (if needed) and set total amounts and taxes: [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax) [B2B] amountWithTax = round(amountWithoutTax)
-     * + round(amountTax)
+     * Calculate, round (if needed) and set total amounts and taxes: [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax) [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax)
      *
      * Unit prices and taxes are not rounded
      *
@@ -774,9 +800,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         BigDecimal amount = null;
         BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
-        if(unitPrice == null)
-        	throw new BusinessException("No unit price found");
-        	
+        if (unitPrice == null)
+            throw new BusinessException("No unit price found");
+
         // process ratingEL here
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
@@ -827,16 +853,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param buyerCountryId Buyer's county id
      * @param buyerCurrency Buyer's trading currency
      * @return Matched price plan
-     * @throws BusinessException Business exception
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long buyerCountryId, TradingCurrency buyerCurrency) throws BusinessException {
+    private PricePlanMatrix matchPricePlan(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long buyerCountryId, TradingCurrency buyerCurrency) throws InvalidELException {
         // FIXME: the price plan properties could be null !
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.RECURRING) {
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
@@ -940,7 +966,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                 if (!offerCodeSameInPricePlan) {
                     log.trace("The operation offerCode {} is not compatible with price plan offerCode: {}", bareOperation.getOfferTemplate() != null ? bareOperation.getOfferTemplate() : bareOperation.getOfferCode(),
-                            ppOfferTemplate);
+                        ppOfferTemplate);
                     continue;
                 }
             }
@@ -959,8 +985,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
-            if ((recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange()) && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
-                    continue;
+            if ((recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange())
+                    && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
+                continue;
             }
             Calendar validityCalendar = pricePlan.getValidityCalendar();
             boolean validityCalendarOK = validityCalendar == null || validityCalendar.previousCalendarDate(operationDate) != null;
@@ -984,95 +1011,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     /**
-     * Re-rate wallet operations. Each wallet operation is rerated independently and marked as failed to rerate if error occurs.
+     * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
      *
-     * @param woIds Ids of wallet operations to be re-rated
-     * @param useSamePricePlan true if same price plan will be used
-     * @throws BusinessException business exception
-     * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
-     */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reRateInNewTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
-
-        for (Long woId : woIds) {
-
-            try {
-                ratingServiceNewTX.reRateInNewTx(woId, useSamePricePlan);
-
-            } catch (RatingException e) {
-                log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
-                walletOperationService.markAsFailedToRerateInNewTx(woId, e);
-
-            } catch (BusinessException e) {
-                log.error("Failed to rerate Wallet operation {}: {}", woId, e.getMessage(), e);
-                walletOperationService.markAsFailedToRerateInNewTx(woId, e);
-            }
-        }
-    }
-
-    /**
-     * Re-rate wallet operations together. Each wallet operation is rerated and marked as failed to rerate if error occurs.
-     *
-     * @param woIds Ids of wallet operations to be re-rated
-     * @param useSamePricePlan true if same price plan will be used
-     * @throws BusinessException business exception
-     * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
-     */
-    public void reRate(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
-
-        for (Long woId : woIds) {
-
-            try {
-                reRate(woId, useSamePricePlan);
-
-            } catch (RatingException e) {
-                log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
-                throw e;
-
-            } catch (BusinessException e) {
-                log.error("Failed to rerate Wallet operation {}: {}", woId, e.getMessage(), e);
-                throw e;
-            }
-        }
-
-    }
-
-    /**
-     * Rerate wallet operation in new transaction
-     * 
-     * @param operationToRerateId wallet operation to be rerated
+     * @param operationToRerate wallet operation to be rerated
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void reRateInNewTx(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
-        reRate(operationToRerateId, useSamePricePlan);
-    }
+    public WalletOperation rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
 
-    /**
-     * Rerate wallet operation
-     *
-     * @param operationToRerateId wallet operation to be rerated
-     * @param useSamePricePlan true if same price plan will be used
-     * @throws BusinessException business exception
-     * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
-     */
-    public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
-
-        WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
-        if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
-            return;
-        }
-
-        // Change related OPEN or REJECTED Rated transaction status to CANCELED
-        RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
-            ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
-            }
-
-        WalletOperation operation = operationToRerate.getUnratedClone();
+        WalletOperation operation = walletOperationToRerate.getUnratedClone();
         PricePlanMatrix priceplan = operation.getPriceplan();
         WalletInstance wallet = operation.getWallet();
         UserAccount userAccount = wallet.getUserAccount();
@@ -1109,12 +1057,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
             operation.setChargeMode(ChargeApplicationModeEnum.RERATING);
 
             rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
-                priceplan != null ? priceplan.getTradingCurrency() : null);
+                priceplan != null ? priceplan.getTradingCurrency() : null, false);
         }
-        create(operation);
 
-        getEntityManager().createNamedQuery("WalletOperation.setStatusToReratedWithReratedWo").setParameter("now", new Date()).setParameter("newWo", operation).setParameter("id", operationToRerateId).executeUpdate();
-
+        return operation;
     }
 
     /**
@@ -1126,14 +1072,15 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param priceplan Price plan
      * @param amount Amount used in EL
      * @return Evaluated value from expression.
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    private BigDecimal evaluateAmountExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, BigDecimal amount) {
+    private BigDecimal evaluateAmountExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, BigDecimal amount) throws InvalidELException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount, null);
+        Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount, walletOperation.getEdr());
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
 
@@ -1148,9 +1095,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param priceplan Price plan
      * @param edr EDR
      * @return true/false True if expression is matched
-     * @throws BusinessException Business exception
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    private boolean evaluateBooleanExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, EDR edr) throws BusinessException {
+    private boolean evaluateBooleanExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, EDR edr) throws InvalidELException {
 
         if (StringUtils.isBlank(expression)) {
             return true;
@@ -1170,9 +1117,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param priceplan Price plan
      * @param edr EDR
      * @return Evaluated value
-     * @throws BusinessException business exception
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    private String evaluateStringExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, EDR edr) throws BusinessException {
+    private String evaluateStringExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, EDR edr) throws InvalidELException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -1192,9 +1139,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param priceplan Price plan
      * @param edr EDR
      * @return Evaluated value
-     * @throws BusinessException business exception
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    private Double evaluateDoubleExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, EDR edr) throws BusinessException {
+    private Double evaluateDoubleExpression(String expression, WalletOperation walletOperation, UserAccount ua, PricePlanMatrix priceplan, EDR edr) throws InvalidELException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -1259,26 +1206,26 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (expression.indexOf(ValueExpressionWrapper.VAR_CPQ_QUOTE) >= 0) {
             ServiceInstance service = chargeInstance.getServiceInstance();
             if (service != null) {
-            	CpqQuote quote=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuote():null;
-            	if(quote!=null) {
-            		userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
-            	}
-                
+                CpqQuote quote = service.getQuoteProduct() != null ? service.getQuoteProduct().getQuote() : null;
+                if (quote != null) {
+                    userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+                }
+
             }
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
             ServiceInstance service = chargeInstance.getServiceInstance();
             if (service != null) {
-            	QuoteVersion quoteVersion=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuoteVersion():null;
-            	if(quoteVersion!=null) {
-            		userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
-            	}
-                
+                QuoteVersion quoteVersion = service.getQuoteProduct() != null ? service.getQuoteProduct().getQuoteVersion() : null;
+                if (quoteVersion != null) {
+                    userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
+                }
+
             }
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE) >= 0) {
             ProductInstance productInstance = null;
-            if (chargeInstance instanceof ProductChargeInstance) {
+            if (chargeInstance != null && chargeInstance.getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.PRODUCT) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
@@ -1322,24 +1269,81 @@ public class RatingService extends PersistenceService<WalletOperation> {
      *
      * @param bareWalletOperation Wallet operation to rate
      * @param scriptInstance Script to execute
+     * @param isVirtual Is this a virtual rating
      * @throws RatingException Rating exception
      */
-    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws RatingException {
+    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance, boolean isVirtual) throws RatingException {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Will execute {} script {} for charge {}", bareWalletOperation.getPriceplan() != null ? "priceplan" : "rating", scriptInstanceCode, bareWalletOperation.getChargeInstance().getId());
             }
-
-            scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
+            Map<String, Object> context = new HashMap<>();
+            context.put("isVirtual", isVirtual);
+            scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, context);
 
         } catch (RatingException e) {
             throw e;
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
         }
     }
 
+    public static boolean isORChargeMatch(ChargeInstance chargeInstance) throws InvalidELException {
+        boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN).
+        	 filter(attributeInstance -> attributeInstance.getBooleanValue()!=null)
+            .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate())).anyMatch(attributeInstance -> !attributeInstance.getBooleanValue());
+
+        if (anyFalseAttribute) {
+            return false;
+        }
+        if (StringUtils.isBlank(chargeInstance.getChargeTemplate().getFilterExpression())) {
+            return true;
+        }
+
+        return ValueExpressionWrapper.evaluateToBooleanOneVariable(chargeInstance.getChargeTemplate().getFilterExpression(), "ci", chargeInstance);
+    }
+
+    /**
+     * Increment accumulator counter by a given value. Will instantiate a counter period if one was not created yet matching the given date. Counter changes are recorded in ratingResult.
+     *
+     * @param walletOperations Wallet operations
+     * @param ratingResult Rating result to record counter changes done.
+     * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
+     * @throws CounterInstantiationException Failure to create a new counter period
+     */
+    protected void incrementAccumulatorCounterValues(List<WalletOperation> walletOperations, RatingResult ratingResult, boolean isVirtual) throws CounterInstantiationException {
+
+        if (walletOperations.isEmpty()) {
+            return;
+        }
+        Map<ChargeInstance, List<WalletOperation>> groupedWOByChargeInstance = walletOperations.stream().collect(Collectors.groupingBy(wo -> wo.getChargeInstance()));
+
+        for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
+            ChargeInstance chargeInstance = groupedWos.getKey();
+            if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
+                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
+                ratingResult.addCounterChange(counterChangeInfo);
+            }
+        }
+    }
+
+    /**
+     * Revert counter values
+     * 
+     * @param countersToRevert Counter values to revert. Key = Counter period id, value - value to return
+     */
+    protected void revertCounterChanges(Map<Long, BigDecimal> countersToRevert) {
+
+        if (countersToRevert == null || countersToRevert.isEmpty()) {
+            return;
+        }
+        log.error("Failed to rate charge will revert the applied counters {}", countersToRevert);
+
+        for (Entry<Long, BigDecimal> counterInfo : countersToRevert.entrySet()) {
+            counterInstanceService.incrementCounterValue(counterInfo.getKey(), counterInfo.getValue());
+        }
+    }
 }

@@ -21,6 +21,9 @@ package org.meveo.model.payments;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -30,6 +33,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
+import org.meveo.model.crm.Provider;
 
 import java.util.Map;
 
@@ -70,4 +74,20 @@ public class CreditCategory extends BusinessEntity implements ISearchable {
             return this.description;
         }
     }
+    
+	/**
+	 * PaymentPlanPolicy associated to the entity
+	 */	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id")
+    protected Provider provider; 
+    
+	
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
 }
