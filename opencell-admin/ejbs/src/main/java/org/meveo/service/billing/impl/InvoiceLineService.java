@@ -1,6 +1,8 @@
 package org.meveo.service.billing.impl;
 
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
@@ -11,15 +13,7 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -250,6 +244,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	seller=commercialOrder.getSeller();
 
         }
+        if (entityToInvoice instanceof BillingAccount) {
+        	entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
+        	billingAccount = ((BillingAccount) entityToInvoice);
+        	invoiceLine.setBillingAccount(billingAccount);
+        	seller=billingAccount.getCustomerAccount().getCustomer().getSeller();
+
+        }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
@@ -261,7 +262,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      if (accountingArticle != null ) {
          setApplicableTax(accountingArticle, operationDate, seller, billingAccount, invoiceLine);
      }
-        create(invoiceLine);
+     create(invoiceLine);
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
@@ -650,16 +651,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public Map<Long, Long> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public Map<Long, List<Long>> createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
-        List<InvoiceLine> invoiceLines = new ArrayList<>();
-        Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
             create(invoiceLine);
-            invoiceLines.add(invoiceLine);
-            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+            commit();
+            List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
+                    .split(","))
+                    .map(Long::parseLong)
+                    .collect(toList());
+            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
         }
         return iLIdsRtIdsCorrespondence;
     }
