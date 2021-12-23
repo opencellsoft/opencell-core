@@ -70,7 +70,7 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private Date lastTransactionDate;
 
     /** The reference date. */
-    private ReferenceDateEnum referenceDate;
+    private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
     
     /** Custom fields. */
     private CustomFieldsDto customFields;
