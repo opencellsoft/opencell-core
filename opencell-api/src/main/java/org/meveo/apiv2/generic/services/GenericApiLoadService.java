@@ -52,19 +52,9 @@ public class GenericApiLoadService {
                     .find(nativePersistenceService.getEntityManager()).stream()
                     .map(ObjectArrays -> Arrays.asList(ObjectArrays))
                     .collect(Collectors.toList());
-            
-            List<Map<String, Object>> results = new ArrayList<Map<String,Object>>();
-            for(List<Object> line : list) {
-            	Map<String, Object> result = new LinkedHashMap<String, Object>();
-            	for(Object o : line) {
-            		Iterator iterator = genericFields.iterator();
-            		for (int i = 0; i < ((Object[]) o).length; i++) {
-                		result.put((String) iterator.next(), ((Object[]) o)[i]);
-					}
-            		results.add(result);
-            	}
-            }
-            return serializeResult(results);
+            return serializeResult(list.stream()
+                    .map(line -> addResultLine(line, genericFields.iterator()))
+                    .collect(Collectors.toList()));
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
@@ -96,6 +86,7 @@ public class GenericApiLoadService {
     private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
         return line.stream()
                 .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
+                .map(l -> Objects.isNull(l) ? "" : l)
                 .collect(Collectors.toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
     }
     private static Stream<Object> flatten(Object[] array) {
