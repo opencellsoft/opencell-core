@@ -41,6 +41,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
 
 public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
@@ -49,6 +50,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     private static boolean ENCRYPT_CF = TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR));
 
     public static final CustomFieldJsonTypeDescriptor INSTANCE = new CustomFieldJsonTypeDescriptor();
+    
 
     @SuppressWarnings("unchecked")
     public CustomFieldJsonTypeDescriptor() {
@@ -63,12 +65,12 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         if (value == null) {
             return null;
         }
-
         if (ENCRYPT_CF) {
-            return encrypt(value.asJson());
+        	
+             return encrypt(value.asJson());
         }
 
-        return value.asJson();
+          return value.asJson();
     }
 
     @Override
@@ -93,7 +95,6 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 
         Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
-
         return new CustomFieldValues(cfValues);
     }
 
@@ -114,7 +115,18 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return (X) toString(value);
 
         } else if (JsonNode.class.isAssignableFrom(type)) {
-            return (X) JacksonUtil.toJsonNode(toString(value));
+        	Gson gson = new Gson();
+			RootCfValues target2 = gson.fromJson(value.asJson(), RootCfValues.class);
+			System.out.println("Cf_value "+ target2.test.get(0).string);
+     		String valueCrypter=toString(value);
+     		String new_val=target2.test.get(0).string.replace(target2.test.get(0).string, valueCrypter);
+     		CfvaluesClasse cfvaluesClass=new CfvaluesClasse();
+     		cfvaluesClass.setString(new_val);
+     		List<CfvaluesClasse> cfValuesLists=new ArrayList<CfvaluesClasse>();
+     		cfValuesLists.add(cfvaluesClass);
+     		target2.setTest(cfValuesLists);
+     		
+        	 return (X) JacksonUtil.toJsonNode(new Gson().toJson(target2));
         }
         
         throw unknownUnwrap(type);
@@ -147,7 +159,19 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         } else {
             // Logger log = LoggerFactory.getLogger(getClass());
             // log.error("AKKKK value to wrap is " + (value != null ? value.getClass() : null));
-            return fromString(value.toString());
+        	Gson gson = new Gson();
+			RootCfValues target2 = gson.fromJson(value.toString(), RootCfValues.class);
+			if(target2.test!=null) {
+     		String valuedecrypterCrypter=decrypt(target2.test.get(0).string);
+     		String new_val=target2.test.get(0).string.replace(target2.test.get(0).string, valuedecrypterCrypter);
+     		CfvaluesClasse cfvaluesClass=new CfvaluesClasse();
+     		cfvaluesClass.setString(new_val);
+     		List<CfvaluesClasse> cfValuesLists=new ArrayList<CfvaluesClasse>();
+     		cfValuesLists.add(cfvaluesClass);
+     		target2.setTest(cfValuesLists);
+			 return fromString(new Gson().toJson(target2));
+        }
+			return fromString(value.toString());	
         }
     }
 
