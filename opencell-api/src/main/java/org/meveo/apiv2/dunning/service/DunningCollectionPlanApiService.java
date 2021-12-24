@@ -546,7 +546,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             dunningLevelInstanceService.update(levelInstanceToUpdate);
-
+            
             if (updateLevelInstanceInput.getActions() != null) {
                 fields.add("actions");
                 for (DunningActionInstance action : levelInstanceToUpdate.getActions()) {
@@ -554,10 +554,15 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 createActions(levelInstanceToUpdate, updateLevelInstanceInput.getActions());
             }
+            // If "levelStatus" : "DONE" ==> update all its DunningActionInstance to "DONE".
+            else if (updateLevelInstanceInput.getLevelStatus() != null && updateLevelInstanceInput.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+                dunningActionInstanceService.updateStatus(DunningActionInstanceStatusEnum.DONE, levelInstanceToUpdate);
+                levelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions", "collectionPlan"));
+            }
 
             updateCollectionPlanActions(levelInstanceToUpdate);
            
-            String origine = (levelInstanceToUpdate.getCollectionPlan()!=null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
+            String origine = (levelInstanceToUpdate.getCollectionPlan() != null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
             auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), levelInstanceToUpdate.getCollectionPlan(), origine, fields);
             return of(levelInstanceToUpdate);
         } catch (MeveoApiException e) {
