@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.generic.wf.GWFTransition;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The Class GWFTransitionDto
  */
@@ -61,6 +63,9 @@ public class GWFTransitionDto extends BaseEntityDto {
     /** The description. */
     @XmlElement(required = false)
     private String actionScriptCode;
+    
+    @JsonIgnore
+    private String workFlowCode;
 
     /**
      * Instantiates a new WF transition dto.
@@ -207,4 +212,18 @@ public class GWFTransitionDto extends BaseEntityDto {
         return "GWFTransitionDto [uuid=" + uuid + ", fromStatus=" + fromStatus + ", toStatus=" + toStatus + ", conditionEl=" + conditionEl + ", priority=" + priority
                 + ", description=" + description + ", actionScriptCode=" + actionScriptCode + "]";
     }
+
+	/**
+	 * @return the workFlowCode
+	 */
+	public String getWorkFlowCode() {
+		return workFlowCode;
+	}
+
+	/**
+	 * @param workFlowCode the workFlowCode to set
+	 */
+	public void setWorkFlowCode(String workFlowCode) {
+		this.workFlowCode = workFlowCode;
+	}
 }
