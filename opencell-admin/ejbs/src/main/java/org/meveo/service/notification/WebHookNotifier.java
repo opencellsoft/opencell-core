@@ -123,16 +123,14 @@ public class WebHookNotifier {
             }
             
             Map<String, String> params = evaluateMap(webHook.getWebhookParams(), entityOrEvent, context);
-            if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod() || WebHookMethodEnum.HTTP_DELETE == webHook.getHttpMethod()) {
-                String paramQuery = "";
-                String sep = "";
-                for (String paramKey : params.keySet()) {
-                    paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
-                    sep = "&";
-                }
-                log.debug("paramQuery={}", paramQuery);
-                url += "?" + paramQuery;
+            String paramQuery = "";
+            String sep = "";
+            for (String paramKey : params.keySet()) {
+                paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
+                sep = "&";
             }
+            log.debug("paramQuery={}", paramQuery);
+            url += "?" + paramQuery;
 
             log.debug("webhook url: {}", url);
             URL obj = new URL(url);
