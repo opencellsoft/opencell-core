@@ -43,7 +43,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     public PricePlanMatrixLine(PricePlanMatrixLine copy) {
 		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
 		this.description = copy.description;
-		this.pricetWithoutTax = copy.pricetWithoutTax;
+		this.priceWithoutTax = copy.priceWithoutTax;
 		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
 		this.priority = copy.priority;
 	}
@@ -58,7 +58,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
 
 	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-    private BigDecimal pricetWithoutTax;
+    private BigDecimal priceWithoutTax;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
@@ -83,15 +83,16 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.description = description;
     }
 
+
     public BigDecimal getPriceWithoutTax() {
-        return pricetWithoutTax;
-    }
+		return priceWithoutTax;
+	}
 
-    public void setPricetWithoutTax(BigDecimal pricetWithoutTax) {
-        this.pricetWithoutTax = pricetWithoutTax;
-    }
+	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
+		this.priceWithoutTax = priceWithoutTax;
+	}
 
-    public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
+	public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
         return pricePlanMatrixValues;
     }
 
