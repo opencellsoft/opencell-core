@@ -175,13 +175,13 @@ public class PricePlanMatrixLineServiceTest {
             PricePlanMatrixLine monthlyPrice1Line = new PricePlanMatrixLine();
             monthlyPrice1Line.setId(1L);
             monthlyPrice1Line.setDescription("Price1");
-            monthlyPrice1Line.setPricetWithoutTax(valueOf(24));
+            monthlyPrice1Line.setPriceWithoutTax(valueOf(24));
             monthlyPrice1Line.setPricePlanMatrixValues(Set.of(monthlyBcValue, twelveSubscriptionDurationValue));
             monthlyPrice1Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 
             PricePlanMatrixLine monthlyPrice2Line = new PricePlanMatrixLine();
             monthlyPrice2Line.setId(2L);
-            monthlyPrice2Line.setPricetWithoutTax(valueOf(15));
+            monthlyPrice2Line.setPriceWithoutTax(valueOf(15));
             monthlyPrice2Line.setDescription("Price2");
             monthlyPrice2Line.setPricePlanMatrixValues(Set.of(monthlyBcValue, twentyFourSubscriptionDurationValue));
             monthlyPrice2Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
@@ -189,13 +189,13 @@ public class PricePlanMatrixLineServiceTest {
             PricePlanMatrixLine annuallyPrice3Line = new PricePlanMatrixLine();
             annuallyPrice3Line.setId(3L);
             annuallyPrice3Line.setDescription("Price3");
-            annuallyPrice3Line.setPricetWithoutTax(valueOf(18));
+            annuallyPrice3Line.setPriceWithoutTax(valueOf(18));
             annuallyPrice3Line.setPricePlanMatrixValues(Set.of(annuallyBcValue, twelveSubscriptionDurationValue));
             annuallyPrice3Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 
             PricePlanMatrixLine annuallyPrice4Line = new PricePlanMatrixLine();
             annuallyPrice4Line.setId(4L);
-            annuallyPrice4Line.setPricetWithoutTax(valueOf(13));
+            annuallyPrice4Line.setPriceWithoutTax(valueOf(13));
             annuallyPrice4Line.setDescription("Price4");
             annuallyPrice4Line.setPricePlanMatrixValues(Set.of(annuallyBcValue, twentyFourSubscriptionDurationValue));
             annuallyPrice4Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);

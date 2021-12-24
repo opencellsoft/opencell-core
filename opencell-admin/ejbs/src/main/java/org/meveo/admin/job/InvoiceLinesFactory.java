@@ -10,7 +10,6 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -132,11 +130,14 @@ public class InvoiceLinesFactory {
         DatePeriod validity = new DatePeriod();
         validity.setFrom(ofNullable((Date) record.get("start_date")).orElse((Date) record.get("usage_date")));
         validity.setTo(ofNullable((Date) record.get("end_date")).orElse(null));
-        Subscription subscription = subscriptionService.findById(((BigInteger) record.get("subscription_id")).longValue());
+        if(record.get("subscription_id") != null) {
+            Subscription subscription = subscriptionService.findById(((BigInteger) record.get("subscription_id")).longValue());
+            ofNullable(subscription)
+                    .ifPresent(id -> invoiceLine.setSubscription(subscription));
+            ofNullable(subscription).ifPresent(sub -> ofNullable(sub.getOrder())
+                    .ifPresent(order -> invoiceLine.setCommercialOrder(order)));
+        }
         invoiceLine.setValidity(validity);
-        ofNullable(subscription)
-                .ifPresent(id -> invoiceLine.setSubscription(subscription));
-        ofNullable(subscription).ifPresent(sub -> ofNullable(sub.getOrder()).ifPresent(order -> invoiceLine.setCommercialOrder(order)));
     }
 
     private void withAggregationOption(InvoiceLine invoiceLine, Map<String, Object> record, boolean isEnterprise) {

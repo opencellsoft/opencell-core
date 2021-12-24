@@ -342,7 +342,12 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     dunningLevelInstanceService.remove(levelInstanceToRemove);
 
                     // Update DunningCollectionPlan totalDunningLevels
-                    collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() - 1);
+                    if (collectionPlan.getTotalDunningLevels() == null) {
+                        collectionPlan.setTotalDunningLevels(0);
+                    }
+                    if (collectionPlan.getTotalDunningLevels() > 0) {
+                        collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() - 1);
+                    }
 
                     // if the deleted dunningLevelInstance sequence = currentSequence + 1
                     if (currentDunningLevelSequence != null && levelInstanceToRemove.getSequence() == currentDunningLevelSequence + 1) {
@@ -468,7 +473,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             // 2- set sequence
-            Long minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, daysOverdue);
+            Integer minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, daysOverdue);
             newDunningLevelInstance.setSequence(minSequence.intValue());
 
             dunningLevelInstanceService.create(newDunningLevelInstance);
@@ -477,7 +482,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             dunningLevelInstanceService.incrementSequecesGreaterThanDaysOverdue(collectionPlan, daysOverdue);
 
             // 4- update DunningCollectionPlan totalDunningLevels;
+            if (collectionPlan.getTotalDunningLevels() == null) {
+                collectionPlan.setTotalDunningLevels(0);
+            }
             collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() + 1);
+            
             dunningCollectionPlanService.update(collectionPlan);
 
             // Create actions
@@ -522,7 +531,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 levelInstanceToUpdate.setDaysOverdue(updateLevelInstanceInput.getDaysOverdue());
 
                 // 2- set sequence
-                Long minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, newDaysOverdue);
+                Integer minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, newDaysOverdue);
                 levelInstanceToUpdate.setSequence(minSequence.intValue());
 
                 // 3- update dunningLevelInstances

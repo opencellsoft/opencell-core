@@ -63,9 +63,9 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
                 .getSingleResult() > 0;
     }
 
-    public Long getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+    public Integer getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
         return getEntityManager()
-                .createNamedQuery("DunningLevelInstance.checkDaysOverdueIsAlreadyExist", Long.class)
+                .createNamedQuery("DunningLevelInstance.minSequenceByDaysOverdue", Integer.class)
                 .setParameter("collectionPlan", collectionPlan)
                 .setParameter("daysOverdue", daysOverdue)
                 .getSingleResult();
