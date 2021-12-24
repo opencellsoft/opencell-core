@@ -70,7 +70,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	        }else {
 	        	articleMappingLineUpdated.setArticleMapping(null);
 	        }
-	        articleMappingLine.setAccountingArticle(accountingArticle);
+	        articleMappingLineUpdated.setAccountingArticle(accountingArticle);
 	        populateArticleMappingLineForUpdate(articleMappingLineUpdated,articleMappingLine);
 	        
 	        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
