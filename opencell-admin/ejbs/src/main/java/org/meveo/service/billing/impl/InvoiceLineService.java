@@ -151,9 +151,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public List<InvoiceLine> listInvoiceLinesToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate,
-                                                       Date lastTransactionDate, Filter filter, int pageSize) throws BusinessException {
+                                                       Date lastTransactionDate, Filter filter,Map<String, Object> filterParams, int pageSize) throws BusinessException {
         if (filter != null) {
-            return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, null);
+            return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, filterParams);
 
         } else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceBySubscription", InvoiceLine.class)
