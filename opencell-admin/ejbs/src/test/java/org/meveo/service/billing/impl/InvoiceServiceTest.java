@@ -168,7 +168,7 @@ public class InvoiceServiceTest {
             }
         });
 
-        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
+        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(),any(), any(), anyInt())).thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
             List<InvoiceLine> invoiceLines = new ArrayList<>();
             IBillableEntity entity = (IBillableEntity) invocation.getArguments()[0];
             InvoiceLine invoiceLine = getInvoiceLine(entity);
@@ -1026,7 +1026,7 @@ public class InvoiceServiceTest {
         when(ba.getCustomerAccount()).thenReturn(customerAccount);
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(customer.getSeller()).thenReturn(seller);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null);
         assertThat(invoiceLinesGroups).isNotNull();
         Assert.assertEquals(invoiceLinesGroups.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesGroups.invoiceLinesGroups.get(0);
@@ -1048,7 +1048,7 @@ public class InvoiceServiceTest {
         when(ba.getCustomerAccount()).thenReturn(customerAccount);
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(customer.getSeller()).thenReturn(seller);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null,null, false, paymentMethod, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
@@ -1064,7 +1064,7 @@ public class InvoiceServiceTest {
         BillingCycle bc = new BillingCycle();
         InvoiceType invoiceType = new InvoiceType();
         PaymentMethod paymentMethod = new CardPaymentMethod();
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class), mock(Date.class), mock(Date.class), false,
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class),null, mock(Date.class), mock(Date.class), false,
             paymentMethod, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);

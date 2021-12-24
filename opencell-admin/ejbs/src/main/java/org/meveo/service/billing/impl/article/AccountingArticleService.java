@@ -43,7 +43,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
-		if(chargeTemplate==null) {
+		if(articleMappingLines.isEmpty() && chargeTemplate!=null) {
+			articleMappingLines=articleMappingLineService.findByProductAndCharge(product, null);
+		}else if(chargeTemplate==null) {
 			productCharges.addAll(product.getProductCharges().stream()
 					.map(pc -> pc.getChargeTemplate())
 					.collect(toList()));
