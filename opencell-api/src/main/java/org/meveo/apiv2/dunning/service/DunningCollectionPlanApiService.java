@@ -394,7 +394,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             if (actionInstanceResources != null) {
                 for (Resource actionInstanceResource : actionInstanceResources) {
                     Long actionInstanceId = actionInstanceResource.getId();
-                    DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
+                    DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("collectionPlan", "dunningLevelInstance"));
                     if (dunningActionInstance == null) {
                         throw new EntityDoesNotExistsException("No Dunning Action Instance found with id : " + actionInstanceId);
                     }
@@ -430,7 +430,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
                     dunningActionInstanceService.remove(dunningActionInstance);
 
-                    String origine = (dunningActionInstance.getCollectionPlan()!=null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
+                    String origine = (dunningActionInstance.getCollectionPlan() != null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningActionInstance", new Date(), dunningActionInstance.getCollectionPlan(), origine);
                 }
             }
