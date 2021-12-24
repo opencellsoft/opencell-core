@@ -191,15 +191,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
              }
              
              if(from==null){
-            	 pricePlanMatrixVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrixCode);
-            	 if (pricePlanMatrixVersion == null) {
-            		throw new MeveoApiException("At least one version must be published");
-                 }
-            	 Date endDate=pricePlanMatrixVersion.getValidity().getTo();
-            	 if(endDate==null) {
-            		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
-            	 }
-            	 from=endDate;
+                 PricePlanMatrixVersion pricePlanMatrixVersionPublished = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrixCode);
+                 if (pricePlanMatrixVersionPublished != null) {
+                     Date endDate=pricePlanMatrixVersion.getValidity().getTo();
+                     if(endDate==null) {
+                        throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
+                     }
+                     from=endDate;
+                 } 
              }
              
             DatePeriod validity=new DatePeriod(from, to);
@@ -208,9 +207,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             pricePlanMatrix.getVersions()
 			.stream()
 			.forEach(ppmv -> {
-            if(ppmv.getValidity().isCorrespondsToPeriod(validity, false)) {
-        		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
-        	}
+                if(VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus()) && ppmv.getValidity().isCorrespondsToPeriod(validity, false)) {
+	        		throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriod"));
+	        	}
 			 });
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion,validity, null));
         } catch (BusinessException e) {
