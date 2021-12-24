@@ -25,6 +25,7 @@ import static org.meveo.api.MeveoApiErrorCodeEnum.CONDITION_FALSE;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -193,22 +194,24 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
             }
         }
 
-        List<GWFTransition> currentGWfTransitions = genericWorkflow.getTransitions();
+
         List<GWFTransition> gwfTransitionsToRemove = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(currentGWfTransitions)) {
-            currentGWfTransitions.removeAll(listUpdate);
-            if (CollectionUtils.isNotEmpty(currentGWfTransitions)) {
-                for (GWFTransition gwfTransition : currentGWfTransitions) {
-                    gwfTransitionsToRemove.add(gwfTransition);
-                    gwfTransitionService.remove(gwfTransition);
-                }
-            }
-        }
-
+       genericWorkflow.getTransitions().forEach(gwtTransaction -> {
+    	   for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {  
+    		   if(gwtTransaction.getFromStatus().equalsIgnoreCase(gwfTransitionDto.getFromStatus()) && 
+       				gwtTransaction.getToStatus().equalsIgnoreCase(gwfTransitionDto.getToStatus())) {
+    			   gwfTransitionsToRemove.add(gwtTransaction);
+                   gwfTransitionService.remove(gwtTransaction);
+       			break;
+       		}
+    	   }
+        });
         genericWorkflow.getTransitions().removeAll(gwfTransitionsToRemove);
-
+       
+        
         if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {           
-            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {                
+            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {  
+            	gwfTransitionDto.setWorkFlowCode(genericWorkflow.getCode());             
                 gwfTransitionApi.createOrUpdate(genericWorkflow, gwfTransitionDto);               
             }
         }
