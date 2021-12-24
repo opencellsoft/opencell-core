@@ -23,7 +23,7 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
     public DunningLevelInstance findByCurrentLevelSequence(DunningCollectionPlan collectionPlan) {
         try {
             return getEntityManager()
-                    .createNamedQuery("DunningLevelInstance.findByCurrentLevelSequence", entityClass)
+                    .createNamedQuery("DunningLevelInstance.findBySequence", entityClass)
                     .setParameter("collectionPlan", collectionPlan)
                     .setParameter("sequence", collectionPlan.getCurrentDunningLevelSequence())
                     .getSingleResult();
