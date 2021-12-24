@@ -807,6 +807,8 @@ public class NativePersistenceService extends BaseService {
                         return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
                     else if(x.toLowerCase().trim().contains("->>double")) 
                            return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>long")) 
+                        return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
                     else if(x.toLowerCase().trim().contains("->>date")) 
                         return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
                     else if(x.toLowerCase().trim().contains("->>boolean")) 
