@@ -392,7 +392,7 @@ public class MediationJobBean extends BaseJobBean {
         }
     }
 
-    private Throwable getRootCause(Throwable e) {
+    public static Throwable getRootCause(Throwable e) {
         if (e.getCause() != null) {
             return getRootCause(e.getCause());
         }

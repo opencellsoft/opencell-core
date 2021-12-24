@@ -25,11 +25,11 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "dunning_level_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_level_instance_seq") })
-@NamedQueries({ @NamedQuery(name = "DunningLevelInstance.findByPolicyLevelId", query = "SELECT li FROM DunningLevelInstance li where li.policyLevel.id = :policyLevelId"),
+@NamedQueries({ @NamedQuery(name = "DunningLevelInstance.findByLevelId", query = "SELECT li FROM DunningLevelInstance li where li.dunningLevel.id = :levelId AND li.collectionPlan is NULL"),
         @NamedQuery(name = "DunningLevelInstance.findBySequence", query = "SELECT li FROM DunningLevelInstance li LEFT JOIN FETCH li.actions where li.collectionPlan = :collectionPlan and li.sequence = :sequence"),
         @NamedQuery(name = "DunningLevelInstance.findLastLevelInstance", query = "SELECT li FROM DunningLevelInstance li LEFT JOIN li.dunningLevel d where li.collectionPlan = :collectionPlan and d.isEndOfDunningLevel = true"),
         @NamedQuery(name = "DunningLevelInstance.checkDaysOverdueIsAlreadyExist", query = "SELECT count(li) FROM DunningLevelInstance li where li.collectionPlan = :collectionPlan and li.daysOverdue = :daysOverdue"),
-        @NamedQuery(name = "DunningLevelInstance.getSequenceByDaysOverdue", query = "SELECT min(li.sequence) FROM DunningLevelInstance li where li.collectionPlan = :collectionPlan and li.daysOverdue > :daysOverdue"),
+        @NamedQuery(name = "DunningLevelInstance.minSequenceByDaysOverdue", query = "SELECT min(li.sequence) FROM DunningLevelInstance li where li.collectionPlan = :collectionPlan and li.daysOverdue > :daysOverdue"),
         @NamedQuery(name = "DunningLevelInstance.incrementSequecesByDaysOverdue", query = "UPDATE DunningLevelInstance li set li.sequence = li.sequence+1 where li.collectionPlan = :collectionPlan and li.daysOverdue > :daysOverdue"),
         @NamedQuery(name = "DunningLevelInstance.decrementSequecesByDaysOverdue", query = "UPDATE DunningLevelInstance li set li.sequence = li.sequence-1 where li.collectionPlan = :collectionPlan and li.daysOverdue > :daysOverdue") })
 public class DunningLevelInstance extends AuditableEntity {
@@ -45,10 +45,6 @@ public class DunningLevelInstance extends AuditableEntity {
     private Integer daysOverdue;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dunning_policy_level_id")
-    private DunningPolicyLevel policyLevel;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_collection_plan_id")
     private DunningCollectionPlan collectionPlan;
 
@@ -59,13 +55,14 @@ public class DunningLevelInstance extends AuditableEntity {
     @OneToMany(mappedBy = "dunningLevelInstance", fetch = LAZY)
     private List<DunningActionInstance> actions;
 
-    @Column(name = "level_status", length = 255)
+    @Column(name = "level_status")
     @Enumerated(EnumType.STRING)
     @NotNull
     private DunningLevelInstanceStatusEnum levelStatus = DunningLevelInstanceStatusEnum.TO_BE_DONE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_level_id")
+    @NotNull
     private DunningLevel dunningLevel;
 
     public DunningLevelInstance() {
@@ -86,14 +83,6 @@ public class DunningLevelInstance extends AuditableEntity {
 
     public void setDaysOverdue(Integer daysOverdue) {
         this.daysOverdue = daysOverdue;
-    }
-
-    public DunningPolicyLevel getPolicyLevel() {
-        return policyLevel;
-    }
-
-    public void setPolicyLevel(DunningPolicyLevel policyLevel) {
-        this.policyLevel = policyLevel;
     }
 
     public DunningCollectionPlan getCollectionPlan() {

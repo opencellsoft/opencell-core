@@ -82,13 +82,12 @@ public class GenericApiLoadService {
 		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
 				.find(nativePersistenceService.getEntityManager()).size();
 	}
-
-    private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
-        return line.stream()
-                .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
-                .map(l -> Objects.isNull(l) ? "" : l)
-                .collect(Collectors.toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
-    }
+	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
+	    return line.stream()
+	            .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
+	            .map(l -> Objects.isNull(l) ? "" : l)
+	            .collect(Collectors.toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
+	}
     private static Stream<Object> flatten(Object[] array) {
         return Arrays.stream(array)
                 .flatMap(o -> o instanceof Object[]? flatten((Object[])o): Stream.of(o));

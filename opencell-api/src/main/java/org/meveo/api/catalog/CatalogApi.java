@@ -42,10 +42,9 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.billing.impl.RecurringRatingService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.catalog.resource.product.Price;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
@@ -63,10 +62,7 @@ public class CatalogApi extends BaseApi {
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
-    private RatingService ratingService;
-
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
+    private RecurringRatingService recurringRatingService;
 
     public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException, BusinessException {
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
@@ -133,7 +129,7 @@ public class CatalogApi extends BaseApi {
                     wo.setPriceplan(pricePlans.get(0));
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setTaxPercent(price.getTaxRate());
-                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    recurringRatingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(price.getDutyFreeAmount().add(wo.getUnitAmountWithoutTax()));
                     price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(wo.getUnitAmountWithTax()));
                 }
@@ -179,7 +175,7 @@ public class CatalogApi extends BaseApi {
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setPriceplan(pricePlans.get(0));
                     wo.setTaxPercent(price.getTaxRate());
-                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    recurringRatingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }
@@ -187,7 +183,7 @@ public class CatalogApi extends BaseApi {
                 // TODO Might not be accurate as neither service instance nor charge instance is present to resolve EL
                 String calendarCode = serviceChargeTemplateRecurring.getChargeTemplate().getCalendar().getCode();
                 if (!StringUtils.isBlank(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl())) {
-                    calendarCode = recurringChargeTemplateService
+                    calendarCode = recurringRatingService
                         .getCalendarFromEl(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl(), null, serviceTemplate, serviceChargeTemplateRecurring.getChargeTemplate(), null).getCode();
                 }
                 String priceName = StringUtils.isBlank(calendarCode) ? serviceTemplate.getCode() : serviceTemplate.getCode() + " " + calendarCode;
@@ -232,7 +228,7 @@ public class CatalogApi extends BaseApi {
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setPriceplan(pricePlans.get(0));
                     wo.setTaxPercent(price.getTaxRate());
-                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    recurringRatingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }

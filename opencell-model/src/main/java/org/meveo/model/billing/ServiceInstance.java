@@ -55,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICounterEntity;
@@ -235,7 +236,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     private OneShotChargeTemplate minimumChargeTemplate;
 
     /** The order histories. */
-    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<OrderHistory> orderHistories;
 
     /** Service renewal configuration. */
@@ -304,7 +305,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "initial_renewal")
     private String initialServiceRenewal;
 
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "serviceInstance", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**
@@ -1213,6 +1214,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         usageChargeInstances = new ArrayList<>();
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
+            PersistenceUtils.initializeAndUnproxy(chargeInstance);
 
             if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);

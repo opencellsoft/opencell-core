@@ -46,26 +46,28 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         getEntityManager().createQuery(hqlQuery).executeUpdate();
     }
 
-    public <T extends BaseEntity> void trackOperation(String origin, String operationType, Date operationDate, T entity) {
-        trackOperation(origin, operationType, operationDate, entity, null);
+    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String origine) {
+        trackOperation(operationType, operationDate, entity, origine, null);
     }
 
-    public <T extends BaseEntity> void trackOperation(String origin, String operationType, Date operationDate, T entity, List<String> fields) {
+    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String origine, List<String> fields) {
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
         String actor = getActor();
-        AuditLog auditLog = new AuditLog();
-        auditLog.setEntity(DunningCollectionPlan.class.getSimpleName());
-        auditLog.setCreated(operationDate);
-        auditLog.setActor(getActor());
-        auditLog.setAction(operationType);
+        String simpleName = entity.getClass().getSimpleName();
         StringBuilder parameters = new StringBuilder()
                 .append(formatter.format(operationDate))
                 .append(" - ").append(actor).append(" - ")
                 .append(" apply ").append(operationType)
-                .append(" to ").append(entity.getClass().getSimpleName()).append(" with ").append(getCodeOrId(entity))
+                .append(" to ").append(simpleName).append(" with ").append(origine)
                 .append(fields != null && !fields.isEmpty() ? ", fields (" + String.join(",", fields) + ")" : "");
+        
+        AuditLog auditLog = new AuditLog();
+        auditLog.setEntity(simpleName);
+        auditLog.setCreated(operationDate);
+        auditLog.setActor(actor);
+        auditLog.setAction(operationType);        
         auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin(origin);
+        auditLog.setOrigin(origine);
         create(auditLog);
     }
 

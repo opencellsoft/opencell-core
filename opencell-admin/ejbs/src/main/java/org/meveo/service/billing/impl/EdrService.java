@@ -79,8 +79,8 @@ public class EdrService extends PersistenceService<EDR> {
     static boolean deduplicateEdrs = false;
     static boolean useInMemoryDeduplication = false;
     static boolean inMemoryDeduplicationPrepopulated = false;
-    
-	private static final int PURGE_MAX_RESULTS = 30000;
+
+    private static final int PURGE_MAX_RESULTS = 30000;
 
     @PostConstruct
     private void init() {
@@ -91,7 +91,7 @@ public class EdrService extends PersistenceService<EDR> {
         if (deduplicateEdrs) {
             useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(deduplicateType);
             inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
-    }
+        }
     }
 
     /**
@@ -108,19 +108,17 @@ public class EdrService extends PersistenceService<EDR> {
             return getEntityManager().createNamedQuery("EDR.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
 
         } else if (rateUntilDate != null && ratingGroup == null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve)
-                .getResultList();
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve).getResultList();
 
         } else if (rateUntilDate == null && ratingGroup != null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
-                .getResultList();
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
 
         } else {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate)
-                .setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
+                .getResultList();
         }
 
-        }
+    }
 
     /**
      * Check if EDR exits matching an origin batch and record numbers
@@ -133,11 +131,9 @@ public class EdrService extends PersistenceService<EDR> {
 
         try {
 
-            StringBuilder selectQuery = new StringBuilder("select e.id from EDR e where ")
-                    .append(originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch")
-                    .append(" and ")
-                    .append(originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord");
-                            
+            StringBuilder selectQuery = new StringBuilder("select e.id from EDR e where ").append(originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch").append(" and ")
+                .append(originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord");
+
             Query query = getEntityManager().createQuery(selectQuery.toString());
 
             if (originBatch != null) {
@@ -200,8 +196,8 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public void reopenRejectedEDRS(List<Long> ids) {
         getEntityManager().createNamedQuery("EDR.reopenByIds").setParameter("ids", ids).executeUpdate();
-        }
-    
+    }
+
     /**
      * Update edrs to reprocess.
      *
@@ -209,11 +205,11 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public void updateEdrsToReprocess(List<Long> ids) {
         getEntityManager().createNamedQuery("EDR.updateEdrsToReprocess").setParameter("ids", ids).executeUpdate();
-        }
+    }
 
     /**
-     * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of
-     * items to return as configured in 'mediation.deduplicateCacheSize' setting
+     * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of items to return as configured in
+     * 'mediation.deduplicateCacheSize' setting
      *
      * @param from Pagination - a record to retrieve from
      * @param pageSize Pagination - number of records to retrieve
@@ -232,35 +228,30 @@ public class EdrService extends PersistenceService<EDR> {
      * @param firstTransactionDate first Transaction Date
      * @param lastTransactionDate last Transaction Date
      * @param lastId a last id used for pagination
-     * @param max  a max rows
+     * @param max a max rows
      * @return All open EDR between two Date
      */
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
-        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class)
-                .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("lastId", lastId)
-                .setMaxResults(max)
-                .getResultList();
+        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
+            .setParameter("lastId", lastId).setMaxResults(max).getResultList();
     }
 
     /**
      * Remove All open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate  last Transaction Date
+     * @param lastTransactionDate last Transaction Date
      * @return the number of deleted entities
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
-        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
-        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
+            .executeUpdate();
 
-        return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+        return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
+            .executeUpdate();
 
     }
 
@@ -306,227 +297,211 @@ public class EdrService extends PersistenceService<EDR> {
         }
     }
 
-	/**
-	 * @param firstTransactionDate
-	 * @param lastTransactionDate
-	 * @param lastId
-	 * @param maxResult
-	 * @param formattedStatus
-	 * @return
-	 */
-	public List<EDR> getEdrsBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, long lastId, int maxResult, List<EDRStatusEnum> formattedStatus) {
-		return getEntityManager().createNamedQuery("EDR.getEdrsBetweenTwoDateByStatus", EDR.class)
-				.setParameter("status", formattedStatus)
-                .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("lastId", lastId)
-                .setMaxResults(maxResult)
-                .getResultList();
-	}
+    /**
+     * @param firstTransactionDate
+     * @param lastTransactionDate
+     * @param lastId
+     * @param maxResult
+     * @param formattedStatus
+     * @return
+     */
+    public List<EDR> getEdrsBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, long lastId, int maxResult, List<EDRStatusEnum> formattedStatus) {
+        return getEntityManager().createNamedQuery("EDR.getEdrsBetweenTwoDateByStatus", EDR.class).setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+            .setParameter("lastTransactionDate", lastTransactionDate).setParameter("lastId", lastId).setMaxResults(maxResult).getResultList();
+    }
 
-	public long purge(Date lastTransactionDate, List<EDRStatusEnum> targetStatusList) {
-        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletionByStatusV1").setParameter("status", targetStatusList)
+    public long purge(Date lastTransactionDate, List<EDRStatusEnum> targetStatusList) {
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletionByStatusV1").setParameter("status", targetStatusList).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletionByStatusV1").setParameter("status", targetStatusList).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        return getEntityManager().createNamedQuery("EDR.deleteEdrByLastTransactionDateAndStatus").setParameter("status", targetStatusList).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+    }
+
+    public long purge(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> targetStatusList) {
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
-        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletionByStatusV1").setParameter("status", targetStatusList)
+        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
-        return getEntityManager().createNamedQuery("EDR.deleteEdrByLastTransactionDateAndStatus").setParameter("status", targetStatusList)
+        return getEntityManager().createNamedQuery("EDR.deleteEdrBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
-	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> targetStatusList) {
-		getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
-				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+    public <T extends Enum<T>, E extends BaseEntity> long countMediationDataToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz) {
+        if (targetStatus != null && !targetStatus.isEmpty()) {
+            String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, true, 0);
+            if (sqlString != null) {
+                log.debug("count Mediation Data To Purge query : {}", sqlString);
+                getEntityManager().clear();
+                return ((BigInteger) getEntityManager().createNativeQuery(sqlString).getSingleResult()).longValue();
+            }
+        }
+        return 0l;
+    }
 
-		getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
-				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+    private <T extends Enum<T>, E extends BaseEntity> String buildSelectOrCountMediationDataToPurgeQuery(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, boolean countQuery, long lastId) {
 
-		return getEntityManager().createNamedQuery("EDR.deleteEdrBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
-				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
-	}
-	
-	public <T extends Enum<T>, E extends BaseEntity> long countMediationDataToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz) {
-		if (targetStatus != null && !targetStatus.isEmpty()) {
-			String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, true, 0);
-			if(sqlString != null) {
-				log.debug("count Mediation Data To Purge query : {}", sqlString);
-				getEntityManager().clear();
-				return ((BigInteger) getEntityManager().createNativeQuery(sqlString).getSingleResult()).longValue();
-			}
-		}
-		return 0l;
-	}
-	
-	private <T extends Enum<T>, E extends BaseEntity> String buildSelectOrCountMediationDataToPurgeQuery(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, boolean countQuery, long lastId) {
-		
-		String tablelName = null;
-		String dateColName = null;
-		
-		switch (clazz.getSimpleName()) {
-		case "WalletOperation":
-			tablelName = "billing_wallet_operation";
-			dateColName = "operation_date";
-			break;
-		case "RatedTransaction":
-			tablelName = "billing_rated_transaction";
-			dateColName = "usage_date";
-			break;
-		case "EDR":
-			tablelName = "rating_edr";
-			dateColName = "event_date";
-			break;
+        String tablelName = null;
+        String dateColName = null;
 
-		default:
-			return null;
-		}
-		
-		StringBuilder queryBuilder = new StringBuilder("select ");
-		queryBuilder.append(countQuery ? "count(*) " : "id ");
-		queryBuilder.append("from ").append(tablelName);
-		queryBuilder.append(" where ");
-		
-		if(!countQuery) {
-			queryBuilder.append("id > ").append(lastId).append(" and ");
-		}
-			
-		queryBuilder
-			.append("date(")
-			.append(dateColName)
-			.append(") = '")
-			.append(firstTransactionDate)
-			.append("'\\:\\:DATE ")
-			.append(statusListToSqlClause(targetStatus));
-		
-		if(!countQuery) {
-			queryBuilder.append(" order by id asc");
-		}
-		
-		return queryBuilder.toString();
-	}
-	
-	public <T extends Enum<T>> String statusListToSqlClause(List<T> enumsList) {
-		StringBuilder inClauseBuilder = new StringBuilder("");
-		if (enumsList != null && !enumsList.isEmpty()) {
-			inClauseBuilder.append(" and status ").append(enumsList.size() > 1 ? "in (" : "= ");
-			boolean firstTime = true;
-			for (T status : enumsList) {
-				if (!firstTime) {
-					inClauseBuilder.append(",");
-				}
-				inClauseBuilder.append("'").append(status.name()).append("'");
-				firstTime = false;
-			}
-			inClauseBuilder.append(enumsList.size() > 1 ? ")" : "");
-		}
-		return inClauseBuilder.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T extends Enum<T>, E extends BaseEntity> List<BigInteger> getMediationDataIdsToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, long lastId) {
-		if (targetStatus != null && !targetStatus.isEmpty()) {
-			String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, false, lastId);
-			if(sqlString != null) {
-				log.debug("get Mediation Data Ids To Purge query : {}", sqlString);
-				getEntityManager().clear();
-				return (List<BigInteger>) getEntityManager().createNativeQuery(sqlString).setMaxResults(PURGE_MAX_RESULTS).getResultList();
-			}
-		}
-		return new ArrayList<BigInteger>();
-	}
-	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public <E extends BaseEntity> long purgeMediationDataPacket(List<BigInteger> ids, Class<E> clazz) {
-		
-		String inClause = buildInIdsClause(ids);
+        switch (clazz.getSimpleName()) {
+        case "WalletOperation":
+            tablelName = "billing_wallet_operation";
+            dateColName = "operation_date";
+            break;
+        case "RatedTransaction":
+            tablelName = "billing_rated_transaction";
+            dateColName = "usage_date";
+            break;
+        case "EDR":
+            tablelName = "rating_edr";
+            dateColName = "event_date";
+            break;
 
-		switch (clazz.getSimpleName()) {
-		
-		case "WalletOperation":
-			
-			String q10 = new StringBuilder("update billing_wallet_operation set reratedwalletoperation_id = null where reratedwalletoperation_id in (").append(inClause).append(")").toString();
-			String q7 = new StringBuilder("delete from billing_wallet_operation where id in (").append(inClause).append(")").toString();
-			
-			long r10 = getEntityManager().createNativeQuery(q10).executeUpdate();
-			log.debug("{} rows updated \n with query {}", r10, q10);
-			
-			long r7 = getEntityManager().createNativeQuery(q7).executeUpdate();
-			log.debug("{} rows deleted \n with query {}", r7, q7);
-			
-			return r7;
-			
-		case "RatedTransaction":
-			
-			String q8 = new StringBuilder("update billing_rated_transaction set adjusted_rated_tx = null where adjusted_rated_tx in (").append(inClause).append(")").toString();
-			long r8 = getEntityManager().createNativeQuery(q8).executeUpdate();
-			log.debug("{} rows updated  \n with query {}", r8, q8);
-			
-			String q11 = new StringBuilder("update billing_wallet_operation set rated_transaction_id = null where rated_transaction_id in (").append(inClause).append(")").toString();
-			long r11 = getEntityManager().createNativeQuery(q8).executeUpdate();
-			log.debug("{} rows updated  \n with query {}", r11, q11);
-			
-			String q9 = new StringBuilder("delete from billing_rated_transaction where id in (").append(inClause).append(")").toString();
-			long r9 = getEntityManager().createNativeQuery(q9).executeUpdate();
-			log.debug("{} rows deleted \n with query {}", r9, q9);
-			
-			return r9;
-		
-		case "EDR":
-			
-			String q1 = new StringBuilder("update billing_wallet_operation set edr_id = null where edr_id in (").append(inClause).append(")").toString();
-			String q2 = new StringBuilder("update billing_rated_transaction set edr_id = null where edr_id in (").append(inClause).append(")").toString();
-			String q3 = new StringBuilder("update billing_reservation set origin_edr_id = null where origin_edr_id in (").append(inClause).append(")").toString();
-			String q4 = new StringBuilder("update rating_edr set header_edr_id = null where header_edr_id in (").append(inClause).append(")").toString();
-			String q5 = new StringBuilder("delete from rating_edr where id in (").append(inClause).append(")").toString();
-			
-			long r1 = getEntityManager().createNativeQuery(q1).executeUpdate();
-			log.debug("{} rows updated \n with query {}", r1, q1);
-			
-			long r2 = getEntityManager().createNativeQuery(q2).executeUpdate();
-			log.debug("{} rows updated \n with query {}", r2, q2);
-			
-			long r3 = getEntityManager().createNativeQuery(q3).executeUpdate();
-			log.debug("{} rows updated \n with query {}", r3, q3);
-			
-			long r4 = getEntityManager().createNativeQuery(q4).executeUpdate();
-			log.debug("{} rows updated \n with query {}", r4, q4);
-			
-			long r5 = getEntityManager().createNativeQuery(q5).executeUpdate();
-			log.debug("{} rows deleted \n with query {}", r5, q5);
-			
-			return r5;
+        default:
+            return null;
+        }
 
-		default:
-			return 0l;
-		}
+        StringBuilder queryBuilder = new StringBuilder("select ");
+        queryBuilder.append(countQuery ? "count(*) " : "id ");
+        queryBuilder.append("from ").append(tablelName);
+        queryBuilder.append(" where ");
 
-	}
-	
-	private String buildInIdsClause(List<BigInteger> ids) {
-		StringBuilder in = new StringBuilder();
-		boolean fisrtTime = true;
-		for(BigInteger id : ids) {
-			if(!fisrtTime)
-				in.append(",");
-			in.append(id.longValue());
-			fisrtTime =false;
-		}
-		return in.toString();
-	}
+        if (!countQuery) {
+            queryBuilder.append("id > ").append(lastId).append(" and ");
+        }
+
+        queryBuilder.append("date(").append(dateColName).append(") = '").append(firstTransactionDate).append("'\\:\\:DATE ").append(statusListToSqlClause(targetStatus));
+
+        if (!countQuery) {
+            queryBuilder.append(" order by id asc");
+        }
+
+        return queryBuilder.toString();
+    }
+
+    public <T extends Enum<T>> String statusListToSqlClause(List<T> enumsList) {
+        StringBuilder inClauseBuilder = new StringBuilder("");
+        if (enumsList != null && !enumsList.isEmpty()) {
+            inClauseBuilder.append(" and status ").append(enumsList.size() > 1 ? "in (" : "= ");
+            boolean firstTime = true;
+            for (T status : enumsList) {
+                if (!firstTime) {
+                    inClauseBuilder.append(",");
+                }
+                inClauseBuilder.append("'").append(status.name()).append("'");
+                firstTime = false;
+            }
+            inClauseBuilder.append(enumsList.size() > 1 ? ")" : "");
+        }
+        return inClauseBuilder.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Enum<T>, E extends BaseEntity> List<BigInteger> getMediationDataIdsToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, long lastId) {
+        if (targetStatus != null && !targetStatus.isEmpty()) {
+            String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, false, lastId);
+            if (sqlString != null) {
+                log.debug("get Mediation Data Ids To Purge query : {}", sqlString);
+                getEntityManager().clear();
+                return (List<BigInteger>) getEntityManager().createNativeQuery(sqlString).setMaxResults(PURGE_MAX_RESULTS).getResultList();
+            }
+        }
+        return new ArrayList<BigInteger>();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public <E extends BaseEntity> long purgeMediationDataPacket(List<BigInteger> ids, Class<E> clazz) {
+
+        String inClause = buildInIdsClause(ids);
+
+        switch (clazz.getSimpleName()) {
+
+        case "WalletOperation":
+
+            String q10 = new StringBuilder("update billing_wallet_operation set reratedwalletoperation_id = null where reratedwalletoperation_id in (").append(inClause).append(")").toString();
+            String q7 = new StringBuilder("delete from billing_wallet_operation where id in (").append(inClause).append(")").toString();
+
+            long r10 = getEntityManager().createNativeQuery(q10).executeUpdate();
+            log.debug("{} rows updated \n with query {}", r10, q10);
+
+            long r7 = getEntityManager().createNativeQuery(q7).executeUpdate();
+            log.debug("{} rows deleted \n with query {}", r7, q7);
+
+            return r7;
+
+        case "RatedTransaction":
+
+            String q8 = new StringBuilder("update billing_rated_transaction set adjusted_rated_tx = null where adjusted_rated_tx in (").append(inClause).append(")").toString();
+            long r8 = getEntityManager().createNativeQuery(q8).executeUpdate();
+            log.debug("{} rows updated  \n with query {}", r8, q8);
+
+            String q11 = new StringBuilder("update billing_wallet_operation set rated_transaction_id = null where rated_transaction_id in (").append(inClause).append(")").toString();
+            long r11 = getEntityManager().createNativeQuery(q8).executeUpdate();
+            log.debug("{} rows updated  \n with query {}", r11, q11);
+
+            String q9 = new StringBuilder("delete from billing_rated_transaction where id in (").append(inClause).append(")").toString();
+            long r9 = getEntityManager().createNativeQuery(q9).executeUpdate();
+            log.debug("{} rows deleted \n with query {}", r9, q9);
+
+            return r9;
+
+        case "EDR":
+
+            String q1 = new StringBuilder("update billing_wallet_operation set edr_id = null where edr_id in (").append(inClause).append(")").toString();
+            String q2 = new StringBuilder("update billing_rated_transaction set edr_id = null where edr_id in (").append(inClause).append(")").toString();
+            String q3 = new StringBuilder("update billing_reservation set origin_edr_id = null where origin_edr_id in (").append(inClause).append(")").toString();
+            String q4 = new StringBuilder("update rating_edr set header_edr_id = null where header_edr_id in (").append(inClause).append(")").toString();
+            String q5 = new StringBuilder("delete from rating_edr where id in (").append(inClause).append(")").toString();
+
+            long r1 = getEntityManager().createNativeQuery(q1).executeUpdate();
+            log.debug("{} rows updated \n with query {}", r1, q1);
+
+            long r2 = getEntityManager().createNativeQuery(q2).executeUpdate();
+            log.debug("{} rows updated \n with query {}", r2, q2);
+
+            long r3 = getEntityManager().createNativeQuery(q3).executeUpdate();
+            log.debug("{} rows updated \n with query {}", r3, q3);
+
+            long r4 = getEntityManager().createNativeQuery(q4).executeUpdate();
+            log.debug("{} rows updated \n with query {}", r4, q4);
+
+            long r5 = getEntityManager().createNativeQuery(q5).executeUpdate();
+            log.debug("{} rows deleted \n with query {}", r5, q5);
+
+            return r5;
+
+        default:
+            return 0l;
+        }
+
+    }
+
+    private String buildInIdsClause(List<BigInteger> ids) {
+        StringBuilder in = new StringBuilder();
+        boolean fisrtTime = true;
+        for (BigInteger id : ids) {
+            if (!fisrtTime)
+                in.append(",");
+            in.append(id.longValue());
+            fisrtTime = false;
+        }
+        return in.toString();
+    }
 
     /**
      * Is EDR deduplication turned on
      * 
      * @return True if EDR deduplication is turned on
      */
-    public static boolean isDuplicateCheckOn() {
+    public boolean isDuplicateCheckOn() {
         return deduplicateEdrs;
     }
 
     public boolean isEDRExistByOriginRecord(String originRecord) {
-        Long count = ((Long) getEntityManager().createNamedQuery("EDR.countNbrEdrByOriginRecord")
-                        .setParameter("originRecord", originRecord)
-                        .getSingleResult());
+        Long count = ((Long) getEntityManager().createNamedQuery("EDR.countNbrEdrByOriginRecord").setParameter("originRecord", originRecord).getSingleResult());
         return count > 0;
     }
 }

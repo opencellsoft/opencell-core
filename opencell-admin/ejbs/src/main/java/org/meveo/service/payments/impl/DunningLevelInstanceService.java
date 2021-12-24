@@ -9,11 +9,11 @@ import javax.ejb.Stateless;
 @Stateless
 public class DunningLevelInstanceService extends PersistenceService<DunningLevelInstance> {
 
-    public DunningLevelInstance findByPolicyLevelId(Long policyLevelId) {
+    public DunningLevelInstance findByLevelId(Long levelId) {
         try {
             return getEntityManager()
-                    .createNamedQuery("DunningLevelInstance.findByPolicyLevelId", entityClass)
-                    .setParameter("policyLevelId", policyLevelId)
+                    .createNamedQuery("DunningLevelInstance.findByLevelId", entityClass)
+                    .setParameter("levelId", levelId)
                     .getSingleResult();
         } catch (Exception exception) {
             return null;
@@ -63,9 +63,9 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
                 .getSingleResult() > 0;
     }
 
-    public Long getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+    public Integer getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
         return getEntityManager()
-                .createNamedQuery("DunningLevelInstance.checkDaysOverdueIsAlreadyExist", Long.class)
+                .createNamedQuery("DunningLevelInstance.minSequenceByDaysOverdue", Integer.class)
                 .setParameter("collectionPlan", collectionPlan)
                 .setParameter("daysOverdue", daysOverdue)
                 .getSingleResult();

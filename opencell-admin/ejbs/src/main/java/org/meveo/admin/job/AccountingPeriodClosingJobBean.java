@@ -19,7 +19,7 @@
 package org.meveo.admin.job;
 
 import static java.util.Optional.of;
-import static org.meveo.model.accounting.CustomLockOption.BEFORE_END_OF_SUB_AP_PERIOD;
+import static org.meveo.model.accounting.CustomLockOption.AFTER_END_OF_SUB_AP_PERIOD;
 import static org.meveo.model.accounting.RegularUserLockOption.CUSTOM;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
@@ -84,7 +84,7 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
             Integer days = accountingPeriod.getCustomLockNumberDays();
             CustomLockOption customLockOption = accountingPeriod.getCustomLockOption();
             if (customLockOption != null) {
-                if (customLockOption == BEFORE_END_OF_SUB_AP_PERIOD) {
+                if (customLockOption == AFTER_END_OF_SUB_AP_PERIOD) {
                     days *= -1;
                 }
                 endDate = addDaysToDate(endDate, days);

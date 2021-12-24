@@ -87,7 +87,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldCreateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .sequence(1)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -106,7 +105,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldFailWhileCreatingDunningPolicyIfPolicyNameIsMissing() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .sequence(1)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()
@@ -124,7 +122,6 @@ public class DunningPolicyResourceImplTest {
     public void shouldFailWhileCreatingDunningPolicyIfDunningLevelDoesNotExits() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
                 .dunningLevelId(1l)
-                .sequence(1)
                 .collectionPlanStatusId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicy resource = ImmutableDunningPolicy.builder()

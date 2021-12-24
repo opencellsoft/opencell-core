@@ -15,20 +15,36 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.admin.exception;
 
-package org.meveo.model.catalog;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.ejb.ApplicationException;
 
 /**
- * @author Khalid HORRI
- * @lastModifiedVersion 6.1
+ * Failed to communicate to a remote Opencell instance
+ * 
+ * @author Andrius Karpavicius
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface CounterTemplateLevelAnnotation {
-    public CounterTemplateLevel value() default CounterTemplateLevel.UA;
+@ApplicationException(rollback = false)
+public class CommunicateToRemoteInstanceException extends BusinessException {
+
+    private static final long serialVersionUID = 7048199432468647599L;
+
+    /**
+     * Constructor
+     * 
+     * @param opencellInstance Opencell instance code
+     * @param cause The cause
+     */
+    public CommunicateToRemoteInstanceException(String opencellInstance, Throwable cause) {
+        super("Failed to communicate " + opencellInstance, cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message Error message
+     */
+    public CommunicateToRemoteInstanceException(String message) {
+        super(message);
+    }
 }

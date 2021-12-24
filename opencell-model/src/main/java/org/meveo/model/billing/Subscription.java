@@ -173,25 +173,25 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Services subscribed to
      */
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     @OrderBy("id")
     private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
     /**
      * Products subscribed to
      */
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     @OrderBy("id")
     private List<ProductInstance> productInstances = new ArrayList<>();
 
     /**
      * Child access points
      */
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     @OrderBy("id")
     private List<Access> accessPoints = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     private List<EDR> edrs = new ArrayList<>();
 
     /**
@@ -205,7 +205,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Account operations associated with a Subscription
      */
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations = new ArrayList<>();
 
     /**
@@ -320,7 +320,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Instance of discount plans.
      */
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subscription", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<DiscountPlanInstance> discountPlanInstances;
 
     /**

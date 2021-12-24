@@ -75,6 +75,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
@@ -119,6 +120,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.billing.impl.RecurringRatingService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -127,7 +129,6 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
@@ -190,9 +191,6 @@ public class CpqQuoteApi extends BaseApi {
     private InvoicingPlanService invoicingPlanService;
 
     @Inject
-    private ServiceTemplateService serviceTemplateService;
-
-    @Inject
     private ServiceInstanceService serviceInstanceService;
 
     @Inject
@@ -248,6 +246,8 @@ public class CpqQuoteApi extends BaseApi {
     @Inject
     private MediaService mediaService;
 
+    @Inject
+    private RecurringRatingService recurringRatingService;
 
 
 	public QuoteDTO createQuote(QuoteDTO quote) {
@@ -812,34 +812,34 @@ public class CpqQuoteApi extends BaseApi {
                 quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
             if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
                 quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
-//		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
-        if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
-        	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
-        }
-        if(!StringUtils.isBlank(quoteOfferDto.getUserAccountCode())) {
-        	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDto.getUserAccountCode()));
-        }
-        quoteOffer.setSequence(quoteOfferDto.getSequence());
-        quoteOffer.setCode(quoteOfferDto.getCode());
-        quoteOffer.setDescription(quoteOfferDto.getDescription());
-        populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
-        quoteOfferService.create(quoteOffer);
-        quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
-        quoteOfferDto.setCode(quoteOffer.getCode());
-        quoteOfferDto.setDescription(quoteOffer.getDescription());
-        
-    	if(quoteOfferDto.getDeliveryDate()!=null && quoteOfferDto.getDeliveryDate().before(new Date())) {
-    		throw new MeveoApiException("Delivery date should be in the future");	
-    	}
-    	quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
-        
-        newPopulateProduct(quoteOfferDto, quoteOffer);
-        newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
-
-
+            if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
+            	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
+            }
+            if(!StringUtils.isBlank(quoteOfferDto.getUserAccountCode())) {
+            	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDto.getUserAccountCode()));
+            }
+            quoteOffer.setSequence(quoteOfferDto.getSequence());
+            quoteOffer.setCode(quoteOfferDto.getCode());
+            quoteOffer.setDescription(quoteOfferDto.getDescription());
+            quoteOffer.setQuoteLineType(quoteOfferDto.getQuoteLineType());
+            populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
+            quoteOfferService.create(quoteOffer);
+            quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
+            quoteOfferDto.setCode(quoteOffer.getCode());
+            quoteOfferDto.setDescription(quoteOffer.getDescription());
+            
+        	if(quoteOfferDto.getDeliveryDate()!=null && quoteOfferDto.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
+            
+            newPopulateProduct(quoteOfferDto, quoteOffer);
+            newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
+    
+    
             return quoteOfferDto;
-        }catch(BusinessException exp){
-            throw new BusinessApiException(exp.getMessage());
+        } catch(BusinessException exp){
+                throw new BusinessApiException(exp.getMessage());
         }
     }
 
@@ -888,7 +888,7 @@ public class CpqQuoteApi extends BaseApi {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	quoteOffer.setDeliveryDate(quoteOfferDTO.getDeliveryDate());
-        
+        quoteOffer.setQuoteLineType(quoteOfferDTO.getQuoteLineType());
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
@@ -1477,13 +1477,13 @@ public class CpqQuoteApi extends BaseApi {
     @SuppressWarnings("unused")
     public List<WalletOperation> quoteRating(Subscription subscription, boolean isVirtual) throws BusinessException {
 
-        List<WalletOperation> walletOperations = new ArrayList<>();
+        RatingResult ratingResult = new RatingResult();
         BillingAccount billingAccount = null;
         if (subscription != null) {
 
             billingAccount = subscription.getUserAccount().getBillingAccount();
             Map<String, Object> attributes = new HashMap<String, Object>();
-            ;
+            
             // Add Service charges
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                 List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
@@ -1499,13 +1499,12 @@ public class CpqQuoteApi extends BaseApi {
               // Add subscription charges
                 for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                     try {
-                        WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription,
-                                subscriptionCharge, serviceInstance.getSubscriptionDate(),
-                                serviceInstance.getQuantity());
-                        if (wo != null) {
+                        RatingResult localRatingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                        ratingResult.add(localRatingResult);
+                        
+                        for (WalletOperation wo : localRatingResult.getWalletOperations()) {
                             wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes)
-                                    .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+subscriptionCharge.getChargeTemplate())));
-                            walletOperations.add(wo);
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate())));
                         }
 
                     } catch (RatingException e) {
@@ -1519,29 +1518,25 @@ public class CpqQuoteApi extends BaseApi {
                 // Add recurring charges
                 for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                     try {
-                        Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
+                        Date nextApplicationDate = recurringRatingService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
 
-                        List<WalletOperation> walletOps = recurringChargeInstanceService
-                                .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
-                        if (walletOps != null && !walletOps.isEmpty()) {
-                            for (WalletOperation wo : walletOps) {
-                            	 wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes)
-                                         .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+recurringCharge.getChargeTemplate())));
-                                walletOperations.add(wo);
-                            }
+                        RatingResult localRatingResult = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
+                        ratingResult.add(localRatingResult);
 
-                        }
+                        for (WalletOperation wo : localRatingResult.getWalletOperations()) {
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate())));
+                         }
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
-
                     }
                 }
             }
 
         }
-        return walletOperations;
+        return ratingResult.getWalletOperations();
     }
 
     private Subscription instantiateVirtualSubscription(QuoteOffer quoteOffer) {

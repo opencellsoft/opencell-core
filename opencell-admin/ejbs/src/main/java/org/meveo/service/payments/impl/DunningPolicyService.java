@@ -2,6 +2,7 @@ package org.meveo.service.payments.impl;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.EMPTY_LIST;
+import static java.util.Comparator.comparing;
 import static java.util.Optional.*;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.dunning.PolicyConditionTargetEnum.valueOf;
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -32,6 +35,9 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     @Inject
     private DunningCollectionPlanStatusService collectionPlanStatusService;
+
+    @Inject
+    private DunningPolicyLevelService dunningPolicyLevelService;
 
     public DunningPolicy findByName(String policyName) {
         try {
@@ -64,6 +70,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
         if(rules != null && !rules.isEmpty()) {
+            rules.sort(Comparator.comparing(DunningPolicyRule::getId));
             ruleFilter.append(buildRuleLinesFilter(rules.get(0).getDunningPolicyRuleLines()));
             for (int index = 1; index < rules.size(); index++) {
                 ruleFilter.append(" ")
@@ -86,6 +93,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildRuleLinesFilter(List<DunningPolicyRuleLine> ruleLines) {
         StringBuilder lineFilter = new StringBuilder();
         if(ruleLines != null && !ruleLines.isEmpty()) {
+            ruleLines.sort(Comparator.comparing(DunningPolicyRuleLine::getId));            
             lineFilter.append("(")
                     .append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
                     .append(" ")
@@ -177,6 +185,20 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                     .getResultList();
         } catch (Exception exception) {
             throw new BusinessException(exception.getMessage());
+        }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void updatePolicyWithLevel(DunningPolicy dunningPolicy, List<DunningPolicyLevel> dunningPolicyLevels) {
+        int sequence = 0;
+        update(dunningPolicy);
+        if(!dunningPolicyLevels.isEmpty()) {
+            dunningPolicy.getDunningLevels().sort(comparing(level -> level.getDunningLevel().getDaysOverdue()));
+            for (DunningPolicyLevel level : dunningPolicy.getDunningLevels()) {
+                level.setSequence(sequence++);
+                level.setDunningPolicy(dunningPolicy);
+                dunningPolicyLevelService.update(level);
+            }
         }
     }
 }

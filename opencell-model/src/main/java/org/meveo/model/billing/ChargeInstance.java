@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -181,7 +180,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     /**
      * Wallet operations associated with a charge
      */
-    @OneToMany(mappedBy = "chargeInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "chargeInstance", fetch = FetchType.LAZY)
     protected List<WalletOperation> walletOperations = new ArrayList<>();
 
     /**
@@ -261,12 +260,12 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected String orderNumber;
 
     /**
-     * Wallet instances
+     * Accumulator type counter instances
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "counter_instance_id"))
     @OrderColumn(name = "INDX")
-    protected List<CounterInstance> counterInstances = new ArrayList<>();
+    protected List<CounterInstance> accumulatorCounterInstances = new ArrayList<>();
 
     /**
      * Resolved taxClass
@@ -590,21 +589,21 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     }
 
     /**
-     * Gets counter instances.
+     * Gets accumulator type counter instances.
      *
      * @return counter instances
      */
-    public List<CounterInstance> getCounterInstances() {
-        return counterInstances;
+    public List<CounterInstance> getAccumulatorCounterInstances() {
+        return accumulatorCounterInstances;
     }
 
     /**
-     * Sets counter instances.
+     * Sets accumulator type counter instances.
      *
      * @param counterInstances counter instances
      */
-    public void setCounterInstances(List<CounterInstance> counterInstances) {
-        this.counterInstances = counterInstances;
+    public void setAccumulatorCounterInstances(List<CounterInstance> counterInstances) {
+        this.accumulatorCounterInstances = counterInstances;
     }
 
     /**
@@ -612,11 +611,11 @@ public abstract class ChargeInstance extends BusinessCFEntity {
      *
      * @param counterInstance the counter instance
      */
-    public void addCounterInstance(CounterInstance counterInstance) {
-        if (this.counterInstances == null) {
-            this.counterInstances = new ArrayList<>();
+    public void addAccumulatorCounterInstance(CounterInstance counterInstance) {
+        if (this.accumulatorCounterInstances == null) {
+            this.accumulatorCounterInstances = new ArrayList<>();
         }
-        this.counterInstances.add(counterInstance);
+        this.accumulatorCounterInstances.add(counterInstance);
     }
 
     /**

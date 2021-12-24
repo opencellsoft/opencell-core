@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.billing.impl.OneShotRatingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class RatingServiceTest {
         };
 
         try {
-            RatingService ratingService = new RatingService();
+            OneShotRatingService ratingService = new OneShotRatingService();
 
             Provider appProvider = new Provider();
             FieldUtils.writeField(ratingService, "appProvider", appProvider, true);
@@ -79,7 +79,7 @@ public class RatingServiceTest {
             for (String[] testValue : testValues) {
 
                 appProvider.setEntreprise(testValue[enterprise].equals("1"));
-                appProvider.setRounding(testValue[rounding].equals("-1") ? -1 : new Double(testValue[rounding]).intValue());
+                appProvider.setRounding(testValue[rounding].equals("-1") ? -1 : Double.valueOf(testValue[rounding]).intValue());
 
                 WalletOperation wo = new WalletOperation();
                 wo.setQuantity(new BigDecimal(testValue[quantity]));
@@ -97,8 +97,7 @@ public class RatingServiceTest {
                     new BigDecimal(testValue[expectedUnitTax]).compareTo(wo.getUnitAmountTax()) == 0);
                 Assert.assertTrue(new BigDecimal(testValue[expectedAmountWithoutTax]) + "-" + wo.getAmountWithoutTax(),
                     new BigDecimal(testValue[expectedAmountWithoutTax]).compareTo(wo.getAmountWithoutTax()) == 0);
-                Assert.assertTrue(new BigDecimal(testValue[expectedAmountWithTax]) + "-" + wo.getAmountWithTax(),
-                    new BigDecimal(testValue[expectedAmountWithTax]).compareTo(wo.getAmountWithTax()) == 0);
+                Assert.assertTrue(new BigDecimal(testValue[expectedAmountWithTax]) + "-" + wo.getAmountWithTax(), new BigDecimal(testValue[expectedAmountWithTax]).compareTo(wo.getAmountWithTax()) == 0);
                 Assert.assertTrue(new BigDecimal(testValue[expectedTax]) + "-" + wo.getAmountTax(), new BigDecimal(testValue[expectedTax]).compareTo(wo.getAmountTax()) == 0);
             }
 

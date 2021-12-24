@@ -45,6 +45,7 @@ import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
@@ -53,7 +54,6 @@ import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.service.base.BusinessService;
 
 import com.slimpay.hapiclient.exception.HttpException;
@@ -174,20 +174,20 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      * @param url url
      * @param meveoInstanceCode meveo instance
      * @param body body of content to be sent.
-     * @return reponse
+     * @return reponse HTTP response
      * @throws BusinessException business exception.
      */
-  public Response callTextServiceMeveoInstance(String url, String meveoInstanceCode, String body) throws BusinessException {
-	  MeveoInstance meveoInstance = findByCode(meveoInstanceCode);
-	  return callTextServiceMeveoInstance(url,meveoInstance,body);
-  }
-  
-  public Response callTextServiceMeveoInstance(String url, MeveoInstance meveoInstance, String body) throws BusinessException {
-     String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
-     String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
-     String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
-     try {
-         ResteasyClient client = new ResteasyClientProxyBuilder().build();
+    public Response callTextServiceMeveoInstance(String url, String meveoInstanceCode, String body) throws CommunicateToRemoteInstanceException {
+        MeveoInstance meveoInstance = findByCode(meveoInstanceCode);
+        return callTextServiceMeveoInstance(url, meveoInstance, body);
+    }
+
+    public Response callTextServiceMeveoInstance(String url, MeveoInstance meveoInstance, String body) throws CommunicateToRemoteInstanceException {
+        String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
+        String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
+        String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
+        try {
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
          ResteasyWebTarget target = client.target(baseurl + url);
          log.debug("call {} with body:{}", (baseurl + url), body);
          BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
@@ -198,14 +198,13 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
              if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
                  throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
              } else {
-                 throw new BusinessException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+                 throw new CommunicateToRemoteInstanceException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
              }
          }
          return response;
+         
      } catch (Exception e) {
-         log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-         throw new BusinessException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
+         throw new CommunicateToRemoteInstanceException(meveoInstance.getCode(), e);
      }
  }
-
 }

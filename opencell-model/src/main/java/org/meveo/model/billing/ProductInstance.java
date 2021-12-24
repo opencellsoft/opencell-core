@@ -96,7 +96,7 @@ public class ProductInstance extends BusinessCFEntity {
     /**
      * Instantiated product charges
      */
-    @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productInstance", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductChargeInstance> productChargeInstances = new ArrayList<>();
 
     /**

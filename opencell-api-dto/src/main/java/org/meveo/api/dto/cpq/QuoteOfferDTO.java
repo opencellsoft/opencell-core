@@ -35,6 +35,7 @@ import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -52,12 +53,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @XmlRootElement(name = "QuoteOfferDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class QuoteOfferDTO extends BusinessEntityDto{
-
-    public QuoteOfferDTO() {
-		super();
-	}
-    
+public class QuoteOfferDTO extends BusinessEntityDto {
 
 	/**
 	 * 
@@ -149,7 +145,14 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	/** User account */
 	@Schema(description = "The code of the user account")
 	private String userAccountCode;
+
+	/** Quote line type */
+    @Schema(description = "The quote line type")
+	private OfferLineTypeEnum quoteLineType;
    
+	public QuoteOfferDTO() {
+        super();
+    }
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer) {
 		super();
@@ -166,12 +169,13 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
 		offerId = quoteOffer.getOfferTemplate().getId();
 		sequence=quoteOffer.getSequence();
-		code = quoteOffer.getCode();
+		code= quoteOffer.getCode();
 		description = quoteOffer.getDescription();
 		deliveryDate = quoteOffer.getDeliveryDate();
 		userAccountCode=quoteOffer.getUserAccount()!=null?quoteOffer.getUserAccount().getCode():null;
-		
+		quoteLineType = quoteOffer.getQuoteLineType();
 	}
+
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		init(quoteOffer);
 		prices=calculateTotalsPerOffer(quoteOffer);
@@ -187,7 +191,7 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 			for(QuoteAttribute offerAttribute:quoteOffer.getQuoteAttributes()) {
 				offerAttributes.add(new QuoteAttributeDTO(offerAttribute));
 			}
-	}
+		}
 	}
 
 	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer) {
@@ -325,8 +329,6 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 		this.billableAccountCode = billableAccountCode;
 	}
 
- 
-
 	/**
 	 * @return the products
 	 */
@@ -352,8 +354,6 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	public void setQuoteOfferId(Long quoteOfferId) {
 		this.quoteOfferId = quoteOfferId;
 	}
-
-
 
 	/**
 	 * @return the contractCode
@@ -440,8 +440,12 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	public void setUserAccountCode(String userAccountCode) {
 		this.userAccountCode = userAccountCode;
 	}
-	
-	
-	
-   
+
+    public OfferLineTypeEnum getQuoteLineType() {
+        return quoteLineType;
+    }
+
+    public void setQuoteLineType(OfferLineTypeEnum quoteLineType) {
+        this.quoteLineType = quoteLineType;
+    }
 }

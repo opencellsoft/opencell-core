@@ -62,70 +62,41 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/registerCdrList")
-	@Operation(
-			summary=" Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job  ",
-			description=" Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job  ",
-			operationId="    POST_Mediation_registerCdrList",
-			responses= {
-				@ApiResponse(description=" Request processing status ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ActionStatus.class
-											)
-								)
-				)}
-	)
+    @Operation(summary = " Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job  ", description = " Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job  ", operationId = "    POST_Mediation_registerCdrList", responses = {
+            @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
     ActionStatus registerCdrList(CdrListDto postData);
 
     /**
-     * Same as registerCdrList, but at the same process rate the EDR created
+     * Parse CDR, convert to EDR and rate it
      * 
      * @param cdr String of CDR
      * @param isVirtual Boolean for the virtual option
      * @param rateTriggeredEdr Boolean for rate Triggered Edr
-     * @param returnWalletOperations return Wallet Operations option
      * @param maxDepth Interger of the max Depth
+     * @param returnEDRs Return EDR ids
+     * @param returnWalletOperations return Wallet Operation IDs
+     * @param returnWalletOperationDetails return Wallet Operation details
+     * @param returnCounters Return counters that were updated information
      * @return Request processing status
      */
     @POST
     @Path("/chargeCdr")
-	@Operation(
-			summary=" Same as registerCdrList, but at the same process rate the EDR created  ",
-			description=" Same as registerCdrList, but at the same process rate the EDR created  ",
-			operationId="    POST_Mediation_chargeCdr",
-			responses= {
-				@ApiResponse(description=" Request processing status ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ChargeCDRResponseDto.class
-											)
-								)
-				)}
-	)
-    ChargeCDRResponseDto chargeCdr(String cdr, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr, @QueryParam("returnWalletOperations") boolean returnWalletOperations, @QueryParam("maxDepth") Integer maxDepth);
+    @Operation(summary = " Same as registerCdrList, but at the same process rate the EDR created  ", description = " Same as registerCdrList, but at the same process rate the EDR created  ", operationId = "    POST_Mediation_chargeCdr", responses = {
+            @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ChargeCDRResponseDto.class))) })
+    ChargeCDRResponseDto chargeCdr(String cdr, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr, @QueryParam("maxDepth") Integer maxDepth,
+            @QueryParam("returnEDRs") boolean returnEDRs, @QueryParam("returnWalletOperations") boolean returnWalletOperations, @QueryParam("returnWalletOperationDetails") boolean returnWalletOperationDetails,
+            @QueryParam("returnCounters") boolean returnCounters);
 
     /**
-     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
-     * (PREPAID_RESRV_DELAY_MS)
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)
      * 
      * @param cdr String of CDR
      * @return Available quantity and reservationID is returned
      */
     @POST
     @Path("/reserveCdr")
-	@Operation(
-			summary=" Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation",
-			description=" Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)  ",
-			operationId="    POST_Mediation_reserveCdr",
-			responses= {
-				@ApiResponse(description=" Available quantity and reservationID is ed ",
-						content=@Content(
-									schema=@Schema(
-											implementation= CdrReservationResponseDto.class
-											)
-								)
-				)}
-	)
+    @Operation(summary = " Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation", description = " Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)  ", operationId = "    POST_Mediation_reserveCdr", responses = {
+            @ApiResponse(description = " Available quantity and reservationID is ed ", content = @Content(schema = @Schema(implementation = CdrReservationResponseDto.class))) })
     CdrReservationResponseDto reserveCdr(String cdr);
 
     /**
@@ -136,19 +107,8 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/confirmReservation")
-	@Operation(
-			summary=" Confirms the reservation  ",
-			description=" Confirms the reservation  ",
-			operationId="    POST_Mediation_confirmReservation",
-			responses= {
-				@ApiResponse(description=" Request processing status ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ActionStatus.class
-											)
-								)
-				)}
-	)
+    @Operation(summary = " Confirms the reservation  ", description = " Confirms the reservation  ", operationId = "    POST_Mediation_confirmReservation", responses = {
+            @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
     ActionStatus confirmReservation(PrepaidReservationDto reservation);
 
     /**
@@ -159,19 +119,8 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/cancelReservation")
-	@Operation(
-			summary=" Cancels the reservation  ",
-			description=" Cancels the reservation  ",
-			operationId="    POST_Mediation_cancelReservation",
-			responses= {
-				@ApiResponse(description=" Request processing status ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ActionStatus.class
-											)
-								)
-				)}
-	)
+    @Operation(summary = " Cancels the reservation  ", description = " Cancels the reservation  ", operationId = "    POST_Mediation_cancelReservation", responses = {
+            @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
     ActionStatus cancelReservation(PrepaidReservationDto reservation);
 
     /**
@@ -182,18 +131,7 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/notifyOfRejectedCdrs")
-	@Operation(
-			summary=" Notify of rejected CDRs  ",
-			description=" Notify of rejected CDRs  ",
-			operationId="    POST_Mediation_notifyOfRejectedCdrs",
-			responses= {
-				@ApiResponse(description=" Request processing status ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ActionStatus.class
-											)
-								)
-				)}
-	)
+    @Operation(summary = " Notify of rejected CDRs  ", description = " Notify of rejected CDRs  ", operationId = "    POST_Mediation_notifyOfRejectedCdrs", responses = {
+            @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ActionStatus.class))) })
     ActionStatus notifyOfRejectedCdrs(CdrListDto cdrList);
 }
