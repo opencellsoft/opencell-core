@@ -1174,9 +1174,11 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.PRODUCT);
         clearExistingQuotations(quoteVersion);
 
-        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+
 
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
@@ -1424,9 +1426,9 @@ public class CpqQuoteApi extends BaseApi {
             if(quoteVersion.getQuoteArticleLines()!=null) {
             	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
                  if (!quoteArticleLines.isEmpty()) {
-                 	quoteVersion.getQuoteArticleLines().clear();
-                     quoteVersionService.update(quoteVersion);
-                     quoteArticleLineService.remove(quoteArticleLines);
+
+
+                   quoteArticleLineService.remove(quoteArticleLines);
                  }
             }
 
