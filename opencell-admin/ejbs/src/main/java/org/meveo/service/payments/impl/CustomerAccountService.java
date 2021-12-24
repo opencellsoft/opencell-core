@@ -19,6 +19,7 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +39,9 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -78,6 +81,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
+      
+    @Inject
+    private AccountOperationService accountOperationService;
 
     /**
      * Checks if is customer account with id exists.
@@ -331,8 +337,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         try {
             ParamBean paramBean = paramBeanFactory.getInstance();
-            String occTransferAccountCredit = paramBean.getProperty("occ.templateTransferAccountCredit", null);
-            String occTransferAccountDebit = paramBean.getProperty("occ.templateTransferAccountDebit", null);
+            String occTransferAccountCredit = paramBean.getProperty("occ.templateTransferAccountCredit", "CRD_TRS");
+            String occTransferAccountDebit = paramBean.getProperty("occ.templateTransferAccountDebit", "DBT_TRS");
             String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
             String descTransfertTo = paramBean.getProperty("occ.descTransfertTo", "transfer to");
 
@@ -607,17 +613,20 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
     }
     
-    public PaymentMethod getPreferredPaymentMethod(AccountOperation ao,PaymentMethodEnum paymentMethodType) {
-    	
-    	if(ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType ) {
-    		return ao.getSubscription().getPaymentMethod();
+    public PaymentMethod getPreferredPaymentMethod(AccountOperation ao,PaymentMethodEnum paymentMethodType) {    	
+    	ao = accountOperationService.findById(ao.getId(), Arrays.asList("subscription","invoice","customerAccount"));
+    	Subscription subscription  = ao.getSubscription();
+    	if(subscription != null && subscription.getPaymentMethod() != null && subscription.getPaymentMethod().getPaymentType() == paymentMethodType ) {
+    		return subscription.getPaymentMethod();
     	}
+    	
     	if(ao instanceof RecordedInvoice) {
-    		if(((RecordedInvoice)ao).getInvoice() != null && ((RecordedInvoice)ao).getInvoice().getBillingAccount().getPaymentMethod() != null && ((RecordedInvoice)ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType ) {
+    		Invoice invoice = ((RecordedInvoice)ao).getInvoice();
+    		if(invoice != null && invoice.getBillingAccount().getPaymentMethod() != null && invoice.getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType ) {
     			return ((RecordedInvoice)ao).getInvoice().getBillingAccount().getPaymentMethod();
     		}
     	}
-    	return ao.getCustomerAccount().getPreferredPaymentMethod();       
+    	return  getPreferredPaymentMethod(ao.getCustomerAccount().getId());       
     }
 
     /**
