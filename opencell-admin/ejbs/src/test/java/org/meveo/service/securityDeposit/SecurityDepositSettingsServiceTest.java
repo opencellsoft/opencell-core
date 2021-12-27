@@ -1,5 +1,6 @@
 package org.meveo.service.securityDeposit;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,8 +59,6 @@ public class SecurityDepositSettingsServiceTest {
         {
             Assert.assertTrue(exception instanceof InvalidParameterException);
         }
-
-
 
     }
 

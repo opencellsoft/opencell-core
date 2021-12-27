@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 @JsonDeserialize(as = ImmutableSecurityDepositSettings.class)
  public interface SecurityDepositSettings  extends Resource {
 
-
     @Schema(description = "")
     @NotNull Boolean getUseSecurityDeposit();
     @Schema(description = "")

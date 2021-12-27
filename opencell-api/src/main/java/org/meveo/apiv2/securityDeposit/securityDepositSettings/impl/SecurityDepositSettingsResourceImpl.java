@@ -24,8 +24,10 @@ public class SecurityDepositSettingsResourceImpl implements SecurityDepositSetti
 
     @Override public Response create(SecurityDepositSettings securityDepositSettings) {
 
-        securityDepositSettingsService.create(securityDepositSettingsMapper.toEntity(securityDepositSettings));
-        return Response.ok().entity(buildResponse(securityDepositSettings)).build();
+        org.meveo.model.securityDeposit.SecurityDepositSettings securityDepositSettingsModel = securityDepositSettingsMapper.toEntity(securityDepositSettings);
+        securityDepositSettingsService.create(securityDepositSettingsModel);
+
+        return Response.ok().entity(buildResponse(securityDepositSettingsMapper.toResource(securityDepositSettingsModel))).build();
 
 
 
@@ -39,7 +41,7 @@ public class SecurityDepositSettingsResourceImpl implements SecurityDepositSetti
         }
        securityDepositSettingsToUpdate = securityDepositSettingsMapper.toEntity(securityDepositSettingsToUpdate, securityDepositSettings);
         securityDepositSettingsService.update(securityDepositSettingsToUpdate);
-        return Response.ok().entity(buildResponse(securityDepositSettings)).build();
+        return Response.ok().entity(buildResponse(securityDepositSettingsMapper.toResource(securityDepositSettingsToUpdate))).build();
     }
 
 

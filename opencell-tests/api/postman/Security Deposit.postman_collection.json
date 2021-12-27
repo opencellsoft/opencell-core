@@ -30,7 +30,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"useSecurityDeposit\": true,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true,\n    \"allowRenew\": true,\n    \"allowTransfer\": true\n}",
+							"raw": "{\n    \"useSecurityDeposit\": false,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true,\n    \"allowRenew\": true,\n    \"allowTransfer\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -38,14 +38,59 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositSettings",
+							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositSettings/",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
 								"securityDeposit",
-								"securityDepositSettings"
+								"securityDepositSettings",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update security deposit settings",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.superpass}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.superuser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"useSecurityDeposit\": false,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true,\n    \"allowRenew\": true,\n    \"allowTransfer\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositSettings/1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"securityDeposit",
+								"securityDepositSettings",
+								"1"
 							]
 						}
 					},
