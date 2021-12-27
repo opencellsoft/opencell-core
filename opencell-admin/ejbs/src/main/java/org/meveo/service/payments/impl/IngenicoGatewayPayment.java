@@ -18,6 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,15 +66,18 @@ import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.H
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.BrowserData;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInputBase;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardRecurrenceDetails;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CustomerDevice;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.OrderReferences;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Payment;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PaymentStatusOutput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PersonalName;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.RedirectionData;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.ThreeDSecure;
@@ -112,6 +117,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private  Client client = null;
     
     private Marshaller marshaller = null;
+    
+    private ScriptInstanceService scriptInstanceService = null;
 
     /**
      * Connect.
@@ -138,6 +145,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return paramBean;
     }
 
+    private ScriptInstanceService getScriptInstanceService() {
+    	if(scriptInstanceService != null) {
+    		return scriptInstanceService;
+    	}
+    	scriptInstanceService = (ScriptInstanceService) EjbUtils.getServiceInterface(ScriptInstanceService.class.getSimpleName());
+    	return scriptInstanceService;
+    }
     /**
      * Gets the client.
      *
@@ -299,33 +313,60 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		return doPaymentResponseDto;
 	}
     
-    private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
-            String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
-        AmountOfMoney amountOfMoney = new AmountOfMoney();
-        amountOfMoney.setAmount(ctsAmount);
-        amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+	private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
+			String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
 
-        Customer customer = new Customer();
-        customer.setBillingAddress(getBillingAddress(customerAccount));
+		CreatePaymentRequest body = new CreatePaymentRequest();
+		String scriptInstanceCode = paramBean().getProperty("ingenico.paymentRequest.script", null);
+		if (scriptInstanceCode == null) {
+			AmountOfMoney amountOfMoney = new AmountOfMoney();
+			amountOfMoney.setAmount(ctsAmount);
+			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
 
-        Order order = new Order();
-        order.setAmountOfMoney(amountOfMoney);
-        order.setCustomer(customer);
+			Customer customer = new Customer();
+			customer.setBillingAddress(getBillingAddress(customerAccount));
+			
+			CustomerDevice customerDevice = new CustomerDevice();
+			customerDevice.setAcceptHeader(paramBean().getProperty("ingenico.device.AcceptHeader", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"));
+			customerDevice.setLocale(paramBean().getProperty("ingenico.device.Locale", "fr_FR"));
+			customerDevice.setTimezoneOffsetUtcMinutes(paramBean().getProperty("ingenico.device.TimezoneOffsetUtcMinutes", "60"));
+			customerDevice.setUserAgent(paramBean().getProperty("ingenico.device.UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"));
+			BrowserData browserData = new BrowserData();
+			browserData.setColorDepth(paramBean().getPropertyAsInteger("ingenico.device.ColorDepth", 24));
+			browserData.setJavaEnabled("true".equals(paramBean().getProperty("ingenico.device.JavaEnabled", "false")));
+			browserData.setScreenHeight(paramBean().getProperty("ingenico.device.ScreenHeight", "1080"));
+			browserData.setScreenWidth(paramBean().getProperty("ingenico.device.ScreenWidth", "1920"));
+			customerDevice.setBrowserData(browserData);
+			
+			customer.setDevice(customerDevice);
+			
 
-        CreatePaymentRequest body = new CreatePaymentRequest();
-        if (ddPaymentMethod != null) {
-            body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
-        }
-        if (paymentCardToken != null) {
-            body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
-        }
-        if (!StringUtils.isBlank(cardNumber)) {
-            body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
-        }
+			Order order = new Order();
+			order.setAmountOfMoney(amountOfMoney);
+			order.setCustomer(customer);
 
-        body.setOrder(order);
-        return body;
-    }
+			if (ddPaymentMethod != null) {
+				body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
+			}
+			if (paymentCardToken != null) {
+				body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
+			}
+			if (!StringUtils.isBlank(cardNumber)) {
+				body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
+			}
+
+			body.setOrder(order);
+		} else {
+			Map<String, Object> context = new  HashMap<String, Object>();
+			context.put("DDPaymentMethod", ddPaymentMethod);
+			context.put("CardPaymentMethod", paymentCardToken);
+			context.put("ctsAmount", ctsAmount);
+			context.put("CustomerAccount", customerAccount);
+			context = getScriptInstanceService().executeCached( scriptInstanceCode, context);
+			body = (CreatePaymentRequest)context.get("CreatePaymentRequest");
+		}
+		return body;
+	}
 
     @Override
     public void cancelPayment(String paymentID) throws BusinessException {       
@@ -371,13 +412,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private Address getBillingAddress(CustomerAccount customerAccount) {
         Address billingAddress = new Address();
         if (customerAccount.getAddress() != null) {
-            billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
-            billingAddress.setCity(customerAccount.getAddress().getCity());
+            billingAddress.setAdditionalInfo(StringUtils.truncate(customerAccount.getAddress().getAddress3(), 50, true));
+            billingAddress.setCity(StringUtils.truncate(customerAccount.getAddress().getCity(), 20, true));
             billingAddress.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
             billingAddress.setHouseNumber("");
-            billingAddress.setState(customerAccount.getAddress().getState());
-            billingAddress.setStreet(customerAccount.getAddress().getAddress1());
-            billingAddress.setZip(customerAccount.getAddress().getZipCode());
+            billingAddress.setState(StringUtils.truncate(customerAccount.getAddress().getState(), 35, true));
+            billingAddress.setStreet(StringUtils.truncate(customerAccount.getAddress().getAddress1(), 50, true));
+            billingAddress.setZip(StringUtils.truncate(customerAccount.getAddress().getZipCode(), 8, true));
         }
         return billingAddress;
     }
@@ -468,13 +509,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        
         ThreeDSecure threeDSecure = new ThreeDSecure();
         ThreeDSecureData threeDSecureData = new ThreeDSecureData();
         threeDSecureData.setAcsTransactionId(cardPaymentMethod.getToken3DsId());
         threeDSecure.setPriorThreeDSecureData(threeDSecureData);
         threeDSecure.setSkipAuthentication(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.SkipAuthentication", "false"))));
-        cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);
-        cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        RedirectionData redirectionData = new  RedirectionData();
+        redirectionData.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        threeDSecure.setRedirectionData(redirectionData);
+        threeDSecure.setChallengeIndicator(paramBean.getProperty("ingenico.3ds.ChallengeIndicator", "no-preference"));
+        threeDSecure.setAuthenticationFlow(paramBean.getProperty("ingenico.3ds.AuthenticationFlow", "browser"));
+        threeDSecure.setChallengeCanvasSize(paramBean.getProperty("ingenico.3ds.ChallengeCanvasSize", "600x400"));
+        cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);       
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.IsRecurring", "false"))));
         cardPaymentMethodSpecificInput.setRequiresApproval(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.RequiresApproval", "true"))));
 
@@ -535,18 +582,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			Address address = getBillingAddress(customerAccount);
 
 			CompanyInformation companyInformation = new CompanyInformation();
-			companyInformation.setName(customerAccount.getCode());
+			companyInformation.setName(StringUtils.truncate(customerAccount.getCode(), 40, true));
 			ContactDetailsBase contactDetails = new ContactDetailsBase();
 			
 			if(customerAccount.getContactInformation() != null ) {
-				contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail());
+				contactDetails.setEmailAddress(StringUtils.truncate(customerAccount.getContactInformation().getEmail(), 70, false));
 			}
 			
 			PersonalName name = new PersonalName();
 			if (customerAccount.getName() != null) {
-				name.setFirstName(customerAccount.getName().getFirstName());
-				name.setSurname(customerAccount.getName().getLastName());
-				name.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
+				name.setFirstName(StringUtils.truncate(customerAccount.getName().getFirstName(), 15, true));
+				name.setSurname(StringUtils.truncate(customerAccount.getName().getLastName(), 70, true));
+				name.setTitle(StringUtils.truncate(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode(), 15, true));
 			}
 
 			PayoutCustomer customer = new PayoutCustomer();
