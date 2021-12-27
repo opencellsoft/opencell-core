@@ -23,7 +23,7 @@ public class SecurityDepositSettingsService extends BusinessService<SecurityDepo
         return super.update(securityDepositSettings);
     }
 
-    private void checkParameters(SecurityDepositSettings securityDepositSettings)
+    public void checkParameters(SecurityDepositSettings securityDepositSettings)
     {
         if(securityDepositSettings.getMaxAmountPerSecurityDeposit().longValue() < 1)
             throw new InvalidParameterException("max amount per security Deposit should be greater or equals 1");
