@@ -1,0 +1,57 @@
+{
+	"info": {
+		"_postman_id": "b7c89241-6a34-41c2-b150-081ceaf6fc01",
+		"name": "Security Deposit",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Security Deposit Settings",
+			"item": [
+				{
+					"name": "Create Security Deposit Settings",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.superpass}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.superuser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"useSecurityDeposit\": true,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true,\n    \"allowRenew\": true,\n    \"allowTransfer\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositSettings",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"securityDeposit",
+								"securityDepositSettings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
