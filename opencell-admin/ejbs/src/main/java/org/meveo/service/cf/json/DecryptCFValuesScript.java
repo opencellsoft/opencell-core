@@ -45,17 +45,13 @@ public class DecryptCFValuesScript extends Script  {
 
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
-
+        Long id=53L;
 		for (String s : listCfvaluesString()) {
-			listCfvaluesTable(s);
+			listCfvaluesTable(s,id);;
 		}
 	}
 
-	@Override
-	public void terminate(Map<String, Object> methodContext) throws BusinessException {
-
-	}
-
+	
 	
 
 	
@@ -94,17 +90,16 @@ public class DecryptCFValuesScript extends Script  {
 		return entities;
 	}
 
-	public void listCfvaluesTable(String nmTable) {
+	public void listCfvaluesTable(String nmTable,Long id) {
 		@SuppressWarnings("unchecked")
 		List<String> entities = accountentityService.getEntityManager()
-				.createNativeQuery("select cf_Values from " + nmTable + " a where cf_Values is not null")
+				.createNativeQuery("select cf_Values from " + nmTable + "  where cf_Values is not null ")
 				.getResultList();
 
 		for(String str:entities) {
 			if(!str.equals(" ")) {
-				@SuppressWarnings("unchecked")
 				int upateEntity = accountentityService.getEntityManager()
-						.createNativeQuery("update  " + nmTable + " set cf_Values='"+decrypt(str)+"' where cf_values like 'AES%'")
+						.createNativeQuery("update  " + nmTable + " set cf_Values='"+decrypt(str)+"' where cf_values  like 'AES%'  and id="+id)
 						.executeUpdate();
 			}
 		}
@@ -156,5 +151,26 @@ public class DecryptCFValuesScript extends Script  {
 	public String getFileKey() throws Exception {
 		return ParamBean.getInstance().getProperty(OPENCELL_SHA_KEY_PROPERTY, null);
 	}
+
+}
+ class EncyptionException extends RuntimeException {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5175511780611978989L;
+    
+    
+    public EncyptionException() {
+        super();
+    }
+
+    public EncyptionException(Throwable cause) {
+        super(cause);
+    }
+
+    public EncyptionException(String message) {
+        super(message);
+    }
 
 }
