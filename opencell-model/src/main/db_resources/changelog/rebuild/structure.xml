@@ -9718,6 +9718,8 @@
             </column>
             <column name="article_family_id" type="bigint"/>
             <column name="accounting_code_id" type="bigint" />
+            <column name="invoice_type_el" type="varchar(255)" />
+            <column name="invoice_type_id" type="bigint" />
             <column name="description_i18n" type="${type.json}"></column>
 
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
@@ -15567,12 +15569,18 @@
 		<addForeignKeyConstraint baseColumnNames="dunning_level_instance_id" baseTableName="dunning_action_instance"
 			constraintName="fk_dunning_level_instance" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
-      </changeSet>
+      	</changeSet>
       
-       <changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+       	<changeSet id="rebuild-str-fk-540-1638" author="Mbarek-Ay">
+        	<addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
-    </changeSet>
+		</changeSet>
+        <changeSet author="HichamHanine" id="rebuild-str-fk-540-1643">
+        	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_accounting_article"
+	            constraintName="fk_billing_accounting_article_invoice_type" deferrable="false"
+	            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+	            referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+		</changeSet>
     
     <!-- end fk -->
 

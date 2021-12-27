@@ -7,6 +7,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.tax.TaxClass;
 
@@ -56,10 +57,17 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @JoinColumn(name = "article_family_id")
     private ArticleFamily articleFamily;
 
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
+    
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
+    @Column(name = "invoice_type_el")
+    private String invoiceTypeEL;    
+    
     @Column(name = "analytic_code_1")
     private String analyticCode1;
 
@@ -169,6 +177,22 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
 	}
+	
+    public InvoiceType getInvoiceType() {
+        return invoiceType;
+    }
+
+    public void setInvoiceType(InvoiceType invoiceType) {
+        this.invoiceType = invoiceType;
+    }
+
+    public String getInvoiceTypeEL() {
+        return invoiceTypeEL;
+    }
+
+    public void setInvoiceTypeEL(String invoiceTypeEL) {
+        this.invoiceTypeEL = invoiceTypeEL;
+    }
 
 	@Override
 	public int hashCode() {
