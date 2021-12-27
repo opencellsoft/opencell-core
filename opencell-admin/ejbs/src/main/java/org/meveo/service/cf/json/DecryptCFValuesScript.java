@@ -46,8 +46,8 @@ public class DecryptCFValuesScript extends Script  {
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
 
-		for (String s : ListCfvaluesString()) {
-			ListCfvaluesTable(s);
+		for (String s : listCfvaluesString()) {
+			listCfvaluesTable(s);
 		}
 	}
 
@@ -58,13 +58,7 @@ public class DecryptCFValuesScript extends Script  {
 
 	
 
-	/**
-	 * Builds the secret key, using sha-256 and aes algorithm 2 keys, first one in
-	 * opencell-admin.properties and the second one is the value of the constatnt
-	 * INTERNAL_SECRET_KEY in source
-	 * 
-	 * @return SecretKeySpec
-	 */
+	
 	public SecretKeySpec buildSecretKey() {
 		MessageDigest sha = null;
 		byte[] hash = null;
@@ -87,18 +81,11 @@ public class DecryptCFValuesScript extends Script  {
 		return null;
 	}
 
-	public List<AccountEntity> ListCfvalues() {
-		@SuppressWarnings("unchecked")
-		List<AccountEntity> entities = accountentityService.getEntityManager()
-				.createQuery("select a from AccountEntity a where a.cfValues is not null", AccountEntity.class)
-				.getResultList();
-
-		return entities;
-	}
+	
 
 
 
-	public List<String> ListCfvaluesString() {
+	public List<String> listCfvaluesString() {
 		@SuppressWarnings("unchecked")
 		List<String> entities = accountentityService.getEntityManager()
 				.createNativeQuery("select table_name from information_schema.columns where column_name='cf_values'")
@@ -107,7 +94,7 @@ public class DecryptCFValuesScript extends Script  {
 		return entities;
 	}
 
-	public void ListCfvaluesTable(String nmTable) {
+	public void listCfvaluesTable(String nmTable) {
 		@SuppressWarnings("unchecked")
 		List<String> entities = accountentityService.getEntityManager()
 				.createNativeQuery("select cf_Values from " + nmTable + " a where cf_Values is not null")
@@ -115,7 +102,10 @@ public class DecryptCFValuesScript extends Script  {
 
 		for(String str:entities) {
 			if(!str.equals(" ")) {
-				log.debug("Code decrypter :" + decrypt(str));
+				@SuppressWarnings("unchecked")
+				int upateEntity = accountentityService.getEntityManager()
+						.createNativeQuery("update  " + nmTable + " set cf_Values='"+decrypt(str)+"' where cf_values like 'AES%'")
+						.executeUpdate();
 			}
 		}
 	}
@@ -140,13 +130,7 @@ public class DecryptCFValuesScript extends Script  {
 		return strToEncrypt;
 	}
 
-	/**
-	 * Decrypts a string using aes Algorithm
-	 * 
-	 * @param strToDecrypt
-	 * @return decrypted String, in case of a problem while decryption we return ###
-	 *         instead
-	 */
+	
 	public String decrypt(String strToDecrypt) {
 		try {
 			if (strToDecrypt != null) {
@@ -168,20 +152,7 @@ public class DecryptCFValuesScript extends Script  {
 		return strToDecrypt;
 	}
 
-	/**
-	 * Builds the secret key, using sha-256 and aes algorithm 2 keys, first one in
-	 * opencell-admin.properties and the second one is the value of the constatnt
-	 * INTERNAL_SECRET_KEY in source
-	 * 
-	 * @return SecretKeySpec
-	 */
-	
 
-	/**
-	 * 
-	 * @return String encryption/decryption key from opencell-admin.properties
-	 * @throws Exception
-	 */
 	public String getFileKey() throws Exception {
 		return ParamBean.getInstance().getProperty(OPENCELL_SHA_KEY_PROPERTY, null);
 	}
