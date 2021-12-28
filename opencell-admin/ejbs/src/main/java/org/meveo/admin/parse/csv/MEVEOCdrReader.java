@@ -35,6 +35,7 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
@@ -133,7 +134,8 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             // cdr.setSource(line);
             cdr.setLine((String) cdrData);
             cdr.setOriginBatch(batchName);
-            cdr.setOriginRecord(getOriginRecord((String) cdrData));
+            if(Strings.isBlank(cdr.getOriginRecord()))
+            	cdr.setOriginRecord(getOriginRecord((String) cdrData));
         }
         return cdr;
     }
