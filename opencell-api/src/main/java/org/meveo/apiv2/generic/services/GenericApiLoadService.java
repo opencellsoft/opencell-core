@@ -45,10 +45,10 @@ public class GenericApiLoadService {
     @Inject
     private GenericApiPersistenceDelegate persistenceDelegate;
 
-    public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth) {
+    public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id) {
         if(genericFields != null && (isAggregationQueries(genericFields) || isCustomFieldQuery(genericFields))){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
-            List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
+            List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
                     .find(nativePersistenceService.getEntityManager()).stream()
                     .map(ObjectArrays -> Arrays.asList(ObjectArrays))
                     .collect(Collectors.toList());
@@ -73,13 +73,13 @@ public class GenericApiLoadService {
     }
 
 	public List<Map<String, Object>> findAggregatedPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFieldsAlias) {
-		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
+		List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
 				.addPaginationConfiguration(searchConfig, "a").find(nativePersistenceService.getEntityManager()).stream().map(ObjectArrays -> Arrays.asList(ObjectArrays)).collect(Collectors.toList());
 		return list.stream().map(line -> addResultLine(line, genericFieldsAlias != null ? genericFieldsAlias.iterator() : searchConfig.getFetchFields().iterator())).collect(Collectors.toList());
 	}
 
 	public int getAggregatedRecordsCount(Class entityClass, PaginationConfiguration searchConfig) {
-		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
+		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
 				.find(nativePersistenceService.getEntityManager()).size();
 	}
 	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
@@ -110,7 +110,7 @@ public class GenericApiLoadService {
         return field.contains("->>");
     }
     
-    private boolean isCustomFieldQuery(Set<String> genericFields) {
+    public boolean isCustomFieldQuery(Set<String> genericFields) {
         return genericFields.stream()
                 .filter(genericField -> isCustomField(genericField))
                 .findFirst()
