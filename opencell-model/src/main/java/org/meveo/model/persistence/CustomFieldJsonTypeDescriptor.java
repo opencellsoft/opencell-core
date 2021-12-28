@@ -68,7 +68,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         }
         if (ENCRYPT_CF) {
 
-        	return encryToString(value);
+        	return encrypToString(value);
         	
         }
 
@@ -111,17 +111,21 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
   		public Map<String, List<CustomFieldValue>> decryptString(Map<String, List<CustomFieldValue>> cfValues) {
   			for(Entry<String, List<CustomFieldValue>> list:cfValues.entrySet()) {
   				for(CustomFieldValue listCf:list.getValue()) {		
-  				listCf.setStringValue(decrypt(listCf.getStringValue()));
-  				}
+					if (listCf.getStringValue() instanceof String && listCf.getStringValue().contains("AES")) {
+						listCf.setStringValue(decrypt(listCf.getStringValue()));
+					}
+				}
   			}
 			return cfValues;
   			
   		}
-        	public String encryToString(CustomFieldValues cfValues) {
+        	public String encrypToString(CustomFieldValues cfValues) {
         		for(Entry<String, List<CustomFieldValue>> list:cfValues.getValuesByCode().entrySet()) {
-      				for(CustomFieldValue listCf:list.getValue()) {		
-      				listCf.setStringValue(encrypt(listCf.getStringValue()));
-      				}
+      				for(CustomFieldValue listCf:list.getValue()) {	
+						if (listCf.getStringValue() instanceof String && !listCf.getStringValue().contains("AES")) {
+							listCf.setStringValue(encrypt(listCf.getStringValue()));
+						}
+					}
       			}
     			return cfValues.toString();
         		
