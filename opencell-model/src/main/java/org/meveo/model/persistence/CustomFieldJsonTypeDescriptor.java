@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -66,8 +67,9 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return null;
         }
         if (ENCRYPT_CF) {
+
+        	return encryToString(value);
         	
-             return encrypt(value.asJson());
         }
 
           return value.asJson();
@@ -80,12 +82,12 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return null;
         }
 
-        if (ENCRYPT_CF) {
-            string = decrypt(string);
+        if (ENCRYPT_CF ) {
+        	 string = decrypt(string);
             if (IEncryptable.ON_ERROR_RETURN.equalsIgnoreCase(string)) {
                 return null;
             }
-        }
+           
 
         if (!ENCRYPT_CF && string.startsWith(ENCRYPTION_CHECK_STRING)) {
             Map<String, List<CustomFieldValue>> cfValues = new HashMap<String, List<CustomFieldValue>>();
@@ -93,11 +95,38 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return new CustomFieldValues(cfValues);
         }
 
-        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
-        });
-        return new CustomFieldValues(cfValues);
-    }
-
+            
+       
+//		}
+        	
+        	    
+	}
+		 Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
+	        });
+		 
+		 Map<String, List<CustomFieldValue>> cfValuestoo =decryptString(cfValues);
+        return new CustomFieldValues(cfValuestoo);
+}
+        	
+  		public Map<String, List<CustomFieldValue>> decryptString(Map<String, List<CustomFieldValue>> cfValues) {
+  			for(Entry<String, List<CustomFieldValue>> list:cfValues.entrySet()) {
+  				for(CustomFieldValue listCf:list.getValue()) {		
+  				listCf.setStringValue(decrypt(listCf.getStringValue()));
+  				}
+  			}
+			return cfValues;
+  			
+  		}
+        	public String encryToString(CustomFieldValues cfValues) {
+        		for(Entry<String, List<CustomFieldValue>> list:cfValues.getValuesByCode().entrySet()) {
+      				for(CustomFieldValue listCf:list.getValue()) {		
+      				listCf.setStringValue(encrypt(listCf.getStringValue()));
+      				}
+      			}
+    			return cfValues.toString();
+        		
+        	}
+    
     @SuppressWarnings("unchecked")
     @Override
     public <X> X unwrap(CustomFieldValues value, Class<X> type, WrapperOptions options) {
@@ -115,18 +144,8 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return (X) toString(value);
 
         } else if (JsonNode.class.isAssignableFrom(type)) {
-        	Gson gson = new Gson();
-			RootCfValues target2 = gson.fromJson(value.asJson(), RootCfValues.class);
-			System.out.println("Cf_value "+ target2.test.get(0).string);
-     		String valueCrypter=toString(value);
-     		String new_val=target2.test.get(0).string.replace(target2.test.get(0).string, valueCrypter);
-     		CfvaluesClasse cfvaluesClass=new CfvaluesClasse();
-     		cfvaluesClass.setString(new_val);
-     		List<CfvaluesClasse> cfValuesLists=new ArrayList<CfvaluesClasse>();
-     		cfValuesLists.add(cfvaluesClass);
-     		target2.setTest(cfValuesLists);
-     		
-        	 return (X) JacksonUtil.toJsonNode(new Gson().toJson(target2));
+
+        	 return (X) JacksonUtil.toJsonNode(toString(value));
         }
         
         throw unknownUnwrap(type);
@@ -157,23 +176,10 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             
             // Support for Postgresql JsonB type field
         } else {
-            // Logger log = LoggerFactory.getLogger(getClass());
-            // log.error("AKKKK value to wrap is " + (value != null ? value.getClass() : null));
-        	Gson gson = new Gson();
-			RootCfValues target2 = gson.fromJson(value.toString(), RootCfValues.class);
-			if(target2.test!=null) {
-     		String valuedecrypterCrypter=decrypt(target2.test.get(0).string);
-     		String new_val=target2.test.get(0).string.replace(target2.test.get(0).string, valuedecrypterCrypter);
-     		CfvaluesClasse cfvaluesClass=new CfvaluesClasse();
-     		cfvaluesClass.setString(new_val);
-     		List<CfvaluesClasse> cfValuesLists=new ArrayList<CfvaluesClasse>();
-     		cfValuesLists.add(cfvaluesClass);
-     		target2.setTest(cfValuesLists);
-			 return fromString(new Gson().toJson(target2));
-        }
-			return fromString(value.toString());	
+        	return fromString(value.toString());
         }
     }
+
 
     @Override
     public boolean areEqual(CustomFieldValues one, CustomFieldValues another) {
