@@ -18,6 +18,15 @@
 
 package org.meveo.service.tax;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -25,6 +34,7 @@ import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -49,14 +59,6 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Tax mapping service implementation.
@@ -382,7 +384,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             if (ignoreNoTax) {
                 return null;
             }
-            throw new NoTaxException(e);
+            throw new MeveoApiException(e.getMessage());
         }
     }
 
