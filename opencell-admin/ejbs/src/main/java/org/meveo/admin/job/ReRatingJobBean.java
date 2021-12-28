@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.billing.impl.ReratingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 
 /**
@@ -47,7 +47,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
     private WalletOperationService walletOperationService;
 
     @Inject
-    private RatingService ratingService;
+    private ReratingService reratingService;
 
     private boolean useSamePricePlan;
 
@@ -80,6 +80,6 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
      */
     private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
 
-        ratingService.reRate(walletOperationId, useSamePricePlan);
+        reratingService.reRate(walletOperationId, useSamePricePlan);
     }
 }

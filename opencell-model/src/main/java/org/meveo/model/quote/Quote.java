@@ -187,7 +187,7 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
     /**
      * Associated invoices
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote")
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
     /**

@@ -408,6 +408,7 @@
             <java-class>org.meveo.model.cpq.trade.CommercialRuleHeader</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixColumn</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixVersion</java-class>
+            <java-class>org.meveo.model.cpq.Product</java-class>
         </classesToExportAsFull>
         <relatedEntities>
             <relatedEntity pathToEntityRelatedTo="businessOfferModel">
@@ -457,6 +458,64 @@
                     </entry>
                 </parameters>
             </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.ProductChargeTemplateMapping</entityClass>
+                <selection>
+                    select pctm from ProductChargeTemplateMapping pctm
+                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>offerTemplateId</string>
+                        <string>#{entity.id}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.ChargeTemplate</entityClass>
+                <selection>
+                    select ct from ChargeTemplate ct
+                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>offerTemplateId</string>
+                        <string>#{entity.id}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.PricePlanMatrix</entityClass>
+                <selection>
+                    select ppm from PricePlanMatrix ppm
+                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct
+                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>offerTemplateId</string>
+                        <string>#{entity.id}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.PricePlanMatrixVersion</entityClass>
+                <selection>
+                    select ppmv from PricePlanMatrixVersion ppmv 
+                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
+                    	where pctm.product.id in (select offc.product.id from OfferComponent offc where  offc.offerTemplate.id = :offerTemplateId)
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>offerTemplateId</string>
+                        <string>#{entity.id}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
         </relatedEntities>
         <groupedTemplates>
             <template ref="Catalog's custom field templates"/>
@@ -475,10 +534,30 @@
             <java-class>org.meveo.model.cpq.trade.CommercialRuleHeader</java-class>
             <java-class>org.meveo.model.article.ArticleMappingLine</java-class>
             <java-class>org.meveo.model.catalog.PricePlanMatrixColumn</java-class>
+            <java-class>org.meveo.model.catalog.PricePlanMatrixVersion</java-class>
             <java-class>org.meveo.model.cpq.ProductVersion</java-class>
             <java-class>org.meveo.model.cpq.tags.Tag</java-class>
             <java-class>org.meveo.model.cpq.ProductVersionAttribute</java-class>
         </classesToExportAsFull>
+        <relatedEntities>
+            <relatedEntity>
+                <entityClass>org.meveo.model.catalog.PricePlanMatrixVersion</entityClass>
+                <selection>
+                    select ppmv from PricePlanMatrixVersion ppmv 
+                    	left join ppmv.pricePlanMatrix ppm on ppm = ppmv.pricePlanMatrix
+                    	left join ChargeTemplate ct on ct.code = ppm.eventCode
+                    	left join ProductChargeTemplateMapping pctm on pctm.chargeTemplate = ct 
+                    	where pctm.product.id = :productId
+                </selection>
+                <parameters>
+                    <entry>
+                        <string>productId</string>
+                        <string>#{entity.id}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+        </relatedEntities>        
+        
     </template>
 
 </list>

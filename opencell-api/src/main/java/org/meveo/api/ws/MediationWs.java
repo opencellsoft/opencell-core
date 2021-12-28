@@ -21,7 +21,6 @@ package org.meveo.api.ws;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CdrListDto;
@@ -55,17 +54,22 @@ public interface MediationWs extends IBaseWs {
      * @param cdr String of CDR
      * @param isVirtual Boolean for the virtual option
      * @param rateTriggeredEdr Boolean for rate Triggered Edr
-     * @param returnWalletOperations return Wallet Operations option
      * @param maxDepth Interger of the max Depth
+     * @param returnEDRs Return EDR ids
+     * @param returnWalletOperations return Wallet Operation IDs
+     * @param returnWalletOperationDetails return Wallet Operation details
+     * @param returnCounters Return counters that were updated information
      * @return Request processing status
      */
     @WebMethod
     ChargeCDRResponseDto chargeCdr(@WebParam(name = "cdr") String cdr, @WebParam(name = "isVirtual") boolean isVirtual, @WebParam(name = "rateTriggeredEdr") boolean rateTriggeredEdr,
-            @WebParam(name = "returnWalletOperations") boolean returnWalletOperations, @WebParam(name = "maxDepth") Integer maxDepth);
+            @WebParam(name = "maxDepth") Integer maxDepth, @WebParam(name = "returnEDRs") boolean returnEDRs, @WebParam(name = "returnWalletOperations") boolean returnWalletOperations,
+            @WebParam(name = "returnWalletOperationDetails") boolean returnWalletOperationDetails, @WebParam(name = "returnCounters") boolean returnCounters
+
+    );
 
     /**
-     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
-     * (PREPAID_RESRV_DELAY_MS)
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)
      * 
      * @param cdr String of CDR
      * @return Available quantity and reservationID is returned

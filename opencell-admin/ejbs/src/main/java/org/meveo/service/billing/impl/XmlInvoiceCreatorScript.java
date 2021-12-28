@@ -164,7 +164,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected WalletOperationService walletOperationService;
 
     @Inject
-    private InvoiceLineService invoiceLineService;
+    protected InvoiceLineService invoiceLineService;
 
     /**
      * transformer factory.

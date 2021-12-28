@@ -27,6 +27,5 @@ public enum DunningCollectionPlanStatusEnum {
     /**
      * When user stop a collection plan
      */
-    STOPPED;
-
+    STOPPED
 }

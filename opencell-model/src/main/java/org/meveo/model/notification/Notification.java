@@ -21,6 +21,7 @@ package org.meveo.model.notification;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.context.BeforeDestroyed;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,8 +37,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -150,7 +153,20 @@ public class Notification extends EnableBusinessCFEntity {
     @Column(name = "save_successful_notif", nullable = false)
     @NotNull
     private boolean saveSuccessfulNotifications = true;
+    
+    @Transient
+    protected String oldClassNameFilter;
+    
+    @Transient
+    protected NotificationEventTypeEnum oldEventTypeFilter;
+    
 
+	@PostLoad
+	private void loadOldClassAndOldEvent() {
+		this.getOldClassNameFilter();
+		this.getOldEventTypeFilter();
+	}
+	
     public String getClassNameFilter() {
         return classNameFilter;
     }
@@ -274,6 +290,23 @@ public class Notification extends EnableBusinessCFEntity {
     public void setSaveSuccessfulNotifications(boolean saveSuccessfulNotifications) {
         this.saveSuccessfulNotifications = saveSuccessfulNotifications;
     }
-    
+
+	/**
+	 * @return the oldClassNameFilter
+	 */
+	public String getOldClassNameFilter() {
+		if(oldClassNameFilter == null)
+			oldClassNameFilter = classNameFilter;
+		return oldClassNameFilter;
+	}
+
+	/**
+	 * @return the oldEventTypeFilter
+	 */
+	public NotificationEventTypeEnum getOldEventTypeFilter() {
+		if(oldEventTypeFilter == null)
+			oldEventTypeFilter = eventTypeFilter;
+		return oldEventTypeFilter;
+	}
     
 }

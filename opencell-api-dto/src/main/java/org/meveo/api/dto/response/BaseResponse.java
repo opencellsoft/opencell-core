@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * 
  * @author Edward P. Legaspi
  **/
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(Include.NON_EMPTY)
 public abstract class BaseResponse implements Serializable {
 
     /** The Constant serialVersionUID. */

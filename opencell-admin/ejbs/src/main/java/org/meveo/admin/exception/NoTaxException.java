@@ -28,7 +28,7 @@ import org.meveo.model.rating.EDRRejectReasonEnum;
 public class NoTaxException extends RatingException {
     private static final long serialVersionUID = 1L;
 
-    public NoTaxException() {
-        super(EDRRejectReasonEnum.NO_TAX);
+    public NoTaxException(Throwable cause) {
+        super(EDRRejectReasonEnum.NO_TAX, cause.getMessage(), cause);
     }
 }

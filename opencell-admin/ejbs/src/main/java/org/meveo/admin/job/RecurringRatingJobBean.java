@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RatingStatus;
@@ -112,19 +113,10 @@ public class RecurringRatingJobBean extends IteratorBasedJobBean<Long> {
      */
     private void createRecurringCharges(Long chargeInstanceId, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
 
-        RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, rateUntilDate, false);
-        if (ratingStatus.getNbRating() == 1) {
-            // jobExecutionResult.registerSucces();
-
-        } else if (ratingStatus.getNbRating() > 1) {
-            jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean
-            jobExecutionResult.registerWarning(chargeInstanceId + " rated " + ratingStatus.getNbRating() + " times");
-
-        } else {
-            if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
-                jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean
-                jobExecutionResult.registerWarning(chargeInstanceId + " not rated");
-            }
+        RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, rateUntilDate, false, null);
+        if (ratingResult.getWalletOperations().isEmpty()) {
+            jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean and registerWarning is an alternative to registerSucess
+            jobExecutionResult.registerWarning(chargeInstanceId + " not rated");
         }
     }
 }

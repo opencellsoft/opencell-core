@@ -24,6 +24,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -129,35 +130,35 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     /**
      * Default invoice subcategory
      */
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_invoice_subcategory_id")
     private InvoiceSubCategory defaultInvoiceSubCategory;
 
 	/**
      * Default generic accounting article
      */
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_generic_article_id")
     private AccountingArticle defaultGenericAccountingArticle;
     
     /**
      * Default discount accounting article
      */
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_discount_article_id")
     private AccountingArticle defaultDiscountAccountingArticle;
     
     /**
      * Default advanced payment accounting article
      */
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_advanced_payment_article_id")
     private AccountingArticle defaultAdvancedPaymentAccountingArticle;
     
     /**
      * Default advanced payment accounting article
      */
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_invoice_minimum_article_id")
     private AccountingArticle defaultInvoiceMinimumAccountingArticle;
 

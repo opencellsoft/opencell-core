@@ -90,6 +90,7 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ConfigurationException;
 import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.ValidationException;
@@ -3422,7 +3423,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (changedToTax == null) {
 
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(), invoice.getBillingAccount(), invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(), invoice.getBillingAccount(), invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
 
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
@@ -4647,8 +4648,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param el EL expression to resolve
      * @param parameters A list of parameters
      * @return An integer value
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) {
+    public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) throws InvalidELException{
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, parameters);
     }
 
@@ -5152,7 +5154,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndILIds[0];
                         em.createNamedQuery("InvoiceLine.updateWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
                             .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", ilIds).executeUpdate();
-                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("invoice", invoice).setParameter("ids", ilIds).executeUpdate();
+                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("now", now)
+                            .setParameter("ids", ilIds).executeUpdate();
                     }
 
                     for (Object[] aggregateAndILs : ilUpdates) {
@@ -5275,7 +5278,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = taxMappingService.getApplicableTax(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
@@ -5783,7 +5786,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 }
             }
-            ;
         }
 
         if (invoiceLines != null) {

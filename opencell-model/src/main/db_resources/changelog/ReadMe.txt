@@ -17,14 +17,18 @@ data.xml : the dataset file related to changelog file structure.xml.
 
 2- /rebuild : the directory that contains :
 structure.xml : the initial changelog file that creates the database.
-data.xml : base dataset file related to changelog file structure.xml.
+data.xml : base dataset file related to changelog file structure.xml. Should contain only a minimum data needed to start opencell application.
 data-scripts.xml : scripts dataset related to changelog file structure.xml.
 data-reports.xml : reports dataset related to changelog file structure.xml.
 data-demo.xml : demo dataset
 
-3- db.current.xml : master changelog file that we pass all current Liquibase calls.
-4- db.rebuild.xml : master changelog file that we pass all initial Liquibase calls.
-5- db.base.xml : master changelog file that we pass initial Liquibase calls without scripts, reports and demo data.
+3- /dunning : the directory that contains :
+data.xml : demo dunning related dataset
+
+4- db.current.xml : master changelog file that we pass all current Liquibase calls.
+5- db.rebuild.xml : master changelog file that we pass all initial Liquibase calls.
+6- db.base.xml : master changelog file that we pass initial Liquibase calls without scripts, reports and demo data.
+7- db.dunning.xml : master changelog file to populate database with demo dunning data
 
 
 Procedure for the developer

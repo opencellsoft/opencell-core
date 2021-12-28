@@ -41,7 +41,7 @@ public class WalletReservation extends WalletOperation {
     /**
      * Prepaid consumption reservation
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
@@ -84,10 +84,14 @@ public class WalletReservation extends WalletOperation {
      * @param endDate Operation date range - end date
      * @param accountingCode Accounting code
      * @param invoicingDate Date from which operation can be included in an invoice
+     * @param reservation Reservation
      */
     public WalletReservation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
-            String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode, Date invoicingDate) {
+            String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode, Date invoicingDate, Reservation reservation) {
         super(chargeInstance, inputQuantity, quantityInChargeUnits, operationDate, orderNumber, criteria1, criteria2, criteria3, criteriaExtra, tax, startDate, endDate, accountingCode, invoicingDate);
+        
+        this.reservation = reservation;
+                
         setStatus(WalletOperationStatusEnum.RESERVED);
     }
 

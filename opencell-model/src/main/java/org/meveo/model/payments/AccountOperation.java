@@ -220,7 +220,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * A list of matches
      */
-    @OneToMany(mappedBy = "accountOperation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "accountOperation", fetch = FetchType.LAZY)
     private List<MatchingAmount> matchingAmounts = new ArrayList<>();
 
     /**

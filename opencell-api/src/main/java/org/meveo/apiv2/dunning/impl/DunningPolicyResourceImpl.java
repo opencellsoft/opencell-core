@@ -1,6 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
 import static org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource;
 
 import java.util.ArrayList;
@@ -77,10 +78,10 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         int totalDunningLevels = 0;
         int countReminderLevels = 0;
         int countEndOfDunningLevel = 0;
-        int highestSequence = (dunningPolicy.getDunningPolicyLevels() != null
-                && !dunningPolicy.getDunningPolicyLevels().isEmpty())
-                ? dunningPolicy.getDunningPolicyLevels().get(0).getSequence() : 0;
+        int endOfLevelDayOverDue = -1;
+        int sequence = 0;
         try {
+            List<DunningPolicyLevel> dunningPolicyLevels = new ArrayList<>();
             for (org.meveo.apiv2.dunning.DunningPolicyLevel dunningPolicyLevel : dunningPolicy.getDunningPolicyLevels()) {
                 DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
                 dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
@@ -91,18 +92,21 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                     countReminderLevels++;
                 }
                 if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
-                    if (dunningPolicyLevelEntity.getSequence() < highestSequence) {
-                        throw new BadRequestException("End of dunning level sequence must be the highest");
-                    }
-                    highestSequence = dunningPolicyLevelEntity.getSequence();
+                    endOfLevelDayOverDue = dunningPolicyLevelEntity.getDunningLevel().getDaysOverdue();
                     countEndOfDunningLevel++;
                 }
-                policyLevelApiService.create(dunningPolicyLevelEntity);
+                dunningPolicyLevels.add(dunningPolicyLevelEntity);
             }
             if(countReminderLevels == 0 || totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
                 dunningPolicyService.remove(savedEntity);
             }
             dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
+            dunningPolicyApiService.validateLevels(dunningPolicyLevels, endOfLevelDayOverDue);
+            dunningPolicyLevels.sort(comparing(level -> level.getDunningLevel().getDaysOverdue()));
+            for (DunningPolicyLevel level : dunningPolicyLevels) {
+                level.setSequence(sequence++);
+                policyLevelApiService.create(level);
+            }
             savedEntity.setTotalDunningLevels(totalDunningLevels);
             dunningPolicyApiService.updateTotalLevels(savedEntity);
             ActionStatus actionStatus = new ActionStatus();

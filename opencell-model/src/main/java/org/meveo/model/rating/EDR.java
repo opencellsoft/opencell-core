@@ -61,6 +61,16 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.listToRateIdsLimitByRG", query = "SELECT e.id from EDR e where e.status='OPEN' and e.subscription.ratingGroup=:ratingGroup order by e.id"),
         @NamedQuery(name = "EDR.listToRateIdsLimitByDateAndRG", query = "SELECT e.id from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup order by e.id"),
 
+        @NamedQuery(name = "EDR.getListToRateSummary", query = "SELECT count(*), max(e.id)  from EDR e where e.status='OPEN'"),
+        @NamedQuery(name = "EDR.getListToRateLimitByDateSummary", query = "SELECT count(*), max(e.id)  from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate"),
+        @NamedQuery(name = "EDR.getListToRateLimitByRGSummary", query = "SELECT count(*), max(e.id)  from EDR e where e.status='OPEN' and e.subscription.ratingGroup=:ratingGroup"),
+        @NamedQuery(name = "EDR.getListToRateLimitByDateAndRGSummary", query = "SELECT count(*), max(e.id)  from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup"),
+
+        @NamedQuery(name = "EDR.listToRate", query = "SELECT e from EDR e where e.status='OPEN' and e.id<=:maxId order by e.id"),
+        @NamedQuery(name = "EDR.listToRateLimitByDate", query = "SELECT e from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate and e.id<=:maxId order by e.id"),
+        @NamedQuery(name = "EDR.listToRateLimitByRG", query = "SELECT e from EDR e where e.status='OPEN' and e.subscription.ratingGroup=:ratingGroup and e.id<=:maxId  order by e.id"),
+        @NamedQuery(name = "EDR.listToRateLimitByDateAndRG", query = "SELECT e from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup and e.id<=:maxId  order by e.id"),
+        
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select e.status, count(e.id) from EDR e group by e.status"),
 
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
@@ -297,9 +307,6 @@ public class EDR extends BaseEntity {
     /** The times tried. */
     @Column(name = "times_tried")
     private Integer timesTried = 0;
-
-    @Transient
-    private String ratingRejectionReason;
 
     /**
      * Tracks quantity left to rate. Initialized with quantity field value on the first call.
@@ -543,20 +550,6 @@ public class EDR extends BaseEntity {
 
     public void setExtraParameter(String extraParameter) {
         this.extraParameter = extraParameter;
-    }
-
-    /**
-     * @param ratingRejectionReason Rejection reason why EDR was rejected during rating. A transient value. A persisted value is available in procesingStatus.rejectionReason.
-     */
-    public void setRatingRejectionReason(String ratingRejectionReason) {
-        this.ratingRejectionReason = ratingRejectionReason;
-    }
-
-    /**
-     * @return Rejection reason why EDR was rejected during rating. A transient value. A persisted value is available in procesingStatus.rejectionReason.
-     */
-    public String getRatingRejectionReason() {
-        return ratingRejectionReason;
     }
 
     @Override

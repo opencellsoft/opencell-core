@@ -18,9 +18,14 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -168,13 +173,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Invoices produced by a Billing run
      */
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
 
     /**
      * Billing run lists
      */
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private Set<BillingRunList> billingRunLists = new HashSet<>();
 
     /**

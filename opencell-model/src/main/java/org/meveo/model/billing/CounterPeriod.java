@@ -18,18 +18,15 @@
 
 package org.meveo.model.billing;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.JsonUtils;
-import org.meveo.commons.utils.ListUtils;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
-import org.meveo.model.catalog.CounterTypeEnum;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -49,14 +46,17 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.JsonUtils;
+import org.meveo.commons.utils.ListUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
+import org.meveo.model.catalog.CounterTypeEnum;
 
 /**
  * Counter values for a given period
@@ -66,10 +66,8 @@ import java.util.Map.Entry;
 @Entity
 @ObservableEntity
 @Table(name = "billing_counter_period", uniqueConstraints = @UniqueConstraint(columnNames = { "counter_instance_id", "period_start_date" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
-@NamedQueries({
-        @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"),
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
+@NamedQueries({ @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"),
         @NamedQuery(name = "CounterPeriod.countPeriodsToPurgeByDate", query = "select count(*) FROM CounterPeriod cp WHERE cp.periodEndDate<=:date"),
         @NamedQuery(name = "CounterPeriod.purgePeriodsByDate", query = "delete CounterPeriod cp WHERE cp.periodEndDate<=:date"),
         @NamedQuery(name = "CounterPeriod.findByCounterEntityAndPeriodDate", query = "SELECT cp FROM CounterPeriod cp "
@@ -77,7 +75,7 @@ import java.util.Map.Entry;
                 + "AND cp.periodStartDate<=:date AND cp.periodEndDate>:date AND cp.counterInstance.code=:counterCode")
 
 })
-public class CounterPeriod extends BusinessEntity {
+public class CounterPeriod extends BusinessEntity implements Cloneable {
     private static final long serialVersionUID = -4924601467998738157L;
 
     /**
@@ -134,10 +132,10 @@ public class CounterPeriod extends BusinessEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "is_accumulator")
-    private Boolean accumulator = Boolean.FALSE;
+    private boolean accumulator;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name="billing_counter_period_values")
+    @CollectionTable(name = "billing_counter_period_values")
     @MapKeyColumn(name = "counter_key")
     @Column(name = "counter_value")
     private Map<String, BigDecimal> accumulatedValues;
@@ -211,11 +209,11 @@ public class CounterPeriod extends BusinessEntity {
         this.notificationLevels = notificationLevels;
     }
 
-    public Boolean getAccumulator() {
+    public boolean isAccumulator() {
         return accumulator;
     }
 
-    public void setAccumulator(Boolean accumulator) {
+    public void setAccumulator(boolean accumulator) {
         this.accumulator = accumulator;
     }
 
@@ -229,6 +227,7 @@ public class CounterPeriod extends BusinessEntity {
 
     /**
      * Gets the accumulator type multiple or single
+     * 
      * @return an accumulator counter type enum.
      */
     public AccumulatorCounterTypeEnum getAccumulatorType() {
@@ -237,6 +236,7 @@ public class CounterPeriod extends BusinessEntity {
 
     /**
      * Sets the accumulator counter type.
+     * 
      * @param accumulatorType AccumulatorCounterTypeEnum
      */
     public void setAccumulatorType(AccumulatorCounterTypeEnum accumulatorType) {
@@ -314,7 +314,7 @@ public class CounterPeriod extends BusinessEntity {
 
                 } else if (!level.endsWith("%")) {
                     bdLevel = new BigDecimal(level);
-                    if (initialValue.compareTo(bdLevel) > 0) {
+                    if ((accumulator && initialValue.compareTo(bdLevel) < 0) || (!accumulator && initialValue.compareTo(bdLevel) > 0)) {
                         convertedLevels.put(level, bdLevel);
                     }
                 }
@@ -332,8 +332,7 @@ public class CounterPeriod extends BusinessEntity {
     }
 
     /**
-     * Get a list of counter values for which notification should fire given the counter value change from (exclusive)/to (inclusive) value (NOTE : as TO value is lower, it is
-     * inclusive)
+     * Get a list of counter values for which notification should fire given the counter value change from (exclusive)/to (inclusive) value (NOTE : as TO value is lower, it is inclusive)
      * 
      * @param fromValue Counter changed from value
      * @param toValue Counter changed to value
@@ -345,13 +344,43 @@ public class CounterPeriod extends BusinessEntity {
         }
 
         List<Entry<String, BigDecimal>> matchedLevels = new ArrayList<>();
-        if(getNotificationLevelsAsMap() != null) {
+        if (getNotificationLevelsAsMap() != null) {
             for (Entry<String, BigDecimal> notifValue : getNotificationLevelsAsMap().entrySet()) {
-                if (fromValue.compareTo(notifValue.getValue()) > 0 && notifValue.getValue().compareTo(toValue) >= 0) {
+                // Increasing counter from < value<=to
+                if (accumulator && fromValue.compareTo(notifValue.getValue()) < 0 && notifValue.getValue().compareTo(toValue) <= 0) {
+                    matchedLevels.add(notifValue);
+
+                    // Decreasing counter from >value>=to
+                } else if (!accumulator && fromValue.compareTo(notifValue.getValue()) > 0 && notifValue.getValue().compareTo(toValue) >= 0) {
                     matchedLevels.add(notifValue);
                 }
             }
         }
         return matchedLevels;
+    }
+
+    /**
+     * Get a non-persisted copy (no id and version field set) of a counter period
+     */
+    @Override
+    public CounterPeriod clone() throws CloneNotSupportedException {
+        CounterPeriod clone = new CounterPeriod();
+
+        if (accumulatedValues != null) {
+            clone.setAccumulatedValues(new HashMap<String, BigDecimal>(accumulatedValues));
+        }
+        clone.setValue(getValue());
+        clone.setPeriodStartDate(getPeriodStartDate());
+        clone.setPeriodEndDate(getPeriodEndDate());
+        clone.setCode(code);
+        clone.setDescription(description);
+        clone.setLevel(level);
+        clone.setCounterType(counterType);
+        clone.setNotificationLevels(notificationLevels);
+        clone.setAccumulator(accumulator);
+        clone.setAccumulatorType(accumulatorType);
+        clone.setCounterInstance(counterInstance);
+
+        return clone;
     }
 }

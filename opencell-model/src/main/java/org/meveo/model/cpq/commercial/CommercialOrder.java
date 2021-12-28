@@ -185,7 +185,7 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	@JoinTable(name = "cpq_commercial_order_billing_invoice",
 			joinColumns = @JoinColumn(name = "commercial_order_id"),
 			inverseJoinColumns = @JoinColumn(name = "invoice_id"))
-	@OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<Invoice> invoices = new ArrayList<Invoice>();
 
 	@ManyToOne(fetch = FetchType.LAZY)

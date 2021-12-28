@@ -38,7 +38,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.admin.Seller;
@@ -63,6 +63,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -274,7 +275,7 @@ public class ValueExpressionWrapper {
     /**
      * EL expression variable - cpq quote - 'quote'
      */
-    public static final String VAR_ATRIBUTE_VALUE = "attributeValue";
+    public static final String VAR_ATTRIBUTE_VALUE = "attributeValue";
 
 	private static final String VAR_QUOTE_ATRIBUTE = "quoteAttribute";
 
@@ -341,9 +342,9 @@ public class ValueExpressionWrapper {
      * @param expression Expression to evaluate
      * @param contextMap Context of values (optional)
      * @return A value that expression evaluated to
-     * @throws BusinessException business exception.
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static boolean evaluateToBoolean(String expression, Map<Object, Object> contextMap) throws BusinessException {
+    public static boolean evaluateToBoolean(String expression, Map<Object, Object> contextMap) throws InvalidELException {
 
         Object value = evaluateExpression(expression, contextMap, Boolean.class);
         if (value instanceof Boolean) {
@@ -363,8 +364,8 @@ public class ValueExpressionWrapper {
     public static boolean evaluateToBooleanIgnoreErrors(String expression, Map<Object, Object> contextMap) {
         try {
             return evaluateToBoolean(expression, contextMap);
-        } catch (BusinessException e) {
-            log.error("Failed to evaluate expression {} on variable {}", expression, contextMap, e);
+        } catch (InvalidELException e) {
+            log.error(e.getMessage());
             return false;
         }
     }
@@ -376,9 +377,9 @@ public class ValueExpressionWrapper {
      * @param variableName Variable name to give to a variable in context
      * @param variable Variable to make available in context
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException business exception.
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static boolean evaluateToBooleanOneVariable(String expression, String variableName, Object variable) throws BusinessException {
+    public static boolean evaluateToBooleanOneVariable(String expression, String variableName, Object variable) throws InvalidELException {
 
         boolean result = evaluateToBooleanMultiVariable(expression, variableName, variable);
         return result;
@@ -395,8 +396,8 @@ public class ValueExpressionWrapper {
     public static boolean evaluateToBooleanIgnoreErrors(String expression, String variableName, Object variable) {
         try {
             return evaluateToBooleanMultiVariable(expression, variableName, variable);
-        } catch (BusinessException e) {
-            log.error("Failed to evaluate expression {} on variable {}/{}", expression, variableName, variable, e);
+        } catch (InvalidELException e) {
+            log.error(e.getMessage());
             return false;
         }
     }
@@ -407,9 +408,9 @@ public class ValueExpressionWrapper {
      * @param expression Expression to evaluate
      * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException business exception.
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static boolean evaluateToBooleanMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
+    public static boolean evaluateToBooleanMultiVariable(String expression, Object... contextVarNameAndValue) throws InvalidELException {
         if (StringUtils.isBlank(expression)) {
             return true;
         }
@@ -439,8 +440,8 @@ public class ValueExpressionWrapper {
     public static String evaluateToStringIgnoreErrors(String expression, String variableName, Object variable) {
         try {
             return evaluateToStringMultiVariable(expression, variableName, variable);
-        } catch (BusinessException e) {
-            log.error("Failed to evaluate expression {} on variable {}/{}", expression, variableName, variable, e);
+        } catch (InvalidELException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -451,9 +452,9 @@ public class ValueExpressionWrapper {
      * @param expression Expression to evaluate
      * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException business exception
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static String evaluateToStringMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
+    public static String evaluateToStringMultiVariable(String expression, Object... contextVarNameAndValue) throws InvalidELException {
         if (StringUtils.isBlank(expression)) {
             return null;
         }
@@ -483,9 +484,9 @@ public class ValueExpressionWrapper {
      * @param resultClass An expected result class
      * @param parameters Parameters to expose for EL expression evaluation
      * @return A value that expression evaluated to
-     * @throws BusinessException business exception.
+     * @throws InvalidELException Failed to evaluate EL expression
      */
-    public static <T> T evaluateExpression(String expression, Class<T> resultClass, Object... parameters) throws BusinessException {
+    public static <T> T evaluateExpression(String expression, Class<T> resultClass, Object... parameters) throws InvalidELException {
         Map<Object, Object> contextMap = populateContext(expression, parameters);
 
         return evaluateExpression(expression, contextMap, resultClass);
@@ -500,10 +501,10 @@ public class ValueExpressionWrapper {
      * @param contextMap Context of values
      * @param resultClass An expected result class
      * @return A value that expression evaluated to
-     * @throws BusinessException business exception.
+     * @throws InvalidELException Failed to evaluate EL expression
      */
     @SuppressWarnings("unchecked")
-    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, Class<T> resultClass) throws BusinessException {
+    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, Class<T> resultClass) throws InvalidELException {
 
         Object result = null;
         if (StringUtils.isBlank(expression)) {
@@ -539,8 +540,7 @@ public class ValueExpressionWrapper {
             return (T) result;
 
         } catch (Exception e) {
-            log.warn("EL {} throw error with variables {}", expression, contextMap, e);
-            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
+            throw new InvalidELException(expression, contextMap, e);
         }
     }
 
@@ -633,6 +633,7 @@ public class ValueExpressionWrapper {
         QuoteAttribute quoteAttribute=null;
         OrderAttribute orderAttribute=null;
         AttributeInstance attributeInstance=null;
+        AttributeValue attributeValue=null;
         CommercialOrder order=null;
         List<Access> accessPoints = null;
 
@@ -694,6 +695,9 @@ public class ValueExpressionWrapper {
             }
             if (parameter instanceof AttributeInstance) {
             	attributeInstance = (AttributeInstance) parameter;
+            }
+            if(parameter instanceof AttributeValue){
+                attributeValue = (AttributeValue) parameter;
             }
             
             if (parameter instanceof CommercialOrder) {
@@ -901,6 +905,10 @@ public class ValueExpressionWrapper {
             if (invoice != null && invoice.getBillingRun() != null) {
                 contextMap.put(VAR_BILLING_RUN, invoice.getBillingRun());
             }
+        }
+
+        if(el.contains(VAR_ATTRIBUTE_VALUE) && !contextMap.containsKey(VAR_ATTRIBUTE_VALUE) && attributeValue != null){
+            contextMap.put(VAR_ATTRIBUTE_VALUE, attributeValue);
         }
 
         return contextMap;

@@ -17,7 +17,6 @@
  */
 package org.meveo.model.billing;
 
-import static javax.persistence.FetchType.LAZY;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -61,7 +60,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -147,33 +145,17 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @JoinColumn(name = "customer_account_id", nullable = false)
     private CustomerAccount customerAccount;
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
      * User accounts
      */
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<UserAccount> usersAccounts = new ArrayList<>();
 
     /**
      * Invoices
      */
-    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
-
-    /**
-     * For GDPR - Billing runs
-     */
-   @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<BillingRunList> billingRunLists = new ArrayList<>();
-
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    /**
-     * For GDPR - Invoice aggregates
-     */
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     /**
      * Discount rate
@@ -235,11 +217,8 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    // key is the counter template code
     /**
-     * Counter instances
+     * Counter instances. Key is the counter template code
      */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
@@ -276,7 +255,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     private BigDecimal totalInvoicingAmountWithoutTax;
 
     /**
-     * For GDPR - Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
+     * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<DiscountPlanInstance> discountPlanInstances;
@@ -476,22 +455,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     public void setInvoicePrefix(String invoicePrefix) {
         this.invoicePrefix = invoicePrefix;
-    }
-
-    public List<BillingRunList> getBillingRunLists() {
-        return billingRunLists;
-    }
-
-    public void setBillingRunLists(List<BillingRunList> billingRunLists) {
-        this.billingRunLists = billingRunLists;
-    }
-
-    public List<InvoiceAgregate> getInvoiceAgregates() {
-        return invoiceAgregates;
-    }
-
-    public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
-        this.invoiceAgregates = invoiceAgregates;
     }
 
     public TradingCountry getTradingCountry() {

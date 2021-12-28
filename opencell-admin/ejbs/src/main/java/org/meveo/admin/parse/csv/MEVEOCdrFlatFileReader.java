@@ -109,11 +109,18 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
         if (recordContext == null) {
             return null;
         }
+
+        return getRecord(cdrParser, recordContext);
+    }
+
+    @Override
+    public CDR getRecord(ICdrParser cdrParser, Object cdrData) {
+        RecordContext recordContext = (RecordContext) cdrData;
         CDR cdr = null;
         try {
             if (recordContext.getRecord() != null) {
                 cdr = cdrParser.parse(recordContext.getRecord());
-                
+
             } else if (recordContext.getRejectReason() != null) {
                 cdr = new CDR();
                 cdr.setRejectReasonException(recordContext.getRejectReason());
@@ -126,14 +133,14 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
         } finally {
 
             // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
-            if (recordContext.getRecord()!=null) {
+            if (recordContext.getRecord() != null) {
 //            try {
 //                String source = RecordContext.serializeRecord(recordContext.getRecord());
 //                cdr.setSource(source);
 //            } catch (Exception e) {
 //                log.error("Failed to serialize CDR record", e);
 //            }
-              cdr.setType(recordContext.getRecord().getClass().getName());
+                cdr.setType(recordContext.getRecord().getClass().getName());
             }
             String line = recordContext.getLineContent();
             cdr.setLine(line);

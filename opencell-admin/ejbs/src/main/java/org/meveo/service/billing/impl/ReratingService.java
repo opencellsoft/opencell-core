@@ -7,19 +7,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 
 /**
@@ -86,15 +97,15 @@ For not-invoiced Wallet Operations:
        status=CANCELED. Rated transactions are set to status CANCELED
     New/rerated WOs
        status=OPEN, no relation to original WO.
-</pre>
-
+ * </pre>
+ * 
  * </pre>
  * 
  * 
  * @author Andrius Karpavicius
  */
 @Stateless
-public class ReratingService implements Serializable {
+public class ReratingService extends PersistenceService<WalletOperation> implements Serializable {
 
     private static final long serialVersionUID = -1786938564004811233L;
 
@@ -106,14 +117,20 @@ public class ReratingService implements Serializable {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-    @Inject
-    private RatingService ratingService;
+    @EJB
+    private ReratingService reratingServiceNewTx;
 
     @Inject
     private WalletOperationService walletOperationService;
 
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+
+    @Inject
+    private OneShotRatingService oneShotRatingService;
+
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     /**
      * Re-rate service instance charges
@@ -235,9 +252,9 @@ public class ReratingService implements Serializable {
             if (countToRerate > 0) {
 
                 if (sameTx) {
-                    ratingService.reRate(woIdsToRerate, false);
+                    reRate(woIdsToRerate, false);
                 } else {
-                    ratingService.reRateInNewTx(woIdsToRerate, false);
+                    reratingServiceNewTx.reRateInNewTx(woIdsToRerate, false);
                 }
             }
 
@@ -309,5 +326,87 @@ public class ReratingService implements Serializable {
 
     public EntityManager getEntityManager() {
         return emWrapper.getEntityManager();
+    }
+
+    /**
+     * Re-rate wallet operations. Each wallet operation is rerated independently and marked as "failed to rerate" if error occurs.
+     *
+     * @param woIds Ids of wallet operations to be re-rated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void reRateInNewTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+
+        for (Long woId : woIds) {
+
+            try {
+                methodCallingUtils.callMethodInNewTx(() -> reRate(woId, useSamePricePlan));
+
+            } catch (RatingException e) {
+                log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
+                walletOperationService.markAsFailedToRerateInNewTx(woId, e);
+
+            } catch (BusinessException e) {
+                log.error("Failed to rerate Wallet operation {}: {}", woId, e.getMessage(), e);
+                walletOperationService.markAsFailedToRerateInNewTx(woId, e);
+            }
+        }
+    }
+
+    /**
+     * Re-rate wallet operations together. Each wallet operation is rerated and marked as "failed to rerate" if error occurs.
+     *
+     * @param woIds Ids of wallet operations to be re-rated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    public void reRate(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+
+        for (Long woId : woIds) {
+
+            try {
+                reRate(woId, useSamePricePlan);
+
+            } catch (RatingException e) {
+                log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
+                throw e;
+
+            } catch (BusinessException e) {
+                log.error("Failed to rerate Wallet operation {}: {}", woId, e.getMessage(), e);
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Rerate wallet operation. Mark wallet operation as RERATED with a link to a newly created wallet operation with new amounts
+     *
+     * @param operationToRerateId wallet operation to be rerated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
+
+        WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
+        if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
+            return;
+        }
+
+        // Change related OPEN or REJECTED Rated transaction status to CANCELED
+        RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
+        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
+            ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
+        }
+
+        WalletOperation operation = oneShotRatingService.rateRatedWalletOperation(operationToRerate, useSamePricePlan);
+
+        create(operation);
+
+        getEntityManager().createNamedQuery("WalletOperation.setStatusToReratedWithReratedWo").setParameter("now", new Date()).setParameter("newWo", operation).setParameter("id", operationToRerateId).executeUpdate();
+
     }
 }

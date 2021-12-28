@@ -1,7 +1,28 @@
 package org.meveo.apiv2.generic.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.meveo.apiv2.generic.ValidationUtils.checkId;
+import static org.meveo.apiv2.generic.ValidationUtils.checkRecords;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
@@ -9,16 +30,8 @@ import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.NativePersistenceService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.meveo.apiv2.generic.ValidationUtils.checkId;
-import static org.meveo.apiv2.generic.ValidationUtils.checkRecords;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Stateless
 public class GenericApiLoadService {
@@ -33,7 +46,7 @@ public class GenericApiLoadService {
     private GenericApiPersistenceDelegate persistenceDelegate;
 
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth) {
-        if(genericFields != null && isAggregationQueries(genericFields)){
+        if(genericFields != null && (isAggregationQueries(genericFields) || isCustomFieldQuery(genericFields))){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
                     .find(nativePersistenceService.getEntityManager()).stream()
@@ -69,12 +82,12 @@ public class GenericApiLoadService {
 		return nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig)
 				.find(nativePersistenceService.getEntityManager()).size();
 	}
-
-    private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
-        return line.stream()
-                .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
-                .collect(Collectors.toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
-    }
+	private Map<String, Object> addResultLine(List<Object> line, Iterator<String> iterator) {
+	    return line.stream()
+	            .flatMap(array -> array instanceof Object[] ? flatten((Object[])array) : Stream.of(array))
+	            .map(l -> Objects.isNull(l) ? "" : l)
+	            .collect(Collectors.toMap(x -> iterator.next(), Function.identity(), (existing, replacement) -> existing, LinkedHashMap::new));
+	}
     private static Stream<Object> flatten(Object[] array) {
         return Arrays.stream(array)
                 .flatMap(o -> o instanceof Object[]? flatten((Object[])o): Stream.of(o));
@@ -91,6 +104,17 @@ public class GenericApiLoadService {
     private boolean isAggregationField(String field) {
         return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
                 || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(");
+    }
+    
+    private boolean isCustomField(String field) {
+        return field.contains("->>");
+    }
+    
+    private boolean isCustomFieldQuery(Set<String> genericFields) {
+        return genericFields.stream()
+                .filter(genericField -> isCustomField(genericField))
+                .findFirst()
+                .isPresent();
     }
 
     private boolean isAggregationQueries(Set<String> genericFields) {
@@ -113,5 +137,6 @@ public class GenericApiLoadService {
                         .build()
                         .toJson(genericFields, entityClass, Collections.singletonMap("data", entity)));
     }
+    
 
 }

@@ -54,7 +54,7 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
     /**
      * The sub category invoice aggregate
      */
-    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<>();
 
     /**
