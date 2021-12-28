@@ -11440,6 +11440,10 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description" type="varchar(255)" />
             <column name="template_name" type="varchar(100)" />
             <column name="currency_id" type="bigint" />
             <column name="allow_validity_date" type="${type.boolean}" defaultValueNumeric="0" />
@@ -11468,11 +11472,17 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="templat_id" type="bigint" />
             <column name="currency_id" type="bigint" />
             <column name="customer_account_id" type="bigint"/>
             <column name="validity_date" type="date" />
-            <column name="validity_period" type="bigint" />
+            <column name="validity_period" type="int4" />
             <column name="validity_period_unit" type="varchar(255)" />
             <column name="amount" type="numeric(23, 12)" />
             <column name="current_balance" type="numeric(23, 12)" />

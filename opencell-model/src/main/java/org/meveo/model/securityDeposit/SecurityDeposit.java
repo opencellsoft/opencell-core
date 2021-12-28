@@ -31,6 +31,7 @@ public class SecurityDeposit extends BusinessCFEntity {
     private CustomerAccount customerAccount;
 
     @Column(name = "validity_date")
+    @Temporal(TemporalType.DATE)
     private Date validityDate;
 
     @Column(name = "validity_period")
