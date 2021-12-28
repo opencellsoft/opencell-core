@@ -394,7 +394,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             if (actionInstanceResources != null) {
                 for (Resource actionInstanceResource : actionInstanceResources) {
                     Long actionInstanceId = actionInstanceResource.getId();
-                    DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
+                    DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("collectionPlan", "dunningLevelInstance"));
                     if (dunningActionInstance == null) {
                         throw new EntityDoesNotExistsException("No Dunning Action Instance found with id : " + actionInstanceId);
                     }
@@ -430,7 +430,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
                     dunningActionInstanceService.remove(dunningActionInstance);
 
-                    String origine = (dunningActionInstance.getCollectionPlan()!=null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
+                    String origine = (dunningActionInstance.getCollectionPlan() != null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningActionInstance", new Date(), dunningActionInstance.getCollectionPlan(), origine);
                 }
             }
@@ -546,7 +546,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             dunningLevelInstanceService.update(levelInstanceToUpdate);
-
+            
             if (updateLevelInstanceInput.getActions() != null) {
                 fields.add("actions");
                 for (DunningActionInstance action : levelInstanceToUpdate.getActions()) {
@@ -554,10 +554,15 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 createActions(levelInstanceToUpdate, updateLevelInstanceInput.getActions());
             }
+            // If "levelStatus" : "DONE" ==> update all its DunningActionInstance to "DONE".
+            else if (updateLevelInstanceInput.getLevelStatus() != null && updateLevelInstanceInput.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+                dunningActionInstanceService.updateStatus(DunningActionInstanceStatusEnum.DONE, levelInstanceToUpdate);
+                levelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions", "collectionPlan"));
+            }
 
             updateCollectionPlanActions(levelInstanceToUpdate);
            
-            String origine = (levelInstanceToUpdate.getCollectionPlan()!=null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
+            String origine = (levelInstanceToUpdate.getCollectionPlan() != null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
             auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), levelInstanceToUpdate.getCollectionPlan(), origine, fields);
             return of(levelInstanceToUpdate);
         } catch (MeveoApiException e) {

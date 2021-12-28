@@ -104,8 +104,8 @@ public class GWFTransitionApi extends BaseApi {
             throw new BusinessApiException("Workflow does not match");
         }
 
-        gwfTransition = fromDTO(gwfTransitionDto, gwfTransition);
         gwfTransition.setGenericWorkflow(genericWorkflow);
+        gwfTransition = fromDTO(gwfTransitionDto, gwfTransition);
         gwfTransition = gwfTransitionService.update(gwfTransition);
 
         return gwfTransition;
@@ -195,7 +195,13 @@ public class GWFTransitionApi extends BaseApi {
         gwfTransition.setFromStatus(dto.getFromStatus());
         gwfTransition.setToStatus(dto.getToStatus());
         gwfTransition.setConditionEl(dto.getConditionEl());
-        gwfTransition.setPriority(dto.getPriority());
+        if(dto.getWorkFlowCode() != null && dto.getPriority() == null) {
+        	 gwfTransition.setPriority(gwfTransitionService.findMaxNextPriority(dto.getWorkFlowCode()) + 1);
+        }else if(dto.getPriority() != null)
+        	 gwfTransition.setPriority(dto.getPriority());
+        else 
+       	 gwfTransition.setPriority(1);
+       
         gwfTransition.setDescription(dto.getDescription());
 
         for (GWFActionDto action : dto.getActions()) {

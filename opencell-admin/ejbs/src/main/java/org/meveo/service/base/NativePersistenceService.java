@@ -802,7 +802,22 @@ public class NativePersistenceService extends BaseService {
         return fields
                 .stream()
                 .filter(predicate)
-                .map(x -> "a." + x)
+                .map(x -> {
+                    if (x.toLowerCase().trim().contains("->>string")) 
+                        return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>double")) 
+                           return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>long")) 
+                        return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>date")) 
+                        return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>boolean")) 
+                        return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>entity")) 
+                        return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else
+                        return "a." + x;
+                      })
                 .collect(joining(","));
     }
 
