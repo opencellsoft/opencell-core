@@ -1,15 +1,15 @@
 package org.meveo.model.securityDeposit;
 
 public enum SecurityDepositStatusEnum {
-New,
+NEW,
 
-Locked,
+LOCKED,
 
-Unlocked,
+UNLOCKED,
 
-AutoRefund,
+AUTO_REFUND,
 
-Refunded,
+REFUNDED,
 
-Canceled;
+CANCELED
 }
