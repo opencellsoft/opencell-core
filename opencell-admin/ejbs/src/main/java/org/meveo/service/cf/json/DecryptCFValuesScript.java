@@ -1,7 +1,9 @@
 package org.meveo.service.cf.json;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,9 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.encryption.EncyptionException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.AccountEntity;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.script.Script;
 
@@ -45,9 +45,8 @@ public class DecryptCFValuesScript extends Script  {
 
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
-        Long id=53L;
-		for (String s : listCfvaluesString()) {
-			listCfvaluesTable(s,id);;
+		for (String s : tablesCfvalues()) {
+			updateDecryptCfvalues(s);;
 		}
 	}
 
@@ -83,7 +82,7 @@ public class DecryptCFValuesScript extends Script  {
 
 	
 	
-	public List<String> listCfvaluesString() {
+	public List<String> tablesCfvalues() {
 		@SuppressWarnings("unchecked")
 		List<String> entities = accountentityService.getEntityManager()
 				.createNativeQuery("select table_name from information_schema.columns where column_name='cf_values'")
@@ -92,18 +91,19 @@ public class DecryptCFValuesScript extends Script  {
 		return entities;
 	}
 
-	public void listCfvaluesTable(String nmTable,Long id) {
+	public void updateDecryptCfvalues(String tableCfvalue) {
+		HashMap<Long, String> map=new HashMap<Long, String>();
 		@SuppressWarnings("unchecked")
-		List<String> entities = accountentityService.getEntityManager()
-				.createNativeQuery("select cf_Values from " + nmTable + "  where cf_Values is not null ")
+		List<Object[]>  entities = accountentityService.getEntityManager()
+				.createNativeQuery("select id,cf_Values from " + tableCfvalue + "  where cf_Values like 'AES%' ")
 				.getResultList();
-
-		for(String str:entities) {
-			if(!str.equals(" ")) {
+		for (Object[] result : entities) {
+	        map.put(( ((BigInteger) result[0]).longValue()), result[1].toString());
+	    }
+		for(Map.Entry<Long, String> entry :map.entrySet()) {
 				int upateEntity = accountentityService.getEntityManager()
-						.createNativeQuery("update  " + nmTable + " set cf_Values='"+decrypt(str)+"' where cf_values  like 'AES%'  and id="+id)
+						.createNativeQuery("update  " + tableCfvalue + " set cf_Values='"+decrypt(entry.getValue())+"' where  id="+entry.getKey())
 						.executeUpdate();
-			}
 		}
 	}
 	
