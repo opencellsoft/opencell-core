@@ -100,7 +100,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         } else {
                             groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
                         }
-                        Map<Long, Long> iLIdsRtIdsCorrespondence
+                        Map<Long, List<Long>> iLIdsRtIdsCorrespondence
                                 = invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
                         ratedTransactionService.makeAsProcessed(ratedTransactionIds);
                         ratedTransactionService.linkRTWithInvoiceLine(iLIdsRtIdsCorrespondence);

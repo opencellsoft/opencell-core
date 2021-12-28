@@ -5,10 +5,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -91,9 +88,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             int countReminderLevels = 0;
             int countEndOfDunningLevel = 0;
             int totalDunningLevels = 0;
-            int highestSequence = (Hibernate.isInitialized(dunningPolicy.getDunningLevels())
-                    && dunningPolicy.getDunningLevels() != null && !dunningPolicy.getDunningLevels().isEmpty())
-                    ? dunningPolicy.getDunningLevels().get(0).getSequence() : 0;
+            List<DunningPolicyLevel> dunningPolicyLevels = new ArrayList<>();
+            int endOfLevelDayOverDue = -1;
             if (Hibernate.isInitialized(dunningPolicy.getDunningLevels()) && dunningPolicy.getDunningLevels() != null) {
                 for (DunningPolicyLevel policyLevel : dunningPolicy.getDunningLevels()) {
                     refreshPolicyLevel(policyLevel);
@@ -103,24 +99,26 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                         totalDunningLevels++;
                     }
                     if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
-                        if (policyLevel.getSequence() < highestSequence) {
-                            throw new BadRequestException("End of dunning level sequence must be high");
-                        }
-                        highestSequence = policyLevel.getSequence();
+                        endOfLevelDayOverDue = policyLevel.getDunningLevel().getDaysOverdue();
                         countEndOfDunningLevel++;
                     }
+                    dunningPolicyLevels.add(policyLevel);
                 }
                 if (countReminderLevels == 0) {
                     throw new BadRequestException("Can not remove reminder level");
                 }
+                if (countEndOfDunningLevel == 0) {
+                    throw new BadRequestException("Can not remove end of level");
+                }
                 validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
                 dunningPolicy.setTotalDunningLevels(totalDunningLevels);
+                validateLevels(dunningPolicyLevels, endOfLevelDayOverDue);
             }
-            DunningPolicy updatedDunningPolicy = dunningPolicyService.update(dunningPolicy);
-            return of(updatedDunningPolicy);
+            dunningPolicyService.updatePolicyWithLevel(dunningPolicy, dunningPolicyLevels);
+            return of(dunningPolicy);
         } catch (Exception exception) {
             checkNameConstraint(exception);
-            throw new BusinessException(exception.getMessage());
+            throw new BusinessException(exception);
         }
     }
 
@@ -147,6 +145,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         if (countReminderLevels == 0) {
             throw new BadRequestException("Reminder level is mandatory");
         }
+        if (countEndOfDunningLevel == 0) {
+            throw new BadRequestException("End of level is mandatory");
+        }
         if (countReminderLevels > 1) {
             throw new BadRequestException("There is already a Reminder level for this policy, remove the existing level to select a new one.");
         }
@@ -155,6 +156,15 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         }
         if (totalDunningLevels == 0) {
             throw new BadRequestException("Policy should have at least one dunning level other the reminder level");
+        }
+    }
+
+    public void validateLevels(List<DunningPolicyLevel> dunningPolicyLevels, int endOfLevelDayOverDue) {
+        for (DunningPolicyLevel policyLevel : dunningPolicyLevels) {
+            if(!policyLevel.getDunningLevel().isEndOfDunningLevel()
+                    && policyLevel.getDunningLevel().getDaysOverdue() > endOfLevelDayOverDue) {
+                throw new BadRequestException("End of level must have the highest day over due");
+            }
         }
     }
 

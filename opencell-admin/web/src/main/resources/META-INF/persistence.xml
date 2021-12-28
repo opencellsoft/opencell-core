@@ -43,6 +43,9 @@
 
             <!-- Additional query functions for accessing JSON -->
             <property name="hibernate.dialect" value="org.meveo.commons.persistence.${env.OPENCELL_DIALECT:postgresql.MeveoPostgreSQLDialect}" />
+
+            <!-- Flush mode to COMMIT for hibernate -->
+            <property name="org.hibernate.flushMode" value="COMMIT"/>
         </properties>
     </persistence-unit>
 
@@ -89,6 +92,9 @@
 
             <!-- Additional query functions for accessing JSON -->
             <property name="hibernate.dialect" value="org.meveo.commons.persistence.${opencell.dialect}" />
+
+            <!-- Flush mode to COMMIT for hibernate -->
+            <property name="org.hibernate.flushMode" value="COMMIT"/>
         </properties>
     </persistence-unit>
 

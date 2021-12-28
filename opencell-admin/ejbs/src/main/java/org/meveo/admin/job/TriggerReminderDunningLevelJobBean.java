@@ -164,7 +164,6 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         levelInstance.setSequence(policyLevel.getSequence());
         levelInstance.setDaysOverdue(policyLevel.getDunningLevel().getDaysOverdue());
         levelInstance.setCollectionPlanStatus(policyLevel.getCollectionPlanStatus());
-        levelInstance.setPolicyLevel(policyLevel);
         levelInstance.setLevelStatus(DONE);
         levelInstance.setDunningLevel(policyLevel.getDunningLevel());
         levelInstanceService.create(levelInstance);

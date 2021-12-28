@@ -284,6 +284,16 @@ public abstract class GenericProductOfferingService<T extends ProductOffering> e
     }
 
     /**
+     * Find a particular product offering version by a code without checking validaty dates.
+     * 
+     * @param code Product offering code
+     * @return Product offering
+     */
+    public T findByCodeIgnoringValidityDate(String code) {
+    	return super.findByCode(code);
+    }
+    
+    /**
      * Find a particular product offering version with additional fields to fetch. A current date will be used to select a valid version.
      * 
      * @param code Product offering code

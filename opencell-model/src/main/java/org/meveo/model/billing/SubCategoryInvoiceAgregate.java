@@ -71,7 +71,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     private InvoiceSubCategory invoiceSubCategory;
 
     /** The category invoice agregate. */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_invoice_agregate")
     private CategoryInvoiceAgregate categoryInvoiceAgregate;
 

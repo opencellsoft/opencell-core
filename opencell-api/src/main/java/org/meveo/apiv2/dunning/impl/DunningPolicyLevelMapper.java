@@ -17,14 +17,12 @@ public class DunningPolicyLevelMapper extends ResourceMapper<DunningPolicyLevel,
                 .collectionPlanStatusId(ofNullable(entity.getCollectionPlanStatus())
                         .map(DunningCollectionPlanStatus::getId)
                         .orElse(null))
-                .sequence(entity.getSequence())
                 .build();
     }
 
     @Override
     protected org.meveo.model.dunning.DunningPolicyLevel toEntity(DunningPolicyLevel resource) {
         org.meveo.model.dunning.DunningPolicyLevel entity = new org.meveo.model.dunning.DunningPolicyLevel();
-        entity.setSequence(resource.getSequence());
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(resource.getDunningLevelId());
         if (resource.getCollectionPlanStatusId() != null) {

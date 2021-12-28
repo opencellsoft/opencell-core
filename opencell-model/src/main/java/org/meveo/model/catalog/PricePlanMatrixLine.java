@@ -43,7 +43,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     public PricePlanMatrixLine(PricePlanMatrixLine copy) {
 		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
 		this.description = copy.description;
-		this.pricetWithoutTax = copy.pricetWithoutTax;
+		this.priceWithoutTax = copy.priceWithoutTax;
 		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
 		this.priority = copy.priority;
 	}
@@ -58,7 +58,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
 
 	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-    private BigDecimal pricetWithoutTax;
+    private BigDecimal priceWithoutTax;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
@@ -83,15 +83,16 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.description = description;
     }
 
-    public BigDecimal getPricetWithoutTax() {
-        return pricetWithoutTax;
-    }
 
-    public void setPricetWithoutTax(BigDecimal pricetWithoutTax) {
-        this.pricetWithoutTax = pricetWithoutTax;
-    }
+    public BigDecimal getPriceWithoutTax() {
+		return priceWithoutTax;
+	}
 
-    public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
+	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
+		this.priceWithoutTax = priceWithoutTax;
+	}
+
+	public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
         return pricePlanMatrixValues;
     }
 
@@ -125,12 +126,12 @@ public class PricePlanMatrixLine extends AuditableEntity {
         PricePlanMatrixLine that = (PricePlanMatrixLine) o;
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
-                Objects.equals(getPricetWithoutTax(), that.getPricetWithoutTax()) &&
+                Objects.equals(getPriceWithoutTax(), that.getPriceWithoutTax()) &&
                 Objects.equals(getPriority(), that.getPriority());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPricetWithoutTax(), getPriority());
+        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPriceWithoutTax(), getPriority());
     }
 }

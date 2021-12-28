@@ -18,8 +18,6 @@
 
 package org.meveo.model;
 
-import org.meveo.model.billing.CounterPeriod;
-
 import java.math.BigDecimal;
 
 /**
@@ -28,10 +26,11 @@ import java.math.BigDecimal;
  * @author Khalid HORRI
  */
 public class DeducedCounter {
+
     /**
-     * Counter Period.
+     * Counter period change information
      */
-    private CounterPeriod counterPeriod = null;
+    private CounterValueChangeInfo counterValueChangeInfo;
 
     /**
      * A deduced quantity of an EDR related to a counter.
@@ -47,30 +46,12 @@ public class DeducedCounter {
     /**
      * Constructor.
      *
-     * @param counterPeriod   the counter period
+     * @param counterValueChangeInfo Counter period change information
      * @param deducedQuantity the deduced quantity
      */
-    public DeducedCounter(final CounterPeriod counterPeriod, final BigDecimal deducedQuantity) {
-        this.counterPeriod = counterPeriod;
+    public DeducedCounter(CounterValueChangeInfo counterValueChangeInfo, final BigDecimal deducedQuantity) {
+        this.counterValueChangeInfo = counterValueChangeInfo;
         this.deducedQuantity = deducedQuantity;
-    }
-
-    /**
-     * Gets Counter Period.
-     *
-     * @return a counter period
-     */
-    public CounterPeriod getCounterPeriod() {
-        return counterPeriod;
-    }
-
-    /**
-     * Sets counter period.
-     *
-     * @param counterPeriod a counter period
-     */
-    public void setCounterPeriod(CounterPeriod counterPeriod) {
-        this.counterPeriod = counterPeriod;
     }
 
     /**
@@ -89,5 +70,19 @@ public class DeducedCounter {
      */
     public void setDeducedQuantity(BigDecimal deducedQuantity) {
         this.deducedQuantity = deducedQuantity;
+    }
+
+    /**
+     * @return Counter period change information
+     */
+    public CounterValueChangeInfo getCounterValueChangeInfo() {
+        return counterValueChangeInfo;
+    }
+    
+    /**
+     * @param counterValueChangeInfo
+     */
+    public void setCounterValueChangeInfo(CounterValueChangeInfo counterValueChangeInfo) {
+        this.counterValueChangeInfo = counterValueChangeInfo;
     }
 }

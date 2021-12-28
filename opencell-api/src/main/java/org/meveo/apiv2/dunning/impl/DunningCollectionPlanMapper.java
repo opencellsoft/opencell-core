@@ -41,6 +41,7 @@ public class DunningCollectionPlanMapper
             .lastAction(entity.getLastAction())
             .lastActionDate(entity.getLastActionDate())
             .totalDunningLevels(entity.getTotalDunningLevels())
+            .collectionPlanNumber(entity.getCollectionPlanNumber())
             .build();
     }
 

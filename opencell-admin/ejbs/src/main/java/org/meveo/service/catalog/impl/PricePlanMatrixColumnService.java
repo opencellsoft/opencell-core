@@ -92,7 +92,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		
 		/*
 		File format example:
-		id(text);Booléen(BOOLEAN);Nombres(LIST_MULTIPLE_NUMERIC);Valeurs(LIST_MULTIPLE_TEXT);description(text);priority(number);pricetWithoutTax(number)
+		id(text);Booléen(BOOLEAN);Nombres(LIST_MULTIPLE_NUMERIC);Valeurs(LIST_MULTIPLE_TEXT);description(text);priority(number);priceWithoutTax(number)
 		252;true;;3XL|Bleu;;0;20
 		*/
 		
@@ -120,7 +120,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		for(int i = 0; i < firstLine.length; i++) {
 			String column = firstLine[i].split("\\(")[0];
 			boolean isRange = firstLine[i].split("\\(").length > 1 ? firstLine[i].split("\\(")[1].toLowerCase().contains("range") : false;
-			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("pricetWithoutTax"))) {
+			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("priceWithoutTax"))) {
 				List<PricePlanMatrixColumn> PricePlanMatrixColumnList = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion);
 				if (PricePlanMatrixColumnList.isEmpty()) {
 					throw new NotFoundException(
@@ -225,8 +225,8 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					if (columns.get(columnIndex).getKey().equalsIgnoreCase("description")) {
 						pricePlanMatrixLineDto.setDescription(nextLine[columnIndex]);
 					}
-					if (columns.get(columnIndex).getKey().equalsIgnoreCase("PricetWithoutTax")) {
-						pricePlanMatrixLineDto.setPricetWithoutTax(new BigDecimal(nextLine[columnIndex]));
+					if (columns.get(columnIndex).getKey().equalsIgnoreCase("PriceWithoutTax")) {
+						pricePlanMatrixLineDto.setPriceWithoutTax(new BigDecimal(nextLine[columnIndex]));
 					}
 					
 				}

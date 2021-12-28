@@ -131,8 +131,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         if (!useNotificationCache) {
             return;
         }
-
-        CacheKeyStr cacheKey = getCacheKey(notif);
+        CacheKeyStr cacheKey = getCacheKey(notif, false);
 
         log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
         // Solve lazy loading issues when firing notification
@@ -172,7 +171,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
             return;
         }
 
-        CacheKeyStr cacheKey = getCacheKey(notif);
+        CacheKeyStr cacheKey = getCacheKey(notif, true);
 
         log.trace("Removing notification {} from notification cache under key {}", notif.getId(), cacheKey);
 
@@ -291,8 +290,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         }
     }
 
-    private CacheKeyStr getCacheKey(Notification notif) {
-        String key = notif.getEventTypeFilter().name() + "_" + notif.getClassNameFilter();
+    private CacheKeyStr getCacheKey(Notification notif, boolean isUpdate) {
+        String key = notif.getOldEventTypeFilter().name() + "_" + notif.getOldClassNameFilter();
+        if(!isUpdate) {
+        	key = notif.getEventTypeFilter().name() + "_" + notif.getClassNameFilter();
+        }
         return new CacheKeyStr(currentUser.getProviderCode(), key);
     }
 

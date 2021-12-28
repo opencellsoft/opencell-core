@@ -210,7 +210,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	/**
 	 * A list of discounts plans that cannot be active at the same time on an entity instance.
 	 */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "discount_plan_id")
 	private List<DiscountPlan> incompatibleDiscountPlans;
 

@@ -225,16 +225,20 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
         if (baseEntity.getChargeValue() != null) {
             if (baseEntity.getChargeType() == DunningLevelChargeTypeEnum.PERCENTAGE && HUNDRED.compareTo(baseEntity.getChargeValue()) < 0) {
-                throw new InvalidParameterException("dunningLevelChargeValue shoud be less than or equal to 100");
+                throw new InvalidParameterException("dunningLevelChargeValue should be less than or equal to 100");
             }
         }
 
+        if(baseEntity.isEndOfDunningLevel() && baseEntity.isReminder()) {
+            throw new InvalidParameterException("Dunning level should not be reminder and end of level at the same time");
+        }
+
         if (baseEntity.getDaysOverdue() != null) {
-            if (baseEntity.isReminder() && baseEntity.getDaysOverdue() > 0) {
-                throw new InvalidParameterException("dunningLevelDaysOverdue shoud be negative");
+            if (baseEntity.isReminder() && baseEntity.getDaysOverdue() >= 0) {
+                throw new InvalidParameterException("Reminder Dunning level days overdue should be negative");
             }
             if (!baseEntity.isReminder() && baseEntity.getDaysOverdue() < 0) {
-                throw new InvalidParameterException("dunningLevelDaysOverdue shoud be positive");
+                throw new InvalidParameterException("Dunning level days Overdue should be positive");
             }
         }
         if (baseEntity.getDunningActions() != null && !(baseEntity.getDunningActions() instanceof PersistentCollection)) {

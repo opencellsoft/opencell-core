@@ -302,7 +302,7 @@ public class KeycloakAdminClientService {
                         throw new EntityDoesNotExistsException(RoleRepresentation.class, externalRole.getName());
                     }
                 }
-
+                // add from posted data
                 usersResource.get(userRepresentation.getId()).roles().realmLevel().add(rolesToAdd);
                 // delete other roles
                 usersResource.get(userRepresentation.getId()).roles().realmLevel().remove(rolesToDelete);
@@ -310,7 +310,7 @@ public class KeycloakAdminClientService {
                 // delete other roles
                 usersResource.get(userRepresentation.getId()).roles().realmLevel().remove(rolesToDelete);
             }
-
+            
             userResource.update(userRepresentation);
 
             if (!StringUtils.isBlank(postData.getPassword())) {

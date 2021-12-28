@@ -108,6 +108,7 @@ import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
@@ -155,8 +156,27 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.*;
-import org.meveo.service.catalog.impl.*;
+import org.meveo.service.billing.impl.AttributeInstanceService;
+import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
@@ -279,8 +299,8 @@ public class SubscriptionApi extends BaseApi {
     private Event<Subscription> versionRemovedEvent;
 
 
-	@Inject
-	private AttributeInstanceService attributeInstanceService;
+    @Inject
+    private AttributeInstanceService attributeInstanceService;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
@@ -458,7 +478,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
-        	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
+            subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
         // subscription.setTerminationDate(postData.getTerminationDate());
 
@@ -532,7 +552,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
-        	updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
+            updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
         }
         updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
         subscription = subscriptionService.update(subscription);
@@ -655,7 +675,7 @@ public class SubscriptionApi extends BaseApi {
                         if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.ACTIVE) {
                             throw new MeveoApiException("ServiceInstance with code=" + alreadyInstantiatedService.getCode() + " is already activated.");
                         } else if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.INACTIVE  
-                        		|| alreadyInstantiatedService.getStatus() == InstanceStatusEnum.PENDING) {
+                                || alreadyInstantiatedService.getStatus() == InstanceStatusEnum.PENDING) {
                             serviceInstance = alreadyInstantiatedService;
                             break;
                         }
@@ -826,21 +846,21 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
-        	// activate services
-        	for (ServiceInstance serviceInstance : serviceInstances) {
+            // activate services
+            for (ServiceInstance serviceInstance : serviceInstances) {
 
-        		try {
-        		    serviceInstance.clearTransientSubscriptionChargeInstance();
-        		    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
-        				serviceInstance.setDeliveryDate(new Date());
-        		    }
-        			serviceInstanceService.serviceActivation(serviceInstance);
-        			
-        		} catch (BusinessException e) {
-        			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
-        			throw e;
-        		}
-        	}
+                try {
+                    serviceInstance.clearTransientSubscriptionChargeInstance();
+                    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
+                        serviceInstance.setDeliveryDate(new Date());
+                    }
+                    serviceInstanceService.serviceActivation(serviceInstance);
+                    
+                } catch (BusinessException e) {
+                    log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
+                    throw e;
+                }
+            }
 
     }
 
@@ -1062,7 +1082,7 @@ public class SubscriptionApi extends BaseApi {
         handleMissingParametersAndValidate(postData);
 
         Date operationDate = postData.getOperationDate();
-		if (operationDate == null) {
+        if (operationDate == null) {
             postData.setOperationDate(new Date());
         }
 
@@ -1106,7 +1126,7 @@ public class SubscriptionApi extends BaseApi {
         try {
 
             oneShotChargeInstanceService
-                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
+                    .instantiateAndApplyOneShotCharge(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
@@ -1601,11 +1621,11 @@ public class SubscriptionApi extends BaseApi {
         }
         List<AttributeInstanceDto> attributeInstances = null;
         if(serviceInstance.getAttributeInstances() != null) {
-        	attributeInstances = new ArrayList<AttributeInstanceDto>();
-        	for(AttributeInstance ai : serviceInstance.getAttributeInstances()) {
+            attributeInstances = new ArrayList<AttributeInstanceDto>();
+            for(AttributeInstance ai : serviceInstance.getAttributeInstances()) {
                 cFsDTO = entityToDtoConverter.getCustomFieldsDTO(ai, inheritCF);
                 attributeInstances.add( new AttributeInstanceDto(ai, cFsDTO));
-        	}
+            }
         }
 
         ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, recurringChargeInstances, subscriptionChargeInstances, terminationChargeInstances, usageChargeInstances, attributeInstances, customFieldsDTO);
@@ -1970,7 +1990,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
-        	// Allow all services to be updated regardless of the status
+            // Allow all services to be updated regardless of the status
             ServiceInstance serviceToUpdate = getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription);
 
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
@@ -2021,31 +2041,31 @@ public class SubscriptionApi extends BaseApi {
             }
             
             serviceToUpdate.getAttributeInstances().clear();
-			if(postData.getAttributeInstances() != null) {
-				postData.getAttributeInstances().forEach(attributeInstanceDto -> {
-					var attributeInstance = new AttributeInstance();
-					attributeInstance.setSubscription(subscription);
-					attributeInstance.setServiceInstance(serviceToUpdate);
-					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
-						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
-					}
-					if(attributeInstanceDto.getParentAttributeValueId() != null) {
-						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
-					}
-					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
-						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
-					}
-					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
-						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
-					if(attributeInstanceDto.getDateValue() != null)
-						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
-					if(attributeInstanceDto.getDoubleValue() != null)
-						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-					attributeInstanceService.create(attributeInstance);
-					serviceToUpdate.getAttributeInstances().add(attributeInstance);
-				});
-			}
+            if(postData.getAttributeInstances() != null) {
+                postData.getAttributeInstances().forEach(attributeInstanceDto -> {
+                    var attributeInstance = new AttributeInstance();
+                    attributeInstance.setSubscription(subscription);
+                    attributeInstance.setServiceInstance(serviceToUpdate);
+                    if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
+                        attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+                    }
+                    if(attributeInstanceDto.getParentAttributeValueId() != null) {
+                        attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
+                    }
+                    if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
+                        var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+                        attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
+                    }
+                    if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
+                        attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+                    if(attributeInstanceDto.getDateValue() != null)
+                        attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+                    if(attributeInstanceDto.getDoubleValue() != null)
+                        attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+                    attributeInstanceService.create(attributeInstance);
+                    serviceToUpdate.getAttributeInstances().add(attributeInstance);
+                });
+            }
 
             serviceInstanceService.update(serviceToUpdate);
         }
@@ -2216,18 +2236,18 @@ public class SubscriptionApi extends BaseApi {
             renewalInfo.setRenewForUnit(renewalInfoDto.getRenewForUnit());
         }
         if (!StringUtils.isBlank(renewalInfoDto.getInitialTermType())) {
-        	renewalInfo.setInitialTermType(renewalInfoDto.getInitialTermType());
-    	}
+            renewalInfo.setInitialTermType(renewalInfoDto.getInitialTermType());
+        }
         renewalInfo.setAutoRenew(renewalInfoDto.isAutoRenew());
         renewalInfo.setDaysNotifyRenewal(renewalInfoDto.getDaysNotifyRenewal());
         renewalInfo.setEndOfTermAction(renewalInfoDto.getEndOfTermAction());
         renewalInfo.setExtendAgreementPeriodToSubscribedTillDate(renewalInfoDto.isExtendAgreementPeriodToSubscribedTillDate());
         if (!StringUtils.isBlank(renewalInfoDto.getRenewalTermType()) && RenewalTermTypeEnum.RECURRING == renewalInfoDto.getRenewalTermType()) {
-        	renewalInfo.setRenewalTermType(RenewalTermTypeEnum.RECURRING);
-		}
+            renewalInfo.setRenewalTermType(RenewalTermTypeEnum.RECURRING);
+        }
         if (!StringUtils.isBlank(renewalInfoDto.getRenewalTermType()) && RenewalTermTypeEnum.CALENDAR == renewalInfoDto.getRenewalTermType()) {
-        	renewalInfo.setRenewalTermType(RenewalTermTypeEnum.CALENDAR);
-		}
+            renewalInfo.setRenewalTermType(RenewalTermTypeEnum.CALENDAR);
+        }
         if (renewalInfoDto.getTerminationReasonCode() != null) {
             SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(renewalInfoDto.getTerminationReasonCode());
             if (terminationReason == null) {
@@ -2374,8 +2394,8 @@ public class SubscriptionApi extends BaseApi {
         // Recurring charges :
         List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionId(InstanceStatusEnum.ACTIVE, rateUntillDate, subscription.getId());
         for (Long chargeId : activeRecurringChargeIds) {
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate, false).getNbRating();
-            result.addResult(chargeId, nbRating);
+            RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate, false, null);
+            result.addResult(chargeId, ratingResult.getWalletOperations().size());
         }
         return result;
     }
@@ -2592,62 +2612,62 @@ public class SubscriptionApi extends BaseApi {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Subscription subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
-    	Subscription subscription=create(postData);
+        Subscription subscription=create(postData);
 
-    	if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
-    		List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
-    		if(products!=null && !products.isEmpty()) {
-    			for(ProductToInstantiateDto productDto:products)
-    				processProduct(subscription,productDto);
-    		}
-    	}
-    	return subscription;
+        if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
+            List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
+            if(products!=null && !products.isEmpty()) {
+                for(ProductToInstantiateDto productDto:products)
+                    processProduct(subscription,productDto);
+            }
+        }
+        return subscription;
     }
 
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
-    	if(serviceInstanceDtos != null) {
-    		serviceInstanceDtos.forEach(serviceInstanceDto -> {
-    			var serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(serviceInstanceDto.getCode(), subscription.getCode());
-    			if(serviceInstances != null && !serviceInstances.isEmpty()) {
-	    			var serviceInstance = serviceInstances.get(0);
-	    			serviceInstance.getAttributeInstances().clear();
-	    			if(serviceInstanceDto.getAttributeInstances() != null) {
-	    				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
-	    					var attributeInstance = new AttributeInstance();
-	    					attributeInstance.setSubscription(subscription);
-							attributeInstance.setServiceInstance(serviceInstance);
-	    					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
-	    						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
-	    					}
-	    					if(attributeInstanceDto.getParentAttributeValueId() != null) {
-	    						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
-	    					}
-	    					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
-	    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
-	    						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
-	    					}
-	    					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
-	    						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
-	    					if(attributeInstanceDto.getDateValue() != null)
-	    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
-	    					if(attributeInstanceDto.getDoubleValue() != null)
-	    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
-	    					attributeInstanceService.create(attributeInstance);
-	    					serviceInstance.getAttributeInstances().add(attributeInstance);
-	    				});
-	    			}
-	    			if (!serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-	    				 
-	 		        	if(serviceInstanceDto.getDeliveryDate() != null && serviceInstanceDto.getDeliveryDate().before(new Date())) {
-	 		        		throw new MeveoApiException("Delivery date should be in the future");	
-	 		        	}
-	 		        	serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
-	    				 
-	    			    serviceInstanceService.update(serviceInstance);
-	                }
-    			}
-    		});
-    	}
+        if(serviceInstanceDtos != null) {
+            serviceInstanceDtos.forEach(serviceInstanceDto -> {
+                var serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(serviceInstanceDto.getCode(), subscription.getCode());
+                if(serviceInstances != null && !serviceInstances.isEmpty()) {
+                    var serviceInstance = serviceInstances.get(0);
+                    serviceInstance.getAttributeInstances().clear();
+                    if(serviceInstanceDto.getAttributeInstances() != null) {
+                        serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
+                            var attributeInstance = new AttributeInstance();
+                            attributeInstance.setSubscription(subscription);
+                            attributeInstance.setServiceInstance(serviceInstance);
+                            if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
+                                attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+                            }
+                            if(attributeInstanceDto.getParentAttributeValueId() != null) {
+                                attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
+                            }
+                            if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
+                                var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+                                attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
+                            }
+                            if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
+                                attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+                            if(attributeInstanceDto.getDateValue() != null)
+                                attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+                            if(attributeInstanceDto.getDoubleValue() != null)
+                                attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+                            attributeInstanceService.create(attributeInstance);
+                            serviceInstance.getAttributeInstances().add(attributeInstance);
+                        });
+                    }
+                    if (!serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+                         
+                        if(serviceInstanceDto.getDeliveryDate() != null && serviceInstanceDto.getDeliveryDate().before(new Date())) {
+                            throw new MeveoApiException("Delivery date should be in the future");   
+                        }
+                        serviceInstance.setDeliveryDate(serviceInstanceDto.getDeliveryDate());
+                         
+                        serviceInstanceService.update(serviceInstance);
+                    }
+                }
+            });
+        }
     }
 
 
@@ -2725,7 +2745,7 @@ public class SubscriptionApi extends BaseApi {
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
-        	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
+            subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
         if (!StringUtils.isBlank(postData.getBillingCycle())) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
@@ -2777,35 +2797,35 @@ public class SubscriptionApi extends BaseApi {
         populateElectronicBillingFields(postData, subscription);
 
         CustomFieldsDto cfs = postData.getCustomFields();
-    	if(cfs!=null) {
+        if(cfs!=null) {
         // populate customFields
-	        try {
-	        	List<CustomFieldDto> customFieldDtos =cfs.getCustomField();
-	        	List<CustomFieldDto> inheritedCustomFieldDtos =cfs.getInheritedCustomField();
-				if (cfsToCopy != null) {
-					if(customFieldDtos != null) {
-						customFieldDtos = customFieldDtos.stream().filter(x -> cfsToCopy.contains(x.getCode())).collect(Collectors.toList());
-						cfs.setCustomField(customFieldDtos);
-					}
-					if(inheritedCustomFieldDtos != null) {
-						inheritedCustomFieldDtos = inheritedCustomFieldDtos.stream().filter(x -> cfsToCopy.contains(x)).collect(Collectors.toList());
-						cfs.setInheritedCustomField(inheritedCustomFieldDtos);
-					}
-				}
-				populateCustomFields(cfs, subscription, true);
-	        } catch (MissingParameterException | InvalidParameterException e) {
-	            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-	            throw e;
-	        } catch (Exception e) {
-	            log.error("Failed to associate custom field instance to an entity", e);
-	            throw e;
-	        }
-    	}
-		if (subscription.getSubscriptionDate().after(new Date())) {
-			subscription.setStatus(SubscriptionStatusEnum.PENDING);
-		}else {
-			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-		}
+            try {
+                List<CustomFieldDto> customFieldDtos =cfs.getCustomField();
+                List<CustomFieldDto> inheritedCustomFieldDtos =cfs.getInheritedCustomField();
+                if (cfsToCopy != null) {
+                    if(customFieldDtos != null) {
+                        customFieldDtos = customFieldDtos.stream().filter(x -> cfsToCopy.contains(x.getCode())).collect(Collectors.toList());
+                        cfs.setCustomField(customFieldDtos);
+                    }
+                    if(inheritedCustomFieldDtos != null) {
+                        inheritedCustomFieldDtos = inheritedCustomFieldDtos.stream().filter(x -> cfsToCopy.contains(x)).collect(Collectors.toList());
+                        cfs.setInheritedCustomField(inheritedCustomFieldDtos);
+                    }
+                }
+                populateCustomFields(cfs, subscription, true);
+            } catch (MissingParameterException | InvalidParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw e;
+            }
+        }
+        if (subscription.getSubscriptionDate().after(new Date())) {
+            subscription.setStatus(SubscriptionStatusEnum.PENDING);
+        }else {
+            subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+        }
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
 
@@ -2873,13 +2893,13 @@ public class SubscriptionApi extends BaseApi {
     }
 
    /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
-    	List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
-    	for(Subscription sub: subscriptions) {
-    		boolean isOverLap = validity.isCorrespondsToPeriod(sub.getValidity().getFrom(), sub.getValidity().getTo(), false);
-    		if(isOverLap) {
-    			throw new MeveoApiException("Current validity ("+ validity.toString("dd/MM/yyyy") +") date is overlap with validity ("+ sub.getValidity().toString("dd/MM/yyyy") +")");
-    		}
-    	}
+        List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
+        for(Subscription sub: subscriptions) {
+            boolean isOverLap = validity.isCorrespondsToPeriod(sub.getValidity().getFrom(), sub.getValidity().getTo(), false);
+            if(isOverLap) {
+                throw new MeveoApiException("Current validity ("+ validity.toString("dd/MM/yyyy") +") date is overlap with validity ("+ sub.getValidity().toString("dd/MM/yyyy") +")");
+            }
+        }
     }*/
 
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
@@ -3065,35 +3085,35 @@ public class SubscriptionApi extends BaseApi {
         }
     }
     @Inject
-	private ProductService productService;
+    private ProductService productService;
 
     private void processProduct(Subscription subscription,  ProductToInstantiateDto productDto) {
-    	if (StringUtils.isBlank(productDto.getProductCode())) {
-    		missingParameters.add("productCode");
-    	}
-    	if (StringUtils.isBlank(productDto.getQuantity())) {
-    		missingParameters.add("quantity");
-    	}
-    	handleMissingParameters(productDto);
-    	Product product=productService.findByCode(productDto.getProductCode());
-    	if (product == null) {
-    		throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
-    	}
+        if (StringUtils.isBlank(productDto.getProductCode())) {
+            missingParameters.add("productCode");
+        }
+        if (StringUtils.isBlank(productDto.getQuantity())) {
+            missingParameters.add("quantity");
+        }
+        handleMissingParameters(productDto);
+        Product product=productService.findByCode(productDto.getProductCode());
+        if (product == null) {
+            throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
+        }
 
 
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
-                	OrderAttribute orderAttribute = new OrderAttribute();
-                	if(ai.getOrderAttributeCode()!=null) {
+                    OrderAttribute orderAttribute = new OrderAttribute();
+                    if(ai.getOrderAttributeCode()!=null) {
                     Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
                     orderAttribute.setAttribute(attribute);
                     orderAttribute.setStringValue(ai.getStringValue());
                     orderAttribute.setDoubleValue(ai.getDoubleValue());
                     orderAttribute.setDateValue(ai.getDateValue());
-                	}
+                    }
                     return orderAttribute;
 
-                	})
+                    })
                 .collect(Collectors.toList());
 
         commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes, null, productDto.getDeliveryDate());

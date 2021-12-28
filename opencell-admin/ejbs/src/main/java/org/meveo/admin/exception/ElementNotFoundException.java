@@ -25,6 +25,10 @@ public class ElementNotFoundException extends ValidationException {
 
     private static final long serialVersionUID = 1L;
 
+    public ElementNotFoundException(String message) {
+        super(message);
+    }
+    
     public ElementNotFoundException(String code, String elementName) {
         super(elementName + " with code=" + code + " not found");
     }

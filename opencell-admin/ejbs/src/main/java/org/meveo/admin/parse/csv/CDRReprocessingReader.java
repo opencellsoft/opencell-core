@@ -73,6 +73,15 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
         if (cdr == null) {
             return null;
         }
+        
+
+        return getRecord(cdrParser, cdr);
+    }
+
+    @Override
+    public CDR getRecord(ICdrParser cdrParser, Object cdrData) {
+        
+        CDR cdr = (CDR)cdrData;
         Integer timesTried = cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1;
         try {
             CDR newCdr = cdrParser.parse(cdr.getLine());

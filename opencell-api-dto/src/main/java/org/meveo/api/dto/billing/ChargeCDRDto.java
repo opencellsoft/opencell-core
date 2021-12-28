@@ -18,11 +18,11 @@
 
 package org.meveo.api.dto.billing;
 
-import org.meveo.api.dto.BaseEntityDto;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class ChargeCDRDto.
@@ -54,14 +54,29 @@ public class ChargeCDRDto extends BaseEntityDto {
     private boolean rateTriggeredEdr;
 
     /**
-     * If true, the API will return the list of all wallet operations produced during, even if the are virtual.
+     * The max deep used in triggered EDR.
+     */
+    private Integer maxDepth;
+
+    /**
+     * If true, the API will return the list of IDs of all wallet operations produced. Applies to non-virtual mode only.
      */
     private boolean returnWalletOperations;
 
     /**
-     * The max deep used in triggered EDR.
+     * If true, the API will return the list of details of all wallet operations produced, even if they are virtual
      */
-    private Integer maxDepth;
+    private boolean returnWalletOperationDetails;
+
+    /**
+     * If true, the API will return the list of IDs of all EDRs produced. Applies to non-virtual mode only.
+     */
+    private boolean returnEDRs;
+
+    /**
+     * If true, the API will return the list Counters that were updated during the rating, even if they are virtual
+     */
+    private boolean returnCounters;
 
     public ChargeCDRDto() {
         virtual = false;
@@ -70,13 +85,17 @@ public class ChargeCDRDto extends BaseEntityDto {
         returnWalletOperations = false;
     }
 
-    public ChargeCDRDto(String cdr, String ip, boolean virtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
+    public ChargeCDRDto(String cdr, String ip, boolean virtual, boolean rateTriggeredEdr, Integer maxDepth, boolean returnEDRs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
+            boolean returnCounters) {
         this.cdr = cdr;
         this.ip = ip;
         this.virtual = virtual;
         this.rateTriggeredEdr = rateTriggeredEdr;
-        this.returnWalletOperations = returnWalletOperations;
         this.maxDepth = maxDepth == null ? 1 : maxDepth;
+        this.returnWalletOperations = returnWalletOperations;
+        this.returnWalletOperationDetails = returnWalletOperationDetails;
+        this.returnEDRs = returnEDRs;
+        this.returnCounters = returnCounters;
     }
 
     public String getCdr() {
@@ -132,24 +151,6 @@ public class ChargeCDRDto extends BaseEntityDto {
     }
 
     /**
-     * check if return WalletOperations is enabled
-     *
-     * @return true if return WalletOperations is enabled, false else.
-     */
-    public boolean isReturnWalletOperations() {
-        return returnWalletOperations;
-    }
-
-    /**
-     * Sets returnWalletOperations
-     *
-     * @param returnWalletOperations
-     */
-    public void setReturnWalletOperations(boolean returnWalletOperations) {
-        this.returnWalletOperations = returnWalletOperations;
-    }
-
-    /**
      * Gets the maxDepth
      *
      * @return the maxDepth
@@ -168,5 +169,65 @@ public class ChargeCDRDto extends BaseEntityDto {
      */
     public void setMaxDepth(Integer maxDepth) {
         this.maxDepth = maxDepth;
+    }
+
+    /**
+     * @return If true, the API will return the list of IDs of all EDRs produced. Applies to non-virtual mode only.
+     */
+    public boolean isReturnEDRs() {
+        return returnEDRs;
+    }
+
+    /**
+     * @param returnEDRs If true, the API will return the list of IDs of all EDRs produced. Applies to non-virtual mode only.
+     */
+    public void setReturnEDRs(boolean returnEDRs) {
+        this.returnEDRs = returnEDRs;
+    }
+
+    /**
+     * check if return WalletOperations is enabled
+     *
+     * @return true if return WalletOperations is enabled, false else.
+     */
+    public boolean isReturnWalletOperations() {
+        return returnWalletOperations;
+    }
+
+    /**
+     * Sets returnWalletOperations
+     *
+     * @param returnWalletOperations
+     */
+    public void setReturnWalletOperations(boolean returnWalletOperations) {
+        this.returnWalletOperations = returnWalletOperations;
+    }
+
+    /**
+     * @return If true, the API will return the list of details of all wallet operations produced, even if they are virtual
+     */
+    public boolean isReturnWalletOperationDetails() {
+        return returnWalletOperationDetails;
+    }
+
+    /**
+     * @param returnWalletOperationDetails If true, the API will return the list of details of all wallet operations produced, even if they are virtual
+     */
+    public void setReturnWalletOperationDetails(boolean returnWalletOperationDetails) {
+        this.returnWalletOperationDetails = returnWalletOperationDetails;
+    }
+
+    /**
+     * @return If true, the API will return the list Counters that were updated during the rating, even if they are virtual
+     */
+    public boolean isReturnCounters() {
+        return returnCounters;
+    }
+
+    /**
+     * @param returnCounters If true, the API will return the list Counters that were updated during the rating, even if they are virtual
+     */
+    public void setReturnCounters(boolean returnCounters) {
+        this.returnCounters = returnCounters;
     }
 }
