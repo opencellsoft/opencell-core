@@ -36,6 +36,7 @@ public class SecurityDepositTemplat extends BusinessEntity {
     @Column(name = "max_amount")
     private BigDecimal maxAmount;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
     private SecurityTemplateStatusEnum status;
 
