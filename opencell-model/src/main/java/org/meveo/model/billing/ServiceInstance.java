@@ -55,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICounterEntity;
@@ -1213,6 +1214,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         usageChargeInstances = new ArrayList<>();
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
+            PersistenceUtils.initializeAndUnproxy(chargeInstance);
 
             if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);

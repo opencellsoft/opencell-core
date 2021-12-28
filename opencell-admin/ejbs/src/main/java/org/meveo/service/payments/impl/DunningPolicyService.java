@@ -70,6 +70,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
         if(rules != null && !rules.isEmpty()) {
+            rules.sort(Comparator.comparing(DunningPolicyRule::getId));
             ruleFilter.append(buildRuleLinesFilter(rules.get(0).getDunningPolicyRuleLines()));
             for (int index = 1; index < rules.size(); index++) {
                 ruleFilter.append(" ")
@@ -92,6 +93,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildRuleLinesFilter(List<DunningPolicyRuleLine> ruleLines) {
         StringBuilder lineFilter = new StringBuilder();
         if(ruleLines != null && !ruleLines.isEmpty()) {
+            ruleLines.sort(Comparator.comparing(DunningPolicyRuleLine::getId));            
             lineFilter.append("(")
                     .append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
                     .append(" ")

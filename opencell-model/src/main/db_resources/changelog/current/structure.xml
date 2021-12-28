@@ -11192,13 +11192,13 @@ order by date_trunc('month', i.invoice_date) DESC
 			deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION"/>
     </changeSet>
-
+    
     <changeSet id="#2333_20211021" author="anasseh">
         <addColumn tableName="ar_payment_token">
             <column name="token_3ds_id" type="varchar(250)"/>
    		</addColumn>
     </changeSet>
-	<changeSet id="#INTRD-1254" author="MohammedELAZZOUZI">
+    <changeSet id="#INTRD-1254" author="MohammedELAZZOUZI">
         <addColumn tableName="cpq_order_offer">
             <column name="user_account_id" type="bigint"/>
    		</addColumn>

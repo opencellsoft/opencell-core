@@ -66,7 +66,7 @@ public class PricePlanMatrixLineApi extends BaseApi {
 //            	if(target.size() != pricePlanMatrixLineDto.getPricePlanMatrixValues().size())
 //            		throw new MeveoApiException("Error");
             	PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
-            	pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
+            	pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
                 pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
                 pricePlanMatrixLine.getPricePlanMatrixValues().clear();
                 pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);

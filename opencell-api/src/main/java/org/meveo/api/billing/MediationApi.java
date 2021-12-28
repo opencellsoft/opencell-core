@@ -49,7 +49,6 @@ import org.meveo.apiv2.billing.service.MediationApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.ReservationService;
@@ -221,11 +220,10 @@ public class MediationApi extends BaseApi {
         }
     }
 
-    private List<WalletOperation> rateUsage(EDR edr, ChargeCDRDto chargeCDRDto) throws MeveoApiException {
+    private void rateUsage(EDR edr, ChargeCDRDto chargeCDRDto) throws MeveoApiException {
 
-        List<WalletOperation> walletOperations = null;
         try {
-            walletOperations = usageRatingService.rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0);
+            usageRatingService.rateUsage(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0, null, false);
 
         } catch (InsufficientBalanceException e) {
             log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
@@ -239,8 +237,6 @@ public class MediationApi extends BaseApi {
             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
             throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
         }
-
-        return walletOperations;
     }
 
     /**

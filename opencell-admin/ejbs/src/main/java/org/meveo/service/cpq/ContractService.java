@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -115,16 +116,16 @@ public class ContractService extends BusinessService<Contract>  {
 		}
 		
 	}
-	
-	public Contract getContractByAccount(Customer customer,BillingAccount billingAccount,CustomerAccount customerAccount) {
-		Contract contract = null;
+
+    public Contract getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
+
 		try {
-			contract = (Contract) getEntityManager().createNamedQuery("Contract.findByAccounts")
+			return (Contract) getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId()).getSingleResult();
-		} catch (Exception e) {
-		}
-		return contract;
-	}
-	
+
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
