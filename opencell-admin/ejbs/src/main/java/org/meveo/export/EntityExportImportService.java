@@ -107,7 +107,10 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Permission;
@@ -641,6 +644,13 @@ public class EntityExportImportService implements Serializable {
                 xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
                 xstream.omitField(ExportTemplate.class, "parameters");
                 xstream.omitField(ExportTemplate.class, "relatedEntities");
+
+                //status for the OfferTemplate should be by default IN_DESIGN
+                xstream.omitField(OfferTemplate.class, "lifeCycleStatus");
+				xstream.omitField(ProductOffering.class, "lifeCycleStatus");
+                //status for the OfferTemplate should be by default DRAFT
+				xstream.omitField(Product.class, "status");
+
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
                 xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig), XStream.PRIORITY_NORMAL);
