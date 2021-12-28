@@ -11605,5 +11605,15 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="dunning_policy_level_id" />
         </dropColumn>
     </changeSet>
+    <changeSet id="INTRD-3807_20211227" author="HHanine">
+ 		<addColumn tableName="billing_accounting_article">
+            <column name="invoice_type_el" type="varchar(255)" />
+            <column name="invoice_type_id" type="bigint" />
+	    </addColumn>
+		<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_accounting_article"
+            constraintName="fk_billing_accounting_article_invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
 
 </databaseChangeLog>
