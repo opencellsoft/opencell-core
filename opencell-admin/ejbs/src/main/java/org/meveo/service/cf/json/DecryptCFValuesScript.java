@@ -106,26 +106,7 @@ public class DecryptCFValuesScript extends Script  {
 			}
 		}
 	}
-	public String encrypt(String strToEncrypt) {
-		try {
-			
-			if (strToEncrypt != null) {
-				if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
-					return strToEncrypt;
-				}
-				SecretKeySpec secretKey = buildSecretKey();
-				Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-				cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-				String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
-				return ENCRYPTION_CHECK_STRING + encrypted;
-			}
-			
-		} catch (Exception e) {
-			log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
-			throw new EncyptionException(e);
-		}
-		return strToEncrypt;
-	}
+	
 
 	
 	public String decrypt(String strToDecrypt) {
