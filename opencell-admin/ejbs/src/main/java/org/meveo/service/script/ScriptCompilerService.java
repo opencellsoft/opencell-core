@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -51,6 +52,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
+import org.slf4j.Logger;
 
 
 /**
@@ -183,8 +185,13 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                             classpath += f.getCanonicalPath() + File.pathSeparator;
                         }
                     }
+             
                 }
             }
+
+            // Add classes that are usually used in scripts without a need to explicitly import them
+            addToClassPath(Logger.class.getName());
+            addToClassPath(EntityManager.class.getName());
         }
         log.info("compileAll classpath={}", classpath);
 
@@ -340,7 +347,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
     /**
      * Supplement classpath with classes needed for the particular script compilation. Solves issue when classes server as jboss modules are referenced in script. E.g.
-     * prg.slf4j.Logger
+     * org.slf4j.Logger
      * 
      * @param javaSrc Java source to compile
      */
@@ -355,35 +362,44 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
             if(className.startsWith("static ")) {
             	className=className.substring(7, className.lastIndexOf("."));
             }
-            try {
-                if (!className.startsWith("java.") && !className.startsWith("org.meveo")) {
-                    Class clazz = Class.forName(className);
-                    try {
-                        String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
-                        if (location.startsWith("file:")) {
-                            location = location.substring(5);
-                        }
-                        if (location.endsWith("!/")) {
-                            location = location.substring(0, location.length() - 2);
-                        }
-                        // Remove a starting / if its a windows server
-                        if (SystemUtils.IS_OS_WINDOWS && location.startsWith("/")) {
-                            location = location.substring(1);
-                        }
-
-                        if (!classpath.contains(location)) {
-                            classpath += File.pathSeparator + location;
-                        }
-
-                    } catch (Exception e) {
-                        log.warn("Failed to find location for class {}", className);
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Failed to find location for class {}", className);
-            }
+            addToClassPath(className);
         }
+    }
 
+    /**
+     * Supplement classpath with a class
+     * 
+     * @param className Classname
+     * @return True if classname was added to the classpath
+     */
+    public boolean addToClassPath(String className) {
+
+        try {
+            if (!className.startsWith("java.") && !className.startsWith("org.meveo")) {
+                Class clazz = Class.forName(className);
+
+                String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+                if (location.startsWith("file:")) {
+                    location = location.substring(5);
+                }
+                if (location.endsWith("!/")) {
+                    location = location.substring(0, location.length() - 2);
+                }
+                // Remove a starting / if its a windows server
+                if (SystemUtils.IS_OS_WINDOWS && location.startsWith("/")) {
+                    location = location.substring(1);
+                }
+
+                if (!classpath.contains(location)) {
+                    classpath += File.pathSeparator + location;
+                }
+
+            }
+            return true;
+        } catch (Exception e) {
+            log.warn("Failed to find location for class {}", className);
+            return false;
+        }
     }
 
     /**
