@@ -19,17 +19,17 @@
 package org.meveo.service.payments.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.http.client.utils.DateUtils;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -44,7 +44,10 @@ import org.meveo.model.payments.MandatStateEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.PaymentGatewayClass;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,15 +81,18 @@ import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.Mandate
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.BrowserData;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInputBase;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardRecurrenceDetails;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CustomerDevice;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.OrderReferences;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Payment;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PaymentStatusOutput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PersonalName;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.RedirectionData;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.ThreeDSecure;
@@ -117,8 +123,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaD
  *
  * @author anasseh
  * @author Mounir Bahije
- * @author Mbarek-Ay
- * @lastModifiedVersion 10.0.0 
+ * @lastModifiedVersion 5.5.2 
  */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
@@ -128,11 +133,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     
     /** The payment gateway. */
     private PaymentGateway paymentGateway = null; 
-    
+        
     /** The client. */
     private  Client client = null;
     
     private Marshaller marshaller = null;
+    
+    private ScriptInstanceService scriptInstanceService = null;
 
     /**
      * Connect.
@@ -159,6 +166,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return paramBean;
     }
 
+    private ScriptInstanceService getScriptInstanceService() {
+    	if(scriptInstanceService != null) {
+    		return scriptInstanceService;
+    	}
+    	scriptInstanceService = (ScriptInstanceService) EjbUtils.getServiceInterface(ScriptInstanceService.class.getSimpleName());
+    	return scriptInstanceService;
+    }
     /**
      * Gets the client.
      *
@@ -238,148 +252,6 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
 
     }
-    
-      /*reserved to GlobalCollect platform*/
-    @Override
-    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException {
-        try {
-            CompanyInformation companyInformation = new CompanyInformation();
-            companyInformation.setName(customerAccount.getCode());  
-            
-            PersonalNameToken name = new PersonalNameToken();
-            if (customerAccount.getName() != null) {
-                name.setFirstName(customerAccount.getName().getFirstName());
-                name.setSurname(customerAccount.getName().getLastName());
-                name.setSurnamePrefix(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode()); 
-            } 
-            PersonalInformationToken personalInformation = new PersonalInformationToken();
-            personalInformation.setName(name);
-            
-            ContactDetailsToken contactDetails=new ContactDetailsToken();
-    		if(customerAccount.getContactInformation() != null ) {
-    			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
-    		}
-            
-            CustomerTokenWithContactDetails customerTokenWithDetail = new CustomerTokenWithContactDetails();
-            customerTokenWithDetail.setBillingAddress(getBillingAddress(customerAccount));
-            customerTokenWithDetail.setCompanyInformation(companyInformation);
-            customerTokenWithDetail.setMerchantCustomerId(customerAccount.getCode());
-            customerTokenWithDetail.setPersonalInformation(personalInformation);
-            customerTokenWithDetail.setContactDetails(contactDetails);
-           
-            TokenSepaDirectDebitWithoutCreditor  tokenSepaDDWithoutCreditor = new TokenSepaDirectDebitWithoutCreditor(); 
-            MandateSepaDirectDebitWithoutCreditor  mandateSepaDDWithoutCreditor = new MandateSepaDirectDebitWithoutCreditor();
-            
-            BankAccountIban bankAccountIban=new BankAccountIban();
-            bankAccountIban.setAccountHolderName(accountHolderName);
-            bankAccountIban.setIban(iban);
-            mandateSepaDDWithoutCreditor.setBankAccountIban(bankAccountIban); 
-            
-            Debtor debtor=new Debtor();
-            debtor.setAdditionalAddressInfo(customerAccount.getAddress().getAddress3());
-            debtor.setCity(customerAccount.getAddress().getCity());
-            debtor.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-            
-            if (customerAccount.getName() != null) {
-            	debtor.setFirstName(customerAccount.getName().getFirstName());
-            	debtor.setSurname(customerAccount.getName().getLastName());
-            	debtor.setSurnamePrefix(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
-            }
-            debtor.setHouseNumber("");
-            debtor.setState(customerAccount.getAddress().getState());
-            debtor.setStreet(customerAccount.getAddress().getAddress1());
-            debtor.setZip(customerAccount.getAddress().getZipCode());
-            mandateSepaDDWithoutCreditor.setDebtor(debtor);
-            
-            tokenSepaDDWithoutCreditor.setMandate(mandateSepaDDWithoutCreditor); 
-            tokenSepaDDWithoutCreditor.setCustomer(customerTokenWithDetail);  
-            tokenSepaDDWithoutCreditor.setAlias(alias);
-            CreateTokenRequest body = new CreateTokenRequest();
-            body.setPaymentProductId(770);
-            body.setSepaDirectDebit(tokenSepaDDWithoutCreditor);    
-            
-            ObjectMapper mapper = new ObjectMapper(); 
-            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
-            log.info("Body :"+jsonString);
-            
-            CreateTokenResponse response = getClient().merchant(paymentGateway.getMarchandId()).tokens().create(body);
-            if (!response.getIsNewToken()) {
-                throw new BusinessException("A token already exist for sepa:" + tokenSepaDDWithoutCreditor.getAlias());
-            }
-            return response.getToken();
-        } catch (ApiException ev) {
-            throw new BusinessException(ev.getResponseBody());
-
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
-        }
-
-    }
-    @Override
-    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
-    	try {
-    		BankAccountIban bankAccountIban=new BankAccountIban(); 
-    		bankAccountIban.setIban(iban);
- 
-    		MandateContactDetails contactDetails=new MandateContactDetails();
-    		if(customerAccount.getContactInformation() != null ) {
-    			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
-    		}
-    		
-    		MandateAddress address=new MandateAddress();
-    		if (customerAccount.getAddress() != null) {
-    		address.setCity(customerAccount.getAddress().getCity());
-    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-    		address.setStreet(customerAccount.getAddress().getAddress1());
-    		address.setZip(customerAccount.getAddress().getZipCode());
-    		}
-    		MandatePersonalName name = new MandatePersonalName();
-    		MandatePersonalInformation personalInformation =new MandatePersonalInformation();
-    		if (customerAccount.getName() != null) {
-    			name.setFirstName(customerAccount.getName().getFirstName());
-    			name.setSurname(customerAccount.getName().getLastName()); 
-    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
-    		}  
-    		personalInformation.setName(name);
-    		MandateCustomer customer=new MandateCustomer();
-    		customer.setBankAccountIban(bankAccountIban);
-    		customer.setContactDetails(contactDetails);
-    		customer.setMandateAddress(address);
-    		customer.setPersonalInformation(personalInformation);
-
-    		
-    		CreateMandateRequest body = new CreateMandateRequest();
-    		body.setUniqueMandateReference(mandateReference);
-    		body.setCustomer(customer);
-    		body.setCustomerReference(customerAccount.getExternalRef1()); 
-    		body.setRecurrenceType("RECURRING");
-    		body.setSignatureType("UNSIGNED");
-
-    	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
-
-    	}catch (ApiException ev) { 
-    		throw new MeveoApiException("Connection to ingenico is not allowed");
-    	}catch (Exception e) {
-    		throw new BusinessException(e.getMessage());
-    	}
-
-    }
-
-    @Override
-    public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException {
-    	try {
-    	ApproveTokenRequest body = new ApproveTokenRequest();
-    	body.setMandateSignatureDate(DateUtils.formatDate(signatureDate, "YYYYMMdd"));
-    	body.setMandateSignaturePlace("");
-    	body.setMandateSigned(true);
-    	
-    	client.merchant(paymentGateway.getMarchandId()).tokens().approvesepadirectdebit(token, body);
-    	
-    	}catch (Exception e) {
-    		throw new BusinessException(e.getMessage());
-    	}
-    }
-    
 
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
@@ -462,33 +334,60 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		return doPaymentResponseDto;
 	}
     
-    private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
-            String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
-        AmountOfMoney amountOfMoney = new AmountOfMoney();
-        amountOfMoney.setAmount(ctsAmount);
-        amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+	private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
+			String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
 
-        Customer customer = new Customer();
-        customer.setBillingAddress(getBillingAddress(customerAccount));
+		CreatePaymentRequest body = new CreatePaymentRequest();
+		String scriptInstanceCode = paramBean().getProperty("ingenico.paymentRequest.script", null);
+		if (scriptInstanceCode == null) {
+			AmountOfMoney amountOfMoney = new AmountOfMoney();
+			amountOfMoney.setAmount(ctsAmount);
+			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
 
-        Order order = new Order();
-        order.setAmountOfMoney(amountOfMoney);
-        order.setCustomer(customer);
+			Customer customer = new Customer();
+			customer.setBillingAddress(getBillingAddress(customerAccount));
+			
+			CustomerDevice customerDevice = new CustomerDevice();
+			customerDevice.setAcceptHeader(paramBean().getProperty("ingenico.device.AcceptHeader", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"));
+			customerDevice.setLocale(paramBean().getProperty("ingenico.device.Locale", "fr_FR"));
+			customerDevice.setTimezoneOffsetUtcMinutes(paramBean().getProperty("ingenico.device.TimezoneOffsetUtcMinutes", "60"));
+			customerDevice.setUserAgent(paramBean().getProperty("ingenico.device.UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"));
+			BrowserData browserData = new BrowserData();
+			browserData.setColorDepth(paramBean().getPropertyAsInteger("ingenico.device.ColorDepth", 24));
+			browserData.setJavaEnabled("true".equals(paramBean().getProperty("ingenico.device.JavaEnabled", "false")));
+			browserData.setScreenHeight(paramBean().getProperty("ingenico.device.ScreenHeight", "1080"));
+			browserData.setScreenWidth(paramBean().getProperty("ingenico.device.ScreenWidth", "1920"));
+			customerDevice.setBrowserData(browserData);
+			
+			customer.setDevice(customerDevice);
+			
 
-        CreatePaymentRequest body = new CreatePaymentRequest();
-        if (ddPaymentMethod != null) {
-            body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
-        }
-        if (paymentCardToken != null) {
-            body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
-        }
-        if (!StringUtils.isBlank(cardNumber)) {
-            body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
-        }
+			Order order = new Order();
+			order.setAmountOfMoney(amountOfMoney);
+			order.setCustomer(customer);
 
-        body.setOrder(order);
-        return body;
-    }
+			if (ddPaymentMethod != null) {
+				body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
+			}
+			if (paymentCardToken != null) {
+				body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
+			}
+			if (!StringUtils.isBlank(cardNumber)) {
+				body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
+			}
+
+			body.setOrder(order);
+		} else {
+			Map<String, Object> context = new  HashMap<String, Object>();
+			context.put("DDPaymentMethod", ddPaymentMethod);
+			context.put("CardPaymentMethod", paymentCardToken);
+			context.put("ctsAmount", ctsAmount);
+			context.put("CustomerAccount", customerAccount);
+			context = getScriptInstanceService().executeCached( scriptInstanceCode, context);
+			body = (CreatePaymentRequest)context.get("CreatePaymentRequest");
+		}
+		return body;
+	}
 
     @Override
     public void cancelPayment(String paymentID) throws BusinessException {       
@@ -534,13 +433,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private Address getBillingAddress(CustomerAccount customerAccount) {
         Address billingAddress = new Address();
         if (customerAccount.getAddress() != null) {
-            billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
-            billingAddress.setCity(customerAccount.getAddress().getCity());
+            billingAddress.setAdditionalInfo(StringUtils.truncate(customerAccount.getAddress().getAddress3(), 50, true));
+            billingAddress.setCity(StringUtils.truncate(customerAccount.getAddress().getCity(), 20, true));
             billingAddress.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
             billingAddress.setHouseNumber("");
-            billingAddress.setState(customerAccount.getAddress().getState());
-            billingAddress.setStreet(customerAccount.getAddress().getAddress1());
-            billingAddress.setZip(customerAccount.getAddress().getZipCode());
+            billingAddress.setState(StringUtils.truncate(customerAccount.getAddress().getState(), 35, true));
+            billingAddress.setStreet(StringUtils.truncate(customerAccount.getAddress().getAddress1(), 50, true));
+            billingAddress.setZip(StringUtils.truncate(customerAccount.getAddress().getZipCode(), 8, true));
         }
         return billingAddress;
     }
@@ -631,13 +530,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        
         ThreeDSecure threeDSecure = new ThreeDSecure();
         ThreeDSecureData threeDSecureData = new ThreeDSecureData();
         threeDSecureData.setAcsTransactionId(cardPaymentMethod.getToken3DsId());
         threeDSecure.setPriorThreeDSecureData(threeDSecureData);
         threeDSecure.setSkipAuthentication(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.SkipAuthentication", "false"))));
-        cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);
-        cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        RedirectionData redirectionData = new  RedirectionData();
+        redirectionData.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        threeDSecure.setRedirectionData(redirectionData);
+        threeDSecure.setChallengeIndicator(paramBean.getProperty("ingenico.3ds.ChallengeIndicator", "no-preference"));
+        threeDSecure.setAuthenticationFlow(paramBean.getProperty("ingenico.3ds.AuthenticationFlow", "browser"));
+        threeDSecure.setChallengeCanvasSize(paramBean.getProperty("ingenico.3ds.ChallengeCanvasSize", "600x400"));
+        cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);       
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.IsRecurring", "false"))));
         cardPaymentMethodSpecificInput.setRequiresApproval(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.RequiresApproval", "true"))));
 
@@ -654,12 +559,6 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return cardPaymentMethodSpecificInput;
     }
     
-    /**
-     * Gets the card token input.
-     *
-     * @param cardPaymentMethod the card payment method
-     * @return the card token input
-     */
     private CardPaymentMethodSpecificInput getCardTokenInputDefault(CardPaymentMethod cardPaymentMethod) {
         ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
@@ -705,18 +604,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			Address address = getBillingAddress(customerAccount);
 
 			CompanyInformation companyInformation = new CompanyInformation();
-			companyInformation.setName(customerAccount.getCode());
+			companyInformation.setName(StringUtils.truncate(customerAccount.getCode(), 40, true));
 			ContactDetailsBase contactDetails = new ContactDetailsBase();
 			
 			if(customerAccount.getContactInformation() != null ) {
-				contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail());
+				contactDetails.setEmailAddress(StringUtils.truncate(customerAccount.getContactInformation().getEmail(), 70, false));
 			}
 			
 			PersonalName name = new PersonalName();
 			if (customerAccount.getName() != null) {
-				name.setFirstName(customerAccount.getName().getFirstName());
-				name.setSurname(customerAccount.getName().getLastName());
-				name.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
+				name.setFirstName(StringUtils.truncate(customerAccount.getName().getFirstName(), 15, true));
+				name.setSurname(StringUtils.truncate(customerAccount.getName().getLastName(), 70, true));
+				name.setTitle(StringUtils.truncate(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode(), 15, true));
 			}
 
 			PayoutCustomer customer = new PayoutCustomer();
@@ -786,12 +685,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
 
-    } 
+    }
 
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
     	MandatInfoDto mandatInfoDto=new MandatInfoDto();
-    	GetMandateResponse response = getClient().merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
+    	GetMandateResponse response = client.merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
     	MandateResponse mandatResponse=response.getMandate();
     	if(mandatResponse!=null) { 
     		if("WAITING_FOR_REFERENCE".equals(mandatResponse.getStatus())) {
@@ -804,7 +703,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     	return mandatInfoDto;
 
-    } 
+    }
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
@@ -848,11 +747,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
 			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
 			cardPaymentMethodSpecificInputBase.setTokenize(true);
-
+			
 			AmountOfMoney amountOfMoney3DS = new AmountOfMoney();
 			amountOfMoney3DS.setAmount(Long.valueOf(hostedCheckoutInput.getAuthenticationAmount()));
 			amountOfMoney3DS.setCurrencyCode(hostedCheckoutInput.getCurrencyCode());
-			
+
 			ThreeDSecureBase threeDSecure = new ThreeDSecureBase();
 			threeDSecure.setAuthenticationAmount(amountOfMoney3DS);
 			threeDSecure.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
@@ -887,9 +786,152 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
-
+   
 	@Override
 	public String createInvoice(Invoice invoice) throws BusinessException {
-		 throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
+
+	/*reserved to GlobalCollect platform*/
+    @Override
+    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException {
+        try {
+            CompanyInformation companyInformation = new CompanyInformation();
+            companyInformation.setName(customerAccount.getCode());  
+            
+            PersonalNameToken name = new PersonalNameToken();
+            if (customerAccount.getName() != null) {
+                name.setFirstName(customerAccount.getName().getFirstName());
+                name.setSurname(customerAccount.getName().getLastName());
+                name.setSurnamePrefix(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode()); 
+            } 
+            PersonalInformationToken personalInformation = new PersonalInformationToken();
+            personalInformation.setName(name);
+            
+            ContactDetailsToken contactDetails=new ContactDetailsToken();
+    		if(customerAccount.getContactInformation() != null ) {
+    			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
+    		}
+            
+            CustomerTokenWithContactDetails customerTokenWithDetail = new CustomerTokenWithContactDetails();
+            customerTokenWithDetail.setBillingAddress(getBillingAddress(customerAccount));
+            customerTokenWithDetail.setCompanyInformation(companyInformation);
+            customerTokenWithDetail.setMerchantCustomerId(customerAccount.getCode());
+            customerTokenWithDetail.setPersonalInformation(personalInformation);
+            customerTokenWithDetail.setContactDetails(contactDetails);
+           
+            TokenSepaDirectDebitWithoutCreditor  tokenSepaDDWithoutCreditor = new TokenSepaDirectDebitWithoutCreditor(); 
+            MandateSepaDirectDebitWithoutCreditor  mandateSepaDDWithoutCreditor = new MandateSepaDirectDebitWithoutCreditor();
+            
+            BankAccountIban bankAccountIban=new BankAccountIban();
+            bankAccountIban.setAccountHolderName(accountHolderName);
+            bankAccountIban.setIban(iban);
+            mandateSepaDDWithoutCreditor.setBankAccountIban(bankAccountIban); 
+            
+            Debtor debtor=new Debtor();
+            debtor.setAdditionalAddressInfo(customerAccount.getAddress().getAddress3());
+            debtor.setCity(customerAccount.getAddress().getCity());
+            debtor.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
+            
+            if (customerAccount.getName() != null) {
+            	debtor.setFirstName(customerAccount.getName().getFirstName());
+            	debtor.setSurname(customerAccount.getName().getLastName());
+            	debtor.setSurnamePrefix(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
+            }
+            debtor.setHouseNumber("");
+            debtor.setState(customerAccount.getAddress().getState());
+            debtor.setStreet(customerAccount.getAddress().getAddress1());
+            debtor.setZip(customerAccount.getAddress().getZipCode());
+            mandateSepaDDWithoutCreditor.setDebtor(debtor);
+            
+            tokenSepaDDWithoutCreditor.setMandate(mandateSepaDDWithoutCreditor); 
+            tokenSepaDDWithoutCreditor.setCustomer(customerTokenWithDetail);  
+            tokenSepaDDWithoutCreditor.setAlias(alias);
+            CreateTokenRequest body = new CreateTokenRequest();
+            body.setPaymentProductId(770);
+            body.setSepaDirectDebit(tokenSepaDDWithoutCreditor);    
+            
+            ObjectMapper mapper = new ObjectMapper(); 
+            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+            log.info("Body :"+jsonString);
+            
+            CreateTokenResponse response = getClient().merchant(paymentGateway.getMarchandId()).tokens().create(body);
+            if (!response.getIsNewToken()) {
+                throw new BusinessException("A token already exist for sepa:" + tokenSepaDDWithoutCreditor.getAlias());
+            }
+            return response.getToken();
+        } catch (ApiException ev) {
+            throw new BusinessException(ev.getResponseBody());
+
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+
+    }
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
+    	try {
+    		BankAccountIban bankAccountIban=new BankAccountIban(); 
+    		bankAccountIban.setIban(iban);
+ 
+    		MandateContactDetails contactDetails=new MandateContactDetails();
+    		if(customerAccount.getContactInformation() != null ) {
+    			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
+    		}
+    		MandateAddress address=new MandateAddress();
+    		if (customerAccount.getAddress() != null) {
+    		address.setCity(customerAccount.getAddress().getCity());
+    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
+    		address.setStreet(customerAccount.getAddress().getAddress1());
+    		address.setZip(customerAccount.getAddress().getZipCode());
+    		}
+    		MandatePersonalName name = new MandatePersonalName();
+    		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
+    		
+    		if (customerAccount.getName() != null) {
+    			name.setFirstName(customerAccount.getName().getFirstName());
+    			name.setSurname(customerAccount.getName().getLastName()); 
+    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
+    		}  
+    		personalInformation.setName(name);
+    		MandateCustomer customer=new MandateCustomer();
+    		customer.setBankAccountIban(bankAccountIban);
+    		customer.setContactDetails(contactDetails);
+    		customer.setMandateAddress(address);
+    		customer.setPersonalInformation(personalInformation);
+
+    		
+    		CreateMandateRequest body = new CreateMandateRequest();
+    		body.setUniqueMandateReference(mandateReference);
+    		body.setCustomer(customer);
+    		body.setCustomerReference(customerAccount.getExternalRef1()); 
+    		body.setRecurrenceType("RECURRING");
+    		body.setSignatureType("UNSIGNED");
+
+    	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
+
+    	} catch (ApiException ev) { 
+    		throw new BusinessException(ev.getResponseBody());
+
+    	} catch (Exception e) { 
+    		throw new BusinessException(e.getMessage());
+    	}
+
+    }
+
+	@Override
+	public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException {
+    	try {
+    	ApproveTokenRequest body = new ApproveTokenRequest();
+    	body.setMandateSignatureDate(DateUtils.formatDateWithPattern(signatureDate, "YYYYMMdd"));
+    	body.setMandateSignaturePlace("");
+    	body.setMandateSigned(true);
+    	
+    	client.merchant(paymentGateway.getMarchandId()).tokens().approvesepadirectdebit(token, body);
+    	
+    	}catch (Exception e) {
+    		throw new BusinessException(e.getMessage());
+    	}
+    }
 }
