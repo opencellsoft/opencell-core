@@ -20,8 +20,10 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.tax.TaxClassService;
@@ -34,10 +36,15 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Inject
     private AccountingArticleService accountingArticleService;
+    
     @Inject
     private TaxClassService taxClassService;
+
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -74,6 +81,13 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             if (articleFamily == null)
                 throw new BadRequestException("No articleFamily found");
             accountingArticle.setArticleFamily(articleFamily);
+        }
+        
+        if (accountingArticle.getInvoiceType() != null) {
+            InvoiceType invoiceType = (InvoiceType) invoiceTypeService.tryToFindByCodeOrId(accountingArticle.getInvoiceType());
+            if (invoiceType == null)
+                throw new BadRequestException("No invoiceType found");
+            accountingArticle.setInvoiceType(invoiceType);
         }
 
         accountingArticleService.create(accountingArticle);
@@ -166,6 +180,17 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
         if (baseEntity.getCfValues() != null) {
             accountingArticle.setCfValues(baseEntity.getCfValues());
+        }
+        
+        if (baseEntity.getInvoiceType() != null) {
+            InvoiceType invoiceType = (InvoiceType) invoiceTypeService.tryToFindByCodeOrId(baseEntity.getInvoiceType());
+            if (invoiceType == null)
+                throw new BadRequestException("No invoiceType found");
+            accountingArticle.setInvoiceType(invoiceType);
+        }
+        
+        if (baseEntity.getInvoiceTypeEl() != null) {
+            accountingArticle.setInvoiceTypeEl(baseEntity.getInvoiceTypeEl());
         }
 
         accountingArticleService.update(accountingArticle);
