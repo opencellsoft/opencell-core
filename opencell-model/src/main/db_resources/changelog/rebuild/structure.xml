@@ -11424,7 +11424,87 @@
 	            <column name="dunning_action_id" type="bigint" />
 			</createTable>
         </changeSet>
-	
+
+    <changeSet id="#INTRD-3461_20212128" author="hichamElHaloui">
+
+        <createSequence sequenceName="security_deposit_templat_seq" startValue="1" />
+
+        <createTable tableName="security_deposit_templat">
+	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_templat_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="template_name" type="varchar(100)" />
+            <column name="currency_id" type="bigint" />
+            <column name="allow_validity_date" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="allow_validity_period" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="min_amount" type="numeric(23, 12)" />
+            <column name="max_amount" type="numeric(23, 12)" />
+            <column name="status" type="varchar(255)" />
+            <column name="number_instantiation" type="int" />
+        </createTable>
+
+            <addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="security_deposit_templat"
+			constraintName="fk_adm_currency_security_deposit_templat" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+
+
+		<createSequence sequenceName="security_deposit_seq" startValue="1" />
+
+        <createTable tableName="security_deposit">
+	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="templat_id" type="bigint" />
+            <column name="currency_id" type="bigint" />
+            <column name="customer_account_id" type="bigint"/>
+            <column name="validity_date" type="date" />
+            <column name="validity_period" type="bigint" />
+            <column name="validity_period_unit" type="varchar(255)" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="current_balance" type="numeric(23, 12)" />
+            <column name="status" type="varchar(255)" />
+            <column name="product_instance" type="varchar(255)"/>
+            <column name="subscription_id" type="bigint"/>
+            <column name="product_id" type="bigint"/>
+            <column name="external_reference" type="varchar(255)"/>
+
+		</createTable>
+
+	<addForeignKeyConstraint baseColumnNames="templat_id" baseTableName="security_deposit"
+			constraintName="fk_security_deposit_templat_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="security_deposit_templat" />
+
+    <addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="security_deposit"
+			constraintName="fk_adm_currency_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+
+    <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="security_deposit"
+			constraintName="fk_ar_customer_account_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+
+    <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="security_deposit"
+			constraintName="fk_billing_subscription_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+
+     <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="security_deposit"
+			constraintName="fk_cpq_product_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+    </changeSet>
 
     <!-- end tables -->
 
