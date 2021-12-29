@@ -1137,7 +1137,7 @@ public class InvoiceServiceTest {
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(subscription.getSeller()).thenReturn(sellerSub);
         when(customer.getSeller()).thenReturn(sellerCust);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
         Assert.assertEquals(invoiceLinesGroup.getSeller().getCode(), "Seller_code");
