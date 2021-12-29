@@ -5,4 +5,6 @@ public enum SecurityTemplateStatusEnum {
     DRAFT,
     ACTIVE,
     ARCHIVED;
+
+
 }

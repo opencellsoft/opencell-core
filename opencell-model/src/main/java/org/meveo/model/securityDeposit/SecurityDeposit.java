@@ -20,7 +20,7 @@ public class SecurityDeposit extends BusinessCFEntity {
 
     @ManyToOne
     @JoinColumn(name = "templat_id")
-    private SecurityDepositTemplat templat;
+    private SecurityDepositTemplate templat;
 
     @ManyToOne
     @JoinColumn(name = "currency_id", nullable = false)
@@ -66,11 +66,11 @@ public class SecurityDeposit extends BusinessCFEntity {
     @Column(name = "external_reference")
     private String externalReference;
 
-    public SecurityDepositTemplat getTemplat() {
+    public SecurityDepositTemplate getTemplat() {
         return templat;
     }
 
-    public void setTemplat(SecurityDepositTemplat templat) {
+    public void setTemplat(SecurityDepositTemplate templat) {
         this.templat = templat;
     }
 
