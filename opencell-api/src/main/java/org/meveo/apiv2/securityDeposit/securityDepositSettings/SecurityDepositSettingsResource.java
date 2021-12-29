@@ -25,7 +25,7 @@ public interface SecurityDepositSettingsResource {
             })
     Response create(@Parameter(description = "Security Deposit Settings", required = true) SecurityDepositSettings securityDepositSettings);
 
-    @POST
+    @PUT
     @Path("/{id}")
     @Operation(summary = "Update Security Deposit settings",
             tags = {"Post"},
