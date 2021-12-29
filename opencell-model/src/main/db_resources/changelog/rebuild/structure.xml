@@ -309,7 +309,7 @@
     	<createSequence sequenceName="dunning_collection_plan_seq" startValue="1" />
     	<createSequence sequenceName="dunning_level_instance_seq" startValue="1" />
     	<createSequence sequenceName="dunning_action_instance_seq" startValue="1" />
-    	<createSequence sequenceName="security_deposit_settings_seq" startValue="1" />
+    	<createSequence sequenceName="finance_settings_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_templat_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_seq" startValue="1" />
     </changeSet>
@@ -11432,9 +11432,9 @@
 
 
     <changeSet id="INTRD-3781_20211217-rebuild-str-tbl" author="hichamElHaloui">
-        <createTable tableName="security_deposit_settings">
+        <createTable tableName="finance_settings">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_settings_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="finance_settings_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -16960,7 +16960,7 @@
 	<changeSet id="#INTRD-760_13072021" author="MohammedELAZZOUZI" />
 	<changeSet id="#INTRD-1291_20210804" author="HatimOUDAD" />
     <changeSet id="#INTRD-1275_20210805" author="ZBariki" />
-     <changeSet id="INTRD-1310_050821" author="Mbarek-Ay"/>
+    <changeSet id="INTRD-1310_050821" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-1277_20210810" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1357_10082021" author="AmineBENAICHA" />
    	<changeSet id="#INTRD-1313_20210809" author="HatimOUDAD" />
@@ -17045,16 +17045,16 @@
     <changeSet id="#INTRD-2765_20211112" author="ZBariki"/>
     <changeSet id="#INTRD-3250_20211123" author="HatimOUDAD"/>
 	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA" />
-	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
+ 	<changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-3426_202112012" author="ZBariki" />
     <changeSet id="INTRD-1421-Payment_deferral" author="AbdelkaderBouazza" />
     <changeSet id="INTRD-3610_20211210" author="TarikRabeh" />
     <changeSet id="INTRD-3721_20211216" author="AmineBENAICHA" />
     <changeSet id="INTRD-3707_20211216" author="ZBariki" />
     <changeSet id="INTRD-3781_20211217" author="hichamElHaloui" />
-     <changeSet id="#INTRD-3461_20212128" author="hichamElHaloui" />
-     <changeSet id="INTRD-3807_20211227" author="HHanine" />
-
+    <changeSet id="#INTRD-3461_20212128" author="hichamElHaloui" />
+    <changeSet id="INTRD-3807_20211227" author="HHanine" />
+	<changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -1,15 +1,14 @@
 package org.meveo.service.securityDeposit.impl;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.model.securityDeposit.SecurityDepositSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.base.BusinessService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 @Stateless
 public class SecurityDepositTemplateService extends BusinessService<SecurityDepositTemplate> {
