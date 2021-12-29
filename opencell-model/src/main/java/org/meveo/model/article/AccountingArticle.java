@@ -1,16 +1,12 @@
 package org.meveo.model.article;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.tax.TaxClass;
+import static javax.persistence.FetchType.LAZY;
 
-import javax.persistence.CascadeType;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -21,13 +17,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.tax.TaxClass;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
 @Table(name = "billing_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -59,7 +56,14 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+    
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
 
+    @Column(name = "invoice_type_el")
+    private String invoiceTypeEl;    
+    
     @Column(name = "analytic_code_1")
     private String analyticCode1;
 
@@ -169,13 +173,29 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
 	}
+	
+    public InvoiceType getInvoiceType() {
+        return invoiceType;
+    }
+
+    public void setInvoiceType(InvoiceType invoiceType) {
+        this.invoiceType = invoiceType;
+    }
+
+    public String getInvoiceTypeEl() {
+        return invoiceTypeEl;
+    }
+
+    public void setInvoiceTypeEl(String invoiceTypeEL) {
+        this.invoiceTypeEl = invoiceTypeEL;
+    }
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice());
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl());
 		return result;
 	}
 
@@ -195,8 +215,4 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		return true;
 	}
-	
-	
-    
-    
 }

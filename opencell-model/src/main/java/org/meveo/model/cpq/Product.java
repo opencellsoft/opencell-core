@@ -122,7 +122,7 @@ public class Product extends ServiceCharge {
 	@Column(name = "status", nullable = false)
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ProductStatusEnum status;
+	private ProductStatusEnum status = ProductStatusEnum.DRAFT;
 	
 	/**
 	 * status date : modified automatically when the status change
