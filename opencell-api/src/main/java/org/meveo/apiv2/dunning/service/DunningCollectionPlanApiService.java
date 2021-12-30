@@ -6,7 +6,16 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -522,12 +531,10 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             List<String> fields = new ArrayList<>();
             DunningCollectionPlan collectionPlan = levelInstanceToUpdate.getCollectionPlan();
             Integer newDaysOverdue = updateLevelInstanceInput.getDaysOverdue();
-            if (newDaysOverdue != null) {
+            if (newDaysOverdue != null && newDaysOverdue != levelInstanceToUpdate.getDaysOverdue()) {
                 // check daysOverdue
                 checkDaysOverdue(collectionPlan, newDaysOverdue);
-                if (newDaysOverdue != levelInstanceToUpdate.getDaysOverdue()) {
-                    fields.add("daysOverdue");
-                }
+                fields.add("daysOverdue");
                 levelInstanceToUpdate.setDaysOverdue(updateLevelInstanceInput.getDaysOverdue());
 
                 // 2- set sequence
