@@ -130,7 +130,7 @@ public class MediationApi extends BaseApi {
 
         ChargeCDRResponseDto chargeCDRResponseDto = null;
         for (ChargeCDRResponseDto processedCdr : processCdrListResult.getChargedCDRs()) {
-            if (processedCdr.getError() != null) {
+            if (processedCdr!=null && processedCdr.getError() != null) {
                 throw new MeveoApiException(processedCdr.getError().getErrorMessage());
             } else {
                 chargeCDRResponseDto = processedCdr;
