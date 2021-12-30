@@ -7,6 +7,7 @@ import static org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromRes
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -124,48 +125,70 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     }
 
     @Override
-    public Response update(Long dunningPolicyId, DunningPolicyInput dunningPolicy) {
-        org.meveo.model.dunning.DunningPolicy entity = dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
-        if (entity == null) {
+    public Response update(Long dunningPolicyId, DunningPolicyInput dunningPolicyInput) {
+        org.meveo.model.dunning.DunningPolicy dunningPolicyEntity = dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
+        if (dunningPolicyEntity == null) {
             throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
         }
+
         List<String> updatedFields = new ArrayList<>();
-        List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
-        if (dunningPolicy.getDunningPolicyLevels() != null && !dunningPolicy.getDunningPolicyLevels().isEmpty()) {
-            entity.getDunningLevels().clear();
-            for (Resource resource : dunningPolicy.getDunningPolicyLevels()) {
+        
+        if (checkIfPolicyLevelsAreChanged(dunningPolicyInput.getDunningPolicyLevels(), dunningPolicyEntity.getDunningLevels())) {
+            
+            dunningPolicyEntity.getDunningLevels().clear();
+            List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
+            for (Resource resource : dunningPolicyInput.getDunningPolicyLevels()) {
                 DunningPolicyLevel level = dunningPolicyLevelService.findById(resource.getId());
                 if (level != null) {
-                    level.setDunningPolicy(entity);
+                    level.setDunningPolicy(dunningPolicyEntity);
                     dunningPolicyLevelList.add(level);
                 }
             }
-        }
-        if (!dunningPolicyLevelList.isEmpty()) {
+            
             updatedFields.add("dunningLevels");
-            entity.setDunningLevels(dunningPolicyLevelList);
+            dunningPolicyEntity.setDunningLevels(dunningPolicyLevelList);
         }
         
         String operationType = "update";
-
-        if(dunningPolicy.isActivePolicy() !=null && entity.getActivePolicy() != dunningPolicy.isActivePolicy()){
-        	operationType = dunningPolicy.isActivePolicy()? "activation" : "deactivation";
+        
+        if(dunningPolicyInput.isActivePolicy() != null && dunningPolicyEntity.getActivePolicy() != dunningPolicyInput.isActivePolicy()) {
+        	operationType = dunningPolicyInput.isActivePolicy() ? "activation" : "deactivation";
         }
         
         org.meveo.model.dunning.DunningPolicy policy =
-                dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicy, entity, updatedFields)).get();
+                dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicyInput, dunningPolicyEntity, updatedFields)).get();
 
-        String origine = (policy!=null) ? policy.getPolicyName() : "";
+        String origine = (policy != null) ? policy.getPolicyName() : "";
         auditLogService.trackOperation(operationType, new Date(), policy, origine, updatedFields);
         
         ActionStatus actionStatus = new ActionStatus();
         actionStatus.setStatus(ActionStatusEnum.SUCCESS);
         actionStatus.setMessage("Entity successfully updated");
-        actionStatus.setEntityId(entity.getId());
+        actionStatus.setEntityId(policy.getId());
+        actionStatus.setEntityCode(policy.getPolicyName());
         return Response
-                .ok(getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
+                .ok(getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicyEntity.getId()).build())
                 .entity(actionStatus)
                 .build();
+    }
+    
+    private boolean checkIfPolicyLevelsAreChanged(List<Resource> policyLevelResources, List<DunningPolicyLevel> policyLevelEntities) {
+        
+        if (policyLevelResources == null) {
+            return false;
+        }
+        if (policyLevelResources.size() == policyLevelEntities.size()) {
+            List<Long> resourceIds = policyLevelResources.stream().map(Resource::getId).collect(Collectors.toList());
+            List<Long> entityIds = policyLevelEntities.stream().map(DunningPolicyLevel::getId).collect(Collectors.toList());
+            
+            for (Long resourceId : resourceIds) {
+                if (!entityIds.contains(resourceId)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override
