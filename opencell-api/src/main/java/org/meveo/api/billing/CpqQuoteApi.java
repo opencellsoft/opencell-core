@@ -1417,17 +1417,11 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
-            if(quoteVersion.getQuoteArticleLines()!=null) {
-            	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
-                 if (!quoteArticleLines.isEmpty()) {
-                 	quoteVersion.getQuoteArticleLines().clear();
-                     quoteVersionService.update(quoteVersion);
-                     quoteArticleLineService.remove(quoteArticleLines);
-                 }
-            }
+        if (quoteVersion.getQuoteArticleLines() != null) {
 
-
-
+            quoteVersion.getQuoteArticleLines().clear();
+            quoteVersionService.update(quoteVersion);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -1509,7 +1503,9 @@ public class CpqQuoteApi extends BaseApi {
                 		 edr.setOriginBatch("QUOTE");
                 		 edr.setOriginRecord(System.currentTimeMillis()+"");
                 		 UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
-                		 Double quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                         Double quantity = null;
+                		 if(chargetemplate.getUsageQuantityAttribute() != null)
+                		     quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
                 		 edr.setQuantity(quantity!=null?new BigDecimal(quantity):BigDecimal.ZERO);
                          List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
                          
