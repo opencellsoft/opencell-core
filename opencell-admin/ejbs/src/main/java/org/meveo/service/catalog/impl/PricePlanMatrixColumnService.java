@@ -167,7 +167,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					
 					String columnType = columns.get(columnIndex).toString().split("\\|")[1];
 					String columnCode = columns.get(columnIndex).toString().split("\\|")[0];
-					boolean isRange = Boolean.valueOf(columns.get(columnIndex).toString().split("\\|")[2]);
+					boolean isRange = ColumnTypeEnum.Range_Date.name().equals(columnType);
 					switch (columnType) {
 					case "String":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
