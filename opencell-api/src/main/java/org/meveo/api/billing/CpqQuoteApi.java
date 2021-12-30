@@ -1462,17 +1462,15 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
-            if(quoteVersion.getQuoteArticleLines()!=null) {
-            	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
-                 if (!quoteArticleLines.isEmpty()) {
-                 	quoteVersion.getQuoteArticleLines().clear();
+            if(quoteVersion.getQuoteArticleLines() != null) {
+                 if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
+                     quoteVersion.getQuoteArticleLines()
+                             .stream()
+                             .forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
+                     quoteVersion.getQuoteArticleLines().clear();
                      quoteVersionService.update(quoteVersion);
-                     quoteArticleLineService.remove(quoteArticleLines);
                  }
             }
-
-
-
     }
 
     @SuppressWarnings("unused")
