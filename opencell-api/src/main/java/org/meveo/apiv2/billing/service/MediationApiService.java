@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -176,7 +178,9 @@ public class MediationApiService {
 
         boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
-        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+        // the multithreading is temporarily disabled while waiting to resolve the deduplication issue on multithreading mode
+//        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+        int nbThreads = 1;
         if (nbThreads > cdrLines.size()) {
             nbThreads = cdrLines.size();
         }
@@ -200,9 +204,8 @@ public class MediationApiService {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
-                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                    cdrListResult, virtualCounters, counterUpdates);
+	                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+	                    cdrListResult, virtualCounters, counterUpdates);
 
             });
         }
@@ -216,7 +219,7 @@ public class MediationApiService {
             try {
                 future.get();
 
-            } catch (InterruptedException | CancellationException e) {
+            } catch (InterruptedException | CancellationException  e) {
 //                wasKilled = true;
 
             } catch (ExecutionException e) {
