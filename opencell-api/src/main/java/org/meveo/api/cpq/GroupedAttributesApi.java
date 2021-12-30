@@ -60,6 +60,7 @@ public class GroupedAttributesApi extends BaseApi{
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
 		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
+		groupedAttribute.setSequence(groupedAttributeDto.getSequence());
 		List<Attribute> attributes = new ArrayList<Attribute>();
 		attributes = addToGroup(groupedAttribute, groupedAttributeDto.getAttributeCodes(), true);
 		populateCustomFields(groupedAttributeDto.getCustomFields(), groupedAttribute, true);

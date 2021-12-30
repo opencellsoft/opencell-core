@@ -233,7 +233,7 @@ public class CpqQuoteApi extends BaseApi {
 
     @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
-    
+
     @Inject
     private UserAccountService userAccountService;
 
@@ -284,12 +284,12 @@ public class CpqQuoteApi extends BaseApi {
         }
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
-        
+
     	if(quote.getDeliveryDate()!=null && quote.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");
     	}
     	cpqQuote.setDeliveryDate(quote.getDeliveryDate());
-        
+
         cpqQuote.setQuoteLotDuration(quote.getQuoteLotDuration());
         cpqQuote.setOpportunityRef(quote.getOpportunityRef());
         cpqQuote.setCustomerRef(quote.getExternalId());
@@ -396,12 +396,12 @@ public class CpqQuoteApi extends BaseApi {
                 quoteProduct.setDiscountPlan(discountPlan);
                 quoteProduct.setQuote(quoteOffer.getQuoteVersion() != null ? quoteOffer.getQuoteVersion().getQuote() : null);
                 quoteProduct.setQuoteVersion(quoteOffer.getQuoteVersion());
-                
+
             	if(quoteProductDTO.getDeliveryDate()!=null && quoteProductDTO.getDeliveryDate().before(new Date())) {
-            		throw new MeveoApiException("Delivery date should be in the future");	
+            		throw new MeveoApiException("Delivery date should be in the future");
             	}
             	quoteProduct.setDeliveryDate(quoteProductDTO.getDeliveryDate());
-                
+
                 populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
                 quoteProductService.create(quoteProduct);
                 newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
@@ -596,12 +596,12 @@ public class CpqQuoteApi extends BaseApi {
         }
         quote.setSendDate(quoteDto.getSendDate());
 
-        
+
     	if(quoteDto.getDeliveryDate()!=null && quoteDto.getDeliveryDate().before(new Date())) {
-    		throw new MeveoApiException("Delivery date should be in the future");	
+    		throw new MeveoApiException("Delivery date should be in the future");
     	}
     	quote.setDeliveryDate(quoteDto.getDeliveryDate());
-        
+
         quote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
         quote.setOpportunityRef(quoteDto.getOpportunityRef());
         quote.setCustomerRef(quoteDto.getExternalId());
@@ -823,16 +823,16 @@ public class CpqQuoteApi extends BaseApi {
             quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
             quoteOfferDto.setCode(quoteOffer.getCode());
             quoteOfferDto.setDescription(quoteOffer.getDescription());
-            
+
         	if(quoteOfferDto.getDeliveryDate()!=null && quoteOfferDto.getDeliveryDate().before(new Date())) {
-        		throw new MeveoApiException("Delivery date should be in the future");	
+        		throw new MeveoApiException("Delivery date should be in the future");
         	}
         	quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
-            
+
             newPopulateProduct(quoteOfferDto, quoteOffer);
             newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
-    
-    
+
+
             return quoteOfferDto;
         } catch(BusinessException exp){
                 throw new BusinessApiException(exp.getMessage());
@@ -879,9 +879,9 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));
         if (!Strings.isEmpty(quoteOfferDTO.getQuoteLotCode()))
             quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDTO.getQuoteLotCode()));
-        
+
     	if(quoteOfferDTO.getDeliveryDate() != null && quoteOfferDTO.getDeliveryDate().before(new Date())) {
-    		throw new MeveoApiException("Delivery date should be in the future");	
+    		throw new MeveoApiException("Delivery date should be in the future");
     	}
     	quoteOffer.setDeliveryDate(quoteOfferDTO.getDeliveryDate());
         quoteOffer.setQuoteLineType(quoteOfferDTO.getQuoteLineType());
@@ -991,13 +991,13 @@ public class CpqQuoteApi extends BaseApi {
 
         q.setProductVersion(productVersion);
         q.setQuantity(quoteProductDTO.getQuantity());
-        
+
     	if(quoteProductDTO.getDeliveryDate()!=null && quoteProductDTO.getDeliveryDate().before(new Date())) {
-    		throw new MeveoApiException("Delivery date should be in the future");	
+    		throw new MeveoApiException("Delivery date should be in the future");
     	}
     	q.setDeliveryDate(quoteProductDTO.getDeliveryDate());
-        
-        
+
+
         q.setQuoteOffer(quoteOffer);
         q.setQuoteVersion(quoteOffer.getQuoteVersion());
         q.setDiscountPlan(discountPlan);
@@ -1457,17 +1457,11 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
-            if(quoteVersion.getQuoteArticleLines()!=null) {
-            	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
-                 if (!quoteArticleLines.isEmpty()) {
-                 	quoteVersion.getQuoteArticleLines().clear();
-                     quoteVersionService.update(quoteVersion);
-                     quoteArticleLineService.remove(quoteArticleLines);
-                 }
-            }
+        if (quoteVersion.getQuoteArticleLines() != null) {
 
-
-
+            quoteVersion.getQuoteArticleLines().clear();
+            quoteVersionService.update(quoteVersion);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -1934,7 +1928,7 @@ public class CpqQuoteApi extends BaseApi {
     	}
     	return null;
     }
-    
+
     public Date getSubscriptionDeliveryDate(CpqQuote quote, QuoteOffer offer) {
 		if (offer.getDeliveryDate() != null) {
 			return offer.getDeliveryDate();
