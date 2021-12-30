@@ -383,7 +383,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     // update the sequence of other levels
                     dunningLevelInstanceService.decrementSequecesGreaterThanDaysOverdue(collectionPlan, levelInstanceToRemove.getDaysOverdue());
    
-                    String origine = (levelInstanceToRemove.getCollectionPlan()!=null) ? levelInstanceToRemove.getCollectionPlan().getCollectionPlanNumber() : "";
+                    String origine = (levelInstanceToRemove.getCollectionPlan() != null) ? levelInstanceToRemove.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningLevelInstance", new Date(), levelInstanceToRemove.getCollectionPlan(), origine);
                 }
             }
@@ -648,7 +648,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     public Optional<DunningActionInstance> updateDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput, Long actionInstanceId) {
 
         try {
-            DunningActionInstance dunningActionInstanceToUpdate = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
+            DunningActionInstance dunningActionInstanceToUpdate = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("collectionPlan", "dunningLevelInstance"));
             if (dunningActionInstanceToUpdate == null) {
                 throw new EntityDoesNotExistsException("No Dunning Action Instance found with id : " + actionInstanceId);
             }
@@ -763,7 +763,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
             dunningActionInstanceService.update(dunningActionInstanceToUpdate);
 
-            String origine = (dunningActionInstanceToUpdate.getCollectionPlan() !=null) ? dunningActionInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
+            String origine = (dunningActionInstanceToUpdate.getCollectionPlan() != null) ? dunningActionInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
             auditLogService.trackOperation("UPDATE DunningActionInstance", new Date(), dunningActionInstanceToUpdate.getCollectionPlan(), origine, fields);
             return of(dunningActionInstanceToUpdate);
         } catch (MeveoApiException e) {
