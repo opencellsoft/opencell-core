@@ -5,12 +5,14 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
 import static org.meveo.model.payments.ActionChannelEnum.LETTER;
-import static org.meveo.model.payments.ActionTypeEnum.SCRIPT;
-import static org.meveo.model.payments.ActionTypeEnum.SEND_NOTIFICATION;
+import static org.meveo.model.payments.ActionTypeEnum.*;
 import static org.meveo.model.payments.DunningCollectionPlanStatusEnum.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
@@ -19,23 +21,20 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.payments.ActionModeEnum;
-import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DunningCollectionPlanService;
-import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningLevelInstanceService;
+import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless
 public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Long> {
@@ -67,6 +66,15 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private PaymentService paymentService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
+
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
 
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -119,6 +127,41 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                                     || levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(LETTER)) {
                                 sendReminderEmail(levelInstance.getActions().get(i).getDunningAction().getActionNotificationTemplate(),
                                         collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
+                            }
+                        }
+                        if(levelInstance.getActions().get(i).getActionType().equals(RETRY_PAYMENT)) {
+                            BillingAccount billingAccount = collectionPlan.getBillingAccount();
+                            if(billingAccount != null && billingAccount.getCustomerAccount() != null
+                                    && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
+                                PaymentMethod preferredPaymentMethod = collectionPlan.getBillingAccount().getCustomerAccount()
+                                        .getPaymentMethods()
+                                        .stream()
+                                        .filter(PaymentMethod::isPreferred)
+                                        .findFirst()
+                                        .orElseThrow(() -> new BusinessException("No preferred payment method found"));
+                                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue();
+                                List<AccountOperation> accountOperationsToPay =
+                                        accountOperationService.getAOsToPayOrRefundByCA(new Date(1), new Date(),
+                                                OperationCategoryEnum.DEBIT, customerAccount.getId());
+                                List<Long> accountOperationsToPayIds = new ArrayList<>();
+                                if(accountOperationsToPay != null) {
+                                    accountOperationsToPayIds = accountOperationsToPay
+                                            .stream()
+                                            .map(AccountOperation::getId)
+                                            .collect(Collectors.toList());
+                                }
+                                PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+                                if(preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.DIRECTDEBIT)
+                                        || preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.CARD)) {
+                                    try {
+                                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                                true, true, paymentGateway, null, null,
+                                                null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                    } catch (NoAllOperationUnmatchedException | UnbalanceAmountException exception) {
+                                        throw new BusinessException(exception);
+                                    }
+                                }
                             }
                         }
                         levelInstance.getActions().get(i).setActionStatus(DunningActionInstanceStatusEnum.DONE);

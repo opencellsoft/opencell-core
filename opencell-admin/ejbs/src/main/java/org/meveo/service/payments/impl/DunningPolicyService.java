@@ -132,7 +132,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         for (Map.Entry<DunningPolicy, List<Invoice>> entry : eligibleInvoice.entrySet()) {
             DunningPolicy policy = refreshOrRetrieve(entry.getKey());
             Integer dayOverDue = policy.getDunningLevels().stream()
-                    .filter(policyLevel -> policyLevel.getSequence() == 1)
+                    .filter(policyLevel -> policyLevel.getDunningLevel().isReminder())
                     .map(policyLevel -> policyLevel.getDunningLevel().getDaysOverdue())
                     .findFirst()
                     .orElseThrow(BusinessException::new);

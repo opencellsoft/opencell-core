@@ -30,7 +30,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .analyticCode1(entity.getAnalyticCode1()).analyticCode2(entity.getAnalyticCode2()).analyticCode3(entity.getAnalyticCode3()).unitPrice(entity.getUnitPrice())
                 .languageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(entity.getDescriptionI18n()))
                 .customFields(entityToDtoConverter.getCustomFieldsDTO(entity))
-                .invoiceType(ImmutableResource.builder().id(entity.getInvoiceType().getId()).code(entity.getInvoiceType().getCode()).build())
+                .invoiceType(entity.getInvoiceType() != null ? ImmutableResource.builder().id(entity.getInvoiceType().getId()).code(entity.getInvoiceType().getCode()).build(): null)
                 .invoiceTypeEl(entity.getInvoiceTypeEl())
                 .build();
     }

@@ -46,6 +46,7 @@ import javax.print.attribute.standard.Media;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -1507,7 +1508,9 @@ public class CpqQuoteApi extends BaseApi {
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate())));
                         }
 
-                    } catch (RatingException e) {
+                    }catch (NoTaxException e) { 
+                        throw new MeveoApiException(e.getMessage());
+                    }catch (RatingException e) {
                         log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
                                 e.getRejectionReason());
                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode(),e); // e.getBusinessException();
@@ -1528,6 +1531,8 @@ public class CpqQuoteApi extends BaseApi {
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate())));
                          }
 
+                    }catch (NoTaxException e) { 
+                        throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
