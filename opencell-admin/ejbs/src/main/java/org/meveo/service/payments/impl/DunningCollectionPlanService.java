@@ -141,7 +141,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
             collectionPlan.setDunningLevelInstances(createLevelInstances(policy, collectionPlan,
                     collectionPlanStatus, dayOverDue));
         }
-        collectionPlan.setCollectionPlanNumber("C"+collectionPlan.getId());
+        collectionPlan.setCollectionPlanNumber("C" + collectionPlan.getId());
         return update(collectionPlan);
     }
 
@@ -174,21 +174,16 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     }
 
     private DunningLevelInstance createLevelInstance(DunningCollectionPlan collectionPlan,
-                                                  DunningCollectionPlanStatus collectionPlanStatus,
-                                                  Integer dayOverDue, DunningPolicyLevel policyLevel,
-                                                  DunningLevelInstanceStatusEnum status) {
+                                                     DunningCollectionPlanStatus collectionPlanStatus,
+                                                     Integer dayOverDue, DunningPolicyLevel policyLevel,
+                                                     DunningLevelInstanceStatusEnum status) {
         DunningLevelInstance levelInstance = new DunningLevelInstance();
         levelInstance.setCollectionPlan(collectionPlan);
         levelInstance.setCollectionPlanStatus(collectionPlanStatus);
         levelInstance.setLevelStatus(status);
         levelInstance.setSequence(policyLevel.getSequence());
         levelInstance.setDunningLevel(policyLevel.getDunningLevel());
-        if (dayOverDue != null) {
-            levelInstance.setDaysOverdue(dayOverDue);
-        }
-        else {
-            levelInstance.setDaysOverdue(policyLevel.getDunningLevel().getDaysOverdue());
-        }
+        levelInstance.setDaysOverdue(policyLevel.getDunningLevel().getDaysOverdue());
         levelInstanceService.create(levelInstance);
         if(policyLevel.getDunningLevel().getDunningActions() != null
                 && !policyLevel.getDunningLevel().getDunningActions().isEmpty()) {
