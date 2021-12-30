@@ -696,9 +696,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             } else {
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
-                if (pricePlanMatrixLine != null) {
-                    priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
-                }
+               if(pricePlanMatrixLine!=null) {
+                	  priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                    String amountEL=appProvider.isEntreprise()?ppmVersion.getAmountWithoutTaxEL():ppmVersion.getAmountWithTaxEL();
+                    if (!StringUtils.isBlank(amountEL)) {
+                    	priceWithoutTax = evaluateAmountExpression(amountEL,
+                                wo, wo.getChargeInstance().getUserAccount(),
+                                null, priceWithoutTax);
+                    }
+               }
                 if (priceWithoutTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
@@ -1292,13 +1298,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     }
 
     public static boolean isORChargeMatch(ChargeInstance chargeInstance) throws InvalidELException {
-        boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN).
-        	 filter(attributeInstance -> attributeInstance.getBooleanValue()!=null)
-            .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate())).anyMatch(attributeInstance -> !attributeInstance.getBooleanValue());
-
-        if (anyFalseAttribute) {
-            return false;
-        }
+    	if(chargeInstance.getServiceInstance()!=null) {
+    		boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN).
+    	        	 filter(attributeInstance -> attributeInstance.getBooleanValue()!=null)
+    	            .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+    	            .anyMatch(attributeInstance -> attributeInstance.getBooleanValue()==null || !attributeInstance.getBooleanValue());
+  	        
+    		if(anyFalseAttribute) return false;
+  	}
         if (StringUtils.isBlank(chargeInstance.getChargeTemplate().getFilterExpression())) {
             return true;
         }

@@ -148,6 +148,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -1124,9 +1125,19 @@ public class SubscriptionApi extends BaseApi {
             throw e;
         }
         try {
+        	
+        	ServiceInstance serviceInstance=null;
+        	if(!StringUtils.isBlank(postData.getProductCode())) {
+        		 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(postData.getProductCode(), subscription,
+                         InstanceStatusEnum.ACTIVE);
+            	 if (alreadyInstantiatedServices == null ||  alreadyInstantiatedServices.isEmpty()) {
+            		 throw new BusinessException("The product instance "+postData.getProductCode()+" doest not exist for this subscription or is not active");
+            	 }
+            	 serviceInstance=alreadyInstantiatedServices.get(0);
+        	}
 
             oneShotChargeInstanceService
-                    .instantiateAndApplyOneShotCharge(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
+                    .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
@@ -2652,6 +2663,11 @@ public class SubscriptionApi extends BaseApi {
                                 attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
                             if(attributeInstanceDto.getDoubleValue() != null)
                                 attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+                            if(attributeInstanceDto.getBooleanValue() != null)
+	    						attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+	    					if(AttributeTypeEnum.BOOLEAN==attributeInstance.getAttribute().getAttributeType() && attributeInstance.getBooleanValue()==null && attributeInstance.getStringValue()!=null ) {
+	    			        	attributeInstance.setBooleanValue(Boolean.valueOf(attributeInstance.getStringValue()));
+	    			        }
                             attributeInstanceService.create(attributeInstance);
                             serviceInstance.getAttributeInstances().add(attributeInstance);
                         });
@@ -3110,6 +3126,7 @@ public class SubscriptionApi extends BaseApi {
                     orderAttribute.setStringValue(ai.getStringValue());
                     orderAttribute.setDoubleValue(ai.getDoubleValue());
                     orderAttribute.setDateValue(ai.getDateValue());
+                    orderAttribute.setBooleanValue(ai.getBooleanValue());
                     }
                     return orderAttribute;
 

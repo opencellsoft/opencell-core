@@ -26,6 +26,18 @@ public enum ColumnTypeEnum {
                 case PHONE: {
                     return attributeValue.getStringValue().equals(pricePlanMatrixValue.getStringValue());
                 }
+                case EXPRESSION_LANGUAGE: {
+                	System.out.println("ColumnTypeEnum valueMatch="+pricePlanMatrixValue.getStringValue());
+                	 if(attributeValue.getDoubleValue()!=null) {
+                		 System.out.println("ColumnTypeEnum valueMatch double="+attributeValue.getDoubleValue());
+	       				 return java.lang.Double.valueOf(pricePlanMatrixValue.getStringValue()).equals(attributeValue.getDoubleValue());
+	       			 }else if(attributeValue.getBooleanValue()!=null) {
+	       					return attributeValue.getBooleanValue().equals(java.lang.Boolean.valueOf(pricePlanMatrixValue.getStringValue()));
+	    	       	 }else {
+	    	       		System.out.println("ColumnTypeEnum valueMatch string="+attributeValue.getStringValue());
+	    	       		return pricePlanMatrixValue.getStringValue().equals(attributeValue.getStringValue());
+	       			}
+                }
                 default:
                     return false;
 

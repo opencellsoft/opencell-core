@@ -4884,6 +4884,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				return invoiceLine.getQuote().getSeller();
 			}
 		}
+		if(invoice.getCpqQuote()!=null) {
+			if(invoice.getCpqQuote().getSeller()!=null) {
+				return invoice.getCpqQuote().getSeller();
+			}
+		}
     	if (invoiceLine.getBillingAccount() != null) {
             return invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
