@@ -11707,5 +11707,15 @@ order by date_trunc('month', i.invoice_date) DESC
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
 
     </changeSet>
+    
+    <changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA">
+    	<renameTable newTableName="finance_settings" oldTableName="security_deposit_settings"/>
+    	<renameSequence newSequenceName="finance_settings_seq" oldSequenceName="security_deposit_settings_seq" />
+
+    	<dropPrimaryKey constraintName="security_deposit_settings_pkey"  
+            schemaName="public"
+            tableName="finance_settings"/>
+        <addPrimaryKey columnNames="id" constraintName="finance_settings_pkey" tableName="finance_settings" />
+    </changeSet>
 
 </databaseChangeLog>
