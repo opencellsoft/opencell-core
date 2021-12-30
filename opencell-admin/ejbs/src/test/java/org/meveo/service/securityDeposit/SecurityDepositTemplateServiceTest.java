@@ -3,10 +3,12 @@ package org.meveo.service.securityDeposit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
+import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.mockito.InjectMocks;
@@ -14,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecurityDepositTemplateServiceTest {
@@ -104,6 +107,31 @@ public class SecurityDepositTemplateServiceTest {
         {
             Assert.assertTrue(exception instanceof InvalidParameterException);
             Assert.assertEquals("The min amount cannot exceed the max amount", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    public void updateStatus(){
+        SecurityDepositTemplateService businessService = Mockito.spy(securityDepositTemplateService);
+        SecurityDepositTemplate securityDepositTemplate = new SecurityDepositTemplate();
+        securityDepositTemplate.setStatus(SecurityTemplateStatusEnum.ACTIVE);
+        Mockito.doReturn(securityDepositTemplate).when((BusinessService)businessService).findById(Mockito.any());
+        Mockito.doReturn(securityDepositTemplate).when((BusinessService)businessService).update(Mockito.any());
+
+        businessService.updateStatus(Collections.singleton(1L), "DRAFT");
+    }
+
+     @Test
+    public void checkStatusTransition_archived_to_active(){
+        SecurityDepositTemplate securityDepositTemplate = new SecurityDepositTemplate();
+        securityDepositTemplate.setStatus(SecurityTemplateStatusEnum.ARCHIVED);
+        try {
+        securityDepositTemplateService.checkStatusTransition(securityDepositTemplate,  SecurityTemplateStatusEnum.ACTIVE);
+        }catch (Exception exception)
+        {
+            Assert.assertTrue(exception instanceof BusinessException);
+            Assert.assertEquals("cannot activate an archived security deposit template", exception.getMessage());
         }
 
     }
