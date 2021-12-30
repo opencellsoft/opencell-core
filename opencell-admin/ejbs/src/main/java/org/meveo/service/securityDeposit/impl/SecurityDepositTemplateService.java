@@ -1,24 +1,33 @@
 package org.meveo.service.securityDeposit.impl;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
+import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.Set;
 
 @Stateless
 public class SecurityDepositTemplateService extends BusinessService<SecurityDepositTemplate> {
 
     @Inject
     private CurrencyService currencyService;
+
+    @Inject
+    private AuditLogService auditLogService;
+
     @Override public void create(SecurityDepositTemplate entity) throws BusinessException {
         entity.setCurrency(currencyService.findById(entity.getCurrency().getId()));
         checkParameters(entity);
         super.create(entity);
+        auditLogService.trackOperation("UPDATE", new Date(), entity, entity.getCode());
     }
 
     @Override
@@ -26,7 +35,34 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
 
         entity.setCurrency(currencyService.findById(entity.getCurrency().getId()));
         checkParameters(entity);
-        return super.update(entity);
+        SecurityDepositTemplate updatedSecurityDepositTemplate =  super.update(entity);
+        auditLogService.trackOperation("UPDATE", new Date(), updatedSecurityDepositTemplate, updatedSecurityDepositTemplate.getCode());
+        return updatedSecurityDepositTemplate;
+    }
+
+    public void updateStatus(Set<Long> ids, String status)
+    {
+        for(Long id: ids)
+        {
+            var securityDepositTemplateModel = findById(id);
+            if(securityDepositTemplateModel == null) {
+            throw new EntityDoesNotExistsException("security deposit template with id "+id+" does not exist.");
+        }
+            checkStatusTransition(securityDepositTemplateModel, SecurityTemplateStatusEnum.valueOf(status));
+            securityDepositTemplateModel.setStatus(SecurityTemplateStatusEnum.valueOf(status));
+            update(securityDepositTemplateModel);
+            auditLogService.trackOperation("UPDATE STATUS", new Date(), securityDepositTemplateModel, securityDepositTemplateModel.getCode());
+
+        }
+
+    }
+
+    public void checkStatusTransition(SecurityDepositTemplate securityDepositTemplate, SecurityTemplateStatusEnum status)
+    {
+        if(SecurityTemplateStatusEnum.ARCHIVED == securityDepositTemplate.getStatus()
+                && status == SecurityTemplateStatusEnum.ACTIVE)
+            throw new BusinessException("cannot activate an archived security deposit template");
+
     }
 
     public void checkParameters(SecurityDepositTemplate securityDepositTemplate)
