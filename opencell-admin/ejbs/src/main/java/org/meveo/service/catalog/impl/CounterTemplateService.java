@@ -27,9 +27,11 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
+import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -112,5 +114,12 @@ public class CounterTemplateService extends BusinessService<CounterTemplate> {
         }
         return counterTemplate;
     }
+	
+	@SuppressWarnings("unchecked")
+	public List<CounterTemplate> listAll() {
+		QueryBuilder qb = new QueryBuilder(CounterTemplate.class, "c");
+		qb.addBooleanCriterion("disabled", false);
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 
 }
