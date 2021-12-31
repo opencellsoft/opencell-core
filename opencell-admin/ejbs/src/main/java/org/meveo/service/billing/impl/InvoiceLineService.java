@@ -131,15 +131,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(entity.getValueDate()!=null) {
     		date=entity.getValueDate();
     	}
-    	Seller seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     	BillingAccount billingAccount=entity.getBillingAccount();
+    	Seller seller=null;
     	if(invoice!=null) {
-    	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
-    	 billingAccount=invoice.getBillingAccount();
+       	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+       	 billingAccount=invoice.getBillingAccount();
+       	}
+    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+    	if(seller==null) {
+    		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
     	}
-    	
     	 if (accountingArticle != null) {
-             billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
@@ -524,11 +526,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if(invoiceLine.getAccountingArticle()!=null && invoiceLine.getTax()==null) {
         	AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 			if (accountingArticle != null && invoiceLine.getBillingAccount()!=null) {
+				BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceLine.getBillingAccount());
+				Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
+		        if (isExonerated == null) {
+		            isExonerated = billingAccountService.isExonerated(billingAccount);
+		        }
 				TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(),
-						invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller(),
-						invoiceLine.getBillingAccount(), null,
+						billingAccount.getCustomerAccount().getCustomer().getSeller(),
+						billingAccount, null,
 						invoiceLine.getValueDate() != null ? invoiceLine.getValueDate() : new Date(), null,
-						invoiceLine.getBillingAccount().isExoneratedFromtaxes(), false, invoiceLine.getTax());
+						isExonerated, false, invoiceLine.getTax());
 
 				invoiceLine.setTax(recalculatedTaxInfo.tax);
 
