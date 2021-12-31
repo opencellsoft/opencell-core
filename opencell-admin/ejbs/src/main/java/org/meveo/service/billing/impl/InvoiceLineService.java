@@ -135,6 +135,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	BillingAccount billingAccount=entity.getBillingAccount();
     	if(invoice!=null) {
     	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+    	 billingAccount=invoice.getBillingAccount();
     	}
     	
     	 if (accountingArticle != null) {
@@ -207,7 +208,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
- public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+ public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -249,6 +250,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setValueDate(new Date());
         
      create(invoiceLine);
+     
+     return invoiceLine;
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
@@ -446,8 +449,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @return
 	 */
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
-		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
+		InvoiceLine invoiceLine=new InvoiceLine();
 		invoiceLine.setInvoice(invoice);
+		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
+		
 		create(invoiceLine);
 		return invoiceLine;
 	}
@@ -498,6 +503,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}
 		if(resource.getBillingAccountCode()!=null) {
 			invoiceLine.setBillingAccount((BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, resource.getBillingAccountCode()));
+        }else if(invoiceLine.getInvoice()!=null){
+        	invoiceLine.setBillingAccount(invoiceLine.getInvoice().getBillingAccount());
         }
         if (resource.getOfferTemplateCode() != null) {
             invoiceLine.setOfferTemplate((OfferTemplate) tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
@@ -516,7 +523,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         if(invoiceLine.getAccountingArticle()!=null && invoiceLine.getTax()==null) {
         	AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
-			if (accountingArticle != null) {
+			if (accountingArticle != null && invoiceLine.getBillingAccount()!=null) {
 				TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(),
 						invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller(),
 						invoiceLine.getBillingAccount(), null,
