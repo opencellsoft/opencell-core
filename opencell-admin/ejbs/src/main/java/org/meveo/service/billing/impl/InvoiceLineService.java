@@ -72,6 +72,7 @@ import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
+import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
 
 @Stateless
@@ -130,21 +131,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(entity.getValueDate()!=null) {
     		date=entity.getValueDate();
     	}
-    	Seller seller=null;
-    	BillingAccount billingAccount=null;
+    	Seller seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	BillingAccount billingAccount=entity.getBillingAccount();
     	if(invoice!=null) {
-    	   if(invoice.getInvoiceDate()!=null) {
-        		date=invoice.getInvoiceDate();
-        	}
-    	 seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	 seller=sellerService.retrieveIfNotManaged(seller);
-    	 billingAccount=billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
-    	} else if (entity.getBillingAccount()!=null) {
-    		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    		 billingAccount = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
-    	 }
+    	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+    	}
     	
-    	 if (accountingArticle != null ) {
+    	 if (accountingArticle != null) {
+             billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+             seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
     	super.create(entity);
@@ -213,8 +208,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 
  public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        Date operationDate=new Date();
-        Seller seller=null;
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -229,8 +222,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setQuote(quote);
             billingAccount = quote.getBillableAccount();
             invoiceLine.setBillingAccount(billingAccount);
-            operationDate=quote.getQuoteDate();
-            seller=quote.getSeller();
         }
         CommercialOrder commercialOrder=null;
         if (entityToInvoice instanceof CommercialOrder) {
@@ -240,15 +231,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
             billingAccount = commercialOrder.getBillingAccount();
         	invoiceLine.setBillingAccount(billingAccount);
-        	operationDate=commercialOrder.getOrderDate();
-        	seller=commercialOrder.getSeller();
 
         }
         if (entityToInvoice instanceof BillingAccount) {
         	entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
         	billingAccount = ((BillingAccount) entityToInvoice);
         	invoiceLine.setBillingAccount(billingAccount);
-        	seller=billingAccount.getCustomerAccount().getCustomer().getSeller();
 
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
@@ -259,9 +247,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setTaxRate(totalTaxRate);
       
         invoiceLine.setValueDate(new Date());
-     if (accountingArticle != null ) {
-         setApplicableTax(accountingArticle, operationDate, seller, billingAccount, invoiceLine);
-     }
+        
      create(invoiceLine);
     }
 
@@ -281,6 +267,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     tax.getPercent());
             invoiceLine.setTax(tax);
             invoiceLine.setTaxRecalculated(taxRecalculated);
+            if(!tax.getPercent().equals(invoiceLine.getTaxRate())) {
+
+         	   invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+
+                invoiceLine.setTaxRate(tax.getPercent());
+            }
         }
     }
 
@@ -522,6 +514,26 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
+        if(invoiceLine.getAccountingArticle()!=null && invoiceLine.getTax()==null) {
+        	AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
+			if (accountingArticle != null) {
+				TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(),
+						invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller(),
+						invoiceLine.getBillingAccount(), null,
+						invoiceLine.getValueDate() != null ? invoiceLine.getValueDate() : new Date(), null,
+						invoiceLine.getBillingAccount().isExoneratedFromtaxes(), false, invoiceLine.getTax());
+
+				invoiceLine.setTax(recalculatedTaxInfo.tax);
+
+				invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+			}
+
+		}
+        /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
+
+        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+
+
 
         invoiceLine.setValidity(datePeriod);
         invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
