@@ -13,6 +13,7 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import javax.ejb.Stateless;
@@ -27,6 +28,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
@@ -51,6 +53,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
@@ -73,6 +76,7 @@ import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
+import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
 
 @Stateless
@@ -260,14 +264,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setTaxRate(totalTaxRate);
       
         invoiceLine.setValueDate(new Date());
-     if (accountingArticle != null ) {
-         setApplicableTax(accountingArticle, operationDate, seller, billingAccount, invoiceLine);
-     }
         create(invoiceLine);
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
-
         Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
         Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
         if (isExonerated == null) {
@@ -283,6 +283,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     tax.getPercent());
             invoiceLine.setTax(tax);
             invoiceLine.setTaxRecalculated(taxRecalculated);
+            
+            if(!tax.getPercent().equals(invoiceLine.getTaxRate())) {
+            	   invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+                   invoiceLine.setTaxRate(tax.getPercent());
+            }
+         
+            
         }
     }
 
@@ -488,10 +495,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 					invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
 					if(resource.getQuantity() != null) {
 						invoiceLine.setAmountWithoutTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
+						invoiceLine.setAmountWithTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
+						/****amountWithoutTax and amountWithTax will be recalculated bellow according to tax percent and the business model (b2b or b2c)*/
 					}
 				}else {
 					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 				}
+				if(invoiceLine.getTax()==null) {
+					  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
+							  invoiceLine.getBillingAccount(), null, invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, invoiceLine.getBillingAccount().isExoneratedFromtaxes(), false, invoiceLine.getTax());
+					  invoiceLine.setTax(recalculatedTaxInfo.tax);
+					  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+				}
+				
 			}else {
 				throw new BusinessException("You cannot create an invoice line without a price");
 			}
@@ -539,6 +555,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
+        
+
+        /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
+        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
 
         invoiceLine.setValidity(datePeriod);
         invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
