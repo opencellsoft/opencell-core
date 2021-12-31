@@ -247,4 +247,15 @@ public class CardPaymentMethod extends PaymentMethod {
 
         return (now.getTime().after(expiration.getTime())) ? true : false;
     }
+    
+    @Override
+    public void anonymize(String code) {
+        super.anonymize(code);
+        setOwner(code);
+        setMonthExpiration(null);
+        setYearExpiration(null);
+        setCardNumber(code);
+        setCardType(null);
+        setIssueNumber(code);
+    }
 }

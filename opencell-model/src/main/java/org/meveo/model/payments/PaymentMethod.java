@@ -293,5 +293,15 @@ public abstract class PaymentMethod extends EnableEntity {
         
         return true;
     }
+    
+    public void anonymize(String code) {
+        setInfo1(code);
+        setInfo2(code);
+        setInfo3(code);
+        setInfo4(code);
+        setInfo5(code);
+        setTokenId(code);
+        setUserId(code);
+    }
 
 }

@@ -616,6 +616,11 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
+
+        if(isNotEmpty(this.getPaymentMethods())) {
+        	this.getPaymentMethods().forEach(payment -> payment.anonymize(code));
+        }
+		
         if(isNotEmpty(this.billingAccounts) ) {
 			this.billingAccounts.forEach(ba -> ba.anonymize(code));
 		}
