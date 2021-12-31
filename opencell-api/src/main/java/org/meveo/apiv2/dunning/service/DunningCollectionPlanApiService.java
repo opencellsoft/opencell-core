@@ -328,20 +328,20 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     if (levelInstanceToRemove == null) {
                         throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + levelInstanceId);
                     }
-                    // User cannot delete the end level
+                    // User can not delete the end level
                     if (levelInstanceToRemove.getDunningLevel().isEndOfDunningLevel()) {
-                        throw new ActionForbiddenException("Cannot delete the end level");
+                        throw new ActionForbiddenException("Can not delete the end level");
                     }
                     DunningCollectionPlan collectionPlan = levelInstanceToRemove.getCollectionPlan();
-                    // User cannot the current dunning level instance
+                    // User can not the current dunning level instance
                     Integer currentDunningLevelSequence = collectionPlan.getCurrentDunningLevelSequence();
                     if (levelInstanceToRemove.getSequence() == currentDunningLevelSequence) {
-                        throw new ActionForbiddenException("Cannot delete the current dunning level instance");
+                        throw new ActionForbiddenException("Can not delete the current dunning level instance");
                     }
                     // If the dunningLevelInstance status is DONE or IN_PROGRESS
                     if (levelInstanceToRemove.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE
                             || levelInstanceToRemove.getLevelStatus() == DunningLevelInstanceStatusEnum.IN_PROGRESS) {
-                        throw new ActionForbiddenException("Cannot delete dunningLevelInstance with status DONE or IN_PROGRESS");
+                        throw new ActionForbiddenException("Can not delete dunningLevelInstance with status DONE or IN_PROGRESS");
                     }
                     if (levelInstanceToRemove.getActions() != null) {
                         for (DunningActionInstance action : levelInstanceToRemove.getActions()) {
@@ -408,15 +408,15 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                         throw new EntityDoesNotExistsException("No Dunning Action Instance found with id : " + actionInstanceId);
                     }
 
-                    // 1- User cannot either modify or delete the end level!
+                    // 1- User can not either modify or delete the end level!
                     DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningActionInstance.getDunningLevelInstance().getId(),
                         Arrays.asList("dunningLevel", "actions", "collectionPlan"));
                     if (dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
-                        throw new ActionForbiddenException("Cannot modify or delete the end level");
+                        throw new ActionForbiddenException("Can not modify or delete the end level");
                     }
                     // 2- If the dunningActionInstance status is DONE ==> it can not be deleted.
                     if (dunningActionInstance.getActionStatus() != null && dunningActionInstance.getActionStatus() == DunningActionInstanceStatusEnum.DONE) {
-                        throw new ActionForbiddenException("Cannot delete an action instance with status DONE");
+                        throw new ActionForbiddenException("Can not delete an action instance with status DONE");
                     }
                     // 3- If the remaining DunningActionInstance of the dunningLevelInstance are DONE
                     List<DunningActionInstance> actions = dunningLevelInstance.getActions();
@@ -521,11 +521,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             // 1- Can not update the dunning level instance if :
             // status is DONE
             if (levelInstanceToUpdate.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
-                throw new ActionForbiddenException("Cannot update a DONE dunningLevelInstance");
+                throw new ActionForbiddenException("Can not update a DONE dunningLevelInstance");
             }
             // dunningLevel.isReminderLevel is TRUE
             if (levelInstanceToUpdate.getDunningLevel().isReminder()) {
-                throw new ActionForbiddenException("Can not create a new dunning level instance if dunningLevel.isReminderLevel is TRUE");
+                throw new ActionForbiddenException("Can not update a new dunning level instance if dunningLevel.isReminderLevel is TRUE");
             }
 
             List<String> fields = new ArrayList<>();
