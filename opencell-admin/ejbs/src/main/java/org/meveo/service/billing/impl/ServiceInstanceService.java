@@ -38,6 +38,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -132,6 +135,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+    
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -510,6 +516,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 }
 
                 oneShotChargeInstanceService.update(oneShotChargeInstance);
+                instanciateCounterPeriods(oneShotChargeInstance);
             }
         }
 
@@ -535,10 +542,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 log.error("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getMessage(), e);
                 throw e;
             }
+            instanciateCounterPeriods(recurringChargeInstance);
         }
 
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
+            instanciateCounterPeriods(usageChargeInstance);
         }
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
@@ -1137,6 +1146,22 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return getEntityManager().createNamedQuery("ServiceInstance.findByServiceCodeAndSubscriptionCode") //
             .setParameter("code", code).setParameter("subscriptionCode", subscriptionCode).getResultList();
 
+    }
+    
+    public void instanciateCounterPeriods(ChargeInstance chargeInstance) {
+    	CounterPeriod counterPeriod = null;
+    	// accumulatorCounter
+    	for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
+    		if (counterInstance != null) {
+    			counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance,chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+    					chargeInstance, chargeInstance.getServiceInstance());
+    		}
+    	}
+    	// standard counter
+    	if (chargeInstance.getCounter() != null) {
+    		counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(),chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+    				chargeInstance, chargeInstance.getServiceInstance());
+    	}
     }
 
 }
