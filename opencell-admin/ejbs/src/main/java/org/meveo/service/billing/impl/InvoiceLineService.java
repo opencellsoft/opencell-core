@@ -138,22 +138,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(entity.getValueDate()!=null) {
     		date=entity.getValueDate();
     	}
+    	BillingAccount billingAccount=entity.getBillingAccount();
     	Seller seller=null;
-    	BillingAccount billingAccount=null;
     	if(invoice!=null) {
-    	   if(invoice.getInvoiceDate()!=null) {
-        		date=invoice.getInvoiceDate();
-        	}
-    	 seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	 billingAccount=invoice.getBillingAccount();
+       	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+       	 billingAccount=invoice.getBillingAccount();
+       	}
+    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+    	if(seller==null) {
+    		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
     	}
-    	 else if (entity.getBillingAccount()!=null) {
-    		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    		 billingAccount=entity.getBillingAccount();
-    	 }
-    	
     	 if (accountingArticle != null) {
-             billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
@@ -222,9 +217,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
- public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, OrderOffer orderOffer,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-	   Date operationDate=new Date();
-       Seller seller=null;
+ public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, OrderOffer orderOffer,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+	  
        BillingAccount billingAccount = null;
     	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -241,8 +235,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setQuote(quote);
             billingAccount = quote.getBillableAccount();
             invoiceLine.setBillingAccount(billingAccount);
-            operationDate=quote.getQuoteDate();
-            seller=quote.getSeller();
         }
         CommercialOrder commercialOrder=null;
         if (entityToInvoice instanceof CommercialOrder) {
@@ -252,8 +244,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
             billingAccount = commercialOrder.getBillingAccount();
         	invoiceLine.setBillingAccount(billingAccount);
-        	operationDate=commercialOrder.getOrderDate();
-        	seller=commercialOrder.getSeller();
+        }
+        if (entityToInvoice instanceof BillingAccount) {
+        	entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
+        	billingAccount = ((BillingAccount) entityToInvoice);
+        	invoiceLine.setBillingAccount(billingAccount);
+
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null)?amountWithoutTaxToBeInvoiced:accountingArticle.getUnitPrice();
@@ -265,6 +261,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
       
         invoiceLine.setValueDate(new Date());
         create(invoiceLine);
+        return invoiceLine;
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
@@ -462,8 +459,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @return
 	 */
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
-		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
+		InvoiceLine invoiceLine=new InvoiceLine();
 		invoiceLine.setInvoice(invoice);
+		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
 		create(invoiceLine);
 		return invoiceLine;
 	}
@@ -487,10 +485,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+		AccountingArticle accountingArticle=null;
+		if (resource.getAccountingArticleCode() != null){
+			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
+		}	
 		
 		if(invoiceLine.getUnitPrice() == null) {
-			if (resource.getAccountingArticleCode() != null){
-				AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 				if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
 					invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
 					if(resource.getQuantity() != null) {
@@ -501,17 +501,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 				}else {
 					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 				}
-				if(invoiceLine.getTax()==null) {
-					  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
-							  invoiceLine.getBillingAccount(), null, invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, invoiceLine.getBillingAccount().isExoneratedFromtaxes(), false, invoiceLine.getTax());
-					  invoiceLine.setTax(recalculatedTaxInfo.tax);
-					  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
-				}
-				
-			}else {
-				throw new BusinessException("You cannot create an invoice line without a price");
-			}
 		}
+		
 		
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
@@ -533,12 +524,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}
 		if(resource.getTaxCode()!=null) {
 			invoiceLine.setTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTaxCode()));
+			invoiceLine.setTaxRate(invoiceLine.getTax().getPercent());
 		}
 		if(resource.getOrderLotCode()!=null) {
 			invoiceLine.setOrderLot((OrderLot)tryToFindByEntityClassAndCode(OrderLot.class, resource.getOrderLotCode()));
 		}
 		if(resource.getBillingAccountCode()!=null) {
 			invoiceLine.setBillingAccount((BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, resource.getBillingAccountCode()));
+        } else if(invoiceLine.getInvoice()!=null){
+        	invoiceLine.setBillingAccount(invoiceLine.getInvoice().getBillingAccount());
         }
         if (resource.getOfferTemplateCode() != null) {
             invoiceLine.setOfferTemplate((OfferTemplate) tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
@@ -557,6 +551,18 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         
 
+		if(invoiceLine.getTax()==null  && accountingArticle != null && invoiceLine.getBillingAccount()!=null)  {
+			BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceLine.getBillingAccount());
+			
+			  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
+					  billingAccount.getCustomerAccount().getCustomer().getSeller(), 
+					  billingAccount, null, 
+					  invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
+				      billingAccount.isExoneratedFromtaxes(), false, invoiceLine.getTax());
+			  invoiceLine.setTax(recalculatedTaxInfo.tax);
+			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+		}
+		
         /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
         invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
 
