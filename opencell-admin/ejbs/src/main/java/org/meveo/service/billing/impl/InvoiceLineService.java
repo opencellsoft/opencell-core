@@ -131,15 +131,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(entity.getValueDate()!=null) {
     		date=entity.getValueDate();
     	}
-    	Seller seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     	BillingAccount billingAccount=entity.getBillingAccount();
+    	Seller seller=null;
     	if(invoice!=null) {
-    	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
-    	 billingAccount=invoice.getBillingAccount();
+       	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+       	 billingAccount=invoice.getBillingAccount();
+       	}
+    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+    	if(seller==null) {
+    		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
     	}
-    	
     	 if (accountingArticle != null) {
-             billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
