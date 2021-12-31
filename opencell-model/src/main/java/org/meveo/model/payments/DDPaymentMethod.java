@@ -115,5 +115,14 @@ public class DDPaymentMethod extends PaymentMethod {
 				+ ",  bank_name = " + bc.getBankName() + "," + " bic = " + bc.getBic() + ", iban = " + bc.getIban()
 				+ ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
 	}
+	
+	public void anonymize(String code) {
+	    super.anonymize(code);
+	    setMandateIdentification(code);
+	    setMandateDate(null);
+	    if(bankCoordinates != null) {
+	        bankCoordinates.anonymize(code);
+	    }
+    }
 
 }
