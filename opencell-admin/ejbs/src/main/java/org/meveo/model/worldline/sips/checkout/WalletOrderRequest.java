@@ -5,12 +5,14 @@ import org.meveo.model.worldline.sips.BaseRequest;
 public class WalletOrderRequest extends BaseRequest {
     private String amount;
     private String currencyCode;
+    private String initialSchemeTransactionIdentifier;
     private String merchantWalletId;
     private String orderChannel;
     private String paymentMeanId;
     private String transactionReference;
-    private String initialSchemeTransactionIdentifier;
     private String paymentPattern;
+    
+    
 
     public String getTransactionReference() {
         return transactionReference;
@@ -60,12 +62,14 @@ public class WalletOrderRequest extends BaseRequest {
         this.paymentMeanId = paymentMeanId;
     }
 
+
+
 	public String getInitialSchemeTransactionIdentifier() {
 		return initialSchemeTransactionIdentifier;
 	}
 
-	public void setInitialSchemeTransactionIdentifier(String schemeTransactionIdentifier) {
-		this.initialSchemeTransactionIdentifier = schemeTransactionIdentifier;
+	public void setInitialSchemeTransactionIdentifier(String initialSchemeTransactionIdentifier) {
+		this.initialSchemeTransactionIdentifier = initialSchemeTransactionIdentifier;
 	}
 
 	public String getPaymentPattern() {
@@ -75,7 +79,7 @@ public class WalletOrderRequest extends BaseRequest {
 	public void setPaymentPattern(String paymentPattern) {
 		this.paymentPattern = paymentPattern;
 	}
-	
+
 	
     
 }
