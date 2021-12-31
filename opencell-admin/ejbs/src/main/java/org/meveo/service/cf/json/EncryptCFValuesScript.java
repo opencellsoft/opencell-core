@@ -30,6 +30,7 @@ public class EncryptCFValuesScript extends Script  {
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
 	static final String UTF_8_ENCODING = "UTF-8";
 	static final String ENCRYPTION_ALGORITHM = "AES/ECB/PKCS5PADDING";
