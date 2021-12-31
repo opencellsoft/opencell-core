@@ -524,11 +524,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if(invoiceLine.getAccountingArticle()!=null && invoiceLine.getTax()==null) {
         	AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 			if (accountingArticle != null && invoiceLine.getBillingAccount()!=null) {
+				BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceLine.getBillingAccount());
 				TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(),
-						invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller(),
-						invoiceLine.getBillingAccount(), null,
+						billingAccount.getCustomerAccount().getCustomer().getSeller(),
+						billingAccount, null,
 						invoiceLine.getValueDate() != null ? invoiceLine.getValueDate() : new Date(), null,
-						invoiceLine.getBillingAccount().isExoneratedFromtaxes(), false, invoiceLine.getTax());
+						billingAccount.isExoneratedFromtaxes(), false, invoiceLine.getTax());
 
 				invoiceLine.setTax(recalculatedTaxInfo.tax);
 
