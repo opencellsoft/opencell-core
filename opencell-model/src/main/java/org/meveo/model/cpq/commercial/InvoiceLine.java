@@ -59,7 +59,6 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  * @version 11.0
  *
  */
-@SuppressWarnings("serial")
 @Entity
 @Table(name = "cpq_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -104,8 +103,12 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		})
 public class InvoiceLine extends AuditableEntity {
 
-	
-	@ManyToOne(fetch = LAZY)
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 7347240213099322047L;
+
+    @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "invoice_id")
 	private Invoice invoice;
 	
