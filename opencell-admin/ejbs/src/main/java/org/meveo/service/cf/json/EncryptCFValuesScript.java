@@ -108,7 +108,7 @@ public class EncryptCFValuesScript extends Script  {
 	    }
 		for(Map.Entry<Long, String> entry :map.entrySet()) {
 				int upateEntity = accountentityService.getEntityManager()
-						.createNativeQuery("update  Account_entity set cf_Values='"+encrypt(entry.getValue())+"' where  id="+entry.getValue())
+						.createNativeQuery("update  Account_entity set cf_Values='"+cryptageString(entry.getValue())+"' where  id="+entry.getValue())
 						.executeUpdate();
 				
 				
