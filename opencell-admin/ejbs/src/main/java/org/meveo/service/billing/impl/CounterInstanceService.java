@@ -420,7 +420,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return Found or created counter period or NULL if counter period can not be created because of calendar limitations
      * @throws BusinessException business exception
      */
-    private CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws BusinessException {
+    public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws BusinessException {
         CounterPeriod counterPeriod = getCounterPeriodByDate(counterInstance, date);
 
         if (counterPeriod != null) {
