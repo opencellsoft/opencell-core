@@ -20,6 +20,7 @@ package org.meveo.service.billing.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -917,5 +918,19 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         context.put(WALLET_OPERATION, walletOperation);
         return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filterEl, context);
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<Long> findByCounterAndActiveService(String counterTemplateCode) { 
+    	List<Long> ids=new ArrayList<>();
+    	try {
+    		ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndActiveService")
+    				           .setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("findByCounterAndActiveService error ", e.getMessage());
+    	}
+
+    	return ids;
+    } 
 
 }

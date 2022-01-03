@@ -20,6 +20,7 @@ package org.meveo.service.catalog.impl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -782,8 +783,8 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	    				attributeValue.setId(null);
     	       			 if(value instanceof Boolean) {
     	       				 attributeValue.setBooleanValue((Boolean)value);
-    	       			 }else if(value instanceof Number) {
-    	       					attributeValue.setDoubleValue(((Number)value).doubleValue());
+    	       			 }else if(NumberUtils.isCreatable(value.toString().trim())) {
+    	       					attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
     	       			 }else {
     	       				attributeValue.setStringValue((String)value);
     	       			}

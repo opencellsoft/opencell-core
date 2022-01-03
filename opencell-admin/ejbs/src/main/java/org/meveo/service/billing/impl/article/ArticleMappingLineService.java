@@ -70,8 +70,8 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	        }else {
 	        	articleMappingLineUpdated.setArticleMapping(null);
 	        }
-	        articleMappingLine.setAccountingArticle(accountingArticle);
-	        populateArticleMappingLine(articleMappingLine);
+	        articleMappingLineUpdated.setAccountingArticle(accountingArticle);
+	        populateArticleMappingLineForUpdate(articleMappingLineUpdated,articleMappingLine);
 	        
 	        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
 	        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
@@ -107,6 +107,21 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
         if(articleMappingLine.getChargeTemplate() != null){
             ChargeTemplate chargeTemplate = (ChargeTemplate) tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
             articleMappingLine.setChargeTemplate(chargeTemplate);
+        }
+    }
+	
+	private void populateArticleMappingLineForUpdate(ArticleMappingLine updatedArticleMappingLine,ArticleMappingLine articleMappingLine) {
+    	if(articleMappingLine.getOfferTemplate() != null){
+            OfferTemplate offerTemplate = (OfferTemplate) tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
+            updatedArticleMappingLine.setOfferTemplate(offerTemplate);
+        }
+        if(articleMappingLine.getProduct() != null){
+        	Product product = (Product) tryToFindByCodeOrId(articleMappingLine.getProduct());
+        	updatedArticleMappingLine.setProduct(product);
+        }
+        if(articleMappingLine.getChargeTemplate() != null){
+            ChargeTemplate chargeTemplate = (ChargeTemplate) tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
+            updatedArticleMappingLine.setChargeTemplate(chargeTemplate);
         }
     }
 

@@ -59,8 +59,8 @@ public class Media extends BusinessCFEntity{
 	/**
 	 * short name of the media
 	 */
-	@Column(name = "media_name", length = 20, nullable = false)
-	@Size(max = 20)
+	@Column(name = "media_name", length = 255, nullable = false)
+	@Size(max = 255)
 	@NotNull
 	private String mediaName;
 	

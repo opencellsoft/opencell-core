@@ -202,7 +202,7 @@ public class MediationApi extends BaseApi {
             return createChargeCDRResultDto(walletOperations, chargeCDRDto.isReturnWalletOperations());                    
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
-            throw new MeveoApiException(e.getRejectionCause().toString());
+            throw new MeveoApiException(e.getRejectionCause()!=null?e.getRejectionCause().toString():e.getMessage());
         } finally {
             if (persistCDR && cdr != null) {
                 cdrService.create(cdr);
