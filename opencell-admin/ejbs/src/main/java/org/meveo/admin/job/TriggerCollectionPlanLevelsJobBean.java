@@ -5,37 +5,32 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
 import static org.meveo.model.payments.ActionChannelEnum.LETTER;
-import static org.meveo.model.payments.ActionTypeEnum.SCRIPT;
-import static org.meveo.model.payments.ActionTypeEnum.SEND_NOTIFICATION;
+import static org.meveo.model.payments.ActionTypeEnum.*;
 import static org.meveo.model.payments.DunningCollectionPlanStatusEnum.*;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.exception.UnbalanceAmountException;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.payments.ActionModeEnum;
-import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.communication.impl.EmailSender;
-import org.meveo.service.communication.impl.EmailTemplateService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DunningCollectionPlanService;
-import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningLevelInstanceService;
+import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.ApplicationProvider;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless
 public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Long> {
@@ -56,17 +51,16 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
     private DunningLevelInstanceService levelInstanceService;
 
     @Inject
-    private EmailSender emailSender;
-
-    @Inject
-    private EmailTemplateService emailTemplateService;
-
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
-    @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private PaymentService paymentService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
+
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
 
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -117,8 +111,43 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                         if (levelInstance.getActions().get(i).getActionType().equals(SEND_NOTIFICATION)) {
                             if (levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(EMAIL)
                                     || levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(LETTER)) {
-                                sendReminderEmail(levelInstance.getActions().get(i).getDunningAction().getActionNotificationTemplate(),
-                                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
+                                sendEmail(levelInstance.getActions().get(i).getDunningAction().getActionNotificationTemplate(),
+                                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate(), jobExecutionResult);
+                            }
+                        }
+                        if(levelInstance.getActions().get(i).getActionType().equals(RETRY_PAYMENT)) {
+                            BillingAccount billingAccount = collectionPlan.getBillingAccount();
+                            if(billingAccount != null && billingAccount.getCustomerAccount() != null
+                                    && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
+                                PaymentMethod preferredPaymentMethod = collectionPlan.getBillingAccount().getCustomerAccount()
+                                        .getPaymentMethods()
+                                        .stream()
+                                        .filter(PaymentMethod::isPreferred)
+                                        .findFirst()
+                                        .orElseThrow(() -> new BusinessException("No preferred payment method found"));
+                                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue();
+                                List<AccountOperation> accountOperationsToPay =
+                                        accountOperationService.getAOsToPayOrRefundByCA(new Date(1), new Date(),
+                                                OperationCategoryEnum.DEBIT, customerAccount.getId());
+                                List<Long> accountOperationsToPayIds = new ArrayList<>();
+                                if(accountOperationsToPay != null) {
+                                    accountOperationsToPayIds = accountOperationsToPay
+                                            .stream()
+                                            .map(AccountOperation::getId)
+                                            .collect(Collectors.toList());
+                                }
+                                PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+                                if(preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.DIRECTDEBIT)
+                                        || preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.CARD)) {
+                                    try {
+                                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                                true, true, paymentGateway, null, null,
+                                                null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                    } catch (NoAllOperationUnmatchedException | UnbalanceAmountException exception) {
+                                        throw new BusinessException(exception);
+                                    }
+                                }
                             }
                         }
                         levelInstance.getActions().get(i).setActionStatus(DunningActionInstanceStatusEnum.DONE);
@@ -157,36 +186,54 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
 
     }
 
-    private void sendReminderEmail(EmailTemplate emailTemplate, Invoice invoice, Date lastActionDate) {
-        Map<Object, Object> params = new HashMap<>();
-        BillingAccount billingAccount =
-                billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-        params.put("Company.Name", billingAccount.getDescription());
-        params.put("Compagny.adress", billingAccount.getAddress().getAddress1());
-        params.put("Company.postalcode", billingAccount.getAddress().getZipCode());
-        params.put("billingAccount.address.city", billingAccount.getAddress().getCity());
-        params.put("Company.phone", billingAccount.getContactInformation().getPhone());
+    private void sendEmail(EmailTemplate emailTemplate,
+                           Invoice invoice, Date lastActionDate, JobExecutionResultImpl jobExecutionResult) {
+        if(invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
+                && invoice.getSeller().getContactInformation().getEmail() != null
+                && !invoice.getSeller().getContactInformation().getEmail().isBlank()) {
+            Seller seller = invoice.getSeller();
+            Map<Object, Object> params = new HashMap<>();
+            BillingAccount billingAccount =
+                    billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
+            params.put("Company.Name", billingAccount.getDescription());
+            params.put("Compagny.adress", billingAccount.getAddress() != null ?
+                    billingAccount.getAddress().getAddress1() : "");
+            params.put("Company.postalcode", billingAccount.getAddress() != null ?
+                    billingAccount.getAddress().getZipCode() : "");
+            params.put("billingAccount.address.city", billingAccount.getAddress() != null ?
+                    billingAccount.getAddress().getCity() : "");
+            params.put("Company.phone", billingAccount.getContactInformation() != null ?
+                    billingAccount.getContactInformation().getPhone() : "");
 
-        CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-        params.put("Title.client", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-        params.put("Company.client.adress", customerAccount.getAddress().getAddress1());
-        params.put("Company.client.postalcode", customerAccount.getAddress().getZipCode());
-        params.put("Company.client.city", customerAccount.getAddress().getCity());
-        params.put("Contact.client", customerAccount.getDescription());
-        params.put("Company.client.name", customerAccount.getName().getFirstName());
+            CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
+            params.put("Title.client", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            params.put("Company.client.adress", customerAccount.getAddress() != null ?
+                    customerAccount.getAddress().getAddress1() : "");
+            params.put("Company.client.postalcode", customerAccount.getAddress() != null ?
+                    customerAccount.getAddress().getZipCode() : "");
+            params.put("Company.client.city",  customerAccount.getAddress() != null ?
+                    customerAccount.getAddress().getCity() : "");
+            params.put("Contact.client", customerAccount.getDescription());
+            params.put("Company.client.name",  customerAccount.getName() != null ?
+                    customerAccount.getName().getFirstName() : "");
 
-        params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-        params.put("invoice.dueDate", invoice.getDueDate());
-        params.put("invoice.total", invoice.getAmountWithTax());
-        params.put("day.date", new Date());
-        params.put("Last.action.date", lastActionDate);
-
-        emailTemplate = emailTemplateService.findById(emailTemplate.getId());
-        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-        emailSender.send(appProvider.getEmail(), asList(appProvider.getEmail()),
-                asList(billingAccount.getContactInformation().getEmail()), null, null,
-                subject, content, contentHtml, null, null, false);
+            params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoice.dueDate", invoice.getDueDate());
+            params.put("invoice.total", invoice.getAmountWithTax());
+            params.put("day.date", new Date());
+            params.put("Last.action.date", lastActionDate);
+            if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
+                try {
+                    collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
+                            billingAccount.getContactInformation().getEmail(),  emailTemplate, params);
+                } catch (Exception exception) {
+                    jobExecutionResult.addErrorReport(exception.getMessage());
+                }
+            } else {
+                jobExecutionResult.addErrorReport("Billing account email is missing");
+            }
+        } else {
+            jobExecutionResult.addErrorReport("From email is missing, email sending skipped");
+        }
     }
 }

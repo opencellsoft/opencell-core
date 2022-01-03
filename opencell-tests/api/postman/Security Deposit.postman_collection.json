@@ -38,15 +38,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositSettings/",
+							"raw": "{{opencell.url}}/v2/accountReceivable/financeSettings",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
-								"securityDeposit",
-								"securityDepositSettings",
-								""
+								"accountReceivable",
+								"financeSettings"
 							]
 						}
 					},
@@ -82,15 +81,151 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositSettings/1",
+							"raw": "{{opencell.url}}/v2/accountReceivable/financeSettings/1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"accountReceivable",
+								"financeSettings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Security Deposit Template",
+			"item": [
+				{
+					"name": "Create Security Deposit Template",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.superpass}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.superuser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"templateName\": \"TEMPLATE_TEST\",\n    \"currency\": {\n        \"id\": 1\n    },\n    \"allowValidityDate\": null,\n    \"allowValidityPeriod\": true,\n    \"minAmount\": 100,\n    \"maxAmount\": 100,\n    \"status\": \"DRAFT\",\n    \"numberOfInstantiation\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositTemplate",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
 								"securityDeposit",
-								"securityDepositSettings",
-								"1"
+								"securityDepositTemplate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Security Deposit Template status",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.superpass}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.superuser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"SDTemplateList\": [\n        {\n            \"id\": 1\n        },\n        {\n            \"id\": 2\n        },\n        {\n            \"id\": 3\n        }\n\n    ],\n    \"status\": \"ACTIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositTemplate/changeStatus",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"securityDeposit",
+								"securityDepositTemplate",
+								"changeStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Security Deposit Template",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.superpass}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.superuser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"templateName\": \"TEMPLATE_TEST\",\n    \"currency\": {\n        \"id\": 1\n    },\n    \"allowValidityDate\": true,\n    \"allowValidityPeriod\": true,\n    \"minAmount\": 10,\n    \"maxAmount\": 100,\n    \"status\": \"ACTIVE\",\n    \"numberOfInstantiation\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/securityDeposit/securityDepositTemplate/{{securityDepositTemplateId}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"securityDeposit",
+								"securityDepositTemplate",
+								"{{securityDepositTemplateId}}"
 							]
 						}
 					},

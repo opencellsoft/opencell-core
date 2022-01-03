@@ -196,6 +196,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			invoiceLineRessource =  ImmutableInvoiceLine.copyOf(invoiceLineRessource).withId(invoiceLine.getId());
 			result.addInvoiceLines(invoiceLineRessource);
 		}
+		invoiceService.calculateInvoice(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
 		return result.build();
 	}
@@ -215,6 +216,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
 		invoiceLinesService.update(invoice, invoiceLineInput.getInvoiceLine(), lineId);
+		invoiceService.calculateInvoice(invoice);
 	}
 
 	/**
@@ -223,6 +225,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void removeLine(Invoice invoice, Long lineId) {
 		invoiceLinesService.remove(invoice, lineId);
+		invoiceService.calculateInvoice(invoice);
 	}
 
 	/**

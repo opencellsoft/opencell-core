@@ -40,7 +40,7 @@ public interface InvoiceLine extends Resource {
 	 * @return the accountingArticle code
 	 */
 	@Schema(description = "The code of accounting article")
-	@Nullable
+	@NotNull
 	String getAccountingArticleCode();
 
 	/**

@@ -1,6 +1,8 @@
 package org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.models.Resource;
+import org.meveo.apiv2.securityDeposit.SDTemplateListStatus;
 import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
 import org.meveo.apiv2.securityDeposit.securityDepositTemplate.SecurityDepositTemplateResource;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
@@ -10,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SecurityDepositTemplateResourceImpl implements SecurityDepositTemplateResource {
 
@@ -39,7 +42,16 @@ public class SecurityDepositTemplateResourceImpl implements SecurityDepositTempl
 
     }
 
-        private Map<String, Object> buildResponse(SecurityDepositTemplate securityDepositTemplate) {
+    @Override
+    public Response updateStatus(SDTemplateListStatus sdTemplateListStatus) {
+        securityDepositTemplateService.updateStatus(
+                sdTemplateListStatus.getSecurityDepositTemplates().stream().map(Resource::getId).collect(Collectors.toSet())
+                , sdTemplateListStatus.getStatus());
+        return Response.ok().entity(Collections.singletonMap("actionStatus", Collections.singletonMap("status","SUCCESS"))).build();
+
+    }
+
+    private Map<String, Object> buildResponse(SecurityDepositTemplate securityDepositTemplate) {
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
         response.put("securityDepositTemplate", securityDepositTemplate);

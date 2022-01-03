@@ -46,6 +46,7 @@ import javax.print.attribute.standard.Media;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -87,6 +88,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -114,6 +116,8 @@ import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -123,6 +127,7 @@ import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringRatingService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -249,6 +254,9 @@ public class CpqQuoteApi extends BaseApi {
     @Inject
     private RecurringRatingService recurringRatingService;
 
+    
+    @Inject
+    private UsageRatingService usageRatingService;
 
 	public QuoteDTO createQuote(QuoteDTO quote) {
 	    if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -1369,10 +1377,10 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getCode());
                 overrideAmounts(quotePrice, recurrenceDuration);
             } else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum())){
-                UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
-                Long quantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, wo.getServiceInstance().getQuoteProduct()));
-                quotePrice.setRecurrenceDuration(quantity);
-                overrideAmounts(quotePrice, quantity);
+            	 UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
+                 Long quantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, wo.getServiceInstance().getQuoteProduct()));
+                 quotePrice.setRecurrenceDuration(quantity);
+                 overrideAmounts(quotePrice, quantity);
             }
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
@@ -1461,17 +1469,15 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
-            if(quoteVersion.getQuoteArticleLines()!=null) {
-            	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
-                 if (!quoteArticleLines.isEmpty()) {
-                 	quoteVersion.getQuoteArticleLines().clear();
+            if(quoteVersion.getQuoteArticleLines() != null) {
+                 if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
+                     quoteVersion.getQuoteArticleLines()
+                             .stream()
+                             .forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
+                     quoteVersion.getQuoteArticleLines().clear();
                      quoteVersionService.update(quoteVersion);
-                     quoteArticleLineService.remove(quoteArticleLines);
                  }
             }
-
-
-
     }
 
     @SuppressWarnings("unused")
@@ -1507,7 +1513,9 @@ public class CpqQuoteApi extends BaseApi {
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate())));
                         }
 
-                    } catch (RatingException e) {
+                    }catch (NoTaxException e) { 
+                        throw new MeveoApiException(e.getMessage());
+                    }catch (RatingException e) {
                         log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
                                 e.getRejectionReason());
                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode(),e); // e.getBusinessException();
@@ -1528,10 +1536,55 @@ public class CpqQuoteApi extends BaseApi {
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate())));
                          }
 
+                    }catch (NoTaxException e) { 
+                        throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
                     }
+                }
+                // Add usage charges
+                EDR edr =null;
+                for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
+                	UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
+                	if(chargetemplate.getUsageQuantityAttribute()!=null) {
+                		edr =new EDR();
+                		try {
+
+                			edr.setAccessCode(null);
+                			edr.setEventDate(usageCharge.getChargeDate());
+                			edr.setSubscription(subscription);
+                			edr.setStatus(EDRStatusEnum.OPEN);
+                			edr.setCreated(new Date());
+                			edr.setOriginBatch("QUOTE");
+                			edr.setOriginRecord(System.currentTimeMillis()+"");
+
+                			Double quantity=attributes.get(chargetemplate.getUsageQuantityAttribute().getCode())!=null?(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode()):0;
+                			edr.setQuantity(new BigDecimal(quantity));
+                			RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
+                			ratingResult.add(localRatingResult);
+                			if (localRatingResult != null) {
+                				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
+                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
+                				}
+
+                			}
+
+                		} catch (RatingException e) {
+                			log.trace("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                			throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+
+
+
+
+                		} catch (BusinessException e) {
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                			throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+
+                		}
+                	}
+
                 }
             }
 
@@ -1632,6 +1685,11 @@ public class CpqQuoteApi extends BaseApi {
                 recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
                 recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
                 recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+            }
+            List<UsageChargeInstance> usageChargeInstances = serviceInstance.getUsageChargeInstances();
+            for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
+            	usageChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+                usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
             }
         }
     }
