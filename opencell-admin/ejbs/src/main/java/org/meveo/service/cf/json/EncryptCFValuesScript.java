@@ -1,6 +1,7 @@
 package org.meveo.service.cf.json;
 
 import java.io.IOException;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -100,14 +101,14 @@ public class EncryptCFValuesScript extends Script  {
 		HashMap<Long, String> map=new HashMap<Long, String>();
 		@SuppressWarnings("unchecked")
 		List<Object[]>  entities = accountentityService.getEntityManager()
-				.createNativeQuery("select id,cf_Values from " + tableCfvalue + "  where cf_Values is not null ")
+				.createNativeQuery("select id,cf_Values from "+ tableCfvalue +"  where cf_Values is not null ")
 				.getResultList();
 		for (Object[] result : entities) {
 	        map.put(( ((BigInteger) result[0]).longValue()), result[1].toString());
 	    }
 		for(Map.Entry<Long, String> entry :map.entrySet()) {
 				int upateEntity = accountentityService.getEntityManager()
-						.createNativeQuery("update  Account_entity set cf_Values='"+cryptageString(entry.getValue())+"' where  id="+entry.getKey())
+						.createNativeQuery("update  Account_entity set cf_Values='"+cryptageString(entry.getValue())+"' where  id="+entry.getValue())
 						.executeUpdate();
 				
 				
@@ -116,26 +117,7 @@ public class EncryptCFValuesScript extends Script  {
 	
 
 	
-	public String decrypt(String strToDecrypt) {
-		try {
-			if (strToDecrypt != null) {
-				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
-					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
-					SecretKeySpec secretKey = buildSecretKey();
-					Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-					cipher.init(Cipher.DECRYPT_MODE, secretKey);
-					String res = new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
-					return res;
-				}
-				return strToDecrypt;
-				
-			}
-		} catch (Exception e) {
-			log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
-			return ON_ERROR_RETURN;
-		}
-		return strToDecrypt;
-	}
+	
 
 
 	public String getFileKey() throws Exception {
@@ -177,15 +159,13 @@ public class EncryptCFValuesScript extends Script  {
 			log.info("Niveau 1 Key : " + maps.getKey());
 			for (Map<String, String> map : list) {
 				for (Entry<String, String> element : map.entrySet()) {
-					log.info("Niveau 2 Key : " + element.getKey());
-					log.info("Niveau 2 Value : " + element.getValue());
-					//
-					Map map2 = new HashMap<String, String>();
-					map2.put(element.getKey(), encrypt(element.getValue()));
-					list2.add(map2);
+
+						Map map2 = new HashMap<String, String>();
+						map2.put(element.getKey(),encrypt(element.getValue()));
+						list2.add(map2);
 				}
 			}
-			 mapsList2.put(maps.getKey(), list2);
+			mapsList2.put(maps.getKey(), list2);
 		}
 		return mapsList2.toString();
 	}
