@@ -42,7 +42,6 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
 
 public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
@@ -54,83 +53,62 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     
 
     @SuppressWarnings("unchecked")
-    public CustomFieldJsonTypeDescriptor() {
-
+    public CustomFieldJsonTypeDescriptor() 
+    {
         super(CustomFieldValues.class, ImmutableMutabilityPlan.INSTANCE);
-
     }
 
     @Override
-    public String toString(CustomFieldValues value) {
-
+    public String toString(CustomFieldValues value) 
+    {
         if (value == null) {
             return null;
         }
+        
         if (ENCRYPT_CF) {
-
-        	return encrypToString(value);
-        	
+        	return encryptCfs(value);
         }
 
-          return value.asJson();
+        return value.asJson();
     }
 
     @Override
-    public CustomFieldValues fromString(String string) {
-
+    public CustomFieldValues fromString(String string) 
+    {
         if (StringUtils.isBlank(string)) {
             return null;
         }
-
-        if (ENCRYPT_CF ) {
-        	 string = decrypt(string);
-            if (IEncryptable.ON_ERROR_RETURN.equalsIgnoreCase(string)) {
-                return null;
-            }
-           
-
-        if (!ENCRYPT_CF && string.startsWith(ENCRYPTION_CHECK_STRING)) {
-            Map<String, List<CustomFieldValue>> cfValues = new HashMap<String, List<CustomFieldValue>>();
-            cfValues.put("AES", new ArrayList<CustomFieldValue>());
-            return new CustomFieldValues(cfValues);
-        }
-
-            
-       
-//		}
-        	
-        	    
-	}
-		 Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
-	        });
 		 
-		 Map<String, List<CustomFieldValue>> cfValuestoo =decryptString(cfValues);
-        return new CustomFieldValues(cfValuestoo);
-}
+        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {});
+        return new CustomFieldValues(decryptCfs(cfValues));
+    }
         	
-  		public Map<String, List<CustomFieldValue>> decryptString(Map<String, List<CustomFieldValue>> cfValues) {
-  			for(Entry<String, List<CustomFieldValue>> list:cfValues.entrySet()) {
-  				for(CustomFieldValue listCf:list.getValue()) {		
-					if (listCf.getStringValue() instanceof String && listCf.getStringValue().contains("AES")) {
-						listCf.setStringValue(decrypt(listCf.getStringValue()));
-					}
+	public Map<String, List<CustomFieldValue>> decryptCfs(Map<String, List<CustomFieldValue>> cfValues) 
+	{
+		for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.entrySet()) {
+			for(CustomFieldValue cf: listCfs.getValue()) {
+				if (cf.getStringValue() != null && cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
+				    cf.setStringValue(decrypt(cf.getStringValue()));
 				}
-  			}
-			return cfValues;
-  			
-  		}
-        	public String encrypToString(CustomFieldValues cfValues) {
-        		for(Entry<String, List<CustomFieldValue>> list:cfValues.getValuesByCode().entrySet()) {
-      				for(CustomFieldValue listCf:list.getValue()) {	
-						if (listCf.getStringValue() instanceof String && !listCf.getStringValue().contains("AES")) {
-							listCf.setStringValue(encrypt(listCf.getStringValue()));
-						}
-					}
-      			}
-    			return cfValues.toString();
-        		
-        	}
-    
+			}
+		}
+		
+		return cfValues;
+	}
+  		
+	public String encryptCfs(CustomFieldValues cfValues) 
+	{
+		for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.getValuesByCode().entrySet()) {
+			for(CustomFieldValue cf: listCfs.getValue()) {	
+				if (cf.getStringValue() != null && !cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
+				    cf.setStringValue(encrypt(cf.getStringValue()));
+				}
+			}
+		}
+		
+		return cfValues.toString();
+	}
+
     @SuppressWarnings("unchecked")
     @Override
     public <X> X unwrap(CustomFieldValues value, Class<X> type, WrapperOptions options) {
