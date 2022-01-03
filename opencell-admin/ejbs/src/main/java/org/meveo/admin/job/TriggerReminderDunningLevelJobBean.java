@@ -10,26 +10,20 @@ import static org.meveo.model.payments.ActionModeEnum.AUTOMATIC;
 import static org.meveo.model.payments.ActionTypeEnum.SCRIPT;
 import static org.meveo.model.payments.ActionTypeEnum.SEND_NOTIFICATION;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.communication.impl.EmailSender;
-import org.meveo.service.communication.impl.EmailTemplateService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DunningLevelInstanceService;
-import org.meveo.service.payments.impl.DunningLevelService;
-import org.meveo.service.payments.impl.DunningPolicyService;
+import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.ApplicationProvider;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -50,9 +44,6 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     private DunningLevelService levelService;
 
     @Inject
-    private EmailTemplateService emailTemplateService;
-
-    @Inject
     private BillingAccountService billingAccountService;
 
     @Inject
@@ -62,11 +53,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     private ScriptInstanceService scriptInstanceService;
 
     @Inject
-    private EmailSender emailSender;
-
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
+    private DunningCollectionPlanService collectionPlanService;
 
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
@@ -119,43 +106,46 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     }
 
     private void sendReminderEmail(EmailTemplate emailTemplate, Invoice invoice) {
-        Map<Object, Object> params = new HashMap<>();
-        BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-        params.put("billingAccount.description", billingAccount.getDescription());
-        params.put("billingAccount.address.address1",
-                billingAccount.getAddress() != null ? billingAccount.getAddress().getAddress1() : "");
-        params.put("billingAccount.address.zipCode",
-                billingAccount.getAddress() != null ? billingAccount.getAddress().getZipCode() : "");
-        params.put("billingAccount.address.city",
-                billingAccount.getAddress() != null ? billingAccount.getAddress().getCity() : "");
-        params.put("billingAccount.contactInformation.phone",
-                billingAccount.getContactInformation() != null ? billingAccount.getContactInformation().getPhone() : "");
+        if(invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
+                && invoice.getSeller().getContactInformation().getEmail() != null
+                && !invoice.getSeller().getContactInformation().getEmail().isBlank()) {
+            Seller seller = invoice.getSeller();
+            Map<Object, Object> params = new HashMap<>();
+            BillingAccount billingAccount =
+                    billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
+            params.put("billingAccount.description", billingAccount.getDescription());
+            params.put("billingAccount.address.address1",
+                    billingAccount.getAddress() != null ? billingAccount.getAddress().getAddress1() : "");
+            params.put("billingAccount.address.zipCode",
+                    billingAccount.getAddress() != null ? billingAccount.getAddress().getZipCode() : "");
+            params.put("billingAccount.address.city",
+                    billingAccount.getAddress() != null ? billingAccount.getAddress().getCity() : "");
+            params.put("billingAccount.contactInformation.phone",
+                    billingAccount.getContactInformation() != null ? billingAccount.getContactInformation().getPhone() : "");
 
-        CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-        params.put("customerAccount.legalEntityType.code",
-                ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-        params.put("customerAccount.address.address1",
-                customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
-        params.put("customerAccount.address.zipCode",
-               customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
-        params.put("customerAccount.address.city",
-               customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
+            CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
+            params.put("customerAccount.legalEntityType.code",
+                    ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            params.put("customerAccount.address.address1",
+                    customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
+            params.put("customerAccount.address.zipCode",
+                   customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
+            params.put("customerAccount.address.city",
+                   customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
 
-        params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-        params.put("invoice.dueDate", invoice.getDueDate());
-        params.put("invoice.total", invoice.getAmountWithTax());
-        params.put("day.date", new Date());
+            params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoice.dueDate", invoice.getDueDate());
+            params.put("invoice.total", invoice.getAmountWithTax());
+            params.put("day.date", new Date());
 
-        emailTemplate = emailTemplateService.findById(emailTemplate.getId());
-        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-        if(appProvider.getEmail() != null && !appProvider.getEmail().isBlank()) {
-            emailSender.send(appProvider.getEmail(), asList(appProvider.getEmail()),
-                    asList(billingAccount.getContactInformation().getEmail()), null, null,
-                    subject, content, contentHtml, null, null, false);
+            if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
+                collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
+                        billingAccount.getContactInformation().getEmail(), emailTemplate, params);
+            } else {
+                throw new BusinessException("Billing account email is missing");
+            }
         } else {
-            log.error("Configuration email is missing, email sending skipped");
+            throw new BusinessException("From email is missing, email sending skipped");
         }
     }
 
