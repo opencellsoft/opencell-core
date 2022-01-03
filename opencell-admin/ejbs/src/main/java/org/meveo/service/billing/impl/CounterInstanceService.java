@@ -860,6 +860,20 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         context.put(WALLET_OPERATION, walletOperation);
         return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filterEl, context);
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<Long> findByCounterAndActiveService(String counterTemplateCode) { 
+    	List<Long> ids=new ArrayList<>();
+    	try {
+    		ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndActiveService")
+    				           .setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("findByCounterAndActiveService error ", e.getMessage());
+    	}
+
+    	return ids;
+    } 
 
     /**
      * Get a list of updated counter periods
