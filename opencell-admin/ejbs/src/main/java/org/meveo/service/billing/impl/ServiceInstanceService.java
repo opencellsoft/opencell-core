@@ -37,6 +37,9 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -128,6 +131,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+    
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -432,6 +438,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
                 oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
                 oneShotChargeInstanceService.update(oneShotChargeInstance);
+                instanciateCounterPeriods(oneShotChargeInstance);
             }
         } else {
             log.debug("ServiceActivation: subscription charges are not applied.");
@@ -458,10 +465,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 log.error("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getMessage(), e);
                 throw e;
             }
+            instanciateCounterPeriods(recurringChargeInstance);
         }
 
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
+            instanciateCounterPeriods(usageChargeInstance);
         }
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
@@ -480,7 +489,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (paymentScheduleTemplate != null && paymentScheduleTemplateService.matchExpression(paymentScheduleTemplate.getFilterEl(), serviceInstance)) {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate, serviceInstance);
         }
-    }
+       
+    } 
 
     /**
      * Terminate service with a date in the past
@@ -1025,5 +1035,22 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
         }
         return chargeToDateOnTermination;
+    }
+    
+    
+    public void instanciateCounterPeriods(ChargeInstance chargeInstance) {
+    	CounterPeriod counterPeriod = null;
+    	// accumulatorCounter
+    	for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
+    		if (counterInstance != null) {
+    			counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance,chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+    					chargeInstance, chargeInstance.getServiceInstance());
+    		}
+    	}
+    	// standard counter
+    	if (chargeInstance.getCounter() != null) {
+    		counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(),chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+    				chargeInstance, chargeInstance.getServiceInstance());
+    	}
     }
 }
