@@ -50,8 +50,10 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     
     @Inject
     private Logger log;
+    
     @Inject
     private BillingRunService billingRunService;
+    
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
     
@@ -60,7 +62,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     
     @Inject
     private ServiceSingleton serviceSingleton;
-    
 
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;

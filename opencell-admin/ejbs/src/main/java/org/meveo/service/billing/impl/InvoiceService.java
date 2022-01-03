@@ -132,6 +132,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 import org.meveo.model.billing.IInvoiceable;
@@ -1274,7 +1275,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return result;
     }
-
+    
     /**
      * @param invoiceList
      */
@@ -4803,7 +4804,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, InvoiceLinesGroup> invoiceLinesGroup = new HashMap<>();
 
         BillingCycle billingCycle = defaultBillingCycle;
-        InvoiceType postPaidInvoiceType = defaultInvoiceType;
         PaymentMethod paymentMethod;
         if (defaultPaymentMethod == null && billingAccount != null) {
             defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -4819,11 +4819,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (defaultBillingCycle == null) {
                     billingCycle = billingAccount != null ? billingAccount.getBillingCycle() : null;
                 }
-                if (defaultInvoiceType == null) {
-                    postPaidInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
-                }
             }
-            InvoiceType invoiceType = postPaidInvoiceType;
+        	
+        	InvoiceType invoiceType = null;
+        	AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
+        	if (!StringUtils.isBlank(accountingArticle.getInvoiceTypeEl())) {
+                String invoiceTypeCode = evaluateInvoiceTypeEl(accountingArticle.getInvoiceTypeEl(), invoiceLine);
+                invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+            }
+            if (invoiceType == null) {
+                invoiceType = accountingArticle.getInvoiceType();
+            }
+            if (invoiceType == null) {
+                invoiceType = defaultInvoiceType;
+            }
+            if (invoiceType == null) {
+                invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
+            }
+        	
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
             Seller seller = getSelectedSeller(invoiceLine);
             String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
@@ -4850,7 +4863,37 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return new InvoiceLinesToInvoice(moreIls, convertedIlGroups);
 
     }
+    
+    private String evaluateInvoiceTypeEl(String expression, InvoiceLine invoiceLine) throws InvalidELException {
 
+        String invoiceTypeCode = null;
+
+        if (!StringUtils.isBlank(expression)) {
+            AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
+
+            Map<Object, Object> contextMap = new HashMap<>();
+            if (expression.indexOf("article") >= 0 || expression.indexOf("accountingArticle") >= 0) {
+                contextMap.put("article", accountingArticle);
+                contextMap.put("accountingArticle", accountingArticle);
+            }
+            if (expression.indexOf("il") >= 0 || expression.indexOf("invoiceLine") >= 0) {
+                contextMap.put("il", invoiceLine);
+                contextMap.put("invoiceLine", invoiceLine);
+            }
+
+            try {
+                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                if (value != null) {
+                    invoiceTypeCode = value;
+                }
+            } catch (Exception e) {
+                log.warn("Error when evaluate InvoiceTypeEl for accountingArticle id=" + accountingArticle.getId());
+            }
+        }
+
+        return invoiceTypeCode;   
+    }
+    
     private PaymentMethod resolvePMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, InvoiceLine invoiceLine) {
         if (BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())) {
             if (Objects.nonNull(invoiceLine.getSubscription().getPaymentMethod())) {
