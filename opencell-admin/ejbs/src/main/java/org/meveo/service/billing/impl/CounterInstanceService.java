@@ -17,6 +17,26 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -52,24 +72,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Said Ramli
@@ -880,5 +882,20 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         context.put(WALLET_OPERATION, walletOperation);
         return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filterEl, context);
     }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<CounterInstance> findByCounterAndActiveService(String counterTemplateCode) { 
+    	List<CounterInstance> counterInstances=new ArrayList<CounterInstance>();
+    	try {
+    		counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndActiveService")
+    				           .setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("findByCounterAndActiveService error ", e.getMessage());
+    	}
+
+    	return counterInstances;
+    } 
 
 }
