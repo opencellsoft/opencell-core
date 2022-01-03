@@ -1,10 +1,12 @@
 package org.meveo.service.payments.impl;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.asList;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 import static org.meveo.model.shared.DateUtils.daysBetween;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.*;
 
@@ -16,12 +18,16 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
 
 @Stateless
 public class DunningCollectionPlanService extends PersistenceService<DunningCollectionPlan> {
@@ -46,6 +52,12 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     @Inject
     private DunningPolicyService policyService;
+
+    @Inject
+    private EmailSender emailSender;
+
+    @Inject
+    private EmailTemplateService emailTemplateService;
 
     private static final String STOP_REASON = "Changement de politique de recouvrement";
 
@@ -331,5 +343,15 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         return getEntityManager()
                 .createNamedQuery("DunningCollectionPlan.activeCollectionPlansIds", Long.class)
                 .getResultList();
+    }
+
+    public void sendNotification(String emailFrom, String emailTo, EmailTemplate emailTemplate,
+                                 Map<Object, Object> params) {
+        emailTemplate = emailTemplateService.refreshOrRetrieve(emailTemplate);
+        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+        emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
+                subject, content, contentHtml, null, null, false);
     }
 }
