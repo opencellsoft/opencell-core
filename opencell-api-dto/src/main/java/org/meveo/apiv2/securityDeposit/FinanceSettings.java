@@ -2,6 +2,7 @@ package org.meveo.apiv2.securityDeposit;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
@@ -17,10 +18,10 @@ public interface FinanceSettings extends Resource {
     @NotNull
     Boolean getUseSecurityDeposit();
 
-    @NotNull
+    @Nullable
     BigDecimal getMaxAmountPerSecurityDeposit();
 
-    @NotNull
+    @Nullable
     BigDecimal getMaxAmountPerCustomer();
 
     @NotNull
