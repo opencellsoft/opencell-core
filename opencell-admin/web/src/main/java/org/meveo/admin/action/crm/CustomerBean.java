@@ -130,7 +130,7 @@ public class CustomerBean extends AccountBean<Customer> {
      * @return null for JSF navigation
      */
     @ActionMethod
-    public String anonymizeGdpr() {
+    public String anonymizeGpdr() {
         try {
             entity = customerService.refreshOrRetrieve(entity);
             gpdrService.anonymize(entity);
