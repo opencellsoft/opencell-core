@@ -334,33 +334,21 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		return doPaymentResponseDto;
 	}
     
-	private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
+    private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
 			String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
 
 		CreatePaymentRequest body = new CreatePaymentRequest();
 		String scriptInstanceCode = paramBean().getProperty("ingenico.paymentRequest.script", null);
-		if (scriptInstanceCode == null) {
+		if (StringUtils.isBlank(scriptInstanceCode)) {
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
 			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
 
 			Customer customer = new Customer();
 			customer.setBillingAddress(getBillingAddress(customerAccount));
-			
-			CustomerDevice customerDevice = new CustomerDevice();
-			customerDevice.setAcceptHeader(paramBean().getProperty("ingenico.device.AcceptHeader", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"));
-			customerDevice.setLocale(paramBean().getProperty("ingenico.device.Locale", "fr_FR"));
-			customerDevice.setTimezoneOffsetUtcMinutes(paramBean().getProperty("ingenico.device.TimezoneOffsetUtcMinutes", "60"));
-			customerDevice.setUserAgent(paramBean().getProperty("ingenico.device.UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"));
-			BrowserData browserData = new BrowserData();
-			browserData.setColorDepth(paramBean().getPropertyAsInteger("ingenico.device.ColorDepth", 24));
-			browserData.setJavaEnabled("true".equals(paramBean().getProperty("ingenico.device.JavaEnabled", "false")));
-			browserData.setScreenHeight(paramBean().getProperty("ingenico.device.ScreenHeight", "1080"));
-			browserData.setScreenWidth(paramBean().getProperty("ingenico.device.ScreenWidth", "1920"));
-			customerDevice.setBrowserData(browserData);
-			
-			customer.setDevice(customerDevice);
-			
+			if("true".equals(paramBean().getProperty("ingenico.CreatePayment.includeDeviceData", "true"))) {
+				customer.setDevice(getDeviceData());	
+			}
 
 			Order order = new Order();
 			order.setAmountOfMoney(amountOfMoney);
@@ -544,11 +532,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         threeDSecure.setChallengeCanvasSize(paramBean.getProperty("ingenico.3ds.ChallengeCanvasSize", "600x400"));
         cardPaymentMethodSpecificInput.setThreeDSecure(threeDSecure);       
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.IsRecurring", "false"))));
-        cardPaymentMethodSpecificInput.setRequiresApproval(Boolean.valueOf("true".equals(paramBean().getProperty("ingenico.CreatePayment.RequiresApproval", "true"))));
+     
 
         cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());        
 
-        cardPaymentMethodSpecificInput.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileRequestor", "MIT"));
+        cardPaymentMethodSpecificInput.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileRequestor", "merchantInitiated"));
         cardPaymentMethodSpecificInput.setUnscheduledCardOnFileSequenceIndicator(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileSequenceIndicator", "subsequent"));
         
         CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();					
@@ -558,6 +546,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		
         return cardPaymentMethodSpecificInput;
     }
+
     
     private CardPaymentMethodSpecificInput getCardTokenInputDefault(CardPaymentMethod cardPaymentMethod) {
         ParamBean paramBean = paramBean();
@@ -734,6 +723,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
 			Customer customer = new Customer();
 			customer.setBillingAddress(billingAddress);
+			customer.setDevice(getDeviceData());
+			
 
 			OrderReferences orderReferences = new OrderReferences();
 			orderReferences.setMerchantReference(TimeMillisWithcustomerAccountId);
@@ -761,7 +752,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			cardRecurrenceDetails.setRecurringPaymentSequenceIndicator(paramBean().getProperty("ingenico.HostedCheckout.RecurringPaymentSequenceIndicator", ""));			
 			cardPaymentMethodSpecificInputBase.setRecurring(cardRecurrenceDetails);
 
-			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileRequestor", "CIT"));
+			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileRequestor", "cardholderInitiated"));
 			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileSequenceIndicator(paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileSequenceIndicator", "first"));
 
 			
@@ -782,6 +773,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		}
 	}
 
+
     @Override
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
@@ -790,6 +782,21 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 	@Override
 	public String createInvoice(Invoice invoice) throws BusinessException {
 		throw new UnsupportedOperationException();
+	}
+	
+	private CustomerDevice getDeviceData() {		
+		CustomerDevice customerDevice = new CustomerDevice();
+		customerDevice.setAcceptHeader(paramBean().getProperty("ingenico.device.AcceptHeader", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"));
+		customerDevice.setLocale(paramBean().getProperty("ingenico.device.Locale", "fr_FR"));
+		customerDevice.setTimezoneOffsetUtcMinutes(paramBean().getProperty("ingenico.device.TimezoneOffsetUtcMinutes", "60"));
+		customerDevice.setUserAgent(paramBean().getProperty("ingenico.device.UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"));
+		BrowserData browserData = new BrowserData();
+		browserData.setColorDepth(paramBean().getPropertyAsInteger("ingenico.device.ColorDepth", 24));
+		browserData.setJavaEnabled("true".equals(paramBean().getProperty("ingenico.device.JavaEnabled", "false")));
+		browserData.setScreenHeight(paramBean().getProperty("ingenico.device.ScreenHeight", "1080"));
+		browserData.setScreenWidth(paramBean().getProperty("ingenico.device.ScreenWidth", "1920"));
+		customerDevice.setBrowserData(browserData);
+		return customerDevice;
 	}
 
 	/*reserved to GlobalCollect platform*/
