@@ -24,9 +24,9 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
 
     public void checkParameters(FinanceSettings financeSettings)
     {
-        if(financeSettings.getMaxAmountPerSecurityDeposit().longValue() < 1)
+        if(financeSettings.getMaxAmountPerSecurityDeposit() != null && financeSettings.getMaxAmountPerSecurityDeposit().longValue() < 1)
             throw new InvalidParameterException("max amount per security Deposit should be greater or equals 1");
-        if(financeSettings.getMaxAmountPerCustomer().longValue() < 1)
+        if(financeSettings.getMaxAmountPerCustomer() != null && financeSettings.getMaxAmountPerCustomer().longValue() < 1)
             throw new InvalidParameterException("max amount per customer should be greater or equals 1");
     }
 }
