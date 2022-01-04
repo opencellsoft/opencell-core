@@ -53,6 +53,12 @@ public class JsonGenericMapper extends ObjectMapper{
             addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
             this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
         }
+        if(fields == null || fields.isEmpty()){
+            addMixIn(entityClass, EntityFieldsFilterMixIn.class);
+            simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
+            addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
+            this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
+        }
         setFilterProvider(this.simpleFilterProvider);
         try {
             return writeValueAsString(dtoToSerialize);
