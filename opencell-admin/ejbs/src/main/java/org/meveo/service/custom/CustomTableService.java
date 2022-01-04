@@ -292,7 +292,7 @@ public class CustomTableService extends NativePersistenceService {
     public Future<DataImportExportStatistics> exportData(CustomEntityTemplate customEntityTemplate, PaginationConfiguration config) throws BusinessException {
 
         try {
-            QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), config);
+            QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), config, null);
 
             SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
 
@@ -952,7 +952,7 @@ public class CustomTableService extends NativePersistenceService {
 
     @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
     private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
-        QueryBuilder queryBuilder = getQuery(tableName, null);
+        QueryBuilder queryBuilder = getQuery(tableName, null, null);
         queryBuilder.addCriterion("id", "=", id, true);
         Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return (Map<String, Object>) query.uniqueResult();
@@ -1003,7 +1003,7 @@ public class CustomTableService extends NativePersistenceService {
         fetchFields.addAll(fields);
         PaginationConfiguration pc = new PaginationConfiguration(null);
         pc.setFetchFields(fetchFields);
-        QueryBuilder qb = getQuery(tableName, pc);
+        QueryBuilder qb = getQuery(tableName, pc, null);
         if (!StringUtils.isEmpty(wildCode)) {
             qb.addSql(" cast(" + FIELD_ID + " as varchar(100)) like :id");
         }
@@ -1016,7 +1016,7 @@ public class CustomTableService extends NativePersistenceService {
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
-        QueryBuilder queryBuilder = getQuery(tableName, null);
+        QueryBuilder queryBuilder = getQuery(tableName, null, null);
         queryBuilder.addCriterion(columnName, "=", id, true);
         Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return !query.list().isEmpty();

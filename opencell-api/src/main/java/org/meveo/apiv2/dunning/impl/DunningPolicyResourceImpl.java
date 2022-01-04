@@ -222,6 +222,12 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         org.meveo.model.dunning.DunningPolicyRule dunningPolicyRule =
                 dunningPolicyApiService.removePolicyRule(policyRuleID)
                         .orElseThrow(() -> new NotFoundException("Policy rule with id " + policyRuleID + " does not exists"));
+        org.meveo.model.dunning.DunningPolicy dunningPolicy = dunningPolicyRule.getDunningPolicy();
+        List<String> updatedFields = new ArrayList<>();
+        String operationType = "removePolicyRule";
+        updatedFields.add("PolicyRule");        
+        String origine = (dunningPolicy != null) ? dunningPolicy.getPolicyName() : "";
+        auditLogService.trackOperation(operationType, new Date(), dunningPolicy, origine, updatedFields);
         return Response.ok(ImmutableSuccessResponse.builder()
                 .status("SUCCESS")
                 .message("Policy rule with id " + dunningPolicyRule.getId() + " is successfully deleted")
@@ -230,6 +236,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Override
     public Response addPolicyRule(Long dunningPolicyId, DunningPolicyRules policyRules) {
+        List<String> updatedFields = new ArrayList<>();
         org.meveo.model.dunning.DunningPolicy dunningPolicy = dunningPolicyApiService.findById(dunningPolicyId)
                 .orElseThrow(() -> new NotFoundException("Dunning policy with id " + dunningPolicyId + "does not exits"));
         if(policyRules.getPolicyRules() == null && policyRules.getPolicyRules().isEmpty()) {
@@ -243,10 +250,14 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             dunningPolicyRuleEntity.setDunningPolicy(dunningPolicy);
             dunningPolicyApiService.addPolicyRule(dunningPolicyRuleEntity, policyRule.getRuleLines());
         }
+        updatedFields.add("PolicyRule");
+        String origine = (dunningPolicy != null) ? dunningPolicy.getPolicyName() : "";
         SuccessResponse response = ImmutableSuccessResponse.builder()
                 .status("SUCCESS")
                 .message("Policy rules successfully added")
                 .build();
+        String operationType = "addPolicyRule";
+        auditLogService.trackOperation(operationType, new Date(), dunningPolicy, origine, updatedFields);
         return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, policyRules.getId())
                 .build())
                 .entity(response)
