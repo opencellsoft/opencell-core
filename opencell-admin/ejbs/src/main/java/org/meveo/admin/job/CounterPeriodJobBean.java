@@ -97,12 +97,12 @@ public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
 					if(counterInstance!=null) {
 					for(ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
 					counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-							counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+							counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance);
 					}
 					//UsageChargeInstances
 					for(ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
 						counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance);
 				}
 					}
 				}

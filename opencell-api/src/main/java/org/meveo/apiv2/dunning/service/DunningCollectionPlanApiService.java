@@ -204,7 +204,10 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         Set<Long> canBeSwitched = new TreeSet<>();
         Set<Long> canNotBeSwitched = new TreeSet<>();
         Map<String, Set<Long>> massSwitchResult = new HashMap<>();
-        if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
+        
+        if(policy.getDunningPolicyRules() == null || policy.getDunningPolicyRules().isEmpty()) {
+            canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
+        }else if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
                 collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
                 if (collectionPlan == null) {
@@ -220,7 +223,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                                     .map(DunningCollectionPlan::getId)
                                     .filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId))
                                     .collect(toSet());
-        } else {
+        }else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
         massSwitchResult.put("canBESwitched", canBeSwitched);

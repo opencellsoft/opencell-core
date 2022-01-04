@@ -15,6 +15,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth()))
+        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
@@ -52,9 +53,14 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth())
-                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
-                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        if(genericFields != null && loadService.isCustomFieldQuery(genericFields)){
+        	return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), id))
+                    .links(buildPaginatedResourceLink(entityName)).build();
+        } else {    
+	        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth())
+	                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
+	                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        }
     }
 
     @Override
