@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.encryption.EncyptionException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.script.Script;
@@ -84,6 +87,33 @@ public class EncryptCFValuesScript extends Script  {
 				.createNativeQuery("select table_name from information_schema.columns where column_name='cf_values'")
 				.getResultList();
 	}
+	
+	/**
+     * Encrypts a string using aes Algorithm
+     * 
+     * @param strToEncrypt
+     * @return Encrypted String
+     */
+    String encryptCF(String strToEncrypt) {
+        try {
+            
+            if (strToEncrypt != null) {
+                if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
+                    return strToEncrypt;
+                }
+                SecretKeySpec secretKey = buildSecretKey();
+                Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+                String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+                return ENCRYPTION_CHECK_STRING + encrypted;
+            }
+            
+        } catch (Exception e) {
+            log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
+            throw new EncyptionException(e);
+        }
+        return strToEncrypt;
+    }
 
 	public void encryptCfvalues(String tableName)
 	{
@@ -98,7 +128,7 @@ public class EncryptCFValuesScript extends Script  {
             log.info("encrypting line id = "+cfId+", value = "+cfValue+", table = "+tableName);
             
 			accountentityService.getEntityManager()
-						.createNativeQuery("update " + tableName + " set cf_Values='" + encrypt(cfValue) + "' where  id="+cfId)
+						.createNativeQuery("update " + tableName + " set cf_Values='" + encryptCF(cfValue) + "' where  id="+cfId)
 						.executeUpdate();
 				
 		}
