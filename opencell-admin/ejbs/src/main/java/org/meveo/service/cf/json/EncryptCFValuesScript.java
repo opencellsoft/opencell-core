@@ -15,7 +15,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.encryption.EncyptionException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.script.Script;
