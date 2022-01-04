@@ -660,6 +660,10 @@
             <version>2.2</version>
             <scope>test</scope>
         </dependency>
+        
+                         <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/dependency-maven-plugin -->
+
+
         <!-- Optional, but highly recommended -->
         <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) JPA from JUnit/TestNG -->
         <!-- <dependency> -->
