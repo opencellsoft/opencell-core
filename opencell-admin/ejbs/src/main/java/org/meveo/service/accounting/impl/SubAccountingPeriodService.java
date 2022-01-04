@@ -1,9 +1,6 @@
 package org.meveo.service.accounting.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,8 +59,8 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 		deleteOldSubAccountingPeriods(ap.getId());
 
-		LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
+		LocalDateTime startDateTime = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime endDateTime = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDateTime);
 	}
 
