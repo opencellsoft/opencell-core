@@ -156,9 +156,11 @@ public class EncryptCFValuesScript extends Script  {
 							listCfvalues.add(map);
 						}
 					} else if (cfValues.getValue() instanceof List) {
+						Map<String, String> mapListCfValues = new HashMap<String, String>();
 						for (Object typeListCfvalues : (List) cfValues.getValue()) {
 							if (typeListCfvalues instanceof String) {
-								listCfvalues.add(encrypt(typeListCfvalues.toString()));
+								mapListCfValues.put(cfValues.getKey(), encrypt(typeListCfvalues.toString()));
+								listCfvalues.add(mapListCfValues);
 							}
 						}
 					} else if (cfValues.getValue() instanceof Map) {
