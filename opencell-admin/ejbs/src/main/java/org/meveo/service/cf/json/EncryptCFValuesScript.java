@@ -156,10 +156,12 @@ public class EncryptCFValuesScript extends Script  {
 							listCfvalues.add(map);
 						}
 					} else if (cfValues.getValue() instanceof List) {
-						Map<String, String> mapListCfValues = new HashMap<String, String>();
+						Map<String, List<String>> mapListCfValues = new HashMap<String, List<String>>();
+						List<String> listValesStrings = new ArrayList<String>();
 						for (Object typeListCfvalues : (List) cfValues.getValue()) {
 							if (typeListCfvalues instanceof String) {
-								mapListCfValues.put(cfValues.getKey(), encrypt(typeListCfvalues.toString()));
+								listValesStrings.add(encrypt(typeListCfvalues.toString()));
+								mapListCfValues.put(cfValues.getKey(), listValesStrings);
 								listCfvalues.add(mapListCfValues);
 							}
 						}
