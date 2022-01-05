@@ -1,5 +1,6 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.apiv2.models.ImmutableResource.builder;
 
@@ -8,6 +9,7 @@ import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.dunning.DunningPolicy;
 
 import java.util.List;
@@ -79,7 +81,7 @@ public class DunningCollectionPlanMapper
                     .isDefaultPolicy(policy.getDefaultPolicy())
                     .isActivePolicy(policy.getActivePolicy())
                     .policyName(policy.getPolicyName())
-                    .minBalanceTriggerCurrency(builder().id(policy.getMinBalanceTriggerCurrency().getId()).build())
+                    .minBalanceTriggerCurrency(buildMinBalanceCurrencyResource(policy.getMinBalanceTriggerCurrency()))
                     .policyDescription(policy.getPolicyDescription())
                     .minBalanceTrigger(policy.getMinBalanceTrigger())
                     .policyPriority(policy.getPolicyPriority())
@@ -89,5 +91,11 @@ public class DunningCollectionPlanMapper
                     .isIncludePayReminder(policy.getIncludePayReminder())
                     .determineLevelBy(policy.getDetermineLevelBy())
                 .build();
+    }
+
+    private ImmutableResource buildMinBalanceCurrencyResource(Currency minBalanceTriggerCurrency) {
+        return ofNullable(minBalanceTriggerCurrency)
+                .map(minBalance -> builder().id(minBalance.getId()).build())
+                .orElse(null);
     }
 }
