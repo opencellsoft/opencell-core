@@ -123,6 +123,8 @@ public class EdrService extends PersistenceService<EDR> {
 	        }
 	        strQuery.append(" order by e.id");
 	        
+	        log.info("getEDRsToRate query={}",strQuery);
+	        
 	        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(),Long.class);
 	        if(rateUntilDate != null) {
 	        	query.setParameter("rateUntilDate", rateUntilDate);
