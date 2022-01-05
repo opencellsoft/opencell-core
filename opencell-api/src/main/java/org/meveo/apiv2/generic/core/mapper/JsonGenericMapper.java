@@ -46,18 +46,16 @@ public class JsonGenericMapper extends ObjectMapper{
         configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
     }
 
-    public String toJson(Set<String> fields, Class entityClass, Object dtoToSerialize) {
+    public String toJson(Set<String> fields, Class entityClass, Object dtoToSerialize, Set<String> excludedFields) {
         if(fields != null && !fields.isEmpty()){
             addMixIn(entityClass, EntityFieldsFilterMixIn.class);
             simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
             addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
             this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
         }
-        if(fields == null || fields.isEmpty()){
+        if((fields == null || fields.isEmpty())  && excludedFields != null){
             addMixIn(entityClass, EntityFieldsFilterMixIn.class);
-            simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
-            addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
-            this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
+            simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.serializeAllExcept(excludedFields));
         }
         setFilterProvider(this.simpleFilterProvider);
         try {
