@@ -144,23 +144,35 @@ public class EncryptCFValuesScript extends Script  {
 		ObjectMapper mapper = new ObjectMapper();
 		Gson gsonparser = new GsonBuilder().disableHtmlEscaping().create();
 		mapsList = mapper.readValue(value, Map.class);
-		List listCfvalues = new ArrayList();
+
 		for (Entry<String, List> maps : mapsList.entrySet()) {
+			List listCfvalues = new ArrayList();
 			List<Map> list = maps.getValue();
 			for (Map<String, Object> map : list) {
 				for (Entry<String, Object> cfValues : map.entrySet()) {
-					if (!cfValues.getValue().equals("")) {
-						if (cfValues.getValue() instanceof String) {
-							map.put(cfValues.getKey(),  encrypt(cfValues.getValue().toString()));
+					if (cfValues.getValue() instanceof String) {
+						if (!cfValues.getValue().equals("")) {
+							map.put(cfValues.getKey(), encrypt(cfValues.getValue().toString()));
 							listCfvalues.add(map);
-						} else if (cfValues.getValue() instanceof List) {
-							for (Object typeListCfvalues : (List) cfValues.getValue()) {
+						}
+					} else if (cfValues.getValue() instanceof List) {
+						for (Object typeListCfvalues : (List) cfValues.getValue()) {
+							if (typeListCfvalues instanceof String) {
 								listCfvalues.add(encrypt(typeListCfvalues.toString()));
 							}
-						} else if (cfValues.getValue() instanceof Map) {
-							for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cfValues.getValue()).entrySet()) {
-								Object o=typeMapsCfvalues.getValue();
-								listCfvalues.add(encrypt(o.toString()));
+						}
+					} else if (cfValues.getValue() instanceof Map) {
+						for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cfValues.getValue())
+								.entrySet()) {
+							Object o = typeMapsCfvalues.getKey();
+							Map<String, String> mapMatrix = new HashMap<String, String>();
+							if (o instanceof String) {
+								for (Entry<String, String> typeMapsCfvaluesmaps : ((Map<String, String>) cfValues.getValue()).entrySet()) {
+									if(typeMapsCfvaluesmaps.getValue() instanceof String) {
+									mapMatrix.put(typeMapsCfvaluesmaps.getKey(), encrypt(typeMapsCfvaluesmaps.getValue().toString()));
+									listCfvalues.add(mapMatrix);
+									}
+								}
 							}
 						}
 					}
