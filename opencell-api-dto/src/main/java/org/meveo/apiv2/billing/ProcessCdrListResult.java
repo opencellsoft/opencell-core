@@ -1,7 +1,6 @@
 package org.meveo.apiv2.billing;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.api.dto.billing.ChargeCDRResponseDto;

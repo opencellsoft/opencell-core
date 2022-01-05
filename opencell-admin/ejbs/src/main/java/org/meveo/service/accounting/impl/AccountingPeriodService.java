@@ -55,14 +55,14 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	    if (endDateInput != null && entity.getEndDate().compareTo(endDateInput) != 0) {
 			throw new ValidationException("Once the end date is set, it CANNOT be modified");
 		}
-		if (entity.isUseSubAccountingCycles() && !Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
+		if (entity.isUseSubAccountingCycles() && Boolean.FALSE.equals(isUseSubAccountingPeriods)) {
 			throw new ValidationException("Use sub-accounting cycles CANNOT be modified");
 		} else
 			Optional.ofNullable(isUseSubAccountingPeriods).ifPresent(b -> entity.setUseSubAccountingCycles(Boolean.TRUE.equals(isUseSubAccountingPeriods)));
 
 		validateInputs(entity, isUseSubAccountingPeriods, subAccountingPeriodType);
 
-		if (isUsedOnAccountingOperations(entity)) {
+		if (!entity.getSubAccountingPeriodType().equals(SubAccountingPeriodTypeEnum.valueOf(subAccountingPeriodType)) && isUsedOnAccountingOperations(entity)) {
 			throw new ValidationException("sub-accounting cycles type CANNOT be modified because the sub dates is used in the account operations");
 		} else
 			Optional.ofNullable(subAccountingPeriodType).ifPresent(subAP -> entity.setSubAccountingPeriodType(SubAccountingPeriodTypeEnum.valueOf(subAP)));

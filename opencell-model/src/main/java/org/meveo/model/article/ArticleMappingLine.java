@@ -1,11 +1,9 @@
 package org.meveo.model.article;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.cpq.Product;
+import static javax.persistence.FetchType.LAZY;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,17 +15,22 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import org.hibernate.annotations.GenericGenerator;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Product;
 
 @Entity
 @Table(name = "billing_article_mapping_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_mapping_line_seq"), })
 public class ArticleMappingLine extends BusinessEntity {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6999650126224128377L;
 
     public ArticleMappingLine() {
 		super();
