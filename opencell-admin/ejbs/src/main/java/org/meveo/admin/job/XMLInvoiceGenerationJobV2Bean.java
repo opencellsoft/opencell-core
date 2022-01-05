@@ -25,8 +25,7 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
 
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
-                this::generateXml, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::generateXml, null, null, null);
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,17 +13,27 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.annotation.Resource;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.jms.JMSConsumer;
+import javax.jms.JMSContext;
+import javax.jms.Queue;
 
+import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.IEntity;
+import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.Job;
 
@@ -39,6 +50,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
+
+    @Resource(lookup = "java:/jms/queue/JobQueue")
+    private Queue jobQueue;
+
+    @Inject
+    private JMSContext jmsContext;
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
 
     /**
      * Execute job implementation
@@ -57,19 +77,21 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param initFunction A function to initialize the data to process
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
+     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional.
      * @param finalizeFunction A function to finalize data to process. Optional.
      */
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
-            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
+            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeInitFunction,
+            Consumer<JobExecutionResultImpl> finalizeFunction) {
 
-        execute(jobExecutionResult, jobInstance, initFunction, processSingleItemFunction, null, hasMoreFunction, finalizeFunction);
+        execute(jobExecutionResult, jobInstance, initFunction, processSingleItemFunction, null, hasMoreFunction, finalizeInitFunction, finalizeFunction);
     }
 
     /**
      * Execute a job - retrieve a list of data to process, iterate over the data and process one or multiple items at a time, checking if job is still running and update job progress in DB periodically. <br/>
      * <br/>
      * 
-     * If processMultipleItemFunction is provided at first an atempt to process multiple items in one transaction will be atempted. If any items fail, each item will be processed one by one in a separate transaction.
+     * If processMultipleItemFunction is provided at first an atempt to process multiple items in one transaction will be attempted. If any items fail, each item will be processed one by one in a separate transaction.
      * 
      * @param jobExecutionResult Job execution result
      * @param jobInstance Job instance
@@ -77,39 +99,80 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param processMultipleItemFunction A function to process multiple items. Will be executed in its own transaction.
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
+     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional.
      * @param finalizeFunction A function to finalize data to process. Optional.
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
             BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, Predicate<JobInstance> hasMoreFunction,
-            Consumer<JobExecutionResultImpl> finalizeFunction) {
+            Consumer<JobExecutionResultImpl> finalizeInitFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
 
-        jobExecutionErrorService.purgeJobErrors(jobExecutionResult.getJobInstance());
+        boolean isRunningAsJobManager = jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER;
 
-        Optional<Iterator<T>> iteratorOpt = initFunction.apply(jobExecutionResult);
+        boolean spreadOverCluster = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && EjbUtils.isRunningInClusterMode();
 
-        if (!iteratorOpt.isPresent()) {
-            return;
+        Iterator<T> iterator = null;
+        JMSConsumer jmsConsumer = null;
+
+        if (EjbUtils.isRunningInClusterMode()) {
+            jobExecutionResult.addReport("Node " + EjbUtils.getCurrentClusterNode());
         }
 
-        Iterator<T> iterator = iteratorOpt.get();
+        // When running as a primary job manager, initialize job history tracking
+        // and publish data to the job processing queue if data processing is spread over a cluster
+        if (isRunningAsJobManager) {
+            jobExecutionErrorService.purgeJobErrors(jobExecutionResult.getJobInstance());
 
-        if (iterator instanceof SynchronizedIterator) {
-            jobExecutionResult.setNbItemsToProcess(((SynchronizedIterator) iterator).getSize());
+            Optional<Iterator<T>> iteratorOpt = initFunction.apply(jobExecutionResult);
+
+            if (!iteratorOpt.isPresent()) {
+                return;
+            }
+
+            iterator = iteratorOpt.get();
+
+            if (iterator instanceof SynchronizedIterator) {
+                jobExecutionResult.setNbItemsToProcess(((SynchronizedIterator) iterator).getSize());
+            }
+
+            if (jobExecutionResult.getNbItemsToProcess() == 0) {
+                log.info("{}/{} will skip as nothing to process", jobInstance.getJobTemplate(), jobInstance.getCode());
+                return;
+            }
+            if (!jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
+                log.info("{}/{} will skip as should not continue", jobInstance.getJobTemplate(), jobInstance.getCode());
+                return;
+            }
+
+            log.info("{}/{} - {} records to process", jobInstance.getJobTemplate(), jobInstance.getCode(), jobExecutionResult.getNbItemsToProcess());
+
+            jobExecutionResultService.persistResult(jobExecutionResult);
+
+            if (spreadOverCluster) {
+                // Publish data to the job processing queue if data processing is spread over a cluster
+                clusterEventPublisher.publish(jobQueue, iterator);
+
+                // Close data initialization
+                if (finalizeInitFunction != null) {
+                    finalizeInitFunction.accept(jobExecutionResult);
+                }
+
+                // Launch jobs in other clusters
+                clusterEventPublisher.publishEventAsync(jobInstance, CrudActionEnum.executeWorker,
+                    MapUtils.putAll(new HashMap<String, Object>(), new Object[] { Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId(), Job.JOB_PARAM_LAUNCHER, JobLauncherEnum.WORKER }),
+                    currentUser.getProviderCode(), currentUser.getUserName());
+
+                jmsConsumer = jmsContext.createConsumer(jobQueue);
+                iterator = new SynchronizedIterator<T>(jmsConsumer);
+            }
+        } else {
+            jmsConsumer = jmsContext.createConsumer(jobQueue);
+            iterator = new SynchronizedIterator<T>(jmsConsumer);
+
+            log.info("{}/{} running as a worker node", jobInstance.getJobTemplate(), jobInstance.getCode());
+
+            jobExecutionResultService.persistResult(jobExecutionResult);
         }
-
-        if (jobExecutionResult.getNbItemsToProcess() == 0) {
-            log.info("{}/{} will skip as nothing to process", jobInstance.getJobTemplate(), jobInstance.getCode());
-            return;
-        }
-        if (!jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
-            log.info("{}/{} will skip as should not continue", jobInstance.getJobTemplate(), jobInstance.getCode());
-            return;
-        }
-
-        log.info("{}/{} - {} records to process", jobInstance.getJobTemplate(), jobInstance.getCode(), jobExecutionResult.getNbItemsToProcess());
-
-        jobExecutionResultService.persistResult(jobExecutionResult);
 
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads == -1) {
@@ -131,6 +194,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
 
+        final Iterator<T> finalIterator = iterator;
+
         for (int k = 0; k < nbThreads; k++) {
 
             int finalK = k;
@@ -143,7 +208,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 int i = 0;
                 long globalI = 0;
 
-                T itemToProcess = iterator.next();
+                T itemToProcess = finalIterator.next();
                 mainLoop: while (itemToProcess != null) {
 
                     if (useMultipleItemProcessing) {
@@ -153,7 +218,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         int nrOfItemsInBatch = 1;
 
                         while (nrOfItemsInBatch < batchSize) {
-                            itemToProcess = iterator.next();
+                            itemToProcess = finalIterator.next();
                             if (itemToProcess == null) {
                                 break;
                             }
@@ -215,7 +280,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         log.error("Failed to update job progress", e);
                     }
 
-                    itemToProcess = iterator.next();
+                    itemToProcess = finalIterator.next();
                     i++;
                 }
             });
@@ -254,6 +319,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     jobExecutionResult.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
+            }
+
+            if (jmsConsumer != null) {
+                jmsConsumer.close();
             }
 
             // Mark job as stopped if task was killed

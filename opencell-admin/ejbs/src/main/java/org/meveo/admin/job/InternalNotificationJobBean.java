@@ -83,7 +83,7 @@ public class InternalNotificationJobBean extends IteratorBasedJobBean<Object> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeNotification, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeNotification, null, null, null);
         notification = null;
     }
 

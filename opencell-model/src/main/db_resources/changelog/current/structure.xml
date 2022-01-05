@@ -11579,5 +11579,18 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="dunning_policy_level_id" />
         </dropColumn>
     </changeSet>
+    
+    <changeSet id="INTRD-4064_20211218" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_job_instance">
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+        </addColumn>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cluster_behavior = 'RUN_IN_PARALLEL' where single_node=0</sql>
+        <dropColumn tableName="meveo_job_instance">
+            <column name="single_node" />
+        </dropColumn>
+        <addColumn tableName="job_execution">
+            <column name="related_job_result_id" type="bigint" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

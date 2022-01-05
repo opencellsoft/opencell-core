@@ -37,6 +37,7 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticClientConnection;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
@@ -120,12 +121,21 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(JobInstance.class.getSimpleName())) {
 
             if (eventDto.getAction() == CrudActionEnum.execute) {
-                JobLauncherEnum jobLauncher = JobLauncherEnum.valueOf(eventDto.getAdditionalInfo());
+                JobLauncherEnum jobLauncher = eventDto.getAdditionalInfo() != null && eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER) != null
+                        ? JobLauncherEnum.valueOf((String) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER))
+                        : null;
+
                 jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), null, jobLauncher, false);
+
+            } else if (eventDto.getAction() == CrudActionEnum.executeWorker) {
+                JobLauncherEnum jobLauncher = JobLauncherEnum.WORKER;
+
+                jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), eventDto.getAdditionalInfo(), jobLauncher, false);
 
             } else if (eventDto.getAction() == CrudActionEnum.stop) {
                 jobExecutionService.stopJobByForce(jobInstanceService.findById(eventDto.getId()), false);
 
+                // Any modify/update
             } else {
                 jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
             }

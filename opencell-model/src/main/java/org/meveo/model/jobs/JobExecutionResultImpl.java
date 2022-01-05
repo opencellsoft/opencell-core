@@ -106,6 +106,10 @@ public class JobExecutionResultImpl extends BaseEntity {
     @Column(name = "nb_error")
     private long nbItemsProcessedWithError;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "related_job_result_id")
+    private JobExecutionResultImpl relatedJobExecutionResult;
+
     /**
      * Job execution status
      */
@@ -531,6 +535,20 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void setMoreToProcess(boolean moreToProcess) {
         this.moreToProcess = moreToProcess;
+    }
+
+    /**
+     * @return Related job execution result
+     */
+    public JobExecutionResultImpl getRelatedJobExecutionResult() {
+        return relatedJobExecutionResult;
+    }
+
+    /**
+     * @param relatedJobExecutionResult Related job execution result
+     */
+    public void setRelatedJobExecutionResult(JobExecutionResultImpl relatedJobExecutionResult) {
+        this.relatedJobExecutionResult = relatedJobExecutionResult;
     }
 
     @Override

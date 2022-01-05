@@ -51,7 +51,7 @@ public class PaymentScheduleProcessingJobBean extends IteratorBasedJobBean<Payme
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processPaymentSchedule, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processPaymentSchedule, null, null, null);
 
     }
 

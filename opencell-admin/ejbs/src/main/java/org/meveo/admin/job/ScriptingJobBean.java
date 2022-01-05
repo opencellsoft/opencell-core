@@ -65,7 +65,7 @@ public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeScript, null, this::finalizeScript);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeScript, null, null, this::finalizeScript);
         context = null;
         script = null;
     }

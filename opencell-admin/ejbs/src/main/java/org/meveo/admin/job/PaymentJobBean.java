@@ -143,7 +143,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createPaymentOrPayout, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createPaymentOrPayout, null, null, null);
         operationCategory = null;
         paymentMethodType = null;
         paymentOrRefundEnum = PaymentOrRefundEnum.PAYMENT;

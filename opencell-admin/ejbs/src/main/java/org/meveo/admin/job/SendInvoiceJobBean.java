@@ -58,7 +58,7 @@ public class SendInvoiceJobBean extends IteratorBasedJobBean<Invoice> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::sendByEmail, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::sendByEmail, null, null, null);
     }
 
     /**

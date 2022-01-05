@@ -19,6 +19,7 @@
 package org.meveo.event.monitoring;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Synchronization between cluster nodes event information.
@@ -35,7 +36,21 @@ public class ClusterEventDto implements Serializable {
      *
      */
     public enum CrudActionEnum {
-        create, update, remove, enable, disable, execute, stop;
+        create, update, remove, enable, disable,
+
+        /**
+         * Launch a job
+         */
+        execute,
+        /**
+         * Launch a job as a worker thread
+         */
+        executeWorker,
+
+        /**
+         * Stop job execution
+         */
+        stop;
     };
 
     /**
@@ -76,7 +91,7 @@ public class ClusterEventDto implements Serializable {
     /**
      * Additional information about the action
      */
-    private String additionalInfo;
+    private Map<String, Object> additionalInfo;
 
     /**
      * Defaut constructor.
@@ -95,7 +110,7 @@ public class ClusterEventDto implements Serializable {
      * @param additionalInfo Additional information about the action
      * 
      */
-    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName, String additionalInfo) {
+    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName, Map<String, Object> additionalInfo) {
         super();
         this.clazz = clazz;
         this.id = id;
@@ -159,14 +174,14 @@ public class ClusterEventDto implements Serializable {
     /**
      * @return Additional information about the action
      */
-    public String getAdditionalInfo() {
+    public Map<String, Object> getAdditionalInfo() {
         return additionalInfo;
     }
 
     /**
      * @param additionalInfo Additional information about the action
      */
-    public void setAdditionalInfo(String additionalInfo) {
+    public void setAdditionalInfo(Map<String, Object> additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
 

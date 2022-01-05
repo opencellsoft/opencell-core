@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
 
@@ -86,8 +87,12 @@ public class JobInstanceDto extends EnableBusinessDto {
     /**
      * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
      */
-    @Schema(description = "Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time")
+    @Schema(description = "Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time. Deprecated. Use clusterBehavior instead.")
+    @Deprecated
     private Boolean limitToSingleNode;
+
+    @Schema(description = "Job execution behavior when running in a clustered environment")
+    private JobClusterBehaviorEnum clusterBehavior;
 
     /**
      * Whether a verbose error log will be kept.
@@ -127,7 +132,7 @@ public class JobInstanceDto extends EnableBusinessDto {
         }
 
         setRunOnNodes(jobInstance.getRunOnNodes());
-        setLimitToSingleNode(jobInstance.isLimitToSingleNode());
+        setLimitToSingleNode(jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE);
 
         setCustomFields(customFieldInstances);
 
@@ -302,8 +307,8 @@ public class JobInstanceDto extends EnableBusinessDto {
 
     @Override
     public String toString() {
-        return "JobInstanceDto [jobCategory=" + jobCategory + ", jobTemplate=" + jobTemplate + ", followingJob=" + followingJob + ", parameter=" + parameter + ", active=" + active
-                + ", customFields=" + customFields + ", timerCode=" + timerCode + ", runOnNodes=" + runOnNodes + ", limitToSingleNode=" + limitToSingleNode + "]";
+        return "JobInstanceDto [jobCategory=" + jobCategory + ", jobTemplate=" + jobTemplate + ", followingJob=" + followingJob + ", parameter=" + parameter + ", active=" + active + ", customFields=" + customFields
+                + ", timerCode=" + timerCode + ", runOnNodes=" + runOnNodes + ", limitToSingleNode=" + limitToSingleNode + "]";
     }
 
     public Boolean getVerboseReport() {
@@ -326,5 +331,19 @@ public class JobInstanceDto extends EnableBusinessDto {
      */
     public void setJobSpeed(JobSpeedEnum jobSpeed) {
         this.jobSpeed = jobSpeed;
+    }
+
+    /**
+     * @return Job execution behavior when running in a clustered environment
+     */
+    public JobClusterBehaviorEnum getClusterBehavior() {
+        return clusterBehavior;
+    }
+
+    /**
+     * @param clusterBehavior Job execution behavior when running in a clustered environment
+     */
+    public void setClusterBehavior(JobClusterBehaviorEnum clusterBehavior) {
+        this.clusterBehavior = clusterBehavior;
     }
 }

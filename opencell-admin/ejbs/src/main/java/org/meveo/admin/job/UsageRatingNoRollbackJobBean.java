@@ -66,7 +66,7 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::rateEDRBatch, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::rateEDRBatch, this::hasMore, null, null);
 
         rateUntilDate = null;
         ratingGroup = null;
