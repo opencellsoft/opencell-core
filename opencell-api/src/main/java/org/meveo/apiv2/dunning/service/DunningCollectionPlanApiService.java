@@ -695,20 +695,20 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     throw new EntityDoesNotExistsException("No Dunning agent found with id : " + dunningAgentId);
                 }
 
-                if (dunningActionInstanceInput.getActionOwner().getId() != dunningActionInstanceToUpdate.getActionOwner().getId()) {
+                if (dunningActionInstanceToUpdate.getActionOwner() == null || dunningActionInstanceToUpdate.getActionOwner().getId() != dunningAgentId) {
                     fields.add("actionOwner");
                 }
                 dunningActionInstanceToUpdate.setActionOwner(dunningAgent);
             }
 
             if (dunningActionInstanceInput.getCode() != null) {
-                if (dunningActionInstanceInput.getCode().equals(dunningActionInstanceToUpdate.getCode())) {
+                if (!dunningActionInstanceInput.getCode().equals(dunningActionInstanceToUpdate.getCode())) {
                     fields.add("code");
                 }
                 dunningActionInstanceToUpdate.setCode(dunningActionInstanceInput.getCode());
             }
             if (dunningActionInstanceInput.getDescription() != null) {
-                if (dunningActionInstanceInput.getDescription().equals(dunningActionInstanceToUpdate.getDescription())) {
+                if (!dunningActionInstanceInput.getDescription().equals(dunningActionInstanceToUpdate.getDescription())) {
                     fields.add("description");
                 }
                 dunningActionInstanceToUpdate.setDescription(dunningActionInstanceInput.getDescription());
@@ -758,7 +758,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             if (dunningActionInstanceInput.getActionRestult() != null) {
-                if (dunningActionInstanceInput.getActionRestult().equals(dunningActionInstanceToUpdate.getActionRestult())) {
+                if (!dunningActionInstanceInput.getActionRestult().equals(dunningActionInstanceToUpdate.getActionRestult())) {
                     fields.add("actionRestult");
                 }
                 dunningActionInstanceToUpdate.setActionRestult(dunningActionInstanceInput.getActionRestult());
