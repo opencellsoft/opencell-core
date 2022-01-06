@@ -53,6 +53,8 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.AttributeInstanceService;
+import org.meveo.service.cpq.AttributeValueService;
 import org.meveo.service.cpq.QuoteAttributeService;
 
 import javax.ejb.Stateless;
@@ -95,6 +97,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     
 
     @Inject private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    
+    @Inject
+    private AttributeInstanceService attributeInstanceService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -762,7 +767,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         	String serviceCode=chargeInstance.getServiceInstance().getCode();
         	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
                        .stream()
-                       .map(attributeInstance -> getAttributeValue(attributeInstance, walletOperation))
+                       .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation))
                        .collect(Collectors.toSet());
         	   
         	   
@@ -771,37 +776,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
      
         return null; 
     }
-    
-    private AttributeValue getAttributeValue(AttributeInstance attributeInstance, WalletOperation walletOperation) throws BusinessException{
-    	try {
-        	if(AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(attributeInstance.getAttribute().getAttributeType())) {
-        		if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
-
-        			Object value=ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, walletOperation);
-    	    			if(value!=null) {
-    	    				AttributeValue<AttributeValue> attributeValue= (AttributeValue) BeanUtils.cloneBean(attributeInstance);
-    	    				attributeValue.setId(null);
-    	       			 if(value instanceof Boolean) {
-    	       				 attributeValue.setBooleanValue((Boolean)value);
-    	       			 }else if(NumberUtils.isCreatable(value.toString().trim())) {
-    	       					attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
-    	       			 }else {
-    	       				attributeValue.setStringValue((String)value);
-    	       			}
-    	       			log.debug("getAttributeValue value={}, String={},boolean={},double={}",value,attributeValue.getStringValue(),attributeValue.getBooleanValue(),attributeValue.getDoubleValue());
-    	       			
-    	       			return attributeValue;
-        			}
-        			
-        		  }
-        		}
-		} catch (Exception e) {
-			log.error("Error when trying to get AttributeValue : ", e);
-			throw new BusinessException(e.getMessage());
-		}
-
-    	return (AttributeValue)attributeInstance;
-    	}
+  
     	
     	
     

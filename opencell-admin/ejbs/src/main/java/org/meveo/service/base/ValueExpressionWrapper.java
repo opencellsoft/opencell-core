@@ -720,6 +720,11 @@ public class ValueExpressionWrapper {
             contextMap.put(VAR_CPQ_QUOTE, quote);
         }
         
+        if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && serviceInstance != null ) {
+            quote =chargeInstance!=null && serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
+            contextMap.put(VAR_CPQ_QUOTE, quote);
+        }
+        
         if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && chargeInstance != null) {
             quoteVersion =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuoteVersion():null;
             contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
