@@ -15,7 +15,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.encryption.EncyptionException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.script.Script;
@@ -161,10 +160,10 @@ public class EncryptCFValuesScript extends Script  {
 						for (Object typeListCfvalues : (List) cfValues.getValue()) {
 							if (typeListCfvalues instanceof String) {
 								listValueStrings.add(encrypt(typeListCfvalues.toString()));
-								mapListCfValues.put(cfValues.getKey(), listValueStrings);
-								listCfvalues.add(mapListCfValues);
+								mapListCfValues.put(cfValues.getKey(), listValueStrings);							
 							}
 						}
+						listCfvalues.add(mapListCfValues);
 					} else if (cfValues.getValue() instanceof Map) {
 						for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cfValues.getValue())
 								.entrySet()) {
