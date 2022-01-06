@@ -60,7 +60,6 @@ public class EncryptCFValuesScript extends Script  {
 			try {
 				encryptCfvalues(tableName);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
