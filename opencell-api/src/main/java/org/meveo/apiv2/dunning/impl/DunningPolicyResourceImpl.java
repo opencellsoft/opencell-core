@@ -127,7 +127,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     @Override
     public Response update(Long dunningPolicyId, DunningPolicyInput dunningPolicyInput) {
         org.meveo.model.dunning.DunningPolicy dunningPolicyEntity =
-                dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
+                dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels", "minBalanceTriggerCurrency"));
         if (dunningPolicyEntity == null) {
             throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
         }

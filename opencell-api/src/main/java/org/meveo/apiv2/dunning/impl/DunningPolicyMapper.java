@@ -9,7 +9,9 @@ import org.hibernate.Hibernate;
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.model.admin.Currency;
 
 public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo.model.dunning.DunningPolicy> {
 
@@ -25,6 +27,9 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         if (entity.getDunningLevels() != null && Hibernate.isInitialized(entity.getDunningLevels())) {
             builder
                 .dunningPolicyLevels(entity.getDunningLevels().stream().map(dunningPolicyLevel -> policyLevelMapper.toResource(dunningPolicyLevel)).collect(Collectors.toList()));
+        }
+        if(entity.getMinBalanceTriggerCurrency() != null) {
+            builder.minBalanceTriggerCurrency(ImmutableResource.builder().id(entity.getMinBalanceTriggerCurrency().getId()).build());
         }
         return builder.build();
     }
@@ -46,7 +51,8 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         return entity;
     }
 
-    public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicyInput resource, org.meveo.model.dunning.DunningPolicy toUpdate, List<String> updatedFields) {
+    public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicyInput resource,
+                                                                org.meveo.model.dunning.DunningPolicy toUpdate, List<String> updatedFields) {
         ofNullable(resource.getPolicyName()).ifPresent(policyName -> {
             if (!resource.getPolicyName().equals(toUpdate.getPolicyName())) {
                 updatedFields.add("policyName");
@@ -107,6 +113,13 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             }
             toUpdate.setDetermineLevelBy(determineLevelBy);
         });
+        if (resource.getMinBalanceTriggerCurrency() != null
+                && !resource.getMinBalanceTriggerCurrency().getCode().equals(toUpdate.getMinBalanceTriggerCurrency().getCurrencyCode())) {
+            Currency currency = new Currency();
+            currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
+            toUpdate.setMinBalanceTriggerCurrency(currency);
+            updatedFields.add("minBalanceTriggerCurrency");
+        }
         return toUpdate;
     }
 }

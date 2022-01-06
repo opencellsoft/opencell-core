@@ -15,6 +15,7 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.OrderArticleLine;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderLot;
@@ -183,6 +184,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setQuoteOffer(quoteOffer);
 		offer.setDeliveryDate(quoteOffer.getDeliveryDate());
 		offer.setUserAccount(quoteOffer.getUserAccount());
+		offer.setOrderLineType(OfferLineTypeEnum.CREATE);
 		orderOfferService.create(offer);
 		return offer;
 	}
