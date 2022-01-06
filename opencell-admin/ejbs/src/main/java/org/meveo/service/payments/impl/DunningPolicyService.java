@@ -17,10 +17,12 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.*;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 
@@ -38,6 +40,9 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     @Inject
     private DunningPolicyLevelService dunningPolicyLevelService;
+
+    @Inject
+    private CurrencyService currencyService;
 
     public DunningPolicy findByName(String policyName) {
         try {
@@ -194,6 +199,14 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updatePolicyWithLevel(DunningPolicy dunningPolicy, List<DunningPolicyLevel> dunningPolicyLevels) {
         int sequence = 0;
+        if(dunningPolicy.getMinBalanceTriggerCurrency() != null && dunningPolicy.getMinBalanceTriggerCurrency().getId() == null
+                && dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() != null) {
+            Currency currency = currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode());
+            if(currency == null) {
+                throw new BusinessException("MinBalanceTriggerCurrency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
+            }
+            dunningPolicy.setMinBalanceTriggerCurrency(currency);
+        }
         update(dunningPolicy);
         if(!dunningPolicyLevels.isEmpty()) {
             dunningPolicy.getDunningLevels().sort(comparing(level -> level.getDunningLevel().getDaysOverdue()));
