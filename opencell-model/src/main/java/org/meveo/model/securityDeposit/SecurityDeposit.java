@@ -1,5 +1,20 @@
 package org.meveo.model.securityDeposit;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
@@ -8,19 +23,24 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Date;
-
 @Entity
 @Table(name = "security_deposit")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "security_deposit_seq"),})
+        @Parameter(name = "sequence_name", value = "security_deposit_seq"), })
+@NamedQueries({
+    @NamedQuery(name = "SecurityDeposit.sumAmountPerClient", query = "SELECT SUM(s.amount) FROM SecurityDeposit s WHERE s.customerAccount=:customerAccount"),
+    @NamedQuery(name = "SecurityDeposit.countPerTemplate", query = "SELECT COUNT(s.id) FROM SecurityDeposit s WHERE s.template=:template")
+})
 public class SecurityDeposit extends BusinessCFEntity {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3362135495269999537L;
 
     @ManyToOne
     @JoinColumn(name = "templat_id")
-    private SecurityDepositTemplate templat;
+    private SecurityDepositTemplate template;
 
     @ManyToOne
     @JoinColumn(name = "currency_id", nullable = false)
@@ -49,7 +69,7 @@ public class SecurityDeposit extends BusinessCFEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private SecurityDepositStatusEnum status;
+    private SecurityDepositStatusEnum status = SecurityDepositStatusEnum.NEW;
 
     @Column(name = "product_instance")
     private String productInstance;
@@ -62,16 +82,15 @@ public class SecurityDeposit extends BusinessCFEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-
     @Column(name = "external_reference")
     private String externalReference;
 
-    public SecurityDepositTemplate getTemplat() {
-        return templat;
+    public SecurityDepositTemplate getTemplate() {
+        return template;
     }
 
-    public void setTemplat(SecurityDepositTemplate templat) {
-        this.templat = templat;
+    public void setTemplate(SecurityDepositTemplate template) {
+        this.template = template;
     }
 
     public Currency getCurrency() {
@@ -170,6 +189,3 @@ public class SecurityDeposit extends BusinessCFEntity {
         this.externalReference = externalReference;
     }
 }
-
-
-

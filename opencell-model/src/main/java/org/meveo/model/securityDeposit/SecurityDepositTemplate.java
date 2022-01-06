@@ -1,19 +1,31 @@
 package org.meveo.model.securityDeposit;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-
 @Table(name = "security_deposit_templat")
 @Entity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "security_deposit_templat_seq"),})
+        @Parameter(name = "sequence_name", value = "security_deposit_templat_seq"), })
 public class SecurityDepositTemplate extends BusinessEntity {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8231082352583077713L;
 
     @Column(name = "template_name", nullable = false)
     private String templateName;
@@ -42,7 +54,6 @@ public class SecurityDepositTemplate extends BusinessEntity {
 
     @Column(name = "number_instantiation")
     private Integer numberOfInstantiation;
-
 
     public String getTemplateName() {
         return templateName;
@@ -108,5 +119,3 @@ public class SecurityDepositTemplate extends BusinessEntity {
         this.numberOfInstantiation = numberOfInstantiation;
     }
 }
-
-
