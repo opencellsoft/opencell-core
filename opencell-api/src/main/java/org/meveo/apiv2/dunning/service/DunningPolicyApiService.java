@@ -118,7 +118,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             return of(dunningPolicy);
         } catch (Exception exception) {
             checkNameConstraint(exception);
-            throw new BusinessException(exception);
+            throw new BusinessException(exception.getMessage());
         }
     }
 

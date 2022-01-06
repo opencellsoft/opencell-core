@@ -158,7 +158,7 @@ public class DiscountPlanApiServiceTest {
     public void test_get_all_discount_plan() throws JsonProcessingException {
 
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
-        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L);
+        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);
         assertEquals(3, map.get("total"));

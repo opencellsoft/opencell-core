@@ -196,6 +196,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			invoiceLineRessource =  ImmutableInvoiceLine.copyOf(invoiceLineRessource).withId(invoiceLine.getId());
 			result.addInvoiceLines(invoiceLineRessource);
 		}
+		invoiceService.calculateInvoice(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
 		return result.build();
 	}
@@ -215,6 +216,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
 		invoiceLinesService.update(invoice, invoiceLineInput.getInvoiceLine(), lineId);
+		invoiceService.calculateInvoice(invoice);
 	}
 
 	/**
@@ -223,6 +225,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void removeLine(Invoice invoice, Long lineId) {
 		invoiceLinesService.remove(invoice, lineId);
+		invoiceService.calculateInvoice(invoice);
 	}
 
 	/**
@@ -254,9 +257,11 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(), input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation());
 	}
 	
-	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
-		return invoiceService.update(invoice, input, invoiceResource);
-	}
+	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {       
+        Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
+        invoiceService.calculateInvoice(updateInvoice);
+        return updateInvoice;
+    }
 
 	/**
 	 * @param invoice

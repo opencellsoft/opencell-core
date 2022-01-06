@@ -72,8 +72,8 @@ public class AuditLogService extends PersistenceService<AuditLog> {
     }
 
     private String getActor() {
-        if (StringUtils.isNotBlank(currentUser.getFullNameOrUserName())) {
-            return currentUser.getFullNameOrUserName();
+        if (StringUtils.isNotBlank(currentUser.getFullName())) {
+            return currentUser.getFullName();
         } else if (StringUtils.isNotBlank(currentUser.getEmail())) {
             return currentUser.getEmail();
         }

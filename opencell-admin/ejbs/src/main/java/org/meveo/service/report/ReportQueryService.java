@@ -382,10 +382,10 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
         params.put("startDate", format.format(startDate));
         params.put("portalResultLink", portalResultLink);
 
-	    long durationMiliSecond = duration % 1000;
-        duration = duration / 1000;
+	    //to arround to the max value : (long) Math.ceil(duration % 1000)
+	    long durationSecond = (duration / 1000) + (((long) Math.ceil(duration % 1000)) > 0?1l:0l);
 	    
-        params.put("duration", String.format("%02d",duration / 3600)+"h "+String.format("%02d",duration / 60 % 60)+"m "+String.format("%02d",duration % 60)+"s "+String.format("%03d",durationMiliSecond)+"ms");
+        params.put("duration", String.format("%02d",durationSecond / 3600)+"h "+String.format("%02d",durationSecond / 60 % 60)+"m "+String.format("%02d",durationSecond % 60)+"s");
         try {
         	
             if(success) {

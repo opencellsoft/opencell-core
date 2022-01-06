@@ -16,7 +16,6 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -45,7 +44,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
-		if(chargeTemplate==null) {
+		if(articleMappingLines.isEmpty() && chargeTemplate!=null) {
+			articleMappingLines=articleMappingLineService.findByProductAndCharge(product, null);
+		}else if(chargeTemplate==null) {
 			productCharges.addAll(product.getProductCharges().stream()
 					.map(pc -> pc.getChargeTemplate())
 					.collect(toList()));
@@ -106,7 +107,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD", Arrays.asList("taxClass"));
 		}
 		if(result != null) {
 			Hibernate.initialize(result);

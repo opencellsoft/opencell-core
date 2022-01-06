@@ -193,4 +193,8 @@ public class CDRService extends PersistenceService<CDR> {
             }                       
         }
     }
+
+    public boolean isCDRExistByOriginRecord(String originRecord) {
+    	return getEntityManager().createNamedQuery("CDR.findByOrginRecord").setParameter("originRecord", originRecord).getResultList().size() > 0;
+    }
 }

@@ -746,10 +746,11 @@ public class NativePersistenceService extends BaseService {
      *
      * @param tableName A name of a table to query
      * @param config    Data filtering, sorting and pagination criteria
+     * @param id 
      * @return Query builder to filter entities according to pagination configuration data.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
+    public QueryBuilder getQuery(String tableName, PaginationConfiguration config, Long id) {
         tableName = addCurrentSchema(tableName);
         Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
         String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
@@ -761,6 +762,10 @@ public class NativePersistenceService extends BaseService {
             fieldsToRetrieve = "*";
         }
         QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ", "a");
+        if(id != null) {
+        	queryBuilder.addSql(" a.id ='"+id+"'");
+        }
+        	
         if (config == null) {
             return queryBuilder;
         }
@@ -802,7 +807,22 @@ public class NativePersistenceService extends BaseService {
         return fields
                 .stream()
                 .filter(predicate)
-                .map(x -> "a." + x)
+                .map(x -> {
+                    if (x.toLowerCase().trim().contains("->>string")) 
+                        return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>double")) 
+                           return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>long")) 
+                        return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>date")) 
+                        return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>boolean")) 
+                        return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else if(x.toLowerCase().trim().contains("->>entity")) 
+                        return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                    else
+                        return "a." + x;
+                      })
                 .collect(joining(","));
     }
 
@@ -831,7 +851,7 @@ public class NativePersistenceService extends BaseService {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
-        QueryBuilder queryBuilder = getQuery(tableName, config);
+        QueryBuilder queryBuilder = getQuery(tableName, config, null);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return query.setFlushMode(FlushMode.COMMIT).list();
     }
@@ -847,7 +867,7 @@ public class NativePersistenceService extends BaseService {
     @SuppressWarnings({"deprecation", "rawtypes"})
     public List listAsObjects(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
-        QueryBuilder queryBuilder = getQuery(tableName, config);
+        QueryBuilder queryBuilder = getQuery(tableName, config, null);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
         return query.setFlushMode(FlushMode.COMMIT).list();
     }
@@ -887,7 +907,7 @@ public class NativePersistenceService extends BaseService {
      */
     public long count(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
-        QueryBuilder queryBuilder = getQuery(tableName, config);
+        QueryBuilder queryBuilder = getQuery(tableName, config, null);
         Query query = queryBuilder.getNativeCountQuery(getEntityManager());
         Object count = query.setFlushMode(FlushModeType.COMMIT).getSingleResult();
         if (count instanceof Long) {

@@ -29,7 +29,6 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -45,7 +44,6 @@ import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 
 @RequestScoped
@@ -257,10 +255,10 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	@Override
 	public Response quoteQuotation(String quoteCode, int quoteVersion) {
 		try {
-		          return Response.ok(cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion)).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
-	        }
+			return Response.ok(cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion)).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
+		}
 	}
 
 	@Override

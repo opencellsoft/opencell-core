@@ -8195,6 +8195,20 @@
     <changeSet id="#INTRD-1589_2021_14_09" author="ZBariki" />
     <changeSet id="1589_20210930" author="YoussefIZEM" />
      <changeSet id="INTRD-2143_20211006" author="TarikFA." />
+     
+    <changeSet id="#4044_30122021_counter_period_job" author="Mbarek-Ay">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="22" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2021-12-30 00:00:00.000" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="CounterPeriodJob" />
+            <column name="code" value="CounterPeriodJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Counter period job"/>
+            <column name="uuid" value="CounterPeriodJob" />
+        </insert>
+    </changeSet>
     
     <changeSet id="INTRD_1985_20210923_data" author="TarikFA.">
     
