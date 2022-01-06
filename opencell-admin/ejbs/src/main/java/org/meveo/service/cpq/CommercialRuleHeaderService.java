@@ -284,17 +284,15 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     		return true;
     	}
     	if(selectedAttributes!=null) {
-    		for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
-    			String attributeCode = entry.getKey();
+    		for (Entry<String, Object> entry : selectedAttributes.entrySet()) { 
     			Object attributeValue = entry.getValue();
-    			String convertedValue = String.valueOf(attributeValue);
-    			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
-    				isSelected=true;
+    			String convertedValue = String.valueOf(attributeValue); 
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
     					List<String> values = Arrays.asList(convertedValue.split(";"));
     					if (!values.contains(line.getSourceAttributeValue())) {
+    						isSelected=false;
     						if (continueProcess) {
     							continue;
     						} else {
@@ -307,6 +305,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					convertedValue = result;
     					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
+    						isSelected=false;
     						if (continueProcess) {
     							continue;
     						} else {
@@ -316,6 +315,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				default:
     					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
+    						isSelected=false;
     						if (continueProcess) {
     							continue;
     						} else {
@@ -324,7 +324,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					}
 
     				}
-    			}
+    			
     		}
     	}else if(isPreRequisite && line.getSourceAttribute()!=null) {
     		return false;
