@@ -5711,6 +5711,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
         }
+        if (InvoiceStatusEnum.NEW.equals(status)) {            
+            toUpdate.setStatus(InvoiceStatusEnum.DRAFT);
+        }
         if (input.getComment() != null) {
             toUpdate.setComment(input.getComment());
         }
