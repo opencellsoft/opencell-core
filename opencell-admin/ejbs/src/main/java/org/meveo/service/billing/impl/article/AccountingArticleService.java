@@ -16,7 +16,6 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -108,7 +107,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD", Arrays.asList("taxClass"));
 		}
 		if(result != null) {
 			Hibernate.initialize(result);

@@ -421,7 +421,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     private PaymentActionEnum paymentAction;
 
     @Column(name = "payment_deferral_count")
-    private Integer paymentDeferralCount;
+    private Integer paymentDeferralCount = 0;
     /**
      * Account export file
      */

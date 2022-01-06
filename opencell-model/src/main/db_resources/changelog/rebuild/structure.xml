@@ -6752,7 +6752,7 @@
             <column name="quote_id" type="bigint" />
             <column name="billing_cycle" type="bigint" />
             <column name="billing_run" type="bigint" />
-            <column name="order_number " type="varchar(255)" />
+            <column name="order_number" type="varchar(255)" />
             <column name="mailing_type" type="varchar(255)" />
             <column name="cced_emails" type="varchar(2000)" />
             <column name="email" type="varchar(255)" />

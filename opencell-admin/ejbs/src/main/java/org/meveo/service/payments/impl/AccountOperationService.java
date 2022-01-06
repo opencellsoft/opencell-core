@@ -98,8 +98,10 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         if((paymentLocalDate.toEpochDay() - LocalDate.now().toEpochDay()) > appProvider.getMaximumDelay()){
             throw new BusinessException("the paymentDate should not exceed " + appProvider.getMaximumDelay());
         }
-        if(accountOperation.getPaymentDeferralCount() +1 > appProvider.getMaximumDeferralPerInvoice()){
-            throw new BusinessException("the payment deferral count should not exceeds the configured maximum deferral per invoice.");
+        if(appProvider.getMaximumDeferralPerInvoice() != null && accountOperation.getPaymentDeferralCount() != null) {
+            if(accountOperation.getPaymentDeferralCount() + 1 > appProvider.getMaximumDeferralPerInvoice()){
+                throw new BusinessException("the payment deferral count should not exceeds the configured maximum deferral per invoice.");
+            }
         }
         if(selectedPaymentMethod != null){
             DayOfWeek paymentDateDayOfWeek = paymentLocalDate.plusDays(3).getDayOfWeek();
