@@ -656,9 +656,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
             }
             Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
-            DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId, Arrays.asList("collectionPlan", "actions"));
+            DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId, Arrays.asList("dunningLevel", "collectionPlan", "actions"));
             if (dunningLevelInstance == null) {
-                throw new EntityDoesNotExistsException("No Dunning Level found with id : " + dunningLevelInstanceId);
+                throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + dunningLevelInstanceId);
             }
             if (dunningActionInstanceInput.getDunningLevelInstance().getId() != dunningActionInstanceToUpdate.getDunningLevelInstance().getId()) {
                 fields.add("dunningLevelInstance");
