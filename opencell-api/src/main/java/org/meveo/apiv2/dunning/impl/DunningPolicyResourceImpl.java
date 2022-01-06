@@ -126,7 +126,8 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Override
     public Response update(Long dunningPolicyId, DunningPolicyInput dunningPolicyInput) {
-        org.meveo.model.dunning.DunningPolicy dunningPolicyEntity = dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
+        org.meveo.model.dunning.DunningPolicy dunningPolicyEntity =
+                dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels"));
         if (dunningPolicyEntity == null) {
             throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
         }
@@ -134,7 +135,6 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         List<String> updatedFields = new ArrayList<>();
         
         if (checkIfPolicyLevelsAreChanged(dunningPolicyInput.getDunningPolicyLevels(), dunningPolicyEntity.getDunningLevels())) {
-            
             dunningPolicyEntity.getDunningLevels().clear();
             List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
             for (Resource resource : dunningPolicyInput.getDunningPolicyLevels()) {
@@ -144,22 +144,23 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                     dunningPolicyLevelList.add(level);
                 }
             }
-            
             updatedFields.add("dunningLevels");
             dunningPolicyEntity.setDunningLevels(dunningPolicyLevelList);
         }
         
         String operationType = "update";
         
-        if(dunningPolicyInput.isActivePolicy() != null && dunningPolicyEntity.getActivePolicy() != dunningPolicyInput.isActivePolicy()) {
+        if(dunningPolicyInput.isActivePolicy() != null
+                && dunningPolicyEntity.getActivePolicy() != dunningPolicyInput.isActivePolicy()) {
         	operationType = dunningPolicyInput.isActivePolicy() ? "activation" : "deactivation";
         }
         
         org.meveo.model.dunning.DunningPolicy policy =
-                dunningPolicyApiService.update(dunningPolicyId, mapper.toUpdateEntity(dunningPolicyInput, dunningPolicyEntity, updatedFields)).get();
+                dunningPolicyApiService.update(dunningPolicyId,
+                        mapper.toUpdateEntity(dunningPolicyInput, dunningPolicyEntity, updatedFields)).get();
 
-        String origine = (policy != null) ? policy.getPolicyName() : "";
-        auditLogService.trackOperation(operationType, new Date(), policy, origine, updatedFields);
+        String origin = (policy != null) ? policy.getPolicyName() : "";
+        auditLogService.trackOperation(operationType, new Date(), policy, origin, updatedFields);
         
         ActionStatus actionStatus = new ActionStatus();
         actionStatus.setStatus(ActionStatusEnum.SUCCESS);
