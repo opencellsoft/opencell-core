@@ -92,10 +92,13 @@ public class DecryptCFValuesScript extends Script  {
             String cfValue = (String) result[1];
           
             log.info("descrypting line id = "+cfId+", value = "+cfValue+", table = "+tableName);
-          
-            accountentityService.getEntityManager()
-                        .createNativeQuery("update  " + tableName + " set cf_Values='"+decrypt(cfValue)+"' where  id="+cfId)
-                        .executeUpdate();          
+            
+            String decryptedCf = decrypt(cfValue);
+            if(decryptedCf != null) {
+                accountentityService.getEntityManager()
+                            .createNativeQuery("update  " + tableName + " set cf_values='"+decryptedCf+"' where  id="+cfId)
+                            .executeUpdate();      
+            }
         }
     }
     
@@ -116,7 +119,7 @@ public class DecryptCFValuesScript extends Script  {
             }
         } catch (Exception e) {
             log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
-            return ON_ERROR_RETURN;
+            return null;
         }
         return strToDecrypt;
     }
