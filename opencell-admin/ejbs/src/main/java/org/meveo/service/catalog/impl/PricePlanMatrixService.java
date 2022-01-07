@@ -35,6 +35,7 @@ import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -48,6 +49,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.QuoteAttributeService;
 
 import javax.ejb.Stateless;
@@ -90,6 +92,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     
 
     @Inject private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    
+    @Inject
+    private AttributeInstanceService attributeInstanceService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -751,13 +756,14 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     }
 
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) throws BusinessException {
-        if( chargeInstance.getServiceInstance()!=null) {
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws BusinessException {
+        ChargeInstance chargeInstance=walletOperation.getChargeInstance();
+    	if( chargeInstance.getServiceInstance()!=null) {
         	String serviceCode=chargeInstance.getServiceInstance().getCode();
-        	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
-                       .stream()
-                       .map(attributeInstance -> (AttributeValue)attributeInstance)
-                       .collect(Collectors.toSet());
+     	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
+                    .stream()
+                    .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation))
+                    .collect(Collectors.toSet());
         	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
         }
      

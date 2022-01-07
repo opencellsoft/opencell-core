@@ -1,8 +1,10 @@
 package org.meveo.service.script;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.meveo.admin.exception.BusinessException;
@@ -14,6 +16,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Product;
@@ -58,7 +61,10 @@ public class OrderValidationScript extends Script {
         }
 
         List<OrderOffer> validOffers = commercialOrderService.validateOffers(order.getOffers());
-
+        Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
+		if(order.getDiscountPlan()!=null) {
+			discountPlans.add(order.getDiscountPlan());
+		}
         if(order.getOrderNumber() == null)
             order = serviceSingleton.assignCommercialOrderNumber(order);
 
@@ -77,12 +83,19 @@ public class OrderValidationScript extends Script {
             subscription.setOrder(order);
             subscriptionService.create(subscription);
 
-            for (OrderProduct product : offer.getProducts()){
-                processProduct(subscription, product, currentUser);
-            }
-
-            subscriptionService.update(subscription);
-            subscriptionService.activateInstantiatedService(subscription);
+            if(offer.getDiscountPlan()!=null) {
+				discountPlans.add(offer.getDiscountPlan());
+			}
+			
+			for (OrderProduct product : offer.getProducts()){
+				if(product.getDiscountPlan()!=null) {
+					discountPlans.add(product.getDiscountPlan());
+				}
+				commercialOrderService.processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes());
+			}
+			commercialOrderService.instanciateDiscountPlans(subscription, discountPlans);
+			subscriptionService.update(subscription);
+			subscriptionService.activateInstantiatedService(subscription);
         }
 
         order.setStatus(CommercialOrderEnum.VALIDATED.toString());
@@ -105,47 +118,5 @@ public class OrderValidationScript extends Script {
         }
         return seller;
     }
-    private void processProduct(Subscription subscription, OrderProduct orderProduct, MeveoUser currentUser) {
-        Product product = orderProduct.getProductVersion().getProduct();
 
-        ServiceInstance serviceInstance = new ServiceInstance();
-        serviceInstance.setCode(product.getCode());
-        serviceInstance.setQuantity(orderProduct.getQuantity());
-        serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
-        serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
-        serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
-        serviceInstance.setProductVersion(orderProduct.getProductVersion());
-
-        serviceInstance.setSubscription(subscription);
-
-        AttributeInstance attributeInstance = null;
-        for (OrderAttribute orderAttribute : orderProduct.getOrderAttributes()) {
-            attributeInstance = new AttributeInstance(orderAttribute, currentUser);
-            attributeInstance.updateAudit(currentUser);
-            attributeInstance.setServiceInstance(serviceInstance);
-            attributeInstance.setSubscription(subscription);
-            serviceInstance.addAttributeInstance(attributeInstance);
-        }
-        serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
-
-        List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
-                .stream()
-                .filter(oneShotChargeInstance -> ((OneShotChargeTemplate)oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
-                .map(oneShotChargeInstance -> {
-                    oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
-                    oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-                    return oneShotChargeInstance;
-                }).collect(Collectors.toList());
-        serviceInstance.getSubscriptionChargeInstances().clear();
-        serviceInstance.getSubscriptionChargeInstances().addAll(oneShotCharges);
-
-
-        List<RecurringChargeInstance> recurringChargeInstances = serviceInstance.getRecurringChargeInstances();
-        for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
-            recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
-            recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-            recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-        }
-        subscription.addServiceInstance(serviceInstance);
-    }
 }

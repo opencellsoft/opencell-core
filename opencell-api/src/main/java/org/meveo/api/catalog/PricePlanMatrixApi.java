@@ -581,27 +581,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return ppm;
     }
 
-    public PricePlanMatrixLineDto loadPrices(String ppmCode, int version, String chargeInstanceCode) {
-        if (StringUtils.isBlank(ppmCode)) {
-            missingParameters.add("ppmCode");
-        }
-        if (StringUtils.isBlank(version)) {
-            missingParameters.add("ppmVersion");
-        }
-        if (StringUtils.isBlank(chargeInstanceCode)) {
-            missingParameters.add("chargeInstanceCode");
-        }
-        handleMissingParameters();
 
-        PricePlanMatrixVersion pricePlanMatrixVersion = loadPublishedMatrixVersion(ppmCode, version);
-
-        ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, chargeInstanceCode, ChargeInstance.class);
-        try {
-        	return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
-        }catch(BusinessException e) {
-        	throw new MeveoApiException(e.getMessage());
-        }
-    }
 
     public PricePlanMatrixesResponseDto list(PagingAndFiltering pagingAndFiltering) {
         PricePlanMatrixesResponseDto result = new PricePlanMatrixesResponseDto();
