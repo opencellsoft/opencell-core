@@ -164,12 +164,21 @@ public enum AttributeTypeEnum {
 		}
 	},
     
-	EXPRESSION_LANGUAGE {
-		@Override
-		public ColumnTypeEnum getColumnType(Boolean isRange) {
-			return ColumnTypeEnum.String;
-		}
-	},
+ 	EXPRESSION_LANGUAGE {
+ 		@Override
+ 		public ColumnTypeEnum getColumnType(Boolean isRange) {
+ 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.String;
+ 		}
+ 		
+ 		@Override
+ 		public Object getValue(AttributeValue attributeValue) {
+ 			 if(attributeValue.getDoubleValue()!=null) {
+    				 return attributeValue.getDoubleValue();
+ 	       	 }else {
+ 	       		return attributeValue.getStringValue();
+    			}
+ 		}
+ 	},
 	BOOLEAN {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
