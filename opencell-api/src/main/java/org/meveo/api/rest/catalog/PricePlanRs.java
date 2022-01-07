@@ -430,18 +430,6 @@ public interface PricePlanRs extends IBaseRs {
     Response updatePricePlanMatrixLines(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
                                         @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
 
-    @POST
-    @Path("/{pricePlanMatrixCode}/pricePlanMatrixVersions/{pricePlanMatrixVersion}/chargeInstance/{chargeInstanceCode}/rating")
-    @Operation(summary = "load prices",
-            tags = { "Price Plan" },
-            description ="load prices",
-            responses = {
-                    @ApiResponse(responseCode="200", description = "the prices are successfully loaded"),
-                    @ApiResponse(responseCode = "400", description = "Internal error")
-            })
-    Response matrixRating(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
-                          @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @Parameter @PathParam("chargeInstanceCode") String chargeInstanceCode);
-    
 
     /**
      *

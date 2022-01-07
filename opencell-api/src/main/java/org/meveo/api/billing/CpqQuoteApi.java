@@ -119,6 +119,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -256,6 +257,10 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     UsageRatingService usageRatingService;
+    
+
+    @Inject
+    private AttributeInstanceService attributeInstanceService;
 
 
 
@@ -1436,7 +1441,11 @@ public class CpqQuoteApi extends BaseApi {
             ;
             // Add Service charges
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
+            	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
+                        .stream()
+                        .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance,serviceInstance, subscription))
+                        .collect(Collectors.toSet());
+            	
                 for (AttributeValue attributeValue : attributeValues) {
                     Attribute attribute = attributeValue.getAttribute();
                     Object value = attribute.getAttributeType().getValue(attributeValue);
@@ -1636,6 +1645,7 @@ public class CpqQuoteApi extends BaseApi {
             	usageChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
                 usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
             }
+            
         }
     }
 
@@ -1911,30 +1921,5 @@ public class CpqQuoteApi extends BaseApi {
     }
 
 
-    public static Object getAttributeValue(QuoteProduct quoteProduct, Attribute attribute) {
-    	Optional<QuoteAttribute> quoteAttribute=null;
-    	if(!quoteProduct.getQuoteAttributes().isEmpty())
-    			quoteAttribute=quoteProduct.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attribute.getCode())).findFirst();
-
-    	if(attribute.getAttributeType()!=null) {
-    		switch (attribute.getAttributeType()) {
-			case TOTAL :
-			case COUNT :
-			case NUMERIC :
-			case INTEGER:
-				return quoteAttribute.get().getDoubleValue();
-			case LIST_MULTIPLE_TEXT:
-			case LIST_TEXT:
-			case EXPRESSION_LANGUAGE :
-			case TEXT:
-				return quoteAttribute.get().getStringValue();
-			case DATE:
-				return quoteAttribute.get().getDateValue();
-			default:
-				break;
-			}
-    	}
-    	return null;
-    }
 
 }

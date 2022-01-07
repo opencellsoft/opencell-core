@@ -67,6 +67,10 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
                     .collect(Collectors.toList());
         }
     }
+    public AttributeInstance(MeveoUser currentUser) {
+    	super();
+    	updateAudit(currentUser);
+    }
 
     public ServiceInstance getServiceInstance() {
         return serviceInstance;

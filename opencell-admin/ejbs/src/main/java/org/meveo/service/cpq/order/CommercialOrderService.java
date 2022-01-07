@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,12 +36,14 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -220,12 +224,46 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setProductVersion(product.getCurrentVersion());
 
 		serviceInstance.setSubscription(subscription);
-
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		
 		for (OrderAttribute orderAttribute : orderAttributes) {
+			if(orderAttribute.getAttribute()!=null && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType()) ) {
 			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 			attributeInstance.setServiceInstance(serviceInstance);
 			attributeInstance.setSubscription(subscription);
+			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+			}
+		}
+		//add missing attribute instances
+		AttributeInstance attributeInstance=null;
+		for(Attribute attribute:product.getCurrentVersion().getAttributes()) {
+			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
+				attributeInstance = new AttributeInstance(currentUser);
+				attributeInstance.setAttribute(attribute);
+				attributeInstance.setServiceInstance(serviceInstance);
+				attributeInstance.setSubscription(subscription);
+			
+			}else {
+				attributeInstance=instantiatedAttributes.get(attribute.getCode());
+			}
+			if(!StringUtils.isBlank(attribute.getDefaultValue())){
+				switch (attribute.getAttributeType()) {
+				case BOOLEAN:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(attribute.getDefaultValue());
+					break;
+				case NUMERIC:
+					if(attributeInstance.getDoubleValue()==null)
+						attributeInstance.setDoubleValue(Double.valueOf(attribute.getDefaultValue()));
+					break;
+				default:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(attribute.getDefaultValue());
+					break;
+				}
+			}
 			serviceInstance.addAttributeInstance(attributeInstance);
+			
 		}
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
