@@ -203,7 +203,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                 && dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() != null) {
             Currency currency = currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode());
             if(currency == null) {
-                throw new BusinessException("MinBalanceTriggerCurrency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
+                throw new BusinessException("Currency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
             }
             dunningPolicy.setMinBalanceTriggerCurrency(currency);
         }
