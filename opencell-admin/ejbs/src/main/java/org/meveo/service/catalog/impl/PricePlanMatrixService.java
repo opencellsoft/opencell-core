@@ -93,7 +93,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     @Inject private PricePlanMatrixVersionService pricePlanMatrixVersionService;
     
-    @inject
+    @Inject
     private AttributeInstanceService attributeInstanceService;
 
     // private ParamBean param = ParamBean.getInstance();
