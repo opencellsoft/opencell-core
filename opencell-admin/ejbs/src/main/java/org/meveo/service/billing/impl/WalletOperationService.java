@@ -23,16 +23,13 @@ import static org.meveo.commons.utils.NumberUtils.round;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -41,43 +38,41 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
-import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.InsufficientBalanceException;
-import org.meveo.admin.exception.RatingException;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.CounterValueChangeInfo;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.rating.RatingResult;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
@@ -97,25 +92,10 @@ import org.meveo.service.filter.FilterService;
 public class WalletOperationService extends PersistenceService<WalletOperation> {
 
     @Inject
-    private BillingAccountService billingAccountService;
-
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-    @Inject
-    private RatingService ratingService;
-
-    @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
 
     @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
-
-    @Inject
     private WalletService walletService;
-
-    @Inject
-    private CounterInstanceService counterInstanceService;
 
     @Inject
     private SellerService sellerService;
@@ -141,599 +121,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @Inject
     private FilterService filterService;
 
-    @EJB
-    private RecurringChargeInstanceService recurringChargeInstanceService;
-
-    /**
-     * Apply a one shot charge
-     * 
-     * @param subscription Subscription
-     * @param chargeInstance Charge instance to apply
-     * @param inputQuantity Quantity to apply
-     * @param quantityInChargeUnits Quantity to apply in charge units
-     * @param applicationDate Charge application date
-     * @param isVirtual Is it a virtual charge
-     * @param orderNumberOverride Order number to override
-     * @param chargeMode Charge mode
-     * @return Wallet operation
-     * @throws BusinessException General business exception
-     * @throws RatingException Rating related exception
-     */
-    public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
-            String orderNumberOverride, ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
-
-        if (chargeInstance == null) {
-            throw new IncorrectChargeInstanceException("charge instance is null");
-        }
-
-        if (applicationDate == null) {
-            applicationDate = new Date();
-        }
-
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", subscription.getId(), quantityInChargeUnits,
-            applicationDate, chargeInstance.getId(), chargeInstance.getDescription());
-
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null, chargeMode, null, false,
-            isVirtual);
-
-        WalletOperation walletOperation = ratingResult.getWalletOperation();
-
-        if (isVirtual) {
-            return walletOperation;
-        }
-
-        chargeWalletOperation(walletOperation);
-
-        OneShotChargeTemplate oneShotChargeTemplate = null;
-
-        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-
-        if (chargeTemplate instanceof OneShotChargeTemplate) {
-            oneShotChargeTemplate = (OneShotChargeTemplate) chargeInstance.getChargeTemplate();
-        } else {
-            oneShotChargeTemplate = oneShotChargeTemplateService.findById(chargeTemplate.getId());
-        }
-
-        boolean immediateInvoicing = (oneShotChargeTemplate != null && oneShotChargeTemplate.getImmediateInvoicing() != null) ? oneShotChargeTemplate.getImmediateInvoicing() : false;
-
-        if (Boolean.TRUE.equals(immediateInvoicing)) {
-            BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
-            int delay = billingAccount.getBillingCycle().getInvoiceDateDelayEL() == null ? 0
-                    : InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), walletOperation, billingAccount);
-            Date nextInvoiceDate = DateUtils.addDaysToDate(billingAccount.getNextInvoiceDate(), -delay);
-            nextInvoiceDate = DateUtils.setTimeToZero(nextInvoiceDate);
-            applicationDate = DateUtils.setTimeToZero(applicationDate);
-
-            if (nextInvoiceDate == null || applicationDate.after(nextInvoiceDate)) {
-                billingAccount.setNextInvoiceDate(applicationDate);
-                billingAccountService.update(billingAccount);
-            }
-        }
-        if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
-            counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
-        }
-        return walletOperation;
-    }
-
-    /**
-     * Determine recurring period start date
-     *
-     * @param chargeInstance Charge instance
-     * @param date Date to calculate period for
-     * @return Recurring period start date
-     */
-    public Date getRecurringPeriodStartDate(RecurringChargeInstance chargeInstance, Date date) {
-
-        Calendar cal = resolveCalendar(chargeInstance);
-        if (cal == null) {
-            throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
-        }
-
-        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
-
-        Date previousChargeDate = cal.previousCalendarDate(cal.truncateDateTime(date));
-        return previousChargeDate;
-    }
-
-    /**
-     * Determine recurring period end date
-     *
-     * @param chargeInstance Charge instance
-     * @param date Date to calculate period for
-     * @return Recurring period end date
-     */
-    public Date getRecurringPeriodEndDate(RecurringChargeInstance chargeInstance, Date date) {
-
-        Calendar cal = resolveCalendar(chargeInstance);
-        if (cal == null) {
-            throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
-        }
-
-        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
-
-        Date nextChargeDate = cal.nextCalendarDate(cal.truncateDateTime(date));
-        return nextChargeDate;
-    }
-
-    /**
-     * Determine recurring period start and end dates
-     * 
-     * @param chargeInstance Charge instance
-     * @param date Date to calculate period for
-     * @return Recurring period
-     */
-    public DatePeriod getRecurringPeriod(RecurringChargeInstance chargeInstance, Date date) {
-
-        Calendar cal = resolveCalendar(chargeInstance);
-        if (cal == null) {
-            throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
-        }
-
-        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
-
-        Date startPeriodDate = cal.previousCalendarDate(cal.truncateDateTime(date));
-        Date endPeriodDate = cal.nextCalendarDate(cal.truncateDateTime(date));
-
-        return new DatePeriod(startPeriodDate, endPeriodDate);
-    }
-
-    private Calendar resolveCalendar(RecurringChargeInstance chargeInstance) {
-        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
-        Calendar cal = chargeInstance.getCalendar();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate, chargeInstance);
-        }
-        return cal;
-    }
-
-    /**
-     * Determine if charge should be applied in advance
-     * 
-     * @param recurringChargeInstance Recurring charge instance
-     * @return True if charge is applied in advance
-     */
-    public boolean isApplyInAdvance(RecurringChargeInstance recurringChargeInstance) {
-        boolean isApplyInAdvance = recurringChargeInstance.getApplyInAdvance() != null && recurringChargeInstance.getApplyInAdvance();
-        if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
-            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), recurringChargeInstance.getServiceInstance(), null, null,
-                recurringChargeInstance);
-        }
-
-        return isApplyInAdvance;
-    }
-
-    private boolean shouldNotIncludePPM(Date applyChargeOnDate, Date nextChargeDate, Date from, Date to) {
-        return (to != null && (to.before(applyChargeOnDate) || to.getTime() == applyChargeOnDate.getTime())) || (from != null && (from.after(nextChargeDate) || from.getTime() == nextChargeDate.getTime()));
-    }
-
-    public boolean isChargeMatch(ChargeInstance chargeInstance, String filterExpression) throws BusinessException {
-        boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances()
-                .stream()
-                .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                .anyMatch(attributeInstance -> !attributeInstance.getBooleanValue());
-
-        if(anyFalseAttribute) return false;
-
-        if (StringUtils.isBlank(filterExpression)) {
-            return true;
-        }
-
-        return ValueExpressionWrapper.evaluateToBooleanOneVariable(filterExpression, "ci", chargeInstance);
-    }
-
-    /**
-     * Apply a recurring charge.<br>
-     * Identical to applyRecurringCharge() but occurs in a new transaction
-     * 
-     * @param chargeInstanceId Recurring charge instance id
-     * @param chargeMode Charge application mode
-     * @param forSchedule Is this a scheduled charge
-     * @param chargeToDate An explicit date to charge to. Assumption - to reach end agreement date. Optional. If provided, will charge up to a given date, pro-rating, if needed, the last period.
-     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @param orderNumberToOverride Order number to assign to Wallet operation. Optional. If provided, will override a value from chargeInstance.
-     * @return List of created wallet operations
-     * @throws BusinessException General business exception
-     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
-     */
-    public List<WalletOperation> applyReccuringChargeInNewTx(Long chargeInstanceId, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
-            throws BusinessException, RatingException {
-        return applyReccuringCharge(recurringChargeInstanceService.findById(chargeInstanceId), chargeMode, forSchedule, chargeToDate, orderNumberToOverride, isVirtual);
-    }
-
-    /**
-     * Apply a recurring charge.<br>
-     * Quantity might be prorated for first time charge (identified by chargeInstance.chargeDate=null) if subscription prorata is enabled on charge template. Will update charge instance with a new charge and next charge
-     * dates. <br>
-     * <br>
-     * Recurring charge can be of two scenarious, depending on chargeInstance.applyInAdvance flag of its EL expression:
-     * <ul>
-     * <li>Apply charge that is applied at the end of calendar period - for charge instance with appliedInAdvance = false</li>
-     * <li>Apply the recurring charge in advance of calendar period - for charge instance with appliedInAdvance = true</li>
-     * </ul>
-     *
-     * <b>Apply charge that is applied at the end of calendar period</b> applyInAdvance = false:<br>
-     * <br>
-     * Will create a WalletOperation with wo.operationDate = chargeInstance.nextChargeDate, wo.startDate = chargeInstance.chargeDate and wo.endDate=chargeInstance.nextChargeDate.<br>
-     * <br>
-     * <b>Apply the recurring charge in advance of calendar period</b> applyInAdvance = true:<br>
-     * <br>
-     * Will create a WalletOperation with wo.operationDate = chargeInstance.chargeDate, wo.startDate = chargeInstance.chargeDate and wo.endDate=chargeInstance.nextChargeDate <br>
-     * ---<br>
-     * For non-reimbursement it will charge only the next calendar period cycle unless an explicit chargeToDate is provided. In such case last period might be prorated.<br>
-     * For reimbursement need to reimburse earlier applied recurring charges starting from termination date to the last date charged. Thus it might span multiple calendar periods with first period being .<br>
-     * ---<br>
-     * It will also update chargeInstance.chargeDate = chargeInstance.nextChargeDate and chargeInstance.nextChargeDate = nextCalendarDate(chargeInstance.nextChargeDate)
-     * 
-     *
-     * @param chargeInstance Charge instance
-     * @param chargeMode Charge application mode
-     * @param forSchedule Is this a scheduled charge
-     * @param chargeToDate An explicit date to charge to. Assumption - to reach end agreement date. Optional. If provided, will charge up to a given date, pro-rating, if needed, the last period.
-     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @param orderNumberToOverride Order number to assign to Wallet operation. Optional. If provided, will override a value from chargeInstance.
-     * @return List of created wallet operations
-     * @throws BusinessException General business exception
-     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
-     */
-    public List<WalletOperation> applyReccuringCharge(RecurringChargeInstance chargeInstance, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
-            throws BusinessException, RatingException {
-
-        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
-
-        Date applyChargeFromDate;
-        Date applyChargeToDate;
-
-        boolean prorateFirstPeriod = false;
-        Date prorateFirstPeriodFromDate = null;
-
-        // -- Determine charge period, prorating for the first termination period and prorating of first subscription period
-
-        // For reimbursement need to reimburse earlier applied recurring charges starting from "apply charge to upon termination" date to the last date charged (chargedToDate).
-        // This might span multiple calendar periods and might require a first period proration. Here none of WOs are created yet and chargedToDate reflects the real last charged
-        // to date.
-        if (chargeMode == ChargeApplicationModeEnum.REIMBURSMENT) {
-
-            if (chargeInstance.getChargedToDate() == null) {
-                // Trying to reimburse something that was not charged yet
-                log.error("Trying to reimburse a charge {} that was not charged yet. Will skip.", chargeInstance.getId());
-                return new ArrayList<>();
-            }
-
-            applyChargeFromDate = chargeInstance.getChargeToDateOnTermination();
-            applyChargeToDate = chargeInstance.getChargedToDate();
-
-            // Take care of the first charge period that termination date falls into
-            // Determine if first period proration is needed and is requested
-            prorateFirstPeriodFromDate = getRecurringPeriodStartDate(chargeInstance, applyChargeFromDate);
-            if (prorateFirstPeriodFromDate.before(applyChargeFromDate)) {
-                prorateFirstPeriod = prorateTerminationCharges(chargeInstance);
-
-            } else {
-                prorateFirstPeriod = false;
-                prorateFirstPeriodFromDate = null;
-            }
-
-            // For rerating reimbursement need to reimburse earlier applied recurring charges starting from the last date charged (chargedToDate) to the end of the period or the
-            // chargeToDate.
-            // This might span multiple calendar periods and might require a first period proration.
-            // As in RecurringChargeInstanceService.resetRecurringCharge() chargedToDate will be reset to a fromDate or a later date (depending on rerateInvoiced
-            // flag), need to reimburse not from chargeToDateOnTermination, but from what chargedToDate was reset to.
-            // And chargeToDate (not chargedToDate) is expected as to know what date to reimburse charges to
-        } else if (chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT) {
-
-            if (chargeInstance.getChargedToDate() == null) {
-                // Trying to reimburse something that was not charged yet
-                log.error("Trying to reimburse a charge {} that was not charged yet. Will skip.", chargeInstance.getId());
-                return new ArrayList<>();
-            }
-
-            applyChargeFromDate = chargeInstance.getChargedToDate();
-
-            DatePeriod period = getRecurringPeriod(chargeInstance, applyChargeFromDate);
-            applyChargeToDate = period.getTo();
-
-            // Take care of the first charge period that termination date falls into
-            // Determine if first period proration is needed and is requested
-            if (period.getFrom().before(applyChargeFromDate)) {
-                prorateFirstPeriod = prorateTerminationCharges(chargeInstance);
-                prorateFirstPeriodFromDate = period.getFrom();
-
-            } else {
-                prorateFirstPeriod = false;
-                prorateFirstPeriodFromDate = null;
-            }
-
-            applyChargeToDate = chargeToDate != null ? chargeToDate : applyChargeToDate;
-
-            // For non-reimbursement it will cover only one calendar period cycle unless an explicit chargeToDate is specified.
-            // In such case this might span multiple calendar periods and might require a last period proration
-            // Initialize charge and determine prorata ratio if applying a charge for the first time
-        } else {
-
-            applyChargeFromDate = chargeInstance.getChargedToDate();
-
-            boolean isFirstCharge = false;
-
-            // First time charge
-            if (chargeInstance.getChargedToDate() == null) {
-                applyChargeFromDate = chargeInstance.getSubscriptionDate();
-                isFirstCharge = true;
-            } else {
-                isFirstCharge = chargeInstance.getChargedToDate().equals(chargeInstance.getSubscriptionDate());
-            }
-
-            DatePeriod period = getRecurringPeriod(chargeInstance, applyChargeFromDate);
-            applyChargeToDate = period.getTo();
-
-            // When charging first time, need to determine if counter is available and prorata ratio if subscription charge proration is enabled
-            if (isFirstCharge) {
-                
-             // The counter will be decremented by charge quantity
-                CounterInstance counterInstance = chargeInstance.getCounter();
-                if (!isVirtual && counterInstance != null) {
-
-                    CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                        chargeInstance, chargeInstance.getQuantity(), isVirtual);
-
-                    boolean isApplyInAdvance = isApplyInAdvance(chargeInstance);
-                    
-                                       
-
-                    // If the counter was not deducted, then the charge is not applied (but next activation date is updated).
-                    if (counterValueChangeInfo.getDeltaValue().equals(BigDecimal.ZERO)) {
-                        chargeInstance.advanceChargeDates(applyChargeFromDate, applyChargeToDate, isApplyInAdvance ? applyChargeToDate : applyChargeFromDate);
-                        return new ArrayList<>();
-
-                    } 
-                }
-
-                // Determine if subscription charge should be prorated
-                prorateFirstPeriodFromDate = period.getFrom();
-                if (period.getFrom().before(applyChargeFromDate)) {
-
-                    boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() != null && recurringChargeTemplate.getSubscriptionProrata();
-                    if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
-                        prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate,
-                            chargeInstance);
-                    }
-
-                    prorateFirstPeriod = prorateSubscription;
-
-                } else {
-                    prorateFirstPeriod = false;
-                    prorateFirstPeriodFromDate = null;
-                }
-
-                // If it is not a first time charge, it might still be need to prorate first period when rerating.
-                // e.g. initial charge WO was 01/10 to 01/11. A change came in on 22/10 and two WOs were created instead: 01/10-22/10 and 22/10-01/11.
-                // A second change came in on 27/10 and three WOs were created instead: 01/10-22/10, 22/10-27/10 and 27/10-01/11.
-                // When processing a second change and rerating a period 22/10-01/11, it should be aware that proration shall be applied as initial full period was 01/10-01/11
-            } else if (chargeMode == ChargeApplicationModeEnum.RERATING && period.getFrom().before(applyChargeFromDate)) {
-                prorateFirstPeriod = true;
-                prorateFirstPeriodFromDate = period.getFrom();
-            }
-
-            applyChargeToDate = chargeToDate != null ? chargeToDate : applyChargeToDate;
-        }
-
-        if (applyChargeFromDate == null) {
-            throw new IncorrectChargeInstanceException("nextChargeDate is null.");
-        }
-
-        log.debug("Will apply {} recuring charges for charge {}/{} for period(s) {} - {}.",
-            chargeMode == ChargeApplicationModeEnum.REIMBURSMENT || chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT ? "reimbursement" : "", chargeInstance.getId(), chargeInstance.getCode(),
-            applyChargeFromDate, applyChargeToDate);
-
-        // -- Divide a period to charge into periods (or partial periods) and create WOs
-
-        List<WalletOperation> walletOperations = new ArrayList<>();
-        Date currentPeriodFromDate = applyChargeFromDate;
-        int periodIndex = 0;
-
-        Date effectiveChargeFromDate = null;
-        Date effectiveChargeToDate = null;
-
-        try {
-            while (applyChargeToDate != null && currentPeriodFromDate.getTime() < applyChargeToDate.getTime()) {
-
-                boolean isApplyInAdvance = isApplyInAdvance(chargeInstance);
-                boolean prorate = false;
-
-                // Check if prorating is needed on first period of termination reimbursement or on subscription
-                effectiveChargeFromDate = currentPeriodFromDate;
-                if (periodIndex == 0 && prorateFirstPeriodFromDate != null) {
-                    currentPeriodFromDate = prorateFirstPeriodFromDate;
-                    prorate = prorateFirstPeriod;
-                }
-
-                // Take care of the last charge period that termination date falls into
-                // Check if prorating is needed on last period (this really should happen in Apply end agreement mode)
-                Date currentPeriodToDate = getRecurringPeriodEndDate(chargeInstance, currentPeriodFromDate);
-                effectiveChargeToDate = currentPeriodToDate;
-                if (chargeToDate != null && currentPeriodToDate.after(chargeToDate)) {
-                    effectiveChargeToDate = chargeToDate;
-
-                    if (chargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-                        prorate = prorate || prorateTerminationCharges(chargeInstance);
-                    }
-                }
-
-                // Handle a case of re-rating of recurring charge - existing WOs have been canceled and new ones are re-generated up to termination date only if it falls within the
-                // rating period. chargeToDate is not passed in rerating cases.
-                if ((chargeMode == ChargeApplicationModeEnum.RERATING || chargeMode == ChargeApplicationModeEnum.AGREEMENT) && chargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-                    Date chargeToDateOnTermination = chargeInstance.getChargeToDateOnTermination();
-                    // Termination date is not charged, its like TO value in a range of dates - e.g. if termination date is on friday, friday will not be charged.
-                    if (chargeToDateOnTermination != null && currentPeriodFromDate.compareTo(chargeToDateOnTermination) < 0 && chargeToDateOnTermination.compareTo(currentPeriodToDate) <= 0) {
-                        effectiveChargeToDate = effectiveChargeToDate.before(chargeToDateOnTermination) ? effectiveChargeToDate : chargeToDateOnTermination;
-
-                        if (chargeToDateOnTermination.compareTo(currentPeriodToDate) < 0) {
-                            prorate = prorate || prorateTerminationCharges(chargeInstance);
-                        }
-                    }
-                }
-
-                boolean chargeDatesAlreadyAdvanced = false;
-
-                // If charge is not applicable for current period, skip it
-                if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression()) || ignoreChargeTemplate(chargeInstance)) {
-                    log.debug("IPIEL: not rating chargeInstance with id={}, filter expression evaluated to FALSE", chargeInstance.getId());
-
-                } else {
-
-                    BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
-
-                    // Apply prorating if needed
-                    if (prorate) {
-                        BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
-                        if (prorata == null) {
-                            throw new BusinessException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
-                                    + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
-                        }
-
-                        inputQuantity = inputQuantity.multiply(prorata);
-                    }
-
-                    if (chargeMode.isReimbursement())
-                        log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", "reimbursement", chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate, inputQuantity);
-                    else
-                        log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", isApplyInAdvance ? "start of period" : "end of period", chargeInstance.getId(), effectiveChargeFromDate,
-                            effectiveChargeToDate, inputQuantity);
-
-                    if (recurringChargeTemplate.isProrataOnPriceChange()) {
-                        walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectiveChargeFromDate, effectiveChargeToDate,
-                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, inputQuantity, orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(),
-                            isApplyInAdvance, isVirtual));
-
-                    } else {
-
-                        Date oldChargedToDate = chargeInstance.getChargedToDate();
-
-                        Date operationDate = isApplyInAdvance ? effectiveChargeFromDate : effectiveChargeToDate;
-                        // Any operation past the termination date is invoiced with termination date
-                        if (chargeInstance.getTerminationDate() != null && operationDate.after(chargeInstance.getTerminationDate())) {
-                            operationDate = chargeInstance.getTerminationDate();
-                        }
-
-                        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, operationDate, inputQuantity, null,
-                            orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
-                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
-
-                        WalletOperation walletOperation = ratingResult.getWalletOperation();
-
-                        // Check if rating script modified a chargedTo date
-                        chargeDatesAlreadyAdvanced = DateUtils.compare(oldChargedToDate, chargeInstance.getChargedToDate()) != 0;
-
-                        if (forSchedule) {
-                            walletOperation.changeStatus(WalletOperationStatusEnum.SCHEDULED);
-                        }
-
-                        if (isVirtual) {
-                            walletOperations.add(walletOperation);
-                        } else {
-                            List<WalletOperation> operations = chargeWalletOperation(walletOperation);
-                            walletOperations.addAll(operations);
-                        }
-                    }
-                    
-                    if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
-                        counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, walletOperations, isVirtual);
-                    }
-                }
-
-                // Update charge, nextCharge and chargedToDates if not advanced already in some rating script
-                if (!chargeDatesAlreadyAdvanced) {
-                    if (isApplyInAdvance) {
-                        chargeInstance.advanceChargeDates(effectiveChargeFromDate, effectiveChargeToDate, effectiveChargeToDate);
-                    } else {
-                        chargeInstance.advanceChargeDates(effectiveChargeToDate, getRecurringPeriodEndDate(chargeInstance, effectiveChargeToDate), effectiveChargeToDate);
-                    }
-                }
-
-                currentPeriodFromDate = chargeInstance.getChargedToDate();
-                periodIndex++;
-
-                // Handle a case of infinite loop when chargeToDate is null (regular charging), but period was shortened (e.g. rating up to the termination/end aggreement date only
-                // for
-                // terminated charges)
-                if (effectiveChargeToDate.compareTo(currentPeriodToDate) != 0) {
-                    break;
-                }
-            }
-
-        } catch (Exception e) {
-
-            if (e instanceof BusinessException) {
-                ((BusinessException) e).addErrorContext(ErrorContextAttributeEnum.RATING_PERIOD, new DatePeriod(effectiveChargeFromDate, effectiveChargeToDate));
-            }
-
-            throw e;
-        }
-
-        return walletOperations;
-    }
-
-    /**
-     * Shall termination or reimbursement charges be prorated
-     *
-     * @param chargeInstance Recurring charge instance
-     * @return True if termination charges should be prorated
-     */
-    private boolean prorateTerminationCharges(RecurringChargeInstance chargeInstance) {
-
-        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
-        boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() != null && recurringChargeTemplate.getTerminationProrata();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
-            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), null, null, chargeInstance);
-        }
-        boolean prorate;
-        if (chargeInstance.getServiceInstance().getSubscriptionTerminationReason() == null)
-            prorate = isTerminationProrata;
-        else
-            prorate = chargeInstance.getServiceInstance().getSubscriptionTerminationReason().getOverrideProrata().isToProrate(isTerminationProrata);
-
-        return prorate;
-    }
-
-    // TODO AKK what if rateCharge would return multiple WOs as alternative to this method??
-    private List<WalletOperation> generateWalletOperationsByPricePlan(RecurringChargeInstance chargeInstance, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date periodStartDate, Date periodEndDate,
-            DatePeriod fullRatingPeriod, BigDecimal inputQuantity, String orderNumberToOverride, boolean isApplyInAdvance, boolean isVirtual) {
-
-        String recurringChargeTemplateCode = chargeInstance.getRecurringChargeTemplate().getCode();
-
-        return ratingService.getActivePricePlansByChargeCode(recurringChargeTemplateCode).stream()
-            .filter(ppm -> !shouldNotIncludePPM(periodStartDate, periodEndDate, ppm.getValidityFrom(), ppm.getValidityDate()) && (ppm.getValidityFrom() != null && periodEndDate.after(ppm.getValidityFrom())))
-            .map(pricePlanMatrix -> {
-
-                Date computedApplyChargeOnDate = pricePlanMatrix.getValidityFrom().after(periodStartDate) ? pricePlanMatrix.getValidityFrom() : periodStartDate;
-                Date computedNextChargeDate = pricePlanMatrix.getValidityDate() != null && pricePlanMatrix.getValidityDate().before(periodEndDate) ? pricePlanMatrix.getValidityDate() : periodEndDate;
-                double ratio = computeQuantityRatio(computedApplyChargeOnDate, computedNextChargeDate);
-                BigDecimal computedInputQuantityHolder = inputQuantity.multiply(new BigDecimal(ratio + ""));
-
-                RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? computedApplyChargeOnDate : computedNextChargeDate, computedInputQuantityHolder, null,
-                    orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), computedApplyChargeOnDate, computedNextChargeDate, fullRatingPeriod, chargeMode, null, forSchedule, false);
-
-                WalletOperation walletOperation = ratingResult.getWalletOperation();
-                walletOperation.setSubscriptionDate(chargeInstance.getSubscriptionDate());
-
-                if (forSchedule) {
-                    walletOperation.changeStatus(WalletOperationStatusEnum.SCHEDULED);
-                }
-                if (isVirtual) {
-                    return Arrays.asList(walletOperation);
-
-                } else {
-                    return chargeWalletOperation(walletOperation);
-                }
-
-            }).flatMap(List::stream).collect(Collectors.toList());
-    }
-
-    private double computeQuantityRatio(Date computedApplyChargeOnDate, Date computedNextChargeDate) {
-        int lengthOfMonth = 30;
-        double days = DateUtils.daysBetween(computedApplyChargeOnDate, computedNextChargeDate);
-        return days > lengthOfMonth ? 1 : days / lengthOfMonth;
-    }
 
     /**
      *
@@ -786,10 +173,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param chargeInstance Charge instance
      * @param op Wallet operation
      * @return A list of wallet operations containing a single original wallet operation or multiple wallet operations if had to be split among various wallets
-     * @throws BusinessException General business exception
      * @throws InsufficientBalanceException Balance is insufficient in the wallet
      */
-    private List<WalletOperation> chargeOnPrepaidWallets(ChargeInstance chargeInstance, WalletOperation op) throws BusinessException, InsufficientBalanceException {
+    private List<WalletOperation> chargeOnPrepaidWallets(ChargeInstance chargeInstance, WalletOperation op) throws InsufficientBalanceException {
 
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
@@ -936,7 +322,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return result;
     }
 
-    public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws BusinessException, InsufficientBalanceException {
+    /**
+     * Persist a wallet operation. For prepaid wallets, additional wallet operations might be created to span amount over multiple wallets.
+     * 
+     * @param op Wallet operation
+     * @return A list of wallet operations. For postpaid wallets, it will contain the same wallet operation as passed in. For postpaid wallets, additional wallet operations might be returned.
+     * @throws InsufficientBalanceException Insufficient balance to charge for prepaid wallets
+     */
+    public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws InsufficientBalanceException {
 
         List<WalletOperation> result = new ArrayList<>();
         ChargeInstance chargeInstance = op.getChargeInstance();
@@ -944,28 +337,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         // case of scheduled operation (for revenue recognition)
         UserAccount userAccount = chargeInstance.getUserAccount();
 
-        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-        if (chargeTemplate != null) {
-            if (op.getInputUnitDescription() == null) {
-                op.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
-            }
-            if (op.getRatingUnitDescription() == null) {
-                op.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
-            }
-            if (op.getInvoiceSubCategory() == null) {
-                op.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
-            }
-        }
-
         if (chargeInstanceId == null) {
             op.setWallet(userAccount.getWallet());
             result.add(op);
+            
             // Balance and reserved balance deals with prepaid wallets.
             // With wallet cache at all
         } else if (!chargeInstance.getPrepaid()) {
             op.setWallet(userAccount.getWallet());
             result.add(op);
             create(op);
+            
             // Prepaid charges only
         } else {
             result = chargeOnPrepaidWallets(chargeInstance, op);
@@ -1160,6 +542,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate, WalletOperationAggregationSettings aggregationSettings) {
 
         updateWalletOperationPeriodView(aggregationSettings);
@@ -1172,7 +555,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("invoicingDate", invoicingDate);
         // get the aggregated data
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         List result = query.unwrap(org.hibernate.query.Query.class).setResultTransformer(new AliasToAggregatedWalletOperationResultTransformer(AggregatedWalletOperation.class)).getResultList();
 
         return result;
@@ -1469,17 +852,4 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
 
-    public boolean ignoreChargeTemplate(ChargeInstance chargeInstance) {
-        ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
-        if (serviceInstance != null && serviceInstance.getProductVersion() != null) {
-            boolean dontApplyCharge = serviceInstance.getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                .anyMatch(attributeInstance -> !Boolean.valueOf(attributeInstance.getStringValue()));
-            if (dontApplyCharge) {
-                log.debug(String.format("charge %s will be ignored, cause it was ignored by an attribute", chargeInstance.getChargeTemplate().getCode()));
-                return true;
-            }
-        }
-        return false;
-    }
 }

@@ -1,9 +1,12 @@
 package org.meveo.service.payments.impl;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.asList;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
+import static org.meveo.model.shared.DateUtils.daysBetween;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.*;
 
@@ -15,12 +18,16 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
 
 @Stateless
 public class DunningCollectionPlanService extends PersistenceService<DunningCollectionPlan> {
@@ -46,15 +53,26 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     @Inject
     private DunningPolicyService policyService;
 
+    @Inject
+    private EmailSender emailSender;
+
+    @Inject
+    private EmailTemplateService emailTemplateService;
+
     private static final String STOP_REASON = "Changement de politique de recouvrement";
 
     public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
         DunningStopReason stopReason = dunningStopReasonsService.findByStopReason(STOP_REASON);
         policy = policyService.refreshOrRetrieve(policy);
+        DunningCollectionPlanStatus collectionPlanStatusStop
+        = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.STOPPED);
+
         oldCollectionPlan.setStopReason(stopReason);
         oldCollectionPlan.setCloseDate(new Date());
+        oldCollectionPlan.setStatus(collectionPlanStatusStop);
 
-        DunningCollectionPlanStatus collectionPlanStatusActif = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.ACTIVE);
+        DunningCollectionPlanStatus collectionPlanStatusActif
+                = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.ACTIVE);
         DunningCollectionPlan newCollectionPlan = new DunningCollectionPlan();
         newCollectionPlan.setRelatedPolicy(policy);
         newCollectionPlan.setBillingAccount(oldCollectionPlan.getBillingAccount());
@@ -64,22 +82,27 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         newCollectionPlan.setStartDate(oldCollectionPlan.getStartDate());
         newCollectionPlan.setStatus(collectionPlanStatusActif);
         newCollectionPlan.setBalance(oldCollectionPlan.getBalance());
+        newCollectionPlan.setInitialCollectionPlan(oldCollectionPlan);
         create(newCollectionPlan);
         if (policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             List<DunningLevelInstance> levelInstances = new ArrayList<>();
             for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
-                DunningLevelInstance levelInstance = null;
-                if (policyLevel.getSequence() <= selectedPolicyLevel.getSequence()) {
-                    levelInstance = createLevelInstance(newCollectionPlan, collectionPlanStatusActif, null, policyLevel, DONE);
+                DunningLevelInstance levelInstance;
+                if (policyLevel.getSequence() < selectedPolicyLevel.getSequence()) {
+                    levelInstance = createLevelInstance(newCollectionPlan,
+                            collectionPlanStatusActif, null, policyLevel, DONE);
                 } else {
-                    levelInstance = createLevelInstance(newCollectionPlan, collectionPlanStatusActif, null, policyLevel, TO_BE_DONE);
+                    levelInstance = createLevelInstance(newCollectionPlan,
+                            collectionPlanStatusActif, null, policyLevel, TO_BE_DONE);
                 }
                 levelInstances.add(levelInstance);
             }
             newCollectionPlan.setDunningLevelInstances(levelInstances);
+            update(newCollectionPlan);
         }
 
-        create(newCollectionPlan);
+        newCollectionPlan.setCollectionPlanNumber("C" + newCollectionPlan.getId());
+        update(newCollectionPlan);
         update(oldCollectionPlan);
         return newCollectionPlan;
     }
@@ -129,12 +152,13 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         Optional.ofNullable(invoice.getRecordedInvoice())
                 .ifPresent(recordedInvoice ->
                         collectionPlan.setBalance(recordedInvoice.getUnMatchingAmount()));
+        collectionPlan.setDaysOpen((int) daysBetween(collectionPlan.getStartDate(), new Date()) + 1);
         create(collectionPlan);
         if(policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             collectionPlan.setDunningLevelInstances(createLevelInstances(policy, collectionPlan,
                     collectionPlanStatus, dayOverDue));
         }
-        collectionPlan.setCollectionPlanNumber("C"+collectionPlan.getId());
+        collectionPlan.setCollectionPlanNumber("C" + collectionPlan.getId());
         return update(collectionPlan);
     }
 
@@ -167,21 +191,16 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     }
 
     private DunningLevelInstance createLevelInstance(DunningCollectionPlan collectionPlan,
-                                                  DunningCollectionPlanStatus collectionPlanStatus,
-                                                  Integer dayOverDue, DunningPolicyLevel policyLevel,
-                                                  DunningLevelInstanceStatusEnum status) {
+                                                     DunningCollectionPlanStatus collectionPlanStatus,
+                                                     Integer dayOverDue, DunningPolicyLevel policyLevel,
+                                                     DunningLevelInstanceStatusEnum status) {
         DunningLevelInstance levelInstance = new DunningLevelInstance();
         levelInstance.setCollectionPlan(collectionPlan);
         levelInstance.setCollectionPlanStatus(collectionPlanStatus);
         levelInstance.setLevelStatus(status);
         levelInstance.setSequence(policyLevel.getSequence());
         levelInstance.setDunningLevel(policyLevel.getDunningLevel());
-        if (dayOverDue != null) {
-            levelInstance.setDaysOverdue(dayOverDue);
-        }
-        else {
-            levelInstance.setDaysOverdue(policyLevel.getDunningLevel().getDaysOverdue());
-        }
+        levelInstance.setDaysOverdue(policyLevel.getDunningLevel().getDaysOverdue());
         levelInstanceService.create(levelInstance);
         if(policyLevel.getDunningLevel().getDunningActions() != null
                 && !policyLevel.getDunningLevel().getDunningActions().isEmpty()) {
@@ -200,7 +219,11 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
             actionInstance.setActionType(action.getActionType());
             actionInstance.setActionMode(action.getActionMode());
             actionInstance.setActionOwner(action.getAssignedTo());
-            actionInstance.setActionStatus(DunningActionInstanceStatusEnum.TO_BE_DONE);
+            if (levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+            	actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+            }else {
+                actionInstance.setActionStatus(DunningActionInstanceStatusEnum.TO_BE_DONE);
+            }
             actionInstance.setCollectionPlan(collectionPlan);
             actionInstance.setDunningLevelInstance(levelInstance);
             actionInstance.setCode(action.getCode() + "_" + currentTimeMillis());
@@ -236,7 +259,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		collectionPlanToPause.setStatus(collectionPlanStatus);
 		collectionPlanToPause.setPausedUntilDate(pauseUntil);
 		collectionPlanToPause.setPauseReason(dunningPauseReason);
-		collectionPlanToPause.addPauseDuration((int)DateUtils.daysBetween(new Date(),collectionPlanToPause.getPausedUntilDate()));
+		collectionPlanToPause.addPauseDuration((int) daysBetween(new Date(),collectionPlanToPause.getPausedUntilDate()));
 		update(collectionPlanToPause);
 		return collectionPlanToPause; 
 	}
@@ -257,6 +280,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		DunningCollectionPlanStatus collectionPlanStatus = dunningCollectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.STOPPED);
 		collectionPlanToStop.setStatus(collectionPlanStatus);
 		collectionPlanToStop.setCloseDate(new Date());
+		collectionPlanToStop.setDaysOpen((int) daysBetween(collectionPlanToStop.getCloseDate(), new Date()) + 1);
 		collectionPlanToStop.setStopReason(dunningStopReason);
 		update(collectionPlanToStop);
 		return collectionPlanToStop; 
@@ -296,7 +320,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 			collectionPlanToResume.setPauseReason(null);
 		}
 		collectionPlanToResume.setStatus(collectionPlanStatus);
-		collectionPlanToResume.addPauseDuration((int)DateUtils.daysBetween(collectionPlanToResume.getPausedUntilDate(), new Date()));
+		collectionPlanToResume.addPauseDuration((int) daysBetween(collectionPlanToResume.getPausedUntilDate(), new Date()));
 		update(collectionPlanToResume);
 		return collectionPlanToResume;
 	}
@@ -328,5 +352,15 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         return getEntityManager()
                 .createNamedQuery("DunningCollectionPlan.activeCollectionPlansIds", Long.class)
                 .getResultList();
+    }
+
+    public void sendNotification(String emailFrom, String emailTo, EmailTemplate emailTemplate,
+                                 Map<Object, Object> params) {
+        emailTemplate = emailTemplateService.refreshOrRetrieve(emailTemplate);
+        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+        emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
+                subject, content, contentHtml, null, null, false);
     }
 }

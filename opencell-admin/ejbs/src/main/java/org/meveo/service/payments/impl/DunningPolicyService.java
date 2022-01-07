@@ -70,6 +70,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
         if(rules != null && !rules.isEmpty()) {
+            rules.sort(Comparator.comparing(DunningPolicyRule::getId));
             ruleFilter.append(buildRuleLinesFilter(rules.get(0).getDunningPolicyRuleLines()));
             for (int index = 1; index < rules.size(); index++) {
                 ruleFilter.append(" ")
@@ -92,6 +93,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private String buildRuleLinesFilter(List<DunningPolicyRuleLine> ruleLines) {
         StringBuilder lineFilter = new StringBuilder();
         if(ruleLines != null && !ruleLines.isEmpty()) {
+            ruleLines.sort(Comparator.comparing(DunningPolicyRuleLine::getId));            
             lineFilter.append("(")
                     .append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
                     .append(" ")
@@ -129,15 +131,18 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         DunningCollectionPlanStatus collectionPlanStatus = collectionPlanStatusService.findByStatus(DunningCollectionPlanStatusEnum.ACTIVE);
         for (Map.Entry<DunningPolicy, List<Invoice>> entry : eligibleInvoice.entrySet()) {
             DunningPolicy policy = refreshOrRetrieve(entry.getKey());
-            Integer dayOverDue = policy.getDunningLevels().stream()
-                    .filter(policyLevel -> policyLevel.getSequence() == 1)
-                    .map(policyLevel -> policyLevel.getDunningLevel().getDaysOverdue())
-                    .findFirst()
-                    .orElseThrow(BusinessException::new);
-            entry.getValue().stream()
-                    .filter(invoice -> invoiceEligibilityCheck(invoice, policy, dayOverDue))
-                    .forEach(invoice ->
-                            collectionPlanService.createCollectionPlanFrom(invoice, policy, dayOverDue, collectionPlanStatus));
+            Optional<DunningPolicyLevel> reminderLevel = policy.getDunningLevels().stream()
+                    .filter(policyLevel -> policyLevel.getDunningLevel().isReminder())
+                    .findFirst();
+            if(!reminderLevel.isEmpty()) {
+                Integer dayOverDue = reminderLevel.map(policyLevel -> policyLevel.getDunningLevel().getDaysOverdue()).get();
+                entry.getValue().stream()
+                        .filter(invoice -> invoiceEligibilityCheck(invoice, policy, dayOverDue))
+                        .forEach(invoice ->
+                                collectionPlanService.createCollectionPlanFrom(invoice, policy, dayOverDue, collectionPlanStatus));
+            } else {
+                log.error("No reminder level configured for policy" + policy.getPolicyName());
+            }
         }
     }
 
@@ -147,13 +152,13 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         Date today = new Date();
         if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
             dayOverDueAndThresholdCondition =
-                    (dayOverDue.longValue() == DAYS.between(invoice.getDueDate().toInstant(), today.toInstant()));
+                    (dayOverDue.longValue() == DAYS.between(today.toInstant(), invoice.getDueDate().toInstant()));
         } else {
             BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
                                             .map(RecordedInvoice::getUnMatchingAmount)
                                             .orElse(BigDecimal.ZERO);
             dayOverDueAndThresholdCondition =
-                    (dayOverDue.longValue() == DAYS.between(invoice.getDueDate().toInstant(), today.toInstant())
+                    (dayOverDue.longValue() == DAYS.between(today.toInstant(), invoice.getDueDate().toInstant())
                             || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
         }
         return invoice.getPaymentStatus().equals(UNPAID)

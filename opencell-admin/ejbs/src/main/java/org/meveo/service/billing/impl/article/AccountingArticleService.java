@@ -1,5 +1,7 @@
 package org.meveo.service.billing.impl.article;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,13 +14,14 @@ import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
@@ -26,8 +29,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
-
-import static java.util.stream.Collectors.toList;
 
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
@@ -39,11 +40,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return getAccountingArticle(product, null, attributes);
 	}
 
-	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, Map<String, Object> attributes) throws BusinessException {
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, Map<String, Object> attributes) throws InvalidELException, ValidationException {
 		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
-		if(chargeTemplate==null) {
+		if(articleMappingLines.isEmpty() && chargeTemplate!=null) {
+			articleMappingLines=articleMappingLineService.findByProductAndCharge(product, null);
+		}else if(chargeTemplate==null) {
 			productCharges.addAll(product.getProductCharges().stream()
 					.map(pc -> pc.getChargeTemplate())
 					.collect(toList()));
@@ -96,14 +99,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			}
 			
 		});
-		if(attributeMappingLineMatch.getFullMatchsArticle().size() > 1)
-			throw new BusinessException("More than one article found");
+        if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
+            throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+        }
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD", Arrays.asList("taxClass"));
 		}
 		if(result != null) {
 			Hibernate.initialize(result);
@@ -119,30 +123,25 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	@SuppressWarnings("rawtypes")
-	public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) {
-		if(chargeInstance==null) {
-			return null;
-		}
-		ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
-		   Map<String, Object> attributes = new HashMap<>();
-		  List<AttributeValue> attributeValues = serviceInstance != null ?
-				  serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(toList())
-				  : new ArrayList<>();
-	       for (AttributeValue attributeValue : attributeValues) {
-               Attribute attribute = attributeValue.getAttribute();
-               Object value = attribute.getAttributeType().getValue(attributeValue);
-               if (value != null) {
-                   attributes.put(attributeValue.getAttribute().getCode(), value);
-               }
-           }
-           Optional<AccountingArticle> accountingArticle = Optional.empty();
-           try {
-        	   accountingArticle = getAccountingArticle(serviceInstance != null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(),attributes);
-           }catch(BusinessException e) {
-           	throw new MeveoApiException(e.getMessage());
-           }
-           return accountingArticle.isPresent() ? accountingArticle.get() : null;
-	}
+    public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) throws InvalidELException, ValidationException {
+        if (chargeInstance == null) {
+            return null;
+        }
+        ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
+        Map<String, Object> attributes = new HashMap<>();
+        List<AttributeValue> attributeValues = serviceInstance != null ? serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(toList()) : new ArrayList<>();
+        for (AttributeValue attributeValue : attributeValues) {
+            Attribute attribute = attributeValue.getAttribute();
+            Object value = attribute.getAttributeType().getValue(attributeValue);
+            if (value != null) {
+                attributes.put(attributeValue.getAttribute().getCode(), value);
+            }
+        }
+        Optional<AccountingArticle> accountingArticle = Optional.empty();
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes);
+
+        return accountingArticle.isPresent() ? accountingArticle.get() : null;
+    }
 	
 	public List<AccountingArticle> findByTaxClassAndSubCategory(TaxClass taxClass, InvoiceSubCategory invoiceSubCategory) {
 		return getEntityManager().createNamedQuery("AccountingArticle.findByTaxClassAndSubCategory", AccountingArticle.class)

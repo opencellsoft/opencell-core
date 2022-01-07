@@ -27,6 +27,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -115,19 +116,16 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         }
     }
 
-	public List<WalletOperation> saveAndApplyProductInstance(ProductInstance productInstance, String criteria1,
-			String criteria2, String criteria3, boolean persist) throws BusinessException {
+    public List<WalletOperation> saveAndApplyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist) throws BusinessException {
         create(productInstance);
         return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist);
     }
 
-    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist)
-            throws BusinessException {
+    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist) throws BusinessException {
         return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist, true);
     }
 
-    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist, boolean instantiate)
-            throws BusinessException {
+    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist, boolean instantiate) throws BusinessException {
 
         if (instantiate) {
             instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, !persist);
@@ -136,7 +134,8 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         List<WalletOperation> walletOperations = new ArrayList<>();
         for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
             try {
-                walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, !persist));
+                RatingResult ratingResult = productChargeInstanceService.applyProductChargeInstance(productChargeInstance, !persist);
+                walletOperations.addAll(ratingResult.getWalletOperations());
 
             } catch (RatingException e) {
                 log.trace("Failed to apply a product charge {}: {}", productChargeInstance, e.getRejectionReason());
@@ -194,5 +193,4 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
             }
         }
     }
-
 }

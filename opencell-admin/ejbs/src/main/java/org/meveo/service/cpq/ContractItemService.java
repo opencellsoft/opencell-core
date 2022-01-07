@@ -127,40 +127,22 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		
 	}
 
-  
-	@SuppressWarnings("unchecked")
-	public ContractItem getApplicableContractItem(Contract contract,OfferTemplate offer,String productCode,ChargeTemplate chargeTemplate) {
-		ContractItem contractItem = null;
-		try {
-			Query query=getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
-					.setParameter("contractId", contract.getId()).setParameter("offerId", offer.getId())
-					.setParameter("productCode",productCode).setParameter("chargeTemplateId",chargeTemplate.getId());
-			List<ContractItem> applicableContractItems=query.getResultList();
-			if(!applicableContractItems.isEmpty()) {
-			if(applicableContractItems.size()>1) {
-				throw new Exception("Contract "+contract.getCode()+"has more than one item ");
-			}else
-				contractItem=applicableContractItems.get(0);
-			}
-		} catch (Exception e) { 
-			log.error("findByCriteria error ", e.getMessage());
-		}
-		return contractItem;
-	}
-	 
- 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    @SuppressWarnings("unchecked")
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+        ContractItem contractItem = null;
+
+        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts").setParameter("contractId", contract.getId()).setParameter("offerId", offer.getId())
+            .setParameter("productCode", productCode).setParameter("chargeTemplateId", chargeTemplate.getId());
+        List<ContractItem> applicableContractItems = query.getResultList();
+
+        if (!applicableContractItems.isEmpty()) {
+            if (applicableContractItems.size() > 1) {
+                log.error("Contract " + contract.getCode() + "has more than one item ");
+
+            } else {
+                contractItem = applicableContractItems.get(0);
+            }
+        }
+        return contractItem;
+    }
 }

@@ -90,19 +90,19 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             toUpdate.setIncludePayReminder(includePayReminder);
         });
         ofNullable(resource.getInterestForDelaySequence()).ifPresent(interestForDelaySequence -> {
-            if (resource.getInterestForDelaySequence() != toUpdate.getInterestForDelaySequence()) {
+            if (resource.getInterestForDelaySequence().equals(toUpdate.getInterestForDelaySequence())) {
                 updatedFields.add("interestForDelaySequence");
             }
             toUpdate.setInterestForDelaySequence(interestForDelaySequence);
         });
         ofNullable(resource.getMinBalanceTrigger()).ifPresent(minBalance -> {
-            if (resource.getMinBalanceTrigger() != toUpdate.getMinBalanceTrigger()) {
+            if (!resource.getMinBalanceTrigger().equals(toUpdate.getMinBalanceTrigger())) {
                 updatedFields.add("minBalanceTrigger");
             }
             toUpdate.setMinBalanceTrigger(minBalance);
         });
         ofNullable(resource.getDetermineLevelBy()).ifPresent(determineLevelBy -> {
-            if (resource.getDetermineLevelBy() != toUpdate.getDetermineLevelBy()) {
+            if (!resource.getDetermineLevelBy().equals(toUpdate.getDetermineLevelBy())) {
                 updatedFields.add("determineLevelBy");
             }
             toUpdate.setDetermineLevelBy(determineLevelBy);

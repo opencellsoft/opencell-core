@@ -54,9 +54,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
 
     @Inject
     private CDRService cdrService;
-    
+
     @Inject
-    private EdrService edrService ;
+    private EdrService edrService;
 
     /**
      * Source of CDR record
@@ -149,7 +149,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
             }
         }
     }
-
 
     /**
      * Convert a CDR to an EDR record, linked to a subscription

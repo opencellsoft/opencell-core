@@ -22,7 +22,6 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -1133,6 +1132,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setTaxClass(taxClass);
         result.setFullRatingPeriod(fullRatingPeriod);
         result.setChargeMode(chargeMode);
+        result.setAccountingCode(accountingCode);
 
         return result;
     }

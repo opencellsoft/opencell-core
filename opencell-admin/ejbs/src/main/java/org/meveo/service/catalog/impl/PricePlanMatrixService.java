@@ -23,8 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -45,18 +43,13 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
@@ -69,13 +62,10 @@ import org.meveo.service.base.BusinessService;
  *
  */
 @Stateless
-public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
+public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {  
 
-    @Inject
-    private PricePlanMatrixLineService pricePlanMatrixLineService;
-    
-
-    @Inject private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    @Inject 
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -718,25 +708,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
 
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
-    }
-
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws BusinessException {
-        ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-		if( chargeInstance .getServiceInstance()!=null) {
-        	
-        	String serviceCode=chargeInstance.getServiceInstance().getCode();
-        	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
-                       .stream()
-                       .map(attributeInstance -> (AttributeValue)attributeInstance)
-                       .collect(Collectors.toSet());
-        	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode, walletOperation);
-        }
-     
-        return null; 
-    }
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,Set<AttributeValue> attributeValues) {
-        
-        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode, null);
     }
 
     public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode) {

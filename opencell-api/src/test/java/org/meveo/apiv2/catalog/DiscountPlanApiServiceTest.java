@@ -18,12 +18,12 @@ import org.meveo.apiv2.generic.services.SearchResult;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IEntity;
+import org.meveo.model.RatingResult;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
-import org.meveo.model.rating.RatingResult;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -158,7 +158,7 @@ public class DiscountPlanApiServiceTest {
     public void test_get_all_discount_plan() throws JsonProcessingException {
 
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
-        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L);
+        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);
         assertEquals(3, map.get("total"));

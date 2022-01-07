@@ -339,6 +339,8 @@ public class UserApi extends BaseApi {
 
         // get the external roles
         result.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, username));
+        // get the external email
+        result.setExternalEmail(keycloakAdminClientService.findUserEmail(httpServletRequest, username));
 
         return result;
     }

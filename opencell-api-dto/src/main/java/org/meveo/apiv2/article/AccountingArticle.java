@@ -69,4 +69,11 @@ public interface AccountingArticle extends Resource {
 	@Schema(description = "custom field associated to accounting article")
     CustomFieldsDto getCustomFields();
 
+    @Nullable
+    @Schema(description = "invoice type associated to accounting article")
+    Resource getInvoiceType();
+    
+    @Nullable
+    @Schema(description = "invoice type el associated to accounting article")
+    String getInvoiceTypeEl();
 }

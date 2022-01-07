@@ -2,6 +2,8 @@ package org.meveo.service.payments.impl;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.dunning.DunningActionInstance;
+import org.meveo.model.dunning.DunningActionInstanceStatusEnum;
+import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
@@ -21,4 +23,11 @@ public class DunningActionInstanceService extends PersistenceService<DunningActi
         }
 	}
 
+	public int updateStatus(DunningActionInstanceStatusEnum actionStatus, DunningLevelInstance dunningLevelInstance) {
+        return getEntityManager()
+                .createNamedQuery("DunningActionInstance.updateStatus")
+                .setParameter("actionStatus", actionStatus)
+                .setParameter("dunningLevelInstance", dunningLevelInstance)
+                .executeUpdate();
+    }
 }

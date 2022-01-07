@@ -63,7 +63,7 @@ public class DiscountPlanInstanceApiService {
 	private EntityManagerWrapper entityManagerWrapper;
 
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities, 1L, null);
 	}
 
 	public Optional<String> findById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
