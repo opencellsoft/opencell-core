@@ -170,6 +170,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -343,6 +344,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private CommercialOrderService commercialOrderService;
 
+    @Inject
+    private SellerService sellerService;
+
     /**
      * folder for pdf .
      */
@@ -507,26 +511,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
-        InvoiceType invoiceType = invoice.getInvoiceType();
-        String prefix = invoiceType.getPrefixEL();
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
-        // TODO: 3508
-        Seller seller = null;
-        if (invoice.getBillingAccount() != null && invoice.getBillingAccount().getCustomerAccount() != null && invoice.getBillingAccount().getCustomerAccount().getCustomer() != null
+        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
+
+
+        Seller seller = invoice.getSeller();
+        if (invoice.getSeller() == null && invoice.getBillingAccount() != null && invoice.getBillingAccount().getCustomerAccount() != null && invoice.getBillingAccount().getCustomerAccount().getCustomer() != null
                 && invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller() != null) {
-            seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+            seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller().findSellerForInvoiceNumberingSequence(cfName, invoiceType);;
         }
 
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-        if (invoiceTypeSellerSequence != null) {
-            prefix = invoiceTypeSellerSequence.getPrefixEL();
-        }
+        seller = sellerService.refreshOrRetrieve(seller);
 
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-        } else {
-            prefix = "";
-        }
+
+        String prefix = serviceSingleton.getInvoicePrefix(invoice, invoiceType, seller);
 
         String invoiceNumber = invoicesToNumberInfo.nextInvoiceNumber();
         // request to store invoiceNo in alias field

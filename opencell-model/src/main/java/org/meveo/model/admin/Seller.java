@@ -18,7 +18,6 @@
 package org.meveo.model.admin;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -292,11 +291,10 @@ public class Seller extends AccountEntity implements IWFEntity {
      * (until seller.parent=null).
      * 
      * @param cfName Custom field name storing invoice numbering sequence
-     * @param date Date
      * @param invoiceType Type of invoice
      * @return Chosen seller
      */
-    public Seller findSellerForInvoiceNumberingSequence(String cfName, Date date, InvoiceType invoiceType) {
+    public Seller findSellerForInvoiceNumberingSequence(String cfName, InvoiceType invoiceType) {
         if (getSeller() == null) {
             return this;
         }
@@ -307,7 +305,7 @@ public class Seller extends AccountEntity implements IWFEntity {
             return this;
         }
 
-        return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
+        return getSeller().findSellerForInvoiceNumberingSequence(cfName, invoiceType);
     }
 
     public List<CustomerSequence> getCustomerSequences() {

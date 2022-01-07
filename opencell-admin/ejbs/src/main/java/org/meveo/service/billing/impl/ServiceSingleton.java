@@ -254,7 +254,7 @@ public class ServiceSingleton {
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
 
         Seller seller = sellerService.findById(sellerId);
-        seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
+        seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceType);
 
         InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
         return sequence;
@@ -431,20 +431,19 @@ public class ServiceSingleton {
         Seller seller = cpqQuote.getSeller();
 
         if (seller == null && cust.getSeller() != null) {
-            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, cpqQuote.getSendDate(), invoiceType);
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoiceType);
         }
         seller = sellerService.refreshOrRetrieve(seller);
         InvoiceSequence sequence = incrementInvoiceNumberSequence(cpqQuote.getSendDate(), invoiceType, seller, cfName, 1);
         int sequenceSize = sequence.getSequenceSize();
 
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
         InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
         if (invoiceTypeSellerSequencePrefix != null) {
             prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
 
         } else if (seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            InvoiceTypeSellerSequence invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
             if (invoiceTypeSellerSequence != null) {
                 prefix = invoiceTypeSellerSequence.getPrefixEL();
             }
@@ -477,7 +476,7 @@ public class ServiceSingleton {
         Seller seller = order.getSeller();
 
         if (seller == null && cust.getSeller() != null) {
-            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, order.getOrderDate(), invoiceType);
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoiceType);
         }
         seller = sellerService.refreshOrRetrieve(seller);
 
@@ -527,32 +526,14 @@ public class ServiceSingleton {
 
         Seller seller = invoice.getSeller();
         if (seller == null && cust.getSeller() != null) {
-            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoiceType);
         }
         seller = sellerService.refreshOrRetrieve(seller);
 
         InvoiceSequence sequence = incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
         long sequenceSize = sequence.getSequenceSize();
 
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
-        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
-        String prefix = invoiceType.getPrefixEL();
-        if (invoiceTypeSellerSequencePrefix != null) {
-            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
-
-        } else if (seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-            if (invoiceTypeSellerSequence != null) {
-                prefix = invoiceTypeSellerSequence.getPrefixEL();
-            }
-        }
-
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = InvoiceService.evaluatePrefixElExpression(prefix, invoice);
-
-        } else {
-            prefix = "";
-        }
+        String prefix = getInvoicePrefix(invoice, invoiceType, seller);
 
         long nextInvoiceNb = sequence.getCurrentNumber();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
@@ -568,6 +549,28 @@ public class ServiceSingleton {
         	}
         }
         return invoice;
+    }
+
+    public String getInvoicePrefix(Invoice invoice, InvoiceType invoiceType, Seller seller) {
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
+        String prefix = invoiceType.getPrefixEL();
+        if (invoiceTypeSellerSequencePrefix != null) {
+            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+        } else if (seller != null) {
+            InvoiceTypeSellerSequence invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            if (invoiceTypeSellerSequence != null) {
+                prefix = invoiceTypeSellerSequence.getPrefixEL();
+            }
+        }
+
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = InvoiceService.evaluatePrefixElExpression(prefix, invoice);
+
+        } else {
+            prefix = "";
+        }
+        return prefix;
     }
 
     /**
