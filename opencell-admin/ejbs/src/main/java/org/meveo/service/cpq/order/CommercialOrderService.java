@@ -205,7 +205,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return order;
 	}
 	
-	private void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
+	public void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
 	     // instantiate the discounts
             for (DiscountPlan dp : discountPlans) {
                 subscriptionService.instantiateDiscountPlan(subscription, dp);
