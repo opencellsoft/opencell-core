@@ -85,8 +85,8 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 	 * @param entity old accounting period
 	 * @param apDto the new accounting period
 	 */
-	public Optional<AccountingPeriod> update(AccountingPeriod entity, org.meveo.apiv2.accounting.AccountingPeriod apDto) {
-		return Optional.of(accountingPeriodService.update(entity, apDto.getStartDate(), apDto.getEndDate(), apDto.getUseSubAccountingPeriods(), apDto.getSubAccountingPeriodType()));
+	public Optional<AccountingPeriod> update(AccountingPeriod entity, AccountingPeriod newValue) {
+		return Optional.of(accountingPeriodService.update(entity, newValue));
 		
 	}
 

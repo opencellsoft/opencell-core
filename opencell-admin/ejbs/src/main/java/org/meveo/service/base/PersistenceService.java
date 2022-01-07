@@ -91,7 +91,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -1556,10 +1555,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @param instance
 	 * @return
 	 */
-	public BusinessEntity tryToFindByCodeOrId(BusinessEntity instance) {
-		return tryToFindByCodeOrId(instance, null);
+	@SuppressWarnings("unchecked")
+    public <B extends BusinessEntity> B tryToFindByCodeOrId(B instance) {
+		return (B) tryToFindByCodeOrId(instance, null);
 	}
-	
+
 	/**
 	 * try to find entity in database by code or id
 	 * @param instance
