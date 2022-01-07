@@ -254,7 +254,7 @@ public class CardPaymentMethod extends PaymentMethod {
         setOwner(code);
         setMonthExpiration(null);
         setYearExpiration(null);
-        setCardNumber(code);
+        setCardNumber(code.substring(0,16));
         setCardType(null);
         setIssueNumber(code);
     }
