@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,8 +19,11 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.script.Script;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class EncryptCFValuesScript extends Script  {
 
@@ -49,10 +54,14 @@ public class EncryptCFValuesScript extends Script  {
 	}
 
 	@Override
-	public void execute(Map<String, Object> methodContext) throws BusinessException {
+	public void execute(Map<String, Object> methodContext)  {
 	    List<String> tablesWithCfvalues = getTablesWithCfvalues();
 		for (String tableName : tablesWithCfvalues) {
-			encryptCfvalues(tableName);
+			try {
+				encryptCfvalues(tableName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -85,7 +94,7 @@ public class EncryptCFValuesScript extends Script  {
 				.getResultList();
 	}
 
-	public void encryptCfvalues(String tableName)
+	public void encryptCfvalues(String tableName) throws JsonParseException, JsonMappingException, IOException
 	{
 		List<Object[]>  entities = accountentityService.getEntityManager()
 				.createNativeQuery("select id, cast(cf_values as varchar) from " + tableName + "  where cf_values is not null ")
@@ -98,7 +107,7 @@ public class EncryptCFValuesScript extends Script  {
             log.info("encrypting line id = "+cfId+", value = "+cfValue+", table = "+tableName);
             
 			accountentityService.getEntityManager()
-						.createNativeQuery("update " + tableName + " set cf_Values='" + encrypt(cfValue) + "' where  id="+cfId)
+						.createNativeQuery("update " + tableName + " set cf_Values='" + encryptCfvaluesStr(cfValue) + "' where  id="+cfId)
 						.executeUpdate();
 				
 		}
@@ -107,30 +116,73 @@ public class EncryptCFValuesScript extends Script  {
 	public String getFileKey() throws Exception {
 		return ParamBean.getInstance().getProperty(OPENCELL_SHA_KEY_PROPERTY, null);
 	}	
-
-	public  String encrypt(String value) throws com.fasterxml.jackson.core.JsonParseException, JsonMappingException, IOException {
-	    
-		Map<String, List> mapsList2 = new HashMap<String, List>();
-		
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, List> mapsList = mapper.readValue(value, Map.class);
-		
-		for (Entry<String, List> maps : mapsList.entrySet()) {
-			List list2 = new ArrayList<Map>();
-			List<Map> list = maps.getValue();
+	public String encrypt(String strToEncrypt) {
+		try {
 			
-			log.info("Niveau 1 Key : " + maps.getKey());
-			for (Map<String, String> map : list) {
-				for (Entry<String, String> element : map.entrySet()) {
+			if (strToEncrypt != null) {
+				if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
+					return strToEncrypt;
+				}
+				SecretKeySpec secretKey = buildSecretKey();
+				Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+				cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+				String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+				return ENCRYPTION_CHECK_STRING + encrypted;
+			}
+			
+		} catch (Exception e) {
+			log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
+			throw new EncyptionException(e);
+		}
+		return strToEncrypt;
+	}
 
-						Map map2 = new HashMap<String, String>();
-						map2.put(element.getKey(),encrypt(element.getValue()));
-						list2.add(map2);
+	public  String encryptCfvaluesStr(String value) throws com.fasterxml.jackson.core.JsonParseException, JsonMappingException, IOException {
+		Map<String, List> mapsList;
+		ObjectMapper mapper = new ObjectMapper();
+		Gson gsonparser = new GsonBuilder().disableHtmlEscaping().create();
+		mapsList = mapper.readValue(value, Map.class);
+
+		for (Entry<String, List> maps : mapsList.entrySet()) {
+			List listCfvalues = new ArrayList();
+			List<Map> list = maps.getValue();
+			for (Map<String, Object> map : list) {
+				for (Entry<String, Object> cfValues : map.entrySet()) {
+					if (cfValues.getValue() instanceof String) {
+						if (!cfValues.getValue().equals("")) {
+							map.put(cfValues.getKey(), encrypt(cfValues.getValue().toString()));
+							listCfvalues.add(map);
+						}
+					} else if (cfValues.getValue() instanceof List) {
+						Map<String, List<String>> mapListCfValues = new HashMap<String, List<String>>();
+						List<String> listValueStrings = new ArrayList<String>();
+						for (Object typeListCfvalues : (List) cfValues.getValue()) {
+							if (typeListCfvalues instanceof String) {
+								listValueStrings.add(encrypt(typeListCfvalues.toString()));
+								mapListCfValues.put(cfValues.getKey(), listValueStrings);							
+							}
+						}
+						listCfvalues.add(mapListCfValues);
+					} else if (cfValues.getValue() instanceof Map) {
+						for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cfValues.getValue())
+								.entrySet()) {
+							Object o = typeMapsCfvalues.getKey();
+							Map<String, String> mapMatrix = new HashMap<String, String>();
+							if (o instanceof String) {
+								for (Entry<String, String> typeMapsCfvaluesmaps : ((Map<String, String>) cfValues.getValue()).entrySet()) {
+									if(typeMapsCfvaluesmaps.getValue() instanceof String) {
+									mapMatrix.put(typeMapsCfvaluesmaps.getKey(), encrypt(typeMapsCfvaluesmaps.getValue().toString()));
+									listCfvalues.add(mapMatrix);
+									}
+								}
+							}
+						}
+					}
 				}
 			}
-			mapsList2.put(maps.getKey(), list2);
+			mapsList.put(maps.getKey(), listCfvalues);
 		}
-		return mapsList2.toString();
+		return mapsList.toString();
 	}
 
 }
