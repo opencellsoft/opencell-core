@@ -8362,4 +8362,43 @@ Opencell team.
             <column name="uuid" value="CounterPeriodJob" />
         </insert>
     </changeSet>
+
+   	<changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA">
+		<insert tableName="billing_tax_mapping">
+        	<column name="id" value='-20'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-2'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-21'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-5'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-22'/>
+            <column name="tax_category_id" value="-2"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-1'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-23'/>
+            <column name="tax_category_id" value="null"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-1'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+     	</insert>
+     </changeSet>
 </databaseChangeLog>
