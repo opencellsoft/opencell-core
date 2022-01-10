@@ -113,30 +113,35 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             Map<Object, Object> params = new HashMap<>();
             BillingAccount billingAccount =
                     billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-            params.put("billingAccount.description", billingAccount.getDescription());
-            params.put("billingAccount.address.address1",
+            params.put("billingAccountDescription", billingAccount.getDescription());
+            params.put("billingAccountAddressAddress1",
                     billingAccount.getAddress() != null ? billingAccount.getAddress().getAddress1() : "");
-            params.put("billingAccount.address.zipCode",
+            params.put("billingAccountAddressZipCode",
                     billingAccount.getAddress() != null ? billingAccount.getAddress().getZipCode() : "");
-            params.put("billingAccount.address.city",
+            params.put("billingAccountAddressCity",
                     billingAccount.getAddress() != null ? billingAccount.getAddress().getCity() : "");
-            params.put("billingAccount.contactInformation.phone",
+            params.put("billingAccountContactInformationPhone",
                     billingAccount.getContactInformation() != null ? billingAccount.getContactInformation().getPhone() : "");
 
             CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-            params.put("customerAccount.legalEntityType.code",
+            params.put("customerAccountFirstName",  customerAccount.getName() != null ?
+                    customerAccount.getName().getFirstName() : "");
+            params.put("customerAccountLastName",  customerAccount.getName() != null ?
+                    customerAccount.getName().getLastName() : "");
+            params.put("customerAccountLegalEntityTypeCode",
                     ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-            params.put("customerAccount.address.address1",
+            params.put("customerAccountAddressAddress1",
                     customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
-            params.put("customerAccount.address.zipCode",
-                   customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
-            params.put("customerAccount.address.city",
-                   customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
+            params.put("customerAccountAddressZipCode",
+                    customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
+            params.put("customerAccountAddressCity",
+                    customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
+            params.put("customerAccountDescription", customerAccount.getDescription());
 
-            params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-            params.put("invoice.dueDate", invoice.getDueDate());
-            params.put("invoice.total", invoice.getAmountWithTax());
-            params.put("day.date", new Date());
+            params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoiceDueDate", invoice.getDueDate());
+            params.put("invoiceTotal", invoice.getAmountWithTax());
+            params.put("dayDate", new Date());
 
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),

@@ -29,6 +29,8 @@ import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +63,8 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
 
     @Inject
     private PaymentGatewayService paymentGatewayService;
+
+    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -195,33 +199,36 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
             Map<Object, Object> params = new HashMap<>();
             BillingAccount billingAccount =
                     billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-            params.put("Company.Name", billingAccount.getDescription());
-            params.put("Compagny.adress", billingAccount.getAddress() != null ?
+            params.put("billingAccountDescription", billingAccount.getDescription());
+            params.put("billingAccountAddressAddress1", billingAccount.getAddress() != null ?
                     billingAccount.getAddress().getAddress1() : "");
-            params.put("Company.postalcode", billingAccount.getAddress() != null ?
+            params.put("billingAccountAddressZipCode", billingAccount.getAddress() != null ?
                     billingAccount.getAddress().getZipCode() : "");
-            params.put("billingAccount.address.city", billingAccount.getAddress() != null ?
+            params.put("billingAccountAddressCity", billingAccount.getAddress() != null ?
                     billingAccount.getAddress().getCity() : "");
-            params.put("Company.phone", billingAccount.getContactInformation() != null ?
+            params.put("billingAccountContactInformationPhone", billingAccount.getContactInformation() != null ?
                     billingAccount.getContactInformation().getPhone() : "");
 
             CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-            params.put("Title.client", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-            params.put("Company.client.adress", customerAccount.getAddress() != null ?
+            params.put("customerAccountLegalEntityTypeCode", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            params.put("customerAccountAddressAddress1", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getAddress1() : "");
-            params.put("Company.client.postalcode", customerAccount.getAddress() != null ?
+            params.put("customerAccountAddressZipCode", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getZipCode() : "");
-            params.put("Company.client.city",  customerAccount.getAddress() != null ?
+            params.put("customerAccountAddressCity",  customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getCity() : "");
-            params.put("Contact.client", customerAccount.getDescription());
-            params.put("Company.client.name",  customerAccount.getName() != null ?
+            params.put("customerAccountDescription", customerAccount.getDescription());
+            params.put("customerAccountLastName",  customerAccount.getName() != null ?
+                    customerAccount.getName().getLastName() : "");
+            params.put("customerAccountFirstName",  customerAccount.getName() != null ?
                     customerAccount.getName().getFirstName() : "");
 
-            params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-            params.put("invoice.dueDate", invoice.getDueDate());
-            params.put("invoice.total", invoice.getAmountWithTax());
-            params.put("day.date", new Date());
-            params.put("Last.action.date", lastActionDate);
+            params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoiceTotal", invoice.getAmountWithTax());
+            params.put("invoiceDueDate", formatter.format(invoice.getDueDate()));
+            params.put("dayDate", formatter.format(new Date()));
+
+            params.put("dunningCollectionPlanLastActionDate", lastActionDate);
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
