@@ -16,11 +16,13 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningPolicyRule;
 import org.meveo.model.dunning.DunningPolicyRuleLine;
+import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
@@ -48,6 +50,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Inject
     private DunningPolicyRuleLineService dunningPolicyRuleLineService;
 
+    @Inject
+    private CurrencyService currencyService;
+
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
     private DunningPolicyRuleLineMapper policyRuleLineMapper = new DunningPolicyRuleLineMapper();
@@ -74,6 +79,13 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
         try {
+            if(dunningPolicy.getMinBalanceTriggerCurrency() != null) {
+                Currency currency = currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode());
+                if(currency == null) {
+                    throw new NotFoundException("Currency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
+                }
+                dunningPolicy.setMinBalanceTriggerCurrency(currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode()));
+            }
             dunningPolicyService.create(dunningPolicy);
             auditLogService.trackOperation("create", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
             return findByCode(dunningPolicy.getPolicyName()).get();
