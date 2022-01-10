@@ -585,6 +585,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     public Optional<DunningActionInstance> addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
         DunningActionInstance dunningActionInstance = new DunningActionInstance();
         
+        if(dunningActionInstanceInput.getCode() != null) {
+            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCode(dunningActionInstanceInput.getCode());
+            if(dunningActionInstanceExist != null) {
+                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
+            }
+        }
+
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
             throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
         }
@@ -597,15 +604,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         } else {
             dunningActionInstance.setDunningLevelInstance(dunningLevelInstance);
         }
-        
-
-        if(dunningActionInstanceInput.getCode() != null) {
-            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCodeAndDunningLevelInstance(dunningActionInstanceInput.getCode(), dunningLevelInstanceId);
-            if(dunningActionInstanceExist != null) {
-                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
-            }
-        }
-
 
         if (dunningActionInstanceInput.getCollectionPlan() == null || dunningActionInstanceInput.getCollectionPlan().getId() == null) {
             throw new ActionForbiddenException("Attribut collectionPlan is mandatory");
