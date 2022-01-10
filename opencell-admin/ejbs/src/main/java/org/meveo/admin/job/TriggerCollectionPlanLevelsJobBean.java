@@ -30,7 +30,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
