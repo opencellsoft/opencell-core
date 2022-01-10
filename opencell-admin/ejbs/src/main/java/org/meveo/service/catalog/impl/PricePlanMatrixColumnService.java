@@ -210,9 +210,12 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
 						pricePlanMatrixValueDto.setStringValue((nextLine[columnIndex] == null || nextLine[columnIndex].isEmpty())? null :nextLine[columnIndex].replace("\\|", ";"));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
-                        if (!inAllowedValues(columns.get(columnIndex).getValue().get().getAllowedValues() ,pricePlanMatrixValueDto.getStringValue()))
-                            throw new BusinessException("not allowed values");
-                        break;
+						columns.get(columnIndex).getValue().ifPresent(
+								attribute -> {
+									if(!inAllowedValues(attribute.getAllowedValues(), pricePlanMatrixValueDto.getStringValue()))
+										throw new BusinessException("not allowed values");
+								}
+						);break;
 					default:
 						break;
 					}
