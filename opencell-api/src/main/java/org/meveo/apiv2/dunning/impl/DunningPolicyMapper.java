@@ -113,12 +113,19 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             }
             toUpdate.setDetermineLevelBy(determineLevelBy);
         });
-        if (resource.getMinBalanceTriggerCurrency() != null
-                && !resource.getMinBalanceTriggerCurrency().getCode().equals(toUpdate.getMinBalanceTriggerCurrency().getCurrencyCode())) {
-            Currency currency = new Currency();
-            currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
-            toUpdate.setMinBalanceTriggerCurrency(currency);
-            updatedFields.add("minBalanceTriggerCurrency");
+        if (resource.getMinBalanceTriggerCurrency() != null) {
+            if(resource.getMinBalanceTriggerCurrency().getCode() == null) {
+                toUpdate.setMinBalanceTriggerCurrency(null);
+                updatedFields.add("minBalanceTriggerCurrency");
+            } else {
+                if (toUpdate.getMinBalanceTriggerCurrency() == null
+                        || !resource.getMinBalanceTriggerCurrency().getCode().equals(toUpdate.getMinBalanceTriggerCurrency().getCurrencyCode())) {
+                    Currency currency = new Currency();
+                    currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
+                    toUpdate.setMinBalanceTriggerCurrency(currency);
+                    updatedFields.add("minBalanceTriggerCurrency");
+                }
+            }
         }
         return toUpdate;
     }
