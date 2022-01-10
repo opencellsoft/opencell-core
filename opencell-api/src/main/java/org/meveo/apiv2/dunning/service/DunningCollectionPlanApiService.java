@@ -145,7 +145,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     public Optional<DunningCollectionPlan> delete(Long id) {
         DunningCollectionPlan dunningCollectionPlan = findById(id).get();
         dunningCollectionPlanService.remove(dunningCollectionPlan);
-        String origine = (dunningCollectionPlan != null) ? dunningCollectionPlan.getCollectionPlanNumber() : "";
+        String origine = (dunningCollectionPlan!=null) ? dunningCollectionPlan.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("REMOVE", new Date(), dunningCollectionPlan, origine);
         return of(dunningCollectionPlan);
     }
@@ -204,10 +204,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         Set<Long> canBeSwitched = new TreeSet<>();
         Set<Long> canNotBeSwitched = new TreeSet<>();
         Map<String, Set<Long>> massSwitchResult = new HashMap<>();
-
-        if (policy.getDunningPolicyRules() == null || policy.getDunningPolicyRules().isEmpty()) {
-            canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
-        } else if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
+        
+        if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
                 collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
                 if (collectionPlan == null) {
@@ -219,8 +217,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     }
                 }
             }
-            canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
-        } else {
+            canNotBeSwitched = collectionPlans.stream()
+                                    .map(DunningCollectionPlan::getId)
+                                    .filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId))
+                                    .collect(toSet());
+        } else if(!dunningPolicyService.existPolicyRulesCheck(policy)) {
+            canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
+        }else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
         massSwitchResult.put("canBESwitched", canBeSwitched);
@@ -281,7 +284,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
         collectionPlanToStop = dunningCollectionPlanService.stopCollectionPlan(collectionPlanToStop, dunningStopReason);
 
-        String origine = (collectionPlanToStop != null) ? collectionPlanToStop.getCollectionPlanNumber() : "";
+        String origine = (collectionPlanToStop!=null) ? collectionPlanToStop.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("STOP Reason : " + dunningStopReason.getStopReason(), new Date(), collectionPlanToStop, origine);
         return of(collectionPlanToStop);
     }
@@ -310,7 +313,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         var collectionPlanToResume = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
 
-        String origine = (collectionPlanToResume != null) ? collectionPlanToResume.getCollectionPlanNumber() : "";
+        String origine = (collectionPlanToResume!=null) ? collectionPlanToResume.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("RESUME", new Date(), collectionPlanToResume, origine);
         return of(collectionPlanToResume);
     }
@@ -382,7 +385,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     dunningCollectionPlanService.update(collectionPlan);
                     // update the sequence of other levels
                     dunningLevelInstanceService.decrementSequecesGreaterThanDaysOverdue(collectionPlan, levelInstanceToRemove.getDaysOverdue());
-
+   
                     String origine = (levelInstanceToRemove.getCollectionPlan() != null) ? levelInstanceToRemove.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningLevelInstance", new Date(), levelInstanceToRemove.getCollectionPlan(), origine);
                 }
@@ -495,7 +498,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 collectionPlan.setTotalDunningLevels(0);
             }
             collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() + 1);
-
+            
             dunningCollectionPlanService.update(collectionPlan);
 
             // Create actions
@@ -553,7 +556,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             dunningLevelInstanceService.update(levelInstanceToUpdate);
-
+            
             if (updateLevelInstanceInput.getActions() != null) {
                 fields.add("actions");
                 for (DunningActionInstance action : levelInstanceToUpdate.getActions()) {
@@ -568,7 +571,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             updateCollectionPlanActions(levelInstanceToUpdate);
-
+           
             String origine = (levelInstanceToUpdate.getCollectionPlan() != null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
             auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), levelInstanceToUpdate.getCollectionPlan(), origine, fields);
             return of(levelInstanceToUpdate);
@@ -581,6 +584,13 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     public Optional<DunningActionInstance> addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
         DunningActionInstance dunningActionInstance = new DunningActionInstance();
+        
+        if(dunningActionInstanceInput.getCode() != null) {
+            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCode(dunningActionInstanceInput.getCode());
+            if(dunningActionInstanceExist != null) {
+                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
+            }
+        }
 
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
             throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
@@ -593,14 +603,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             throw new ActionForbiddenException("Cant not add actions at the end of dunning level with id : " + dunningLevelInstanceId);
         } else {
             dunningActionInstance.setDunningLevelInstance(dunningLevelInstance);
-        }
-
-        if (dunningActionInstanceInput.getCode() != null) {
-            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCodeAndDunningLevelInstance(dunningActionInstanceInput.getCode(),
-                dunningLevelInstanceId);
-            if (dunningActionInstanceExist != null) {
-                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
-            }
         }
 
         if (dunningActionInstanceInput.getCollectionPlan() == null || dunningActionInstanceInput.getCollectionPlan().getId() == null) {
@@ -872,12 +874,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     }
 
                     collectionPlan.setNextAction(nextLevelAction);
-                    
-                    Integer days = nextLevelInstance.getDaysOverdue();
-                    if (collectionPlan.getPauseDuration() != null) {
-                        days += collectionPlan.getPauseDuration();
-                    }
-                    collectionPlan.setNextActionDate(DateUtils.addDaysToDate(collectionPlan.getStartDate(), days));
+                    collectionPlan
+                        .setNextActionDate(DateUtils.addDaysToDate(collectionPlan.getStartDate(), nextLevelInstance.getDaysOverdue() + collectionPlan.getPauseDuration()));
                 }
             } else {
                 collectionPlan.setNextAction(null);
