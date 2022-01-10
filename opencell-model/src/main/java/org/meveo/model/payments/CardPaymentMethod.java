@@ -252,8 +252,8 @@ public class CardPaymentMethod extends PaymentMethod {
     public void anonymize(String code) {
         super.anonymize(code);
         setOwner(code);
-        setMonthExpiration(null);
-        setYearExpiration(null);
+        setMonthExpiration(01);
+        setYearExpiration(1970);
         setCardNumber(code.substring(0,16));
         setCardType(null);
         setIssueNumber(code);
