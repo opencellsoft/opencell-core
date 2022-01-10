@@ -38,10 +38,12 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
-
 		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType());
-		if(entity.getAccountingPeriodYear()==null) {
+		if(entity.getAccountingPeriodYear() == null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
+		}
+		if(entity.getStartDate() == null) {
+			entity.setStartDate(new Date());
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);

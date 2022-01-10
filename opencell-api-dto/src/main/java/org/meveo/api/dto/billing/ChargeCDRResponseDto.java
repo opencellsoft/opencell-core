@@ -75,6 +75,12 @@ public class ChargeCDRResponseDto extends BaseResponse {
      * A wallet operations list.
      */
     private List<WalletOperationDto> walletOperations;
+    
+
+    /**
+     * Counter periods that were updated during the rating
+     */
+    private List<CounterPeriodDto> counterPeriods = new ArrayList<CounterPeriodDto>();
 
     public ChargeCDRResponseDto() {
         setActionStatus(null);
@@ -267,4 +273,18 @@ public class ChargeCDRResponseDto extends BaseResponse {
             this.cdr = cdr;
         }
     }
+
+	/**
+	 * @return the counterPeriods
+	 */
+	public List<CounterPeriodDto> getCounterPeriods() {
+		return counterPeriods;
+	}
+
+	/**
+	 * @param counterPeriods the counterPeriods to set
+	 */
+	public void setCounterPeriods(List<CounterPeriodDto> counterPeriods) {
+		this.counterPeriods = counterPeriods;
+	}
 }
