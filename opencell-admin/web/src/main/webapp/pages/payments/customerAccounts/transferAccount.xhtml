@@ -34,27 +34,27 @@
         </hftl:entityPopup>
 
         <hftl:decorateFormPanel formId="transferAccountForm" label="#{messages['customerAccount.transferAccountTitle']}">
-            <ui:define name="fields">        
+            <ui:define name="fields">   
                     <hftl:decorateFormField fieldId="accountTransferFrom" label="#{messages['customerAccount.accountTransferFrom']}">
                         <p:inputText id="accountTransferFrom" value="#{customerAccountBean.entity.code}" disabled="true" size="30"></p:inputText>
                     </hftl:decorateFormField>
 
                     <hftl:decorateFormField id="accountTransferCode" fieldId="accountTransferCode" label="#{messages['customerAccount.accountTransferTo']}">
-
                         <p:inputText id="accountTransferCode" value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30"></p:inputText>
                         <p:commandButton id="selectLink" onclick="PF('dlg_customerAccountPopup').show()" type="button" icon="ui-icon-search" />
                         <ui:insert />
                     </hftl:decorateFormField>
 
-                    <hftl:decorateFormField fieldId="amountToTransfer" label="#{messages['customerAccount.amountToTransfer']}">
+                    <hftl:decorateFormField id="amountToTransfer" fieldId="amountToTransfer" label="#{messages['customerAccount.amountToTransfer']}">
                         <p:inputText id="amountToTransfer" value="#{customerAccountBean.amountToTransfer}" required="true" size="5">
-                            <f:converter converterId="bigDecimalConverter" />
+                            <f:converter converterId="javax.faces.BigDecimal" />
                         </p:inputText>
                     </hftl:decorateFormField>
+
              </ui:define>
              <ui:define name="buttons">
                     <p:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="#{customerAccountBean.transferAccount()}"
-                                     process="@this"  update="@form"/>
+                                     process="@form" update="@form"/>
 
                     <p:button outcome="customerAccountDetailOperationsTab" value="#{messages['action.back']}">
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
