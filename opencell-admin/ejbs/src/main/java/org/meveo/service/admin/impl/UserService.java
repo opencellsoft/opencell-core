@@ -173,5 +173,15 @@ public class UserService extends PersistenceService<User> {
 
         return users;
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<User> findUserByRole(String username, String... roles) {
+        String queryString = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE u.userName = :userName and role.name IN (:roles)";
+        Query query = getEntityManager().createQuery(queryString);
+        query.setParameter("userName", username.toUpperCase());
+        query.setParameter("roles", Arrays.asList(roles));
+        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
+        return query.getResultList();
+    }
 
 }
