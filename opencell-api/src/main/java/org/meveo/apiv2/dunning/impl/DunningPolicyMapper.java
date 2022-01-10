@@ -48,6 +48,11 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         entity.setPolicyPriority(resource.getPolicyPriority());
         entity.setDefaultPolicy(resource.isDefaultPolicy());
         entity.setActivePolicy(resource.isActivePolicy());
+        if(resource.getMinBalanceTriggerCurrency() != null && resource.getMinBalanceTriggerCurrency().getCode() != null) {
+            Currency currency = new Currency();
+            currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
+            entity.setMinBalanceTriggerCurrency(currency);
+        }
         return entity;
     }
 
