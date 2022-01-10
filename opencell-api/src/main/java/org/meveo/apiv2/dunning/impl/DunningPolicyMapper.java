@@ -113,6 +113,12 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             }
             toUpdate.setDetermineLevelBy(determineLevelBy);
         });
+        ofNullable(resource.getPolicyPriority()).ifPresent(policyPriority -> {
+            if (!resource.getPolicyPriority().equals(toUpdate.getPolicyPriority())) {
+                updatedFields.add("policyPriority");
+            }
+            toUpdate.setPolicyPriority(policyPriority);
+        });
         if (resource.getMinBalanceTriggerCurrency() != null) {
             if(resource.getMinBalanceTriggerCurrency().getCode() == null) {
                 toUpdate.setMinBalanceTriggerCurrency(null);
