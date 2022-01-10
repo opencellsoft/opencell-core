@@ -349,11 +349,16 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
                             executionResult.getStartDate(), executionResult.getExecutionDuration(),
                             executionResult.getLineCount(), null);
             	}
-                for(String email : emails) {
-                	notifyUser(executionResult.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
-                            executionResult.getStartDate(), executionResult.getExecutionDuration(),
-                            executionResult.getLineCount(), null);
-                }
+            	if(emails != null && !emails.isEmpty()) {
+                	Set<String> setEmails = new HashSet<String>(emails);
+                    for(String email : setEmails) {
+                    	if(email != null && !email.equalsIgnoreCase(currentUser.getEmail())) {
+                        	notifyUser(executionResult.getId(), reportQuery.getCode(), email, currentUser.getFullNameOrUserName(), true,
+                                    executionResult.getStartDate(), executionResult.getExecutionDuration(),
+                                    executionResult.getLineCount(), null);
+                    	}
+                    }
+            	}
             }
             
         } catch (InterruptedException | CancellationException e) {

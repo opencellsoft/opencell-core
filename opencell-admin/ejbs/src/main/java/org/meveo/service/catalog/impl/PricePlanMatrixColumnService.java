@@ -210,10 +210,12 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
 						pricePlanMatrixValueDto.setStringValue((nextLine[columnIndex] == null || nextLine[columnIndex].isEmpty())? null :nextLine[columnIndex].replace("\\|", ";"));
 						PricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
-                        if (pricePlanMatrixValueDto.getStringValue() != null && !pricePlanMatrixValueDto.getStringValue().isEmpty() && columns.get(columnIndex).getValue().get()
-                                .getAllowedValues() != null && !columns.get(columnIndex).getValue().get().getAllowedValues().contains(pricePlanMatrixValueDto.getStringValue()))
-                            throw new BusinessException("not allowed values");
-                        break;
+						columns.get(columnIndex).getValue().ifPresent(
+								attribute -> {
+									if(!inAllowedValues(attribute.getAllowedValues(), pricePlanMatrixValueDto.getStringValue()))
+										throw new BusinessException("not allowed values");
+								}
+						);break;
 					default:
 						break;
 					}
@@ -238,5 +240,17 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 			pricePlanMatrixLines.add(pricePlanMatrixLineDto);
 		}
 		return pricePlanMatrixLines;
+	}
+
+	private boolean inAllowedValues(Set<String> allowedValues, String value)
+	{
+		if(value != null && !value.isEmpty() && allowedValues!= null && !allowedValues.isEmpty())
+		{
+			List<String> values = Arrays.asList(value.split("\\|"));
+			return allowedValues.containsAll(values);
+		}
+
+		return true;
+
 	}
 }
