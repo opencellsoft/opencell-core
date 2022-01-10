@@ -23,6 +23,7 @@ import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,6 +43,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
@@ -85,30 +87,120 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         	
 	public Map<String, List<CustomFieldValue>> decryptCfs(Map<String, List<CustomFieldValue>> cfValues) 
 	{
+	    List listStr=new ArrayList();
+	    List<String> listcfValuesString=new ArrayList<String>();
+        ObjectMapper oMapper = new ObjectMapper();
+        Map<String,Object> mapcfValuesString=new LinkedHashMap<String, Object>();
+        Map<String,Object> matrixcfValuesString=new LinkedHashMap<String, Object>();
+        Map<String,Object> maplistString=new HashMap<String, Object>();
+        List matrixList=new ArrayList();
+        Map<String,String> maput=new HashMap<String, String>();
 		for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.entrySet()) {
 			for(CustomFieldValue cf: listCfs.getValue()) {
 				if (cf.getStringValue() != null && cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
 				    cf.setStringValue(decrypt(cf.getStringValue()));
+				}else if (cf.getListValue()!=null) {
+				    for(Object objectList:cf.getListValue()) {
+				        if(objectList instanceof String) {
+				            listStr.add(decrypt(objectList.toString()));
+				        }
+				        
+				    }
+				    cf.setListValue(listStr);
+				}else if(cf.getMapValue()!=null) {
+				    for(Object mapobject:cf.getMapValue().entrySet()) {
+	                      if(mapobject instanceof Entry) {
+	                          for( Entry<String, Object> mapliss:cf.getkeyValueMap().entrySet() ) {
+	                              Map<String, String> map = oMapper.convertValue(mapliss.getValue(), Map.class);
+	                              for(Entry<String, String> str:map.entrySet()) {
+	                                  mapcfValuesString.put(str.getKey(), decrypt(str.getValue()));
+	                                  cf.setMapValue(mapcfValuesString);
+	                              }
+	                             
+	                          }
+	                          
+	                      }
 				}
-			}
-		}
-		
-		return cfValues;
+			}else if (cf.getMatrixValuesForGUI()!=null) {
+                for(Map<String, Object> matrixObject:cf.getMatrixValuesForGUI()) {
+                    for(Entry<String, Object> maplistMatrix:matrixObject.entrySet()) {
+
+                        matrixcfValuesString.put(maplistMatrix.getKey(), decrypt(maplistMatrix.getValue().toString()));
+                        matrixList.add(matrixcfValuesString);
+                        cf.setMapValuesForGUI(matrixList);
+                    }
+                }
+             }
+				
+				
+         }
+     }
+     return cfValues;
 	}
   		
 	public String encryptCfs(CustomFieldValues cfValues) 
-	{
-		for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.getValuesByCode().entrySet()) {
-			for(CustomFieldValue cf: listCfs.getValue()) {	
-				if (cf.getStringValue() != null && !cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
-				    cf.setStringValue(encrypt(cf.getStringValue()));
-				}
-			}
-		}
-		
-		return cfValues.toString();
-	}
+    {
+        List<String> listcfValuesString = new ArrayList<String>();
+        ObjectMapper oMapper = new ObjectMapper();
+        Map<String, Object> mapcfValuesString = new LinkedHashMap<String, Object>();
+        Map<String, Object> matrixcfValuesString = new LinkedHashMap<String, Object>();
+        Map<String, Object> maplistString = new HashMap<String, Object>();
+        List matrixList = new ArrayList();
+        Map<String, String> maput = new HashMap<String, String>();
+        for (Entry<String, List<CustomFieldValue>> listCfs : cfValues.getValuesByCode().entrySet()) {
+            for (CustomFieldValue cf : listCfs.getValue()) {
+                if (cf.getStringValue() != null) {
+                    if (cf.getStringValue() != null && !cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
+                        cf.setStringValue(encrypt(cf.getStringValue()));
+                    }
+                }
 
+                if (cf.getListValue() != null) {
+                    for (Object cfListMultiVal : cf.getListValue()) {
+                        if (cfListMultiVal instanceof String) {
+                            listcfValuesString.add(encrypt(cfListMultiVal.toString()));
+                            cf.setListValue(listcfValuesString);
+                        }
+                    }
+
+                }
+
+                if (cf.getMatrixValuesForGUI() != null) {
+                    for (Map<String, Object> matrixObject : cf.getMatrixValuesForGUI()) { 
+                        for (Entry<String, Object> maplistMatrix : matrixObject.entrySet()) {
+
+                            matrixcfValuesString.put(maplistMatrix.getKey(), encrypt(maplistMatrix.getValue().toString()));
+                            matrixList.add(matrixcfValuesString);
+                            cf.setMapValuesForGUI(matrixList);
+                        }
+                    }
+
+                }
+
+                if (cf.getMapValue() != null) {
+
+                    for (Object mapobject : cf.getMapValue().entrySet()) {
+                        if (mapobject instanceof Entry) {
+                            for (Entry<String, Object> mapliss : cf.getkeyValueMap().entrySet()) {
+                                Map<String, String> map = oMapper.convertValue(mapliss.getValue(), Map.class);
+                                for (Entry<String, String> str : map.entrySet()) {
+                                    maput.put(str.getKey(), encrypt(str.getValue()));
+                                    mapcfValuesString.put(str.getKey(), encrypt(str.getValue()));
+                                    cf.setMapValue(mapcfValuesString);
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+        return cfValues.toString();
+    }
+	
     @SuppressWarnings("unchecked")
     @Override
     public <X> X unwrap(CustomFieldValues value, Class<X> type, WrapperOptions options) {
