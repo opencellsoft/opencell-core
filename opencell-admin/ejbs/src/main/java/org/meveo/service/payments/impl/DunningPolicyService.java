@@ -72,6 +72,14 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         return EMPTY_LIST;
     }
 
+    public boolean existPolicyRulesCheck(DunningPolicy policy) {
+        policy = refreshOrRetrieve(policy);
+        if (policy == null) {
+            throw new BusinessException("Policy does not exists");
+        }
+        return (policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty());
+    }
+    
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
         if(rules != null && !rules.isEmpty()) {
