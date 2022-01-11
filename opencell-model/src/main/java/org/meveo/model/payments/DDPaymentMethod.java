@@ -119,7 +119,7 @@ public class DDPaymentMethod extends PaymentMethod {
 	public void anonymize(String code) {
 	    super.anonymize(code);
 	    setMandateIdentification(code);
-	    setMandateDate(null);
+	    setMandateDate(new Date(0));
 	    if(bankCoordinates != null) {
 	        bankCoordinates.anonymize(code);
 	    }
