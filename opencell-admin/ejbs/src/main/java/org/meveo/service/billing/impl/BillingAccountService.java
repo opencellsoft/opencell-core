@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -31,6 +32,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hibernate.transform.Transformers;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -54,6 +56,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.invoicing.impl.InvoicingItem;
 
 /**
  * The Class BillingAccountService.
@@ -488,6 +491,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
 	/**
+	 * @param billableAmountSummary 
 	 * @param billingRun
 	 */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -538,7 +542,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			idsQueryName = idsQueryName+"ExcludingThresholdEntities";
 		} 
 		
-
+        Date lastTransactionDate = billingRun.getLastTransactionDate();
+        if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+            lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+        } else {
+        	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
+        }
 		boolean useStart = startDate != null;
 		boolean useEnd = endDate != null;
 		String entitiesQueryName = "BillingAccount.findBillableEntitiesWithDetailsForInvoicing";
@@ -555,13 +564,53 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		if(ids==null || ids.isEmpty()) {
 			return new ArrayList<IBillableEntity>();
 		}
-		Query query = getEntityManager().createNamedQuery(entitiesQueryName).setParameter("ids", ids);
+		Query query = getEntityManager().createNamedQuery(entitiesQueryName).setParameter("ids", ids).setParameter("lastTransactionDate", lastTransactionDate);
 		if (useStart) {
 			query.setParameter("startDate", startDate);
 		} else if (useEnd) {
 			query.setParameter("endDate", endDate);
 		}
 		return query.getResultList();
+	}
+	
+	public List<InvoicingItem> getInvoicingItems(BillingRun billingRun, Date startDate,
+			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
+		
+		String idsQueryName = "BillingAccount.findBillableEntityIdsForInvoicing";
+		if(thresholdPerEntityFound) {
+			idsQueryName = idsQueryName+"ExcludingThresholdEntities";
+		} 
+		
+        Date lastTransactionDate = billingRun.getLastTransactionDate();
+        if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+            lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+        } else {
+        	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
+        }
+		boolean useStart = startDate != null;
+		boolean useEnd = endDate != null;
+		String invoicingItemsQueryName = "BillingAccount.getInvoicingItems";
+		if (useStart && useEnd) {
+			invoicingItemsQueryName = invoicingItemsQueryName + "ByStartAndEndDate";
+		} else if (useStart) {
+			invoicingItemsQueryName = invoicingItemsQueryName + "ByStartDate";
+		} else if (useEnd) {
+			invoicingItemsQueryName = invoicingItemsQueryName + "ByEndDate";
+		}
+		//split to 2 queries to avoid hibernate 'firstResult/maxResults specified with collection fetch; applying in memory!' 
+		List<Long> ids = getEntityManager().createNamedQuery(idsQueryName).setParameter("billingRun", billingRun).setMaxResults(pageSize)
+			      .setFirstResult(pageIndex * pageSize).getResultList();
+		if(ids==null || ids.isEmpty()) {
+			return new ArrayList<InvoicingItem>();
+		}
+		Query query = getEntityManager().createNamedQuery(invoicingItemsQueryName).setParameter("ids", ids).setParameter("lastTransactionDate", lastTransactionDate);
+		if (useStart) {
+			query.setParameter("startDate", startDate);
+		} else if (useEnd) {
+			query.setParameter("endDate", endDate);
+		}
+		final List<Object[]> resultList = (List<Object[]>)query.getResultList();
+		return resultList.stream().map(x-> new InvoicingItem(x)).collect(Collectors.toList());
 	}
 
 }

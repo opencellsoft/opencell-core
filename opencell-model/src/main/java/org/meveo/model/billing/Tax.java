@@ -41,6 +41,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.I18nDescripted;
 import org.meveo.model.ObservableEntity;
 
 /**
@@ -64,7 +65,7 @@ import org.meveo.model.ObservableEntity;
         @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByCode", query = "from Tax t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent ") })
-public class Tax extends BusinessCFEntity {
+public class Tax extends BusinessCFEntity implements I18nDescripted{
     private static final long serialVersionUID = 1L;
 
     /**

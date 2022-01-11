@@ -139,6 +139,17 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     @Transient
     private Map<Tax, BigDecimal> amountsByTax;
+    
+    @Transient
+    private List<Long> rtIDs=new ArrayList<Long>();
+    
+    public void addRTs(List<Long> rtIDs) {
+    	this.rtIDs.addAll(rtIDs);
+    }
+    
+    public List<Long> getRtIDs() {
+    	return this.rtIDs;
+    }
 
     /**
      * Instantiates a new sub category invoice aggregate.
@@ -565,5 +576,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     public void setAmountsByTax(Map<Tax, BigDecimal> amountsByTax) {
         this.amountsByTax = amountsByTax;
+    }
+    
+    public String getCategoryAggKey() {
+    	return ""+(this.userAccount==null?"":this.userAccount.getId())+this.invoiceSubCategory.getInvoiceCategory().getId();
     }
 }

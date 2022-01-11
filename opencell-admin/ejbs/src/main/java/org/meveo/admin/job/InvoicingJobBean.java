@@ -37,7 +37,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.invoicing.impl.BillingService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -52,7 +52,7 @@ public class InvoicingJobBean extends BaseJobBean {
     protected Logger log;
 
     @Inject
-    private BillingRunService billingRunService;
+    private BillingService billingRunService;
 
     @Inject
     private JobExecutionService jobExecutionService;

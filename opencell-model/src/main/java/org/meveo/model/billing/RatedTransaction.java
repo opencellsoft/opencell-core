@@ -163,6 +163,13 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.moveNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.status='OPEN' AND r.subscription=:subscription"),
         @NamedQuery(name = "RatedTransaction.moveAndRerateNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.status='RERATED', r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.status='TO_RERATE' AND o.subscription=:subscription) OR (r.status='OPEN' AND r.subscription=:subscription)"),
 
+        @NamedQuery(name = "RatedTransaction.getRecalculableRTDetails", query = "select rt, m " + 
+        		"from RatedTransaction rt join fetch rt.billingAccount ba join ba.customerAccount ca join ca.customer c join c.customerCategory cc join rt.seller cs join ba.billingRun br " +
+        		"join TaxMapping m on (rt.tax.id<> m.tax.id and m.accountTaxCategory.id=(case when ba.taxCategory is not null then ba.taxCategory when ba.taxCategory is null then cc.taxCategory end) " + 
+        		"and (m.chargeTaxClass=rt.taxClass or m.chargeTaxClass is null) and (m.sellerCountry=cs.tradingCountry or m.sellerCountry is null)  " + 
+        		"and (m.buyerCountry=ba.tradingCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=br.invoiceDate) AND (br.invoiceDate<m.valid.to or m.valid.to is null)) ) " + 
+        		"where br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
+        
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query =
                 "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                         + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),

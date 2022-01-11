@@ -1925,4 +1925,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("newUserAccount", newWallet.getUserAccount())
                 .setParameter("subscription", subscription).executeUpdate();
     }
+
+	/**
+	 * @param billingRun 
+	 * @return 
+	 * 
+	 */
+	public List getRecalculableRTDetails(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("RatedTransaction.getRecalculableRTDetails")
+                .setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

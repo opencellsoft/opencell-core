@@ -22,6 +22,7 @@
 package org.meveo.admin.async;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -43,10 +44,12 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceService2;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoicingService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RejectedBillingAccountService;
+import org.meveo.service.billing.invoicing.impl.InvoicingItem;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -63,9 +66,13 @@ public class InvoicingAsync {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
+    /** The invoicing service. */
+    @Inject
+    private InvoicingService invoicingService;
+    
     /** The invoice service. */
     @Inject
-    private InvoiceService2 invoiceService;
+    private InvoiceService invoiceService;
 
     /** The log. */
     @Inject
@@ -163,6 +170,34 @@ public class InvoicingAsync {
     /**
      * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
      *
+     * @param invoicingItemsList             the entity objects
+     * @param billingRun           the billing run
+     * @param jobInstanceId        the job instance id
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param lastCurrentUser      Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *                             expirations), current user might be lost, thus there is a need to reestablish.
+     * @return the future
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> createAgregatesAndInvoiceAsync(BillingRun billingRun, List<List<InvoicingItem>> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser) {
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        for (List<InvoicingItem> invoicingItems : invoicingItemsList) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+            	invoicingService.createAgregatesAndInvoiceForJob(invoicingItems, billingRun);
+            } catch (Exception e1) {
+                log.error("Failed to create invoices for entity {}/{}", invoicingItems.get(0).getBillingAccountId(), invoicingItems.get(0).getInvoiceKey(), e1);
+            }
+        }
+        return new AsyncResult<String>("OK");
+    }
+    
+    /**
+     * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
+     *
      * @param entities             the entity objects
      * @param billingRun           the billing run
      * @param jobInstanceId        the job instance id
@@ -174,13 +209,15 @@ public class InvoicingAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser) {
+
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         for (IBillableEntity entityToInvoice : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoiceForJob(entityToInvoice, billingRun);
+                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, minAmountForAccounts, false);
             } catch (Exception e1) {
                 log.error("Failed to create invoices for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
             }
