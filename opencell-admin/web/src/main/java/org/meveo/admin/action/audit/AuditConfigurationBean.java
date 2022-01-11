@@ -42,6 +42,8 @@ import org.meveo.audit.logging.handler.ConsoleAuditHandler;
 import org.meveo.audit.logging.handler.DBAuditHandler;
 import org.meveo.audit.logging.handler.FileAuditHandler;
 import org.meveo.audit.logging.handler.Handler;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.DualListModel;
 import org.slf4j.Logger;
 
@@ -102,9 +104,9 @@ public class AuditConfigurationBean implements Serializable {
             ClassAndMethods cm = new ClassAndMethods();
             cm.setClassName(selectedClass.getName());
 
-            for (Object methodName : methods.getTarget()) {
-                cm.addMethod(StringEscapeUtils.unescapeHtml((String) methodName));
-            }
+			for (MethodWithParameter m : methods.getTarget()) {
+				cm.addMethod(m.getMethodName());
+			}
 
             if (!selectedClassAndMethods.contains(cm)) {
                 selectedClassAndMethods.add(cm);
