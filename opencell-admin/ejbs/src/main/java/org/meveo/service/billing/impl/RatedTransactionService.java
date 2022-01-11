@@ -57,6 +57,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -82,15 +84,19 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationNative;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
@@ -254,13 +260,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Create Rated transaction from wallet operation.
      *
-     * @param walletOperation Wallet operation
-     * @return Rated transaction
+     * @param walletOperations Wallet operations
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createRatedTransactionsInBatch(List<WalletOperation> walletOperations) throws BusinessException {
+    public void createRatedTransactionsInBatch(List<WalletOperationNative> walletOperations) throws BusinessException {
 
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
@@ -268,16 +273,96 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
-        
+
         // Convert WO to RT and persist RT
         Long[][] woRtIds = new Long[walletOperations.size()][2];
         int i = 0;
-        for (WalletOperation walletOperation : walletOperations) {
+        for (WalletOperationNative walletOperation : walletOperations) {
             if (i > 0 && i % 2000 == 0) {
                 em.flush();
                 em.clear();
             }
-            RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+            RatedTransaction ratedTransaction = new RatedTransaction();
+
+            ratedTransaction.setCode(walletOperation.getCode());
+            ratedTransaction.setDescription(walletOperation.getDescription());
+            if (walletOperation.getChargeInstanceId() != null) {
+                ratedTransaction.setChargeInstance(em.getReference(ChargeInstance.class, walletOperation.getChargeInstanceId()));
+            }
+            ratedTransaction.setUsageDate(walletOperation.getOperationDate());
+            ratedTransaction.setUnitAmountWithoutTax(walletOperation.getUnitAmountWithoutTax());
+            ratedTransaction.setUnitAmountWithTax(walletOperation.getUnitAmountWithTax());
+            ratedTransaction.setUnitAmountTax(walletOperation.getUnitAmountTax());
+            ratedTransaction.setQuantity(walletOperation.getQuantity());
+            ratedTransaction.setAmountWithoutTax(walletOperation.getAmountWithoutTax());
+            ratedTransaction.setAmountWithTax(walletOperation.getAmountWithTax());
+            ratedTransaction.setInputQuantity(walletOperation.getInputQuantity());
+            ratedTransaction.setRawAmountWithTax(walletOperation.getRawAmountWithTax());
+            ratedTransaction.setRawAmountWithoutTax(walletOperation.getRawAmountWithoutTax());
+            ratedTransaction.setAmountTax(walletOperation.getAmountTax());
+            if (walletOperation.getWalletId() != null) {
+                ratedTransaction.setWallet(em.getReference(WalletInstance.class, walletOperation.getWalletId()));
+            }
+            if (walletOperation.getUserAccountId() != null) {
+                ratedTransaction.setUserAccount(em.getReference(UserAccount.class, walletOperation.getUserAccountId()));
+            }
+            if (walletOperation.getBillingAccountId() != null) {
+                ratedTransaction.setBillingAccount(em.getReference(BillingAccount.class, walletOperation.getBillingAccountId()));
+            }
+            if (walletOperation.getSellerId() != null) {
+                ratedTransaction.setSeller(em.getReference(Seller.class, walletOperation.getSellerId()));
+            }
+            if (walletOperation.getInvoiceSubCategoryId() != null) {
+                ratedTransaction.setInvoiceSubCategory(em.getReference(InvoiceSubCategory.class, walletOperation.getInvoiceSubCategoryId()));
+            }
+            ratedTransaction.setParameter1(walletOperation.getParameter1());
+            ratedTransaction.setParameter2(walletOperation.getParameter2());
+            ratedTransaction.setParameter3(walletOperation.getParameter3());
+            ratedTransaction.setParameterExtra(walletOperation.getParameterExtra());
+            ratedTransaction.setOrderNumber(walletOperation.getOrderNumber());
+            if (walletOperation.getSubscriptionId() != null) {
+                ratedTransaction.setSubscription(em.getReference(Subscription.class, walletOperation.getSubscriptionId()));
+            }
+            if (walletOperation.getPriceplanId() != null) {
+                ratedTransaction.setPriceplan(em.getReference(PricePlanMatrix.class, walletOperation.getPriceplanId()));
+            }
+            if (walletOperation.getOfferTemplateId() != null) {
+                ratedTransaction.setOfferTemplate(em.getReference(OfferTemplate.class, walletOperation.getOfferTemplateId()));
+            }
+            if (walletOperation.getEdrId() != null) {
+                ratedTransaction.setEdr(em.getReference(EDR.class, walletOperation.getEdrId()));
+            }
+            ratedTransaction.setStartDate(walletOperation.getStartDate());
+            ratedTransaction.setEndDate(walletOperation.getEndDate());
+            if (walletOperation.getTaxId() != null) {
+                ratedTransaction.setTax(em.getReference(Tax.class, walletOperation.getTaxId()));
+            }
+            ratedTransaction.setTaxPercent(walletOperation.getTaxPercent());
+            if (walletOperation.getServiceInstanceId() != null) {
+                ratedTransaction.setServiceInstance(em.getReference(ServiceInstance.class, walletOperation.getServiceInstanceId()));
+            }
+            ratedTransaction.setStatus(RatedTransactionStatusEnum.OPEN);
+            ratedTransaction.setUpdated(new Date());
+            if (walletOperation.getTaxClassId() != null) {
+                ratedTransaction.setTaxClass(em.getReference(TaxClass.class, walletOperation.getTaxClassId()));
+            }
+            if (walletOperation.getInputUnitOfMeasureId() != null) {
+                ratedTransaction.setInputUnitOfMeasure(em.getReference(UnitOfMeasure.class, walletOperation.getInputUnitOfMeasureId()));
+            }
+            if (walletOperation.getRatingUnitOfMeasureId() != null) {
+                ratedTransaction.setRatingUnitOfMeasure(em.getReference(UnitOfMeasure.class, walletOperation.getRatingUnitOfMeasureId()));
+            }
+            if (walletOperation.getAccountingCodeId() != null) {
+                ratedTransaction.setAccountingCode(em.getReference(AccountingCode.class, walletOperation.getAccountingCodeId()));
+            }
+            if (walletOperation.getAccountingArticleId() != null) {
+                ratedTransaction.setAccountingArticle(em.getReference(AccountingArticle.class, walletOperation.getAccountingArticleId()));
+            }
+            ratedTransaction.setInvoicingDate(walletOperation.getInvoicingDate());
+            ratedTransaction.setUnityDescription(walletOperation.getInputUnitDescription());
+            ratedTransaction.setRatingUnitDescription(walletOperation.getRatingUnitDescription());
+            ratedTransaction.setSortIndex(walletOperation.getSortIndex());
+            ratedTransaction.setCfValues(walletOperation.getCfValues());
 
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 

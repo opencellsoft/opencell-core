@@ -1,16 +1,9 @@
 package org.meveo.admin.async;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.jms.JMSConsumer;
-import javax.jms.JMSException;
-import javax.jms.Message;
-
 import org.hibernate.ScrollableResults;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a one at a time access to iterator.getNext() function
@@ -38,8 +31,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
 
     private ScrollableResults scrollableResults;
 
-    private JMSConsumer jmsConsumer;
-
     public SynchronizedIterator() {
     }
 
@@ -65,16 +56,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
     }
 
     /**
-     * Constructor
-     * 
-     * @param queueName Queue name
-     */
-    public SynchronizedIterator(JMSConsumer jmsConsumer) {
-        this.jmsConsumer = jmsConsumer;
-        this.size = -1;
-    }
-
-    /**
      * A synchronized implementation of Iterator.next(). Will return null if no more values are available
      * 
      * @return Returns the next element, or null if no more elements are found
@@ -94,22 +75,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
             } else {
                 return null;
             }
-        } else if (jmsConsumer != null) {
-
-            Message msg = jmsConsumer.receiveNoWait();
-            if (msg != null) {
-                position++;
-                T data;
-                try {
-                    data = (T) msg.getBody(Serializable.class);
-                    return data;
-                } catch (JMSException e) {
-                    Logger log = LoggerFactory.getLogger(this.getClass());
-                    log.error("Failed to read JMS JOB processing message body.", e);
-                }
-            }
-            return null;
-
         } else {
             return null;
         }

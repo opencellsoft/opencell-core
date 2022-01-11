@@ -23,6 +23,7 @@ import javax.jms.JMSContext;
 import javax.jms.Queue;
 
 import org.apache.commons.collections.MapUtils;
+import org.meveo.admin.async.QueueBasedIterator;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
@@ -112,7 +113,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         boolean spreadOverCluster = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && EjbUtils.isRunningInClusterMode();
 
         Iterator<T> iterator = null;
-        JMSConsumer jmsConsumer = null;
 
         if (EjbUtils.isRunningInClusterMode()) {
             jobExecutionResult.addReport("Node " + EjbUtils.getCurrentClusterNode());
@@ -149,6 +149,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             jobExecutionResultService.persistResult(jobExecutionResult);
 
             if (spreadOverCluster) {
+
                 // Publish data to the job processing queue if data processing is spread over a cluster
                 clusterEventPublisher.publish(jobQueue, iterator);
 
@@ -157,17 +158,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     finalizeInitFunction.accept(jobExecutionResult);
                 }
 
-                // Launch jobs in other clusters
+                // Launch jobs in other cluster nodes
                 clusterEventPublisher.publishEventAsync(jobInstance, CrudActionEnum.executeWorker,
                     MapUtils.putAll(new HashMap<String, Object>(), new Object[] { Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId(), Job.JOB_PARAM_LAUNCHER, JobLauncherEnum.WORKER }),
                     currentUser.getProviderCode(), currentUser.getUserName());
 
-                jmsConsumer = jmsContext.createConsumer(jobQueue);
-                iterator = new SynchronizedIterator<T>(jmsConsumer);
+                iterator = null;
             }
         } else {
-            jmsConsumer = jmsContext.createConsumer(jobQueue);
-            iterator = new SynchronizedIterator<T>(jmsConsumer);
+            iterator = null;
 
             log.info("{}/{} running as a worker node", jobInstance.getJobTemplate(), jobInstance.getCode());
 
@@ -198,6 +197,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         for (int k = 0; k < nbThreads; k++) {
 
+            final JMSConsumer jmsConsumer = spreadOverCluster ? jmsContext.createConsumer(jobQueue) : null;
             int finalK = k;
             tasks.add(() -> {
 
@@ -207,8 +207,13 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 int i = 0;
                 long globalI = 0;
+                Iterator<T> threadIterator = finalIterator;
+                
+                if (spreadOverCluster) {
+                    threadIterator = new QueueBasedIterator<T>(jmsConsumer);
+                }
 
-                T itemToProcess = finalIterator.next();
+                T itemToProcess = threadIterator.next();
                 mainLoop: while (itemToProcess != null) {
 
                     if (useMultipleItemProcessing) {
@@ -218,7 +223,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         int nrOfItemsInBatch = 1;
 
                         while (nrOfItemsInBatch < batchSize) {
-                            itemToProcess = finalIterator.next();
+                            itemToProcess = threadIterator.next();
                             if (itemToProcess == null) {
                                 break;
                             }
@@ -251,12 +256,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                             if (processSingleItemFunction != null) {
                                 // reset counter to previous value, so job continuity check would still be valid
-                                i = i - itemsToProcess.size();
+                                i = i - nrOfItemsInBatch;
 
                                 for (T itemToProcessFromFailedBatch : itemsToProcess) {
                                     globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
                                     i++;
                                 }
+                                
+                            } else {
+                                globalI = jobExecutionResult.registerError(e.getMessage());
                             }
                         }
 
@@ -280,8 +288,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         log.error("Failed to update job progress", e);
                     }
 
-                    itemToProcess = finalIterator.next();
+                    itemToProcess = threadIterator.next();
                     i++;
+                }
+
+                if (jmsConsumer != null) {
+                    jmsConsumer.close();
                 }
             });
         }
@@ -319,10 +331,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     jobExecutionResult.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
-            }
-
-            if (jmsConsumer != null) {
-                jmsConsumer.close();
             }
 
             // Mark job as stopped if task was killed

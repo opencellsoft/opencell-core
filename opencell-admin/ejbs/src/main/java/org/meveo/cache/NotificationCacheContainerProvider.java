@@ -315,8 +315,8 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         Object entity = getEntity(entityOrEvent);
 
         CacheKeyStr cacheKey = getCacheKey(eventType, entity.getClass());
-        if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
-            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new HashSet<Notification>());
+        if (!eventNotificationCache.containsKey(cacheKey)) {
+            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKey, new HashSet<Notification>());
         }
     }
 

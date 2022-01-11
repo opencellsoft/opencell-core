@@ -35,8 +35,8 @@ import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationNative;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -52,7 +52,7 @@ import org.meveo.service.job.Job;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperation> {
+public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperationNative> {
 
     private static final long serialVersionUID = -2740290205290535899L;
 
@@ -85,7 +85,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
-    private Optional<Iterator<WalletOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+    private Optional<Iterator<WalletOperationNative>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
@@ -123,12 +123,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         }
 
         statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
-        scrollableResults = statelessSession.createNamedQuery("WalletOperation.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
+        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
             .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
         hasMore = nrOfRecords >= processNrInJobRun;
 
-        return Optional.of(new SynchronizedIterator<WalletOperation>(scrollableResults, nrOfRecords.intValue()));
+        return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
     }
 
     /**
@@ -137,7 +137,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param walletOperations Wallet operations
      * @param jobExecutionResult Job execution result
      */
-    private void convertWoToRTBatch(List<WalletOperation> walletOperations, JobExecutionResultImpl jobExecutionResult) {
+    private void convertWoToRTBatch(List<WalletOperationNative> walletOperations, JobExecutionResultImpl jobExecutionResult) {
 
         ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
     }
