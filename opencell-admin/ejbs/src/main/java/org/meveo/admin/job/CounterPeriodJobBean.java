@@ -41,76 +41,74 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
 
 /**
  * The Class CounterPeriodJobBean.
+ * 
  * @author Mbarek-Ay
  */
 @Stateless
-public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> { 
-	
+public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
 
-   private static final long serialVersionUID = -1217889119746250685L;
- 
-	@Inject	
-	private CounterInstanceService counterInstanceService;
-	
-	@Inject	
-	private CounterTemplateService counterTemplateService;
+    private static final long serialVersionUID = -1217889119746250685L;
 
- 
-	 /**
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+    @Inject
+    private CounterTemplateService counterTemplateService;
+
+    /**
      * Initialize job settings and retrieve data to process
      * 
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of counter instance ids
      */
-	 @SuppressWarnings("unchecked")
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-		List<CounterTemplate> counterTemplates= counterTemplateService.listAll();
-		List<Long> ids=new ArrayList<>();
-		if(!counterTemplates.isEmpty()) {
-			for(CounterTemplate counterTemplate : counterTemplates) {
-				ids.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
-			}
-		}
-		   return Optional.of(new SynchronizedIterator<Long>(ids));
-	}
-	
-	@Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance ) { 
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null,this::getOrCreateCounterPeriod, null, null); 
+        List<CounterTemplate> counterTemplates = counterTemplateService.listAll();
+        List<Long> ids = new ArrayList<>();
+        if (!counterTemplates.isEmpty()) {
+            for (CounterTemplate counterTemplate : counterTemplates) {
+                ids.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
+            }
+        }
+        return Optional.of(new SynchronizedIterator<Long>(ids));
     }
- 
-	/**
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::getOrCreateCounterPeriod, null, null);
+    }
+
+    /**
      * Create get or create counterPeriod
      * 
-     * @param counterInstanceIds  id
+     * @param counterInstanceIds id
      * @param jobExecutionResult Job execution result
      * @throws BusinessException General business exception
      */
-	private void getOrCreateCounterPeriod(List<Long> counterInstanceIds ,JobExecutionResultImpl jobExecutionResult) throws BusinessException { 
-		Date applicationDate = (Date) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "applicationDate");
-		try { 
-			if(!counterInstanceIds.isEmpty()) {
-				for(Long id : counterInstanceIds) {
-					//accumulator chargeInstance
-					CounterInstance counterInstance=counterInstanceService.findById(id);
-					if(counterInstance!=null) {
-					for(ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
-					counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-							counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance);
-					}
-					//UsageChargeInstances
-					for(ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
-						counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance);
-				}
-					}
-				}
-			}
-		}catch(BusinessException e) {
-			log.error("Failed to get or create counterPeriod", e); 
-		}
+    private void getOrCreateCounterPeriod(List<Long> counterInstanceIds, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+        Date applicationDate = (Date) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "applicationDate");
+        try {
+            if (!counterInstanceIds.isEmpty()) {
+                for (Long id : counterInstanceIds) {
+                    // accumulator chargeInstance
+                    CounterInstance counterInstance = counterInstanceService.findById(id);
+                    for (ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
+                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), counterInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance);
+                        break;
+                    }
+                    // UsageChargeInstances
+                    for (ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
+                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), counterInstance.getServiceInstance().getSubscriptionDate(),
+                            chargeInstance);
+                        break;
+                    }
+                }
+            }
+        } catch (BusinessException e) {
+            log.error("Failed to get or create counterPeriod", e);
+        }
 
-	} 
+    }
 
 }

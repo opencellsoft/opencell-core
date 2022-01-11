@@ -1178,21 +1178,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new BusinessException("No service instance with code " + code + " associated to subscription code : " + subscription.getCode());
         }
     }
-    
-    public void instanciateCounterPeriods(ChargeInstance chargeInstance) {
-    	CounterPeriod counterPeriod = null;
-    	// accumulatorCounter
-    	for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
-    		if (counterInstance != null) {
-    			counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance,chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-    					chargeInstance);
-    		}
-    	}
-    	// standard counter
-    	if (chargeInstance.getCounter() != null) {
-    		counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(),chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-    				chargeInstance);
-    	}
-    }
-    
+
+    private void instanciateCounterPeriods(ChargeInstance chargeInstance) {
+
+        // Accumulator counters
+        for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
+            if (counterInstance != null) {
+                counterInstanceService.createCounterPeriodIfMissing(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+            }
+        }
+        // Standard counter
+        if (chargeInstance.getCounter() != null) {
+            counterInstanceService.createCounterPeriodIfMissing(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+        }
+    }    
 }

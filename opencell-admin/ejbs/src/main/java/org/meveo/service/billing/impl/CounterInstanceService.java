@@ -405,6 +405,22 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
+     * Create a counter period for a given date. A check is done and no period will be created if one is already present
+     *
+     * @param counterInstance Counter instance
+     * @param date Date to match
+     * @param initDate initial date.
+     * @param chargeInstance Charge instance to associate counter with
+     * @throws CounterInstantiationException Failure to create counter period
+     */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+        getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance);
+    }
+
+    /**
      * Find or create a counter period for a given date.
      *
      * @param counterInstance Counter instance
@@ -414,7 +430,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return Found or created counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
-    public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+    private CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
         CounterPeriod counterPeriod = getCounterPeriodByDate(counterInstance, date);
 
         if (counterPeriod != null) {
@@ -860,20 +876,19 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         context.put(WALLET_OPERATION, walletOperation);
         return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filterEl, context);
     }
-    
-    @SuppressWarnings("unchecked")
-    public List<Long> findByCounterAndActiveService(String counterTemplateCode) { 
-    	List<Long> ids=new ArrayList<>();
-    	try {
-    		ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndActiveService")
-    				           .setParameter("counterTemplateCode", counterTemplateCode).getResultList();
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		log.error("findByCounterAndActiveService error ", e.getMessage());
-    	}
 
-    	return ids;
-    } 
+    @SuppressWarnings("unchecked")
+    public List<Long> findByCounterAndActiveService(String counterTemplateCode) {
+        List<Long> ids = new ArrayList<>();
+        try {
+            ids = (List<Long>) getEntityManager().createNamedQuery("CounterInstance.findByCounterAndActiveService").setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("findByCounterAndActiveService error ", e.getMessage());
+        }
+
+        return ids;
+    }
 
     /**
      * Get a list of updated counter periods

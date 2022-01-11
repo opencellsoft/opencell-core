@@ -122,15 +122,15 @@ public class OneShotRatingService extends RatingService implements Serializable 
             return ratingResult;
         
         } catch (EJBTransactionRolledbackException e) {
-        	if(ratingResult!=null) {
-            revertCounterChanges(ratingResult.getCounterChanges());
-        	}
+            if (ratingResult != null) {
+                revertCounterChanges(ratingResult.getCounterChanges());
+            }
             throw e;
             
         } catch (Exception e) {
-        	if(ratingResult!=null) {
-            revertCounterChanges(ratingResult.getCounterChanges());
-        	}
+            if (ratingResult != null) {
+                revertCounterChanges(ratingResult.getCounterChanges());
+            }
 
             if (failSilently) {
                 log.debug("Failed to rate a one shot charge subscription {}, quantity {}, applicationDate {}, chargeInstance {}/{}/{}", subscription.getId(), quantityInChargeUnits, applicationDate,
