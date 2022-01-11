@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "dunning_policy_rule_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_policy_rule_line_seq")})
+@NamedQueries({
+    @NamedQuery(name = "DunningPolicyRuleLine.findByDunningPolicyId", query = "SELECT dprl from DunningPolicyRuleLine dprl where dprl.dunningPolicyRule.dunningPolicy.id = :policyId"),
+    @NamedQuery(name = "DunningPolicyRuleLine.findByDunningPolicyRuleId", query = "SELECT dprl from DunningPolicyRuleLine dprl where dprl.dunningPolicyRule.id = :dunningPolicyRuleId")})
 public class DunningPolicyRuleLine extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
