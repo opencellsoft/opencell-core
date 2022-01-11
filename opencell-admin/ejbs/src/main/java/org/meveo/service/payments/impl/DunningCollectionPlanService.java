@@ -22,6 +22,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
+import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -83,7 +84,10 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         newCollectionPlan.setStatus(collectionPlanStatusActif);
         newCollectionPlan.setBalance(oldCollectionPlan.getBalance());
         newCollectionPlan.setInitialCollectionPlan(oldCollectionPlan);
+        newCollectionPlan.setLastAction(oldCollectionPlan.getLastAction());
+        newCollectionPlan.setLastActionDate(oldCollectionPlan.getLastActionDate());
         create(newCollectionPlan);
+       
         if (policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             List<DunningLevelInstance> levelInstances = new ArrayList<>();
             for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
@@ -94,13 +98,32 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                 } else {
                     levelInstance = createLevelInstance(newCollectionPlan,
                             collectionPlanStatusActif, null, policyLevel, TO_BE_DONE);
+                    if (policyLevel.getSequence() == selectedPolicyLevel.getSequence()) {
+                        DunningLevel nextLevel = findLevelBySequence(policy.getDunningLevels(), policyLevel.getSequence());
+                        if(nextLevel != null
+                                && nextLevel.getDunningActions() != null && !nextLevel.getDunningActions().isEmpty()) {
+                            int dOverDue = Optional.ofNullable(nextLevel.getDaysOverdue()).orElse(0);
+                            int i = 0;
+                            while(i < nextLevel.getDunningActions().size()) {
+                            	if(nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
+                            		break;
+                            	}else {
+                            		i++;
+                            	}
+                            }
+                            newCollectionPlan.setNextAction((nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC))
+                            		?nextLevel.getDunningActions().get(i).getCode()
+                            				:nextLevel.getDunningActions().get(0).getCode());
+                            newCollectionPlan.setNextActionDate(addDaysToDate(newCollectionPlan.getStartDate(), dOverDue));
+                        }
+                    }
                 }
                 levelInstances.add(levelInstance);
             }
             newCollectionPlan.setDunningLevelInstances(levelInstances);
             update(newCollectionPlan);
-        }
-
+        }        
+        
         newCollectionPlan.setCollectionPlanNumber("C" + newCollectionPlan.getId());
         update(newCollectionPlan);
         update(oldCollectionPlan);
