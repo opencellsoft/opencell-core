@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,6 +22,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -660,71 +662,74 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
             List<String> fields = new ArrayList<>();
 
-            if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
+            Long dunningLevelInstanceIdInput = dunningActionInstanceInput.getDunningLevelInstance() != null ? dunningActionInstanceInput.getDunningLevelInstance().getId() : null;
+            Long dunningLevelInstanceIdToUpdate = dunningActionInstanceToUpdate.getDunningLevelInstance() != null ? dunningActionInstanceToUpdate.getDunningLevelInstance().getId()
+                    : null;
+
+            if (dunningLevelInstanceIdInput == null) {
                 throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
             }
-            Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
-            DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId, Arrays.asList("dunningLevel", "collectionPlan", "actions"));
+            DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceIdInput,
+                Arrays.asList("dunningLevel", "collectionPlan", "actions"));
             if (dunningLevelInstance == null) {
-                throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + dunningLevelInstanceId);
+                throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + dunningLevelInstanceIdInput);
             }
-            if (dunningActionInstanceInput.getDunningLevelInstance().getId() != dunningActionInstanceToUpdate.getDunningLevelInstance().getId()) {
+
+            if (!Objects.equals(dunningLevelInstanceIdInput, dunningLevelInstanceIdToUpdate)) {
                 fields.add("dunningLevelInstance");
-            }
-            dunningActionInstanceToUpdate.setDunningLevelInstance(dunningLevelInstance);
-
-            if (dunningActionInstanceInput.getDunningAction() != null && dunningActionInstanceInput.getDunningAction().getId() != null) {
-                Long dunningActionId = dunningActionInstanceInput.getDunningAction().getId();
-                DunningAction dunningAction = dunningActionService.findById(dunningActionId);
-                if (dunningAction == null) {
-                    throw new EntityDoesNotExistsException("No Dunning action found with id : " + dunningActionId);
-                }
-
-                if (dunningActionInstanceInput.getDunningAction().getId() != dunningActionInstanceToUpdate.getDunningAction().getId()) {
-                    fields.add("dunningAction");
-                }
-                dunningActionInstanceToUpdate.setDunningAction(dunningAction);
+                dunningActionInstanceToUpdate.setDunningLevelInstance(dunningLevelInstance);
             }
 
-            if (dunningActionInstanceInput.getActionOwner() != null && dunningActionInstanceInput.getActionOwner().getId() != null) {
-                Long dunningAgentId = dunningActionInstanceInput.getActionOwner().getId();
-                DunningAgent dunningAgent = dunningAgentService.findById(dunningAgentId);
-                if (dunningAgent == null) {
-                    throw new EntityDoesNotExistsException("No Dunning agent found with id : " + dunningAgentId);
-                }
+            Long dunningActionIdInput = dunningActionInstanceInput.getDunningAction() != null ? dunningActionInstanceInput.getDunningAction().getId() : null;
+            Long dunningActionIdToUpdate = dunningActionInstanceToUpdate.getDunningAction() != null ? dunningActionInstanceToUpdate.getDunningAction().getId() : null;
+            if (!Objects.equals(dunningActionIdInput, dunningActionIdToUpdate)) {
 
-                if (dunningActionInstanceToUpdate.getActionOwner() == null || dunningActionInstanceToUpdate.getActionOwner().getId() != dunningAgentId) {
-                    fields.add("actionOwner");
+                fields.add("dunningAction");
+                if (dunningActionIdInput != null) {
+                    DunningAction dunningAction = dunningActionService.findById(dunningActionIdInput);
+                    if (dunningAction == null) {
+                        throw new EntityDoesNotExistsException("No Dunning action found with id : " + dunningActionIdInput);
+                    }
+                    dunningActionInstanceToUpdate.setDunningAction(dunningAction);
+                } else {
+                    dunningActionInstanceToUpdate.setDunningAction(null);
                 }
-                dunningActionInstanceToUpdate.setActionOwner(dunningAgent);
             }
 
-            if (dunningActionInstanceInput.getCode() != null) {
-                if (!dunningActionInstanceInput.getCode().equals(dunningActionInstanceToUpdate.getCode())) {
-                    fields.add("code");
+            Long actionOwnerIdInput = dunningActionInstanceInput.getActionOwner() != null ? dunningActionInstanceInput.getActionOwner().getId() : null;
+            Long actionOwnerIdToUpdate = dunningActionInstanceToUpdate.getActionOwner() != null ? dunningActionInstanceToUpdate.getActionOwner().getId() : null;
+            if (!Objects.equals(actionOwnerIdInput, actionOwnerIdToUpdate)) {
+
+                fields.add("actionOwner");
+                if (actionOwnerIdInput != null) {
+                    DunningAgent dunningAgent = dunningAgentService.findById(actionOwnerIdInput);
+                    if (dunningAgent == null) {
+                        throw new EntityDoesNotExistsException("No Dunning agent found with id : " + actionOwnerIdInput);
+                    }
+                    dunningActionInstanceToUpdate.setActionOwner(dunningAgent);
+                } else {
+                    dunningActionInstanceToUpdate.setActionOwner(null);
                 }
+
+            }
+            if (StringUtils.isNotBlank(dunningActionInstanceInput.getCode()) && !Objects.equals(dunningActionInstanceInput.getCode(), dunningActionInstanceToUpdate.getCode())) {
+                fields.add("code");
                 dunningActionInstanceToUpdate.setCode(dunningActionInstanceInput.getCode());
             }
-            if (dunningActionInstanceInput.getDescription() != null) {
-                if (!dunningActionInstanceInput.getDescription().equals(dunningActionInstanceToUpdate.getDescription())) {
-                    fields.add("description");
-                }
+            if (!Objects.equals(dunningActionInstanceInput.getDescription(), dunningActionInstanceToUpdate.getDescription())) {
+                fields.add("description");
                 dunningActionInstanceToUpdate.setDescription(dunningActionInstanceInput.getDescription());
             }
-            if (dunningActionInstanceInput.getActionType() != null) {
-                if (dunningActionInstanceInput.getActionType() != dunningActionInstanceToUpdate.getActionType()) {
-                    fields.add("actionType");
-                }
+            if (!Objects.equals(dunningActionInstanceInput.getActionType(), dunningActionInstanceToUpdate.getActionType())) {
+                fields.add("actionType");
                 dunningActionInstanceToUpdate.setActionType(dunningActionInstanceInput.getActionType());
             }
-            if (dunningActionInstanceInput.getMode() != null) {
-                if (dunningActionInstanceInput.getMode() != dunningActionInstanceToUpdate.getActionMode()) {
-                    fields.add("actionMode");
-                }
+            if (!Objects.equals(dunningActionInstanceInput.getMode(), dunningActionInstanceToUpdate.getActionMode())) {
+                fields.add("actionMode");
                 dunningActionInstanceToUpdate.setActionMode(dunningActionInstanceInput.getMode());
             }
             if (dunningActionInstanceInput.getActionStatus() != null) {
-                if (dunningActionInstanceInput.getActionStatus() != dunningActionInstanceToUpdate.getActionStatus()) {
+                if (!Objects.equals(dunningActionInstanceInput.getActionStatus(), dunningActionInstanceToUpdate.getActionStatus())) {
                     fields.add("actionStatus");
                 }
                 dunningActionInstanceToUpdate.setActionStatus(dunningActionInstanceInput.getActionStatus());
@@ -755,10 +760,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
             }
 
-            if (dunningActionInstanceInput.getActionRestult() != null) {
-                if (!dunningActionInstanceInput.getActionRestult().equals(dunningActionInstanceToUpdate.getActionRestult())) {
-                    fields.add("actionRestult");
-                }
+            if (!Objects.equals(dunningActionInstanceInput.getActionRestult(), dunningActionInstanceToUpdate.getActionRestult())) {
+                fields.add("actionRestult");
                 dunningActionInstanceToUpdate.setActionRestult(dunningActionInstanceInput.getActionRestult());
             }
 
@@ -872,7 +875,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     }
 
                     collectionPlan.setNextAction(nextLevelAction);
-                    
+
                     Integer days = nextLevelInstance.getDaysOverdue();
                     if (collectionPlan.getPauseDuration() != null) {
                         days += collectionPlan.getPauseDuration();
