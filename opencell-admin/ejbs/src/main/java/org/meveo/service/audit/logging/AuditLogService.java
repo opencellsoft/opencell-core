@@ -78,15 +78,4 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         }
         return currentUser.getUserName();
     }
-
-    private <T extends BaseEntity> String getCodeOrId(T entity) {
-        String codeOrId = null;
-        if (entity instanceof BusinessEntity) {
-            codeOrId = ((BusinessEntity) entity).getCode();
-        }
-        if (StringUtils.isNotBlank(codeOrId)) {
-            return "code " + codeOrId;
-        }
-        return "id " + entity.getId();
-    }
 }
