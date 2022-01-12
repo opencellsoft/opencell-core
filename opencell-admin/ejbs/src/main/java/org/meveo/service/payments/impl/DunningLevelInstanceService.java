@@ -1,13 +1,26 @@
 package org.meveo.service.payments.impl;
 
+import java.util.List;
+
+import javax.ejb.Stateless;
+
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
-
 @Stateless
 public class DunningLevelInstanceService extends PersistenceService<DunningLevelInstance> {
+
+    public List<DunningLevelInstance> findByCollectionPlan(DunningCollectionPlan collectionPlan) {
+        try {
+            return getEntityManager()
+                    .createNamedQuery("DunningLevelInstance.findByCollectionPlan", entityClass)
+                    .setParameter("collectionPlan", collectionPlan)
+                    .getResultList();
+        } catch (Exception exception) {
+            return null;
+        }
+    }
 
     public DunningLevelInstance findByLevelId(Long levelId) {
         try {
