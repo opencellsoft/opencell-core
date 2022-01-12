@@ -42,6 +42,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
+import org.meveo.service.billing.impl.InvoicingService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -91,6 +92,9 @@ public class BillingService extends PersistenceService<BillingRun> {
 
 	@Inject
 	private OrderService orderService;
+
+	@Inject
+	private InvoicingService invoicingService;
 
 	/**
 	 * Round.
@@ -180,10 +184,11 @@ public class BillingService extends PersistenceService<BillingRun> {
 	 * @param nbRuns        the nb runs
 	 * @param waitingMillis the waiting millis
 	 * @param jobInstanceId the job instance id
+	 * @param isFullAutomatic 
 	 * @throws BusinessException the business exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId)
+	public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, boolean isFullAutomatic)
 			throws BusinessException {
 		//#MEL must be used in all RT read queries!
         Date lastTransactionDate = billingRun.getLastTransactionDate();
@@ -193,7 +198,7 @@ public class BillingService extends PersistenceService<BillingRun> {
         	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
         }
 		// #MEL where to put pageSise param?
-		final int pageSise = 10000;
+		final int pageSise = 30000;
 		// #MEL STEP 1: get entities to invoice having threshold per entity
 		boolean thresholdPerEntityFound = false;
 		final List<ThresholdSummary> parentEntitiesWithThresholdPerEntity = getEntitiesToInvoiceHavingThresholdPerEntity(billingRun);
@@ -210,7 +215,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 				// entities = getEntitiesToInvoiceHavingParentThreshold(billingRun, pageSise,
 				// index, thresholdPerEntityFound);
 				// processEntitiesHavingParentThreshold(billingRun, nbRuns, waitingMillis,
-				// jobInstanceId, entities);
+				// jobInstanceId, entities, isFullAutomatic);
 			}
 		}
 
@@ -220,15 +225,16 @@ public class BillingService extends PersistenceService<BillingRun> {
 
 		while (count != 0) {
 			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound);
-			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items);
 			count = items.size();
-			log.info("======== COUNT : " + count);
+			log.info("======== READER : " + count);
+			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic);
+			log.info("======== PROCESSED ");
 			page += 1;
 		}
 	}
 
 	private void processEntitiesHavingNoParentThreshold(BillingRun billingRun, long nbRuns, long waitingMillis,
-			Long jobInstanceId, List<InvoicingItem> items) {
+			Long jobInstanceId, List<InvoicingItem> items, boolean isFullAutomatic) {
 		SubListCreator<List<InvoicingItem>> subListCreator = null;
 		try {
 			final List<List<InvoicingItem>> values = items.stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().collect(Collectors.toList());
@@ -242,7 +248,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 		List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
 		MeveoUser lastCurrentUser = currentUser.unProxy();
 		while (subListCreator.isHasNext()) {
-			asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync(billingRun, subListCreator.getNextWorkSet(),jobInstanceId, minAmountForAccounts, lastCurrentUser));
+			asyncReturns.add(invoicingService.createAgregatesAndInvoiceAsync(billingRun, subListCreator.getNextWorkSet(),jobInstanceId, minAmountForAccounts, lastCurrentUser, isFullAutomatic));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -507,8 +513,9 @@ public class BillingService extends PersistenceService<BillingRun> {
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), totalEntityCount, totalEntityCount, BillingRunStatusEnum.PREINVOICED, new Date());
 		}
 
+		final boolean isFullAutomatic = billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC;
 		boolean proceedToInvoiceGenerating = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || 
-				(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider.isAutomaticInvoicing()));
+				(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || isFullAutomatic) || appProvider.isAutomaticInvoicing()));
 
 		if (proceedToInvoiceGenerating) {
 			log.info("recalculateTaxes ==================== 5");
@@ -522,7 +529,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 			invoiceService.recalculateTaxes(billingRun);
 			
 			log.info("createAgregatesAndInvoice ==================== 6");
-			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId);
+			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
 					BillingRunStatusEnum.INVOICES_GENERATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
@@ -535,20 +542,19 @@ public class BillingService extends PersistenceService<BillingRun> {
 			// jobInstanceId, result);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
 					BillingRunStatusEnum.POSTINVOICED, null);
-			if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+			if (isFullAutomatic) {
 				billingRun = billingRunExtensionService.findById(billingRun.getId());
 			}
 		}
 
-		if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())
-				&& billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+		if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && isFullAutomatic) {
 			log.info("==================== 7");
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
 					BillingRunStatusEnum.POSTVALIDATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
 		}
 
-		if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+		if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus()) && !isFullAutomatic) {
 			log.info("==================== 8");
 			log.info("Will assign invoice numbers to invoices of Billing run {} of type {}", billingRun.getId(), type);
 			invoiceService.nullifyInvoiceFileNames(billingRun); // #3600

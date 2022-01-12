@@ -450,6 +450,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Transient
     private List<RatedTransaction> draftRatedTransactions = new ArrayList<>();
 
+    @Transient
+	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
+    @Transient
+	private Date nextInvoiceDate;
+
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
@@ -1104,4 +1109,31 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public List<RatedTransaction> getDraftRatedTransactions() {
         return draftRatedTransactions;
     }
+
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public void setSubCategoryInvoiceAgregate(Set<SubCategoryInvoiceAgregate> invoiceSCAs) {
+		this.subCategoryInvoiceAgregates = invoiceSCAs;
+	}
+	
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregate() {
+		return this.subCategoryInvoiceAgregates;
+	}
+
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
 }

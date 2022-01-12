@@ -32,7 +32,6 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.hibernate.transform.Transformers;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -437,6 +436,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             isExonerated = ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(customerCategory.getExonerationTaxEl(), "ba", ba);
         }
         return isExonerated;
+    }
+    
+    public boolean isExonerated(BillingAccount ba, Boolean customerCategoryExoneratedFromTaxes, String exonerationTaxEl) {
+        if (customerCategoryExoneratedFromTaxes.booleanValue()) {
+            return true;
+        }
+        if (!StringUtils.isBlank(exonerationTaxEl)) {
+        	ba = refreshOrRetrieve(ba);
+            return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(exonerationTaxEl, "ba", ba);
+        }
+        return false;
     }
 
     /**

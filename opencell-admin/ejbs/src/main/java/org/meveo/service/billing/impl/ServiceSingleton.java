@@ -107,7 +107,7 @@ public class ServiceSingleton {
     
     private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
     
-    public String getTempInvoiceNember(Long billingRunId){
+    public String getTempInvoiceNumber(Long billingRunId){
     	// #MEL when remove brs from this map?
     	if(!invoicingTempNumber.containsKey(billingRunId)) {
     		AtomicInteger counter = new AtomicInteger(0);

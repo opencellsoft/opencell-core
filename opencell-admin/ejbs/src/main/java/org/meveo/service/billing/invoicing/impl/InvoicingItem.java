@@ -2,8 +2,7 @@ package org.meveo.service.billing.invoicing.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -35,8 +34,12 @@ public class InvoicingItem {
 	private String caDueDateDelayEL; 
 	private String bcDueDateDelayEL;
 	private List<Long> rtIDs = new ArrayList<>();
+	private Date nextInvoiceDate;
+	private Boolean exoneratedFromTaxes;
+	private String  exonerationTaxEl;
 
 	private Long sellerId;
+	private Boolean electronicBillingEnabled;
 
 	
 	public InvoicingItem(long baId, long sellerId, long walletId, long walletTemplateId, long scId, long categoryId, long userAccountId, long taxId, BigDecimal percent, long paymentMethodId, PaymentMethodEnum paymentType, String languageCode, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax) {
@@ -78,6 +81,10 @@ public class InvoicingItem {
 		this.amountTax = (BigDecimal) fields[i++];
 		this.rtIDs =  Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
 		this.count = (long) rtIDs.size();
+		this.nextInvoiceDate = (Date) fields[i++];
+		this.exoneratedFromTaxes= (Boolean) fields[i++];
+		this.exonerationTaxEl= (String) fields[i++];
+		this.electronicBillingEnabled= (Boolean) fields[i++];
 	}
 
 	/**
@@ -356,6 +363,55 @@ public class InvoicingItem {
 	 */
 	public void setInvoiceCategoryId(Long invoiceCategoryId) {
 		this.invoiceCategoryId = invoiceCategoryId;
+	}
+
+	/**
+	 * @return the nextInvoiceDate
+	 */
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
+
+	/**
+	 * @param nextInvoiceDate the nextInvoiceDate to set
+	 */
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
+
+	/**
+	 * @return the exoneratedFromTaxes
+	 */
+	public Boolean getExoneratedFromTaxes() {
+		return exoneratedFromTaxes;
+	}
+
+	/**
+	 * @param exoneratedFromTaxes the exoneratedFromTaxes to set
+	 */
+	public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
+		this.exoneratedFromTaxes = exoneratedFromTaxes;
+	}
+
+	/**
+	 * @return the exonerationTaxEl
+	 */
+	public String getExonerationTaxEl() {
+		return exonerationTaxEl;
+	}
+
+	/**
+	 * @param exonerationTaxEl the exonerationTaxEl to set
+	 */
+	public void setExonerationTaxEl(String exonerationTaxEl) {
+		this.exonerationTaxEl = exonerationTaxEl;
+	}
+
+	/**
+	 * @return
+	 */
+	public Boolean isElectronicBillingEnabled() {
+		return electronicBillingEnabled;
 	}
 
 }

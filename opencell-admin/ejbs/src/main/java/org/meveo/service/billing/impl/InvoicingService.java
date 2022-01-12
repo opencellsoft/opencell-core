@@ -17,7 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -32,8 +31,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -60,7 +64,9 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -76,11 +82,14 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.invoicing.impl.InvoicingItem;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.billing.TaxScriptService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
@@ -116,17 +125,60 @@ public class InvoicingService extends PersistenceService<Invoice> {
     /** date format. */
     private String DATE_PATERN = "yyyy.MM.dd";
     
+    @Inject
+    private JobExecutionService jobExecutionService;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
     private static final int MAX_RT_TO_UPDATE = 32767;
     
     @Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
     
+    private Map<Long, Tax> taxes=new TreeMap<Long, Tax>();
     /**
      * Description translation map.
      */
     private Map<String, String> descriptionMap = new HashMap<>();
     
-    public List<Invoice> createAgregatesAndInvoiceForJob(List<InvoicingItem> invoicingItems, BillingRun billingRun) throws BusinessException {
+    /**
+     * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
+     *
+     * @param invoicingItemsList             the entity objects
+     * @param billingRun           the billing run
+     * @param jobInstanceId        the job instance id
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param lastCurrentUser      Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *                             expirations), current user might be lost, thus there is a need to reestablish.
+     * @param isFullAutomatic 
+     * @return the future
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Future<String> createAgregatesAndInvoiceAsync(BillingRun billingRun, List<List<InvoicingItem>> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        List<Invoice> invoices = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic);
+        writeInvoicingData(billingRun, isFullAutomatic, invoices);
+        return new AsyncResult<String>("OK");
+    }
+
+	private List<Invoice> processData(BillingRun billingRun, List<List<InvoicingItem>> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic) {
+		List<Invoice> invoices = new ArrayList<Invoice>();
+		for (List<InvoicingItem> invoicingItems : invoicingItemsList) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+            	invoices.add(createAgregatesAndInvoiceForJob(invoicingItems, billingRun));
+            } catch (Exception e1) {
+                log.error("Failed to create invoices for entity {}/{}", invoicingItems.get(0).getBillingAccountId(), invoicingItems.get(0).getInvoiceKey(), e1);
+            }
+        }
+		return invoices;
+	}
+    
+    public Invoice createAgregatesAndInvoiceForJob(List<InvoicingItem> invoicingItems, BillingRun billingRun) throws BusinessException {
     	final long billingAccountId = invoicingItems.get(0).getBillingAccountId();
     	try {
 /*#MEL create min RTs
@@ -147,8 +199,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
                 commit();
             }
 */
-    		final Map<Boolean, List<InvoicingItem>> prepaidGroup = invoicingItems.stream().collect(Collectors.groupingBy(InvoicingItem::isPrepaid));
-    		return prepaidGroup.values().stream().map(x->createAggregatesAndInvoiceFromInvoicingItems(x, billingRun)).collect(Collectors.toList());
+    		return createAggregatesAndInvoiceFromInvoicingItems(invoicingItems, billingRun);
         } catch (Exception e) {
 			log.error("Error for entity {}", billingAccountId, e);
             rejectedBillingAccountService.create(billingAccountId, billingRun, e.getMessage());
@@ -159,6 +210,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
     /**
 	 * @param invoicingItems
 	 * @param billingRun
+     * @param isFullAutomatic 
 	 * @return
 	 */
 	private Invoice createAggregatesAndInvoiceFromInvoicingItems(List<InvoicingItem> invoicingItems, BillingRun billingRun){
@@ -248,20 +300,76 @@ public class InvoicingService extends PersistenceService<Invoice> {
             }
         }*/
         evalDueDate(invoice, billingRun.getBillingCycle(), firstItem.getOrderDueDateDelayEL(), firstItem.getCaDueDateDelayEL());
-        invoice.setTemporaryInvoiceNumber(serviceSingleton.getTempInvoiceNember(billingRun.getId()));
-        this.create(invoice);
-        postCreate(invoice);
-        getEntityManager().flush();//to be able to update Rts
-        invoiceSCAs.stream().forEach(sca->updateRatedTransactions(invoice,billingRun,sca));
+        //writeInvoicingData(billingRun, isFullAutomatic, firstItem, billingAccount, invoice, invoiceSCAs);
+        invoice.setSubCategoryInvoiceAgregate(invoiceSCAs);
         return invoice;
 	}
 
+	private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices) {
+		log.info("======== CREATING {} INVOICES ========", invoices.size());
+		invoices.stream().forEach(invoice->assignNumberAndCreate(billingRun, isFullAutomatic, invoice));
+        getEntityManager().flush();//to be able to update Rts
+        getEntityManager().clear();
+        log.info("======== UPDATING RTs ========", invoices.size());
+        invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateRatedTransactions(i,billingRun,sca)));
+	}
+
+	private void assignNumberAndCreate(BillingRun billingRun, boolean isFullAutomatic, Invoice invoice) {
+		if(isFullAutomatic) {
+        	invoice.setTemporaryInvoiceNumber(serviceSingleton.getTempInvoiceNumber(billingRun.getId()));
+        } else {
+        	serviceSingleton.assignInvoiceNumberVirtual(invoice);
+        	incrementBAInvoiceDate(billingRun, invoice.getBillingAccount(), invoice.getNextInvoiceDate());
+        }
+        this.create(invoice);
+        postCreate(invoice);
+	}
+	
 	private void updateRatedTransactions(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca) {
 		for (List<Long> rtIds : Lists.partition(sca.getRtIDs(), MAX_RT_TO_UPDATE)) {
 			Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("ids", rtIds);
 			query.executeUpdate();
 		}
 	}
+	
+    private void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, Date nextInvoiceDate) throws BusinessException {
+		Date nextCalendarDate = billingRun.getBillingCycle().getNextCalendarDate(getReferenceDate(billingRun, nextInvoiceDate));
+		if(nextCalendarDate!=null && (nextInvoiceDate==null || nextCalendarDate.compareTo(nextInvoiceDate)!=0)) {
+			billingAccount.setNextInvoiceDate(nextCalendarDate);
+	        billingAccount.updateAudit(currentUser);
+	        billingAccountService.update(billingAccount);
+		}
+    }
+    
+    private Date getReferenceDate(BillingRun billingRun, Date nextInvoiceDate) {
+        Date referenceDate = new Date();
+        ReferenceDateEnum referenceDateEnum = null;
+        if (billingRun != null) {
+            referenceDateEnum = billingRun.getReferenceDate();
+        }
+        if (referenceDateEnum == null && billingRun.getBillingCycle() != null) {
+            referenceDateEnum = billingRun.getBillingCycle().getReferenceDate();
+        }
+        if (referenceDateEnum != null) {
+            switch (referenceDateEnum) {
+            case TODAY:
+                referenceDate = new Date();
+                break;
+            case NEXT_INVOICE_DATE:
+				referenceDate = nextInvoiceDate;
+                break;
+            case LAST_TRANSACTION_DATE:
+                referenceDate = billingRun.getLastTransactionDate();
+                break;
+            case END_DATE:
+                referenceDate = billingRun.getEndDate();
+                break;
+            default:
+                break;
+            }
+        }
+        return referenceDate;
+    }
 
 	/**
 	 * @param invoicingItems
@@ -371,6 +479,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		}
 		// Set due balance
 		invoice.setDueBalance(item.getDueBalance().setScale(getInvoiceRounding(), getRoundingMode()));
+        if (item.isElectronicBillingEnabled()) {
+            invoice.setDontSend(true);
+        }
 		return invoice;
 	}
 
@@ -658,10 +769,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
         if (invoice instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) invoice);
         }
-        // activate/deactivate sending invoice by Emails
-        if (!isElectronicBillingEnabled(invoice)) {
-            invoice.setDontSend(true);
-        }
         getEntityManager().persist(invoice);
         log.trace("end of create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
@@ -737,18 +844,15 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	}
 
 	private void initTaxAggregations(Invoice invoice, boolean calculateTaxOnSubCategoryLevel, BillingAccount billingAccount, String languageCode, List<InvoicingItem> invoicingItems) {
-		Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
-		if (isExonerated == null) {
-			isExonerated = billingAccountService.isExonerated(billingAccount);
-		}
+		InvoicingItem firstItem = invoicingItems.get(0);
+		Boolean isExonerated = billingAccountService.isExonerated(billingAccount, firstItem.getExoneratedFromTaxes(), firstItem.getExonerationTaxEl());
         if (isExonerated) {
         	return;
         }
 		if (calculateTaxOnSubCategoryLevel) {
 			Map<Long, List<InvoicingItem>> itemsByTax = invoicingItems.stream().collect(Collectors.groupingBy(InvoicingItem::getTaxId));
 	        for(List<InvoicingItem> items: itemsByTax.values()) {
-	        	InvoicingItem firstItem = items.get(0);
-	            TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, getEntityManager().getReference(Tax.class,firstItem.getTaxId()), firstItem.getTaxPercent(), invoice);
+				TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, getTax(firstItem.getTaxId()), firstItem.getTaxPercent(), invoice);
 	            taxAggregate.updateAudit(currentUser);
 	            addTranslatedDescription(languageCode, taxService.findById(firstItem.getTaxId()), taxAggregate, "T");
 	            invoice.addInvoiceAggregate(taxAggregate);
@@ -767,6 +871,17 @@ public class InvoicingService extends PersistenceService<Invoice> {
                 }
             }
         }
+	}
+
+	/**
+	 * @param taxId
+	 * @return
+	 */
+	private Tax getTax(Long taxId) {
+		if(taxes.isEmpty()) {
+			taxes =  getEntityManager().createNamedQuery("Tax.getAllTaxes",Tax.class).getResultList().stream().collect(Collectors.toMap(Tax::getId, Function.identity()));
+		}
+		return taxes.get(taxId);
 	}
 
 	private void setAggregationAmounts(List<InvoicingItem> items, InvoiceAgregate invoiceAggregate) {
