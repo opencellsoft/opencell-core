@@ -613,14 +613,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
         }
 
-        if (dunningActionInstanceInput.getCode() != null) {
-            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCodeAndDunningLevelInstance(dunningActionInstanceInput.getCode(),
-                dunningLevelInstanceId);
-            if (dunningActionInstanceExist != null) {
-                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
-            }
-        }
-
         if (dunningActionInstanceInput.getCollectionPlan() == null || dunningActionInstanceInput.getCollectionPlan().getId() == null) {
             throw new ActionForbiddenException("Attribut collectionPlan is mandatory");
         }
