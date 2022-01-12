@@ -3048,6 +3048,7 @@ public class DeleteCustomersScript extends Script {
 		//
 		// A workaround for #4134 , no need for this method if #4134 is fixed (only
 		// 6.1.X is concerned)!
+      	this.nullifyDDRequestItem(customer);
 		this.nullifyAOsSeller(customer);
 
       	this.removeWalletOperations(customer);
@@ -3060,13 +3061,18 @@ public class DeleteCustomersScript extends Script {
 
 		this.removePaymentHistory(customer);
 //		this.removeRatedTransactions(customer);
+
+		this.removeMatchingAmounts(customer);
+		this.nullifyRecordedInvoice(customer);
 		this.removeInvoices(customer);
+
 
 
 		this.removeServiceInstances(customer);
 		this.removeAccess(customer);
 		this.removeEDRs(customer);
 		this.removeDiscountPlanInstance(customer);
+		this.nullifyAOSubscriptions(customer);
 		this.removeSubscriptions(customer);
 		this.removeRejectedBAs(customer);
 
@@ -3074,7 +3080,7 @@ public class DeleteCustomersScript extends Script {
 		this.removeCounterInstances(customer);
 		this.removeOrderItems(customer);
 		this.removeProductInstances(customer);
-		this.removeMatchingAmounts(customer);
+
 
 		this.customerService.remove(customer);
 
@@ -3199,6 +3205,23 @@ public class DeleteCustomersScript extends Script {
 	 * @param customer
 	 * @throws BusinessException
 	 */
+
+ private void nullifyDDRequestItem(Customer customer){
+
+    try {
+			log.debug(" Start deleteDDRequestItem for customer = {} ", customer);
+
+			String query = "update DDRequestItem ddri set ddri.automatedPayment= null where ddri.automatedPayment.id in (select ao2.id from AccountOperation ao2 where ao2.customerAccount.customer.id =:customerId) ";
+			int count = this.accountOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" seller to nullify for {} AOs ", count);
+			log.debug(" End nullifyAOsSeller for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifyAOsSeller : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+  }
 	private void nullifyAOsSeller(Customer customer) throws BusinessException {
 		try {
 			log.debug(" Start nullifyAOsSeller for customer = {} ", customer);
@@ -3309,6 +3332,21 @@ public class DeleteCustomersScript extends Script {
 
 
 
+
+	private void nullifyRecordedInvoice(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeRecordedInvoice for customer = {} ", customer);
+
+			String queryText = "update  RecordedInvoice ri   set ri.invoice = null where ri.invoice.id in ( select inv.id from Invoice inv where inv.billingAccount.customerAccount.customer.id =:customerId )";
+			invoiceService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeRecordedInvoice for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeRecordedInvoice : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
 	private void removeInvoices(Customer customer) throws BusinessException {
 		try {
 			log.debug(" Start removeInvoices for customer = {} ", customer);
@@ -3374,6 +3412,17 @@ public class DeleteCustomersScript extends Script {
 	}
 
 
+	private void nullifyAOSubscriptions(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start nullifyAOSubscriptions for customer = {} ", customer);
+						String queryText = "update AccountOperation  ao set ao.subscription= null where ao.subscription.id in (select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer) ";
+			subscriptionService.getEntityManager().createQuery(queryText).setParameter("customer", customer).executeUpdate();
+			log.debug(" End nullifyAOSubscriptions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifyAOSubscriptions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
 
 	private void removeSubscriptions(Customer customer) throws BusinessException {
 		try {
