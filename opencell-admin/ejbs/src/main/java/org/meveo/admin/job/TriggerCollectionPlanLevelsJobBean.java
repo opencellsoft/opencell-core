@@ -24,11 +24,13 @@ import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,6 +65,9 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
 
     @Inject
     private PaymentGatewayService paymentGatewayService;
+
+    @Inject
+    private InvoiceService invoiceService;
 
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -228,11 +233,20 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
             params.put("invoiceDueDate", formatter.format(invoice.getDueDate()));
             params.put("dayDate", formatter.format(new Date()));
 
-            params.put("dunningCollectionPlanLastActionDate", lastActionDate);
+            params.put("dunningCollectionPlanLastActionDate", formatter.format(lastActionDate));
+            List<File> attachments = new ArrayList<>();
+            String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
+            File attachment = new File(invoiceFileName);
+            if (attachment.exists()) {
+                attachments.add(attachment);
+            } else {
+                log.warn("No Pdf file exists for the invoice : {}",
+                        ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
+            }
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                            billingAccount.getContactInformation().getEmail(),  emailTemplate, params);
+                            billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
                 } catch (Exception exception) {
                     jobExecutionResult.addErrorReport(exception.getMessage());
                 }
