@@ -22,12 +22,14 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -55,7 +57,11 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     @Inject
     private DunningCollectionPlanService collectionPlanService;
 
+    @Inject
+    private InvoiceService invoiceService;
+
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+    private final SimpleDateFormat emailDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @TransactionAttribute(REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -139,13 +145,21 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             params.put("customerAccountDescription", customerAccount.getDescription());
 
             params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
-            params.put("invoiceDueDate", invoice.getDueDate());
+            params.put("invoiceDueDate", emailDateFormatter.format(invoice.getDueDate()));
             params.put("invoiceTotal", invoice.getAmountWithTax());
-            params.put("dayDate", new Date());
+            params.put("dayDate", emailDateFormatter.format(new Date()));
 
+            List<File> attachments = new ArrayList<>();
+            String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
+            File attachment = new File(invoiceFileName);
+            if (!attachment.exists()) {
+                log.warn("No Pdf file exists for the invoice : {}", ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
+            } else {
+                attachments.add(attachment);
+            }
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                        billingAccount.getContactInformation().getEmail(), emailTemplate, params);
+                        billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
             } else {
                 throw new BusinessException("Billing account email is missing");
             }
