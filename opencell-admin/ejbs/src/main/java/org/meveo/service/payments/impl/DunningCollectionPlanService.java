@@ -8,6 +8,7 @@ import static org.meveo.model.shared.DateUtils.addDaysToDate;
 import static org.meveo.model.shared.DateUtils.daysBetween;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import java.io.File;
 import java.util.*;
 
 import javax.ejb.Stateless;
@@ -378,12 +379,12 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     }
 
     public void sendNotification(String emailFrom, String emailTo, EmailTemplate emailTemplate,
-                                 Map<Object, Object> params) {
+                                 Map<Object, Object> params, List<File> attachments) {
         emailTemplate = emailTemplateService.refreshOrRetrieve(emailTemplate);
         String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
         String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
         String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
         emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
-                subject, content, contentHtml, null, null, false);
+                subject, content, contentHtml, attachments, null, false);
     }
 }
