@@ -107,30 +107,8 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 				        
 				    }
 				    cf.setListValue(listStr);
-				}else if(cf.getMapValue()!=null) {
-				    for(Object mapobject:cf.getMapValue().entrySet()) {
-	                      if(mapobject instanceof Entry) {
-	                          for( Entry<String, Object> mapliss:cf.getkeyValueMap().entrySet() ) {
-	                              Map<String, String> map = oMapper.convertValue(mapliss.getValue(), Map.class);
-	                              for(Entry<String, String> str:map.entrySet()) {
-	                                  mapcfValuesString.put(str.getKey(), decrypt(str.getValue()));
-	                                  cf.setMapValue(mapcfValuesString);
-	                              }
-	                             
-	                          }
-	                          
-	                      }
-				}
-			}else if (cf.getMatrixValuesForGUI()!=null) {
-                for(Map<String, Object> matrixObject:cf.getMatrixValuesForGUI()) {
-                    for(Entry<String, Object> maplistMatrix:matrixObject.entrySet()) {
+				}				
 
-                        matrixcfValuesString.put(maplistMatrix.getKey(), decrypt(maplistMatrix.getValue().toString()));
-                        matrixList.add(matrixcfValuesString);
-                        cf.setMapValuesForGUI(matrixList);
-                    }
-                }
-             }
 				
 				
          }
@@ -145,7 +123,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         Map<String, Object> mapcfValuesString = new LinkedHashMap<String, Object>();
         Map<String, Object> matrixcfValuesString = new LinkedHashMap<String, Object>();
         Map<String, Object> maplistString = new HashMap<String, Object>();
-        List matrixList = new ArrayList();
+        List<Map<String,Object>> matrixList = new ArrayList();
         Map<String, String> maput = new HashMap<String, String>();
         for (Entry<String, List<CustomFieldValue>> listCfs : cfValues.getValuesByCode().entrySet()) {
             for (CustomFieldValue cf : listCfs.getValue()) {
@@ -165,39 +143,45 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 
                 }
 
-                if (cf.getMatrixValuesForGUI() != null) {
-                    for (Map<String, Object> matrixObject : cf.getMatrixValuesForGUI()) { 
-                        for (Entry<String, Object> maplistMatrix : matrixObject.entrySet()) {
+                if (cf.getMatrixValuesForGUI() != null && !cf.getMatrixValuesForGUI().isEmpty()) {
+                	 Map<String, Object> mapListCfValues = new HashMap();
+                     List<String> listValueStrings = new ArrayList<String>();
+                     Map<String,Object> ops=new HashMap<>();
+                     for(Entry<String,Object> object:cf.getkeyValueMap().entrySet()) {
+                    	 Map<String, String> map = oMapper.convertValue(object.getValue(), Map.class);
+                    	 for (Entry<String, String> str : map.entrySet()) {
+                            matrixcfValuesString.put(str.getKey(), encrypt(str.getValue()));
 
-                            matrixcfValuesString.put(maplistMatrix.getKey(), encrypt(maplistMatrix.getValue().toString()));
-                            matrixList.add(matrixcfValuesString);
-                            cf.setMapValuesForGUI(matrixList);
-                        }
-                    }
+                    } 
 
+                     }
+                     cf.setMapValue(matrixcfValuesString);
                 }
+               
+				if (cf.getMapValue() != null && !cf.getMapValue().isEmpty()) {
+					Map<String, String> mapMatrix = new HashMap<String, String>();
+					Map<String, Object> mapMatrixGlob = new HashMap<String, Object>();
+					for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cf.getValue()).entrySet()) {
+						for (Entry<String, String> typeMapsCfvaluesmaps : ((Map<String, String>) cf.getValue())
+								.entrySet()) {
+							for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
+								if (typeMapsCfvaluesmaps.getValue() instanceof String) {
+									mapMatrix.put(typeMapsCfvaluesmaps.getKey(),
+											encrypt(typeMapsCfvaluesmaps.getValue().toString()));
+									mapcfValuesString.put(typeMapsCfvaluesmaps.getKey(),
+											encrypt(typeMapsCfvaluesmaps.getValue()));
+								}
 
-                if (cf.getMapValue() != null) {
+							}
 
-                    for (Object mapobject : cf.getMapValue().entrySet()) {
-                        if (mapobject instanceof Entry) {
-                            for (Entry<String, Object> mapliss : cf.getkeyValueMap().entrySet()) {
-                                Map<String, String> map = oMapper.convertValue(mapliss.getValue(), Map.class);
-                                for (Entry<String, String> str : map.entrySet()) {
-                                    maput.put(str.getKey(), encrypt(str.getValue()));
-                                    mapcfValuesString.put(str.getKey(), encrypt(str.getValue()));
-                                    cf.setMapValue(mapcfValuesString);
-                                }
+						}
 
-                            }
+					}
+					cf.setMapValue(mapcfValuesString);
+				}
 
-                        }
-
-                    }
-
-                }
-            }
-        }
+			}
+		}
         return cfValues.toString();
     }
 	
