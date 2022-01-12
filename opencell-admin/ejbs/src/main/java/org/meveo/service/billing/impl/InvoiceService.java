@@ -132,7 +132,6 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 import org.meveo.model.billing.IInvoiceable;
@@ -143,6 +142,7 @@ import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.InvoiceLinesGroup;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
+import org.meveo.model.billing.InvoiceProcessTypeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
@@ -4794,7 +4794,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     protected InvoiceLinesToInvoice getInvoiceLinesGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
-            Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice) throws BusinessException {
+            Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum) throws BusinessException {
         List<InvoiceLine> invoiceLines = existingInvoice != null ? invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId())
                 : getInvoiceLines(entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
         boolean moreIls = invoiceLines.size() == rtPaginationSize;
@@ -4823,20 +4823,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         	
         	InvoiceType invoiceType = null;
-        	AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
-        	if (!StringUtils.isBlank(accountingArticle.getInvoiceTypeEl())) {
-                String invoiceTypeCode = evaluateInvoiceTypeEl(accountingArticle.getInvoiceTypeEl(), invoiceLine);
-                invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+        	
+        	if (invoiceProcessTypeEnum == null || invoiceProcessTypeEnum == InvoiceProcessTypeEnum.AUTOMATIC) {
+        	    AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
+                if (!StringUtils.isBlank(accountingArticle.getInvoiceTypeEl())) {
+                    String invoiceTypeCode = evaluateInvoiceTypeEl(accountingArticle.getInvoiceTypeEl(), invoiceLine);
+                    invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+                }
+                if (invoiceType == null) {
+                    invoiceType = accountingArticle.getInvoiceType();
+                }
+                if (invoiceType == null) {
+                    invoiceType = defaultInvoiceType;
+                }
+                if (invoiceType == null) {
+                    invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
+                }
             }
-            if (invoiceType == null) {
-                invoiceType = accountingArticle.getInvoiceType();
-            }
-            if (invoiceType == null) {
-                invoiceType = defaultInvoiceType;
-            }
-            if (invoiceType == null) {
-                invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
-            }
+        	else {
+        	    invoiceType = defaultInvoiceType;
+        	}
         	
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
             Seller seller = getSelectedSeller(invoiceLine);
@@ -5088,7 +5094,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter,filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance,
-                automaticInvoiceCheck, hasMin, null);
+                automaticInvoiceCheck, hasMin, null, null);
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
             if (entityToInvoice instanceof BillingAccount) {
@@ -5108,7 +5114,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
             BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck, boolean hasMin,
-            Invoice existingInvoice) throws BusinessException {
+            Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum) throws BusinessException {
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreInvoiceLinesExpected = true;
         Map<String, InvoiceAggregateProcessingInfo> invoiceLineGroupToInvoiceMap = new HashMap<>();
@@ -5123,7 +5129,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             InvoiceLinesToInvoice iLsToInvoice = getInvoiceLinesGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft,
-                defaultPaymentMethod, existingInvoice);
+                defaultPaymentMethod, existingInvoice, invoiceProcessTypeEnum);
             List<InvoiceLinesGroup> invoiceLinesGroupsPaged = iLsToInvoice.invoiceLinesGroups;
             moreInvoiceLinesExpected = iLsToInvoice.moreInvoiceLines;
             if (moreInvoiceLinesExpected) {
@@ -5807,7 +5813,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice = invoiceService.retrieveIfNotManaged(invoice);
         final BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
         return createAggregatesAndInvoiceFromIls(billingAccount, billingAccount.getBillingRun(), null,null, invoice.getInvoiceDate(), null, null, invoice.isDraft(), billingAccount.getBillingCycle(), billingAccount,
-            billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice);
+            billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice, InvoiceProcessTypeEnum.MANUAL);
     }
 
     @Inject
