@@ -207,7 +207,7 @@ public class RefundApi extends BaseApi {
     }
 
     public PaymentResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
-            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
+            throws Exception {
 
         if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
             missingParameters.add("ctsAmount");

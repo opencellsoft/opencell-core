@@ -58,8 +58,7 @@ public class UnitPaymentJobBean {
     @Inject
     private PaymentService paymentService;
 
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+
     public void execute(JobExecutionResultImpl result, Long customerAccountId, List<Long> listAOids, Long amountToPay, boolean createAO, boolean matchingAO,
             OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethodEnum paymentMethodType, AccountOperationFilterScript aoFilterScript) {
         
