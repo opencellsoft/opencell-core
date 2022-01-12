@@ -29,7 +29,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -67,7 +66,7 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         auditLog.setActor(actor);
         auditLog.setAction(operationType);        
         auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin(origine);
+        auditLog.setOrigin(String.valueOf(entity.getId()));
         create(auditLog);
     }
 
