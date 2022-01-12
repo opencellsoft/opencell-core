@@ -520,6 +520,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + levelInstanceId);
             }
 
+            DunningCollectionPlan collectionPlan = levelInstanceToUpdate.getCollectionPlan();
+
             // 1- Can not update the dunning level instance if :
             // status is DONE
             if (levelInstanceToUpdate.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
@@ -531,20 +533,15 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             List<String> fields = new ArrayList<>();
-            DunningCollectionPlan collectionPlan = levelInstanceToUpdate.getCollectionPlan();
+
+            Integer oldDaysOverdue = levelInstanceToUpdate.getDaysOverdue();
             Integer newDaysOverdue = updateLevelInstanceInput.getDaysOverdue();
-            if (newDaysOverdue != null && newDaysOverdue != levelInstanceToUpdate.getDaysOverdue()) {
+
+            if (!Objects.equals(oldDaysOverdue, newDaysOverdue)) {
                 // check daysOverdue
                 checkDaysOverdue(collectionPlan, newDaysOverdue);
                 fields.add("daysOverdue");
-                levelInstanceToUpdate.setDaysOverdue(updateLevelInstanceInput.getDaysOverdue());
-
-                // 2- set sequence
-                Integer minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, newDaysOverdue);
-                levelInstanceToUpdate.setSequence(minSequence.intValue());
-
-                // 3- update dunningLevelInstances
-                dunningLevelInstanceService.incrementSequecesGreaterThanDaysOverdue(collectionPlan, newDaysOverdue);
+                levelInstanceToUpdate.setDaysOverdue(newDaysOverdue);
             }
 
             if (updateLevelInstanceInput.getLevelStatus() != null) {
@@ -571,8 +568,19 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
             updateCollectionPlanActions(levelInstanceToUpdate);
 
-            String origine = (levelInstanceToUpdate.getCollectionPlan() != null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
-            auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), levelInstanceToUpdate.getCollectionPlan(), origine, fields);
+            // 2- Update sequences
+            if (!Objects.equals(oldDaysOverdue, newDaysOverdue)) {
+                List<DunningLevelInstance> levelInstances = dunningLevelInstanceService.findByCollectionPlan(collectionPlan);
+
+                int i = 0;
+                for (DunningLevelInstance dunningLevelInstance : levelInstances) {
+                    dunningLevelInstance.setSequence(i++);
+                    dunningLevelInstanceService.update(dunningLevelInstance);
+                }
+            }
+
+            String origine = (collectionPlan != null) ? collectionPlan.getCollectionPlanNumber() : "";
+            auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), collectionPlan, origine, fields);
             return of(levelInstanceToUpdate);
         } catch (MeveoApiException e) {
             throw e;
