@@ -107,10 +107,20 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 				        
 				    }
 				    cf.setListValue(listStr);
-				}				
+				} else if (cf.getMapValue() != null) {
+					Map<String, Object> mapListCfValues = new HashMap();
+					List<String> listValueStrings = new ArrayList<String>();
+					Map<String, Object> ops = new HashMap<>();
+					for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
+						Map<String, String> map = oMapper.convertValue(object.getValue(), Map.class);
+						for (Entry<String, String> str : map.entrySet()) {
+							matrixcfValuesString.put(str.getKey(), decrypt(str.getValue()));
 
-				
-				
+						}
+					}
+
+					cf.setMapValue(matrixcfValuesString);
+				}		
          }
      }
      return cfValues;
@@ -151,11 +161,13 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
                     	 Map<String, String> map = oMapper.convertValue(object.getValue(), Map.class);
                     	 for (Entry<String, String> str : map.entrySet()) {
                             matrixcfValuesString.put(str.getKey(), encrypt(str.getValue()));
+                            maplistString.put(object.getKey(), matrixcfValuesString);
+                            matrixList.add(maplistString);
 
                     } 
 
                      }
-                     cf.setMapValue(matrixcfValuesString);
+                     cf.setMatrixValuesForGUI(matrixList);
                 }
                
 				if (cf.getMapValue() != null && !cf.getMapValue().isEmpty()) {
