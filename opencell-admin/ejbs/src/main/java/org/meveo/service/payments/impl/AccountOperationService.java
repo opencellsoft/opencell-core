@@ -90,10 +90,15 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     private SubAccountingPeriodService subAccountingPeriodService;
 
     public AccountOperation createDeferralPayments(AccountOperation accountOperation, PaymentMethodEnum selectedPaymentMethod, Date paymentDate) {
+        if(!appProvider.isPaymentDeferral()) {
+            throw new BusinessException("Payment Deferral is not allowed");
+        }
+
         if(selectedPaymentMethod != null
                 && accountOperation.getCustomerAccount().getPaymentMethods().stream().noneMatch(paymentMethod1 -> paymentMethod1.getPaymentType().equals(selectedPaymentMethod))){
             throw new BusinessException("the selected paymentMethod does not belong to the account operation customer account");
         }
+        
         LocalDate paymentLocalDate = LocalDate.ofInstant(paymentDate.toInstant(), ZoneId.systemDefault());
         
         LocalDate collectionDate = accountOperation.getCollectionDate() != null
