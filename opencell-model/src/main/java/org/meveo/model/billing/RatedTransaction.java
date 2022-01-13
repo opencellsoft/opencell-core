@@ -170,6 +170,13 @@ import org.meveo.model.tax.TaxClass;
         		"and (m.buyerCountry=ba.tradingCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=br.invoiceDate) AND (br.invoiceDate<m.valid.to or m.valid.to is null)) ) " + 
         		"where br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
         
+        @NamedQuery(name = "RatedTransaction.getInvoicingItems", query = 
+    	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),',') "
+    		+ " FROM RatedTransaction rt left join rt.wallet w "
+    		+ " where rt.billingAccount.id in (:ids) and rt.status='OPEN' and rt.usageDate<:lastTransactionDate "
+    		+ " group by rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id "
+    		+ " order by rt.billingAccount.id"),
+        
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query =
                 "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                         + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),

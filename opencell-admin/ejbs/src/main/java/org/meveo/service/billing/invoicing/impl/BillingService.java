@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -155,7 +154,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 		}
 	}
 	
-	private List<InvoicingItem> getInvoicingItems(BillingRun billingRun, int pageSize, int pageIndex,
+	private List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, int pageSize, int pageIndex,
 			boolean thresholdPerEntityFound) {
 		log.info("getInvoicingItems ====== > " + pageSize + "-" + pageIndex);
 		BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -221,7 +220,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 
 		int count = pageSise;
 		int page = 0;
-		List<InvoicingItem> items = null;
+		List<BillingAccountDetailsItem> items = null;
 
 		while (count != 0) {
 			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound);
@@ -234,11 +233,11 @@ public class BillingService extends PersistenceService<BillingRun> {
 	}
 
 	private void processEntitiesHavingNoParentThreshold(BillingRun billingRun, long nbRuns, long waitingMillis,
-			Long jobInstanceId, List<InvoicingItem> items, boolean isFullAutomatic) {
-		SubListCreator<List<InvoicingItem>> subListCreator = null;
+			Long jobInstanceId, List<BillingAccountDetailsItem> items, boolean isFullAutomatic) {
+		SubListCreator<BillingAccountDetailsItem> subListCreator = null;
 		try {
-			final List<List<InvoicingItem>> values = items.stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().collect(Collectors.toList());
-			subListCreator = new SubListCreator(values, (int) nbRuns);
+			//final List<List<InvoicingItem>> values = items.stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().collect(Collectors.toList());
+			subListCreator = new SubListCreator(items, (int) nbRuns);
 		} catch (Exception e1) {
 			throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
 		}

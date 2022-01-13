@@ -106,17 +106,25 @@ import org.meveo.model.tax.TaxCategory;
         		+ " left join fetch b.usersAccounts ua left join fetch ua.subscriptions s left join fetch s.discountPlanInstances "
         		+ " left join fetch b.tradingLanguage tl left join fetch tl.language "
         		+ " where b.id in (:ids) and (r is null or r.status='OPEN') and (m is null or m.preferred=true) order by b.id"),
+        //,  b.id, m.id, m.paymentType, b.tradingLanguage.id, ca.dueDateDelayEL, b.nextInvoiceDate, cc.exoneratedFromTaxes, cc.exonerationTaxEl, b.electronicBilling
         
         @NamedQuery(name = "BillingAccount.getInvoicingItems", query = 
-        	"select b.id, rt.seller.id, w.id, w.walletTemplate.id, sc.id, sc.invoiceCategory.id, rt.userAccount.id, rt.tax.id, rt.tax.percent, m.id, m.paymentType, b.tradingLanguage.language.languageCode, ca.dueDateDelayEL, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),','), b.nextInvoiceDate, cc.exoneratedFromTaxes, cc.exonerationTaxEl, b.electronicBilling"
-        		+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join ca.paymentMethods m "
-        		+ " join b.billingRun br left join br.billingCycle bc "
-        		+ " left join b.ratedTransactions rt left join rt.wallet w left join rt.invoiceSubCategory sc left join  rt.userAccount left join rt.taxClass left join rt.tax"
-        		+ " left join b.discountPlanInstances dpi "
-        		+ " left join b.usersAccounts ua left join ua.subscriptions s left join s.discountPlanInstances sdpi"
-        		+ " where b.id in (:ids) and (rt is null or rt.status='OPEN' and rt.usageDate<:lastTransactionDate) and (m is null or m.preferred=true) "
-        		+ " group by b.id, rt.seller.id, w.id, w.walletTemplate.id, sc.id, sc.invoiceCategory.id, rt.userAccount.id, rt.tax.id, rt.tax.percent, m.id, m.paymentType, b.tradingLanguage.language.languageCode, ca.dueDateDelayEL, b.nextInvoiceDate, cc.exoneratedFromTaxes, cc.exonerationTaxEl, b.electronicBilling"
-        		+ " order by b.id"),
+    	"select b.id, rt.seller.id, w.id, w.walletTemplate.id, sc.id, sc.invoiceCategory.id, rt.userAccount.id, rt.tax.id, rt.tax.percent, m.id, m.paymentType, b.tradingLanguage.language.languageCode, ca.dueDateDelayEL, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),','), b.nextInvoiceDate, cc.exoneratedFromTaxes, cc.exonerationTaxEl, b.electronicBilling"
+    		+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join ca.paymentMethods m "
+    		+ " join b.billingRun br left join br.billingCycle bc "
+    		+ " left join b.ratedTransactions rt left join rt.wallet w left join rt.invoiceSubCategory sc left join  rt.userAccount left join rt.taxClass left join rt.tax"
+    		+ " left join b.discountPlanInstances dpi "
+    		+ " left join b.usersAccounts ua left join ua.subscriptions s left join s.discountPlanInstances sdpi"
+    		+ " where b.id in (:ids) and (rt is null or rt.status='OPEN' and rt.usageDate<:lastTransactionDate) and (m is null or m.preferred=true) "
+    		+ " group by b.id, rt.seller.id, w.id, w.walletTemplate.id, sc.id, sc.invoiceCategory.id, rt.userAccount.id, rt.tax.id, rt.tax.percent, m.id, m.paymentType, b.tradingLanguage.language.languageCode, ca.dueDateDelayEL, b.nextInvoiceDate, cc.exoneratedFromTaxes, cc.exonerationTaxEl, b.electronicBilling"
+    		+ " order by b.id"),
+        
+        @NamedQuery(name = "BillingAccount.getBillingAccountDetailsItems", query = 
+    	"select distinct b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType "
+    		+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join ca.paymentMethods m "
+    		+ " left join b.discountPlanInstances dpi "
+    		+ " where b.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
+    		+ " order by b.id"),
         
         @NamedQuery(name = "BillingAccount.findEntitiesToInvoiceHavingThresholdPerEntity", query = "SELECT new org.meveo.model.billing.ThresholdSummary( (case when c.invoicingThreshold is not null then c.id else null end), (case when ca.invoicingThreshold is not null then ca.id else null end), count(ba.id))" + 
         		" from BillingAccount ba join ba.customerAccount ca join ca.customer c " + 

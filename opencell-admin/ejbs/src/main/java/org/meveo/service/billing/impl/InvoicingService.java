@@ -72,6 +72,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -86,6 +87,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.invoicing.impl.BillingAccountDetailsItem;
 import org.meveo.service.billing.invoicing.impl.InvoicingItem;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -137,6 +139,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	private InvoiceSubCategoryService invoiceSubCategoryService;
     
     private Map<Long, Tax> taxes=new TreeMap<Long, Tax>();
+    private Map<Long, TradingLanguage> tradingLanguages=new TreeMap<Long, TradingLanguage>();
     /**
      * Description translation map.
      */
@@ -156,30 +159,30 @@ public class InvoicingService extends PersistenceService<Invoice> {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<String> createAgregatesAndInvoiceAsync(BillingRun billingRun, List<List<InvoicingItem>> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
+    public Future<String> createAgregatesAndInvoiceAsync(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         List<Invoice> invoices = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic);
         writeInvoicingData(billingRun, isFullAutomatic, invoices);
         return new AsyncResult<String>("OK");
     }
 
-	private List<Invoice> processData(BillingRun billingRun, List<List<InvoicingItem>> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic) {
+	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic) {
 		List<Invoice> invoices = new ArrayList<Invoice>();
-		for (List<InvoicingItem> invoicingItems : invoicingItemsList) {
+		for (BillingAccountDetailsItem invoicingItems : invoicingItemsList) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-            	invoices.add(createAgregatesAndInvoiceForJob(invoicingItems, billingRun));
+            	invoices.addAll(createAgregatesAndInvoiceForJob(invoicingItems, billingRun));
             } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}", invoicingItems.get(0).getBillingAccountId(), invoicingItems.get(0).getInvoiceKey(), e1);
+                log.error("Failed to create invoices for entity {}/{}", invoicingItems.getBillingAccountId(), invoicingItems.getInvoicingItems().get(0).getInvoiceKey(), e1);
             }
         }
 		return invoices;
 	}
     
-    public Invoice createAgregatesAndInvoiceForJob(List<InvoicingItem> invoicingItems, BillingRun billingRun) throws BusinessException {
-    	final long billingAccountId = invoicingItems.get(0).getBillingAccountId();
+    public List<Invoice> createAgregatesAndInvoiceForJob(BillingAccountDetailsItem billingAccountDetailsItem, BillingRun billingRun) throws BusinessException {
+    	final long billingAccountId = billingAccountDetailsItem.getBillingAccountId();
     	try {
 /*#MEL create min RTs
         // First retrieve it here as not to loose it if billable entity is not managed and has to be retrieved
@@ -199,7 +202,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
                 commit();
             }
 */
-    		return createAggregatesAndInvoiceFromInvoicingItems(invoicingItems, billingRun);
+    		return billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().map(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun)).collect(Collectors.toList());
         } catch (Exception e) {
 			log.error("Error for entity {}", billingAccountId, e);
             rejectedBillingAccountService.create(billingAccountId, billingRun, e.getMessage());
@@ -208,16 +211,17 @@ public class InvoicingService extends PersistenceService<Invoice> {
     }
 
     /**
-	 * @param invoicingItems
+	 * @param billingAccountDetailsItem 
+     * @param invoicingItems
 	 * @param billingRun
      * @param isFullAutomatic 
 	 * @return
 	 */
-	private Invoice createAggregatesAndInvoiceFromInvoicingItems(List<InvoicingItem> invoicingItems, BillingRun billingRun){
+	private Invoice createAggregatesAndInvoiceFromInvoicingItems(BillingAccountDetailsItem billingAccountDetailsItem, List<InvoicingItem> invoicingItems, BillingRun billingRun){
 		final InvoicingItem firstItem = invoicingItems.get(0);
 		BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, firstItem.getBillingAccountId());
-		final Invoice invoice = initInvoice(firstItem, billingRun, billingAccount);
-		Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(invoicingItems, billingAccount, invoice);
+		final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount);
+		Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, invoicingItems, billingAccount, invoice);
 		if (!invoice.isPrepaid()) {
 			BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccount,
 					ThresholdOptionsEnum.AFTER_DISCOUNT);
@@ -299,7 +303,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
                 invoiceAggregateProcessingInfo.invoice.setOrders(orders);
             }
         }*/
-        evalDueDate(invoice, billingRun.getBillingCycle(), firstItem.getOrderDueDateDelayEL(), firstItem.getCaDueDateDelayEL());
+        evalDueDate(invoice, billingRun.getBillingCycle(), null, billingAccountDetailsItem.getCaDueDateDelayEL());
         //writeInvoicingData(billingRun, isFullAutomatic, firstItem, billingAccount, invoice, invoiceSCAs);
         invoice.setSubCategoryInvoiceAgregate(invoiceSCAs);
         return invoice;
@@ -378,8 +382,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param isExonerated 
 	 * @return 
 	 */
-	private Set<SubCategoryInvoiceAgregate> createInvoiceAgregates(List<InvoicingItem> invoicingItems, BillingAccount billingAccount, Invoice invoice) {
-        String languageCode = invoicingItems.get(0).getLanguageCode();
+	private Set<SubCategoryInvoiceAgregate> createInvoiceAgregates(BillingAccountDetailsItem billingAccountDetailsItem, List<InvoicingItem> invoicingItems, BillingAccount billingAccount, Invoice invoice) {
+        String languageCode = getTradingLanguageCode(billingAccountDetailsItem.getTradingLanguageId());
         boolean calculateTaxOnSubCategoryLevel = invoice.getInvoiceType().getTaxScript() == null;
 		Map<SubCategoryInvoiceAgregate, List<InvoicingItem>> itemsBySubCategory = createInvoiceSubCategories(invoicingItems, invoice);
 		/*
@@ -404,7 +408,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	    		}
 			}
 		}
-        initTaxAggregations(invoice, calculateTaxOnSubCategoryLevel, billingAccount, languageCode, invoicingItems);
+        initTaxAggregations(billingAccountDetailsItem, invoice, calculateTaxOnSubCategoryLevel, billingAccount, languageCode, invoicingItems);
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
         return itemsBySubCategory.keySet();
 	}
@@ -439,7 +443,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.finFromMap(invoicingItem.getInvoiceSubCategoryId());
         SubCategoryInvoiceAgregate scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), getEntityManager().getReference(UserAccount.class, invoicingItem.getUserAccountId()), getEntityManager().getReference(WalletInstance.class, invoicingItem.getWalletId()), invoice, invoiceSubCategory.getAccountingCode());
 		scAggregate.updateAudit(currentUser);
-		addTranslatedDescription(invoicingItem.getLanguageCode(), invoiceSubCategory, scAggregate,"");
+		addTranslatedDescription(getTradingLanguageCode(invoicingItem.getBillingAccountId()), invoiceSubCategory, scAggregate,"");
 		setAggregationAmounts(items, scAggregate);
 		addInvoiceAggregateWithAmounts(invoice, scAggregate);
 		itemsBySubCategory.put(scAggregate,items);
@@ -451,7 +455,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param billingAccount 
 	 * @return
 	 */
-	private Invoice initInvoice(InvoicingItem item, BillingRun billingRun, BillingAccount billingAccount) {
+	private Invoice initInvoice(BillingAccountDetailsItem billingAccountDetailsItem, InvoicingItem item, BillingRun billingRun, BillingAccount billingAccount) {
 		final boolean isPrepaid = item.isPrepaid();
 		InvoiceType invoiceType = determineInvoiceType(isPrepaid, false, billingRun.getBillingCycle(), billingRun, billingAccount);
 		Invoice invoice = new Invoice();
@@ -473,13 +477,13 @@ public class InvoicingService extends PersistenceService<Invoice> {
 			invoice.setSubscription((Subscription) entity);
 		}*/
 		
-		if (item.getPaymentMethodId() != null) {
-			invoice.setPaymentMethodType(item.getPaymentMethodType());
-			invoice.setPaymentMethod(getEntityManager().getReference(PaymentMethod.class, item.getPaymentMethodId()));
+		if (billingAccountDetailsItem.getPaymentMethodId() != null) {
+			invoice.setPaymentMethodType(billingAccountDetailsItem.getPaymentMethodType());
+			invoice.setPaymentMethod(getEntityManager().getReference(PaymentMethod.class, billingAccountDetailsItem.getPaymentMethodId()));
 		}
 		// Set due balance
-		invoice.setDueBalance(item.getDueBalance().setScale(getInvoiceRounding(), getRoundingMode()));
-        if (item.isElectronicBillingEnabled()) {
+		invoice.setDueBalance(billingAccountDetailsItem.getDueBalance().setScale(getInvoiceRounding(), getRoundingMode()));
+        if (billingAccountDetailsItem.getElectronicBillingEnabled()) {
             invoice.setDontSend(true);
         }
 		return invoice;
@@ -843,16 +847,17 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		aggregate.setDescription(descTranslated);
 	}
 
-	private void initTaxAggregations(Invoice invoice, boolean calculateTaxOnSubCategoryLevel, BillingAccount billingAccount, String languageCode, List<InvoicingItem> invoicingItems) {
+	private void initTaxAggregations(BillingAccountDetailsItem BillingAccountDetailsItem, Invoice invoice, boolean calculateTaxOnSubCategoryLevel, BillingAccount billingAccount, String languageCode, List<InvoicingItem> invoicingItems) {
 		InvoicingItem firstItem = invoicingItems.get(0);
-		Boolean isExonerated = billingAccountService.isExonerated(billingAccount, firstItem.getExoneratedFromTaxes(), firstItem.getExonerationTaxEl());
+		Boolean isExonerated = billingAccountService.isExonerated(billingAccount, BillingAccountDetailsItem.getExoneratedFromTaxes(), BillingAccountDetailsItem.getExonerationTaxEl());
         if (isExonerated) {
         	return;
         }
 		if (calculateTaxOnSubCategoryLevel) {
 			Map<Long, List<InvoicingItem>> itemsByTax = invoicingItems.stream().collect(Collectors.groupingBy(InvoicingItem::getTaxId));
 	        for(List<InvoicingItem> items: itemsByTax.values()) {
-				TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, getTax(firstItem.getTaxId()), firstItem.getTaxPercent(), invoice);
+				final Tax tax = getTax(firstItem.getTaxId());
+				TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
 	            taxAggregate.updateAudit(currentUser);
 	            addTranslatedDescription(languageCode, taxService.findById(firstItem.getTaxId()), taxAggregate, "T");
 	            invoice.addInvoiceAggregate(taxAggregate);
@@ -882,6 +887,15 @@ public class InvoicingService extends PersistenceService<Invoice> {
 			taxes =  getEntityManager().createNamedQuery("Tax.getAllTaxes",Tax.class).getResultList().stream().collect(Collectors.toMap(Tax::getId, Function.identity()));
 		}
 		return taxes.get(taxId);
+	}
+	
+	
+	
+	private String getTradingLanguageCode(Long tradingLanguageId) {
+		if(tradingLanguages.isEmpty()) {
+			tradingLanguages =  getEntityManager().createNamedQuery("TradingLanguage.findAll",TradingLanguage.class).getResultList().stream().collect(Collectors.toMap(TradingLanguage::getId, Function.identity()));
+		}
+		return tradingLanguages.get(tradingLanguageId)!=null?tradingLanguages.get(tradingLanguageId).getLanguageCode():"";
 	}
 
 	private void setAggregationAmounts(List<InvoicingItem> items, InvoiceAgregate invoiceAggregate) {

@@ -22,7 +22,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -46,6 +50,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -55,7 +60,10 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.invoicing.impl.BillingAccountDetailsItem;
 import org.meveo.service.billing.invoicing.impl.InvoicingItem;
+
+import com.jcraft.jsch.Identity;
 
 /**
  * The Class BillingAccountService.
@@ -583,12 +591,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return query.getResultList();
 	}
 	
-	public List<InvoicingItem> getInvoicingItems(BillingRun billingRun, Date startDate,
+	public List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, Date startDate,
 			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
 		
-		String idsQueryName = "BillingAccount.findBillableEntityIdsForInvoicing";
+		String BillingAccountDetailsQueryName = "BillingAccount.getBillingAccountDetailsItems";
 		if(thresholdPerEntityFound) {
-			idsQueryName = idsQueryName+"ExcludingThresholdEntities";
+			BillingAccountDetailsQueryName = BillingAccountDetailsQueryName+"ExcludingThresholdEntities";
 		} 
 		
         Date lastTransactionDate = billingRun.getLastTransactionDate();
@@ -599,7 +607,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
 		boolean useStart = startDate != null;
 		boolean useEnd = endDate != null;
-		String invoicingItemsQueryName = "BillingAccount.getInvoicingItems";
+		String invoicingItemsQueryName = "RatedTransaction.getInvoicingItems";
 		if (useStart && useEnd) {
 			invoicingItemsQueryName = invoicingItemsQueryName + "ByStartAndEndDate";
 		} else if (useStart) {
@@ -608,19 +616,23 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			invoicingItemsQueryName = invoicingItemsQueryName + "ByEndDate";
 		}
 		//split to 2 queries to avoid hibernate 'firstResult/maxResults specified with collection fetch; applying in memory!' 
-		List<Long> ids = getEntityManager().createNamedQuery(idsQueryName).setParameter("billingRun", billingRun).setMaxResults(pageSize)
+		List<Object[]> resultList = getEntityManager().createNamedQuery(BillingAccountDetailsQueryName).setParameter("billingRunId", billingRun.getId()).setMaxResults(pageSize)
 			      .setFirstResult(pageIndex * pageSize).getResultList();
-		if(ids==null || ids.isEmpty()) {
-			return new ArrayList<InvoicingItem>();
+		if(resultList==null || resultList.isEmpty()) {
+			return new ArrayList<BillingAccountDetailsItem>();
 		}
-		Query query = getEntityManager().createNamedQuery(invoicingItemsQueryName).setParameter("ids", ids).setParameter("lastTransactionDate", lastTransactionDate);
+		
+		final Map<Long, BillingAccountDetailsItem> billingAccountDetailsMap = resultList.stream().map(x-> new BillingAccountDetailsItem(x)).collect(Collectors.toMap(BillingAccountDetailsItem::getBillingAccountId, Function.identity()));
+		Query query = getEntityManager().createNamedQuery(invoicingItemsQueryName).setParameter("ids", billingAccountDetailsMap.keySet()).setParameter("lastTransactionDate", lastTransactionDate);
 		if (useStart) {
 			query.setParameter("startDate", startDate);
 		} else if (useEnd) {
 			query.setParameter("endDate", endDate);
 		}
-		final List<Object[]> resultList = (List<Object[]>)query.getResultList();
-		return resultList.stream().map(x-> new InvoicingItem(x)).collect(Collectors.toList());
+		log.info("======= GETTING InvoicingItems =======");
+		final Map<Long, List<InvoicingItem>> itemsByBAID = ((List<Object[]>)query.getResultList()).stream().map(x-> new InvoicingItem(x)).collect(Collectors.groupingBy(InvoicingItem::getBillingAccountId));
+		billingAccountDetailsMap.values().stream().forEach(x->x.setInvoicingItems(itemsByBAID.get(x.getBillingAccountId())));
+		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
 	}
 
 }
