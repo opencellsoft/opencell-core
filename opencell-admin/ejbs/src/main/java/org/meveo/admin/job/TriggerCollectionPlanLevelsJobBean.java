@@ -107,11 +107,12 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                     ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
             if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
                     && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)
-                    && today.before(dateToCompare)) {
+                    && today.after(dateToCompare)) {
                 nextLevel = index + 1;
                 int countAutoActions = 0;
                 for (int i = 0; i < levelInstance.getActions().size(); i++) {
-                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
+                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)
+                            && levelInstance.getActions().get(i).getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
                         if (levelInstance.getActions().get(i).getActionType().equals(SCRIPT)) {
                             if (levelInstance.getActions().get(i).getDunningAction() != null) {
                                 scriptInstanceService.execute(levelInstance.getActions().get(i).getDunningAction().getScriptInstance().getCode(), new HashMap<>());
@@ -175,7 +176,7 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
                     collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
                 }
-                if (dateToCompare.before(today)) {
+                if (levelInstance.getDunningLevel().isEndOfDunningLevel() && dateToCompare.before(today)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
                 }
                 if (countAutoActions == levelInstance.getActions().size()
