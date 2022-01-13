@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
@@ -381,10 +380,17 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     public void sendNotification(String emailFrom, String emailTo, EmailTemplate emailTemplate,
                                  Map<Object, Object> params, List<File> attachments) {
         emailTemplate = emailTemplateService.refreshOrRetrieve(emailTemplate);
-        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-        emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
-                subject, content, contentHtml, attachments, null, false);
+        if(emailTemplate != null) {
+            String subject = emailTemplate.getSubject() != null
+                    ? evaluateExpression(emailTemplate.getSubject(), params, String.class) : "";
+            String content = emailTemplate.getTextContent() != null
+                    ? evaluateExpression(emailTemplate.getTextContent(), params, String.class) : "";
+            String contentHtml = emailTemplate.getHtmlContent() != null
+                    ? evaluateExpression(emailTemplate.getHtmlContent(), params, String.class) : "";
+            emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
+                    subject, content, contentHtml, attachments, null, false);
+        } else {
+            log.error("Email template not found");
+        }
     }
 }
