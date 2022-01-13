@@ -136,7 +136,7 @@ public class MediationApi extends BaseApi {
                 chargeCDRResponseDto = processedCdr;
             }
         }
-        if(chargeCDRResponseDto != null)
+        if(chargeCDRResponseDto != null && processCdrListResult.getCounterPeriods() != null)
         	chargeCDRResponseDto.getCounterPeriods().addAll(processCdrListResult.getCounterPeriods());
 
         return chargeCDRResponseDto;
