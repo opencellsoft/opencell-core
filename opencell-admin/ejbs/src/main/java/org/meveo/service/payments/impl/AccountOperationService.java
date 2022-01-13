@@ -95,14 +95,18 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             throw new BusinessException("the selected paymentMethod does not belong to the account operation customer account");
         }
         LocalDate paymentLocalDate = LocalDate.ofInstant(paymentDate.toInstant(), ZoneId.systemDefault());
-        if(accountOperation.getCollectionDate() != null) {
-            LocalDate collectionDate = LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault());
-            if((paymentLocalDate.toEpochDay() < collectionDate.toEpochDay()) || (paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > appProvider.getMaximumDelay()) {
-                throw new BusinessException("the paymentDate should not exceed " + appProvider.getMaximumDelay());
-            }
-        }else if((paymentLocalDate.toEpochDay() < LocalDate.now().toEpochDay()) || (paymentLocalDate.toEpochDay() - LocalDate.now().toEpochDay()) > appProvider.getMaximumDelay()){
-            throw new BusinessException("the paymentDate should not exceed " + appProvider.getMaximumDelay());
+        
+        LocalDate collectionDate = accountOperation.getCollectionDate() != null
+        		?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
+        				:LocalDate.now();
+        
+        if ((paymentLocalDate.toEpochDay() <= collectionDate.toEpochDay())) {
+            throw new BusinessException("the paymentDate should be greated than the current collection date");
         }
+        if((paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > appProvider.getMaximumDelay()) {
+            throw new BusinessException("the paymentDate should not exceed the current collection date by more than " + appProvider.getMaximumDelay());
+        }
+        
         if(appProvider.getMaximumDeferralPerInvoice() != null && accountOperation.getPaymentDeferralCount() != null) {
             if(accountOperation.getPaymentDeferralCount() + 1 > appProvider.getMaximumDeferralPerInvoice()){
                 throw new BusinessException("the payment deferral count should not exceeds the configured maximum deferral per invoice.");

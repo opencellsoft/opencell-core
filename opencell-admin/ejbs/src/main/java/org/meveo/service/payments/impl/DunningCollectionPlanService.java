@@ -8,6 +8,7 @@ import static org.meveo.model.shared.DateUtils.addDaysToDate;
 import static org.meveo.model.shared.DateUtils.daysBetween;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import java.io.File;
 import java.util.*;
 
 import javax.ejb.Stateless;
@@ -18,10 +19,10 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
+import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -83,7 +84,10 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         newCollectionPlan.setStatus(collectionPlanStatusActif);
         newCollectionPlan.setBalance(oldCollectionPlan.getBalance());
         newCollectionPlan.setInitialCollectionPlan(oldCollectionPlan);
+        newCollectionPlan.setLastAction(oldCollectionPlan.getLastAction());
+        newCollectionPlan.setLastActionDate(oldCollectionPlan.getLastActionDate());
         create(newCollectionPlan);
+       
         if (policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             List<DunningLevelInstance> levelInstances = new ArrayList<>();
             for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
@@ -94,13 +98,32 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                 } else {
                     levelInstance = createLevelInstance(newCollectionPlan,
                             collectionPlanStatusActif, null, policyLevel, TO_BE_DONE);
+                    if (policyLevel.getSequence() == selectedPolicyLevel.getSequence()) {
+                        DunningLevel nextLevel = findLevelBySequence(policy.getDunningLevels(), policyLevel.getSequence());
+                        if(nextLevel != null
+                                && nextLevel.getDunningActions() != null && !nextLevel.getDunningActions().isEmpty()) {
+                            int dOverDue = Optional.ofNullable(nextLevel.getDaysOverdue()).orElse(0);
+                            int i = 0;
+                            while(i < nextLevel.getDunningActions().size()) {
+                            	if(nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
+                            		break;
+                            	}else {
+                            		i++;
+                            	}
+                            }
+                            newCollectionPlan.setNextAction((nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC))
+                            		?nextLevel.getDunningActions().get(i).getCode()
+                            				:nextLevel.getDunningActions().get(0).getCode());
+                            newCollectionPlan.setNextActionDate(addDaysToDate(newCollectionPlan.getStartDate(), dOverDue));
+                        }
+                    }
                 }
                 levelInstances.add(levelInstance);
             }
             newCollectionPlan.setDunningLevelInstances(levelInstances);
             update(newCollectionPlan);
-        }
-
+        }        
+        
         newCollectionPlan.setCollectionPlanNumber("C" + newCollectionPlan.getId());
         update(newCollectionPlan);
         update(oldCollectionPlan);
@@ -355,12 +378,19 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     }
 
     public void sendNotification(String emailFrom, String emailTo, EmailTemplate emailTemplate,
-                                 Map<Object, Object> params) {
+                                 Map<Object, Object> params, List<File> attachments) {
         emailTemplate = emailTemplateService.refreshOrRetrieve(emailTemplate);
-        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-        emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
-                subject, content, contentHtml, null, null, false);
+        if(emailTemplate != null) {
+            String subject = emailTemplate.getSubject() != null
+                    ? evaluateExpression(emailTemplate.getSubject(), params, String.class) : "";
+            String content = emailTemplate.getTextContent() != null
+                    ? evaluateExpression(emailTemplate.getTextContent(), params, String.class) : "";
+            String contentHtml = emailTemplate.getHtmlContent() != null
+                    ? evaluateExpression(emailTemplate.getHtmlContent(), params, String.class) : "";
+            emailSender.send(emailFrom, asList(emailFrom), asList(emailTo), null, null,
+                    subject, content, contentHtml, attachments, null, false);
+        } else {
+            log.error("Email template not found");
+        }
     }
 }
