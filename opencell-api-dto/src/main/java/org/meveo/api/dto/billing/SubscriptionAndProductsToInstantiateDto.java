@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author Mbarek-Ay
  * @lastModifiedVersion 11.0
  */
-@JsonIgnoreProperties({ "customFields","accesses","services","products","productInstances"})
+@JsonIgnoreProperties({"services","products","productInstances"})
 public class SubscriptionAndProductsToInstantiateDto extends SubscriptionDto { 
     private static final long serialVersionUID = 178969317101107648L;
     
