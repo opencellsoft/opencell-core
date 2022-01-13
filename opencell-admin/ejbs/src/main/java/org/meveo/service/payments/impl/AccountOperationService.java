@@ -17,17 +17,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.SerializationUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
@@ -46,9 +35,19 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * AccountOperation service implementation.
- * 
+ *
  * @author anasseh
  * @author Abdellatif BARI
  * @lastModifiedVersion 8.2.2
@@ -56,15 +55,21 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
 
-    /** The customer account service. */
+    /**
+     * The customer account service.
+     */
     @Inject
     private CustomerAccountService customerAccountService;
 
-    /** The o CC template service. */
+    /**
+     * The o CC template service.
+     */
     @Inject
     private OCCTemplateService oCCTemplateService;
 
-    /** The matching code service. */
+    /**
+     * The matching code service.
+     */
     @Inject
     private MatchingCodeService matchingCodeService;
 
@@ -88,14 +93,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Gets the account operations.
      *
-     * @param date date
+     * @param date          date
      * @param operationCode code of operation.
      * @return list of account operations.
      */
     @SuppressWarnings("unchecked")
     public List<AccountOperation> getAccountOperations(Date date, String operationCode) {
         Query query = getEntityManager().createQuery("from " + getEntityClass().getSimpleName() + " a where a.occCode=:operationCode and  a.transactionDate=:date")
-            .setParameter("date", date).setParameter("operationCode", operationCode);
+                .setParameter("date", date).setParameter("operationCode", operationCode);
 
         return query.getResultList();
     }
@@ -103,7 +108,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Gets the account operation.
      *
-     * @param amount account operation account
+     * @param amount          account operation account
      * @param customerAccount customer account
      * @param transactionType transaction type.
      * @return account operation.
@@ -112,27 +117,27 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     public AccountOperation getAccountOperation(BigDecimal amount, CustomerAccount customerAccount, String transactionType) {
 
         Query query = getEntityManager()
-            .createQuery("from " + getEntityClass().getSimpleName() + " a where a.amount=:amount and  a.customerAccount=:customerAccount and  a.type=:transactionType")
-            .setParameter("amount", amount).setParameter("transactionType", transactionType).setParameter("customerAccount", customerAccount);
+                .createQuery("from " + getEntityClass().getSimpleName() + " a where a.amount=:amount and  a.customerAccount=:customerAccount and  a.type=:transactionType")
+                .setParameter("amount", amount).setParameter("transactionType", transactionType).setParameter("customerAccount", customerAccount);
         List<AccountOperation> accountOperations = query.getResultList();
 
         return accountOperations.size() > 0 ? accountOperations.get(0) : null;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<AccountOperation> listByCustomerAccount(CustomerAccount customerAccount, Integer firstRow, Integer numberOfRows) {
         try {
-            
+
             Query query = getEntityManager().createNamedQuery("AccountOperation.listByCustomerAccount");
             query.setParameter("customerAccount", customerAccount);
-            
+
             if (firstRow != null) {
                 query.setFirstResult(firstRow);
             }
             if (numberOfRows != null) {
                 query.setMaxResults(numberOfRows);
             }
-            
+
             return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list AccountOperation by customerAccount", e);
@@ -158,7 +163,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away.
-     * 
+     *
      * @param aop account operation.
      * @return id of account operation.
      * @throws BusinessException business exception.
@@ -177,19 +182,19 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Gets the a os to pay.
      *
-     * @param fromDueDate the from due date
-     * @param toDueDate the to due date
-     * @param opCatToProcess the op cat to process
+     * @param fromDueDate       the from due date
+     * @param toDueDate         the to due date
+     * @param opCatToProcess    the op cat to process
      * @param customerAccountId the customer account id
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
     public List<AccountOperation> getAOsToPayOrRefundByCA(Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
-            Long customerAccountId) {
+                                                          Long customerAccountId) {
         try {
             return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefundByCA")
-                .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate)
-                .setParameter("opCatToProcessIN", opCatToProcess).getResultList();
+                    .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate)
+                    .setParameter("opCatToProcessIN", opCatToProcess).getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -199,10 +204,10 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * Gets the a os to pay.
      *
      * @param paymentMethodEnum the payment method enum
-     * @param fromDueDate the from due date
-     * @param toDueDate the to due date
-     * @param opCatToProcess the op cat to process
-     * @param seller the seller
+     * @param fromDueDate       the from due date
+     * @param toDueDate         the to due date
+     * @param opCatToProcess    the op cat to process
+     * @param seller            the seller
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
@@ -213,7 +218,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
                 queryName = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller";
             }
             Query query = getEntityManager().createNamedQuery(queryName).setParameter("paymentMethodIN", paymentMethodEnum).setParameter("fromDueDateIN", fromDueDate)
-                .setParameter("toDueDateIN", toDueDate).setParameter("opCatToProcessIN", opCatToProcess);
+                    .setParameter("toDueDateIN", toDueDate).setParameter("opCatToProcessIN", opCatToProcess);
 
             if (seller != null) {
                 query.setParameter("sellerIN", seller);
@@ -228,7 +233,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     /**
      * Return all AccountOperation with invoiceDate date more than n years old
-     * 
+     *
      * @param nYear age of the account operation
      * @return Filtered list of account operations
      */
@@ -244,7 +249,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     /**
      * Return all unpaid AccountOperation with invoiceDate date more than n years old
-     * 
+     *
      * @param nYear age of the account operation
      * @return Filtered list of account operations
      */
@@ -267,7 +272,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     /**
      * Count unmatched AOs by CA.
-     * 
+     *
      * @param customerAccount Customer Account.
      * @return count of unmatched AOs.
      */
@@ -299,9 +304,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Get the account operation reference
      *
-     * @param accountOperationId the account operation Id
+     * @param accountOperationId        the account operation Id
      * @param accountOperationReference the account operation reference
-     * @param accountOperationAction the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
+     * @param accountOperationAction    the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
      * @return the account operation reference
      */
     public String getRefrence(Long accountOperationId, String accountOperationReference, String accountOperationAction) {
@@ -312,26 +317,26 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * Create the new account operation on the fromCustomerAccountCode to settle the old one.
      *
      * @param accountOperation the account operation to transfer
-     * @param amount the amount to transfer
+     * @param amount           the amount to transfer
      * @return the other credit and charge
      * @throws BusinessException business exception
      */
     public OtherCreditAndCharge createFromAccountOperation(AccountOperation accountOperation, BigDecimal amount) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
-        String debitOccTemplateCode = null;
+        String occTemplateCode = null;
 
         if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
-            debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.credit", "CRD_TRS");
+            occTemplateCode = paramBean.getProperty("occ.transferAccountOperation.credit", "TRS_CRD");
         } else if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
-            debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "DBT_TRS");
+            occTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "TRS_DBT");
         } else {
             throw new BusinessException("Unrecognized operation category for the account operation with  " + accountOperation.getId() + "id");
         }
 
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(debitOccTemplateCode);
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
-            throw new BusinessException("Cannot find AO Template with code:" + debitOccTemplateCode);
+            throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
         }
 
         OtherCreditAndCharge newAccountOperation = new OtherCreditAndCharge();
@@ -370,13 +375,29 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Create the new account operation on the toCustomerAccountCode which is equivalent to the transfer.
      *
-     * @param accountOperation the account operation to transfer
+     * @param accountOperation  the account operation to transfer
      * @param toCustomerAccount the destination customer account
-     * @param amount the amount to transfer
+     * @param amount            the amount to transfer
      * @return the account operation.
      * @throws BusinessException business exception
      */
     public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException {
+
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String occTemplateCode = null;
+
+        if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
+            occTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "TRS_DBT");
+        } else if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+            occTemplateCode = paramBean.getProperty("occ.transferAccountOperation.credit", "TRS_CRD");
+        } else {
+            throw new BusinessException("Unrecognized operation category for the account operation with  " + accountOperation.getId() + "id");
+        }
+
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
+        }
 
         AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
         newAccountOperation.setId(null);
@@ -390,6 +411,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         newAccountOperation.setMatchingAmounts(new ArrayList<>());
         newAccountOperation.setTransactionDate(new Date());
         // newAccountOperation.setDueDate(new Date());
+
+        newAccountOperation.setAccountingCode(occTemplate.getAccountingCode());
+        newAccountOperation.setCode(occTemplate.getCode());
+        newAccountOperation.setDescription(occTemplate.getDescription());
+        newAccountOperation.setTransactionCategory(occTemplate.getOccCategory());
+
         create(newAccountOperation);
 
         newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
@@ -399,7 +426,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Transfer an account operation from a customer account to an other.
      *
-     * @param accountOperation the account operation
+     * @param accountOperation           the account operation
      * @param transferCustomerAccountDto destination customer account
      * @throws BusinessException business exception
      */
@@ -450,7 +477,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         if (!fromCustomerAccount.equals(accountOperation.getCustomerAccount())) {
             throw new BusinessException(
-                "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
+                    "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
         }
 
         if (transferAccountOperationDto.getToCustomerAccounts() != null && !transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {
