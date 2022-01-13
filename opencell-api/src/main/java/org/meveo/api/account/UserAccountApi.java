@@ -96,10 +96,11 @@ public class UserAccountApi extends AccountEntityApi {
     }
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
-        return create(postData, true, null);
+        return create(postData, true, null, null);
     }
 
-    public UserAccount create(UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+    public UserAccount create(UserAccountDto postData, boolean checkCustomFields,
+                              BusinessAccountModel businessAccountModel, BillingAccount associatedBA) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
@@ -111,13 +112,13 @@ public class UserAccountApi extends AccountEntityApi {
         handleMissingParameters(postData);
 
         BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount());
-        if (billingAccount == null) {
+        if (associatedBA == null && billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
         }
 
         UserAccount userAccount = new UserAccount();
 
-        dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
 
         userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
@@ -145,7 +146,7 @@ public class UserAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getCode());
         }
 
-        dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, null);
 
         userAccount = userAccountService.update(userAccount);
 
@@ -160,12 +161,14 @@ public class UserAccountApi extends AccountEntityApi {
      * @param checkCustomFields Should a check be made if CF field is required
      * @param businessAccountModel Business account model
      **/
-    private void dtoToEntity(UserAccount userAccount, UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+    private void dtoToEntity(UserAccount userAccount, UserAccountDto postData, boolean checkCustomFields,
+                             BusinessAccountModel businessAccountModel, BillingAccount associatedBA) {
 
         boolean isNew = userAccount.getId() == null;
 
         if (!StringUtils.isBlank(postData.getBillingAccount())) {
-            BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount());
+            BillingAccount billingAccount =
+                    associatedBA != null ? associatedBA : billingAccountService.findByCode(postData.getBillingAccount());
             if (billingAccount == null) {
                 throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
             } else if (!isNew && !userAccount.getBillingAccount().equals(billingAccount)) {
