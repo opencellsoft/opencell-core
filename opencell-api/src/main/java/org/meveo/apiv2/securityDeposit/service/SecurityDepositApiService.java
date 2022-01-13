@@ -1,5 +1,6 @@
 package org.meveo.apiv2.securityDeposit.service;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 import java.math.BigDecimal;
@@ -65,7 +66,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Override
     public Optional<SecurityDeposit> findById(Long id) {
-        return null;
+        return empty();
     }
 
     @Override
@@ -75,22 +76,22 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Override
     public Optional<SecurityDeposit> update(Long id, SecurityDeposit baseEntity) {
-        return null;
+        return empty();
     }
 
     @Override
     public Optional<SecurityDeposit> patch(Long id, SecurityDeposit baseEntity) {
-        return null;
+        return empty();
     }
 
     @Override
     public Optional<SecurityDeposit> delete(Long id) {
-        return null;
+        return empty();
     }
 
     @Override
     public Optional<SecurityDeposit> findByCode(String code) {
-        return null;
+        return empty();
     }
 
     public Optional<SecurityDeposit> instantiate(SecurityDeposit securityDepositInput) {
@@ -158,6 +159,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
 
         securityDepositService.create(securityDepositInput);
+
+        // Increment template.NumberOfInstantiation after each instantiation
+        Integer numberOfInstantiation = template.getNumberOfInstantiation() != null ? template.getNumberOfInstantiation() : 0;
+        template.setNumberOfInstantiation(++numberOfInstantiation);
+        securityDepositTemplateService.update(template);
 
         return of(securityDepositInput);
     }
