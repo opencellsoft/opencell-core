@@ -234,7 +234,7 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
             params.put("invoiceDueDate", formatter.format(invoice.getDueDate()));
             params.put("dayDate", formatter.format(new Date()));
 
-            params.put("dunningCollectionPlanLastActionDate", formatter.format(lastActionDate));
+            params.put("dunningCollectionPlanLastActionDate", lastActionDate != null ? formatter.format(lastActionDate) : "");
             List<File> attachments = new ArrayList<>();
             String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
             File attachment = new File(invoiceFileName);
