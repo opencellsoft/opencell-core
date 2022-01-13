@@ -1048,7 +1048,7 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create cust");
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
-            accountEntity = customerApi.create(customerDto, true, businessAccountModel);
+            accountEntity = customerApi.create(customerDto, true, businessAccountModel, seller);
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
@@ -1056,7 +1056,7 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create ca");
 
             CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel);
+            accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel, (Customer) accountEntity);
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -1064,8 +1064,9 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create ba");
 
             BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = billingAccountApi.create(billingAccountDto, true, businessAccountModel);
+            accountEntity = billingAccountApi.create(billingAccountDto, true, businessAccountModel, (CustomerAccount) accountEntity);
             setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
+            billingAccountService.commit();
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
@@ -1073,7 +1074,7 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create ua");
 
             UserAccountDto userAccountDto = createUserAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = userAccountApi.create(userAccountDto, true, businessAccountModel);
+            accountEntity = userAccountApi.create(userAccountDto, true, businessAccountModel, (BillingAccount) accountEntity);
         }
 
         if (businessAccountModel != null && businessAccountModel.getScript() != null) {
@@ -1197,7 +1198,6 @@ public class AccountHierarchyApi extends BaseApi {
     /**
      * @param postData
      * @param accountHierarchyTypeEnum
-     * @param businessAccountModel
      * @return the created billing account
      */
     private BillingAccountDto createBillingAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
@@ -1446,7 +1446,6 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * @param postData
-     * @param businessAccountModel
      * @return the created seller dto
      * @throws MeveoApiException
      * @throws BusinessException
