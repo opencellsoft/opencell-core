@@ -24,11 +24,15 @@ import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +65,11 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
 
     @Inject
     private PaymentGatewayService paymentGatewayService;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -98,11 +107,12 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                     ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
             if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
                     && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)
-                    && today.before(dateToCompare)) {
+                    && today.after(dateToCompare)) {
                 nextLevel = index + 1;
                 int countAutoActions = 0;
                 for (int i = 0; i < levelInstance.getActions().size(); i++) {
-                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
+                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)
+                            && levelInstance.getActions().get(i).getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
                         if (levelInstance.getActions().get(i).getActionType().equals(SCRIPT)) {
                             if (levelInstance.getActions().get(i).getDunningAction() != null) {
                                 scriptInstanceService.execute(levelInstance.getActions().get(i).getDunningAction().getScriptInstance().getCode(), new HashMap<>());
@@ -166,7 +176,7 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
                     collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
                 }
-                if (dateToCompare.before(today)) {
+                if (levelInstance.getDunningLevel().isEndOfDunningLevel() && dateToCompare.before(today)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
                 }
                 if (countAutoActions == levelInstance.getActions().size()
@@ -195,37 +205,49 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
             Map<Object, Object> params = new HashMap<>();
             BillingAccount billingAccount =
                     billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-            params.put("Company.Name", billingAccount.getDescription());
-            params.put("Compagny.adress", billingAccount.getAddress() != null ?
+            params.put("billingAccountDescription", billingAccount.getDescription());
+            params.put("billingAccountAddressAddress1", billingAccount.getAddress() != null ?
                     billingAccount.getAddress().getAddress1() : "");
-            params.put("Company.postalcode", billingAccount.getAddress() != null ?
+            params.put("billingAccountAddressZipCode", billingAccount.getAddress() != null ?
                     billingAccount.getAddress().getZipCode() : "");
-            params.put("billingAccount.address.city", billingAccount.getAddress() != null ?
+            params.put("billingAccountAddressCity", billingAccount.getAddress() != null ?
                     billingAccount.getAddress().getCity() : "");
-            params.put("Company.phone", billingAccount.getContactInformation() != null ?
+            params.put("billingAccountContactInformationPhone", billingAccount.getContactInformation() != null ?
                     billingAccount.getContactInformation().getPhone() : "");
 
             CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-            params.put("Title.client", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-            params.put("Company.client.adress", customerAccount.getAddress() != null ?
+            params.put("customerAccountLegalEntityTypeCode", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            params.put("customerAccountAddressAddress1", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getAddress1() : "");
-            params.put("Company.client.postalcode", customerAccount.getAddress() != null ?
+            params.put("customerAccountAddressZipCode", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getZipCode() : "");
-            params.put("Company.client.city",  customerAccount.getAddress() != null ?
+            params.put("customerAccountAddressCity",  customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getCity() : "");
-            params.put("Contact.client", customerAccount.getDescription());
-            params.put("Company.client.name",  customerAccount.getName() != null ?
+            params.put("customerAccountDescription", customerAccount.getDescription());
+            params.put("customerAccountLastName",  customerAccount.getName() != null ?
+                    customerAccount.getName().getLastName() : "");
+            params.put("customerAccountFirstName",  customerAccount.getName() != null ?
                     customerAccount.getName().getFirstName() : "");
 
-            params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-            params.put("invoice.dueDate", invoice.getDueDate());
-            params.put("invoice.total", invoice.getAmountWithTax());
-            params.put("day.date", new Date());
-            params.put("Last.action.date", lastActionDate);
+            params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoiceTotal", invoice.getAmountWithTax());
+            params.put("invoiceDueDate", formatter.format(invoice.getDueDate()));
+            params.put("dayDate", formatter.format(new Date()));
+
+            params.put("dunningCollectionPlanLastActionDate", formatter.format(lastActionDate));
+            List<File> attachments = new ArrayList<>();
+            String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
+            File attachment = new File(invoiceFileName);
+            if (attachment.exists()) {
+                attachments.add(attachment);
+            } else {
+                log.warn("No Pdf file exists for the invoice : {}",
+                        ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
+            }
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                            billingAccount.getContactInformation().getEmail(),  emailTemplate, params);
+                            billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
                 } catch (Exception exception) {
                     jobExecutionResult.addErrorReport(exception.getMessage());
                 }

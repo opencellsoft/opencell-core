@@ -1,5 +1,7 @@
 package org.meveo.service.accounting.impl;
 
+import static java.time.LocalTime.MAX;
+
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -47,8 +49,8 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         Date maxDate = findMaxSubAccountingPeriod();
 
         LocalDateTime startDateTime = maxDate == null ? LocalDateTime.now() : maxDate.toInstant()
-                    .atZone(ZoneId.systemDefault()).plusSeconds(1).toLocalDateTime();
-        LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
+                    .atZone(ZoneId.systemDefault()).plusMonths(1).toLocalDateTime();
+        LocalDateTime endDate = ap.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atTime(MAX);
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDate);
 	}
 
@@ -59,27 +61,37 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 		deleteOldSubAccountingPeriods(ap.getId());
 
-		LocalDateTime startDateTime = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-		LocalDateTime endDateTime = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate().atTime(LocalTime.MAX);
+		LocalDateTime startDateTime =
+				Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime endDateTime =
+				Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate().atTime(MAX);
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDateTime);
 	}
 
-	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type, LocalDateTime startDateTime, LocalDateTime endDate) {
+	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type,
+												  LocalDateTime startDateTime, LocalDateTime endDate) {
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
 		int number = 1;
 		LocalDate now = startDateTime == null ? LocalDate.now() : startDateTime.toLocalDate();
 		int currentYear = now.getYear();
 		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
-		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate()
+				.plusMonths(monthsPerPeriod)
+				.minusDays(1)
+				.with(TemporalAdjusters.lastDayOfMonth())
+				.atTime(MAX);
 		while (!endDatePeriod.isAfter(endDate)) {
-			if (!endDatePeriod.isBefore(now.atTime(LocalTime.MAX))) {
+			if (!endDatePeriod.isBefore(now.atTime(MAX))) {
 				createSubAccPeriod(ap, startDatePeriod, endDatePeriod, number);
 				number ++;
 			}
 			//next period
 			startDatePeriod = endDatePeriod.plusDays(1).toLocalDate().atStartOfDay();
-			endDatePeriod = startDatePeriod.toLocalDate().plusMonths(monthsPerPeriod).minusDays(1).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+			endDatePeriod = startDatePeriod.toLocalDate()
+					.plusMonths(monthsPerPeriod)
+					.minusDays(1).with(TemporalAdjusters.lastDayOfMonth())
+					.atTime(MAX);
 		}
 	}
 

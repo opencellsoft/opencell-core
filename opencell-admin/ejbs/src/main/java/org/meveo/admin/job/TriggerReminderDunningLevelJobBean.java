@@ -22,12 +22,14 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -55,7 +57,11 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     @Inject
     private DunningCollectionPlanService collectionPlanService;
 
+    @Inject
+    private InvoiceService invoiceService;
+
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+    private final SimpleDateFormat emailDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @TransactionAttribute(REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -113,34 +119,47 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             Map<Object, Object> params = new HashMap<>();
             BillingAccount billingAccount =
                     billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-            params.put("billingAccount.description", billingAccount.getDescription());
-            params.put("billingAccount.address.address1",
+            params.put("billingAccountDescription", billingAccount.getDescription());
+            params.put("billingAccountAddressAddress1",
                     billingAccount.getAddress() != null ? billingAccount.getAddress().getAddress1() : "");
-            params.put("billingAccount.address.zipCode",
+            params.put("billingAccountAddressZipCode",
                     billingAccount.getAddress() != null ? billingAccount.getAddress().getZipCode() : "");
-            params.put("billingAccount.address.city",
+            params.put("billingAccountAddressCity",
                     billingAccount.getAddress() != null ? billingAccount.getAddress().getCity() : "");
-            params.put("billingAccount.contactInformation.phone",
+            params.put("billingAccountContactInformationPhone",
                     billingAccount.getContactInformation() != null ? billingAccount.getContactInformation().getPhone() : "");
 
             CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-            params.put("customerAccount.legalEntityType.code",
+            params.put("customerAccountFirstName",  customerAccount.getName() != null ?
+                    customerAccount.getName().getFirstName() : "");
+            params.put("customerAccountLastName",  customerAccount.getName() != null ?
+                    customerAccount.getName().getLastName() : "");
+            params.put("customerAccountLegalEntityTypeCode",
                     ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-            params.put("customerAccount.address.address1",
+            params.put("customerAccountAddressAddress1",
                     customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
-            params.put("customerAccount.address.zipCode",
+            params.put("customerAccountAddressZipCode",
                    customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
-            params.put("customerAccount.address.city",
+            params.put("customerAccountAddressCity",
                    customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
+            params.put("customerAccountDescription", customerAccount.getDescription());
 
-            params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-            params.put("invoice.dueDate", invoice.getDueDate());
-            params.put("invoice.total", invoice.getAmountWithTax());
-            params.put("day.date", new Date());
+            params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoiceDueDate", emailDateFormatter.format(invoice.getDueDate()));
+            params.put("invoiceTotal", invoice.getAmountWithTax());
+            params.put("dayDate", emailDateFormatter.format(new Date()));
 
+            List<File> attachments = new ArrayList<>();
+            String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
+            File attachment = new File(invoiceFileName);
+            if (!attachment.exists()) {
+                log.warn("No Pdf file exists for the invoice : {}", ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
+            } else {
+                attachments.add(attachment);
+            }
             if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-                        billingAccount.getContactInformation().getEmail(), emailTemplate, params);
+                        billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
             } else {
                 throw new BusinessException("Billing account email is missing");
             }
