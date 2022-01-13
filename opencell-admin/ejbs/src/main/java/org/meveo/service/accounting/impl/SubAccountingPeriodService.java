@@ -138,6 +138,8 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 			subAccountingPeriod.setAllUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
 			subAccountingPeriod.setEffectiveClosedDate(new Date());
 		}
+
+		updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 	}
 
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
