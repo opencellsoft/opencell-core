@@ -21,7 +21,7 @@ public class SecurityDepositTemplateMapper extends ResourceMapper<org.meveo.apiv
                 .minAmount(entity.getMinAmount())
                 .maxAmount(entity.getMaxAmount())
                 .status(entity.getStatus())
-                .numberOfInstantiation(entity.getNumberOfInstantiation())
+                .numberOfInstantiation(entity.getNumberOfInstantiation() == null ? 0  : entity.getNumberOfInstantiation())
                 .build();
     }
 
@@ -45,7 +45,7 @@ public class SecurityDepositTemplateMapper extends ResourceMapper<org.meveo.apiv
         securityDepositTemplate.setMinAmount(resource.getMinAmount());
         securityDepositTemplate.setMaxAmount(resource.getMaxAmount());
         securityDepositTemplate.setStatus(resource.getStatus());
-        securityDepositTemplate.setNumberOfInstantiation(resource.getNumberOfInstantiation());
+        securityDepositTemplate.setNumberOfInstantiation(resource.getNumberOfInstantiation() == null ?  0 : resource.getNumberOfInstantiation());
         return securityDepositTemplate;
     }
 
