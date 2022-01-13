@@ -29,7 +29,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -67,7 +66,7 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         auditLog.setActor(actor);
         auditLog.setAction(operationType);        
         auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin(origine);
+        auditLog.setOrigin(String.valueOf(entity.getId()));
         create(auditLog);
     }
 
@@ -78,16 +77,5 @@ public class AuditLogService extends PersistenceService<AuditLog> {
             return currentUser.getEmail();
         }
         return currentUser.getUserName();
-    }
-
-    private <T extends BaseEntity> String getCodeOrId(T entity) {
-        String codeOrId = null;
-        if (entity instanceof BusinessEntity) {
-            codeOrId = ((BusinessEntity) entity).getCode();
-        }
-        if (StringUtils.isNotBlank(codeOrId)) {
-            return "code " + codeOrId;
-        }
-        return "id " + entity.getId();
     }
 }

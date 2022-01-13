@@ -2624,7 +2624,7 @@ public class SubscriptionApi extends BaseApi {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Subscription subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
         Subscription subscription=create(postData);
-
+        createAccess(postData);
         if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
             List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
             if(products!=null && !products.isEmpty()) {
