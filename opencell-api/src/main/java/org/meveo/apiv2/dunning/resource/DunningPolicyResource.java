@@ -29,7 +29,7 @@ public interface DunningPolicyResource {
                     @ApiResponse(responseCode = "412",
                             description = "Missing parameters"),
                     @ApiResponse(responseCode = "400",
-                            description = "DunningLevel creation is failed")
+                            description = "Dunning level creation is failed")
             })
     Response create(@Parameter(description = "Dunning policy to create", required = true) DunningPolicy dunningPolicy);
 

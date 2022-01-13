@@ -14,6 +14,7 @@ import javax.ws.rs.NotFoundException;
 import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.Currency;
@@ -53,6 +54,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Inject
     private CurrencyService currencyService;
 
+    @Inject
+    protected ResourceBundle resourceMessages;
+    
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
     private DunningPolicyRuleLineMapper policyRuleLineMapper = new DunningPolicyRuleLineMapper();
@@ -118,7 +122,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     dunningPolicyLevels.add(policyLevel);
                 }
                 if (countReminderLevels == 0) {
-                    throw new BadRequestException("Can not remove reminder level");
+                    throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
                 }
                 if (countEndOfDunningLevel == 0) {
                     throw new BadRequestException("Can not remove end of level");
@@ -155,20 +159,20 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public void validateLevelsNumber(int countReminderLevels, int countEndOfDunningLevel, int totalDunningLevels) {
+        if (totalDunningLevels == 0) {
+            throw new BadRequestException("Policy should have at least one dunning level other the reminder level");
+        }
         if (countReminderLevels == 0) {
             throw new BadRequestException("Reminder level is mandatory");
         }
         if (countEndOfDunningLevel == 0) {
-            throw new BadRequestException("End of level is mandatory");
+            throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
         }
         if (countReminderLevels > 1) {
-            throw new BadRequestException("There is already a Reminder level for this policy, remove the existing level to select a new one.");
+            throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.isReminderLevel"));
         }
         if (countEndOfDunningLevel > 1) {
             throw new BadRequestException("A policy can have only 1 level with isEndOfDunningLevel = TRUE");
-        }
-        if (totalDunningLevels == 0) {
-            throw new BadRequestException("Policy should have at least one dunning level other the reminder level");
         }
     }
 
