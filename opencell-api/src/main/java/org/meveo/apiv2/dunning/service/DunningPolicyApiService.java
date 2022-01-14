@@ -109,7 +109,6 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             int endOfLevelDayOverDue = -1;
             if (Hibernate.isInitialized(dunningPolicy.getDunningLevels()) && dunningPolicy.getDunningLevels() != null) {
                 for (DunningPolicyLevel policyLevel : dunningPolicy.getDunningLevels()) {
-                    refreshPolicyLevel(policyLevel);
                     if (policyLevel.getDunningLevel().isReminder()) {
                         countReminderLevels++;
                     } else {
