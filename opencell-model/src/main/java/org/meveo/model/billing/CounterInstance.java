@@ -112,13 +112,13 @@ public class CounterInstance extends BusinessEntity {
     private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
     
     /**
-     * usage charges instance
+     * usage charges instances
      */
     @OneToMany(mappedBy = "counter", fetch = FetchType.LAZY)
     private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
     
     /**
-     * charge instances
+     * charge instances related as accumulator counters
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "counter_instance_id"), inverseJoinColumns = @JoinColumn(name = "chrg_instance_id"))

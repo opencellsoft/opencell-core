@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * The Class ChargeCDRResponseDto.
  *
@@ -37,6 +40,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "ChargeCDRResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonInclude(Include.NON_EMPTY)
 public class ChargeCDRResponseDto extends BaseResponse {
 
     private static final long serialVersionUID = 771726001135278144L;

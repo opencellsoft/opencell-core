@@ -40,7 +40,6 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.EdrService;
 
 /**
  * Takes care of parsing and converting CDRS to EDR records
@@ -54,9 +53,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 
     @Inject
     private CDRService cdrService;
-
-    @Inject
-    private EdrService edrService;
 
     /**
      * Source of CDR record
@@ -135,7 +131,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
     }
 
     public void createEdr(EDR edr, CDR cdr) throws BusinessException {
-        edrService.create(edr);
+        create(edr);
         if (cdr != null && persistCDR) {
             cdr.setHeaderEDR(edr);
             cdr.setStatus(CDRStatusEnum.PROCESSED);

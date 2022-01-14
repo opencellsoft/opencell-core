@@ -109,6 +109,8 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             ICdrReader cdrReaderFinal = cdrReader;
             ICdrParser cdrParserFinal = cdrParser;
 
+            String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
+
             Runnable task = () -> {
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -124,7 +126,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                     }
 
                     try {
-                        cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
+                        cdr = cdrReaderFinal.getNextRecord(cdrParserFinal, originRecordEL);
                         if (cdr == null) {
                             break mainLoop;
                         }

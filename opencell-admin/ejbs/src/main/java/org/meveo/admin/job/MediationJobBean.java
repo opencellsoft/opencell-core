@@ -208,6 +208,8 @@ public class MediationJobBean extends BaseJobBean {
             List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
             boolean isDuplicateCheckOn = cdrParserFinal.isDuplicateCheckOn();
 
+            String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
+
             for (int k = 0; k < nbThreads; k++) {
 
                 int finalK = k;
@@ -227,7 +229,7 @@ public class MediationJobBean extends BaseJobBean {
                         while (nrOfItemsInBatch < batchSize) {
 
                             try {
-                                CDR cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
+                                CDR cdr = cdrReaderFinal.getNextRecord(cdrParserFinal, originRecordEL);
                                 if (cdr == null) {
                                     break;
                                 }
@@ -250,11 +252,11 @@ public class MediationJobBean extends BaseJobBean {
                                 break mainLoop;
                             }
                         }
-                        
+
                         if (cdrs.isEmpty()) {
                             break mainLoop;
                         }
-     
+
                         thisNewTX.processCDRs(cdrs, jobExecutionResult, cdrParserFinal, outputFileWriterFinal, rejectFileWriterFinal, fileName, isDuplicateCheckOn, updateTotalCount, checkJobStatusEveryNr);
 
                         try {
@@ -415,22 +417,22 @@ public class MediationJobBean extends BaseJobBean {
                     cdr.setStatus(CDRStatusEnum.ERROR);
                     rejectededCdrEventProducer.fire(cdr);
                     cdrService.createOrUpdateCdr(cdr);
-                    
+
                 } else {
+
+                    List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
+                    List<EDR> edrs = cdrParserFinal.convertCdrToEdr(cdr, accessPoints);
 
                     if (isDuplicateCheckOn) {
                         cdrParserFinal.deduplicate(cdr);
                     }
-                    List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
-                    List<EDR> edrs = cdrParserFinal.convertCdrToEdr(cdr, accessPoints);
-
                     cdrParsingService.createEdrs(edrs, cdr);
 
                     outputFileWriter.println(cdr.getLine());
 
                     jobExecutionResult.registerSucces();
                 }
-                
+
             } catch (Exception e) {
                 String errorReason = e.getMessage();
                 final Throwable rootCause = getRootCause(e);

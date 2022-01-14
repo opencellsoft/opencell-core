@@ -26,7 +26,6 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 import org.meveo.model.admin.User;
-import org.meveo.model.rating.CDR;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;

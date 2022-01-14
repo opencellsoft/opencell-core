@@ -176,9 +176,7 @@ public class MediationApiService {
 
         boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
-        // the multithreading is temporarily disabled while waiting to resolve the deduplication issue on multithreading mode
-//        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
-        int nbThreads = 1;
+        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
         if (nbThreads > cdrLines.size()) {
             nbThreads = cdrLines.size();
         }
@@ -202,8 +200,8 @@ public class MediationApiService {
                 Thread.currentThread().setName("MediationApi" + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
-	                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-	                    cdrListResult, virtualCounters, counterUpdates);
+                thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
+                    cdrListResult, virtualCounters, counterUpdates);
 
             });
         }
@@ -217,7 +215,7 @@ public class MediationApiService {
             try {
                 future.get();
 
-            } catch (InterruptedException | CancellationException  e) {
+            } catch (InterruptedException | CancellationException e) {
 //                wasKilled = true;
 
             } catch (ExecutionException e) {
@@ -266,6 +264,8 @@ public class MediationApiService {
         // In case of no need to rollback, an error will be recorded directly in EDR
         boolean noNeedToRollback = false;
 
+        String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
+
         while (true) {
 
             SynchronizedIterator<String>.NextItem<String> nextCDR = cdrLineIterator.nextWPosition();
@@ -275,7 +275,7 @@ public class MediationApiService {
             int position = nextCDR.getPosition();
             String cdrLine = nextCDR.getValue();
 
-            CDR cdr = cdrReader.getRecord(cdrParser, cdrLine);
+            CDR cdr = cdrReader.getRecord(cdrParser, cdrLine, originRecordEL);
             if (cdr == null) {
                 break;
             }
@@ -286,12 +286,13 @@ public class MediationApiService {
 
             if (cdr.getRejectReason() == null) {
                 try {
-                    if (isDuplicateCheckOn) {
-                        cdrParser.deduplicate(cdr);
-                    }
+
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
                     edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
                     if (!isVirtual) {
+                        if (isDuplicateCheckOn) {
+                            cdrParser.deduplicate(cdr);
+                        }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
 

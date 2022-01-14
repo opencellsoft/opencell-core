@@ -23,29 +23,23 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.util.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
-import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -237,17 +231,7 @@ public class MEVEOCdrParser implements ICdrParser {
                 if (cdr.getAccessCode() == null || cdr.getAccessCode().trim().length() == 0) {
                     cdr.setRejectReasonException(new InvalidAccessException(sLine, "userId is empty"));
                 }
-                var provider = providerService.getProvider();
-                if(provider != null && Strings.isNotBlank(provider.getCdrDeduplicationKeyEL())) {
-               	 try {
-               		cdr.setOriginRecord(ValueExpressionWrapper.evaluateExpression(provider.getCdrDeduplicationKeyEL(), Map.of("cdr",cdr), String.class));
-                	}catch(BusinessException e) {
-                		throw new BusinessException("Error detected in dedudplicationKeyEL : " + e.getMessage());
-                	}
-                	 if (cdrService.isCDRExistByOriginRecord(cdr.getOriginRecord())) {
-                         cdr.setRejectReasonException(new BusinessException("CDR with origin record : " + cdr.getOriginRecord() + ": Already exist"));
-                     }
-                }
+
             } catch (Exception e) {
                 cdr.setRejectReasonException(new InvalidFormatException(sLine, e));
                 cdr.setRejectReason(e.getMessage());
@@ -256,11 +240,6 @@ public class MEVEOCdrParser implements ICdrParser {
 
         return cdr;
     }
-
-    @Inject
-    private ProviderService providerService;
-    @Inject
-    private CDRService cdrService;
 
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
@@ -339,7 +318,7 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Override
     public boolean isDuplicateCheckOn() {
-        return edrService.isDuplicateCheckOn();
+        return EdrService.isDuplicateCheckOn();
     }
 
     /**
