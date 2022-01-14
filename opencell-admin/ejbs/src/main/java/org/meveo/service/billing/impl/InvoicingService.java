@@ -270,11 +270,10 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	
 	private void updateRatedTransactions(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca, boolean expectMassRtsPerInvoice) {
 		final List<Long> largeList = sca.getRtIDs();
-		final int size = largeList.size();
 		final long min=largeList.stream().min(Long::compare).get();
 		final long max=largeList.stream().max(Long::compare).get();
 		
-		if(expectMassRtsPerInvoice && size>2) {
+		if(expectMassRtsPerInvoice && sca.getItemNumber()>2) {
 			final long intervalSize = max-min+1;
 			List<Long[]>intervals = getIntervals(min, max);
 			if((intervalSize)==sca.getItemNumber()) {
