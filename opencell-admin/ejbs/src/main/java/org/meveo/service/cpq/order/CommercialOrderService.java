@@ -47,6 +47,7 @@ import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -260,7 +261,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
 		
 		for (OrderAttribute orderAttribute : orderAttributes) {
-			if(orderAttribute.getAttribute()!=null) {
+			if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
 			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 			attributeInstance.setServiceInstance(serviceInstance);
 			attributeInstance.setSubscription(subscription);

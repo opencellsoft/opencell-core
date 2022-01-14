@@ -14,17 +14,13 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
@@ -32,12 +28,11 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 
 /**
@@ -60,6 +55,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private ProductService productService;
     @Inject
 	private AuditLogService auditLogService;
+    @Inject
+
+    private AttributeInstanceService attributeInstanceService;
 
     @Override
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
@@ -176,7 +174,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         	String serviceCode=chargeInstance.getServiceInstance().getCode();
      	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
                     .stream()
-                    .map(attributeInstance -> getAttributeValue(attributeInstance, walletOperation))
+                    .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation))
                     .collect(Collectors.toSet());
      	   
      	   
@@ -186,36 +184,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return null;
     }
     
-    private AttributeValue getAttributeValue(AttributeInstance attributeInstance, WalletOperation walletOperation) throws BusinessException{
-    	try {
-        	if(AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(attributeInstance.getAttribute().getAttributeType())) {
-        		if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
-
-        			Object value=ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, walletOperation);
-    	    			if(value!=null) {
-    	    				AttributeValue<AttributeValue> attributeValue= (AttributeValue) BeanUtils.cloneBean(attributeInstance);
-    	    				attributeValue.setId(null);
-    	       			 if(value instanceof Boolean) {
-    	       				 attributeValue.setBooleanValue((Boolean)value);
-    	       			 }else if(NumberUtils.isCreatable(value.toString().trim())) {
-    	       					attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
-    	       			 }else {
-    	       				attributeValue.setStringValue((String)value);
-    	       			}
-    	       			log.debug("getAttributeValue value={}, String={},boolean={},double={}",value,attributeValue.getStringValue(),attributeValue.getBooleanValue(),attributeValue.getDoubleValue());
-    	       			
-    	       			return attributeValue;
-        			}
-        			
-        		  }
-        		}
-		} catch (Exception e) {
-			log.error("Error when trying to get AttributeValue : ", e);
-			throw new BusinessException(e.getMessage());
-		}
-
-    	return (AttributeValue)attributeInstance;
-    	}
+   
 
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode, Set<AttributeValue> attributeValues) throws NoPricePlanException {
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode, null);

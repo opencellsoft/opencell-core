@@ -732,6 +732,13 @@ public class ValueExpressionWrapper {
             quote =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
             contextMap.put(VAR_CPQ_QUOTE, quote);
         }
+        if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && serviceInstance != null ) {
+
+            quote =chargeInstance!=null && serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
+
+            contextMap.put(VAR_CPQ_QUOTE, quote);
+
+        }
         if (el.contains(VAR_EDR) && !contextMap.containsKey(VAR_EDR) && walletOperation != null) {
             edr = walletOperation.getEdr();
             contextMap.put(VAR_EDR, edr);
