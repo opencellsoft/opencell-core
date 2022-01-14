@@ -281,7 +281,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				for(Long[] interval :intervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]);
 					query.executeUpdate();
-					getEntityManager().flush();
 				}
 			} else {
 				for (Long[] interval : intervals) {
@@ -289,6 +288,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 					query.executeUpdate();
 					getEntityManager().flush();
 				}
+			}
+			if(intervalSize>1000) {
+				getEntityManager().flush();
 			}
 		} else {
 			for (List<Long> rtIds : Lists.partition(largeList, MAX_RT_TO_UPDATE_PER_TRANSACTION)) {

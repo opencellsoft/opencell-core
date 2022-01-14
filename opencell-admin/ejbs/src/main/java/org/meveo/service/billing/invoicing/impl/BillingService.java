@@ -518,7 +518,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 				(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || isFullAutomatic) || appProvider.isAutomaticInvoicing()));
 
 		if (proceedToInvoiceGenerating) {
-			log.info("recalculateTaxes ==================== 5");
+			log.info("recalculateTaxes IS SKIPPED==================== 5");
 
 			// boolean instantiateMinRts = !includesFirstRun &&
 			// (minAmountForAccounts.isMinAmountCalculationActivated());
@@ -526,7 +526,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 			// minAmountForAccounts.includesFirstRun(!includesFirstRun);
 			
 			//#MEL resolve tax category for BAs with empty tax Category and category with ELs
-			invoiceService.recalculateTaxes(billingRun);
+			//invoiceService.recalculateTaxes(billingRun);
 			
 			log.info("createAgregatesAndInvoice ==================== 6");
 			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic);
