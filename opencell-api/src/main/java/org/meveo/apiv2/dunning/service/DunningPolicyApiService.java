@@ -125,7 +125,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
                 }
                 if (countEndOfDunningLevel == 0) {
-                    throw new BadRequestException("Can not remove end of level");
+                    throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
                 }
                 validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
                 dunningPolicy.setTotalDunningLevels(totalDunningLevels);
