@@ -86,8 +86,6 @@ public class DunningPolicyApiServiceTest {
         dunningPolicy.setTotalDunningLevels(1);
 
         when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
-        when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
-        when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
     }
 
     @Test
