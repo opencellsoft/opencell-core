@@ -213,6 +213,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
     }
     public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields) {
 
+        id = walletOperation.getId();
         code = walletOperation.getCode();
         description = walletOperation.getDescription();
 
