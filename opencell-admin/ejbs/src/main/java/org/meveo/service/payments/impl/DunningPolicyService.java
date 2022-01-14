@@ -215,14 +215,15 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
             }
             dunningPolicy.setMinBalanceTriggerCurrency(currency);
         }
-        update(dunningPolicy);
         if(!dunningPolicyLevels.isEmpty()) {
             dunningPolicy.getDunningLevels().sort(comparing(level -> level.getDunningLevel().getDaysOverdue()));
-            for (DunningPolicyLevel level : dunningPolicy.getDunningLevels()) {
-                level.setSequence(sequence++);
-                level.setDunningPolicy(dunningPolicy);
-                dunningPolicyLevelService.update(level);
+            for (DunningPolicyLevel policyLevel : dunningPolicy.getDunningLevels()) {
+                policyLevel.setSequence(sequence++);
+                policyLevel.setDunningPolicy(dunningPolicy);
+                dunningPolicyLevelService.create(policyLevel);
             }
+            dunningPolicy.setDunningLevels(dunningPolicyLevels);
         }
+        update(dunningPolicy);
     }
 }
