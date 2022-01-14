@@ -42,13 +42,13 @@ public interface SecurityDepositInput extends Resource {
     @NotNull
     BigDecimal getAmount();
 
-    @NotNull
+    @Nullable
     BigDecimal getCurrentBalance();
 
     @Nullable
     SecurityDepositStatusEnum getStatus();
 
-    @NotNull
+    @Nullable
     String getProductInstance();
 
     @Nullable
