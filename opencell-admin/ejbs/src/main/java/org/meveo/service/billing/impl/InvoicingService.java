@@ -281,11 +281,13 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				for(Long[] interval :intervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]);
 					query.executeUpdate();
+					getEntityManager().flush();
 				}
 			} else {
 				for (Long[] interval : intervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
 					query.executeUpdate();
+					getEntityManager().flush();
 				}
 			}
 		} else {
