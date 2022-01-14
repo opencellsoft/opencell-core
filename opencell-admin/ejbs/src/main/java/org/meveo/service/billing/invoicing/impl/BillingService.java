@@ -155,7 +155,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 	}
 	
 	private List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, int pageSize, int pageIndex,
-			boolean thresholdPerEntityFound) {
+			boolean thresholdPerEntityFound, boolean expectMassRtsPerInvoice) {
 		log.info("getInvoicingItems ====== > " + pageSize + "-" + pageIndex);
 		BillingCycle billingCycle = billingRun.getBillingCycle();
 
@@ -173,7 +173,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 			if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
 				return orderService.findOrders(billingCycle, startDate, endDate);
 			}*/
-			return billingAccountService.getInvoicingItems(billingRun, startDate, endDate, pageSize, pageIndex, thresholdPerEntityFound);
+			return billingAccountService.getInvoicingItems(billingRun, startDate, endDate, pageSize, pageIndex, thresholdPerEntityFound, expectMassRtsPerInvoice);
 	}
 
 	/**
@@ -198,6 +198,7 @@ public class BillingService extends PersistenceService<BillingRun> {
         }
 		// #MEL where to put pageSise param?
 		final int pageSise = 30000;
+		final boolean expectMassRtsPerInvoice = true;
 		// #MEL STEP 1: get entities to invoice having threshold per entity
 		boolean thresholdPerEntityFound = false;
 		final List<ThresholdSummary> parentEntitiesWithThresholdPerEntity = getEntitiesToInvoiceHavingThresholdPerEntity(billingRun);
@@ -223,17 +224,17 @@ public class BillingService extends PersistenceService<BillingRun> {
 		List<BillingAccountDetailsItem> items = null;
 
 		while (count != 0) {
-			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound);
+			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound, expectMassRtsPerInvoice);
 			count = items.size();
 			log.info("======== READER : " + count);
-			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic);
+			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic, expectMassRtsPerInvoice);
 			log.info("======== PROCESSED ");
 			page += 1;
 		}
 	}
 
 	private void processEntitiesHavingNoParentThreshold(BillingRun billingRun, long nbRuns, long waitingMillis,
-			Long jobInstanceId, List<BillingAccountDetailsItem> items, boolean isFullAutomatic) {
+			Long jobInstanceId, List<BillingAccountDetailsItem> items, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
 		SubListCreator<BillingAccountDetailsItem> subListCreator = null;
 		try {
 			//final List<List<InvoicingItem>> values = items.stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().collect(Collectors.toList());
@@ -247,7 +248,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 		List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
 		MeveoUser lastCurrentUser = currentUser.unProxy();
 		while (subListCreator.isHasNext()) {
-			asyncReturns.add(invoicingService.createAgregatesAndInvoiceAsync(billingRun, subListCreator.getNextWorkSet(),jobInstanceId, minAmountForAccounts, lastCurrentUser, isFullAutomatic));
+			asyncReturns.add(invoicingService.createAgregatesAndInvoiceForJob(billingRun, subListCreator.getNextWorkSet(),jobInstanceId, minAmountForAccounts, lastCurrentUser, isFullAutomatic, expectMassRtsPerInvoice));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {

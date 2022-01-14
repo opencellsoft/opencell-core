@@ -592,7 +592,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 	
 	public List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, Date startDate,
-			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
+			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound, boolean expectMassRtsPerInvoice) {
 		
 		String BillingAccountDetailsQueryName = "BillingAccount.getBillingAccountDetailsItems";
 		if(thresholdPerEntityFound) {
@@ -608,6 +608,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		boolean useStart = startDate != null;
 		boolean useEnd = endDate != null;
 		String invoicingItemsQueryName = "RatedTransaction.getInvoicingItems";
+		if(expectMassRtsPerInvoice) {
+			invoicingItemsQueryName+="ByInterval";
+		}
 		if (useStart && useEnd) {
 			invoicingItemsQueryName = invoicingItemsQueryName + "ByStartAndEndDate";
 		} else if (useStart) {

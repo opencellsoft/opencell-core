@@ -40,7 +40,10 @@ public class InvoicingItem {
 		this.amountWithTax = (BigDecimal) fields[i++];
 		this.amountTax = (BigDecimal) fields[i++];
 		this.rtIDs =  Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
-		this.count = (long) rtIDs.size();
+		this.count = (Long) fields[i++];
+		if(rtIDs.size()==2 && count==1) {
+			rtIDs.remove(1);
+		}
 	}
 
 	/**

@@ -133,7 +133,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
     @Inject
     private CurrentUserProvider currentUserProvider;
     
-    private static final int MAX_RT_TO_UPDATE = 32767;
+    private static final int MAX_RT_TO_UPDATE_PER_TRANSACTION = 10000;
     
     @Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
@@ -155,36 +155,21 @@ public class InvoicingService extends PersistenceService<Invoice> {
      * @param lastCurrentUser      Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *                             expirations), current user might be lost, thus there is a need to reestablish.
      * @param isFullAutomatic 
+     * @param expectMassRtsPerInvoice 
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<String> createAgregatesAndInvoiceAsync(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
+    public Future<String> createAgregatesAndInvoiceForJob(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         List<Invoice> invoices = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic);
-        writeInvoicingData(billingRun, isFullAutomatic, invoices);
+        writeInvoicingData(billingRun, isFullAutomatic, invoices, expectMassRtsPerInvoice);
         return new AsyncResult<String>("OK");
     }
 
 	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic) {
 		List<Invoice> invoices = new ArrayList<Invoice>();
-		for (BillingAccountDetailsItem invoicingItems : invoicingItemsList) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
-                break;
-            }
-            try {
-            	invoices.addAll(createAgregatesAndInvoiceForJob(invoicingItems, billingRun));
-            } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}", invoicingItems.getBillingAccountId(), invoicingItems.getInvoicingItems().get(0).getInvoiceKey(), e1);
-            }
-        }
-		return invoices;
-	}
-    
-    public List<Invoice> createAgregatesAndInvoiceForJob(BillingAccountDetailsItem billingAccountDetailsItem, BillingRun billingRun) throws BusinessException {
-    	final long billingAccountId = billingAccountDetailsItem.getBillingAccountId();
-    	try {
-/*#MEL create min RTs
+		/*#MEL create min RTs
         // First retrieve it here as not to loose it if billable entity is not managed and has to be retrieved
         //List<RatedTransaction> minAmountTransactions = entityToInvoice.getMinRatedTransactions();
             // Store RTs, to reach minimum amount per invoice, to DB
@@ -202,14 +187,21 @@ public class InvoicingService extends PersistenceService<Invoice> {
                 commit();
             }
 */
-    		return billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().map(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun)).collect(Collectors.toList());
-        } catch (Exception e) {
-			log.error("Error for entity {}", billingAccountId, e);
-            rejectedBillingAccountService.create(billingAccountId, billingRun, e.getMessage());
+		for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            final long billingAccountId = billingAccountDetailsItem.getBillingAccountId();
+            try {
+            	invoices.addAll(billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().map(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun)).collect(Collectors.toList()));
+            } catch (Exception e) {
+                log.error("Failed to create invoices for entity {}", billingAccountId, e);
+                rejectedBillingAccountService.create(billingAccountId, billingRun, e.getMessage());
+            }
         }
-        return null;
-    }
-
+		return invoices;
+	}
+    
     /**
 	 * @param billingAccountDetailsItem 
      * @param invoicingItems
@@ -234,60 +226,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				}
 			}
 		}
-                    /*#MEL manage RTs updates
-                    List<Object[]> rtMassUpdates = new ArrayList<>();
-                    List<Object[]> rtUpdates = new ArrayList<>();
-                    for (SubCategoryInvoiceAgregate subAggregate : invoiceAggregateProcessingInfo.subCategoryAggregates.values()) {
-                        if (subAggregate.getRatedtransactionsToAssociate() == null) {
-                            continue;
-                        }
-                        List<Long> rtIds = new ArrayList<>();
-                        List<RatedTransaction> rts = new ArrayList<>();
-
-                        for (RatedTransaction rt : subAggregate.getRatedtransactionsToAssociate()) {
-
-                            // Check that tax was not overridden in WO and tax recalculation should be ignored
-                            if (rt.isTaxRecalculated()) {
-                                rts.add(rt);
-                            } else {
-                                rtIds.add(rt.getId());
-                            }
-                        }
-
-                        if (!rtIds.isEmpty()) {
-                            rtMassUpdates.add(new Object[] { subAggregate, rtIds });
-                        } else if (!rts.isEmpty()) {
-                            rtUpdates.add(new Object[] { subAggregate, rts });
-                        }
-                        subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
-                    }
-                    
-                    }
-                    // Update RTs with invoice information
-                    //em.flush(); // Need to flush, so RTs can be updated in mass
-                    for (Object[] aggregateAndRtIds : rtMassUpdates) {
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
-                        List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-                        for (List<Long> rtPartition : Lists.partition(rtIds, MAX_RT_TO_UPDATE)) {
-                            Query query = em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                                    .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", rtIds);
-                            query.executeUpdate();
-                        }
-                    }
-
-                    for (Object[] aggregateAndRts : rtUpdates) {
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
-                        List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
-                        for (RatedTransaction rt : rts) {
-                            rt.setBillingRun(billingRun);
-                            rt.setInvoice(invoice);
-                            rt.setInvoiceAgregateF(subCategoryAggregate);
-                            rt.changeStatus(RatedTransactionStatusEnum.BILLED);
-                            em.merge(rt);
-                        }
-                    }
-                }*/
-        // Finalize invoices
+ 
 /*#MEL TODO
         for (InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo : rtGroupToInvoiceMap.values()) {
             // Link orders to invoice
@@ -309,13 +248,13 @@ public class InvoicingService extends PersistenceService<Invoice> {
         return invoice;
 	}
 
-	private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices) {
+	private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices, boolean expectMassRtsPerInvoice) {
 		log.info("======== CREATING {} INVOICES ========", invoices.size());
 		invoices.stream().forEach(invoice->assignNumberAndCreate(billingRun, isFullAutomatic, invoice));
         getEntityManager().flush();//to be able to update Rts
         getEntityManager().clear();
         log.info("======== UPDATING RTs ========", invoices.size());
-        invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateRatedTransactions(i,billingRun,sca)));
+        invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateRatedTransactions(i,billingRun,sca, expectMassRtsPerInvoice)));
 	}
 
 	private void assignNumberAndCreate(BillingRun billingRun, boolean isFullAutomatic, Invoice invoice) {
@@ -329,11 +268,51 @@ public class InvoicingService extends PersistenceService<Invoice> {
         postCreate(invoice);
 	}
 	
-	private void updateRatedTransactions(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca) {
-		for (List<Long> rtIds : Lists.partition(sca.getRtIDs(), MAX_RT_TO_UPDATE)) {
-			Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("ids", rtIds);
-			query.executeUpdate();
+	private void updateRatedTransactions(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca, boolean expectMassRtsPerInvoice) {
+		final List<Long> largeList = sca.getRtIDs();
+		final int size = largeList.size();
+		final long min=largeList.stream().min(Long::compare).get();
+		final long max=largeList.stream().max(Long::compare).get();
+		
+		if(expectMassRtsPerInvoice && size>2) {
+			final long intervalSize = max-min+1;
+			List<Long[]>intervals = getIntervals(min, max);
+			if((intervalSize)==sca.getItemNumber()) {
+				for(Long[] interval :intervals) {
+					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]);
+					query.executeUpdate();
+				}
+			} else {
+				for (Long[] interval : intervals) {
+					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
+					query.executeUpdate();
+				}
+			}
+		} else {
+			for (List<Long> rtIds : Lists.partition(largeList, MAX_RT_TO_UPDATE_PER_TRANSACTION)) {
+				Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("ids", rtIds);
+				query.executeUpdate();
+			}
 		}
+	}
+
+	private List<Long[]> getIntervals(final long min, final long max) {
+		List<Long> checksums = new ArrayList<Long>();
+		checksums.add(min);
+		Long next=min+MAX_RT_TO_UPDATE_PER_TRANSACTION;
+		while(next<max) {
+			checksums.add(next);
+		}
+		checksums.add(max+1);
+		int index = 0; 
+		List<Long[]> intervals = new ArrayList<>();
+		while(index+1<checksums.size()) {
+			long intervalMin=checksums.get(index);
+			long intervalMax=checksums.get(index+1);
+			index++;
+			intervals.add(new Long[]{intervalMin, intervalMax});
+		}
+		return intervals;
 	}
 	
     private void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, Date nextInvoiceDate) throws BusinessException {
