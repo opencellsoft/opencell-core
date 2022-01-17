@@ -36,6 +36,8 @@ import java.util.*;
 @Stateless
 public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
 
+    private static final long serialVersionUID = -3301732194304559773L;
+
     @Inject
     private DunningPolicyService policyService;
 
@@ -75,6 +77,10 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                         processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel);
                     }
                 }
+
+                DunningCollectionPlan dunningCollectionPlan = collectionPlanService.findByPolicy(policy);
+                dunningCollectionPlan.setLastActionDate(new Date());
+                collectionPlanService.update(dunningCollectionPlan);
             }
             jobExecutionResult.addNbItemsCorrectlyProcessed(policies.size() - jobExecutionResult.getNbItemsProcessedWithError());
         } catch (Exception exception) {
