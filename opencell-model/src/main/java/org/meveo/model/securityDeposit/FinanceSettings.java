@@ -39,14 +39,6 @@ public class FinanceSettings extends BusinessEntity {
     @Column(name = "auto_refund")
     private boolean autoRefund = false;
 
-    @Type(type = "numeric_boolean")
-    @Column(name = "allow_renew")
-    private boolean allowRenew = false;
-
-    @Type(type = "numeric_boolean")
-    @Column(name = "allow_transfer")
-    private boolean allowTransfer = false;
-
     public FinanceSettings() {
         super();
     }
@@ -58,8 +50,6 @@ public class FinanceSettings extends BusinessEntity {
         this.maxAmountPerSecurityDeposit = maxAmountPerSecurityDeposit;
         this.maxAmountPerCustomer = maxAmountPerCustomer;
         this.autoRefund = autoRefund;
-        this.allowRenew = allowRenew;
-        this.allowTransfer = allowTransfer;
     }
 
     public boolean isUseSecurityDeposit() {
@@ -94,19 +84,4 @@ public class FinanceSettings extends BusinessEntity {
         this.autoRefund = autoRefund;
     }
 
-    public boolean isAllowRenew() {
-        return allowRenew;
     }
-
-    public void setAllowRenew(boolean allowRenew) {
-        this.allowRenew = allowRenew;
-    }
-
-    public boolean isAllowTransfer() {
-        return allowTransfer;
-    }
-
-    public void setAllowTransfer(boolean allowTransfer) {
-        this.allowTransfer = allowTransfer;
-    }
-}

@@ -129,7 +129,6 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         }
 
         List<String> updatedFields = new ArrayList<>();
-        
         if (checkIfPolicyLevelsAreChanged(dunningPolicyInput.getDunningPolicyLevels(), dunningPolicyEntity.getDunningLevels())) {
             dunningPolicyEntity.getDunningLevels().clear();
             List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();

@@ -11451,9 +11451,7 @@
             <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
             <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="allow_renew" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="allow_transfer" type="${type.boolean}" defaultValueNumeric="0" />
-        </createTable>
+      </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
 
@@ -17058,6 +17056,7 @@
 	<changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-4178_20220106" author="AmineBENAICHA" />
     <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui" />
+    <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
