@@ -93,6 +93,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_useraccount_id",referencedColumnName = "id")
+    private UserAccount userAccount;
+    
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAccount> userAccounts = new ArrayList<>();
 
     /**
      * Account termination date
@@ -165,7 +172,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
         return statusDate;
     }
 
-    public void setStatusDate(Date statusDate) {
+	public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
 
@@ -189,7 +196,23 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
         return subscriptions;
     }
 
-    public void setSubscriptions(List<Subscription> subscriptions) {
+    public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public List<UserAccount> getUserAccounts() {
+		return userAccounts;
+	}
+
+	public void setUserAccounts(List<UserAccount> userAccounts) {
+		this.userAccounts = userAccounts;
+	}
+
+	public void setSubscriptions(List<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
 
