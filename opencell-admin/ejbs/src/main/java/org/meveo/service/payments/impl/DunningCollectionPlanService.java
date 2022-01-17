@@ -62,6 +62,13 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     private static final String STOP_REASON = "Changement de politique de recouvrement";
 
+    public DunningCollectionPlan findByPolicy(DunningPolicy dunningPolicy) {
+        return getEntityManager()
+                    .createNamedQuery("DunningCollectionPlan.findByPolicy", entityClass)
+                    .setParameter("dunningPolicy", dunningPolicy)
+                    .getSingleResult();
+    }
+
     public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
         DunningStopReason stopReason = dunningStopReasonsService.findByStopReason(STOP_REASON);
         policy = policyService.refreshOrRetrieve(policy);
@@ -132,7 +139,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     public List<DunningCollectionPlan> findByInvoiceId(long invoiceID) {
         return getEntityManager()
-                    .createNamedQuery("DunningCollectionPlan.findByInvoiceId", DunningCollectionPlan.class)
+                    .createNamedQuery("DunningCollectionPlan.findByInvoiceId", entityClass)
                     .setParameter("invoiceID", invoiceID)
                     .getResultList();
     }
@@ -355,7 +362,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
 	public List<DunningCollectionPlan> findDunningCollectionPlansToResume() {
         return getEntityManager()
-                .createNamedQuery("DunningCollectionPlan.DCPtoResume", DunningCollectionPlan.class)
+                .createNamedQuery("DunningCollectionPlan.DCPtoResume", entityClass)
                 .setParameter("resumeDate", new Date())
                 .getResultList();
 	}
