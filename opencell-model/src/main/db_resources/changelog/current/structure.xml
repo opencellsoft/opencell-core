@@ -11723,4 +11723,14 @@ order by date_trunc('month', i.invoice_date) DESC
     	<addUniqueConstraint columnNames="code, dunning_level_instance_id" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
     </changeSet>
 
+     <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui">
+         <dropColumn tableName="finance_settings">
+            <column name="allow_renew"  />
+            <column name="allow_transfer"  />
+        </dropColumn>
+     </changeSet>
+
+
+
+
 </databaseChangeLog>
