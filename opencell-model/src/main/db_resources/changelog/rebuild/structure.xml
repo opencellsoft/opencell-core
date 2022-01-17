@@ -11507,10 +11507,10 @@
             <column name="amount" type="numeric(23, 12)" />
             <column name="current_balance" type="numeric(23, 12)" />
             <column name="status" type="varchar(255)" />
-            <column name="product_instance" type="varchar(255)"/>
             <column name="subscription_id" type="bigint"/>
-            <column name="product_id" type="bigint"/>
             <column name="external_reference" type="varchar(255)"/>
+            <column name="invoice_receipt_number" type="varchar(255)" />
+            <column name="service_instance_id" type="bigint"/>
 
 		</createTable>
         </changeSet>
@@ -15691,9 +15691,10 @@
 			constraintName="fk_billing_subscription_security_deposit" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
 
-     <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="security_deposit"
-			constraintName="fk_cpq_product_security_deposit" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+     <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="security_deposit"
+			constraintName="fk_billing_service_instance_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+
     </changeSet>
 
     <!-- end fk -->
@@ -17056,6 +17057,7 @@
     <changeSet id="INTRD-3807_20211227" author="HHanine" />
 	<changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-4178_20220106" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

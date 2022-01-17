@@ -190,10 +190,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositInput.setSubscription(subscription);
         }
 
-        if (securityDepositInput.getProduct() != null) {
-            Product product = productService.tryToFindByCodeOrId(securityDepositInput.getProduct());
-            securityDepositInput.setProduct(product);
-        }
+
     }
 
     private <B extends BaseEntity> void validateNotNull(B input, B result) {
