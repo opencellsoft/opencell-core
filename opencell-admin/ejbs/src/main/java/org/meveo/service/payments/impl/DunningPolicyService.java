@@ -218,9 +218,11 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         if(!dunningPolicyLevels.isEmpty()) {
             dunningPolicy.getDunningLevels().sort(comparing(level -> level.getDunningLevel().getDaysOverdue()));
             for (DunningPolicyLevel policyLevel : dunningPolicy.getDunningLevels()) {
-                policyLevel.setSequence(sequence++);
-                policyLevel.setDunningPolicy(dunningPolicy);
-                dunningPolicyLevelService.create(policyLevel);
+                if(policyLevel.getId() == null) {
+                    policyLevel.setSequence(sequence++);
+                    policyLevel.setDunningPolicy(dunningPolicy);
+                    dunningPolicyLevelService.create(policyLevel);
+                }
             }
             dunningPolicy.setDunningLevels(dunningPolicyLevels);
         }
