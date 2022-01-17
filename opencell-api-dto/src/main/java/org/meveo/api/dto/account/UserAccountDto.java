@@ -43,7 +43,7 @@ public class UserAccountDto extends AccountDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -13552444627686818L;
-
+	private String parentUserAccount;
     /** The billing account. */
     @XmlElement(required = true)
     private String billingAccount;
@@ -98,9 +98,13 @@ public class UserAccountDto extends AccountDto {
      * 
      * @param e UserAccount entity
      */
+
 	public UserAccountDto(UserAccount e) {
 		super(e);
         id = e.getId();
+        if (e.getParentUserAccount() != null) {
+        	setParentUserAccount(e.getParentUserAccount().getCode());
+        }
 		if (e.getBillingAccount() != null) {
 			setBillingAccount(e.getBillingAccount().getCode());
 			setBillingAccountDescription(e.getBillingAccount().getDescription());
@@ -130,6 +134,18 @@ public class UserAccountDto extends AccountDto {
         setVatNo(e.getVatNo());
     }
 	
+	
+
+	public String getParentUserAccount() {
+		return parentUserAccount;
+	}
+
+	public void setParentUserAccount(String parentUserAccount) {
+		this.parentUserAccount = parentUserAccount;
+	}
+
+	
+
 	public UserAccountDto(UserAccount e, List<GDPRInfoDto> userAccountGdpr) {
 		this(e);
 		if(userAccountGdpr != null && !userAccountGdpr.isEmpty()) {

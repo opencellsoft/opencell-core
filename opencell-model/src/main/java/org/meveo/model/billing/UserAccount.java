@@ -98,7 +98,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @JoinColumn(name = "parent_useraccount_id",referencedColumnName = "id")
     private UserAccount parentUserAccount;
     
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentUserAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAccount> userAccounts = new ArrayList<>();
 
     /**
