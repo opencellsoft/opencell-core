@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,6 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
@@ -87,111 +85,83 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         	
 	public Map<String, List<CustomFieldValue>> decryptCfs(Map<String, List<CustomFieldValue>> cfValues) 
 	{
-	    List listStr=new ArrayList();
-	    List<String> listcfValuesString=new ArrayList<String>();
-        ObjectMapper oMapper = new ObjectMapper();
-        Map<String,Object> mapcfValuesString=new LinkedHashMap<String, Object>();
-        Map<String,Object> matrixcfValuesString=new LinkedHashMap<String, Object>();
-        Map<String,Object> maplistString=new HashMap<String, Object>();
-        List matrixList=new ArrayList();
-        Map<String,String> maput=new HashMap<String, String>();
-		for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.entrySet()) {
+        for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.entrySet()) {
 			for(CustomFieldValue cf: listCfs.getValue()) {
 				if (cf.getStringValue() != null && cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
 				    cf.setStringValue(decrypt(cf.getStringValue()));
-				}else if (cf.getListValue()!=null) {
-				    for(Object objectList:cf.getListValue()) {
-				        if(objectList instanceof String) {
-				            listStr.add(decrypt(objectList.toString()));
+				} else if (cf.getListValue() != null) {
+			        List<Object> listValues = new ArrayList<>();
+				    for(Object object: cf.getListValue()) {
+				        if(object instanceof String) {
+				            String valueString = (String) object;
+				            if(valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+				                listValues.add(decrypt(valueString));
+				            } else {
+				                listValues.add(valueString);
+				            }
+				        } else {
+				            listValues.add(object);
 				        }
-				        
 				    }
-				    cf.setListValue(listStr);
-				} else if (cf.getMapValue() != null) {
-					Map<String, Object> mapListCfValues = new HashMap();
-					List<String> listValueStrings = new ArrayList<String>();
-					Map<String, Object> ops = new HashMap<>();
+				    cf.setListValue(listValues);
+				} else if (cf.getMapValue() != null) {					
+			        Map<String, Object> mapValues = new LinkedHashMap<>();
 					for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
-						Map<String, String> map = oMapper.convertValue(object.getValue(), Map.class);
-						for (Entry<String, String> str : map.entrySet()) {
-							matrixcfValuesString.put(str.getKey(), decrypt(str.getValue()));
-
+					    if(object.getValue() instanceof String) {
+					        String valueString = (String) object.getValue();
+					        if(valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+					            mapValues.put(object.getKey(), decrypt(valueString));
+					        } else {
+					            mapValues.put(object.getKey(), valueString);
+					        }
+						} else {
+						    mapValues.put(object.getKey(), object.getValue());
 						}
 					}
-
-					cf.setMapValue(matrixcfValuesString);
-				}		
+					cf.setMapValue(mapValues);
+    			}		
+             }
          }
-     }
-     return cfValues;
+         return cfValues;
 	}
   		
 	public String encryptCfs(CustomFieldValues cfValues) 
     {
-        List<String> listcfValuesString = new ArrayList<String>();
-        ObjectMapper oMapper = new ObjectMapper();
-        Map<String, Object> mapcfValuesString = new LinkedHashMap<String, Object>();
-        Map<String, Object> matrixcfValuesString = new LinkedHashMap<String, Object>();
-        Map<String, Object> maplistString = new HashMap<String, Object>();
-        List<Map<String,Object>> matrixList = new ArrayList();
-        Map<String, String> maput = new HashMap<String, String>();
-        for (Entry<String, List<CustomFieldValue>> listCfs : cfValues.getValuesByCode().entrySet()) {
+        for (Entry<String, List<CustomFieldValue>> listCfs: cfValues.getValuesByCode().entrySet()) {
             for (CustomFieldValue cf : listCfs.getValue()) {
-                if (cf.getStringValue() != null) {
-                    if (cf.getStringValue() != null && !cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
-                        cf.setStringValue(encrypt(cf.getStringValue()));
-                    }
-                }
-
-                if (cf.getListValue() != null) {
-                    for (Object cfListMultiVal : cf.getListValue()) {
-                        if (cfListMultiVal instanceof String) {
-                            listcfValuesString.add(encrypt(cfListMultiVal.toString()));
-                            cf.setListValue(listcfValuesString);
+                if (cf.getStringValue() != null && !cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
+                    cf.setStringValue(encrypt(cf.getStringValue()));
+                } else if (cf.getListValue() != null) {
+                    List<Object> listValues = new ArrayList<>();
+                    for(Object object: cf.getListValue()) {
+                        if(object instanceof String) {
+                            String valueString = (String) object;
+                            if(!valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+                                listValues.add(encrypt(valueString));
+                            } else {
+                                listValues.add(valueString);
+                            }
+                        } else {
+                            listValues.add(object);
                         }
                     }
-
-                }
-
-                if (cf.getMatrixValuesForGUI() != null && !cf.getMatrixValuesForGUI().isEmpty()) {
-                	 Map<String, Object> mapListCfValues = new HashMap();
-                     List<String> listValueStrings = new ArrayList<String>();
-                     Map<String,Object> ops=new HashMap<>();
-                     for(Entry<String,Object> object:cf.getkeyValueMap().entrySet()) {
-                    	 Map<String, String> map = oMapper.convertValue(object.getValue(), Map.class);
-                    	 for (Entry<String, String> str : map.entrySet()) {
-                            matrixcfValuesString.put(str.getKey(), encrypt(str.getValue()));
-                            maplistString.put(object.getKey(), matrixcfValuesString);
-                            matrixList.add(maplistString);
-
-                    } 
-
-                     }
-                     cf.setMatrixValuesForGUI(matrixList);
-                }
-               
-				if (cf.getMapValue() != null && !cf.getMapValue().isEmpty()) {
-					Map<String, String> mapMatrix = new HashMap<String, String>();
-					Map<String, Object> mapMatrixGlob = new HashMap<String, Object>();
-					for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cf.getValue()).entrySet()) {
-						for (Entry<String, String> typeMapsCfvaluesmaps : ((Map<String, String>) cf.getValue())
-								.entrySet()) {
-							for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
-								if (typeMapsCfvaluesmaps.getValue() instanceof String) {
-									mapMatrix.put(typeMapsCfvaluesmaps.getKey(),
-											encrypt(typeMapsCfvaluesmaps.getValue().toString()));
-									mapcfValuesString.put(typeMapsCfvaluesmaps.getKey(),
-											encrypt(typeMapsCfvaluesmaps.getValue()));
-								}
-
-							}
-
-						}
-
-					}
-					cf.setMapValue(mapcfValuesString);
-				}
-
+                    cf.setListValue(listValues);
+                } else if (cf.getMapValue() != null) {                    
+                    Map<String, Object> mapValues = new LinkedHashMap<>();
+                    for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
+                        if(object.getValue() instanceof String) {
+                            String valueString = (String) object.getValue();
+                            if(!valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+                                mapValues.put(object.getKey(), encrypt(valueString));
+                            } else {
+                                mapValues.put(object.getKey(), valueString);
+                            }
+                        } else {
+                            mapValues.put(object.getKey(), object.getValue());
+                        }
+                    }
+                    cf.setMapValue(mapValues);
+                }       
 			}
 		}
         return cfValues.toString();
