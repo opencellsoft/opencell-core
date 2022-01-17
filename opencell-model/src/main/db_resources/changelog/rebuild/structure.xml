@@ -11208,7 +11208,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="interest_for_delay_sequence" type="int4" />
-            <column name="min_balance_trigger" type="float8" defaultValue="0" >
+            <column name="min_balance_trigger" type="${type.float}" defaultValue="0" >
                 <constraints nullable="false" />
             </column>
             <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
@@ -15362,35 +15362,12 @@
 	
 		<addForeignKeyConstraint
 			baseColumnNames="dunning_settings_id"
-			baseTableName="dunning_pause_reasons"
-			constraintName="fk_dunning_settings_pause_reasons_id"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="dunning_settings" />
-	
-		<addForeignKeyConstraint
-			baseColumnNames="dunning_settings_id"
 			baseTableName="dunning_stop_reasons"
 			constraintName="fk_dunning_settings_stop_reasons_id"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="dunning_settings" />
-	
-		<addForeignKeyConstraint
-			baseColumnNames="dunning_settings_id"
-			baseTableName="dunning_collection_plan_statuses"
-			constraintName="fk_dunning_settings_collection_plan_statuses_id"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="dunning_settings" />
-		
-		<addForeignKeyConstraint
-			constraintName="fk_collection_plan_statuses_dunning_settings"
-			referencedTableName="dunning_settings"
-			baseColumnNames="dunning_settings_id"
-			baseTableName="dunning_collection_plan_statuses"
-			referencedColumnNames="id" />
-	
+				
 		<addForeignKeyConstraint
 			baseColumnNames="dunning_settings_id"
 			baseTableName="invoice_dunning_statuses"
@@ -15398,22 +15375,7 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="dunning_settings" />
-	
-		<addForeignKeyConstraint
-			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
-			constraintName="fk_dunning_settings_collection_management_id"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="dunning_settings" />
-	
-		<addForeignKeyConstraint
-			baseColumnNames="dunning_settings_id"
-			baseTableName="dunning_payment_retries"
-			constraintName="fk_dunning_settings_payment_retries_id"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="dunning_settings" />
-	
+			
 		<addForeignKeyConstraint
 			constraintName="fk_dunning_agent_dunning_settings"
 			referencedTableName="dunning_settings"
@@ -15426,7 +15388,7 @@
 			baseColumnNames="dunning_settings_id"
 			baseTableName="dunning_collection_plan_statuses"
 			referencedColumnNames="id" />
-	
+        
 		<addForeignKeyConstraint
 			constraintName="fk_dunning_pause_reasons_dunning_settings"
 			referencedTableName="dunning_settings"
@@ -15438,12 +15400,6 @@
 			referencedTableName="dunning_settings"
 			baseColumnNames="dunning_settings_id"
 			baseTableName="dunning_payment_retries" referencedColumnNames="id" />
-	
-		<addForeignKeyConstraint
-			constraintName="fk_dunning_stop_reasons_dunning_settings"
-			referencedTableName="dunning_settings"
-			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
-			referencedColumnNames="id" />
 	
 		<addForeignKeyConstraint
 			baseColumnNames="cpq_quote_version_id"
@@ -15512,7 +15468,7 @@
 			
 		<addForeignKeyConstraint
 			baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action"
-			constraintName="fk_dunning_agent" referencedColumnNames="id"
+			constraintName="fk_dunning_action_agent" referencedColumnNames="id"
 			referencedTableName="dunning_agent" deferrable="false"
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" />
 	
@@ -15633,7 +15589,7 @@
       
       <changeSet id="#INTRD-2973_20211110-rebuild-str-fk" author="AmineBENAICHA">
 		<addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
-			constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+			constraintName="fk_dunning_level_instance_collection_plan" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
 		
 		<addForeignKeyConstraint baseColumnNames="dunning_collection_plan_status_id" baseTableName="dunning_level_instance"
@@ -15645,11 +15601,11 @@
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level" />
 		
 		<addForeignKeyConstraint baseColumnNames="dunning_agent_id" baseTableName="dunning_action_instance"
-			constraintName="fk_dunning_agent" deferrable="false" initiallyDeferred="false"
+			constraintName="fk_dunning_action_instance_agent" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" />
 			
 		<addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_action_instance"
-			constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+			constraintName="fk_dunning_action_instance_collection_plan" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
 			
 		<addForeignKeyConstraint baseColumnNames="dunning_level_instance_id" baseTableName="dunning_action_instance"
