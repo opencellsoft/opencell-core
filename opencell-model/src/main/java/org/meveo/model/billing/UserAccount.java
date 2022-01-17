@@ -96,7 +96,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_useraccount_id",referencedColumnName = "id")
-    private UserAccount userAccount;
+    private UserAccount parentUserAccount;
     
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAccount> userAccounts = new ArrayList<>();
@@ -196,12 +196,14 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
         return subscriptions;
     }
 
-    public UserAccount getUserAccount() {
-		return userAccount;
+   
+
+	public UserAccount getParentUserAccount() {
+		return parentUserAccount;
 	}
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
+	public void setParentUserAccount(UserAccount parentUserAccount) {
+		this.parentUserAccount = parentUserAccount;
 	}
 
 	public List<UserAccount> getUserAccounts() {
