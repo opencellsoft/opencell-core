@@ -1,13 +1,9 @@
 package org.meveo.apiv2.accounting.resource.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.accounting.ImmutableAccountingPeriod;
 import org.meveo.apiv2.accounting.resource.AccountingPeriodResource;
 import org.meveo.apiv2.accounting.service.AccountingPeriodApiService;
@@ -28,7 +24,6 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 
 	@Override
 	public Response create(org.meveo.apiv2.accounting.AccountingPeriod input) {
-		checkRequiredParameters(input);
 		AccountingPeriod accountingPeriodEntity = accountingPeriodApiService.create(accountingPeriodMapper.toEntity(input), input.getUseSubAccountingPeriods());
 		return Response.created(LinkGenerator
 				.getUriBuilderFromResource(AccountingPeriodResource.class, accountingPeriodEntity.getId()).build())
@@ -43,7 +38,6 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	
 	@Override
 	public Response update(String fiscalYear, org.meveo.apiv2.accounting.AccountingPeriod accountingPeriodResource) {
-		checkRequiredParameters(accountingPeriodResource);
 		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
 		accountingPeriodApiService.update(accountingPeriodMapper.toEntity(accountingPeriod, accountingPeriodResource), accountingPeriodResource);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear).build())
@@ -72,18 +66,4 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear, number, status).build())
                 .build();
 	}
-	
-	private void checkRequiredParameters(org.meveo.apiv2.accounting.AccountingPeriod entity) {
-		List<String> missingParameters = new ArrayList<>();
-		if (entity.getRegularUserLockOption() == null) {
-			missingParameters.add("regularUserLockOption");
-		}
-		if (entity.getAccountingOperationAction() == null) {
-			missingParameters.add("accountingOperationAction");
-		}
-		if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(missingParameters);
-		}
-	}
-
 }
