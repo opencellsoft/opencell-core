@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,6 +43,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
@@ -367,6 +370,46 @@ public class RoleApi extends BaseApi {
 
     public List<RoleDto> listExternalRoles(HttpServletRequest httpServletRequest) throws BusinessException {
         return keycloakAdminClientService.listRoles(httpServletRequest);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void cleanAllAccessibleEntities(Long id){
+        Role role = roleService.findById(id);
+        if(role == null)
+            throw new EntityDoesNotExistsException(Role.class, id);
+        role.getSecuredEntities().clear();
+        roleService.update(role);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void removeAccessibleEntity(Long roleId, SecuredEntity securedEntity){
+        Role role = roleService.findById(roleId);
+        if(role == null)
+            throw new EntityDoesNotExistsException(Role.class, roleId);
+        role.getSecuredEntities().remove(securedEntity);
+        roleService.update(role);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addAccessibleEntity(Long roleId,  SecuredEntity securedEntity){
+        Role role = roleService.findById(roleId);
+        if(role == null)
+            throw new EntityDoesNotExistsException(Role.class, roleId);
+        role.getSecuredEntities().add(securedEntity);
+        roleService.update(role);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addAccessibleEntities(Long roleId, List<SecuredEntity> securedEntities){
+        Role role = roleService.findById(roleId);
+        if(role == null)
+            throw new EntityDoesNotExistsException(Role.class, roleId);
+        role.getSecuredEntities().addAll(securedEntities);
+        roleService.update(role);
     }
 
 }

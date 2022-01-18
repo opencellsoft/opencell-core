@@ -23,9 +23,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +51,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
@@ -430,4 +435,101 @@ public class UserApi extends BaseApi {
 
         return dto;
     }
+
+    public void cleanRoles(Long idUser){
+        User user = userService.findById(idUser);
+        if(user == null){
+            throw new EntityDoesNotExistsException(User.class, idUser);
+        }
+        user.getRoles().clear();
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void removeRole(Long userId, Long roleId){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Optional<Role> role = user.getRoles().stream()
+                .filter(r -> r.getId().equals(roleId))
+                .findFirst();
+        if(role.isPresent()){
+            user.getRoles().remove(role.get());
+            userService.update(user);
+        }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addRole(Long userId, Long roleId){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Role role = roleService.findById(roleId);
+        if(role == null)
+            throw new EntityDoesNotExistsException(Role.class, roleId);
+        user.getRoles().add(role);
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addRoles(Long userId, List<Long> rolesId){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Set<Role> roles = rolesId.stream()
+                .map(roleId -> {
+                    Role role = roleService.findById(roleId);
+                    if (role == null)
+                        throw new EntityDoesNotExistsException(Role.class, roleId);
+                    return role;
+                }).collect(Collectors.toSet());
+        user.getRoles().addAll(roles);
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void cleanAllAccessibleEntities(Long id){
+       User user = userService.findById(id);
+       if(user == null)
+           throw new EntityDoesNotExistsException(User.class, id);
+       user.getSecuredEntities().clear();
+       userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void removeAccessibleEntity(Long id, SecuredEntity securedEntity){
+        User user = userService.findById(id);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, id);
+        user.getSecuredEntities().remove(securedEntity);
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addAccessibleEntity(Long id,  SecuredEntity securedEntity){
+        User user = userService.findById(id);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, id);
+        user.getSecuredEntities().add(securedEntity);
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addAccessibleEntities(Long id, List<SecuredEntity> securedEntities){
+        User user = userService.findById(id);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, id);
+        user.getSecuredEntities().addAll(securedEntities);
+        userService.update(user);
+    }
+
+
+
 }
