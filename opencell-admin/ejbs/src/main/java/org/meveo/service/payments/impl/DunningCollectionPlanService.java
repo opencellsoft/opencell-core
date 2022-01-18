@@ -111,7 +111,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                                 && nextLevel.getDunningActions() != null && !nextLevel.getDunningActions().isEmpty()) {
                             int dOverDue = Optional.ofNullable(nextLevel.getDaysOverdue()).orElse(0);
                             int i = 0;
-                            while(i < nextLevel.getDunningActions().size()) {
+                            while(i < nextLevel.getDunningActions().size() - 1) {
                             	if(nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
                             		break;
                             	}else {
@@ -119,8 +119,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                             	}
                             }
                             newCollectionPlan.setNextAction((nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC))
-                            		?nextLevel.getDunningActions().get(i).getCode()
-                            				:nextLevel.getDunningActions().get(0).getCode());
+                            		? nextLevel.getDunningActions().get(i).getCode()
+                            				: nextLevel.getDunningActions().get(0).getCode());
                             newCollectionPlan.setNextActionDate(addDaysToDate(newCollectionPlan.getStartDate(), dOverDue));
                         }
                     }
