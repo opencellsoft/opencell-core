@@ -13,12 +13,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -72,24 +74,31 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDire
 public class MyTest {
 
 	public static void main(String[] args) throws BusinessException, JsonProcessingException {
-		//IngenicoGatewayPayment ingenico=new IngenicoGatewayPayment();
-		CpqQuote quote=new CpqQuote();
-		quote.setId(1L);
-		quote.setQuoteDate(new Date());
-		QuoteAttribute quoteAttr=new QuoteAttribute();
-		quoteAttr.setDateValue(DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"));
-		quoteAttr.setId(1L);
-		org.meveo.model.cpq.Attribute attr=new org.meveo.model.cpq.Attribute();
-		attr.setAttributeType(AttributeTypeEnum.DATE);
-		attr.setValidationType(AttributeValidationType.EL);
-		attr.setValidationPattern("#{quoteAttribute.dateValue > quote.quoteDate}");
-		quoteAttr.setAttribute(attr);
+//		//IngenicoGatewayPayment ingenico=new IngenicoGatewayPayment();
+//		CpqQuote quote=new CpqQuote();
+//		quote.setId(1L);
+//		quote.setQuoteDate(new Date());
+//		QuoteAttribute quoteAttr=new QuoteAttribute();
+//		quoteAttr.setDateValue(DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"));
+//		quoteAttr.setId(1L);
+//		org.meveo.model.cpq.Attribute attr=new org.meveo.model.cpq.Attribute();
+//		attr.setAttributeType(AttributeTypeEnum.DATE);
+//		attr.setValidationType(AttributeValidationType.EL);
+//		attr.setValidationPattern("#{quoteAttribute.dateValue > quote.quoteDate}");
+//		quoteAttr.setAttribute(attr);
+//		
+//		AttributeValueService.validateValue(quoteAttr, quote, null, null, null);
+//		//boolean a=ValueExpressionWrapper.evaluateExpression("#{date < quote.quoteDate}", Boolean.class, DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"),quote);
+		Object value=ValueExpressionWrapper.evaluateExpression("#{10.6}", Object.class, new WalletOperation());
 		
-		AttributeValueService.validateValue(quoteAttr, quote, null, null, null);
-		//boolean a=ValueExpressionWrapper.evaluateExpression("#{date < quote.quoteDate}", Boolean.class, DateUtils.parseDateWithPattern("01/08/2022", "dd/MM/yyyy"),quote);
-		//System.out.println(a);
-		
-		System.out.println( Pattern.compile("[0-5]").matcher("7").find());
+		if(value!=null) {
+			 if(value instanceof Number) {	
+				 System.out.println("1-"+value);
+			 }
+			 if(NumberUtils.isCreatable(value.toString().trim())) {
+				 System.out.println(Double.valueOf(value.toString().trim()));
+			 }
+	}		 
 		
 		/*********
 		 * 
