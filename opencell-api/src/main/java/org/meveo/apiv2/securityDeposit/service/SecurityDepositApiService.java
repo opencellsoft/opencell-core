@@ -134,13 +134,13 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         securityDepositInput.setCode(securityDepositName + "-" + count);
 
         // Check validity dates
-        if (template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
+        if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
             if (securityDepositInput.getValidityDate() == null && securityDepositInput.getValidityPeriod() == null) {
                 throw new BadRequestException("At least one of the two options (SD.validityDate or SD.validityPeriod) should be filled");
             }
         }
-        if (securityDepositInput.getValidityDate() != null && (isSameDay(securityDepositInput.getValidityDate(), new Date()))
-                || securityDepositInput.getValidityDate().before(new Date())) {
+        if (securityDepositInput.getValidityDate() != null && ((isSameDay(securityDepositInput.getValidityDate(), new Date()))
+                || securityDepositInput.getValidityDate().before(new Date()))) {
             throw new BadRequestException("User cannot select the day date or a date in the past");
         }
         if (securityDepositInput.getValidityPeriod() != null && securityDepositInput.getValidityPeriod() <= 0) {
