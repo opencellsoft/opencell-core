@@ -21,6 +21,7 @@ import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.*;
@@ -40,12 +41,16 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@Inject
 	private WalletService walletService;
 	
-	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)
+	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount,UserAccountDto accountDto)
 			throws BusinessException {
 
 		log.debug("creating userAccount with details {}", new Object[] { userAccount});
 
 		UserAccount existingUserAccount = findByCode(userAccount.getCode());
+		UserAccount findUserAccount = findByCode(accountDto.getParentUserAccount());
+		if(accountDto.getParentUserAccount()!=null) {
+		userAccount.setParentUserAccount(findUserAccount);
+		}
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}
