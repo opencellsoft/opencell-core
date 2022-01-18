@@ -79,8 +79,10 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                 }
 
                 DunningCollectionPlan dunningCollectionPlan = collectionPlanService.findByPolicy(policy);
-                dunningCollectionPlan.setLastActionDate(new Date());
-                collectionPlanService.update(dunningCollectionPlan);
+                if(dunningCollectionPlan != null) {
+                    dunningCollectionPlan.setLastActionDate(new Date());
+                    collectionPlanService.update(dunningCollectionPlan);
+                }
             }
             jobExecutionResult.addNbItemsCorrectlyProcessed(policies.size() - jobExecutionResult.getNbItemsProcessedWithError());
         } catch (Exception exception) {
