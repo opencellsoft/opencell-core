@@ -63,10 +63,11 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
     private static final String STOP_REASON = "Changement de politique de recouvrement";
 
     public DunningCollectionPlan findByPolicy(DunningPolicy dunningPolicy) {
-        return getEntityManager()
-                    .createNamedQuery("DunningCollectionPlan.findByPolicy", entityClass)
-                    .setParameter("dunningPolicy", dunningPolicy)
-                    .getSingleResult();
+        List<DunningCollectionPlan> result = getEntityManager()
+                                                .createNamedQuery("DunningCollectionPlan.findByPolicy", entityClass)
+                                                .setParameter("dunningPolicy", dunningPolicy)
+                                                .getResultList();
+        return result != null && !result.isEmpty() ? result.get(0) : null;
     }
 
     public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
