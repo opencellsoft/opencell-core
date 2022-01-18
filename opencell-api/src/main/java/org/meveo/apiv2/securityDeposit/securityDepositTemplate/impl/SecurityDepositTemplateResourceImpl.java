@@ -5,6 +5,7 @@ import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.securityDeposit.SDTemplateListStatus;
 import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
 import org.meveo.apiv2.securityDeposit.securityDepositTemplate.SecurityDepositTemplateResource;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 
 import javax.inject.Inject;
@@ -19,6 +20,8 @@ public class SecurityDepositTemplateResourceImpl implements SecurityDepositTempl
 
     @Inject
     SecurityDepositTemplateService securityDepositTemplateService;
+
+
     private SecurityDepositTemplateMapper securityDepositTemplateMapper = new SecurityDepositTemplateMapper();
 
     @Override
