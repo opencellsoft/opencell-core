@@ -9,6 +9,8 @@ import static org.meveo.model.shared.DateUtils.daysBetween;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import javax.ejb.Stateless;
@@ -281,8 +283,16 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		if(!forcePause) {
 			Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToPause.getDunningLevelInstances()
 					.stream().max(Comparator.comparing(DunningLevelInstance::getId));
-			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseUntil.after(DateUtils.addDaysToDate(collectionPlanToPause.getStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
-				throw new BusinessApiException("Collection Plan with id "+collectionPlanToPause.getId()+" cannot be paused, the pause until date is after the planned trigger date of the last level");
+            LocalDate pauseDate = pauseUntil.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            LocalDate endDate = DateUtils.addDaysToDate(collectionPlanToPause.getStartDate(), dunningLevelInstance.get().getDaysOverdue())
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseDate.isAfter(endDate)) {
+                throw new BusinessApiException("Collection Plan with id " + collectionPlanToPause.getId()
+                        + " cannot be paused, the pause until date is after the planned trigger date of the last level");
 			}
 		}
 		
