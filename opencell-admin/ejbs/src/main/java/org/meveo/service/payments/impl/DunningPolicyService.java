@@ -19,10 +19,12 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.dunning.*;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 
@@ -43,6 +45,9 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     @Inject
     private CurrencyService currencyService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
     public DunningPolicy findByName(String policyName) {
         try {
@@ -80,6 +85,51 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         return (policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty());
     }
     
+    public boolean minBalanceTriggerCurrencyCheck(DunningPolicy policy, Invoice invoice) {
+		boolean minBalanceTriggerCurrencyBool;
+        policy = refreshOrRetrieve(policy);
+        if (policy == null) {
+            throw new BusinessException("Policy does not exists");
+        }
+
+    	if(policy.getMinBalanceTriggerCurrency() != null && policy.getMinBalanceTriggerCurrency().getCurrencyCode() != null) {
+    		TradingCurrency tradingCurrency = tradingCurrencyService.findById(invoice.getTradingCurrency().getId());
+    		 if(tradingCurrency != null && policy.getMinBalanceTriggerCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
+    			 minBalanceTriggerCurrencyBool = true;
+    		 }else {
+    			 minBalanceTriggerCurrencyBool = false;
+    		 }
+    	}else {
+    		minBalanceTriggerCurrencyBool = true;
+    	}
+        return minBalanceTriggerCurrencyBool;
+    }
+    
+    public boolean minBalanceTriggerCheck(DunningPolicy policy, Invoice invoice) {
+		boolean minBalanceTriggerBool;
+        policy = refreshOrRetrieve(policy);
+        invoice = invoiceService.refreshOrRetrieve(invoice);
+        if (policy == null) {
+            throw new BusinessException("Policy does not exists");
+        }
+
+    	if(policy.getMinBalanceTrigger() != null) {
+    		
+            BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
+                    .map(RecordedInvoice::getUnMatchingAmount)
+                    .orElse(BigDecimal.ZERO);
+            
+    		if(minBalance.doubleValue() >= policy.getMinBalanceTrigger()) {
+    			minBalanceTriggerBool = true;
+    		}else {
+    			minBalanceTriggerBool = false;
+    		}
+    	}else{
+    		minBalanceTriggerBool = true;
+    	}
+
+    	return minBalanceTriggerBool;
+    }
     private String buildPolicyRulesFilter(List<DunningPolicyRule> rules) {
         StringBuilder ruleFilter = new StringBuilder();
         if(rules != null && !rules.isEmpty()) {

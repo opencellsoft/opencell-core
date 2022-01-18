@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -55,6 +56,7 @@ import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningActionInstanceService;
@@ -215,13 +217,29 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 for (Invoice invoice : eligibleInvoice) {
                     if (invoice.getId() == collectionPlan.getRelatedInvoice().getId()) {
-                        canBeSwitched.add(collectionPlan.getId());
+                    	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, invoice) && dunningPolicyService.minBalanceTriggerCheck(policy, invoice)) {
+                            canBeSwitched.add(collectionPlan.getId());
+                    	}
                     }
                 }
             }
             canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
         } else if (!dunningPolicyService.existPolicyRulesCheck(policy)) {
-            canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
+        	
+            for (DunningCollectionPlan collectionPlan : collectionPlans) {
+                collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+                if (collectionPlan == null) {
+                    throw new EntityDoesNotExistsException("Collection plan does not exits");
+                }
+
+            	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, collectionPlan.getRelatedInvoice()) && dunningPolicyService.minBalanceTriggerCheck(policy, collectionPlan.getRelatedInvoice())) {
+                    canBeSwitched.add(collectionPlan.getId());
+            	}
+      	                
+            }
+            canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
+        	
+            //canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         } else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
