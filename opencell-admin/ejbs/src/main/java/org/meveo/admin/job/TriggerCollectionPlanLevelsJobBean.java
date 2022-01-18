@@ -176,11 +176,11 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
                     collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
                 }
-                if (levelInstance.getDunningLevel().isEndOfDunningLevel() && dateToCompare.before(today)) {
+                if (levelInstance.getDunningLevel().isEndOfDunningLevel()
+                        && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
                 }
-                if (countAutoActions == levelInstance.getActions().size()
-                        || collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
+                if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
                 }
                 if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {

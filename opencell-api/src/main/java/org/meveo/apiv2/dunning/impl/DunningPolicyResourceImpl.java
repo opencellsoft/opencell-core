@@ -2,12 +2,13 @@ package org.meveo.apiv2.dunning.impl;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -16,23 +17,17 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.apiv2.dunning.DunningPolicy;
-import org.meveo.apiv2.dunning.DunningPolicyInput;
-import org.meveo.apiv2.dunning.DunningPolicyRuleLine;
-import org.meveo.apiv2.dunning.DunningPolicyRules;
-import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
-import org.meveo.apiv2.dunning.PolicyRule;
+import org.meveo.apiv2.dunning.*;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
 import org.meveo.apiv2.dunning.service.DunningPolicyLevelApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
-import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.apiv2.report.SuccessResponse;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningPolicyRule;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.DunningPolicyLevelService;
+import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
@@ -44,7 +39,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
     private DunningPolicyLevelApiService policyLevelApiService;
 
     @Inject
-    private DunningPolicyLevelService dunningPolicyLevelService;
+    private DunningLevelService levelService;
 
     @Inject
     private DunningPolicyService dunningPolicyService;
@@ -134,18 +129,21 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         }
 
         List<String> updatedFields = new ArrayList<>();
-        
         if (checkIfPolicyLevelsAreChanged(dunningPolicyInput.getDunningPolicyLevels(), dunningPolicyEntity.getDunningLevels())) {
             dunningPolicyEntity.getDunningLevels().clear();
             List<DunningPolicyLevel> dunningPolicyLevelList = new ArrayList<>();
-            for (Resource resource : dunningPolicyInput.getDunningPolicyLevels()) {
-                DunningPolicyLevel level = dunningPolicyLevelService.findById(resource.getId());
+            for (org.meveo.apiv2.dunning.DunningPolicyLevel resource : dunningPolicyInput.getDunningPolicyLevels()) {
+                ofNullable(resource.getDunningLevelId()).orElseThrow(() -> new BadRequestException("Dunning level id is required"));
+                org.meveo.model.dunning.DunningLevel level = levelService.findById(resource.getDunningLevelId());
                 if (level != null) {
-                    level.setDunningPolicy(dunningPolicyEntity);
-                    dunningPolicyLevelList.add(level);
+                    DunningPolicyLevel policyLevel = new DunningPolicyLevel();
+                    policyLevel.setDunningLevel(level);
+                    dunningPolicyLevelList.add(policyLevel);
+                } else {
+                    throw new NotFoundException("Dunning level with id " + resource.getDunningLevelId() + " does not exits");
                 }
             }
-            updatedFields.add("dunningLevels");
+            updatedFields.add("dunningPolicyLevels");
             dunningPolicyEntity.setDunningLevels(dunningPolicyLevelList);
         }
         
@@ -174,14 +172,20 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 .build();
     }
     
-    private boolean checkIfPolicyLevelsAreChanged(List<Resource> policyLevelResources, List<DunningPolicyLevel> policyLevelEntities) {
+    private boolean checkIfPolicyLevelsAreChanged(List<org.meveo.apiv2.dunning.DunningPolicyLevel> policyLevelResources,
+                                                  List<DunningPolicyLevel> policyLevelEntities) {
         
         if (policyLevelResources == null) {
             return false;
         }
         if (policyLevelResources.size() == policyLevelEntities.size()) {
-            List<Long> resourceIds = policyLevelResources.stream().map(Resource::getId).collect(Collectors.toList());
-            List<Long> entityIds = policyLevelEntities.stream().map(DunningPolicyLevel::getId).collect(Collectors.toList());
+            List<Long> resourceIds = policyLevelResources.stream()
+                    .map(org.meveo.apiv2.dunning.DunningPolicyLevel::getDunningLevelId)
+                    .collect(toList());
+            List<Long> entityIds = policyLevelEntities.stream()
+                    .map(DunningPolicyLevel::getDunningLevel)
+                    .map(org.meveo.model.dunning.DunningLevel::getId)
+                    .collect(toList());
             
             for (Long resourceId : resourceIds) {
                 if (!entityIds.contains(resourceId)) {

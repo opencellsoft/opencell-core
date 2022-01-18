@@ -31,9 +31,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .amount(entity.getAmount())
                 .currentBalance(entity.getCurrentBalance())
                 .status(entity.getStatus())
-                .productInstance(entity.getProductInstance())
                 .subscription(createResource(entity.getSubscription()))
-                .product(createResource(entity.getProduct()))
                 .externalReference(entity.getExternalReference())
                 .build();
     }
@@ -70,19 +68,13 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         securityDeposit.setAmount(resource.getAmount());
         securityDeposit.setCurrentBalance(resource.getCurrentBalance());
         securityDeposit.setStatus(resource.getStatus());
-        securityDeposit.setProductInstance(resource.getProductInstance());
         if (resource.getSubscription() != null) {
             Subscription subscription = new Subscription();
             subscription.setId(resource.getSubscription().getId());
             subscription.setCode(resource.getSubscription().getCode());
             securityDeposit.setSubscription(subscription);
         }
-        if (resource.getProduct() != null) {
-            Product product = new Product();
-            product.setId(resource.getProduct().getId());
-            product.setCode(resource.getProduct().getCode());
-            securityDeposit.setProduct(product);
-        }
+
         securityDeposit.setExternalReference(resource.getExternalReference());
         return securityDeposit;
     }
