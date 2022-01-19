@@ -1513,8 +1513,10 @@ public class CpqQuoteApi extends BaseApi {
                 		 edr.setOriginRecord(System.currentTimeMillis()+"");
                 		 UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
                          Double quantity = null;
-                		 if(chargetemplate.getUsageQuantityAttribute() != null)
-                		     quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                		 if(chargetemplate.getUsageQuantityAttribute() != null) {
+                             Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                             quantity = quantityValue instanceof String ? Double.parseDouble((String) quantityValue) : (Double) quantityValue;
+                         }
                 		 edr.setQuantity(quantity!=null?new BigDecimal(quantity):BigDecimal.ZERO);
                          List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
                          
