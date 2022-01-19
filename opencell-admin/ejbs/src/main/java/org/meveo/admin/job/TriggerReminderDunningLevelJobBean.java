@@ -150,7 +150,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                 Name name = ofNullable(billingAccount.getName()).orElse(null);
                 Title title = ofNullable(name).map(Name::getTitle).orElse(null);
                 params.put("customerAccountLegalEntityTypeCode",
-                        ofNullable(title).map(Title::getCode).orElse(""));
+                        ofNullable(title).map(Title::getDescription).orElse(""));
             }
             params.put("customerAccountAddressAddress1",
                     customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
