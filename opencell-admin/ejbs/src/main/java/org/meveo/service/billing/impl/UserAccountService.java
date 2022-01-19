@@ -41,16 +41,12 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@Inject
 	private WalletService walletService;
 	
-	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount,UserAccountDto accountDto)
+	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)
 			throws BusinessException {
 
 		log.debug("creating userAccount with details {}", new Object[] { userAccount});
 
 		UserAccount existingUserAccount = findByCode(userAccount.getCode());
-		UserAccount findUserAccount = findByCode(accountDto.getParentUserAccountCode());
-		if(accountDto.getParentUserAccountCode()!=null) {
-		userAccount.setParentUserAccount(findUserAccount);
-		}
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}

@@ -227,7 +227,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException {
 
         if (entity.isTransient()) {
-            userAccountService.createUserAccount(entity.getBillingAccount(), entity,null);
+            userAccountService.createUserAccount(entity.getBillingAccount(), entity);
         } else {
             entity = getPersistenceService().update(entity);
         }
