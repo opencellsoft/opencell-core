@@ -181,4 +181,12 @@ public class SecurityDeposit extends BusinessCFEntity {
     public void setInvoiceReceiptNumber(String invoiceReceiptNumber) {
         this.invoiceReceiptNumber = invoiceReceiptNumber;
     }
+
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 }
