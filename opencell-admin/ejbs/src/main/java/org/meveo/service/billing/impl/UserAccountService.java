@@ -47,8 +47,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		log.debug("creating userAccount with details {}", new Object[] { userAccount});
 
 		UserAccount existingUserAccount = findByCode(userAccount.getCode());
-		UserAccount findUserAccount = findByCode(accountDto.getParentUserAccount());
-		if(accountDto.getParentUserAccount()!=null) {
+		UserAccount findUserAccount = findByCode(accountDto.getParentUserAccountCode());
+		if(accountDto.getParentUserAccountCode()!=null) {
 		userAccount.setParentUserAccount(findUserAccount);
 		}
 		if (existingUserAccount != null) {

@@ -147,8 +147,8 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, null);
-        if (postData.getParentUserAccount() != null) {
-			userAccount.setParentUserAccount(userAccountService.findByCode(postData.getParentUserAccount()));
+        if (postData.getParentUserAccountCode() != null) {
+			userAccount.setParentUserAccount(userAccountService.findByCode(postData.getParentUserAccountCode()));
 		}
         userAccount = userAccountService.update(userAccount);
 
