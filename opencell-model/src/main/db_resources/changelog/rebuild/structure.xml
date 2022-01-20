@@ -15694,8 +15694,9 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
 
     </changeSet>
-    <changeSet author="Ilyasstalal" id="rebuild-str-fk-478">
-        <addForeignKeyConstraint baseColumnNames="parent_useraccount_id" baseTableName="billing_user_account" constraintName="fk_meveo_useracounet_parentid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+    
+    <changeSet author="Ilyasstalal" id="rebuild-str-fk-1644">
+        <addForeignKeyConstraint baseColumnNames="parent_useraccount_id" baseTableName="billing_user_account" constraintName="fk_user_account_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
     <!-- end fk -->
@@ -17063,7 +17064,7 @@
 
     <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui" />
     <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui" />
-
+	<changeSet id="#INTRD-4410_20220117" author="IlyassTalal" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -45,10 +45,13 @@ public class UserAccountDto extends AccountDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -13552444627686818L;
-   
+    
+    /** Parent user account. */
 	private String parentUserAccountCode;
    
-    List<String> userAccountCodes;
+	/** Sub user accounts. */
+    List<String> userAccountCodes = new ArrayList<>();
+    
     /** The billing account. */
     @XmlElement(required = true)
     private String billingAccount;
@@ -99,9 +102,6 @@ public class UserAccountDto extends AccountDto {
         super();
     }
 
-	private UserAccountDto parentUserAccount;
-
-	private List<UserAccountDto> userAccounts;
     /**
      * Instantiates a new user account dto.
      * 
@@ -142,13 +142,12 @@ public class UserAccountDto extends AccountDto {
         }
         setRegistrationNo(e.getRegistrationNo());
         setVatNo(e.getVatNo());
-        if(e.getUserAccounts()!=null) {
-        	for(UserAccount userAccount:e.getUserAccounts()) {
-        		if(userAccount.getParentUserAccount()!=null) {
-        			getParentUserAccount().setCode(userAccount.getCode());
-        			getParentUserAccount().setParentUserAccountCode(userAccount.getParentUserAccount().getCode());
-        		}
-        		getUserAccounts().add(getParentUserAccount());
+        
+        if (e.getUserAccounts() != null) {
+        	for(UserAccount subUserAccount: e.getUserAccounts()) {
+        	    if(subUserAccount != null) {
+        	        getUserAccountCodes().add(subUserAccount.getCode());
+        	    }
         	}
         }
     }
@@ -399,7 +398,7 @@ public class UserAccountDto extends AccountDto {
 		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate
 				+ ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate=" + statusDate
 				+ ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions
-				+ ", parentUserAccount=" + parentUserAccount + ",userAccounts =" + userAccounts + "]";
+				+ ", parentUserAccount=" + parentUserAccountCode + ",userAccounts =" + userAccountCodes + "]";
 	}
 
 	/**
@@ -431,29 +430,5 @@ public class UserAccountDto extends AccountDto {
 	public void setUserAccountCodes(List<String> userAccountCodes) {
 		this.userAccountCodes = userAccountCodes;
 	}
-
-	public UserAccountDto getParentUserAccount() {
-		if(parentUserAccount==null) {
-		 parentUserAccount=new UserAccountDto();
-		}
-		return parentUserAccount;
-	}
-
-	public void setParentUserAccount(UserAccountDto parentUserAccount) {
-		this.parentUserAccount = parentUserAccount;
-	}
-
-	public List<UserAccountDto> getUserAccounts() {
-		if(userAccounts==null) {
-			userAccounts=new ArrayList<UserAccountDto>();
-		}
-		return userAccounts;
-	}
-
-	public void setUserAccounts(List<UserAccountDto> userAccounts) {
-		this.userAccounts = userAccounts;
-	}
-	
-	
     
 }
