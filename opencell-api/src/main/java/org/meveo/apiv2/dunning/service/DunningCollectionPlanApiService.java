@@ -204,10 +204,24 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<Map<String, Set<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
-        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
+    	
+        //List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
+    	
         Set<Long> canBeSwitched = new TreeSet<>();
         Set<Long> canNotBeSwitched = new TreeSet<>();
         Map<String, Set<Long>> massSwitchResult = new HashMap<>();
+        
+        List<Long> invoiceListId = new ArrayList<Long>();
+    	
+        for (DunningCollectionPlan collectionPlan : collectionPlans) {
+            collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+            if (collectionPlan == null) {
+                throw new EntityDoesNotExistsException("Collection plan does not exits");
+            }
+            invoiceListId.add(collectionPlan.getRelatedInvoice().getId());
+        }
+        
+        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy, invoiceListId);
 
         if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
@@ -225,7 +239,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
             canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
         } else if (!dunningPolicyService.existPolicyRulesCheck(policy)) {
-        	
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
                 collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
                 if (collectionPlan == null) {
@@ -235,14 +248,12 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, collectionPlan.getRelatedInvoice()) && dunningPolicyService.minBalanceTriggerCheck(policy, collectionPlan.getRelatedInvoice())) {
                     canBeSwitched.add(collectionPlan.getId());
             	}
-      	                
             }
             canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
-        	
-            //canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         } else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
+        
         massSwitchResult.put("canBESwitched", canBeSwitched);
         massSwitchResult.put("canNotBESwitched", canNotBeSwitched);
         return of(massSwitchResult);
