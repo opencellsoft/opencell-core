@@ -492,7 +492,7 @@ public class DeleteCustomersScript extends Script {
 			String noCheckVal = record.get("noCheck");
 			if (isNotBlank(noCheckVal) && !noCheckAllowedValues.contains(noCheckVal)) {
 				throw new BusinessException(
-						String.format("Invalid ''noCheck'' value = %s , allowed values are [0,1]", noCheckVal));
+						String.format("Invalid 'noCheck' value = %s , allowed values are [0,1]", noCheckVal));
 			}
 			boolean noCheck = "1".contentEquals(noCheckVal);
 
@@ -521,7 +521,7 @@ public class DeleteCustomersScript extends Script {
 	private void checkOpenEDRs(Customer customer) throws BusinessException {
 		try {
 			log.debug(" Start checkOpenEDRs for customer = {} ", customer);
-			String query = "select count(edr.id) from EDR edr where edr.status = ''OPEN'' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			String query = "select count(edr.id) from EDR edr where edr.status = 'OPEN' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
 			
 			Object count = edrService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId())
 					.getSingleResult();
@@ -540,7 +540,7 @@ public class DeleteCustomersScript extends Script {
 	private void checkOpenWOs(Customer customer) throws BusinessException {
 		try {
 			log.debug(" Start checkOpenWOs for customer = {} ", customer);
-			String query = "select count(wo.id) from WalletOperation wo where wo.status = ''OPEN'' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			String query = "select count(wo.id) from WalletOperation wo where wo.status = 'OPEN' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
 			final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
 					WalletOperationService.class.getSimpleName());
 
@@ -562,7 +562,7 @@ public class DeleteCustomersScript extends Script {
 		try {
 
 			log.debug(" Start checkOpenRTs for customer = {} ", customer);
-			String query = "select count(rt.id) from RatedTransaction rt where rt.status = ''OPEN'' and rt.billingAccount.customerAccount.customer.id =:customerId ";
+			String query = "select count(rt.id) from RatedTransaction rt where rt.status = 'OPEN' and rt.billingAccount.customerAccount.customer.id =:customerId ";
 			Object count = this.ratedTransactionService.getEntityManager().createQuery(query)
 					.setParameter("customerId", customer.getId()).getSingleResult();
 			log.debug(" count of open RTs = {} ", count);
@@ -581,7 +581,7 @@ public class DeleteCustomersScript extends Script {
 		try {
 
 			log.debug(" Start checkUnmatchedAOs for customer = {} ", customer);
-			String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = ''O'' and ao.customerAccount.customer.id =:customerId ";
+			String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = 'O' and ao.customerAccount.customer.id =:customerId ";
 			final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
 					AccountOperationService.class.getSimpleName());
 			Object count = accountOperationService.getEntityManager().createQuery(query)
@@ -2936,7 +2936,7 @@ public class DeleteCustomersScript extends Script {
 			String noCheckVal = record.get("noCheck");
 			if (isNotBlank(noCheckVal) && !noCheckAllowedValues.contains(noCheckVal)) {
 				throw new BusinessException(
-						String.format("Invalid ''noCheck'' value = %s , allowed values are [0,1]", noCheckVal));
+						String.format("Invalid 'noCheck' value = %s , allowed values are [0,1]", noCheckVal));
 			}
 			boolean noCheck = "1".contentEquals(noCheckVal);
 
@@ -2965,7 +2965,7 @@ public class DeleteCustomersScript extends Script {
 	private void checkOpenEDRs(Customer customer) throws BusinessException {
 		try {
 			log.debug(" Start checkOpenEDRs for customer = {} ", customer);
-			String query = "select count(edr.id) from EDR edr where edr.status = ''OPEN'' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			String query = "select count(edr.id) from EDR edr where edr.status = 'OPEN' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
 
 			Object count = edrService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId())
 					.getSingleResult();
@@ -2984,7 +2984,7 @@ public class DeleteCustomersScript extends Script {
 	private void checkOpenWOs(Customer customer) throws BusinessException {
 		try {
 			log.debug(" Start checkOpenWOs for customer = {} ", customer);
-			String query = "select count(wo.id) from WalletOperation wo where wo.status = ''OPEN'' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			String query = "select count(wo.id) from WalletOperation wo where wo.status = 'OPEN' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
 			final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
 					WalletOperationService.class.getSimpleName());
 
@@ -3006,7 +3006,7 @@ public class DeleteCustomersScript extends Script {
 		try {
 
 			log.debug(" Start checkOpenRTs for customer = {} ", customer);
-			String query = "select count(rt.id) from RatedTransaction rt where rt.status = ''OPEN'' and rt.billingAccount.customerAccount.customer.id =:customerId ";
+			String query = "select count(rt.id) from RatedTransaction rt where rt.status = 'OPEN' and rt.billingAccount.customerAccount.customer.id =:customerId ";
 			Object count = this.ratedTransactionService.getEntityManager().createQuery(query)
 					.setParameter("customerId", customer.getId()).getSingleResult();
 			log.debug(" count of open RTs = {} ", count);
@@ -3025,7 +3025,7 @@ public class DeleteCustomersScript extends Script {
 		try {
 
 			log.debug(" Start checkUnmatchedAOs for customer = {} ", customer);
-			String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = ''O'' and ao.customerAccount.customer.id =:customerId ";
+			String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = 'O' and ao.customerAccount.customer.id =:customerId ";
 			final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
 					AccountOperationService.class.getSimpleName());
 			Object count = accountOperationService.getEntityManager().createQuery(query)
