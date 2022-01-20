@@ -2,15 +2,21 @@ package org.meveo.model.worldline.sips.checkout;
 
 import org.meveo.model.worldline.sips.BaseRequest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class WalletOrderRequest extends BaseRequest {
     private String amount;
     private String currencyCode;
+    private String initialSchemeTransactionIdentifier;
     private String merchantWalletId;
     private String orderChannel;
     private String paymentMeanId;
     private String transactionReference;
-    private String initialSchemeTransactionIdentifier;
     private String paymentPattern;
+    
+    
 
     public String getTransactionReference() {
         return transactionReference;
@@ -64,8 +70,8 @@ public class WalletOrderRequest extends BaseRequest {
 		return initialSchemeTransactionIdentifier;
 	}
 
-	public void setInitialSchemeTransactionIdentifier(String schemeTransactionIdentifier) {
-		this.initialSchemeTransactionIdentifier = schemeTransactionIdentifier;
+	public void setInitialSchemeTransactionIdentifier(String initialSchemeTransactionIdentifier) {
+		this.initialSchemeTransactionIdentifier = initialSchemeTransactionIdentifier;
 	}
 
 	public String getPaymentPattern() {
@@ -75,7 +81,10 @@ public class WalletOrderRequest extends BaseRequest {
 	public void setPaymentPattern(String paymentPattern) {
 		this.paymentPattern = paymentPattern;
 	}
-	
+
+
+
+
 	
     
 }
