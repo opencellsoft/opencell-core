@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +45,13 @@ public class UserAccountDto extends AccountDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -13552444627686818L;
-
+    
+    /** Parent user account. */
+	private String parentUserAccountCode;
+   
+	/** Sub user accounts. */
+    List<String> userAccountCodes = new ArrayList<>();
+    
     /** The billing account. */
     @XmlElement(required = true)
     private String billingAccount;
@@ -86,21 +94,27 @@ public class UserAccountDto extends AccountDto {
      */
     private SubscriptionsDto subscriptions = new SubscriptionsDto();
 
+
     /**
      * Instantiates a new user account dto.
      */
     public UserAccountDto() {
         super();
     }
-    
+
     /**
      * Instantiates a new user account dto.
      * 
      * @param e UserAccount entity
      */
+
 	public UserAccountDto(UserAccount e) {
 		super(e);
         id = e.getId();
+       
+        if (e.getParentUserAccount() != null) {
+        	setParentUserAccountCode(e.getParentUserAccount().getCode());
+        }
 		if (e.getBillingAccount() != null) {
 			setBillingAccount(e.getBillingAccount().getCode());
 			setBillingAccountDescription(e.getBillingAccount().getDescription());
@@ -128,8 +142,21 @@ public class UserAccountDto extends AccountDto {
         }
         setRegistrationNo(e.getRegistrationNo());
         setVatNo(e.getVatNo());
+        
+        if (e.getUserAccounts() != null) {
+        	for(UserAccount subUserAccount: e.getUserAccounts()) {
+        	    if(subUserAccount != null) {
+        	        getUserAccountCodes().add(subUserAccount.getCode());
+        	    }
+        	}
+        }
     }
 	
+	
+
+	
+
+
 	public UserAccountDto(UserAccount e, List<GDPRInfoDto> userAccountGdpr) {
 		this(e);
 		if(userAccountGdpr != null && !userAccountGdpr.isEmpty()) {
@@ -368,9 +395,11 @@ public class UserAccountDto extends AccountDto {
 
     @Override
     public String toString() {
-        return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status
-                + ",statusDate=" + statusDate + ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions + "]";
-    }
+		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate
+				+ ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate=" + statusDate
+				+ ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions
+				+ ", parentUserAccount=" + parentUserAccountCode + ",userAccounts =" + userAccountCodes + "]";
+	}
 
 	/**
 	 * @return the infoGdpr
@@ -384,6 +413,22 @@ public class UserAccountDto extends AccountDto {
 	 */
 	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
 		this.infoGdpr = infoGdpr;
+	}
+
+	public String getParentUserAccountCode() {
+		return parentUserAccountCode;
+	}
+
+	public void setParentUserAccountCode(String parentUserAccountCode) {
+		this.parentUserAccountCode = parentUserAccountCode;
+	}
+
+	public  List<String> getUserAccountCodes() {
+		return userAccountCodes;
+	}
+
+	public void setUserAccountCodes(List<String> userAccountCodes) {
+		this.userAccountCodes = userAccountCodes;
 	}
     
 }

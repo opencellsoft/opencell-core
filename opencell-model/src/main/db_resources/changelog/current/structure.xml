@@ -174,8 +174,7 @@
         	update ${db.schema.adapted}billing_wallet_operation set offer_code = null where offer_code = 'NO_OFFER';
         </sql>
 
-      </changeSet>
-
+      </changeSet>      
       <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
 
         <sql>
@@ -11725,7 +11724,13 @@ order by date_trunc('month', i.invoice_date) DESC
         </dropColumn>
      </changeSet>
 
-
+    <changeSet id="#INTRD-4410_20220117" author="IlyassTalal">
+    	<addColumn tableName="billing_user_account">
+            <column name="parent_useraccount_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="parent_useraccount_id" baseTableName="billing_user_account" constraintName="fk_user_account_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+    </changeSet>
 
 
 </databaseChangeLog>
