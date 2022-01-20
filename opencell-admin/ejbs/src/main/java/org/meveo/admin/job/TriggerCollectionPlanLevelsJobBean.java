@@ -112,21 +112,22 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 nextLevel = index + 1;
                 int countAutoActions = 0;
                 for (int i = 0; i < levelInstance.getActions().size(); i++) {
-                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)
-                            && levelInstance.getActions().get(i).getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
-                        if (levelInstance.getActions().get(i).getActionType().equals(SCRIPT)) {
-                            if (levelInstance.getActions().get(i).getDunningAction() != null) {
-                                scriptInstanceService.execute(levelInstance.getActions().get(i).getDunningAction().getScriptInstance().getCode(), new HashMap<>());
+                    DunningActionInstance actionInstance = levelInstance.getActions().get(i);
+                    if (actionInstance.getActionMode().equals(ActionModeEnum.AUTOMATIC)
+                            && actionInstance.getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
+                        if (actionInstance.getActionType().equals(SCRIPT)) {
+                            if (actionInstance.getDunningAction() != null) {
+                                scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
                             }
                         }
-                        if (levelInstance.getActions().get(i).getActionType().equals(SEND_NOTIFICATION)) {
-                            if (levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(EMAIL)
-                                    || levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(LETTER)) {
-                                sendEmail(levelInstance.getActions().get(i).getDunningAction().getActionNotificationTemplate(),
+                        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
+                            if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
+                                    || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
+                                sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
                                         collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate(), jobExecutionResult);
                             }
                         }
-                        if(levelInstance.getActions().get(i).getActionType().equals(RETRY_PAYMENT)) {
+                        if(actionInstance.getActionType().equals(RETRY_PAYMENT)) {
                             BillingAccount billingAccount = collectionPlan.getBillingAccount();
                             if(billingAccount != null && billingAccount.getCustomerAccount() != null
                                     && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
@@ -163,15 +164,17 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                                 }
                             }
                         }
-                        levelInstance.getActions().get(i).setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                        actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
                         countAutoActions++;
-                        lastAction = levelInstance.getActions().get(i).getCode();
+                        lastAction = actionInstance.getCode();
                         if (i + 1 < levelInstance.getActions().size()) {
                             nextAction = levelInstance.getActions().get(i + 1).getCode();
                         }
                     }
                 }
-                levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
+                if(levelInstance.getActions().size() == countAutoActions) {
+                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
+                }
                 collectionPlan.setLastActionDate(new Date());
                 collectionPlan.setLastAction(lastAction);
                 collectionPlan.setNextAction(nextAction);
@@ -179,7 +182,8 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
                     collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
                 }
-                if (levelInstance.getDunningLevel().isEndOfDunningLevel()
+                if (levelInstance.getDunningLevel() != null
+                        && levelInstance.getDunningLevel().isEndOfDunningLevel()
                         && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
                 }
@@ -190,7 +194,11 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                     levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
                 }
             }
-            levelInstanceService.update(levelInstance);
+            if(levelInstance.getDunningLevel() == null) {
+                log.error("No dunning level associated to level instance id {} ", levelInstance.getId());
+            } else {
+                levelInstanceService.update(levelInstance);
+            }
             index++;
         }
         if (updateCollectionPlan) {
