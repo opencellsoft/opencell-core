@@ -95,7 +95,7 @@ public class ProviderService extends PersistenceService<Provider> {
         }
         if (provider == null) {
             provider = getProviderNoCache();
-            tenantCacheContainerProvider.addUpdateTenant(provider);
+            tenantCacheContainerProvider.addUpdateTenant(provider, false);
         }
         return provider;
     }
@@ -135,11 +135,10 @@ public class ProviderService extends PersistenceService<Provider> {
     public Provider update(Provider provider) throws BusinessException {
 
         provider = super.update(provider);
-        
-        
+
         // Refresh appProvider request scope variable if applicable
-        if (appProvider.getId().equals(provider.getId())) {            
-            refreshAppProvider(provider);            
+        if (appProvider.getId().equals(provider.getId())) {
+            refreshAppProvider(provider);
         }
 
         return provider;
@@ -166,9 +165,9 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     private void refreshAppProvider(Provider provider) {
 
-        try {            
+        try {
             BeanUtils.copyProperties(appProvider, provider);
-            
+
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to update appProvider fields");
         }
@@ -179,9 +178,9 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setCfValues(provider.getCFValuesCopy());
-        
-        tenantCacheContainerProvider.addUpdateTenant(provider);
-        
+
+        tenantCacheContainerProvider.addUpdateTenant(provider, true);
+
     }
 
     /**
@@ -196,8 +195,7 @@ public class ProviderService extends PersistenceService<Provider> {
             return null;
         }
 
-        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where lower(code)=:code", entityClass).setParameter("code", code.toLowerCase())
-            .setMaxResults(1);
+        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where lower(code)=:code", entityClass).setParameter("code", code.toLowerCase()).setMaxResults(1);
 
         try {
             return query.getSingleResult();
@@ -216,11 +214,11 @@ public class ProviderService extends PersistenceService<Provider> {
     private void createProviderUserInKC(Provider provider) throws BusinessException {
 
         String name = (provider.getCode() + "." + "superadmin").toLowerCase();
-        
+
         KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
-        
+
         log.info("Add provider user in {} KC with token: {}", name, session.getTokenString());
-        
+
         // Create user
         UserDto userDto = new UserDto();
         userDto.setUsername(name);
@@ -242,16 +240,16 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     public GenericSequence getNextMandateNumber() throws BusinessException {
-        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);      
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
         return genericSequence;
     }
 
     public GenericSequence getNextCustomerNumber() throws BusinessException {
-        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);       
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
         return genericSequence;
     }
-    
+
     public void updateCustomerNumberSequence(GenericSequence genericSequence) throws BusinessException {
-        serviceSingleton.updateCustomerNumberSequence(genericSequence);       
+        serviceSingleton.updateCustomerNumberSequence(genericSequence);
     }
 }
