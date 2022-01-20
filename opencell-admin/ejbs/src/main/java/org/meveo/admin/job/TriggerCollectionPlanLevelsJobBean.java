@@ -152,9 +152,11 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                                 if(preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.DIRECTDEBIT)
                                         || preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.CARD)) {
                                     try {
-                                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
-                                                true, true, paymentGateway, null, null,
-                                                null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                        if(accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
+                                            paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                                    true, true, paymentGateway, null, null,
+                                                    null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                        }
                                     } catch (NoAllOperationUnmatchedException | UnbalanceAmountException exception) {
                                         throw new BusinessException(exception);
                                     }
@@ -224,7 +226,7 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 Name name = ofNullable(billingAccount.getName()).orElse(null);
                 Title title = ofNullable(name).map(Name::getTitle).orElse(null);
                 params.put("customerAccountLegalEntityTypeCode",
-                        ofNullable(title).map(Title::getCode).orElse(""));
+                        ofNullable(title).map(Title::getDescription).orElse(""));
             }
             params.put("customerAccountAddressAddress1", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getAddress1() : "");
