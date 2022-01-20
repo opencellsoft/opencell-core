@@ -26,9 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.ejb.AsyncResult;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -511,9 +516,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	/**
 	 * @param billableAmountSummary 
 	 * @param billingRun
+	 * @param nbRuns 
+	 * @return 
 	 */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void linkBillableEntitiesToBR(BillingRun billingRun) {
+    public Future<String> linkBillableEntitiesToBR(BillingRun billingRun, Long min, Long max) {
         BillingCycle billingCycle = billingRun.getBillingCycle();
         Date startDate = billingRun.getStartDate();
         Date endDate = billingRun.getEndDate();
@@ -525,9 +532,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ? "Subscription.updateBR" :
                 startDate == null ? "BillingAccount.updateBR" : "BillingAccount.updateBRLimitByNextInvoiceDate";
+        
         Query query = getEntityManager().createNamedQuery(sqlName).setParameter("firstTransactionDate", new Date(0))
                 .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
-
+        query.setParameter("billingRun", billingRun);
         if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
             startDate = DateUtils.setDateToEndOfDay(startDate);
             if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
@@ -535,12 +543,47 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             } else {
             	endDate= DateUtils.setDateToStartOfDay(endDate);
             }
-
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
         }
-        query.setParameter("billingRun", billingRun);
-        query.executeUpdate();
+
+    	query.setParameter("min", min).setParameter("max", max);
+    	int updated = query.executeUpdate();
+    	log.info("LINK {} BAs TO BR",updated);
+        return new AsyncResult<String>("OK");
+    }
+    
+	/**
+	 * @param billableAmountSummary 
+	 * @param billingRun
+	 * @param nbRuns 
+	 */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Object[] getMinMaxReport(BillingRun billingRun, long nbRuns) {
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+        if ((startDate != null) && (endDate == null)) {
+            endDate = new Date();
+        }
+        if (endDate != null && startDate == null) {
+        	startDate = new Date(0);
+        }
+        
+        Query minMaxQuery= getEntityManager().createNamedQuery("BillingAccount.getMinMaxToUpdate").setParameter("firstTransactionDate", new Date(0))
+                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+        if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
+            startDate = DateUtils.setDateToEndOfDay(startDate);
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+            	endDate= DateUtils.setDateToEndOfDay(endDate);
+            } else {
+            	endDate= DateUtils.setDateToStartOfDay(endDate);
+            }
+            minMaxQuery.setParameter("startDate", startDate);
+            minMaxQuery.setParameter("endDate", endDate);
+        }
+
+        return (Object[]) minMaxQuery.getSingleResult();
     }
 
 	/**
@@ -632,8 +675,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		} else if (useEnd) {
 			query.setParameter("endDate", endDate);
 		}
-		log.info("======= GETTING InvoicingItems =======");
 		final Map<Long, List<InvoicingItem>> itemsByBAID = ((List<Object[]>)query.getResultList()).stream().map(x-> new InvoicingItem(x)).collect(Collectors.groupingBy(InvoicingItem::getBillingAccountId));
+		log.info("======= InvoicingItems ======="+itemsByBAID.size());
 		billingAccountDetailsMap.values().stream().forEach(x->x.setInvoicingItems(itemsByBAID.get(x.getBillingAccountId())));
 		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
 	}

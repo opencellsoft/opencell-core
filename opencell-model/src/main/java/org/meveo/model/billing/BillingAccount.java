@@ -140,7 +140,8 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
         
-        @NamedQuery(name = "BillingAccount.updateBR", query = "update BillingAccount ba set ba.billingRun =:billingRun where id in (SELECT distinct r.billingAccount.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle)"),
+        @NamedQuery(name = "BillingAccount.getMinMaxToUpdate", query = "SELECT min(r.billingAccount.id), max(r.billingAccount.id), count(r.billingAccount.id), min(r.id), max(r.id) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle"),
+        @NamedQuery(name = "BillingAccount.updateBR", query = "update BillingAccount ba set ba.billingRun =:billingRun where id in (SELECT distinct r.billingAccount.id FROM RatedTransaction r WHERE r.billingAccount.id>=:min and r.billingAccount.id<:max and r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle)"),
 
         
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount")})

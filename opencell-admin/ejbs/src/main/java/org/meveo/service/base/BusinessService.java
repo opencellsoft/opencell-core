@@ -42,6 +42,8 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      * @param code Code to match
      * @return A single entity matching code
      */
+	
+	public static final int MAX_UPDATE_PER_CALL= 500000;
     public P findByCode(String code) {
 
         if (code == null) {

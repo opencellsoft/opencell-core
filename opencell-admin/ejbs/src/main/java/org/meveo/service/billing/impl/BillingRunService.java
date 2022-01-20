@@ -1069,7 +1069,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
             	log.info("==================== 3");
                 AmountsToInvoice billableAmountSummary = getBRSummury(billingRun);
-                billingAccountService.linkBillableEntitiesToBR(billingRun);
+                billingAccountService.linkBillableEntitiesToBR(billingRun, null, null);
                 totalEntityCount=billableAmountSummary.getEntityToInvoiceId().intValue();
                 billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableAmountSummary);
                 log.info("Minimum invoicing amount is skipped.");

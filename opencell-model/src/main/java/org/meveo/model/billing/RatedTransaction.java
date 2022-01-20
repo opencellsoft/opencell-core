@@ -146,8 +146,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT wo.ratedTransaction FROM WalletOperation wo WHERE wo.id=:walletOperationId"),
 
         @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id in :ids"),
-        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoUsingScKey", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id>=:minId and r.id<=:maxId and r.billingAccount.id=:baId and r.seller.id=:sellerId and r.wallet.id=:walletId and r.invoiceSubCategory.id=:scId and r.userAccount.id=:uaId"),
-        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoUsingInterval", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id>=:minId and r.id<=:maxId"),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoUsingScKey", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id>=:minId and r.id<:maxId and r.billingAccount.id=:baId and r.seller.id=:sellerId and r.wallet.id=:walletId and r.invoiceSubCategory.id=:scId and r.userAccount.id=:uaId"),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoUsingInterval", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id>=:minId and r.id<:maxId"),
 
         @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r where r.status!='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.id>:lastId order by r.id "),
         @NamedQuery(name = "RatedTransaction.listBetweenTwoDatesByStatus", query = "SELECT r FROM RatedTransaction r where r.status in (:status) AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.id>:lastId order by r.id "),
@@ -170,7 +170,7 @@ import org.meveo.model.tax.TaxClass;
         		"join TaxMapping m on (rt.tax.id<> m.tax.id and m.accountTaxCategory.id=(case when ba.taxCategory is not null then ba.taxCategory when ba.taxCategory is null then cc.taxCategory end) " + 
         		"and (m.chargeTaxClass=rt.taxClass or m.chargeTaxClass is null) and (m.sellerCountry=cs.tradingCountry or m.sellerCountry is null)  " + 
         		"and (m.buyerCountry=ba.tradingCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=br.invoiceDate) AND (br.invoiceDate<m.valid.to or m.valid.to is null)) ) " + 
-        		"where br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
+        		"where rt.id>=:min and rt.id<:max and br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
         
         @NamedQuery(name = "RatedTransaction.getInvoicingItems", query = 
     	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),','), count(rt.id) "

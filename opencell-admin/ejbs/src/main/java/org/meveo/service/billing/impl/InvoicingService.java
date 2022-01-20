@@ -276,21 +276,29 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		if(expectMassRtsPerInvoice && sca.getItemNumber()>2) {
 			final long intervalSize = max-min+1;
 			List<Long[]>intervals = getIntervals(min, max);
+			int update=0;
+			int i=1;
+			log.info("========= UPDATING {} RTS USING {} INTERVALS ==============",sca.getItemNumber(),intervals.size());
 			if((intervalSize)==sca.getItemNumber()) {
 				for(Long[] interval :intervals) {
-					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]);
-					query.executeUpdate();
+					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]);
+					update=query.executeUpdate();
+					if(intervalSize>1000) {
+						getEntityManager().flush();
+						log.info(" =========INTERVAL {}, {} TO {}, UPDATED:{}==============",i,interval[0],interval[1],update);
+					}
 				}
 			} else {
 				for (Long[] interval : intervals) {
-					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingScKey").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[0]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
-					query.executeUpdate();
-					getEntityManager().flush();
+					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingScKey").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
+					update=query.executeUpdate();
+					if(intervalSize>1000) {
+						getEntityManager().flush();
+						log.info(" =========SC_KEY {}, {} TO {}, UPDATED:{}==============",i,interval[0],interval[1],update);
+					}
 				}
 			}
-			if(intervalSize>1000) {
-				getEntityManager().flush();
-			}
+			
 		} else {
 			for (List<Long> rtIds : Lists.partition(largeList, MAX_RT_TO_UPDATE_PER_TRANSACTION)) {
 				Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("ids", rtIds);
@@ -305,14 +313,14 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		Long next=min+MAX_RT_TO_UPDATE_PER_TRANSACTION;
 		while(next<max) {
 			checksums.add(next);
+			next=next+MAX_RT_TO_UPDATE_PER_TRANSACTION;
 		}
 		checksums.add(max+1);
 		int index = 0; 
 		List<Long[]> intervals = new ArrayList<>();
 		while(index+1<checksums.size()) {
-			long intervalMin=checksums.get(index);
-			long intervalMax=checksums.get(index+1);
-			index++;
+			long intervalMin=checksums.get(index++);
+			long intervalMax=checksums.get(index);
 			intervals.add(new Long[]{intervalMin, intervalMax});
 		}
 		return intervals;

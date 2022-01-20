@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -458,9 +459,8 @@ public class BillingService extends PersistenceService<BillingRun> {
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) || BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
 			minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
 		}
-
+		Object[] minMaxReport = billingAccountService.getMinMaxReport(billingRun, nbRuns);
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-			log.info("==================== 2");
 			int totalEntityCount = 0;
 
 			// Use billable amount calculation one billable entity at a time when minimum
@@ -473,8 +473,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 				List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun, 0, 0, false);
 
 				totalEntityCount = entities != null ? entities.size() : 0;
-				log.info(
-						"Will create min RTs and update billable amount totals for Billing run {} for {} entities of type {}. Minimum invoicing amount is used for accounts hierarchy {}",
+				log.info("Will create min RTs and update billable amount totals for Billing run {} for {} entities of type {}. Minimum invoicing amount is used for accounts hierarchy {}",
 						billingRun.getId(), totalEntityCount, type, minAmountForAccounts);
 				if ((entities != null) && (entities.size() > 0)) {
 					SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
@@ -491,7 +490,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 							log.error("", e);
 						}
 					}
-//#MEL remove billableEntities
+					//#MEL remove billableEntities
 					// for (Future<List<IBillableEntity>> futureItsNow : asyncReturns) {
 					// billableEntities.addAll(futureItsNow.get());
 					// }
@@ -500,69 +499,94 @@ public class BillingService extends PersistenceService<BillingRun> {
 				// A simplified form of calculating of total amounts when no need to worry about
 				// minimum amounts
 			} else {
-				log.info("==================== 3");
+				log.info("==================== linkBillableEntitiesToBR -- Minimum invoicing amount is skipped ====================");
 				//#MEL TODO manage subscription/order cases
 				AmountsToInvoice billableAmountSummary = getBRSummury(billingRun);
-				billingAccountService.linkBillableEntitiesToBR(billingRun);
+				linkBillableEntitiesToBR(billingRun, nbRuns, minMaxReport, waitingMillis);
 				totalEntityCount = billableAmountSummary.getEntityToInvoiceId().intValue();
 				billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableAmountSummary);
-				log.info("Minimum invoicing amount is skipped.");
 			}
-			log.info("==================== 4");
 			// #MEL BE<>
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), totalEntityCount, totalEntityCount, BillingRunStatusEnum.PREINVOICED, new Date());
 		}
 
 		final boolean isFullAutomatic = billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC;
-		boolean proceedToInvoiceGenerating = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || 
-				(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || isFullAutomatic) || appProvider.isAutomaticInvoicing()));
+		boolean proceedToInvoiceGenerating = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || isFullAutomatic) || appProvider.isAutomaticInvoicing()));
 
 		if (proceedToInvoiceGenerating) {
-			log.info("recalculateTaxes IS SKIPPED==================== 5");
-
+			log.info("==================== recalculateTaxes ====================");
 			// boolean instantiateMinRts = !includesFirstRun &&
 			// (minAmountForAccounts.isMinAmountCalculationActivated());
 			// MinAmountForAccounts minAmountForAccountsIncludesFirstRun =
 			// minAmountForAccounts.includesFirstRun(!includesFirstRun);
 			
 			//#MEL resolve tax category for BAs with empty tax Category and category with ELs
-			//invoiceService.recalculateTaxes(billingRun);
+			//recalculateTaxes(billingRun,(Long)minMaxReport[3],(Long)minMaxReport[4], nbRuns, waitingMillis);
 			
-			log.info("createAgregatesAndInvoice ==================== 6");
-			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic);
-			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-					BillingRunStatusEnum.INVOICES_GENERATED, null);
+			log.info("==================== start invoices creation loop ====================");
+			boolean expectInvoicesWithLargeRTsNumber = true;
+			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic );
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
 		}
 		if (BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus())) {
-			
 			log.info("apply threshold rules for all invoices generated with {}", billingRun);
 			// billingRunService.applyThreshold(billingRun);
-			// rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis,
-			// jobInstanceId, result);
-			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-					BillingRunStatusEnum.POSTINVOICED, null);
+			// rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
 			if (isFullAutomatic) {
 				billingRun = billingRunExtensionService.findById(billingRun.getId());
 			}
 		}
 
 		if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && isFullAutomatic) {
-			log.info("==================== 7");
-			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-					BillingRunStatusEnum.POSTVALIDATED, null);
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
 		}
 
-		if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus()) && !isFullAutomatic) {
-			log.info("==================== 8");
-			log.info("Will assign invoice numbers to invoices of Billing run {} of type {}", billingRun.getId(), type);
-			invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
-			assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
-			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED,
-					null);
+		if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+			if(!isFullAutomatic) {
+				log.info("==================== assignInvoiceNumberAndIncrementBAInvoiceDates ====================");
+				log.info("Will assign invoice numbers to invoices of Billing run {} of type {}", billingRun.getId(), type);
+				invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+				assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+			}
+			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
 		}
-		log.info("==================== 9");
+		log.info("==================== END OF Processing billingRun id={} status={} ====================", billingRun.getId(),billingRun.getStatus());
+	}
+
+	/**
+	 * @param billingRun
+	 * @param nbRuns
+	 * @param minMaxReport
+	 * @param waitingMillis 
+	 */
+	private void linkBillableEntitiesToBR(BillingRun billingRun, long nbRuns, Object[] minMaxReport, long waitingMillis) {
+		long min = (long) minMaxReport[0];
+		long max = (long) minMaxReport[1];
+		while (min < max) {
+			log.info("==={} TO {}===", min, max);
+			final long maxRT = max > min + 500000 ? min + 500000 : max + 1;
+			billingAccountService.linkBillableEntitiesToBR(billingRun, min, maxRT);
+			min = maxRT;
+		}
+	}
+
+	/**
+	 * @param billingRun
+	 * @param nbrThreads 
+	 * @param waitingMillis 
+	 * @param long1
+	 * @param long2
+	 */
+	private void recalculateTaxes(BillingRun billingRun, Long min, Long max, long nbrThreads, long waitingMillis) {
+		//#MEL to be optimized (select/update by keys)
+		while (min < max) {
+			final long maxRT = max > min + 100000 ? min + 100000 : max + 1;
+			invoiceService.recalculateTaxes(billingRun, min, maxRT);
+			min = maxRT;
+		}
 	}
 
 	private AmountsToInvoice getBRSummury(BillingRun billingRun) {
@@ -596,5 +620,32 @@ public class BillingService extends PersistenceService<BillingRun> {
 		}
 		return query.getSingleResult();
 	}
+	
+	private List<List<BillingAccountDetailsItem>> dispatchInvoicing(List<BillingAccountDetailsItem> items, int threads){
+		final List<List<BillingAccountDetailsItem>> result = IntStream.range(0, threads).mapToObj(ArrayList<BillingAccountDetailsItem>::new).collect(Collectors.toList());
+		int minIndex=0;
+		int[] counters = new int[threads];
+		items.stream().forEach(item->dispatch(item,result,minIndex,counters));
+		log.info("====== dispatched: "+result.stream().map(x->""+x.size()).collect(Collectors.joining(",")));
+		return result;
+	}
 
+	/**
+	 * @param item
+	 * @param result
+	 * @param counters 
+	 * @param minIndex 
+	 * @param min 
+	 * @return
+	 */
+	private void dispatch(BillingAccountDetailsItem item, List<List<BillingAccountDetailsItem>> result, int minIndex, int[] counters) {
+		result.get(minIndex).add(item);
+		counters[minIndex]=counters[minIndex]+item.getInvoicingItems().stream().mapToInt(InvoicingItem::getCount).sum()+100;//100 added to make some equilibre equilibre with other operations
+		int min=counters[0];
+		for(int i=1; i<counters.length;i++) {
+			if(counters[i]<min) {
+				minIndex=counters[i];
+			}
+		}
+	}
 }

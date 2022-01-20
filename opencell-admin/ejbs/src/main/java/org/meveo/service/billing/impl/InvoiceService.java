@@ -3939,12 +3939,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	/**
 	 * @param billingRun
+	 * @param max
+	 * @param min 
 	 */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void recalculateTaxes(BillingRun billingRun) {
+	public void recalculateTaxes(BillingRun billingRun, Long min, Long max) {
     	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getRecalculableRTDetails")
-        .setParameter("billingRunId", billingRun.getId()).getResultList();
+    			.setParameter("billingRunId", billingRun.getId()).setParameter("min", min).setParameter("max", max).getResultList();
     	for(Object[] result : results) {
     		//#MEL should be optimized later
     		RatedTransaction rt = (RatedTransaction) result[0];
