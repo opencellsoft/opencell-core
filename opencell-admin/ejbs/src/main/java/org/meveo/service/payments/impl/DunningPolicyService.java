@@ -106,6 +106,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     public boolean minBalanceTriggerCurrencyCheck(DunningPolicy policy, Invoice invoice) {
 		boolean minBalanceTriggerCurrencyBool;
         policy = refreshOrRetrieve(policy);
+        invoice = invoiceService.refreshOrRetrieve(invoice);
         if (policy == null) {
             throw new BusinessException("Policy does not exists");
         }
