@@ -204,9 +204,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<Map<String, Set<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
-    	
-        //List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
-    	
         Set<Long> canBeSwitched = new TreeSet<>();
         Set<Long> canNotBeSwitched = new TreeSet<>();
         Map<String, Set<Long>> massSwitchResult = new HashMap<>();
