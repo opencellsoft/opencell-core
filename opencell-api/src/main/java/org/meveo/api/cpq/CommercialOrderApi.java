@@ -144,6 +144,10 @@ public class CommercialOrderApi extends BaseApi {
 		if(!Strings.isEmpty(orderDto.getUserAccountCode())) {
 			order.setUserAccount(loadEntityByCode(userAccountService, orderDto.getUserAccountCode(), UserAccount.class));
 		}
+		if(!Strings.isEmpty(orderDto.getOrderNumber())) {
+			order.setOrderNumber(orderDto.getOrderNumber());
+		}
+
 		if(orderDto.getAccessDto() != null) {
 			var accessDto = orderDto.getAccessDto();
 			if(Strings.isEmpty(accessDto.getCode()))

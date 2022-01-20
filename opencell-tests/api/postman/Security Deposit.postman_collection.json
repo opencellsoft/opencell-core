@@ -1,12 +1,12 @@
 {
 	"info": {
-		"_postman_id": "b7c89241-6a34-41c2-b150-081ceaf6fc01",
+		"_postman_id": "df4578c2-97d9-4ddd-ac22-7e0f3af958a7",
 		"name": "Security Deposit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Security Deposit Settings",
+			"name": "financeSettings",
 			"item": [
 				{
 					"name": "Create Security Deposit Settings",
@@ -30,7 +30,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"useSecurityDeposit\": false,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true,\n    \"allowRenew\": true,\n    \"allowTransfer\": true\n}",
+							"raw": "{\n    \"useSecurityDeposit\": false,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -69,11 +69,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"useSecurityDeposit\": false,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true,\n    \"allowRenew\": true,\n    \"allowTransfer\": true\n}",
+							"raw": "{\n    \"useSecurityDeposit\": true,\n    \"maxAmountPerSecurityDeposit\": 1,\n    \"maxAmountPerCustomer\": 1,\n    \"autoRefund\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"

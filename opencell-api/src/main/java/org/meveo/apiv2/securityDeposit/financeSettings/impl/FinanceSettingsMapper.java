@@ -13,8 +13,6 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .maxAmountPerSecurityDeposit(entity.getMaxAmountPerSecurityDeposit())
                 .maxAmountPerCustomer(entity.getMaxAmountPerCustomer())
                 .autoRefund(entity.isAutoRefund())
-                .allowRenew(entity.isAllowRenew())
-                .allowTransfer(entity.isAllowTransfer())
                 .build();
     }
 
@@ -27,8 +25,6 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
         financeSettings.setMaxAmountPerSecurityDeposit(resource.getMaxAmountPerSecurityDeposit());
         financeSettings.setMaxAmountPerCustomer(resource.getMaxAmountPerCustomer());
         financeSettings.setAutoRefund(resource.getAutoRefund());
-        financeSettings.setAllowRenew(resource.getAllowRenew());
-        financeSettings.setAllowTransfer(resource.getAllowTransfer());
         return financeSettings;
     }
 }

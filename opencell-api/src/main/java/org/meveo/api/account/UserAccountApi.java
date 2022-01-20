@@ -119,7 +119,15 @@ public class UserAccountApi extends AccountEntityApi {
         UserAccount userAccount = new UserAccount();
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
-
+        
+        if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
+    		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
+    		if (parentUserAccount != null) {
+    			userAccount.setParentUserAccount(parentUserAccount);
+    		} else {
+    		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
+    		}
+        }
         userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
@@ -147,6 +155,15 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, null);
+        
+        if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
+            UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
+            if (parentUserAccount != null) {
+                userAccount.setParentUserAccount(parentUserAccount);
+            } else {
+                throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
+            }
+        }
 
         userAccount = userAccountService.update(userAccount);
 

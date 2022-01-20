@@ -19,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
@@ -71,19 +72,19 @@ public class SecurityDeposit extends BusinessCFEntity {
     @Column(name = "status")
     private SecurityDepositStatusEnum status = SecurityDepositStatusEnum.NEW;
 
-    @Column(name = "product_instance")
-    private String productInstance;
-
     @ManyToOne
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
     @Column(name = "external_reference")
     private String externalReference;
+
+    @Column(name = "invoice_receipt_number")
+    private String invoiceReceiptNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
 
     public SecurityDepositTemplate getTemplate() {
         return template;
@@ -157,14 +158,6 @@ public class SecurityDeposit extends BusinessCFEntity {
         this.status = status;
     }
 
-    public String getProductInstance() {
-        return productInstance;
-    }
-
-    public void setProductInstance(String productInstance) {
-        this.productInstance = productInstance;
-    }
-
     public Subscription getSubscription() {
         return subscription;
     }
@@ -173,19 +166,27 @@ public class SecurityDeposit extends BusinessCFEntity {
         this.subscription = subscription;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public String getExternalReference() {
         return externalReference;
     }
 
     public void setExternalReference(String externalReference) {
         this.externalReference = externalReference;
+    }
+
+    public String getInvoiceReceiptNumber() {
+        return invoiceReceiptNumber;
+    }
+
+    public void setInvoiceReceiptNumber(String invoiceReceiptNumber) {
+        this.invoiceReceiptNumber = invoiceReceiptNumber;
+    }
+
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
     }
 }

@@ -9,6 +9,8 @@ import static org.meveo.model.shared.DateUtils.daysBetween;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import javax.ejb.Stateless;
@@ -62,6 +64,14 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     private static final String STOP_REASON = "Changement de politique de recouvrement";
 
+    public DunningCollectionPlan findByPolicy(DunningPolicy dunningPolicy) {
+        List<DunningCollectionPlan> result = getEntityManager()
+                                                .createNamedQuery("DunningCollectionPlan.findByPolicy", entityClass)
+                                                .setParameter("dunningPolicy", dunningPolicy)
+                                                .getResultList();
+        return result != null && !result.isEmpty() ? result.get(0) : null;
+    }
+
     public DunningCollectionPlan switchCollectionPlan(DunningCollectionPlan oldCollectionPlan, DunningPolicy policy, DunningPolicyLevel selectedPolicyLevel) {
         DunningStopReason stopReason = dunningStopReasonsService.findByStopReason(STOP_REASON);
         policy = policyService.refreshOrRetrieve(policy);
@@ -104,7 +114,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                                 && nextLevel.getDunningActions() != null && !nextLevel.getDunningActions().isEmpty()) {
                             int dOverDue = Optional.ofNullable(nextLevel.getDaysOverdue()).orElse(0);
                             int i = 0;
-                            while(i < nextLevel.getDunningActions().size()) {
+                            while(i < nextLevel.getDunningActions().size() - 1) {
                             	if(nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
                             		break;
                             	}else {
@@ -112,8 +122,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                             	}
                             }
                             newCollectionPlan.setNextAction((nextLevel.getDunningActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC))
-                            		?nextLevel.getDunningActions().get(i).getCode()
-                            				:nextLevel.getDunningActions().get(0).getCode());
+                            		? nextLevel.getDunningActions().get(i).getCode()
+                            				: nextLevel.getDunningActions().get(0).getCode());
                             newCollectionPlan.setNextActionDate(addDaysToDate(newCollectionPlan.getStartDate(), dOverDue));
                         }
                     }
@@ -132,7 +142,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
     public List<DunningCollectionPlan> findByInvoiceId(long invoiceID) {
         return getEntityManager()
-                    .createNamedQuery("DunningCollectionPlan.findByInvoiceId", DunningCollectionPlan.class)
+                    .createNamedQuery("DunningCollectionPlan.findByInvoiceId", entityClass)
                     .setParameter("invoiceID", invoiceID)
                     .getResultList();
     }
@@ -273,8 +283,16 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 		if(!forcePause) {
 			Optional<DunningLevelInstance> dunningLevelInstance = collectionPlanToPause.getDunningLevelInstances()
 					.stream().max(Comparator.comparing(DunningLevelInstance::getId));
-			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseUntil.after(DateUtils.addDaysToDate(collectionPlanToPause.getStartDate(), dunningLevelInstance.get().getDaysOverdue()))) {
-				throw new BusinessApiException("Collection Plan with id "+collectionPlanToPause.getId()+" cannot be paused, the pause until date is after the planned trigger date of the last level");
+            LocalDate pauseDate = pauseUntil.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            LocalDate endDate = DateUtils.addDaysToDate(collectionPlanToPause.getStartDate(), dunningLevelInstance.get().getDaysOverdue())
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseDate.isAfter(endDate)) {
+                throw new BusinessApiException("Collection Plan with id " + collectionPlanToPause.getId()
+                        + " cannot be paused, the pause until date is after the planned trigger date of the last level");
 			}
 		}
 		
@@ -355,7 +373,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
 
 	public List<DunningCollectionPlan> findDunningCollectionPlansToResume() {
         return getEntityManager()
-                .createNamedQuery("DunningCollectionPlan.DCPtoResume", DunningCollectionPlan.class)
+                .createNamedQuery("DunningCollectionPlan.DCPtoResume", entityClass)
                 .setParameter("resumeDate", new Date())
                 .getResultList();
 	}

@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -55,6 +56,7 @@ import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningActionInstanceService;
@@ -202,10 +204,21 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<Map<String, Set<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
-        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
         Set<Long> canBeSwitched = new TreeSet<>();
         Set<Long> canNotBeSwitched = new TreeSet<>();
         Map<String, Set<Long>> massSwitchResult = new HashMap<>();
+        
+        List<Long> invoiceListId = new ArrayList<Long>();
+    	
+        for (DunningCollectionPlan collectionPlan : collectionPlans) {
+            collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+            if (collectionPlan == null) {
+                throw new EntityDoesNotExistsException("Collection plan does not exits");
+            }
+            invoiceListId.add(collectionPlan.getRelatedInvoice().getId());
+        }
+        
+        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy, invoiceListId);
 
         if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
@@ -215,16 +228,29 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 for (Invoice invoice : eligibleInvoice) {
                     if (invoice.getId() == collectionPlan.getRelatedInvoice().getId()) {
-                        canBeSwitched.add(collectionPlan.getId());
+                    	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, invoice) && dunningPolicyService.minBalanceTriggerCheck(policy, invoice)) {
+                            canBeSwitched.add(collectionPlan.getId());
+                    	}
                     }
                 }
             }
             canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
         } else if (!dunningPolicyService.existPolicyRulesCheck(policy)) {
-            canBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
+            for (DunningCollectionPlan collectionPlan : collectionPlans) {
+                collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+                if (collectionPlan == null) {
+                    throw new EntityDoesNotExistsException("Collection plan does not exits");
+                }
+
+            	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, collectionPlan.getRelatedInvoice()) && dunningPolicyService.minBalanceTriggerCheck(policy, collectionPlan.getRelatedInvoice())) {
+                    canBeSwitched.add(collectionPlan.getId());
+            	}
+            }
+            canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
         } else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
+        
         massSwitchResult.put("canBESwitched", canBeSwitched);
         massSwitchResult.put("canNotBESwitched", canNotBeSwitched);
         return of(massSwitchResult);

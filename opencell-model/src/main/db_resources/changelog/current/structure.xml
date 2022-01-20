@@ -174,8 +174,7 @@
         	update ${db.schema.adapted}billing_wallet_operation set offer_code = null where offer_code = 'NO_OFFER';
         </sql>
 
-      </changeSet>
-
+      </changeSet>      
       <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
 
         <sql>
@@ -4879,7 +4878,7 @@ END $$;]]>
             </column>
             <column name="cpq_quote_product_id" type="bigint" />
             <column name="string_value" type="varchar(255)" />
-            <column name="double_value" type="float8" />
+            <column name="double_value" type="${type.float}" />
             <column name="date_value" type="datetime" />
         </createTable>
 
@@ -5440,7 +5439,7 @@ END $$;]]>
 
             <column name="string_value" type="varchar(255)" />
             <column name="date_value" type="datetime" />
-            <column name="double_value" type="float8" />
+            <column name="double_value" type="${type.float}" />
 
         </createTable>
 
@@ -5975,15 +5974,15 @@ END $$;]]>
             <column name="ppml_id" type="bigint" />
 
             <column name="long_value" type ="int8"/>
-            <column name="double_value" type ="float8"/>
+            <column name="double_value" type ="${type.float}"/>
             <column name="string_value" type="varchar(255)"/>
 
             <column name="date_value" type="datetime"/>
             <column name="from_date_value" type="datetime"/>
             <column name="to_date_value" type="datetime"/>
 
-            <column name="from_double_value" type ="float8"/>
-            <column name="to_double_value" type ="float8"/>
+            <column name="from_double_value" type ="${type.float}"/>
+            <column name="to_double_value" type ="${type.float}"/>
 
         </createTable>
 
@@ -6142,7 +6141,7 @@ END $$;]]>
             </column>
 
             <column name="string_value" type="varchar(255)" />
-            <column name="double_value" type="float8" />
+            <column name="double_value" type="${type.float}" />
             <column name="date_value" type="datetime" />
         </createTable>
 
@@ -9715,9 +9714,6 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
 
-        <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
-
         <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
 
@@ -9828,7 +9824,7 @@ public class OrderAdvancement extends ModuleScript {
                 <constraints nullable="false" />
             </column>
             <column name="interest_for_delay_sequence" type="int4" />
-            <column name="min_balance_trigger" type="float8" defaultValue="0" >
+            <column name="min_balance_trigger" type="${type.float}" defaultValue="0" >
                 <constraints nullable="false" />
             </column>
             <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
@@ -11186,7 +11182,7 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addColumn tableName="ar_dunning_action">
 			<column name="dunning_agent_id" type="bigint"/>
 		</addColumn>
-		<addForeignKeyConstraint constraintName="fk_dunning_agent"
+		<addForeignKeyConstraint constraintName="fk_dunning_action_agent"
 			baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action"
             referencedColumnNames="id" referencedTableName="dunning_agent"
 			deferrable="false" initiallyDeferred="false"
@@ -11310,25 +11306,6 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="INTRD-2449_2021114" author="ZBariki">
         <dropDefaultValue columnName="rule_line_joint" tableName="dunning_policy_rule_line"/>
 	</changeSet>
-
-    <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA">
-    	<dropForeignKeyConstraint baseTableName="dunning_collection_management" constraintName="fk_dunning_collection_management_dunning_settings"/>
-	    <dropPrimaryKey constraintName="dunning_collection_management_pkey" tableName="dunning_collection_management"/>
-		<renameTable oldTableName="dunning_collection_management" newTableName="dunning_agent"/>
-		<renameSequence oldSequenceName="dunning_collection_management_seq" newSequenceName="dunning_agent_seq" />
-    	<addPrimaryKey columnNames="id" constraintName="dunning_agent_pkey" tableName="dunning_agent" />
-		<addForeignKeyConstraint constraintName="fk_dunning_agent_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
-
-		<addColumn tableName="ar_dunning_action">
-			<column name="dunning_agent_id" type="bigint"/>
-		</addColumn>
-		<addForeignKeyConstraint constraintName="fk_dunning_agent"
-			baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action"
-            referencedColumnNames="id" referencedTableName="dunning_agent"
-			deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION"/>
-    </changeSet>
 
     <changeSet id="INTRD-2418_20211105" author="TarikFA.">
     	<dropForeignKeyConstraint baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_collection_plan_status"/>
@@ -11471,7 +11448,7 @@ order by date_trunc('month', i.invoice_date) DESC
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy_level" />
 
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
-        	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+        	constraintName="fk_dunning_level_instance_collection_plan" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
 
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_status_id" baseTableName="dunning_level_instance"
@@ -11508,11 +11485,11 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addUniqueConstraint columnNames="code" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
 
 		<addForeignKeyConstraint baseColumnNames="dunning_agent_id" baseTableName="dunning_action_instance"
-        	constraintName="fk_dunning_agent" deferrable="false" initiallyDeferred="false"
+        	constraintName="fk_dunning_action_instance_agent" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" />
             
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_action_instance"
-        	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+        	constraintName="fk_dunning_action_instance_collection_plan" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
             
         <addForeignKeyConstraint baseColumnNames="dunning_level_instance_id" baseTableName="dunning_action_instance"
@@ -11722,5 +11699,38 @@ order by date_trunc('month', i.invoice_date) DESC
     	<dropUniqueConstraint constraintName="uk_dunning_action_instance_code" tableName="dunning_action_instance"/>
     	<addUniqueConstraint columnNames="code, dunning_level_instance_id" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
     </changeSet>
+
+    <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui">
+        <dropForeignKeyConstraint baseTableName="security_deposit" constraintName="fk_cpq_product_security_deposit"/>
+        <dropColumn tableName="security_deposit">
+            <column name="product_instance"></column>
+            <column name="product_id"></column>
+        </dropColumn>
+        <addColumn tableName="security_deposit">
+            <column name="invoice_receipt_number" type="varchar(255)" />
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+
+         <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="security_deposit"
+			constraintName="fk_billing_service_instance_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+
+    </changeSet>
+
+     <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui">
+         <dropColumn tableName="finance_settings">
+            <column name="allow_renew"  />
+            <column name="allow_transfer"  />
+        </dropColumn>
+     </changeSet>
+
+    <changeSet id="#INTRD-4410_20220117" author="IlyassTalal">
+    	<addColumn tableName="billing_user_account">
+            <column name="parent_useraccount_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="parent_useraccount_id" baseTableName="billing_user_account" constraintName="fk_user_account_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+    </changeSet>
+
 
 </databaseChangeLog>

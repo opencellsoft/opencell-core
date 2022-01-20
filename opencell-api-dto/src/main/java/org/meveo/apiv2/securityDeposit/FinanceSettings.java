@@ -27,9 +27,4 @@ public interface FinanceSettings extends Resource {
     @NotNull
     Boolean getAutoRefund();
 
-    @NotNull
-    Boolean getAllowRenew();
-
-    @NotNull
-    Boolean getAllowTransfer();
 }

@@ -22,6 +22,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -111,21 +112,22 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 nextLevel = index + 1;
                 int countAutoActions = 0;
                 for (int i = 0; i < levelInstance.getActions().size(); i++) {
-                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)
-                            && levelInstance.getActions().get(i).getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
-                        if (levelInstance.getActions().get(i).getActionType().equals(SCRIPT)) {
-                            if (levelInstance.getActions().get(i).getDunningAction() != null) {
-                                scriptInstanceService.execute(levelInstance.getActions().get(i).getDunningAction().getScriptInstance().getCode(), new HashMap<>());
+                    DunningActionInstance actionInstance = levelInstance.getActions().get(i);
+                    if (actionInstance.getActionMode().equals(ActionModeEnum.AUTOMATIC)
+                            && actionInstance.getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
+                        if (actionInstance.getActionType().equals(SCRIPT)) {
+                            if (actionInstance.getDunningAction() != null) {
+                                scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
                             }
                         }
-                        if (levelInstance.getActions().get(i).getActionType().equals(SEND_NOTIFICATION)) {
-                            if (levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(EMAIL)
-                                    || levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(LETTER)) {
-                                sendEmail(levelInstance.getActions().get(i).getDunningAction().getActionNotificationTemplate(),
+                        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
+                            if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
+                                    || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
+                                sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
                                         collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate(), jobExecutionResult);
                             }
                         }
-                        if(levelInstance.getActions().get(i).getActionType().equals(RETRY_PAYMENT)) {
+                        if(actionInstance.getActionType().equals(RETRY_PAYMENT)) {
                             BillingAccount billingAccount = collectionPlan.getBillingAccount();
                             if(billingAccount != null && billingAccount.getCustomerAccount() != null
                                     && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
@@ -151,24 +153,28 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                                 if(preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.DIRECTDEBIT)
                                         || preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.CARD)) {
                                     try {
-                                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
-                                                true, true, paymentGateway, null, null,
-                                                null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                        if(accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
+                                            paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                                    true, true, paymentGateway, null, null,
+                                                    null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                        }
                                     } catch (NoAllOperationUnmatchedException | UnbalanceAmountException exception) {
                                         throw new BusinessException(exception);
                                     }
                                 }
                             }
                         }
-                        levelInstance.getActions().get(i).setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                        actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
                         countAutoActions++;
-                        lastAction = levelInstance.getActions().get(i).getCode();
+                        lastAction = actionInstance.getCode();
                         if (i + 1 < levelInstance.getActions().size()) {
                             nextAction = levelInstance.getActions().get(i + 1).getCode();
                         }
                     }
                 }
-                levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
+                if(levelInstance.getActions().size() == countAutoActions) {
+                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
+                }
                 collectionPlan.setLastActionDate(new Date());
                 collectionPlan.setLastAction(lastAction);
                 collectionPlan.setNextAction(nextAction);
@@ -176,18 +182,23 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                 if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
                     collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
                 }
-                if (levelInstance.getDunningLevel().isEndOfDunningLevel() && dateToCompare.before(today)) {
+                if (levelInstance.getDunningLevel() != null
+                        && levelInstance.getDunningLevel().isEndOfDunningLevel()
+                        && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
                 }
-                if (countAutoActions == levelInstance.getActions().size()
-                        || collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
+                if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
                 }
                 if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {
                     levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
                 }
             }
-            levelInstanceService.update(levelInstance);
+            if(levelInstance.getDunningLevel() == null) {
+                log.error("No dunning level associated to level instance id {} ", levelInstance.getId());
+            } else {
+                levelInstanceService.update(levelInstance);
+            }
             index++;
         }
         if (updateCollectionPlan) {
@@ -216,7 +227,15 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                     billingAccount.getContactInformation().getPhone() : "");
 
             CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-            params.put("customerAccountLegalEntityTypeCode", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            if(billingAccount.getIsCompany()) {
+                params.put("customerAccountLegalEntityTypeCode",
+                        ofNullable(billingAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            } else {
+                Name name = ofNullable(billingAccount.getName()).orElse(null);
+                Title title = ofNullable(name).map(Name::getTitle).orElse(null);
+                params.put("customerAccountLegalEntityTypeCode",
+                        ofNullable(title).map(Title::getDescription).orElse(""));
+            }
             params.put("customerAccountAddressAddress1", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getAddress1() : "");
             params.put("customerAccountAddressZipCode", customerAccount.getAddress() != null ?

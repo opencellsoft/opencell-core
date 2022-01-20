@@ -20,6 +20,7 @@ import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -35,6 +36,8 @@ import java.util.*;
 
 @Stateless
 public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
+
+    private static final long serialVersionUID = -3301732194304559773L;
 
     @Inject
     private DunningPolicyService policyService;
@@ -74,6 +77,12 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                         List<Invoice> invoices = policyService.findEligibleInvoicesForPolicy(policy);
                         processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel);
                     }
+                }
+
+                DunningCollectionPlan dunningCollectionPlan = collectionPlanService.findByPolicy(policy);
+                if(dunningCollectionPlan != null) {
+                    dunningCollectionPlan.setLastActionDate(new Date());
+                    collectionPlanService.update(dunningCollectionPlan);
                 }
             }
             jobExecutionResult.addNbItemsCorrectlyProcessed(policies.size() - jobExecutionResult.getNbItemsProcessedWithError());
@@ -134,8 +143,15 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                     customerAccount.getName().getFirstName() : "");
             params.put("customerAccountLastName",  customerAccount.getName() != null ?
                     customerAccount.getName().getLastName() : "");
-            params.put("customerAccountLegalEntityTypeCode",
-                    ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            if(billingAccount.getIsCompany()) {
+                params.put("customerAccountLegalEntityTypeCode",
+                        ofNullable(billingAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            } else {
+                Name name = ofNullable(billingAccount.getName()).orElse(null);
+                Title title = ofNullable(name).map(Name::getTitle).orElse(null);
+                params.put("customerAccountLegalEntityTypeCode",
+                        ofNullable(title).map(Title::getDescription).orElse(""));
+            }
             params.put("customerAccountAddressAddress1",
                     customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
             params.put("customerAccountAddressZipCode",
