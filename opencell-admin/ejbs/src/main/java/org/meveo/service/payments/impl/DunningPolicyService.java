@@ -9,6 +9,7 @@ import static org.meveo.model.dunning.PolicyConditionTargetEnum.valueOf;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -76,7 +77,24 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         return EMPTY_LIST;
     }
-
+    
+    public List<Invoice> findEligibleInvoicesForPolicy(DunningPolicy policy,List<Long> invoiceIds) {
+        policy = refreshOrRetrieve(policy);
+        if (policy == null) {
+            throw new BusinessException("Policy does not exists");
+        }
+        
+        if(policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty()) {
+            try {
+                String query = "SELECT inv FROM Invoice inv WHERE inv.id in ("+ invoiceIds.stream().map(String::valueOf).collect(Collectors.joining(",")) + ") and ( " + buildPolicyRulesFilter(policy.getDunningPolicyRules()) +" )";
+                return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
+            } catch (Exception exception) {
+                throw new BusinessException(exception.getMessage());
+            }
+        }
+        return EMPTY_LIST;
+    }
+    
     public boolean existPolicyRulesCheck(DunningPolicy policy) {
         policy = refreshOrRetrieve(policy);
         if (policy == null) {
@@ -88,6 +106,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     public boolean minBalanceTriggerCurrencyCheck(DunningPolicy policy, Invoice invoice) {
 		boolean minBalanceTriggerCurrencyBool;
         policy = refreshOrRetrieve(policy);
+        invoice = invoiceService.refreshOrRetrieve(invoice);
         if (policy == null) {
             throw new BusinessException("Policy does not exists");
         }
@@ -157,26 +176,67 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         StringBuilder lineFilter = new StringBuilder();
         if(ruleLines != null && !ruleLines.isEmpty()) {
             ruleLines.sort(Comparator.comparing(DunningPolicyRuleLine::getId));            
-            lineFilter.append("(")
-                    .append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
+            lineFilter.append("(");
+            if(ruleLines.get(0).getPolicyConditionTarget().equalsIgnoreCase(PolicyConditionTargetEnum.creditCategory.toString())) {
+            	if (ruleLines.get(0).getPolicyConditionOperator().equalsIgnoreCase(PolicyConditionOperatorEnum.NOT_EQUALS.toString())) {
+	                lineFilter.append(" (inv.billingAccount.customerAccount.creditCategory IS NULL or ")
+	                .append("inv.billingAccount.customerAccount.creditCategory in (select creditCategory from CreditCategory creditCategory where creditCategory.code <> ")
+	                .append(toQueryValue(ruleLines.get(0).getPolicyConditionTargetValue(),
+	                        ruleLines.get(0).getPolicyConditionTarget()))
+	                .append(")) ");
+            	}else if(ruleLines.get(0).getPolicyConditionOperator().equalsIgnoreCase(PolicyConditionOperatorEnum.EQUALS.toString())) {
+                    lineFilter.append(" ( inv.billingAccount.customerAccount.creditCategory IS NOT NULL and ")
+                	.append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
                     .append(" ")
                     .append(PolicyConditionOperatorEnum
                             .valueOf(ruleLines.get(0).getPolicyConditionOperator().toUpperCase()).getOperator())
                     .append(" ")
                     .append(toQueryValue(ruleLines.get(0).getPolicyConditionTargetValue(),
                             ruleLines.get(0).getPolicyConditionTarget()))
-                    .append(" ");
+                    .append(") ");
+            	}
+            }else {
+            	lineFilter.append(valueOf(ruleLines.get(0).getPolicyConditionTarget()).getField())
+                .append(" ")
+                .append(PolicyConditionOperatorEnum
+                        .valueOf(ruleLines.get(0).getPolicyConditionOperator().toUpperCase()).getOperator())
+                .append(" ")
+                .append(toQueryValue(ruleLines.get(0).getPolicyConditionTargetValue(),
+                        ruleLines.get(0).getPolicyConditionTarget()))
+                .append(" ");
+            }
+            
             for (int index = 1; index < ruleLines.size(); index++) {
-                lineFilter.append(checkRuleLineJoint(ruleLines.get(index).getRuleLineJoint()))
-                        .append(" ")
-                        .append(valueOf(ruleLines.get(index).getPolicyConditionTarget()).getField())
+                lineFilter.append(checkRuleLineJoint(ruleLines.get(index).getRuleLineJoint()));
+                if(ruleLines.get(index).getPolicyConditionTarget().equalsIgnoreCase(PolicyConditionTargetEnum.creditCategory.toString())) {
+                	if (ruleLines.get(index).getPolicyConditionOperator().equalsIgnoreCase(PolicyConditionOperatorEnum.NOT_EQUALS.toString())) {
+    	                lineFilter.append(" (inv.billingAccount.customerAccount.creditCategory IS NULL or ")
+    	                .append("inv.billingAccount.customerAccount.creditCategory in (select creditCategory from CreditCategory creditCategory where creditCategory.code <> ")
+    	                .append(toQueryValue(ruleLines.get(index).getPolicyConditionTargetValue(),
+    	                        ruleLines.get(index).getPolicyConditionTarget()))
+    	                .append(")) ");
+                	}else if(ruleLines.get(index).getPolicyConditionOperator().equalsIgnoreCase(PolicyConditionOperatorEnum.EQUALS.toString())) {
+                        lineFilter.append(" ( inv.billingAccount.customerAccount.creditCategory IS NOT NULL and ")
+                    	.append(valueOf(ruleLines.get(index).getPolicyConditionTarget()).getField())
                         .append(" ")
                         .append(PolicyConditionOperatorEnum
-                                .valueOf(ruleLines.get(index).getPolicyConditionOperator()).getOperator())
+                                .valueOf(ruleLines.get(index).getPolicyConditionOperator().toUpperCase()).getOperator())
                         .append(" ")
                         .append(toQueryValue(ruleLines.get(index).getPolicyConditionTargetValue(),
                                 ruleLines.get(index).getPolicyConditionTarget()))
-                        .append(" ");
+                        .append(") ");
+                	}
+                }else {
+                	lineFilter.append(" ")
+                    .append(valueOf(ruleLines.get(index).getPolicyConditionTarget()).getField())
+                    .append(" ")
+                    .append(PolicyConditionOperatorEnum
+                            .valueOf(ruleLines.get(index).getPolicyConditionOperator()).getOperator())
+                    .append(" ")
+                    .append(toQueryValue(ruleLines.get(index).getPolicyConditionTargetValue(),
+                            ruleLines.get(index).getPolicyConditionTarget()))
+                    .append(" ");
+                }
             }
         }
         return lineFilter.append(")").toString();
