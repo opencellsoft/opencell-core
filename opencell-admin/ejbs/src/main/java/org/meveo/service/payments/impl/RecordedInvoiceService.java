@@ -25,12 +25,14 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -465,5 +467,23 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     public void create(RecordedInvoice entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
         super.create(entity);
+    }
+    
+    
+    /**
+     * Find by invoice
+     *
+     * @param invoiceID invoice id 
+     * @return found recorded invoice
+     */
+    public RecordedInvoice findByInvoiceId(Long invoiceId) throws BusinessException {
+        QueryBuilder qb = new QueryBuilder(RecordedInvoice.class, "ri", null);
+        qb.addCriterionEntity("ri.invoice.id", invoiceId);
+        try {
+            return (RecordedInvoice) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.info("Invoice with id {} was not found. Returning null.", invoiceId);
+            return null;  
+        }
     }
 }

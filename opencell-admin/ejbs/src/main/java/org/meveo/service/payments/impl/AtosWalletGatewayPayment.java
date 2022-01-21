@@ -45,6 +45,7 @@ import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worldline.sips.exception.SealCalculationException;
@@ -99,7 +100,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, paramBean().getProperty(WALLET_ORDER_URI_PROPERTY,"/checkout/walletOrder"), paramBean().getProperty(CHECKOUT_INTERFACE_VERSION_PROPERTY,"IR_WS_2.42"));
+        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, paramBean().getProperty(WALLET_ORDER_URI_PROPERTY,"/checkout/walletOrder"), paramBean().getProperty(CHECKOUT_INTERFACE_VERSION_PROPERTY,"IR_WS_2.42"),true);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
     	
-        return doPaymentOrRefundToken(paymentToken, ctsAmount, paramBean().getProperty(WALLET_CREDIT_HOLDER_URI_PROPERTY,"/cashManagement/walletCreditHolder"), paramBean().getProperty(CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY,"CR_WS_2.25"));
+        return doPaymentOrRefundToken(paymentToken, ctsAmount, paramBean().getProperty(WALLET_CREDIT_HOLDER_URI_PROPERTY,"/cashManagement/walletCreditHolder"), paramBean().getProperty(CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY,"CR_WS_2.25"),false);
     }
 
     @Override
@@ -150,17 +151,17 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         throw new UnsupportedOperationException();
     }
 
-	private PaymentResponseDto doPaymentOrRefundToken(CardPaymentMethod paymentMethod, Long ctsAmount, String wsUri, String interfaceVersion) throws BusinessException {
+	private PaymentResponseDto doPaymentOrRefundToken(CardPaymentMethod paymentMethod, Long ctsAmount, String wsUri, String interfaceVersion , boolean isPayment) throws BusinessException {
 		PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
 		String scriptInstanceCode = paramBean().getProperty("sips.paymentRequest.script", null);
 		WalletOrderRequest request = null;
 		if (StringUtils.isBlank(scriptInstanceCode)) {
 
-			request = buildWalletOrderRequest(paymentMethod, ctsAmount, interfaceVersion);
+			request = buildWalletOrderRequest(paymentMethod, ctsAmount, interfaceVersion,isPayment);
 
 			String seal;
 			try {
-				String data = getSealString(request);
+				String data = getSealString(request,isPayment);
 				log.info("getSealString(request):" + data);
 				seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
 				request.setSeal(seal);
@@ -183,11 +184,17 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
 		}
 		String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, "changeIt");
+		if(!isPayment) {
+			wsUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
+		}
 		wsUrl += wsUri;
+		
+		log.info("wsUrl: {}", wsUrl);
 
 		ObjectMapper mapper = new ObjectMapper();
 		String requestBody;
 		try {
+			mapper.setSerializationInclusion(Include.NON_NULL);
 			requestBody = mapper.writeValueAsString(request);
 			log.info("WalletOrderRequest: {}", requestBody);
 		} catch (JsonProcessingException e) {
@@ -341,17 +348,19 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         return null;
     }
 
-	private WalletOrderRequest buildWalletOrderRequest(PaymentMethod paymentMethod, Long amount, String interfaceVersion) {
+	private WalletOrderRequest buildWalletOrderRequest(PaymentMethod paymentMethod, Long amount, String interfaceVersion,boolean isPayment) {
 		WalletOrderRequest request = new WalletOrderRequest();
 		request.setAmount(String.valueOf(amount));
 		request.setCurrencyCode(Currency.valueOf(paymentMethod.getCustomerAccount().getTradingCurrency().getCurrencyCode()).getCode());
 		request.setMerchantId(paymentGateway.getMarchandId());
 		request.setOrderChannel(OrderChannel.INTERNET.name());
-		request.setPaymentPattern(PaymentPattern.RECURRING_N.name());
+		if(isPayment) {
+			request.setPaymentPattern(PaymentPattern.RECURRING_N.name());
+		}
 		request.setInterfaceVersion(interfaceVersion);
 		request.setKeyVersion(paymentGateway.getWebhooksKeyId());
 		request.setTransactionReference(System.currentTimeMillis() + "R" + ((int) (Math.random() * 1000 + 1)) + "CA" + paymentMethod.getCustomerAccount().getId());
-		if (!StringUtils.isBlank(paymentMethod.getToken3DsId())) {
+		if (!StringUtils.isBlank(paymentMethod.getToken3DsId()) && isPayment) {
 			request.setInitialSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 		}
 
@@ -434,16 +443,21 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         return status;
     }
 
-    private String getSealString(WalletOrderRequest request) {
+    private String getSealString(WalletOrderRequest request,boolean isPayment) {
+    	
+    	String token3ds = request.getInitialSchemeTransactionIdentifier();
+    	if(StringUtils.isBlank(token3ds) || !isPayment) {
+    		token3ds = "";
+    	}
         return    request.getAmount()
                 + request.getCurrencyCode()
-                + (StringUtils.isBlank(request.getInitialSchemeTransactionIdentifier())?"":request.getInitialSchemeTransactionIdentifier())
+                + token3ds
                 + request.getInterfaceVersion()                 
                 + request.getMerchantId()
                 + request.getMerchantWalletId()  
                 + request.getOrderChannel() 
                 + request.getPaymentMeanId()
-                + request.getPaymentPattern()
+                + (isPayment ? request.getPaymentPattern() : "")
                 + request.getTransactionReference();                 
     }
     
@@ -502,10 +516,6 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
         return paymentMethodService;
     }
-	@Override
-	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
@@ -515,5 +525,12 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	@Override
 	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
 		throw new UnsupportedOperationException();
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+		throw new UnsupportedOperationException();
+		
 	}
 }
