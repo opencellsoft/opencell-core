@@ -435,7 +435,8 @@ public class UserApi extends BaseApi {
 
         return dto;
     }
-
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void cleanRoles(Long idUser){
         User user = userService.findById(idUser);
         if(user == null){
