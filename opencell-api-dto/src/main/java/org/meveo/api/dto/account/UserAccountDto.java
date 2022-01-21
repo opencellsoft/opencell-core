@@ -47,6 +47,7 @@ public class UserAccountDto extends AccountDto {
     private static final long serialVersionUID = -13552444627686818L;
     
     /** Parent user account. */
+    
 	private String parentUserAccountCode;
    
 	/** Sub user accounts. */
@@ -94,6 +95,9 @@ public class UserAccountDto extends AccountDto {
      */
     private SubscriptionsDto subscriptions = new SubscriptionsDto();
 
+    private UserAccountDto parentUserAccount;
+
+    private List<UserAccountDto> userAccounts;
 
     /**
      * Instantiates a new user account dto.
@@ -398,7 +402,7 @@ public class UserAccountDto extends AccountDto {
 		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate
 				+ ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate=" + statusDate
 				+ ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions
-				+ ", parentUserAccount=" + parentUserAccountCode + ",userAccounts =" + userAccountCodes + "]";
+				+ ", parentUserAccount=" + parentUserAccountCode + ",userAccounts =" + userAccountCodes +",UserAccounts  "+ userAccounts +"]";
 	}
 
 	/**
@@ -429,6 +433,28 @@ public class UserAccountDto extends AccountDto {
 
 	public void setUserAccountCodes(List<String> userAccountCodes) {
 		this.userAccountCodes = userAccountCodes;
+	}
+
+	public UserAccountDto getParentUserAccount() {
+		if(parentUserAccount!=null) {
+			parentUserAccount=new UserAccountDto();
+		}
+		return parentUserAccount;
+	}
+
+	public void setParentUserAccount(UserAccountDto parentUserAccount) {
+		this.parentUserAccount = parentUserAccount;
+	}
+
+	public List<UserAccountDto> getUserAccounts() {
+		return userAccounts;
+	}
+
+	public void setUserAccounts(List<UserAccountDto> userAccounts) {
+		if(userAccounts!=null) {
+			userAccounts=new ArrayList<>();
+		}
+		this.userAccounts = userAccounts;
 	}
     
 }
