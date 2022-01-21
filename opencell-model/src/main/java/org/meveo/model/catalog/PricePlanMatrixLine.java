@@ -53,7 +53,6 @@ public class PricePlanMatrixLine extends AuditableEntity {
 
 	protected PricePlanMatrixLine(Auditable auditable) {
 		super(auditable);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -121,7 +120,6 @@ public class PricePlanMatrixLine extends AuditableEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PricePlanMatrixLine)) return false;
-        if (!super.equals(o)) return false;
         PricePlanMatrixLine that = (PricePlanMatrixLine) o;
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
