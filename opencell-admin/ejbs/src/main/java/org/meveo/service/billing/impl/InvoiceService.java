@@ -1292,12 +1292,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
-        if (automaticInvoiceCheck && invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
-            ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
+        InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
+        if (automaticInvoiceCheck && invoiceType != null && invoiceType.getInvoiceValidationScript() != null) {
+            ScriptInstance scriptInstance = invoiceType.getInvoiceValidationScript();
             if (scriptInstance != null) {
                 ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
                 if (script != null) {
-                    Map<String, Object> methodContext = new HashMap<String, Object>();
+                    Map<String, Object> methodContext = new HashMap<>();
                     methodContext.put(Script.CONTEXT_ENTITY, invoice);
                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -2621,6 +2622,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void rebuildInvoice(Invoice invoice, boolean save) {
+        invoice = findById(invoice.getId());
         applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
         if (save) {
             update(invoice);
@@ -5279,7 +5281,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cleanInvoiceAggregates(Long invoiceId) {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
-        getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceAggregate.updateByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
