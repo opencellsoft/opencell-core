@@ -1501,45 +1501,44 @@ public class CpqQuoteApi extends BaseApi {
                 // Add subscription charges
                 EDR edr =null;
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
-                	edr =new EDR();
-                	 try {
-                		 
-                		 edr.setAccessCode(null);
-                		 edr.setEventDate(usageCharge.getChargeDate());
-                		 edr.setSubscription(subscription);
-                		 edr.setStatus(EDRStatusEnum.OPEN);
-                		 edr.setCreated(new Date());
-                		 edr.setOriginBatch("QUOTE");
-                		 edr.setOriginRecord(System.currentTimeMillis()+"");
-                		 UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
-                         Double quantity = null;
-                		 if(chargetemplate.getUsageQuantityAttribute() != null) {
-                             Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                             quantity = quantityValue instanceof String ? Double.parseDouble((String) quantityValue) : (Double) quantityValue;
-                         }
-                		 edr.setQuantity(quantity!=null?new BigDecimal(quantity):BigDecimal.ZERO);
-                         List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-                         
-                         if (walletOperationsFromEdr != null) {
-                        	 for(WalletOperation walletOperation:walletOperationsFromEdr) {
-                        		 walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                                         .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
-                                 walletOperations.addAll(walletOperationsFromEdr);
-                        	 }
-                        	 
-                         }
-                        
+                    UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
+                    if (chargetemplate.getUsageQuantityAttribute() != null) {
+                        edr = new EDR();
+                        try {
 
-                     } catch (RatingException e) {
-                         log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+                            edr.setAccessCode(null);
+                            edr.setEventDate(usageCharge.getChargeDate());
+                            edr.setSubscription(subscription);
+                            edr.setStatus(EDRStatusEnum.OPEN);
+                            edr.setCreated(new Date());
+                            edr.setOriginBatch("QUOTE");
+                            edr.setOriginRecord(System.currentTimeMillis() + "");
+                            Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                            Double quantity = quantityValue instanceof String ? Double.parseDouble((String) quantityValue) : (Double) quantityValue;
+                            edr.setQuantity(quantity != null ? new BigDecimal(quantity) : BigDecimal.ZERO);
+                            List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+
+                            if (walletOperationsFromEdr != null) {
+                                for (WalletOperation walletOperation : walletOperationsFromEdr) {
+                                    walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                                            .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate())));
+                                    walletOperations.addAll(walletOperationsFromEdr);
+                                }
+
+                            }
 
 
-                     } catch (BusinessException e) {
-                         log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+                        } catch (RatingException e) {
+                            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                            throw new BusinessException("Failed to apply a subscription charge {}: {}" + usageCharge.getCode(), e); // e.getBusinessException();
 
-                     }
+
+                        } catch (BusinessException e) {
+                            log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                            throw new BusinessException("Failed to apply a subscription charge {}: {}" + usageCharge.getCode(), e); // e.getBusinessException();
+
+                        }
+                    }
                 }
             }
             
