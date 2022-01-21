@@ -1,21 +1,23 @@
 package org.meveo.admin.job;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.TO_BE_DONE;
+import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.IN_PROGRESS;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
 import static org.meveo.model.payments.ActionChannelEnum.LETTER;
+import static org.meveo.model.payments.ActionModeEnum.AUTOMATIC;
 import static org.meveo.model.payments.ActionTypeEnum.*;
 import static org.meveo.model.payments.DunningCollectionPlanStatusEnum.*;
+import static org.meveo.model.payments.PaymentMethodEnum.CARD;
+import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
-import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
-import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -35,10 +37,9 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Stateless
-public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Long> {
+public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -62,9 +63,6 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
     private PaymentService paymentService;
 
     @Inject
-    private AccountOperationService accountOperationService;
-
-    @Inject
     private PaymentGatewayService paymentGatewayService;
 
     @Inject
@@ -72,20 +70,17 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
 
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
-                this::process, null, null);
-    }
-
-    /**
-     * Initialize job settings and retrieve data to process
-     *
-     * @param jobExecutionResult Job execution result
-     * @return An iterator over a list of active collection to process
-     */
-    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-        return of(new SynchronizedIterator<>(collectionPlanService.getActiveCollectionPlansIds()));
+        List<Long> collectionPlanToProcess = collectionPlanService.getActiveCollectionPlansIds();
+        jobExecutionResult.setNbItemsToProcess(collectionPlanToProcess.size());
+        for (Long collectionPlanId : collectionPlanToProcess) {
+            try {
+                process(collectionPlanId, jobExecutionResult);
+            } catch (Exception exception) {
+                jobExecutionResult.addErrorReport(exception.getMessage());
+            }
+        }
+        jobExecutionResult.setNbItemsCorrectlyProcessed(collectionPlanToProcess.size() - jobExecutionResult.getNbItemsProcessedWithError());
     }
 
     /**
@@ -107,14 +102,14 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
             dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
                     ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
             if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
-                    && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)
+                    && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
                     && today.after(dateToCompare)) {
                 nextLevel = index + 1;
                 int countAutoActions = 0;
                 for (int i = 0; i < levelInstance.getActions().size(); i++) {
                     DunningActionInstance actionInstance = levelInstance.getActions().get(i);
-                    if (actionInstance.getActionMode().equals(ActionModeEnum.AUTOMATIC)
-                            && actionInstance.getActionStatus().equals(DunningActionInstanceStatusEnum.TO_BE_DONE)) {
+                    if (actionInstance.getActionMode().equals(AUTOMATIC)
+                            && actionInstance.getActionStatus().equals(TO_BE_DONE)) {
                         if (actionInstance.getActionType().equals(SCRIPT)) {
                             if (actionInstance.getDunningAction() != null) {
                                 scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
@@ -131,37 +126,23 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                             BillingAccount billingAccount = collectionPlan.getBillingAccount();
                             if(billingAccount != null && billingAccount.getCustomerAccount() != null
                                     && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
-                                PaymentMethod preferredPaymentMethod = collectionPlan.getBillingAccount().getCustomerAccount()
+                                PaymentMethod preferredPaymentMethod = billingAccount.getCustomerAccount()
                                         .getPaymentMethods()
                                         .stream()
                                         .filter(PaymentMethod::isPreferred)
                                         .findFirst()
-                                        .orElseThrow(() -> new BusinessException("No preferred payment method found"));
+                                        .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
+                                                + billingAccount.getCustomerAccount().getCode()));
                                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
                                 long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue();
-                                List<AccountOperation> accountOperationsToPay =
-                                        accountOperationService.getAOsToPayOrRefundByCA(new Date(1), new Date(),
-                                                OperationCategoryEnum.DEBIT, customerAccount.getId());
-                                List<Long> accountOperationsToPayIds = new ArrayList<>();
-                                if(accountOperationsToPay != null) {
-                                    accountOperationsToPayIds = accountOperationsToPay
-                                            .stream()
-                                            .map(AccountOperation::getId)
-                                            .collect(Collectors.toList());
+                                Invoice invoice = collectionPlan.getRelatedInvoice();
+                                if(invoice.getRecordedInvoice() == null) {
+                                    throw new BusinessException("No getRecordedInvoice for the invoice "
+                                            + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
                                 }
                                 PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
-                                if(preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.DIRECTDEBIT)
-                                        || preferredPaymentMethod.getPaymentType().equals(PaymentMethodEnum.CARD)) {
-                                    try {
-                                        if(accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
-                                            paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
-                                                    true, true, paymentGateway, null, null,
-                                                    null,null,null, true, preferredPaymentMethod.getPaymentType());
-                                        }
-                                    } catch (NoAllOperationUnmatchedException | UnbalanceAmountException exception) {
-                                        throw new BusinessException(exception);
-                                    }
-                                }
+                                doPayment(preferredPaymentMethod, customerAccount, amountToPay,
+                                        asList(invoice.getRecordedInvoice().getId()), paymentGateway);
                             }
                         }
                         actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
@@ -172,30 +153,14 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
                         }
                     }
                 }
-                if(levelInstance.getActions().size() == countAutoActions) {
-                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
-                }
                 collectionPlan.setLastActionDate(new Date());
                 collectionPlan.setLastAction(lastAction);
                 collectionPlan.setNextAction(nextAction);
                 updateCollectionPlan = true;
-                if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
-                    collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
-                }
-                if (levelInstance.getDunningLevel() != null
-                        && levelInstance.getDunningLevel().isEndOfDunningLevel()
-                        && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
-                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
-                }
-                if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
-                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
-                }
-                if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {
-                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
-                }
+                updateLevelInstanceAndCollectionPlan(collectionPlan, levelInstance, countAutoActions, nextLevel);
             }
             if(levelInstance.getDunningLevel() == null) {
-                log.error("No dunning level associated to level instance id {} ", levelInstance.getId());
+                jobExecutionResult.addErrorReport("No dunning level associated to level instance id " +  levelInstance.getId());
             } else {
                 levelInstanceService.update(levelInstance);
             }
@@ -204,7 +169,6 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
         if (updateCollectionPlan) {
             collectionPlanService.update(collectionPlan);
         }
-
     }
 
     private void sendEmail(EmailTemplate emailTemplate,
@@ -275,6 +239,52 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
             }
         } else {
             jobExecutionResult.addErrorReport("From email is missing, email sending skipped");
+        }
+    }
+
+    private void doPayment(PaymentMethod preferredPaymentMethod, CustomerAccount customerAccount,
+                           long amountToPay, List<Long> accountOperationsToPayIds, PaymentGateway paymentGateway) {
+        if(preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD)) {
+            try {
+                if(accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
+                    if(preferredPaymentMethod.getPaymentType().equals(CARD)) {
+                        CardPaymentMethod paymentMethod = (CardPaymentMethod) preferredPaymentMethod;
+                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                true, true, paymentGateway, paymentMethod.getCardNumber(),
+                                paymentMethod.getCardNumber(), paymentMethod.getHiddenCardNumber(),
+                                paymentMethod.getExpirationMonthAndYear(), paymentMethod.getCardType(),
+                                true, preferredPaymentMethod.getPaymentType());
+                    } else {
+                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                true, true, paymentGateway, null, null,
+                                null,null,null, true, preferredPaymentMethod.getPaymentType());
+                    }
+                }
+            } catch (Exception exception) {
+                throw new BusinessException("Error occurred during payment process : " + exception.getMessage());
+            }
+        }
+    }
+
+    private void updateLevelInstanceAndCollectionPlan(DunningCollectionPlan collectionPlan,
+                                     DunningLevelInstance levelInstance, int countAutoActions, int nextLevel) {
+        levelInstance = levelInstanceService.refreshOrRetrieve(levelInstance);
+        if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
+            collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
+        }
+        if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)) {
+            collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
+        }
+        if(levelInstance.getActions().size() == countAutoActions) {
+            levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
+        }
+        if (levelInstance.getDunningLevel() != null
+                && levelInstance.getDunningLevel().isEndOfDunningLevel()
+                && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(UNPAID)) {
+            collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
+        }
+        if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {
+            levelInstance.setLevelStatus(IN_PROGRESS);
         }
     }
 }

@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.map.HashedMap;
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
@@ -374,6 +375,10 @@ public class PaymentService extends PersistenceService<Payment> {
             	additionalParams.put("customerAccountCode", customerAccount.getCode());  
             	additionalParams.put("aoToPayOrRefund", aoIdsToPay.get(0));
             	additionalParams.put("createdAO", aoPaymentId);
+                if (preferredMethod instanceof HibernateProxy) {
+                    preferredMethod = (PaymentMethod) ((HibernateProxy) preferredMethod).getHibernateLazyInitializer()
+                            .getImplementation();
+                }
                 if (!(preferredMethod instanceof DDPaymentMethod)) {
                     throw new PaymentException(PaymentErrorEnum.PAY_METHOD_IS_NOT_DD, "Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
                 }
