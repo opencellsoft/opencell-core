@@ -436,9 +436,6 @@ public class UserAccountDto extends AccountDto {
 	}
 
 	public UserAccountDto getParentUserAccount() {
-		if(parentUserAccount!=null) {
-			parentUserAccount=new UserAccountDto();
-		}
 		return parentUserAccount;
 	}
 
@@ -451,10 +448,7 @@ public class UserAccountDto extends AccountDto {
 	}
 
 	public void setUserAccounts(List<UserAccountDto> userAccounts) {
-		if(userAccounts!=null) {
-			userAccounts=new ArrayList<>();
-		}
 		this.userAccounts = userAccounts;
 	}
-    
+
 }

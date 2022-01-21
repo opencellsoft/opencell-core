@@ -120,7 +120,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields,
                               BusinessAccountModel businessAccountModel, BillingAccount associatedBA) throws MeveoApiException, BusinessException {
-		List<UserAccount> useraccounts = new ArrayList<>();
+	
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
         }
@@ -142,17 +142,31 @@ public class UserAccountApi extends AccountEntityApi {
         if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
     		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
     		if (parentUserAccount != null) {
-    				userAccount.setParentUserAccount(parentUserAccount.getParentUserAccount());
-    				useraccounts.addAll(parentUserAccount.getUserAccounts());
-					userAccount.setUserAccounts(useraccounts);
+    				userAccount.setParentUserAccount(parentUserAccount);    				
     		} else {
     		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
     		}
         }
+        
+		userAccountParent(postData, userAccount);
+		
         userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
     }
+
+	private void userAccountParent(UserAccountDto postData, UserAccount userAccount) {
+		List<UserAccount> subUserAccounts = new ArrayList<>();
+		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+			if (subUserAccount != null) {
+				subUserAccounts.add(subUserAccount);
+			}else {
+				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+			}
+		}
+		userAccount.setUserAccounts(subUserAccounts);
+	}
 
     public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
         return update(postData, true);
@@ -185,7 +199,7 @@ public class UserAccountApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
             }
         }
-
+        userAccountParent(postData, userAccount);
         userAccount = userAccountService.update(userAccount);
 
         return userAccount;
