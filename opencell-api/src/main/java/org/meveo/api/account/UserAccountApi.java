@@ -124,6 +124,7 @@ public class UserAccountApi extends AccountEntityApi {
     		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
     		if (parentUserAccount != null) {
     			userAccount.setParentUserAccount(parentUserAccount);
+    			userAccountParent(postData,parentUserAccount);
     		} else {
     		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
     		}
@@ -160,6 +161,7 @@ public class UserAccountApi extends AccountEntityApi {
             UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
             if (parentUserAccount != null) {
                 userAccount.setParentUserAccount(parentUserAccount);
+            	userAccountParent(postData,parentUserAccount);
             } else {
                 throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
             }
@@ -329,6 +331,19 @@ public class UserAccountApi extends AccountEntityApi {
         }
     }
 
+	private void userAccountParent(UserAccountDto postData, UserAccount userAccount) {
+		List<UserAccount> subUserAccounts = new ArrayList<>();
+		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+			if (subUserAccount != null) {
+				subUserAccounts.add(subUserAccount);
+			} else {
+
+				throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+			}
+		}
+		userAccount.setUserAccounts(subUserAccounts);
+	}
     public UserAccount terminate(UserAccountDto postData) throws MeveoApiException, BusinessException {
         SubscriptionTerminationReason terminationReason = null;
         try {
