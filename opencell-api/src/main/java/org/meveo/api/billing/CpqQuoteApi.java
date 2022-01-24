@@ -1574,16 +1574,19 @@ public class CpqQuoteApi extends BaseApi {
                 			}else {
                 				throw new BusinessException("No quantity is given for the usage charge "+usageCharge.getCode()+ ", Please set a value for the attribute :"+ chargetemplate.getUsageQuantityAttribute().getCode());
                 			}
-                			edr.setQuantity(new BigDecimal(quantity));
-                			RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
-                			ratingResult.add(localRatingResult);
-                			if (localRatingResult != null) {
-                				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
-                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
-                				}
+                			if(quantity!=0) {
+                				edr.setQuantity(new BigDecimal(quantity));
+                    			RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
+                    			ratingResult.add(localRatingResult);
+                    			if (localRatingResult != null) {
+                    				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
+                    					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                    							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
+                    				}
 
+                    			}
                 			}
+                			
 
                 		} catch (RatingException e) {
                 			log.trace("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
