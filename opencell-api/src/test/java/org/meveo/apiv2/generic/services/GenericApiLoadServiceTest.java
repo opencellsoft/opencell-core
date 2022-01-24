@@ -45,7 +45,7 @@ public class GenericApiLoadServiceTest {
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("SUM(id)", "code", "field2"));
-        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null);
+        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
         Assert.assertEquals("[{\"SUM(id)\":\"5\",\"code\":\"dd\",\"field2\":\"11\"}]", paginatedRecords);
     }
     @Test
@@ -58,7 +58,7 @@ public class GenericApiLoadServiceTest {
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("AVG(id)", "code"));
-        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null);
+        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
         Assert.assertEquals("[{\"AVG(id)\":\"3\",\"code\":\"dd\"}]", paginatedRecords);
     }
     @Test
@@ -71,7 +71,7 @@ public class GenericApiLoadServiceTest {
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("COUNT(id)", "code", "field2"));
-        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null);
+        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
         Assert.assertEquals("[{\"COUNT(id)\":\"4\",\"code\":\"dd\",\"field2\":\"11\"}]", paginatedRecords);
     }
     @Test
@@ -84,7 +84,7 @@ public class GenericApiLoadServiceTest {
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("MIN(id)", "code", "field2"));
-        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null);
+        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
         Assert.assertEquals("[{\"MIN(id)\":\"1\",\"code\":\"dd\",\"field2\":\"11\"}]", paginatedRecords);
     }
     @Test
@@ -97,7 +97,7 @@ public class GenericApiLoadServiceTest {
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("MAX(id)", "code", "field2"));
-        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null);
+        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
         Assert.assertEquals("[{\"MAX(id)\":\"5\",\"code\":\"dd\",\"field2\":\"11\"}]", paginatedRecords);
     }
     @Test
@@ -110,7 +110,7 @@ public class GenericApiLoadServiceTest {
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("AVG(id)"));
-        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null);
+        String paginatedRecords = loadService.findPaginatedRecords(false, Seller.class, searchConfig, fetchFieldsSet, null, null, null, null);
         Assert.assertEquals("[{\"AVG(id)\":5.0}]", paginatedRecords);
     }
 }
