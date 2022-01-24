@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.IN_PROGRESS;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
@@ -139,7 +140,8 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                                         .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
                                                 + billingAccount.getCustomerAccount().getCode()));
                                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue();
+                                //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
+                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue() * 100;
                                 Invoice invoice = collectionPlan.getRelatedInvoice();
                                 if(invoice.getRecordedInvoice() == null) {
                                     throw new BusinessException("No getRecordedInvoice for the invoice "
@@ -151,6 +153,10 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                             }
                         }
                         actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                        if(levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.TO_BE_DONE) {
+                            levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                            levelInstanceService.update(levelInstance);
+                        }
                         countAutoActions++;
                         lastAction = actionInstance.getCode();
                         if (i + 1 < levelInstance.getActions().size()) {
@@ -175,8 +181,12 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
                 }
-                if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {
+                long countActions = levelInstance.getActions().stream().filter(action -> action.getActionStatus() == DONE).count();
+                if (countActions > 0 && countActions < levelInstance.getActions().size()) {
                     levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                }
+                if(countActions == levelInstance.getActions().size()) {
+                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
                 }
             }
             if(levelInstance.getDunningLevel() == null) {
