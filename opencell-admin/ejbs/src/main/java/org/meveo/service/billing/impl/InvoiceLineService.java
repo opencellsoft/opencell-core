@@ -594,15 +594,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public void uninvoiceILs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds")
+        getEntityManager().createNamedQuery("InvoiceLine.unInvoiceByInvoiceIds")
                 .setParameter("now", new Date())
                 .setParameter("invoiceIds", invoicesIds)
                 .executeUpdate();
 
     }
 
-    public void deleteSupplementalILs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds")
+    public void cancelIlByInvoices(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("InvoiceLine.cancelByInvoiceIds")
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }

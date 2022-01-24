@@ -2391,6 +2391,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
         cancelInvoiceAndRts(invoice);
+        List<Long> invoicesIds = new ArrayList<Long>();
+        invoicesIds.add(invoice.getId());
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);
         if (remove) {
             super.remove(invoice);
         } else {
