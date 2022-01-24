@@ -1238,7 +1238,7 @@ public class CpqQuoteApi extends BaseApi {
                     .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
-            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
+            quoteTotalAmount = quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
         }
 
 
