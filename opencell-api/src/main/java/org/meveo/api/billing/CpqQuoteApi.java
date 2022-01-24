@@ -1514,7 +1514,7 @@ public class CpqQuoteApi extends BaseApi {
                 	if(chargetemplate.getUsageQuantityAttribute()!=null) {
                 		edr =new EDR();
                 		try {
-
+                			Double quantity=0d;
                 			edr.setAccessCode(null);
                 			edr.setEventDate(usageCharge.getChargeDate());
                 			edr.setSubscription(subscription);
@@ -1523,17 +1523,23 @@ public class CpqQuoteApi extends BaseApi {
                 			edr.setOriginBatch("QUOTE");
                 			edr.setOriginRecord(System.currentTimeMillis()+"");
 
-                			Double quantity=attributes.get(chargetemplate.getUsageQuantityAttribute().getCode())!=null?(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode()):0;
-                			edr.setQuantity(new BigDecimal(quantity));
-                			List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+                			Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                			if(quantityValue!=null && quantityValue instanceof Double) {
+                				quantity = (Double) quantityValue;
+                			}else {
+                				throw new BusinessException("no quantity is given for the usage charge "+usageCharge.getCode()+ ", Please set a value for the attribute :"+ chargetemplate.getUsageQuantityAttribute().getCode());
+                			}
+                			if(quantity!=0) {
+                				edr.setQuantity(new BigDecimal(quantity));
+                    			List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
 
-                			if (walletOperationsFromEdr != null) {
-                				for(WalletOperation walletOperation:walletOperationsFromEdr) {
-                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
-                					walletOperations.addAll(walletOperationsFromEdr);
-                				}
-
+                    			if (walletOperationsFromEdr != null) {
+                    				for(WalletOperation walletOperation:walletOperationsFromEdr) {
+                    					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                    							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
+                    					walletOperations.addAll(walletOperationsFromEdr);
+                    				}
+                			}
                 			}
 
                 		} catch (RatingException e) {
