@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -502,4 +503,20 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         return (Long) qb.getQuery(getEntityManager()).getSingleResult();
     }
 
+    /**
+     * Find by invoice id.
+     *
+     * @param invoiceID invoice's id 
+     * @return found recorded invoice
+     */
+    public RecordedInvoice findByInvoiceId(Long invoiceId) throws BusinessException {
+        QueryBuilder qb = new QueryBuilder(RecordedInvoice.class, "ri", null);
+        qb.addCriterionEntity("ri.invoice.id", invoiceId);
+        try {
+            return (RecordedInvoice) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.info("Invoice with id {} was not found. Returning null.", invoiceId);
+            return null;  
+        }
+    }
 }
