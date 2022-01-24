@@ -2307,7 +2307,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
+            	if(invoice.getStatus().equals(InvoiceStatusEnum.DRAFT)) {
+            		invoice.assignTemporaryInvoiceNumber();
+            	}else if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
                     invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
                 }
             } catch (Exception e) {
@@ -2378,9 +2380,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             // Create invoice lines from grouped and filtered RT
             List<RatedTransaction> ratedTransactions = getRatedTransactions(entity, filter, firstTransactionDate, lastTransactionDate, new Date(), isDraft);
-            List<Long> ratedTransactionIds = ratedTransactions.stream()
+            List<Long> ratedTransactionIds = ratedTransactions.stream().filter(Objects::nonNull)
                     .map(RatedTransaction::getId)
                     .collect(toList());
+            
             if (!ratedTransactionIds.isEmpty()) {
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
