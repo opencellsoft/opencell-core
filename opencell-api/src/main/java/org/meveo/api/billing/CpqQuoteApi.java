@@ -1543,11 +1543,7 @@ public class CpqQuoteApi extends BaseApi {
                 			}
 
                 		} catch (RatingException e) {
-                			log.trace("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                			throw new BusinessApiException(e.getMessage()); // e.getBusinessException();
-
-
-
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
 
                 		} catch (BusinessException e) {
                 			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
