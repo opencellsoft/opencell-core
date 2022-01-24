@@ -8584,7 +8584,7 @@ Opencell team.
 		</update>
 	</changeSet>
 	
-	<changeSet id="INTRD-3316_20211215_query_notification_template" author="anasseh">
+	<changeSet id="INTRD-3432_21012022_Manual_refund_by_card_KO" author="anasseh">
 	<update tableName="meveo_script_instance">
            <column name="script">
                <![CDATA[package org.meveo.service.script.demo;
