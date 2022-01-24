@@ -35,6 +35,7 @@ import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.BusinessService;
@@ -143,9 +144,11 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             		}
             	}else if (!StringUtils.isBlank(pg.getApplicationEL()) && matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {
             			return pg;
-            		} 	
+            		}
             }
-            paymentGateway = paymentGateways.get(0);
+    		paymentGateway=(PaymentGateway) paymentGateways.stream().filter(p -> p.getType().equals(PaymentGatewayTypeEnum.NATIF));
+            paymentGateway = paymentGateway!=null?paymentGateway:paymentGateways.get(0);
+            log.info("selected pg : "+paymentGateway.getCode());
         } catch (Exception e) {
             log.error("Error on getPaymentGateway:", e);
         }
