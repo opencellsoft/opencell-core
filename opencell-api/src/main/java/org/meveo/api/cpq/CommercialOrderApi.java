@@ -15,6 +15,7 @@ import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
@@ -456,8 +457,6 @@ public class CommercialOrderApi extends BaseApi {
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getBillingAccountCode()))
 			missingParameters.add("billingAccountCode");
-		if(Strings.isEmpty(order.getUserAccountCode()))
-			missingParameters.add("userAccountCode");
 		if(Strings.isEmpty(order.getOrderTypeCode()))
 			missingParameters.add("orderTypeCode");
 		
@@ -476,6 +475,16 @@ public class CommercialOrderApi extends BaseApi {
 	}
 
 	public CommercialOrderDto validateOrder(CommercialOrder order, boolean orderCompleted) {
+		BillingAccount orderBillingAccount = order.getBillingAccount();
+		if(order.getUserAccount() == null && orderBillingAccount.getUsersAccounts().size() == 1){
+			order.setUserAccount(orderBillingAccount.getUsersAccounts().get(0));
+		}
+		Optional<OrderOffer> optionalOrderOfferWithoutUA = order.getOffers().stream()
+				.filter(orderOffer -> orderOffer.getUserAccount() == null)
+				.findFirst();
+		if(order.getUserAccount() == null && optionalOrderOfferWithoutUA.isPresent()){
+			throw new MissingParameterException("Customer has several consumers. You must either select a default consumer on the order, or select a consumer for each order line");
+		}
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = getSelectedSeller(order).getCode();
 		String orderScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");

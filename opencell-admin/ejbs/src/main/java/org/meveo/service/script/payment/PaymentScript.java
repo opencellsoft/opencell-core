@@ -74,6 +74,9 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 
     /** The Constant RESULT_ERROR_MSG. */
     public static final String RESULT_ERROR_MSG = "RESULT_ERROR_MSG";
+    
+    /** The Constant RESULT_ERROR_CODE. */
+    public static final String RESULT_ERROR_CODE = "RESULT_ERROR_CODE";
 
     /** The Constant RESULT_TRANSACTION_ID. */
     public static final String RESULT_TRANSACTION_ID = "RESULT_TRANSACTION_ID";
@@ -174,6 +177,8 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	 /** The Constant Mandate SIGNATURE_DATE. */
 	public static final String CONTEXT_SIGNATURE_DATE = "SIGNATURE_DATE";
 
+	/** The Constant PAYMENT_GATEWAY. */
+    public static final String PAYMENT_GATEWAY = "PAYMENT_GATEWAY";
 
 
     @Override

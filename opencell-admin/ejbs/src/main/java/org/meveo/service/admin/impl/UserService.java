@@ -102,7 +102,6 @@ public class UserService extends PersistenceService<User> {
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
-    @RolesAllowed({ "userManagement", "userSelfManagement" })
     public User findByUsername(String username) {
         try {
             return getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
