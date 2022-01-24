@@ -14,6 +14,7 @@ import static org.meveo.model.payments.DunningCollectionPlanStatusEnum.*;
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -248,6 +249,10 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             try {
                 if(accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
                     if(preferredPaymentMethod.getPaymentType().equals(CARD)) {
+                        if (preferredPaymentMethod instanceof HibernateProxy) {
+                            preferredPaymentMethod = (PaymentMethod) ((HibernateProxy) preferredPaymentMethod).getHibernateLazyInitializer()
+                                    .getImplementation();
+                        }
                         CardPaymentMethod paymentMethod = (CardPaymentMethod) preferredPaymentMethod;
                         paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
                                 true, true, paymentGateway, paymentMethod.getCardNumber(),
