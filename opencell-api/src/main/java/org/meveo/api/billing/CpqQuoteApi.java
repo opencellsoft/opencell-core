@@ -1527,7 +1527,7 @@ public class CpqQuoteApi extends BaseApi {
                 			if(quantityValue!=null && quantityValue instanceof Double) {
                 				quantity = (Double) quantityValue;
                 			}else {
-                				throw new BusinessException("no quantity is given for the usage charge "+usageCharge.getCode()+ ", Please set a value for the attribute :"+ chargetemplate.getUsageQuantityAttribute().getCode());
+                				throw new MissingParameterException("No quantity is given for the usage charge "+usageCharge.getCode()+ ", Please set a value for the attribute :"+ chargetemplate.getUsageQuantityAttribute().getCode());
                 			}
                 			if(quantity!=0) {
                 				edr.setQuantity(new BigDecimal(quantity));
@@ -1551,7 +1551,7 @@ public class CpqQuoteApi extends BaseApi {
 
                 		} catch (BusinessException e) {
                 			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                			throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+                			throw new BusinessApiException(e.getMessage()); 
 
                 		}
                 	}
