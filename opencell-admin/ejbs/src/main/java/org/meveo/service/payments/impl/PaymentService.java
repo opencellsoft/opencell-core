@@ -25,12 +25,12 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -377,6 +377,10 @@ public class PaymentService extends PersistenceService<Payment> {
 
             }
             if (PaymentMethodEnum.DIRECTDEBIT == paymentMethodType) {
+                if (preferredMethod instanceof HibernateProxy) {
+                    preferredMethod = (PaymentMethod) ((HibernateProxy) preferredMethod).getHibernateLazyInitializer()
+                            .getImplementation();
+                }
                 if (!(preferredMethod instanceof DDPaymentMethod)) {
                     throw new PaymentException(PaymentErrorEnum.PAY_METHOD_IS_NOT_DD, "Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
                 }
