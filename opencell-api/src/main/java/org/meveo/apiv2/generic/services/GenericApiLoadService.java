@@ -45,7 +45,7 @@ public class GenericApiLoadService {
     @Inject
     private GenericApiPersistenceDelegate persistenceDelegate;
 
-    public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id) {
+    public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
         if(genericFields != null && (isAggregationQueries(genericFields) || isCustomFieldQuery(genericFields))){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
@@ -68,7 +68,7 @@ public class GenericApiLoadService {
                     .withNestedEntities(fetchFields)
                     .withNestedDepth(nestedDepth)
                     .build()
-                    .toJson(genericFields, entityClass, genericPaginatedResource);
+                    .toJson(genericFields, entityClass, genericPaginatedResource, excludedFields);
         }
     }
 
@@ -124,7 +124,7 @@ public class GenericApiLoadService {
                 .isPresent();
     }
 
-    public Optional<String> findByClassNameAndId(Boolean extractList, Class entityClass, Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities, Long nestedDepth) {
+    public Optional<String> findByClassNameAndId(Boolean extractList, Class entityClass, Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities, Long nestedDepth, Set<String> excludedFields) {
         checkId(id);
         IEntity iEntity = persistenceDelegate.find(entityClass, id, searchConfig.getFetchFields());
 
@@ -135,7 +135,7 @@ public class GenericApiLoadService {
                         .withNestedEntities(nestedEntities)
                         .withNestedDepth(nestedDepth)
                         .build()
-                        .toJson(genericFields, entityClass, Collections.singletonMap("data", entity)));
+                        .toJson(genericFields, entityClass, Collections.singletonMap("data", entity), excludedFields));
     }
     
 
