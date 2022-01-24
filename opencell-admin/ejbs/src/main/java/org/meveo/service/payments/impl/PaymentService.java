@@ -21,10 +21,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -198,7 +200,7 @@ public class PaymentService extends PersistenceService<Payment> {
      */
     public PaymentResponseDto refundByMandat(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
+        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, false, PaymentMethodEnum.DIRECTDEBIT);
     }
 
     /**
@@ -295,26 +297,16 @@ public class PaymentService extends PersistenceService<Payment> {
             GatewayPaymentInterface gatewayPaymentInterface = null;
             PaymentGateway matchedPaymentGatewayForTheCA = null;
             if(isNewCard) {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, cardType);
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null, cardType,null,paymentGateway.getCode());
             }else {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, preferredMethod, cardType);
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, preferredMethod, cardType,null,paymentGateway.getCode());
             }
                         
             if (matchedPaymentGatewayForTheCA == null) {
                 throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
             }
-
-            if (paymentGateway != null) {
-            	paymentGateway = paymentGatewayService.refreshOrRetrieve(paymentGateway);
-                if (!paymentGateway.getCode().equals(matchedPaymentGatewayForTheCA.getCode())) {
-                	log.warn("Cant process payment for the customerAccount:" + customerAccount.getCode() + " with the selected paymentGateway:" + paymentGateway.getCode());
-                	return doPaymentResponseDto;
-                }
-            } else {
-                paymentGateway = matchedPaymentGatewayForTheCA;
-            }
+            paymentGateway = matchedPaymentGatewayForTheCA;
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-            
             
             Long aoPaymentId = null;
             PaymentErrorTypeEnum errorType = null;
@@ -380,6 +372,10 @@ public class PaymentService extends PersistenceService<Payment> {
 
             }
             if (PaymentMethodEnum.DIRECTDEBIT == paymentMethodType) {
+            	Map<String, Object> additionalParams=new HashedMap<String, Object>();
+            	additionalParams.put("customerAccountCode", customerAccount.getCode());  
+            	additionalParams.put("aoToPayOrRefund", aoIdsToPay.get(0));
+            	additionalParams.put("createdAO", aoPaymentId);
                 if (preferredMethod instanceof HibernateProxy) {
                     preferredMethod = (PaymentMethod) ((HibernateProxy) preferredMethod).getHibernateLazyInitializer()
                             .getImplementation();
@@ -393,7 +389,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 if (isPayment) {
                     doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
                 } else {
-                    doPaymentResponseDto = gatewayPaymentInterface.doRefundSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
+                    doPaymentResponseDto = gatewayPaymentInterface.doRefundSepa(((DDPaymentMethod) preferredMethod), ctsAmount,additionalParams);
                 }
             }
             
