@@ -282,7 +282,10 @@ public class PaymentService extends PersistenceService<Payment> {
             boolean isNewCard = !StringUtils.isBlank(cardNumber);
             AccountOperation aoToPayRefund = accountOperationService.findById(aoIdsToPay.get(0));
             preferredMethod = customerAccountService.getPreferredPaymentMethod(aoToPayRefund, paymentMethodType);
-            
+            if (preferredMethod instanceof HibernateProxy) {
+                preferredMethod = (PaymentMethod) ((HibernateProxy) preferredMethod).getHibernateLazyInitializer()
+                        .getImplementation();
+            }
             
             if (!isNewCard) {
                 if (preferredMethod == null) {
