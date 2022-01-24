@@ -163,6 +163,17 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.String;
 		}
+		
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			 if(attributeValue.getDoubleValue()!=null) {
+   				 return attributeValue.getDoubleValue();
+   			 }else if(attributeValue.getBooleanValue()!=null) {
+   					return attributeValue.getBooleanValue();
+	       	 }else {
+	       		return attributeValue.getStringValue();
+   			}
+		}
 	},
 	BOOLEAN {
 		@Override

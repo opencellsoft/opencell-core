@@ -1566,7 +1566,14 @@ public class CpqQuoteApi extends BaseApi {
                 			edr.setOriginBatch("QUOTE");
                 			edr.setOriginRecord(System.currentTimeMillis()+"");
 
-                			Double quantity=attributes.get(chargetemplate.getUsageQuantityAttribute().getCode())!=null?(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode()):0;
+                			Double quantity=0d;
+                			
+                			Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                			if(quantityValue!=null && quantityValue instanceof Double) {
+                				quantity = (Double) quantityValue;
+                			}else {
+                				throw new BusinessException("No quantity is given for the usage charge "+usageCharge.getCode()+ ", Please set a value for the attribute :"+ chargetemplate.getUsageQuantityAttribute().getCode());
+                			}
                 			edr.setQuantity(new BigDecimal(quantity));
                 			RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
                 			ratingResult.add(localRatingResult);
