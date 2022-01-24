@@ -146,9 +146,15 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             			return pg;
             		}
             }
-    		paymentGateway=(PaymentGateway) paymentGateways.stream().filter(p -> p.getType().equals(PaymentGatewayTypeEnum.NATIF));
+            paymentGateway=(PaymentGateway) paymentGateways.stream().filter(p -> p.getType().equals(PaymentGatewayTypeEnum.NATIF))
+            		.filter(PaymentGateway.class::isInstance)
+            		.map(PaymentGateway.class::cast)
+            		.findFirst()
+            		.orElse(null); 
+            
             paymentGateway = paymentGateway!=null?paymentGateway:paymentGateways.get(0);
-            log.info("selected pg : "+paymentGateway.getCode());
+            log.info("selected paymentGateway : "+paymentGateway.getCode());
+            
         } catch (Exception e) {
             log.error("Error on getPaymentGateway:", e);
         }
