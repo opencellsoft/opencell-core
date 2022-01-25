@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
@@ -185,10 +187,11 @@ public class BillingService extends PersistenceService<BillingRun> {
 	 * @param waitingMillis the waiting millis
 	 * @param jobInstanceId the job instance id
 	 * @param isFullAutomatic 
+	 * @param expectInvoicesWithLargeRTsNumber 
 	 * @throws BusinessException the business exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, boolean isFullAutomatic)
+	public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, boolean isFullAutomatic, boolean expectInvoicesWithLargeRTsNumber)
 			throws BusinessException {
 		//#MEL must be used in all RT read queries!
         Date lastTransactionDate = billingRun.getLastTransactionDate();
@@ -199,7 +202,6 @@ public class BillingService extends PersistenceService<BillingRun> {
         }
 		// #MEL where to put pageSise param?
 		final int pageSise = 30000;
-		final boolean expectMassRtsPerInvoice = true;
 		// #MEL STEP 1: get entities to invoice having threshold per entity
 		boolean thresholdPerEntityFound = false;
 		final List<ThresholdSummary> parentEntitiesWithThresholdPerEntity = getEntitiesToInvoiceHavingThresholdPerEntity(billingRun);
@@ -225,10 +227,10 @@ public class BillingService extends PersistenceService<BillingRun> {
 		List<BillingAccountDetailsItem> items = null;
 
 		while (count != 0) {
-			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound, expectMassRtsPerInvoice);
+			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound, expectInvoicesWithLargeRTsNumber);
 			count = items.size();
 			log.info("======== READER : " + count);
-			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic, expectMassRtsPerInvoice);
+			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic, expectInvoicesWithLargeRTsNumber);
 			log.info("======== PROCESSED ");
 			page += 1;
 		}
@@ -236,20 +238,14 @@ public class BillingService extends PersistenceService<BillingRun> {
 
 	private void processEntitiesHavingNoParentThreshold(BillingRun billingRun, long nbRuns, long waitingMillis,
 			Long jobInstanceId, List<BillingAccountDetailsItem> items, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
-		SubListCreator<BillingAccountDetailsItem> subListCreator = null;
-		try {
-			//final List<List<InvoicingItem>> values = items.stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().collect(Collectors.toList());
-			subListCreator = new SubListCreator(items, (int) nbRuns);
-		} catch (Exception e1) {
-			throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
-		}
 
 		// boolean[] minRTsUsed = ratedTransactionService.isMinRTsUsed();
 		MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
 		List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
 		MeveoUser lastCurrentUser = currentUser.unProxy();
-		while (subListCreator.isHasNext()) {
-			asyncReturns.add(invoicingService.createAgregatesAndInvoiceForJob(billingRun, subListCreator.getNextWorkSet(),jobInstanceId, minAmountForAccounts, lastCurrentUser, isFullAutomatic, expectMassRtsPerInvoice));
+		final List<List<BillingAccountDetailsItem>> dispatchedInvoicingItems = dispatchInvoicing(items, (int)nbRuns);
+		for (List<BillingAccountDetailsItem> dispatchedInvoicingItem :dispatchedInvoicingItems) {
+			asyncReturns.add(invoicingService.createAgregatesAndInvoiceForJob(billingRun, dispatchedInvoicingItem,jobInstanceId, minAmountForAccounts, lastCurrentUser, isFullAutomatic, expectMassRtsPerInvoice));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -445,8 +441,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
 			JobExecutionResultImpl result) throws Exception {
-		log.info("==================== START Processing billingRun id={} status={} ====================", billingRun.getId(),
-				billingRun.getStatus());
+		log.info("==================== START Processing billingRun id={} status={} ====================", billingRun.getId(),billingRun.getStatus());
 		// List<IBillableEntity> a = new ArrayList<>();
 
 		BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -459,7 +454,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) || BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
 			minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
 		}
-		Object[] minMaxReport = billingAccountService.getMinMaxReport(billingRun, nbRuns);
+		Object[] minMaxReport = billingAccountService.getMinMaxReport(billingRun);
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			int totalEntityCount = 0;
 
@@ -521,11 +516,11 @@ public class BillingService extends PersistenceService<BillingRun> {
 			// minAmountForAccounts.includesFirstRun(!includesFirstRun);
 			
 			//#MEL resolve tax category for BAs with empty tax Category and category with ELs
-			//recalculateTaxes(billingRun,(Long)minMaxReport[3],(Long)minMaxReport[4], nbRuns, waitingMillis);
+			invoicingService.checkDirtyTaxes(billingRun);
 			
 			log.info("==================== start invoices creation loop ====================");
 			boolean expectInvoicesWithLargeRTsNumber = true;
-			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic );
+			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic, expectInvoicesWithLargeRTsNumber);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
 		}
@@ -558,33 +553,20 @@ public class BillingService extends PersistenceService<BillingRun> {
 
 	/**
 	 * @param billingRun
-	 * @param nbRuns
+	 * @param count
 	 * @param minMaxReport
 	 * @param waitingMillis 
 	 */
-	private void linkBillableEntitiesToBR(BillingRun billingRun, long nbRuns, Object[] minMaxReport, long waitingMillis) {
-		long min = (long) minMaxReport[0];
-		long max = (long) minMaxReport[1];
+	private void linkBillableEntitiesToBR(BillingRun billingRun, long count, Object[] minMaxReport, long waitingMillis) {
+		Long min = (Long) minMaxReport[0];
+		Long max = (Long) minMaxReport[1];
+		Long maxRT = count>1000000 ? min + 500000 : max + 1;
+		billingAccountService.linkBillableEntitiesToBR(billingRun, min, maxRT);
+		min = maxRT;
 		while (min < max) {
 			log.info("==={} TO {}===", min, max);
-			final long maxRT = max > min + 500000 ? min + 500000 : max + 1;
+			maxRT = max > min + 500000 ? min + 500000 : max + 1;
 			billingAccountService.linkBillableEntitiesToBR(billingRun, min, maxRT);
-			min = maxRT;
-		}
-	}
-
-	/**
-	 * @param billingRun
-	 * @param nbrThreads 
-	 * @param waitingMillis 
-	 * @param long1
-	 * @param long2
-	 */
-	private void recalculateTaxes(BillingRun billingRun, Long min, Long max, long nbrThreads, long waitingMillis) {
-		//#MEL to be optimized (select/update by keys)
-		while (min < max) {
-			final long maxRT = max > min + 100000 ? min + 100000 : max + 1;
-			invoiceService.recalculateTaxes(billingRun, min, maxRT);
 			min = maxRT;
 		}
 	}
@@ -623,9 +605,8 @@ public class BillingService extends PersistenceService<BillingRun> {
 	
 	private List<List<BillingAccountDetailsItem>> dispatchInvoicing(List<BillingAccountDetailsItem> items, int threads){
 		final List<List<BillingAccountDetailsItem>> result = IntStream.range(0, threads).mapToObj(ArrayList<BillingAccountDetailsItem>::new).collect(Collectors.toList());
-		int minIndex=0;
 		int[] counters = new int[threads];
-		items.stream().forEach(item->dispatch(item,result,minIndex,counters));
+		items.stream().sorted((i1, i2) -> Integer.compare(i2.getTotalRTs(), i1.getTotalRTs())).forEach(item->dispatch(item,result,counters));
 		log.info("====== dispatched: "+result.stream().map(x->""+x.size()).collect(Collectors.joining(",")));
 		return result;
 	}
@@ -638,14 +619,16 @@ public class BillingService extends PersistenceService<BillingRun> {
 	 * @param min 
 	 * @return
 	 */
-	private void dispatch(BillingAccountDetailsItem item, List<List<BillingAccountDetailsItem>> result, int minIndex, int[] counters) {
-		result.get(minIndex).add(item);
-		counters[minIndex]=counters[minIndex]+item.getInvoicingItems().stream().mapToInt(InvoicingItem::getCount).sum()+100;//100 added to make some equilibre equilibre with other operations
+	private void dispatch(BillingAccountDetailsItem item, List<List<BillingAccountDetailsItem>> result, int[] counters) {
+		int minIndex =0;
 		int min=counters[0];
 		for(int i=1; i<counters.length;i++) {
-			if(counters[i]<min) {
-				minIndex=counters[i];
+			if(counters[i]<=min) {
+				min=counters[i];
+				minIndex=i;
 			}
 		}
+		result.get(minIndex).add(item);
+		counters[minIndex]=min+item.getTotalRTs()+100;//100 added to make some equilibre equilibre with other operations
 	}
 }

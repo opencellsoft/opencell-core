@@ -2919,8 +2919,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		    Object[] changedToTax = taxChangeMap.get(taxChangeKey);
 		    if (changedToTax == null) {
-		        Object[] applicableTax = getApplicableTax(tax, isExonerated, taxClass, ratedTransaction.getUserAccount(), billingAccount.getBillingRun().getInvoiceDate(), ratedTransaction.getSeller(), billingAccount);
-		        changedToTax = applicableTax;
+		    	changedToTax = getApplicableTax(tax, isExonerated, taxClass, ratedTransaction.getUserAccount(), billingAccount.getBillingRun().getInvoiceDate(), ratedTransaction.getSeller(), billingAccount);
 		        taxChangeMap.put(taxChangeKey, changedToTax);
 		        if ((boolean) changedToTax[1]) {
 		            log.debug("Will update rated transactions of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%", billingAccount.getId(), taxClassId, tax.getId(), tax.getPercent(),

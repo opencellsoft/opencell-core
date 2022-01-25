@@ -3,7 +3,11 @@ package org.meveo.service.billing.invoicing.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 public class BillingAccountDetailsItem {
@@ -19,6 +23,11 @@ public class BillingAccountDetailsItem {
 	private PaymentMethodEnum paymentMethodType;
 	private BigDecimal dueBalance=BigDecimal.ZERO;
 	private List<InvoicingItem> invoicingItems;
+	private String discountPlanInstancesSummary;
+	private List<DiscountPlanSummary> discountPlanSummaries;
+    private BigDecimal invoicingThreshold;
+    private ThresholdOptionsEnum checkThreshold;
+    private int totalRTs;
 	
 	public BillingAccountDetailsItem(Object[] fields) {
 		int i = 0;
@@ -31,6 +40,15 @@ public class BillingAccountDetailsItem {
 		this.exonerationTaxEl= (String) fields[i++];
 		this.paymentMethodId = (Long) fields[i++];
 		this.paymentMethodType = (PaymentMethodEnum) fields[i++];
+		this.discountPlanInstancesSummary= (String) fields[i++];
+		this.invoicingThreshold=(BigDecimal) fields[i++];
+		String thresholdType=(String) fields[i++];
+		if(!StringUtils.isEmpty(thresholdType)){
+			this.checkThreshold = ThresholdOptionsEnum.valueOf(thresholdType);
+		}
+		if(!StringUtils.isEmpty(discountPlanInstancesSummary)){
+			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split(",", -1)).map(x->new DiscountPlanSummary(x)).collect(Collectors.toList());
+		}
 		//this.orderDueDateDelayEL = (String) fields[i++];
 	}
 
@@ -185,7 +203,64 @@ public class BillingAccountDetailsItem {
 	 * @param invoicingItems the invoicingItems to set
 	 */
 	public void setInvoicingItems(List<InvoicingItem> invoicingItems) {
+		this.totalRTs=invoicingItems.stream().mapToInt(InvoicingItem::getCount).sum();
 		this.invoicingItems = invoicingItems;
+	}
+
+	/**
+	 * @return the discountPlanSummaries
+	 */
+	public List<DiscountPlanSummary> getdiscountPlanSummaries() {
+		return discountPlanSummaries;
+	}
+
+	/**
+	 * @param discountPlanSummaries the discountPlanSummaries to set
+	 */
+	public void setdiscountPlanSummaries(List<DiscountPlanSummary> discountPlanSummaries) {
+		this.discountPlanSummaries = discountPlanSummaries;
+	}
+
+	/**
+	 * @return the checkThreshold
+	 */
+	public ThresholdOptionsEnum getCheckThreshold() {
+		return checkThreshold;
+	}
+
+	/**
+	 * @param checkThreshold the checkThreshold to set
+	 */
+	public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+		this.checkThreshold = checkThreshold;
+	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
+
+	/**
+	 * @return the totalRTs
+	 */
+	public int getTotalRTs() {
+		return totalRTs;
+	}
+
+	/**
+	 * @param totalRTs the totalRTs to set
+	 */
+	public void setTotalRTs(int totalRTs) {
+		this.totalRTs = totalRTs;
 	}
 
 

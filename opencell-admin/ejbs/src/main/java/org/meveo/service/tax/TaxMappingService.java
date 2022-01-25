@@ -18,10 +18,6 @@
 
 package org.meveo.service.tax;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -309,6 +305,19 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             throw e;
         }
     }
+    
+    
+    public Tax trySimpleTaxMappingMatch(Long taxClassId, Long taxCategoryId, Long buyerCountryId, Long sellerCountryId, Date applicationDate) {
+        List<TaxMapping> taxMappings = getEntityManager().createNamedQuery("TaxMapping.findApplicableTaxByIds", TaxMapping.class).setParameter("taxCategoryId", taxCategoryId).setParameter("taxClassId", taxClassId)
+            .setParameter("sellerCountryId", sellerCountryId).setParameter("buyerCountryId", buyerCountryId).setParameter("applicationDate", applicationDate).getResultList();
+        if(!CollectionUtils.isEmpty(taxMappings)){
+	        final TaxMapping firstTaxMapping = taxMappings.get(0);
+			if(firstTaxMapping.getFilterEL() == null && firstTaxMapping.getTaxEL()==null && firstTaxMapping.getTaxScript() == null){
+	        	return firstTaxMapping.getTax();
+	        }
+        }
+        return null;
+    }
 
     /**
      * Determine tax category from a billing account
@@ -461,15 +470,11 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws BusinessException Business exception
      */
     private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws BusinessException {
-
         if (StringUtils.isBlank(expression)) {
             return true;
         }
-
         Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
-
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
-
     }
 
     /**

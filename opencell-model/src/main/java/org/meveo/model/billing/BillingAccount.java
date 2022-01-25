@@ -120,11 +120,15 @@ import org.meveo.model.tax.TaxCategory;
     		+ " order by b.id"),
         
         @NamedQuery(name = "BillingAccount.getBillingAccountDetailsItems", query = 
-    	"select distinct b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType "
-    		+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join ca.paymentMethods m "
-    		+ " left join b.discountPlanInstances dpi "
-    		+ " where b.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
-    		+ " order by b.id"),
+    		"select b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, string_agg((cast(dpi.discountPlan.id as string)||'|'||CAST(dpi.startDate AS string)||'|'||(CAST(dpi.endDate AS string))),','), "
+    			+ " (case when c.thresholdPerEntity=false then c.invoicingThreshold else (case when ca.thresholdPerEntity=false then ca.invoicingThreshold else (case when b.thresholdPerEntity=false then b.invoicingThreshold else null end) end) end) as col_10_0_, "
+    			+ " (case when c.thresholdPerEntity=false then c.checkThreshold else (case when ca.thresholdPerEntity=false then ca.checkThreshold else (case when b.thresholdPerEntity=false then b.checkThreshold else null end) end) end) as col_11_0_ "
+    			+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc "
+    			+ " left join ca.paymentMethods m "
+    			+ " left join b.discountPlanInstances dpi "
+    			+ " where b.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
+    			+ " group by b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, col_10_0_, col_11_0_"
+    			+ " order by b.id"),
         
         @NamedQuery(name = "BillingAccount.findEntitiesToInvoiceHavingThresholdPerEntity", query = "SELECT new org.meveo.model.billing.ThresholdSummary( (case when c.invoicingThreshold is not null then c.id else null end), (case when ca.invoicingThreshold is not null then ca.id else null end), count(ba.id))" + 
         		" from BillingAccount ba join ba.customerAccount ca join ca.customer c " + 

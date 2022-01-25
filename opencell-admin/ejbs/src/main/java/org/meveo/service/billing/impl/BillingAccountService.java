@@ -559,7 +559,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	 * @param nbRuns 
 	 */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Object[] getMinMaxReport(BillingRun billingRun, long nbRuns) {
+    public Object[] getMinMaxReport(BillingRun billingRun) {
         BillingCycle billingCycle = billingRun.getBillingCycle();
         Date startDate = billingRun.getStartDate();
         Date endDate = billingRun.getEndDate();

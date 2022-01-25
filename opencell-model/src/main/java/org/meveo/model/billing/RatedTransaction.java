@@ -170,8 +170,12 @@ import org.meveo.model.tax.TaxClass;
         		"join TaxMapping m on (rt.tax.id<> m.tax.id and m.accountTaxCategory.id=(case when ba.taxCategory is not null then ba.taxCategory when ba.taxCategory is null then cc.taxCategory end) " + 
         		"and (m.chargeTaxClass=rt.taxClass or m.chargeTaxClass is null) and (m.sellerCountry=cs.tradingCountry or m.sellerCountry is null)  " + 
         		"and (m.buyerCountry=ba.tradingCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=br.invoiceDate) AND (br.invoiceDate<m.valid.to or m.valid.to is null)) ) " + 
-        		"where rt.id>=:min and rt.id<:max and br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
-        
+        		"where br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
+
+        @NamedQuery(name = "RatedTransaction.getUsedTaxesSummary", query = "select distinct rt.taxClass.id, cc.taxCategory.id, s.tradingCountry.id, ba.tradingCountry.id, rt.tax.id " + 
+        		" from RatedTransaction rt join rt.billingAccount ba join ba.customerAccount ca join ca.customer c join c.customerCategory cc join rt.seller s" +
+        		" where ba.billingRun.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null"),
+
         @NamedQuery(name = "RatedTransaction.getInvoicingItems", query = 
     	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),','), count(rt.id) "
     		+ " FROM RatedTransaction rt left join rt.wallet w "

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -75,6 +76,7 @@ import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -88,6 +90,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.invoicing.impl.BillingAccountDetailsItem;
+import org.meveo.service.billing.invoicing.impl.DiscountPlanSummary;
 import org.meveo.service.billing.invoicing.impl.InvoicingItem;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -133,13 +136,14 @@ public class InvoicingService extends PersistenceService<Invoice> {
     @Inject
     private CurrentUserProvider currentUserProvider;
     
-    private static final int MAX_RT_TO_UPDATE_PER_TRANSACTION = 10000;
+    private static final int MAX_RT_TO_UPDATE_PER_TRANSACTION = 100000;
     
     @Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
     
     private Map<Long, Tax> taxes=new TreeMap<Long, Tax>();
     private Map<Long, TradingLanguage> tradingLanguages=new TreeMap<Long, TradingLanguage>();
+    private Map<Long, DiscountPlan> discountPlans=new TreeMap<Long, DiscountPlan>();
     /**
      * Description translation map.
      */
@@ -215,11 +219,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount);
 		Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, invoicingItems, billingAccount, invoice);
 		if (!invoice.isPrepaid()) {
-			BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccount,
-					ThresholdOptionsEnum.AFTER_DISCOUNT);
+			BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccountDetailsItem, ThresholdOptionsEnum.AFTER_DISCOUNT, billingRun.getBillingCycle());
 			if (thresholdAfterDiscount != null) {
-				BigDecimal amount = (appProvider.isEntreprise()) ? invoice.getAmountWithoutTax()
-						: invoice.getAmountWithTax();
+				BigDecimal amount = (appProvider.isEntreprise()) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax();
 				if (thresholdAfterDiscount.compareTo(amount) > 0) {
 					rejectedBillingAccountService.create(billingAccount.getId(), billingRun, "Billing account did not reach invoicing threshold");
 					return null;
@@ -243,7 +245,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
             }
         }*/
         evalDueDate(invoice, billingRun.getBillingCycle(), null, billingAccountDetailsItem.getCaDueDateDelayEL());
-        //writeInvoicingData(billingRun, isFullAutomatic, firstItem, billingAccount, invoice, invoiceSCAs);
         invoice.setSubCategoryInvoiceAgregate(invoiceSCAs);
         return invoice;
 	}
@@ -278,14 +279,12 @@ public class InvoicingService extends PersistenceService<Invoice> {
 			List<Long[]>intervals = getIntervals(min, max);
 			int update=0;
 			int i=1;
-			log.info("========= UPDATING {} RTS USING {} INTERVALS ==============",sca.getItemNumber(),intervals.size());
 			if((intervalSize)==sca.getItemNumber()) {
 				for(Long[] interval :intervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]);
 					update=query.executeUpdate();
 					if(intervalSize>1000) {
 						getEntityManager().flush();
-						log.info(" =========INTERVAL {}, {} TO {}, UPDATED:{}==============",i,interval[0],interval[1],update);
 					}
 				}
 			} else {
@@ -294,7 +293,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
 					update=query.executeUpdate();
 					if(intervalSize>1000) {
 						getEntityManager().flush();
-						log.info(" =========SC_KEY {}, {} TO {}, UPDATED:{}==============",i,interval[0],interval[1],update);
 					}
 				}
 			}
@@ -385,7 +383,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		 * scAggregate.addRatedTransaction(ratedTransaction, isEntreprise());
 		 */
 		
-        List<DiscountPlanItem> applicableDiscountPlanItems = getApplicableDiscounts(invoice, billingAccount);
+        List<DiscountPlanItem> applicableDiscountPlanItems = getApplicableDiscounts(billingAccountDetailsItem, invoice);
         final Map<String, List<SubCategoryInvoiceAgregate>> scMap = itemsBySubCategory.keySet().stream().collect(Collectors.groupingBy(SubCategoryInvoiceAgregate::getCategoryAggKey));
 		for (List<SubCategoryInvoiceAgregate> scAggregateList : scMap.values()) {
 			CategoryInvoiceAgregate cAggregate = initInvoiceCategoryAgg(billingAccount, invoice, languageCode,scAggregateList);
@@ -483,50 +481,15 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param billingAccount
 	 * @return
 	 */
-	private BigDecimal getThresholdByInvoice(BillingAccount ba, ThresholdOptionsEnum type) {
-		return null;
-		/*
+	private BigDecimal getThresholdByInvoice(BillingAccountDetailsItem billingAccountDetailsItem, ThresholdOptionsEnum type, BillingCycle bc) {
 		BigDecimal threshold = null;
-		CustomerAccount ca = ba.getCustomerAccount();
-		Customer c = ca.getCustomer();
-		BillingCycle bc = ba.getBillingCycle();
-		if (!ba.isThresholdPerEntity() && ba.getInvoicingThreshold() != null && (type == null || type == ba.getCheckThreshold())) {
-			threshold = ba.getInvoicingThreshold();
-		}
-		if (!ca.isThresholdPerEntity() && ca.getInvoicingThreshold() != null
-				&& (type == null || type == ca.getCheckThreshold()) && (threshold == null || ca.getInvoicingThreshold().compareTo(threshold) > 0)) {
-			threshold = ca.getInvoicingThreshold();
-		}
-		if (!c.isThresholdPerEntity() && c.getInvoicingThreshold() != null
-				&& (type == null || type == c.getCheckThreshold()) && (threshold == null || c.getInvoicingThreshold().compareTo(threshold) > 0)) {
-			threshold = c.getInvoicingThreshold();
-		}
-		if (threshold == null && !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (type == null || type == bc.getCheckThreshold())) {
+		if (billingAccountDetailsItem.getInvoicingThreshold() != null && (type == null || type == billingAccountDetailsItem.getCheckThreshold())) {
+			threshold = billingAccountDetailsItem.getInvoicingThreshold();
+		} else if ( !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (type == null || type == bc.getCheckThreshold())) {
 			threshold = bc.getInvoicingThreshold();
 		}
 		return threshold;
-		*/
 	}
-
-	/**
-     * Check if the electronic billing is enabled.
-     * 
-     * @param invoice the invoice.
-     * @return True if electronic billing is enabled for any Billable entity, false else.
-     */
-    private boolean isElectronicBillingEnabled(Invoice invoice) {
-        boolean isElectronicBillingEnabled = false;
-        if (invoice.getBillingAccount() != null) {
-            isElectronicBillingEnabled = invoice.getBillingAccount().getElectronicBilling();
-        }
-        if (invoice.getSubscription() != null) {
-            isElectronicBillingEnabled = invoice.getSubscription().getElectronicBilling();
-        }
-        if (invoice.getOrder() != null) {
-            isElectronicBillingEnabled = invoice.getOrder().getElectronicBilling();
-        }
-        return isElectronicBillingEnabled;
-    }
 
     /**
      * Find by billing run.
@@ -849,7 +812,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				final Tax tax = getTax(firstItem.getTaxId());
 				TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
 	            taxAggregate.updateAudit(currentUser);
-	            addTranslatedDescription(languageCode, taxService.findById(firstItem.getTaxId()), taxAggregate, "T");
+	            addTranslatedDescription(languageCode, getTax(firstItem.getTaxId()), taxAggregate, "T");
 	            invoice.addInvoiceAggregate(taxAggregate);
 	    		setAggregationAmounts(items, taxAggregate);
 			}
@@ -879,7 +842,13 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		return taxes.get(taxId);
 	}
 	
-	
+	private DiscountPlan getDiscountPlan(long discountPlanId) {
+		if(discountPlans.isEmpty()) {
+			final BinaryOperator<DiscountPlan> mergeFunction = (x1, x2) -> {x1.getDiscountPlanItems().addAll(x2.getDiscountPlanItems());return x1;};
+			discountPlans =  getEntityManager().createNamedQuery("DiscountPlan.getAll",DiscountPlan.class).getResultList().stream().collect(Collectors.toMap(DiscountPlan::getId, Function.identity(), mergeFunction));
+		}
+		return discountPlans.get(discountPlanId);
+	}
 	
 	private String getTradingLanguageCode(Long tradingLanguageId) {
 		if(tradingLanguages.isEmpty()) {
@@ -899,20 +868,21 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		}
 	}
 	
-	private List<DiscountPlanItem> getApplicableDiscounts(Invoice invoice, BillingAccount billingAccount) {
+	private List<DiscountPlanItem> getApplicableDiscounts(BillingAccountDetailsItem billingAccountDetailsItem, Invoice invoice) {
 		// Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
     	//#MEL subscription!=null only if billing by subscription
-        /*Subscription subscription = invoice.getSubscription();
+       /* Subscription subscription = invoice.getSubscription();
         if (subscription == null) {
             List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, subscriptionDiscountPlanInstancesfromBillingAccount(billingAccount), invoice);
             ofNullable(result).ifPresent(discountPlans -> applicableDiscountPlanItems.addAll(discountPlans));
         } else if ( subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
         	applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice));
-        }
-        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-        	applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice));
         }*/
+        final List<DiscountPlanSummary> discountPlanInstances = billingAccountDetailsItem.getdiscountPlanSummaries();
+		if (discountPlanInstances != null && !discountPlanInstances.isEmpty()) {
+        	applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccountDetailsItem, discountPlanInstances,invoice));
+        }
 		return applicableDiscountPlanItems;
 	}
 
@@ -988,7 +958,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	}
     
     private void dispatchDiscountBetweenItems(List<InvoicingItem> taxItems, BigDecimal disountAmount, BigDecimal amount){
-    	BigDecimal percent = disountAmount.divide(amount);
+    	BigDecimal percent = disountAmount.divide(amount, 12, getRoundingMode());
     	taxItems.stream().forEach(item->apllyDiscountPercent(item, percent));
     	//TODO #MEL adjust delta
     }
@@ -1044,15 +1014,16 @@ public class InvoicingService extends PersistenceService<Invoice> {
         return computedDiscount;
     }
 
-    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice)
+    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccountDetailsItem billingAccountDetailsItem, List<DiscountPlanSummary> discountPlansum, Invoice invoice)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
-        for (DiscountPlanInstance dpi : discountPlanInstances) {
-            if (!(dpi.isEffective(invoice.getInvoiceDate()) && dpi.getDiscountPlan().isActive())) {
+        for (DiscountPlanSummary dps : discountPlansum) {
+            final DiscountPlan discountPlan = getDiscountPlan(dps.getDiscountPlanId());
+			if (!(isEffective(dps, invoice.getInvoiceDate()) && discountPlan.isActive())) {
                 continue;
             }
-            for (DiscountPlanItem discountPlanItem : dpi.getDiscountPlan().getDiscountPlanItems()) {
-                if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), billingAccount, invoice, dpi)) {
+            for (DiscountPlanItem discountPlanItem : discountPlan.getDiscountPlanItems()) {
+                if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), invoice, dps, discountPlan)) {
                     applicableDiscountPlanItems.add(discountPlanItem);
                 }
             }
@@ -1060,7 +1031,11 @@ public class InvoicingService extends PersistenceService<Invoice> {
         return applicableDiscountPlanItems;
     }
 
-    /**
+	private boolean isEffective(DiscountPlanSummary dpi, Date invoiceDate) {
+		return (dpi.getStartDate()==null || invoiceDate.compareTo(dpi.getStartDate()) >= 0) && (dpi.getEndDate()==null || invoiceDate.before(dpi.getEndDate()));
+	}
+
+	/**
      * @param expression EL exprestion
      * @param customerAccount customer account
      * @param billingAccount billing account
@@ -1069,7 +1044,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
      * @return true/false
      * @throws BusinessException business exception.
      */
-    private boolean matchDiscountPlanItemExpression(String expression, BillingAccount billingAccount, Invoice invoice, DiscountPlanInstance dpi) throws BusinessException {
+    private boolean matchDiscountPlanItemExpression(String expression, Invoice invoice, DiscountPlanSummary dps, DiscountPlan discountPlan) throws BusinessException {
         Boolean result = true;
 
         if (StringUtils.isBlank(expression)) {
@@ -1077,8 +1052,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
+        BillingAccount billingAccount = retrieveIfNotManaged(invoice).getBillingAccount();
+		if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount .getCustomerAccount());
         }
         if (expression.indexOf("ba") >= 0) {
             userMap.put("ba", billingAccount);
@@ -1090,7 +1066,11 @@ public class InvoicingService extends PersistenceService<Invoice> {
             userMap.put("invoice", invoice);
         }
         if (expression.indexOf("dpi") >= 0) {
-            userMap.put("dpi", dpi);
+            DiscountPlanInstance dpi = new DiscountPlanInstance();
+            dpi.setDiscountPlan(discountPlan);
+            dpi.setStartDate(dps.getStartDate());
+            dpi.setEndDate(dps.getEndDate());
+			userMap.put("dpi", dpi );
         }
         if (expression.indexOf("su") >= 0) {
             userMap.put("su", invoice.getSubscription());
@@ -1186,19 +1166,40 @@ public class InvoicingService extends PersistenceService<Invoice> {
     
 	/**
 	 * @param billingRun
+	 * @param max
+	 * @param min 
 	 */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void checkDirtyTaxes(BillingRun billingRun) {
+    	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getUsedTaxesSummary")
+    			.setParameter("billingRunId", billingRun.getId()).getResultList();
+    	for(Object[] result : results) {
+    		int i=0;
+    		Long taxClassId =(Long)result[i++];
+    		Long taxCategoryId=(Long)result[i++];
+    		Long sellerCountryId=(Long)result[i++];
+    		Long buyerCountryId=(Long)result[i++];
+    		Long taxId = (Long)result[i++];
+    		Tax taxToUse = taxMappingService.trySimpleTaxMappingMatch(taxClassId, taxCategoryId, buyerCountryId, sellerCountryId, billingRun.getInvoiceDate());
+    		//tax mapping found with the easy way
+    		if(taxToUse!=null && taxToUse.getId()==taxId) {
+        			continue;
+    		} 
+    		recalculateTaxes(billingRun);
+    		return;
+    	}
+	}
+    
 	public void recalculateTaxes(BillingRun billingRun) {
     	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getRecalculableRTDetails")
-        .setParameter("billingRunId", billingRun.getId()).getResultList();
+    			.setParameter("billingRunId", billingRun.getId()).getResultList();
     	for(Object[] result : results) {
     		//#MEL should be optimized later
     		RatedTransaction rt = (RatedTransaction) result[0];
-    		TaxMapping tm = (TaxMapping) result[1];
     		final BillingAccount billingAccount = rt.getBillingAccount();
 			final InvoiceType invoiceType = determineInvoiceType(rt.isPrepaid(), false, billingRun.getBillingCycle(), billingRun, billingAccount);
-			recalculateTaxIfNeeded(billingAccount, invoiceType, null, rt, billingRun);
+			recalculateTaxIfNeeded(billingAccount, invoiceType, appProvider.isEntreprise(), rt, billingRun);
     	}
 	}
 }
