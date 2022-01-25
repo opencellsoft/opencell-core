@@ -342,7 +342,6 @@ public class UserAccountApi extends AccountEntityApi {
         return result;
     }
     public UserAccountsDto childParentsAccounts(String userAccountCode) throws MeveoApiException {
-    	List<UserAccount> subUserAccounts = new ArrayList<>();
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("billingAccountCode");
             handleMissingParameters();
