@@ -144,6 +144,11 @@ public interface UserAccountRs extends IBaseRs {
     @Path("/billingAccounts/{billingAccountCode}")
     @Operation(summary = "List user accounts filtered by a billing account's code", tags = { "User account management" })
     UserAccountsResponseDto listByBillingAccountV2(@QueryParam("billingAccountCode") String billingAccountCode);
+    
+    @GET
+    @Path("/{userAccountCode}/allowedParents")
+    @Operation(summary = "List user accounts filtered by a billing account's code", tags = { "User account management" })
+    UserAccountsResponseDto childParentsUserAccounts(@QueryParam("userAccountCode") String userAccountCode);
 
     /**
      * List user accounts matching a given criteria

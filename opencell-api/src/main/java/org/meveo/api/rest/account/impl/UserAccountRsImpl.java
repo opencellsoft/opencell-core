@@ -195,4 +195,18 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         }
         return result;
     }
+
+	@Override
+	public UserAccountsResponseDto childParentsUserAccounts(String userAccountCode) {
+		UserAccountsResponseDto result = new UserAccountsResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+
+        try {
+            result.setUserAccounts(userAccountApi.childParentsAccounts(userAccountCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
 }

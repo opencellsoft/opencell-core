@@ -129,6 +129,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 
         return getEntityManager().createNamedQuery("UserAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
     }
+    public List<UserAccount> getByParent(UserAccount parent) {
+        return getEntityManager().createNamedQuery("UserAccount.getByParent").setParameter("parent", parent).getResultList();
+    }
+
 
 	/**
 	 * List userAccounts by billing account with paginationConfiguration
