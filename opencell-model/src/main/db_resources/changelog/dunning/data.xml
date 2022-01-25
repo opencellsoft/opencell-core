@@ -627,7 +627,7 @@
             <column name="code" value="WF_Dunning_JOB"></column>
             <column name="job_category" value="UTILS"></column>
             <column name="job_template" value="GenericWorkflowJob"></column>
-            <column name="single_node" value="1"></column>
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE"/>
             <column name="exclude_inv_without_amount" value="0"></column>
             <column name="exclude_inv_without_amount" value="1"></column>
             <column name="cf_values" value='{"gwfJob_nbRuns":[{"long":1}], "gwfJob_waitingMillis":[{"long":0}],"gwfJob_generic_wf":[{"entity":{"classname":"org.meveo.model.generic.wf.GenericWorkflow","code":"WF_Dunning"}}]}'></column>

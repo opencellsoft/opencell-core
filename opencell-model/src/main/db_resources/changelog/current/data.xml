@@ -5719,7 +5719,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
