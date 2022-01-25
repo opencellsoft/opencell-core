@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "c9af82da-3efe-40c7-8ef7-19f1328c1d96",
-		"name": "Scenarios",
+		"name": "Scenarios Functional Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
