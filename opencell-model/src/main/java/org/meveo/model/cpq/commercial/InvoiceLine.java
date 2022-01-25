@@ -1,5 +1,6 @@
 package org.meveo.model.cpq.commercial;
 
+import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
@@ -238,7 +239,7 @@ public class InvoiceLine extends AuditableEntity {
 	/**
 	 * Subcategory invoice aggregate that invoice line was invoiced under
 	 */
-	@ManyToOne(fetch = LAZY, cascade = PERSIST)
+	@ManyToOne(fetch = LAZY, cascade = MERGE)
 	@JoinColumn(name = "aggregate_id_f")
 	private SubCategoryInvoiceAgregate invoiceAggregateF;
 	
