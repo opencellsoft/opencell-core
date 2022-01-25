@@ -104,9 +104,9 @@ public class AuditConfigurationBean implements Serializable {
             ClassAndMethods cm = new ClassAndMethods();
             cm.setClassName(selectedClass.getName());
 
-			for (MethodWithParameter m : methods.getTarget()) {
-				cm.addMethod(m.getMethodName());
-			}
+            for (Object methodName : methods.getTarget()) {
+                cm.addMethod(StringEscapeUtils.unescapeHtml((String) methodName));
+            }
 
             if (!selectedClassAndMethods.contains(cm)) {
                 selectedClassAndMethods.add(cm);
