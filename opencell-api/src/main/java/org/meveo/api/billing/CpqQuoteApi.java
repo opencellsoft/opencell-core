@@ -1254,7 +1254,7 @@ public class CpqQuoteApi extends BaseApi {
                     .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
-            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
+            quoteTotalAmount = quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
         }
 
 
@@ -1523,9 +1523,9 @@ public class CpqQuoteApi extends BaseApi {
                     }catch (NoTaxException e) { 
                         throw new MeveoApiException(e.getMessage());
                     }catch (RatingException e) {
-                        log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
+                        log.error("Failed to apply a subscription charge {}: {}", subscriptionCharge,
                                 e.getRejectionReason());
-                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode(),e); // e.getBusinessException();
+                        throw new BusinessApiException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode()); // e.getBusinessException();
 
                     }
                 }
@@ -1546,8 +1546,8 @@ public class CpqQuoteApi extends BaseApi {
                     }catch (NoTaxException e) { 
                         throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
-                        log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
-                        throw new BusinessException("Failed to apply a subscription charge {}: {}"+recurringCharge.getCode(),e); // e.getBusinessException();
+                        log.error("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
+                        throw new BusinessApiException("Failed to apply a recurring charge {}: {}"+recurringCharge.getCode()); // e.getBusinessException();
                     }
                 }
                 // Add usage charges
@@ -1566,28 +1566,31 @@ public class CpqQuoteApi extends BaseApi {
                 			edr.setOriginBatch("QUOTE");
                 			edr.setOriginRecord(System.currentTimeMillis()+"");
 
-                			Double quantity=attributes.get(chargetemplate.getUsageQuantityAttribute().getCode())!=null?(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode()):0;
-                			edr.setQuantity(new BigDecimal(quantity));
-                			RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
-                			ratingResult.add(localRatingResult);
-                			if (localRatingResult != null) {
-                				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
-                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
-                				}
-
+                			Double quantity=0d;
+                			Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                			if(quantityValue!=null && quantityValue instanceof Double) {
+                				quantity = (Double) quantityValue;
+                			}else {
+                				throw new MissingParameterException("The attribute "+ chargetemplate.getUsageQuantityAttribute().getCode()+" for the usage charge "+usageCharge.getCode());
                 			}
+                			if(quantity!=0) {
+                				edr.setQuantity(new BigDecimal(quantity));
+                    			RatingResult localRatingResult = usageRatingService.rateVirtualEDR(edr);
+                    			ratingResult.add(localRatingResult);
+                    			if (localRatingResult != null) {
+                    				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
+                    					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                    							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
+                    				}
 
+                    			}
+                			}
                 		} catch (RatingException e) {
-                			log.trace("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                			throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
-
-
-
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
 
                 		} catch (BusinessException e) {
                 			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                			throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+                			throw new BusinessApiException("Failed to apply a usage charge {}: {}"+usageCharge.getCode()); // e.getBusinessException();
 
                 		}
                 	}
