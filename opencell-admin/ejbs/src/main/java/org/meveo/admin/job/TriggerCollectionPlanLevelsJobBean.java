@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.IN_PROGRESS;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
@@ -19,6 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -68,6 +70,9 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
 
     @Inject
     private InvoiceService invoiceService;
+
+    @Inject
+    private DunningActionInstanceService actionInstanceService;
 
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -135,7 +140,8 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                                         .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
                                                 + billingAccount.getCustomerAccount().getCode()));
                                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue();
+                                //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
+                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue() * 100;
                                 Invoice invoice = collectionPlan.getRelatedInvoice();
                                 if(invoice.getRecordedInvoice() == null) {
                                     throw new BusinessException("No getRecordedInvoice for the invoice "
@@ -147,18 +153,41 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                             }
                         }
                         actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                        if(levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.TO_BE_DONE) {
+                            levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                            levelInstanceService.update(levelInstance);
+                        }
                         countAutoActions++;
                         lastAction = actionInstance.getCode();
                         if (i + 1 < levelInstance.getActions().size()) {
                             nextAction = levelInstance.getActions().get(i + 1).getCode();
                         }
                     }
+                    actionInstanceService.update(actionInstance);
                 }
                 collectionPlan.setLastActionDate(new Date());
                 collectionPlan.setLastAction(lastAction);
                 collectionPlan.setNextAction(nextAction);
                 updateCollectionPlan = true;
-                updateLevelInstanceAndCollectionPlan(collectionPlan, levelInstance, countAutoActions, nextLevel);
+                levelInstance = levelInstanceService.refreshOrRetrieve(levelInstance);
+                if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
+                    collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
+                }
+                if (levelInstance.getDunningLevel() != null
+                        && levelInstance.getDunningLevel().isEndOfDunningLevel()
+                        && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
+                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
+                }
+                if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
+                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
+                }
+                long countActions = levelInstance.getActions().stream().filter(action -> action.getActionStatus() == DONE).count();
+                if (countActions > 0 && countActions < levelInstance.getActions().size()) {
+                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                }
+                if(countActions == levelInstance.getActions().size()) {
+                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
+                }
             }
             if(levelInstance.getDunningLevel() == null) {
                 jobExecutionResult.addErrorReport("No dunning level associated to level instance id " +  levelInstance.getId());
@@ -268,28 +297,6 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             } catch (Exception exception) {
                 throw new BusinessException("Error occurred during payment process : " + exception.getMessage());
             }
-        }
-    }
-
-    private void updateLevelInstanceAndCollectionPlan(DunningCollectionPlan collectionPlan,
-                                     DunningLevelInstance levelInstance, int countAutoActions, int nextLevel) {
-        levelInstance = levelInstanceService.refreshOrRetrieve(levelInstance);
-        if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
-            collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
-        }
-        if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)) {
-            collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
-        }
-        if(levelInstance.getActions().size() == countAutoActions) {
-            levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
-        }
-        if (levelInstance.getDunningLevel() != null
-                && levelInstance.getDunningLevel().isEndOfDunningLevel()
-                && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(UNPAID)) {
-            collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
-        }
-        if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {
-            levelInstance.setLevelStatus(IN_PROGRESS);
         }
     }
 }
