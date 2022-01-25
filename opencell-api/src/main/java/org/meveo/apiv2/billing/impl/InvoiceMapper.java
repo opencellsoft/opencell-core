@@ -99,7 +99,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.id(invoice.getId())
 				.amount(Optional.ofNullable(invoice.getAmount()).orElse(BigDecimal.ZERO))
 				.invoiceDate(invoice.getInvoiceDate())
-				.temporaryInvoiceNumber(invoice.getTemporaryInvoiceNumber())
+				.temporaryInvoiceNumber(Optional.ofNullable(invoice.getTemporaryInvoiceNumber()).orElse(""))
 				.dueDate(invoice.getDueDate())
 				.amountTax(invoice.getAmountTax())
 				.amountWithTax(invoice.getAmountTax())

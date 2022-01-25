@@ -97,7 +97,7 @@ public class UserAccountDto extends AccountDto {
 
     private UserAccountDto parentUserAccount;
 
-    private List<UserAccountDto> userAccounts;
+    private List<UserAccountDto> userAccounts= new ArrayList<>();
 
     /**
      * Instantiates a new user account dto.
