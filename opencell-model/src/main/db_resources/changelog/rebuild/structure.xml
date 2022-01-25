@@ -3599,6 +3599,7 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="is_consumer" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-201">
@@ -17021,6 +17022,7 @@
     <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui" />
     <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui" />
 	<changeSet id="#INTRD-4410_20220117" author="IlyassTalal" />
+	<changeSet id="#INTRD-4677_20220125" author="hatimOUDAD" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
