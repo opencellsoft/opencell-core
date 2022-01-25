@@ -293,4 +293,8 @@ public interface Invoice extends Resource {
 	@Schema(description = "The cpqQuote attached to this invoice")
 	@Nullable
 	Resource getCpqQuote();
+	
+	@Schema(description = "The temporary invoice number")
+	@Nullable
+	String getTemporaryInvoiceNumber();
 }
