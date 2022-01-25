@@ -202,7 +202,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 * @param invoice
 	 */
 	public void cancelInvoice(Invoice invoice) {
-		invoiceService.cancelInvoice(invoice);
+		invoiceService.cancelInvoiceWithoutDelete(invoice);
 	}
 
 	/**

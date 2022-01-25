@@ -25,7 +25,9 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
@@ -101,8 +103,14 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                         }
                     }
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
-                    assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, VALIDATED, null);
+                    if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                    	assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
+                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, VALIDATED, null);
+                    }else{
+                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.DRAFT_INVOICES, null);
+                    }
+                    
+                    
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
