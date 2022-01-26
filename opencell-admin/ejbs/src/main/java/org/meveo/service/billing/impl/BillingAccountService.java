@@ -22,14 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,7 +50,6 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -67,8 +61,6 @@ import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.invoicing.impl.BillingAccountDetailsItem;
 import org.meveo.service.billing.invoicing.impl.InvoicingItem;
-
-import com.jcraft.jsch.Identity;
 
 /**
  * The Class BillingAccountService.
@@ -553,39 +545,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return new AsyncResult<String>("OK");
     }
     
-	/**
-	 * @param billableAmountSummary 
-	 * @param billingRun
-	 * @param nbRuns 
-	 */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Object[] getMinMaxReport(BillingRun billingRun) {
-        BillingCycle billingCycle = billingRun.getBillingCycle();
-        Date startDate = billingRun.getStartDate();
-        Date endDate = billingRun.getEndDate();
-        if ((startDate != null) && (endDate == null)) {
-            endDate = new Date();
-        }
-        if (endDate != null && startDate == null) {
-        	startDate = new Date(0);
-        }
-        
-        Query minMaxQuery= getEntityManager().createNamedQuery("BillingAccount.getMinMaxToUpdate").setParameter("firstTransactionDate", new Date(0))
-                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
-        if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
-            startDate = DateUtils.setDateToEndOfDay(startDate);
-            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-            	endDate= DateUtils.setDateToEndOfDay(endDate);
-            } else {
-            	endDate= DateUtils.setDateToStartOfDay(endDate);
-            }
-            minMaxQuery.setParameter("startDate", startDate);
-            minMaxQuery.setParameter("endDate", endDate);
-        }
-
-        return (Object[]) minMaxQuery.getSingleResult();
-    }
-
 	/**
 	 * @param billingCycle
 	 * @param startDate

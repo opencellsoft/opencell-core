@@ -33,6 +33,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.invoicing.impl.BillingRunSummary;
 
 /**
  * @author Edward P. Legaspi
@@ -68,11 +69,20 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateBRAmounts(Long billingRunId,AmountsToInvoice summury) throws BusinessException {
+    public void updateBRAmounts(Long billingRunId,BillingRunSummary summury, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
         BillingRun billingRun = findById(billingRunId);
         billingRun.setPrAmountWithoutTax(summury.getAmountsToInvoice().getAmountWithoutTax());
         billingRun.setPrAmountWithTax(summury.getAmountsToInvoice().getAmountWithTax());
         billingRun.setPrAmountTax(summury.getAmountsToInvoice().getAmountTax());
+        Integer billableBA = summury.getBillingAccountsCount().intValue();
+        if (billableBA != null) {
+            billingRun.setBillingAccountNumber(billableBA);
+            billingRun.setBillableBillingAcountNumber(billableBA);
+        }
+        if (dateStatus != null) {
+            billingRun.setProcessDate(dateStatus);
+        }
+        billingRun.setStatus(status);
         billingRun = updateNoCheck(billingRun);
     }
 

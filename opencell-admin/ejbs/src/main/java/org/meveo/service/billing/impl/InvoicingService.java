@@ -164,7 +164,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<String> createAgregatesAndInvoiceForJob(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
+    public Future<String> createAgregatesAndInvoiceForJob(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         List<Invoice> invoices = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic);
         writeInvoicingData(billingRun, isFullAutomatic, invoices, expectMassRtsPerInvoice);
@@ -273,28 +273,34 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		final List<Long> largeList = sca.getRtIDs();
 		final long min=largeList.stream().min(Long::compare).get();
 		final long max=largeList.stream().max(Long::compare).get();
-		
-		if(expectMassRtsPerInvoice && sca.getItemNumber()>2) {
+		Date lastTransactionDate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false")) ?
+				DateUtils.setDateToEndOfDay(billingRun.getLastTransactionDate()) :DateUtils.setDateToStartOfDay(billingRun.getLastTransactionDate());
+
+		final Integer numberOfRTs = sca.getItemNumber();
+		if(expectMassRtsPerInvoice && numberOfRTs>2) {
 			final long intervalSize = max-min+1;
-			List<Long[]>intervals = getIntervals(min, max);
-			int update=0;
-			int i=1;
-			if((intervalSize)==sca.getItemNumber()) {
+			List<Long[]>intervals = getIntervals(min, max, numberOfRTs);
+			int updatedRTs=0;
+			if((intervalSize)==numberOfRTs) {
 				for(Long[] interval :intervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]);
-					update=query.executeUpdate();
+					updatedRTs+=query.executeUpdate();
 					if(intervalSize>1000) {
 						getEntityManager().flush();
 					}
 				}
 			} else {
 				for (Long[] interval : intervals) {
-					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingScKey").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
-					update=query.executeUpdate();
+					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingScKey").setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
+					updatedRTs+=query.executeUpdate();
 					if(intervalSize>1000) {
 						getEntityManager().flush();
 					}
 				}
+			}
+			if(updatedRTs!=numberOfRTs) {
+				String updateKey="["+min+"-"+ max+"]  ba : "+invoice.getBillingAccount().getId()+" seller : "+ invoice.getSeller()+" walletId : "+ sca.getWallet().getId()+"scId : "+ sca.getInvoiceSubCategory().getId()+" uaId : "+  sca.getUserAccount().getId();
+				throw new BusinessException("TOTAL UPDATED RTs ("+updatedRTs+") IS NOT THE EXPECTED NUMBER :"+numberOfRTs + " FOR KEY : "+updateKey) ;
 			}
 			
 		} else {
@@ -305,21 +311,26 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		}
 	}
 
-	private List<Long[]> getIntervals(final long min, final long max) {
-		List<Long> checksums = new ArrayList<Long>();
-		checksums.add(min);
-		Long next=min+MAX_RT_TO_UPDATE_PER_TRANSACTION;
-		while(next<max) {
-			checksums.add(next);
-			next=next+MAX_RT_TO_UPDATE_PER_TRANSACTION;
-		}
-		checksums.add(max+1);
-		int index = 0; 
+	private List<Long[]> getIntervals(final long min, final long max, Integer numberOfRTs) {
 		List<Long[]> intervals = new ArrayList<>();
-		while(index+1<checksums.size()) {
-			long intervalMin=checksums.get(index++);
-			long intervalMax=checksums.get(index);
-			intervals.add(new Long[]{intervalMin, intervalMax});
+		if(MAX_RT_TO_UPDATE_PER_TRANSACTION<numberOfRTs) {
+			intervals.add(new Long[]{min, max+1});
+		} else {
+			List<Long> checksums = new ArrayList<Long>();
+			checksums.add(min);
+			Long next=min+MAX_RT_TO_UPDATE_PER_TRANSACTION;
+			while(next<max) {
+				checksums.add(next);
+				next=next+MAX_RT_TO_UPDATE_PER_TRANSACTION;
+			}
+			checksums.add(max+1);
+			int index = 0; 
+	
+			while(index+1<checksums.size()) {
+				long intervalMin=checksums.get(index++);
+				long intervalMax=checksums.get(index);
+				intervals.add(new Long[]{intervalMin, intervalMax});
+			}
 		}
 		return intervals;
 	}
@@ -721,8 +732,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
     @Override
     public void create(Invoice invoice) throws BusinessException {
         invoice.updateAudit(currentUser);
-        // Schedule end of period events
-        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (invoice instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) invoice);
         }
@@ -1172,8 +1181,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void checkDirtyTaxes(BillingRun billingRun) {
-    	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getUsedTaxesSummary")
-    			.setParameter("billingRunId", billingRun.getId()).getResultList();
+    	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getUsedTaxesSummary").setParameter("billingRunId", billingRun.getId()).getResultList();
     	for(Object[] result : results) {
     		int i=0;
     		Long taxClassId =(Long)result[i++];
@@ -1192,8 +1200,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	}
     
 	public void recalculateTaxes(BillingRun billingRun) {
-    	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getRecalculableRTDetails")
-    			.setParameter("billingRunId", billingRun.getId()).getResultList();
+    	List<Object[]> results = getEntityManager().createNamedQuery("RatedTransaction.getRecalculableRTDetails").setParameter("billingRunId", billingRun.getId()).getResultList();
     	for(Object[] result : results) {
     		//#MEL should be optimized later
     		RatedTransaction rt = (RatedTransaction) result[0];
