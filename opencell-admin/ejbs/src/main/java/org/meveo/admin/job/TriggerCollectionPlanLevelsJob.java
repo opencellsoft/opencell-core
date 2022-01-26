@@ -8,6 +8,7 @@ import org.meveo.service.job.Job;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import static javax.ejb.TransactionAttributeType.NEVER;
@@ -20,7 +21,7 @@ public class TriggerCollectionPlanLevelsJob extends Job {
     private TriggerCollectionPlanLevelsJobBean collectionPlanLevelsJobBean;
 
     @Override
-    @TransactionAttribute(NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         collectionPlanLevelsJobBean.execute(result, jobInstance);
         return result;
