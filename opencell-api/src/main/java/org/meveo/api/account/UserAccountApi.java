@@ -214,7 +214,18 @@ public class UserAccountApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
             }
         }
-        attachSubUserAccounts(postData, userAccount,null);
+		List<UserAccount> subUserAccounts = new ArrayList<>();
+		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+			if (subUserAccount != null) {
+				subUserAccounts.add(subUserAccount);
+			} else {
+
+				throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+			}
+		}
+		userAccount.setUserAccounts(subUserAccounts);
+        	
         userAccount = userAccountService.update(userAccount);
 
         return userAccount;
