@@ -1,22 +1,4 @@
-/*
- * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
- * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
- * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
- * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
- * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
- * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
- *
- * For more information on the GNU Affero General Public License, please consult
- * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
- */
-
-package org.meveo.admin.job;
+package org.meveo.admin.job.v2.invoicing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +12,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -37,22 +20,18 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.invoicing.impl.BillingService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
-/**
- * @author HORRI Khalid
- * @lastModifiedVersion 5.4
- */
 @Stateless
-public class InvoicingJobBean extends BaseJobBean {
+public class InvoicingJobBeanV2 extends BaseJobBean {
 
     @Inject
     protected Logger log;
 
     @Inject
-    private BillingRunService billingRunService;
+    private BillingService billingRunService;
 
     @Inject
     private JobExecutionService jobExecutionService;
@@ -66,6 +45,10 @@ public class InvoicingJobBean extends BaseJobBean {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        
+         
+        boolean expectMassRTsProcessing = (boolean) this.getParamOrCFValue(jobInstance, "expectMassRTsProcessing", false);
+        boolean recalculateTaxes = (boolean) this.getParamOrCFValue(jobInstance, "recalculateTaxes", false);
 
         try {
             List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
@@ -79,7 +62,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 }
                 try {
                     billingRunService.detach(billingRun);
-                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(), result.getJobInstance().getId(), result);
+                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),recalculateTaxes, expectMassRTsProcessing, result.getJobInstance().getId(), result);
                     result.registerSucces();
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);

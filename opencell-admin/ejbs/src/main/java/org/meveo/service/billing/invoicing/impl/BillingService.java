@@ -32,7 +32,6 @@ import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicingService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 
 @Stateless
 public class BillingService extends PersistenceService<BillingRun> {
@@ -63,12 +62,14 @@ public class BillingService extends PersistenceService<BillingRun> {
 	 * @param billingRun    the billing run to process
 	 * @param nbRuns        the nb runs
 	 * @param waitingMillis the waiting millis
+	 * @param expectMassRTsProcessing 
+	 * @param recalculateTaxes 
 	 * @param jobInstanceId the job instance
 	 * @param result        the Job execution result
 	 * @throws Exception the exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
+	public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, boolean recalculateTaxes, boolean expectMassRTsProcessing, Long jobInstanceId,
 			JobExecutionResultImpl result) throws Exception {
 		log.info("==================== START Processing billingRun id={} status={} ====================", billingRun.getId(), billingRun.getStatus());
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
@@ -83,19 +84,17 @@ public class BillingService extends PersistenceService<BillingRun> {
 						&& ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || isFullAutomatic) || appProvider.isAutomaticInvoicing()));
 
 		if (proceedToInvoiceGenerating) {
-			log.info("==================== recalculateTaxes ====================");
+			if(recalculateTaxes) {
+				log.info("==================== recalculateTaxes ====================");
+			}
 			invoicingService.checkDirtyTaxes(billingRun);
 			log.info("==================== start invoices creation loop ====================");
-			boolean expectInvoicesWithLargeRTsNumber = true;
-			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic, expectInvoicesWithLargeRTsNumber);
+			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic, expectMassRTsProcessing);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
 		}
 		if (BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus())) {
 			log.info("apply threshold rules for all invoices generated with {}", billingRun);
-			// billingRunService.applyThreshold(billingRun);
-			// rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis,
-			// jobInstanceId, result);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
 			if (isFullAutomatic) {
 				billingRun = billingRunExtensionService.findById(billingRun.getId());
