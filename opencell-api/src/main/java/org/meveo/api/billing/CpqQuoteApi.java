@@ -1513,19 +1513,23 @@ public class CpqQuoteApi extends BaseApi {
                             edr.setCreated(new Date());
                             edr.setOriginBatch("QUOTE");
                             edr.setOriginRecord(System.currentTimeMillis() + "");
+                            Double quantity = 0d;
                             Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                            Double quantity = quantityValue instanceof String ? Double.parseDouble((String) quantityValue) : (Double) quantityValue;
-                            edr.setQuantity(quantity != null ? new BigDecimal(quantity) : BigDecimal.ZERO);
-                            List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+                			if(quantityValue!=null && quantityValue instanceof Double) {
+                				quantity = (Double) quantityValue;
+                			}else {
+                				throw new MissingParameterException("The attribute "+ chargetemplate.getUsageQuantityAttribute().getCode()+" for the usage charge "+usageCharge.getCode());
+                			}
+                			if(quantity!=0) {
+                				 if (walletOperationsFromEdr != null) {
+                                     for (WalletOperation walletOperation : walletOperationsFromEdr) {
+                                         walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate())));
+                                         walletOperations.addAll(walletOperationsFromEdr);
+                                     }
 
-                            if (walletOperationsFromEdr != null) {
-                                for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                    walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                                            .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate())));
-                                    walletOperations.addAll(walletOperationsFromEdr);
-                                }
-
-                            }
+                                 }
+                			}
 
 
                         } catch (RatingException e) {
@@ -1535,7 +1539,7 @@ public class CpqQuoteApi extends BaseApi {
 
                         } catch (BusinessException e) {
                             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                            throw new BusinessException("Failed to apply a subscription charge {}: {}" + usageCharge.getCode(), e); // e.getBusinessException();
+                            throw new BusinessException(e.getMessage()); 
 
                         }
                     }
