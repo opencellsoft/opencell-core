@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -34,7 +32,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -88,7 +85,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 * Discount plan items. Must not be eager to reload in GUI.
 	 */
 	@OneToMany(mappedBy = "discountPlan", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<DiscountPlanItem> discountPlanItems;
+	private List<DiscountPlanItem> discountPlanItems;
 
 	/**
 	 * Effectivity start date
@@ -167,16 +164,16 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 
 	public List<DiscountPlanItem> getDiscountPlanItems() {
-		return discountPlanItems == null? null: new ArrayList<>(discountPlanItems);
+		return discountPlanItems;
 	}
 
 	public void setDiscountPlanItems(List<DiscountPlanItem> discountPlanItems) {
-		this.discountPlanItems = discountPlanItems == null? null: new TreeSet(discountPlanItems);
+		this.discountPlanItems = discountPlanItems;
 	}
 
 	public void addDiscountPlanItem(DiscountPlanItem di) {
 		if (discountPlanItems == null) {
-			discountPlanItems = new TreeSet<>();
+			discountPlanItems = new ArrayList<>();
 		}
 
 		discountPlanItems.add(di);

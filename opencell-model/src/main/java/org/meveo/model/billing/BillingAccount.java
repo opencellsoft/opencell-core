@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -210,7 +208,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      * User accounts
      */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<UserAccount> usersAccounts = new TreeSet<>();
+    private List<UserAccount> usersAccounts = new ArrayList<>();
 
     /**
      * Invoices
@@ -359,7 +357,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<DiscountPlanInstance> discountPlanInstances;
+    private List<DiscountPlanInstance> discountPlanInstances;
 
     /**
      * Total invoicing amount with tax
@@ -431,9 +429,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
-    
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<RatedTransaction> ratedTransactions = new TreeSet<>();
 
     public boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -448,11 +443,11 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
     public List<UserAccount> getUsersAccounts() {
-        return usersAccounts==null?null:new ArrayList<UserAccount>(usersAccounts);
+        return usersAccounts;
     }
 
     public void setUsersAccounts(List<UserAccount> usersAccounts) {
-        this.usersAccounts = new TreeSet(usersAccounts);
+        this.usersAccounts = usersAccounts;
     }
 
     public CustomerAccount getCustomerAccount() {
@@ -747,7 +742,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
     public List<DiscountPlanInstance> getDiscountPlanInstances() {
-        return new ArrayList<>(discountPlanInstances);
+        return discountPlanInstances;
     }
 
     @Override
@@ -764,7 +759,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
     public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
-        this.discountPlanInstances = new TreeSet<>(discountPlanInstances);
+        this.discountPlanInstances = discountPlanInstances;
     }
 
     public DiscountPlan getDiscountPlan() {
@@ -900,18 +895,4 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
-
-	/**
-	 * @return the ratedTransactions
-	 */
-	public Set<RatedTransaction> getRatedTransactions() {
-		return ratedTransactions;
-	}
-
-	/**
-	 * @param ratedTransactions the ratedTransactions to set
-	 */
-	public void setRatedTransactions(Set<RatedTransaction> ratedTransactions) {
-		this.ratedTransactions = ratedTransactions;
-	}
 }
