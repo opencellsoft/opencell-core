@@ -1506,34 +1506,54 @@ public class CpqQuoteApi extends BaseApi {
                         edr = new EDR();
                         try {
 
-                            edr.setAccessCode(null);
-                            edr.setEventDate(usageCharge.getChargeDate());
-                            edr.setSubscription(subscription);
-                            edr.setStatus(EDRStatusEnum.OPEN);
-                            edr.setCreated(new Date());
-                            edr.setOriginBatch("QUOTE");
-                            edr.setOriginRecord(System.currentTimeMillis() + "");
-                            Double quantity = 0d;
-                            Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                			if(quantityValue!=null && quantityValue instanceof Double) {
-                				quantity = (Double) quantityValue;
-                			}else {
-                				throw new MissingParameterException("The attribute "+ chargetemplate.getUsageQuantityAttribute().getCode()+" for the usage charge "+usageCharge.getCode());
-                			}
-                			if(quantity!=0) {
-                				 if (walletOperationsFromEdr != null) {
-                                     for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                         walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate())));
-                                         walletOperations.addAll(walletOperationsFromEdr);
-                                     }
+							edr.setAccessCode(null);
+							edr.setEventDate(usageCharge.getChargeDate());
+							edr.setSubscription(subscription);
+							edr.setStatus(EDRStatusEnum.OPEN);
+							edr.setCreated(new Date());
+							edr.setOriginBatch("QUOTE");
+							edr.setOriginRecord(System.currentTimeMillis() + "");
+							Double quantity = 0d;
+							Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+							if (quantityValue != null && quantityValue instanceof Double) {
+								quantity = (Double) quantityValue;
+							} else {
+								throw new MissingParameterException(
+										"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
+												+ " for the usage charge " + usageCharge.getCode());
+							}
+							if (quantity != 0) {
+								edr.setQuantity(new BigDecimal(quantity));
+								Object param1 = attributes.get("EDR_text_parameter_1");
+								if (param1 != null) {
+									edr.setParameter1(param1.toString());
+								}
+								Object param2 = attributes.get("EDR_text_parameter_2");
+								if (param2 != null) {
+									edr.setParameter2(param2.toString());
+								}
+								Object param3 = attributes.get("EDR_text_parameter_3");
+								if (param3 != null) {
+									edr.setParameter3(param3.toString());
+								}
+								List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
 
-                                 }
-                			}
+								if (walletOperationsFromEdr != null) {
+									for (WalletOperation walletOperation : walletOperationsFromEdr) {
+										walletOperation.setAccountingArticle(accountingArticleService
+												.getAccountingArticle(serviceInstance.getProductVersion().getProduct(),
+														usageCharge.getChargeTemplate(), attributes)
+												.orElseThrow(() -> new BusinessException(
+														errorMsg + " and charge " + usageCharge.getChargeTemplate())));
+										walletOperations.addAll(walletOperationsFromEdr);
+									}
+								}
+							}
 
 
                     	} catch (RatingException e) {
                 			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                			throw new BusinessApiException(e.getMessage());
 
                 		} catch (BusinessException e) {
                 			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
