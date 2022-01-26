@@ -41,6 +41,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -148,6 +149,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
+    
+    /**
+     * is the user account a consumer
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_consumer")
+    private boolean isConsumer;
 
     public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -273,4 +281,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     public Class<? extends BusinessEntity> getParentEntityType() {
         return BillingAccount.class;
     }
+
+	public boolean isConsumer() {
+		return isConsumer;
+	}
+
+	public void setConsumer(boolean isConsumer) {
+		this.isConsumer = isConsumer;
+	}
+    
 }
