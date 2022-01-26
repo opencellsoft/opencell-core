@@ -5740,6 +5740,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
         }
         
+        //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice);
         toUpdate.setDueDate(input.getDueDate());
 
         if (invoiceResource.getPaymentMethod() != null) {
