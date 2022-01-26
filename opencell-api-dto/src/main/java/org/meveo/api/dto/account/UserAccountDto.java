@@ -97,7 +97,9 @@ public class UserAccountDto extends AccountDto {
 
     private UserAccountDto parentUserAccount;
 
-	private List<UserAccountDto> userAccounts = new ArrayList<UserAccountDto>();
+
+    private List<UserAccountDto> userAccounts = new ArrayList<>();
+
 
     /**
      * Instantiates a new user account dto.
@@ -118,7 +120,9 @@ public class UserAccountDto extends AccountDto {
        
         if (e.getParentUserAccount() != null) {
         	setParentUserAccountCode(e.getParentUserAccount().getCode());
+        	parentUserAccount = new UserAccountDto(e.getParentUserAccount());
         }
+        
 		if (e.getBillingAccount() != null) {
 			setBillingAccount(e.getBillingAccount().getCode());
 			setBillingAccountDescription(e.getBillingAccount().getDescription());
@@ -150,7 +154,8 @@ public class UserAccountDto extends AccountDto {
         if (e.getUserAccounts() != null) {
         	for(UserAccount subUserAccount: e.getUserAccounts()) {
         	    if(subUserAccount != null) {
-        	        getUserAccountCodes().add(subUserAccount.getCode());	        
+        	        userAccountCodes.add(subUserAccount.getCode());
+        	        userAccounts.add(new UserAccountDto(subUserAccount));
         	    }
         	}
         } 

@@ -142,25 +142,24 @@ public class UserAccountApi extends AccountEntityApi {
         if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
     		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
     		if (parentUserAccount != null) {
-    				userAccount.setParentUserAccount(parentUserAccount);  
-    				
+				userAccount.setParentUserAccount(parentUserAccount);
+				attachSubUserAccounts(postData, parentUserAccount, billingAccount);
+
     		} else {
     		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
     		}
         }
-        
-        attachSubUserAccounts(postData, userAccount,billingAccount);
-		
-        userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
+		userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
     }
 
-	private void attachSubUserAccounts(UserAccountDto postData, UserAccount userAccount, BillingAccount billingAccount) {
+
+    private void attachSubUserAccounts(UserAccountDto postData, UserAccount userAccount, BillingAccount billingAccount) {
 		List<UserAccount> subUserAccounts = new ArrayList<>();
 		for (String subUserAccountcode : postData.getUserAccountCodes()) {
 			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
-			if (subUserAccount != null && billingAccount!=null) {
+			if (subUserAccount != null) {
 				if (subUserAccount.getBillingAccount() == billingAccount) {
 					subUserAccounts.add(subUserAccount);
 				}else {
@@ -172,6 +171,7 @@ public class UserAccountApi extends AccountEntityApi {
 		}
 		userAccount.setUserAccounts(subUserAccounts);
 	}
+	
 
     public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
         return update(postData, true);
@@ -200,6 +200,16 @@ public class UserAccountApi extends AccountEntityApi {
             UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
             if (parentUserAccount != null) {
                 userAccount.setParentUserAccount(parentUserAccount);
+                List<UserAccount> subUserAccounts = new ArrayList<>();
+        		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+        			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+        			if (subUserAccount != null) {
+        				subUserAccounts.add(subUserAccount);
+        			}else {
+        				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+        			}
+        		}
+        		userAccount.setUserAccounts(subUserAccounts);
             } else {
                 throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
             }
@@ -239,11 +249,11 @@ public class UserAccountApi extends AccountEntityApi {
                     throw new BusinessApiException("Can not change the parent account. User account have non invoiced RT");
                 }
             }
-            
-           for(UserAccount subUserAccount: userAccount.getUserAccounts()){
-        	   subUserAccount.setBillingAccount(billingAccount);
-           }
-           userAccount.setBillingAccount(billingAccount);
+
+            for(UserAccount subUserAccount: userAccount.getUserAccounts()){
+         	   subUserAccount.setBillingAccount(billingAccount);
+            }
+            userAccount.setBillingAccount(billingAccount);
         }
 
         updateAccount(userAccount, postData, checkCustomFields);

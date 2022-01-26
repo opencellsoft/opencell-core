@@ -83,10 +83,18 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 
 	public CommercialOrder duplicate(CommercialOrder entity) {
-		final CommercialOrder duplicate = new CommercialOrder(entity);
-		detach(entity);
+		final CommercialOrder duplicate = new CommercialOrder();
 		duplicate.setStatus(CommercialOrderEnum.DRAFT.toString());
 		duplicate.setStatusDate(Calendar.getInstance().getTime());
+		duplicate.setOrderType(entity.getOrderType());
+		duplicate.setBillingAccount(entity.getBillingAccount());
+		duplicate.setUserAccount(entity.getUserAccount());
+		duplicate.setSeller(entity.getSeller());
+		duplicate.setDescription(entity.getDescription());
+		duplicate.setInvoicingPlan(entity.getInvoicingPlan());
+		duplicate.setOrderInvoiceType(entity.getOrderInvoiceType());
+		duplicate.setOrderDate(new Date());
+		duplicate.setProgressDate(new Date());
 		create(duplicate);
 		return duplicate;
 	}

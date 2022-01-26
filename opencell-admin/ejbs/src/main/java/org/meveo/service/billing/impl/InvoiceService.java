@@ -5210,7 +5210,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         subAggregate.setInvoiceLinesToAssociate(new ArrayList<>());
                     }
 
-                    setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    if (invoice.getDueDate() == null) {
+                        setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    }
                     setInitialCollectionDate(invoice, invoiceLinesGroup.getBillingCycle(), billingRun);
 
                     EntityManager em = getEntityManager();
