@@ -5739,9 +5739,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
         }
-        if (input.getDueDate() != null) {
-            toUpdate.setDueDate(input.getDueDate());
-        }
+
+        toUpdate.setDueDate(input.getDueDate());
+        
         if (invoiceResource.getPaymentMethod() != null) {
             final Long pmId = invoiceResource.getPaymentMethod().getId();
             PaymentMethod pm = (PaymentMethod) tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
