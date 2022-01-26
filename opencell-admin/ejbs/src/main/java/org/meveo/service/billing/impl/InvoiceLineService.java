@@ -503,6 +503,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 				}
 		}
 		
+		if(invoiceLine.getUnitPrice() != null) {
+            if(invoiceLine.getQuantity() != null) {
+                invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
+                invoiceLine.setAmountWithTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
+            }
+        }
 		
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
