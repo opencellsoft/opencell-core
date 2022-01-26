@@ -1532,16 +1532,14 @@ public class CpqQuoteApi extends BaseApi {
                 			}
 
 
-                        } catch (RatingException e) {
-                            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                            throw new BusinessException("Failed to apply a subscription charge {}: {}" + usageCharge.getCode(), e); // e.getBusinessException();
+                    	} catch (RatingException e) {
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
 
+                		} catch (BusinessException e) {
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                			throw new BusinessApiException(e.getMessage()); 
 
-                        } catch (BusinessException e) {
-                            log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                            throw new BusinessException(e.getMessage()); 
-
-                        }
+                		}
                     }
                 }
             }
