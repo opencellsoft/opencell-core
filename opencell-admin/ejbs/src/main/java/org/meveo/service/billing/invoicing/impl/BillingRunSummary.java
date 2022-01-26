@@ -9,31 +9,12 @@ import org.meveo.model.billing.Amounts;
 public class BillingRunSummary implements Serializable {
 
     private static final long serialVersionUID = 3109687834951882877L;
-
     private Long billingAccountsCount;
-    
     private Long firstBillingAccountId;
-    
     private Long lastBillingAccountId;
-
-    /**
-     * Amounts to invoice
-     */
     private Amounts amountsToInvoice;
 
-    /**
-     * Constructor
-     */
-    public BillingRunSummary() {
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param entityToInvoiceId ID of an entity to invoice
-     * @param amountsToInvoice Amounts to invoice
-     */
-    public BillingRunSummary(Long BillingAccountsCount, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, long firstBillingAccountId, long lastBillingAccountId) {
+    public BillingRunSummary(Long BillingAccountsCount, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, Long firstBillingAccountId, Long lastBillingAccountId) {
         this.billingAccountsCount = BillingAccountsCount;
         this.lastBillingAccountId = lastBillingAccountId;
         this.firstBillingAccountId = firstBillingAccountId;
@@ -65,7 +46,7 @@ public class BillingRunSummary implements Serializable {
 	 * @param billingAccountsCount the billingAccountsCount to set
 	 */
 	public void setBillingAccountsCount(Long billingAccountsCount) {
-		billingAccountsCount = billingAccountsCount;
+		this.billingAccountsCount = billingAccountsCount;
 	}
 
 	/**

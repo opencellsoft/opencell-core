@@ -1135,4 +1135,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public Date getNextInvoiceDate() {
 		return nextInvoiceDate;
 	}
+
+	/**
+	 * set all invoice amounts to 0
+	 */
+	public void initAmounts() {
+		this.amountTax=BigDecimal.ZERO;
+		this.amountWithTax=BigDecimal.ZERO;
+		this.amountWithoutTax=BigDecimal.ZERO;
+	}
 }
