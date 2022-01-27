@@ -324,7 +324,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
 
             OCCTemplate occTemplate = null;
-            if (remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
+            if (remainingAmountWithTaxForRecordedIncoice != null && remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
                 String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
                 if (!StringUtils.isBlank(occTemplateCode)) {
                     occTemplate = occTemplateService.findByCode(occTemplateCode);
