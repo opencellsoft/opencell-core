@@ -28,6 +28,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -56,6 +57,9 @@ public class BillingService extends PersistenceService<BillingRun> {
 	@Inject
 	private BillingRunService billingRunService;
 	
+    @Inject
+    BillingCycleService billingCycleService;
+	
 	/**
 	 * Invoicing process for the billingRun, launched by invoicingJob.
 	 *
@@ -69,11 +73,12 @@ public class BillingService extends PersistenceService<BillingRun> {
 	 * @throws Exception the exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, boolean recalculateTaxes, boolean expectMassRTsProcessing, Long jobInstanceId,
+	public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, boolean recalculateTaxes, Long jobInstanceId,
 			JobExecutionResultImpl result) throws Exception {
 		log.info("==================== START Processing billingRun id={} status={} ====================", billingRun.getId(), billingRun.getStatus());
+		BillingCycle billingCycle = billingRun.getBillingCycle();
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-			BillingRunSummary billingRunSummary = getBRSummury(billingRun);
+			BillingRunSummary billingRunSummary = getBRSummury(billingRun, billingCycle);
 			log.info( "==================== linkBillableEntitiesToBR -- Minimum invoicing amount is skipped ====================");
 			linkBillableEntitiesToBR(billingRun, nbRuns, billingRunSummary, waitingMillis);
 			billingRunExtensionService.updateBRAmounts(billingRun.getId(), billingRunSummary, BillingRunStatusEnum.PREINVOICED, new Date());
@@ -89,7 +94,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 			}
 			invoicingService.checkDirtyTaxes(billingRun);
 			log.info("==================== start invoices creation loop ====================");
-			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic, expectMassRTsProcessing);
+			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic, billingCycle);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
 			billingRun = billingRunExtensionService.findById(billingRun.getId());
 		}
@@ -118,7 +123,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 	}
 
 	private void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
-			boolean isFullAutomatic, boolean expectInvoicesWithLargeRTsNumber) throws BusinessException {
+			boolean isFullAutomatic, BillingCycle billingCycle) throws BusinessException {
 		// #MEL must be used in all RT  queries!
 		Date lastTransactionDate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false")) ?
 			DateUtils.setDateToEndOfDay(billingRun.getLastTransactionDate()) :DateUtils.setDateToStartOfDay(billingRun.getLastTransactionDate());
@@ -147,31 +152,31 @@ public class BillingService extends PersistenceService<BillingRun> {
 		int page = 0;
 		List<BillingAccountDetailsItem> items = null;
 		while (count >= pageSise) {
-			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound, expectInvoicesWithLargeRTsNumber);
+			items = getInvoicingItems(billingRun, pageSise, page, thresholdPerEntityFound);
 			count = items.size();
 			log.info("======== READER : {} ======== ", count);
-			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic, expectInvoicesWithLargeRTsNumber);
+			processEntitiesHavingNoParentThreshold(billingRun, nbRuns, waitingMillis, jobInstanceId, items, isFullAutomatic, billingCycle);
 			log.info("======== {} ITEMS PROCESSED ========",count);
 			page += 1;
 		}
 	}
 	
-	private List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, int pageSize, int pageIndex, boolean thresholdPerEntityFound, boolean expectMassRtsPerInvoice) {
+	private List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
 		log.info("========== getInvoicingItems " + pageSize + "-" + pageIndex + " ==========");
 		Date startDate = billingRun.getStartDate();
 		Date endDate = billingRun.getEndDate();
 		if ((startDate != null) && (endDate == null)) {
 			endDate = new Date();
 		}
-		return billingAccountService.getInvoicingItems(billingRun, startDate, endDate, pageSize, pageIndex, thresholdPerEntityFound, expectMassRtsPerInvoice);
+		return billingAccountService.getInvoicingItems(billingRun, startDate, endDate, pageSize, pageIndex, thresholdPerEntityFound);
 	}
 
-	private void processEntitiesHavingNoParentThreshold(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<BillingAccountDetailsItem> items, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
+	private void processEntitiesHavingNoParentThreshold(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<BillingAccountDetailsItem> items, boolean isFullAutomatic, BillingCycle billingCycle) {
 		List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
 		MeveoUser lastCurrentUser = currentUser.unProxy();
 		final List<List<BillingAccountDetailsItem>> dispatchedInvoicingItems = dispatchInvoicingItems(items, (int) nbRuns);
 		for (List<BillingAccountDetailsItem> dispatchedInvoicingItem : dispatchedInvoicingItems) {
-			asyncReturns.add(invoicingService.createAgregatesAndInvoiceForJob(billingRun, dispatchedInvoicingItem, jobInstanceId, lastCurrentUser, isFullAutomatic, expectMassRtsPerInvoice));
+			asyncReturns.add(invoicingService.createAgregatesAndInvoiceForJob(billingRun, billingCycle, dispatchedInvoicingItem, jobInstanceId, lastCurrentUser, isFullAutomatic));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -246,8 +251,7 @@ public class BillingService extends PersistenceService<BillingRun> {
 		return min;
 	}
 
-	private BillingRunSummary getBRSummury(BillingRun billingRun) {
-		BillingCycle billingCycle = billingRun.getBillingCycle();
+	private BillingRunSummary getBRSummury(BillingRun billingRun, BillingCycle billingCycle) {
 		Date startDate = billingRun.getStartDate();
 		Date endDate = billingRun.getEndDate();
 		if ((startDate != null) && (endDate == null)) {

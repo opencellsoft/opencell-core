@@ -38,6 +38,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.job.v2.invoicing.InvoicingJobV2;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
@@ -594,7 +595,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 	
 	public List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, Date startDate,
-			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound, boolean expectMassRtsPerInvoice) {
+			Date endDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
 		
 		String BillingAccountDetailsQueryName = "BillingAccount.getBillingAccountDetailsItems";
 		if(thresholdPerEntityFound) {
@@ -610,9 +611,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		boolean useStart = startDate != null;
 		boolean useEnd = endDate != null;
 		String invoicingItemsQueryName = "RatedTransaction.getInvoicingItems";
-		if(expectMassRtsPerInvoice) {
-			invoicingItemsQueryName+="ByInterval";
-		}
+
 		if (useStart && useEnd) {
 			invoicingItemsQueryName = invoicingItemsQueryName + "ByStartAndEndDate";
 		} else if (useStart) {
@@ -628,7 +627,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 		
 		final Map<Long, BillingAccountDetailsItem> billingAccountDetailsMap = resultList.stream().map(x-> new BillingAccountDetailsItem(x)).collect(Collectors.toMap(BillingAccountDetailsItem::getBillingAccountId, Function.identity()));
-		Query query = getEntityManager().createNamedQuery(invoicingItemsQueryName).setParameter("ids", billingAccountDetailsMap.keySet()).setParameter("lastTransactionDate", lastTransactionDate);
+		Query query = getEntityManager().createNamedQuery(invoicingItemsQueryName).setParameter("ids", billingAccountDetailsMap.keySet()).setParameter("lastTransactionDate", lastTransactionDate).setParameter("limitUpdateById", InvoicingJobV2.LIMIT_UPDATE_BY_ID);
 		if (useStart) {
 			query.setParameter("startDate", startDate);
 		} else if (useEnd) {

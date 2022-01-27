@@ -45,7 +45,8 @@ import org.meveo.service.job.Job;
 @Stateless
 public class InvoicingJobV2 extends Job {
 
-    /** The invoicing job bean. */
+    public static final long LIMIT_UPDATE_BY_ID = 10000;
+	/** The invoicing job bean. */
     @Inject
     private InvoicingJobBeanV2 invoicingJobBean;
 

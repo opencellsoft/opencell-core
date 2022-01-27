@@ -46,7 +46,9 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.v2.invoicing.InvoicingJobV2;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -163,14 +165,16 @@ public class InvoicingService extends PersistenceService<Invoice> {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<String> createAgregatesAndInvoiceForJob(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, boolean expectMassRtsPerInvoice) {
+    public Future<String> createAgregatesAndInvoiceForJob(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        List<Invoice> invoices = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic);
-        writeInvoicingData(billingRun, isFullAutomatic, invoices, expectMassRtsPerInvoice);
+        List<Invoice> invoices = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle);
+        if(!CollectionUtils.isEmpty(invoices)) {
+        	writeInvoicingData(billingRun, isFullAutomatic, invoices, billingCycle);
+        }
         return new AsyncResult<String>("OK");
     }
 
-	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic) {
+	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle) {
 		List<Invoice> invoices = new ArrayList<Invoice>();
 		for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
@@ -179,7 +183,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
             final long billingAccountId = billingAccountDetailsItem.getBillingAccountId();
             try {
             	//group by invoicingKey and prepare invoice
-            	invoices.addAll(billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().map(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun)).collect(Collectors.toList()));
+            	billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().forEach(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun, invoices, billingCycle));
             } catch (Exception e) {
                 log.error("Failed to create invoices for entity {}", billingAccountId, e);
                 rejectedBillingAccountService.create(billingAccountId, billingRun, e.getMessage());
@@ -192,51 +196,53 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param billingAccountDetailsItem 
      * @param invoicingItems
 	 * @param billingRun
+     * @param invoices 
+     * @param billingCycle 
      * @param isFullAutomatic 
 	 * @return
 	 */
-	private Invoice createAggregatesAndInvoiceFromInvoicingItems(BillingAccountDetailsItem billingAccountDetailsItem, List<InvoicingItem> invoicingItems, BillingRun billingRun){
+	private void createAggregatesAndInvoiceFromInvoicingItems(BillingAccountDetailsItem billingAccountDetailsItem, List<InvoicingItem> invoicingItems, BillingRun billingRun, List<Invoice> invoices, BillingCycle billingCycle){
 		final InvoicingItem firstItem = invoicingItems.get(0);
 		BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, firstItem.getBillingAccountId());
-		final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount);
+		final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount, billingCycle);
 		Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, invoicingItems, billingAccount, invoice);
 		if (!invoice.isPrepaid()) {
-			BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccountDetailsItem, ThresholdOptionsEnum.AFTER_DISCOUNT, billingRun.getBillingCycle());
+			BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccountDetailsItem, ThresholdOptionsEnum.AFTER_DISCOUNT, billingCycle);
 			if (thresholdAfterDiscount != null) {
 				BigDecimal amount = (appProvider.isEntreprise()) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax();
 				if (thresholdAfterDiscount.compareTo(amount) > 0) {
 					rejectedBillingAccountService.create(billingAccount.getId(), billingRun, "Billing account did not reach invoicing threshold");
-					return null;
+					return;
 				}
 			}
 		}
  
-        evalDueDate(invoice, billingRun.getBillingCycle(), null, billingAccountDetailsItem.getCaDueDateDelayEL());
+        evalDueDate(invoice, billingCycle, null, billingAccountDetailsItem.getCaDueDateDelayEL());
         invoice.setSubCategoryInvoiceAgregate(invoiceSCAs);
-        return invoice;
+        invoices.add(invoice);
 	}
 
-	private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices, boolean expectMassRtsPerInvoice) {
+	private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices, BillingCycle billingCycle) {
 		log.info("======== CREATING {} INVOICES ========", invoices.size());
-		invoices.stream().forEach(invoice->assignNumberAndCreate(billingRun, isFullAutomatic, invoice));
+		invoices.stream().forEach(invoice->assignNumberAndCreate(billingRun, isFullAutomatic, invoice, billingCycle));
         getEntityManager().flush();//to be able to update Rts
         getEntityManager().clear();
-        log.info("======== UPDATING RTs ========", invoices.size());
-        invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateRatedTransactions(i,billingRun,sca, expectMassRtsPerInvoice)));
+        log.info("======== UPDATING RTs ========");
+        invoices.stream().forEach(i ->i.getSubCategoryInvoiceAgregate().stream().forEach(sca->updateRatedTransactions(i,billingRun,sca)));
 	}
 
-	private void assignNumberAndCreate(BillingRun billingRun, boolean isFullAutomatic, Invoice invoice) {
-		if(isFullAutomatic) {
+	private void assignNumberAndCreate(BillingRun billingRun, boolean isFullAutomatic, Invoice invoice, BillingCycle billingCycle) {
+		if(!isFullAutomatic) {
         	invoice.setTemporaryInvoiceNumber(serviceSingleton.getTempInvoiceNumber(billingRun.getId()));
         } else {
         	serviceSingleton.assignInvoiceNumberVirtual(invoice);
-        	incrementBAInvoiceDate(billingRun, invoice.getBillingAccount(), invoice.getNextInvoiceDate());
+        	incrementBAInvoiceDate(billingRun, invoice.getBillingAccount(), invoice.getNextInvoiceDate(), billingCycle);
         }
         this.create(invoice);
         postCreate(invoice);
 	}
 	
-	private void updateRatedTransactions(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca, boolean expectMassRtsPerInvoice) {
+	private void updateRatedTransactions(Invoice invoice, BillingRun billingRun, SubCategoryInvoiceAgregate sca) {
 		final List<Long> largeList = sca.getRtIDs();
 		final long min=largeList.stream().min(Long::compare).get();
 		final long max=largeList.stream().max(Long::compare).get();
@@ -244,12 +250,12 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				DateUtils.setDateToEndOfDay(billingRun.getLastTransactionDate()) :DateUtils.setDateToStartOfDay(billingRun.getLastTransactionDate());
 
 		final Integer numberOfRTs = sca.getItemNumber();
-		if(expectMassRtsPerInvoice && numberOfRTs>2) {
+		if(numberOfRTs>InvoicingJobV2.LIMIT_UPDATE_BY_ID && numberOfRTs>2) {
 			final long intervalSize = max-min+1;
-			List<Long[]>intervals = getIntervals(min, max, numberOfRTs);
+			List<Long[]>subIntervals = getIntervals(min, max, numberOfRTs);
 			int updatedRTs=0;
 			if((intervalSize)==numberOfRTs) {
-				for(Long[] interval :intervals) {
+				for(Long[] interval :subIntervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingInterval").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]);
 					updatedRTs+=query.executeUpdate();
 					if(intervalSize>1000) {
@@ -257,7 +263,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 					}
 				}
 			} else {
-				for (Long[] interval : intervals) {
+				for (Long[] interval : subIntervals) {
 					Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoUsingScKey").setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("minId", interval[0]).setParameter("maxId", interval[1]).setParameter("baId", invoice.getBillingAccount().getId()).setParameter("sellerId", invoice.getSeller().getId()).setParameter("walletId", sca.getWallet().getId()).setParameter("scId", sca.getInvoiceSubCategory().getId()).setParameter("uaId", sca.getUserAccount().getId());
 					updatedRTs+=query.executeUpdate();
 					if(intervalSize>1000) {
@@ -269,7 +275,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				String updateKey="["+min+"-"+ max+"]  ba : "+invoice.getBillingAccount().getId()+" seller : "+ invoice.getSeller()+" walletId : "+ sca.getWallet().getId()+"scId : "+ sca.getInvoiceSubCategory().getId()+" uaId : "+  sca.getUserAccount().getId();
 				throw new BusinessException("TOTAL UPDATED RTs ("+updatedRTs+") IS NOT THE EXPECTED NUMBER :"+numberOfRTs + " FOR KEY : "+updateKey) ;
 			}
-			
 		} else {
 			for (List<Long> rtIds : Lists.partition(largeList, MAX_RT_TO_UPDATE_PER_TRANSACTION)) {
 				Query query = getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", sca).setParameter("ids", rtIds);
@@ -302,8 +307,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		return intervals;
 	}
 	
-    private void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, Date nextInvoiceDate) throws BusinessException {
-		Date nextCalendarDate = billingRun.getBillingCycle().getNextCalendarDate(getReferenceDate(billingRun, nextInvoiceDate));
+    private void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, Date nextInvoiceDate, BillingCycle billingCycle) throws BusinessException {
+		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDate(billingRun, nextInvoiceDate, billingCycle));
 		if(nextCalendarDate!=null && (nextInvoiceDate==null || nextCalendarDate.compareTo(nextInvoiceDate)!=0)) {
 			billingAccount.setNextInvoiceDate(nextCalendarDate);
 	        billingAccount.updateAudit(currentUser);
@@ -311,14 +316,14 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		}
     }
     
-    private Date getReferenceDate(BillingRun billingRun, Date nextInvoiceDate) {
+    private Date getReferenceDate(BillingRun billingRun, Date nextInvoiceDate, BillingCycle billingCycle) {
         Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
         if (billingRun != null) {
             referenceDateEnum = billingRun.getReferenceDate();
         }
-        if (referenceDateEnum == null && billingRun.getBillingCycle() != null) {
-            referenceDateEnum = billingRun.getBillingCycle().getReferenceDate();
+        if (referenceDateEnum == null && billingCycle != null) {
+            referenceDateEnum = billingCycle.getReferenceDate();
         }
         if (referenceDateEnum != null) {
             switch (referenceDateEnum) {
@@ -411,11 +416,12 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param item
 	 * @param billingRun
 	 * @param billingAccount 
+	 * @param billingCycle 
 	 * @return
 	 */
-	private Invoice initInvoice(BillingAccountDetailsItem billingAccountDetailsItem, InvoicingItem item, BillingRun billingRun, BillingAccount billingAccount) {
+	private Invoice initInvoice(BillingAccountDetailsItem billingAccountDetailsItem, InvoicingItem item, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {
 		final boolean isPrepaid = item.isPrepaid();
-		InvoiceType invoiceType = determineInvoiceType(isPrepaid, false, billingRun.getBillingCycle(), billingRun, billingAccount);
+		InvoiceType invoiceType = determineInvoiceType(isPrepaid, false, billingCycle, billingRun, billingAccount);
 		Invoice invoice = new Invoice();
 		invoice.setBillingAccount(billingAccount);
 		invoice.setSeller(getEntityManager().getReference(Seller.class, item.getSellerId()));
@@ -973,7 +979,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         BigDecimal computedDiscount = discountPlanItem.getDiscountValue();
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
         if (isNotBlank(dpValueEL)) {
-        	//#MEL
+        	//#MEL TODO
             final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getBillingAccount(), scAggregate.getWallet(), invoice, amount);
             log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
             if (computedDiscount != null) {

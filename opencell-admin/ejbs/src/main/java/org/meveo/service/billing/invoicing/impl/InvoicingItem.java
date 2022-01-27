@@ -24,8 +24,6 @@ public class InvoicingItem {
 	private List<Long> rtIDs = new ArrayList<>();
 	private String invoiceCategoryId;
 
-//rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),',')
-	
 	public InvoicingItem(Object[] fields) {
 		int i = 0;
 		this.billingAccountId = (Long) fields[i++];
@@ -35,15 +33,11 @@ public class InvoicingItem {
 		this.invoiceSubCategoryId = (Long) fields[i++];
 		this.userAccountId = (Long) fields[i++];
 		this.taxId = (Long) fields[i++];
-		//this.orderDueDateDelayEL = (String) fields[i++];
 		this.amountWithoutTax = (BigDecimal) fields[i++];
 		this.amountWithTax = (BigDecimal) fields[i++];
 		this.amountTax = (BigDecimal) fields[i++];
-		this.rtIDs =  Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
 		this.count = (Long) fields[i++];
-		if(rtIDs.size()==2 && count==1) {
-			rtIDs.remove(1);
-		}
+		this.rtIDs =  Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
 	}
 
 	/**

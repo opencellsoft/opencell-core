@@ -45,11 +45,7 @@ public class InvoicingJobBeanV2 extends BaseJobBean {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
-        
-         
-        boolean expectMassRTsProcessing = (boolean) this.getParamOrCFValue(jobInstance, "expectMassRTsProcessing", false);
         boolean recalculateTaxes = (boolean) this.getParamOrCFValue(jobInstance, "recalculateTaxes", false);
-
         try {
             List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
 
@@ -62,7 +58,7 @@ public class InvoicingJobBeanV2 extends BaseJobBean {
                 }
                 try {
                     billingRunService.detach(billingRun);
-                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),recalculateTaxes, expectMassRTsProcessing, result.getJobInstance().getId(), result);
+                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),recalculateTaxes, result.getJobInstance().getId(), result);
                     result.registerSucces();
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);

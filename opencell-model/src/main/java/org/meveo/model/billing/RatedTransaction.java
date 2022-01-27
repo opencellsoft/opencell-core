@@ -176,13 +176,7 @@ import org.meveo.model.tax.TaxClass;
         		" where ba.billingRun.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null"),
 
         @NamedQuery(name = "RatedTransaction.getInvoicingItems", query = 
-    	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), string_agg(cast(rt.id as string),','), count(rt.id) "
-    		+ " FROM RatedTransaction rt left join rt.wallet w "
-    		+ " where rt.billingAccount.id in (:ids) and rt.status='OPEN' and rt.usageDate<:lastTransactionDate "
-    		+ " group by rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id "
-    		+ " order by rt.billingAccount.id"),
-        @NamedQuery(name = "RatedTransaction.getInvoicingItemsByInterval", query = 
-    	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), (CAST(min(rt.id) AS text)||','||CAST(max(rt.id) AS text)), count(rt.id) "
+    	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), count(rt.id), (case  when count(rt.id)<:limitUpdateById then (string_agg(cast(rt.id as string),',')) else (CAST(min(rt.id) AS text)||','||CAST(max(rt.id) AS text)) end) "
     		+ " FROM RatedTransaction rt left join rt.wallet w "
     		+ " where rt.billingAccount.id in (:ids) and rt.status='OPEN' and rt.usageDate<:lastTransactionDate "
     		+ " group by rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id "

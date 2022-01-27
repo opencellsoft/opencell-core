@@ -79,7 +79,7 @@ public class BillingCycle extends BusinessCFEntity {
     /**
      * Invoicing calendar (identifier
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "calendar")
     private Calendar calendar;
 
@@ -122,7 +122,7 @@ public class BillingCycle extends BusinessCFEntity {
     /**
      * Invoice type
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
@@ -164,7 +164,7 @@ public class BillingCycle extends BusinessCFEntity {
     /**
      * Script to group rated transactions by invoice type or other parameters. Script accepts a RatedTransaction list as an input.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
