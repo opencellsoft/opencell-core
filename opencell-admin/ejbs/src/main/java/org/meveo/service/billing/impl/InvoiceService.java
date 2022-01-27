@@ -5143,6 +5143,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoiceLineGroupToInvoiceMap.isEmpty() && invoiceLinesGroupsPaged.isEmpty()) {
                 log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+                if(existingInvoice.getInvoiceLines().isEmpty()) {
+                    cleanInvoiceAggregates(existingInvoice.getId());
+                    initAmounts(existingInvoice.getId());
+                }
                 return new ArrayList<>();
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
                 for (InvoiceLinesGroup invoiceLinesGroup : invoiceLinesGroupsPaged) {
@@ -5277,6 +5281,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return invoiceList;
 
+    }
+
+    /**
+     * initialize invoice amounts : amountWithTax, amountWithoutTax, amountToPay, taxAmount, amount
+     *
+     * @param invoiceId
+     */
+    private void initAmounts(Long invoiceId) {
+        getEntityManager()
+                .createNamedQuery("Invoice.initAmounts")
+                .setParameter("invoiceId", invoiceId)
+                .executeUpdate();
     }
 
     /**
