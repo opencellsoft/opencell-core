@@ -605,8 +605,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public void cancelIlByInvoices(Collection<Long> invoicesIds) {
-		getEntityManager().createNamedQuery("InvoiceLine.cancelByInvoiceIds")
-				.setParameter("now", new Date())
+        getEntityManager().createNamedQuery("InvoiceLine.cancelByInvoiceIds")
+        .setParameter("now", new Date())
 				.setParameter("invoicesIds", invoicesIds)
 				.executeUpdate();
     }
