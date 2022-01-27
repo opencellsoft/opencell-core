@@ -27,8 +27,6 @@ import java.util.stream.IntStream;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -117,20 +115,19 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      * @return workflowInstance an updated workflow instance
      * @throws BusinessException
      */
-
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {
 
             WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
-            String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
+            String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : "";
             log.trace("Actual status: {}", currentStatus);
 
-            int endIndex = genericWorkflow.getTransitions().size();
-            if (!genericWorkflow.getTransitions().get(endIndex - 1).getToStatus().equalsIgnoreCase(currentStatus)) {
-                int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
-                List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().subList(startIndex, endIndex);
+            final List<GWFTransition> transitions = genericWorkflow.getTransitions();
+            int endIndex = transitions.size();
+            if (!transitions.get(endIndex - 1).getToStatus().equalsIgnoreCase(currentStatus)) {
+                int startIndex = IntStream.range(0, endIndex).filter(idx -> currentStatus.equals(transitions.get(idx).getFromStatus())).findFirst().orElse(endIndex);
+                List<GWFTransition> listByFromStatus = transitions.subList(startIndex, endIndex);
                 List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
 
                 for (GWFTransition gWFTransition : listByFromStatus) {
@@ -231,4 +228,5 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             return null;
         }
     }
+
 }
