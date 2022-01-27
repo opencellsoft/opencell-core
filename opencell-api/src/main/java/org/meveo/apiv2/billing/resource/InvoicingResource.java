@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.meveo.apiv2.billing.ExceptionalBillingRun;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/billing/invoicing")
@@ -28,4 +25,18 @@ public interface InvoicingResource {
             })
     Response createExceptionalBillingRuns(
             @Parameter(description = "Billing run to create", required = true) ExceptionalBillingRun billingRun);
+
+    @PUT
+    @Path("/{billingRunId}/advanceStatus")
+    @Operation(summary = "Advance the billing run status",
+            tags = {"Invoicing"},
+            description = "Advance the billing run status",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+                            description = "Status changed successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409",
+                            description = "The status should be either NEW, INVOICE_LINES_CREATED , DRAFT_INVOICES , or REJECTED")
+            })
+    Response advanceStatus(@PathParam("billingRunId") Long billingRunId,
+                           @QueryParam("executeInvoicingJob") boolean executeInvoicingJob);
 }
