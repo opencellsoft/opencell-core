@@ -67,7 +67,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     @Schema(description = "The code of the billing account of the billable")
 	private String billableAccountCode;
     
-	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The begin of date of quote lot ")
 	private Date quoteLotDateBegin;
 	
@@ -81,7 +80,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	private String sellerCode;
     
     @Schema(description = "The send date")
-	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date sendDate;
     
     @Schema(description = "The quote number")
@@ -90,7 +88,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     @Schema(description = "The external id")
     private String externalId;
 
-	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The status date")
 	private Date statusDate;
 	/**
