@@ -34,22 +34,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ExtraMinAmount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.MinAmountData;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.MinAmountsResult;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -118,6 +103,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private SellerService sellerService;
+
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -604,7 +592,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	public void remove(Invoice invoice, Long lineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, lineId);
 		invoiceLine.setStatus(InvoiceLineStatusEnum.CANCELED);
+		if(invoiceLine.getInvoiceAggregateF() != null) {
+            InvoiceAgregate invoiceAgregate = invoiceAgregateService.findById(invoiceLine.getInvoiceAggregateF().getId());
+            invoiceAgregate.setInvoice(null);
+        }
 		invoiceLine.setInvoice(null);
+
 	}
 
     public List<Object[]> getTotalPositiveILAmountsByBR(BillingRun billingRun) {

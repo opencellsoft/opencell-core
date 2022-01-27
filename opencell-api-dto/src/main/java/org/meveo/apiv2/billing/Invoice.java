@@ -56,6 +56,7 @@ public interface Invoice extends Resource {
 	InvoiceStatusEnum getStatus();
 
 	@Schema(description = "The Due date")
+	@Nullable
 	Date getDueDate();
 
 	@Schema(description = "The amount of the invoice")
