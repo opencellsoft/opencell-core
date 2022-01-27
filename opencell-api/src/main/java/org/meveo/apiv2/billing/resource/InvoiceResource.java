@@ -218,7 +218,7 @@ public interface InvoiceResource {
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully canceled"),
 	@ApiResponse(responseCode = "403", description = "error when canceling invoice") })
-	Response cancelInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
+	Response cancelInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
 	
 	@POST
 	@Operation(summary = "Create a new invoice", tags = {
