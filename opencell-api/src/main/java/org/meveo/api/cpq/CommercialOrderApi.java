@@ -560,7 +560,7 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		
 		if(!CommercialOrderEnum.DRAFT.toString().equals(commercialOrder.getStatus())) {
-            throw new MeveoApiException("Can not be add Order Offre in The Order with the status : " + commercialOrder.getStatus());
+            throw new MeveoApiException("Cannot add offers to order with status : " + commercialOrder.getStatus());
         }
 
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
@@ -960,7 +960,7 @@ public class CommercialOrderApi extends BaseApi {
     	if (orderOffer.getOrder() != null && orderOffer.getOrder().getId() != null) {
             CommercialOrder commercialOrder = commercialOrderService.findById(orderOffer.getOrder().getId());
             if (commercialOrder != null && !CommercialOrderEnum.DRAFT.toString().equals(commercialOrder.getStatus())) {
-                throw new MeveoApiException("Can not be delete Order Offre in The Order with the status : " + commercialOrder.getStatus());
+                throw new MeveoApiException("Cannot delete offers associated to an order in status : " + commercialOrder.getStatus());
             } 
         }
     	orderOfferService.remove(orderOffer);
