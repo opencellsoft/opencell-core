@@ -558,6 +558,10 @@ public class CommercialOrderApi extends BaseApi {
 		if ( commercialOrder== null) {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
 		}
+		
+		if(!CommercialOrderEnum.DRAFT.toString().equals(commercialOrder.getStatus())) {
+            throw new MeveoApiException("Cannot add offers to order with status : " + commercialOrder.getStatus());
+        }
 
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
 		if (offerTemplate == null) {
@@ -953,8 +957,13 @@ public class CommercialOrderApi extends BaseApi {
     	if (orderOffer == null) {
     		throw new EntityDoesNotExistsException(ProductOrder.class, id);
     	} 
+    	if (orderOffer.getOrder() != null && orderOffer.getOrder().getId() != null) {
+            CommercialOrder commercialOrder = commercialOrderService.findById(orderOffer.getOrder().getId());
+            if (commercialOrder != null && !CommercialOrderEnum.DRAFT.toString().equals(commercialOrder.getStatus())) {
+                throw new MeveoApiException("Cannot delete offers associated to an order in status : " + commercialOrder.getStatus());
+            } 
+        }
     	orderOfferService.remove(orderOffer);
-
     }
     
 	public OrderOfferDto findOrderOffer(Long id) {
