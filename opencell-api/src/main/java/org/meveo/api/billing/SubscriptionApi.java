@@ -1057,7 +1057,9 @@ public class SubscriptionApi extends BaseApi {
             }
 
             serviceToInstantiateDto.setServiceTemplate(serviceTemplate);
+            if(productVersion!=null) {
             serviceToInstantiateDto.setProductVersion(productVersion.get());
+            }
             serviceToInstantiateDtos.add(serviceToInstantiateDto);
         }
 
