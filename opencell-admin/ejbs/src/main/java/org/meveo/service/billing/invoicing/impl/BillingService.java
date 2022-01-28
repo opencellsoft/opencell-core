@@ -77,10 +77,12 @@ public class BillingService extends PersistenceService<BillingRun> {
 			JobExecutionResultImpl result) throws Exception {
 		log.info("==================== START Processing billingRun id={} status={} ====================", billingRun.getId(), billingRun.getStatus());
 		BillingCycle billingCycle = billingRun.getBillingCycle();
+		billingCycle.getInvoiceType();
+		billingCycle.getCalendar();
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			BillingRunSummary billingRunSummary = getBRSummury(billingRun, billingCycle);
 			log.info( "==================== linkBillableEntitiesToBR -- Minimum invoicing amount is skipped ====================");
-			linkBillableEntitiesToBR(billingRun, nbRuns, billingRunSummary, waitingMillis);
+			linkBillableEntitiesToBR(billingRun, billingRunSummary);
 			billingRunExtensionService.updateBRAmounts(billingRun.getId(), billingRunSummary, BillingRunStatusEnum.PREINVOICED, new Date());
 		}
 
@@ -235,12 +237,15 @@ public class BillingService extends PersistenceService<BillingRun> {
 		return getEntityManager().createNamedQuery("BillingAccount.findEntitiesToInvoiceHavingThresholdPerEntity",ThresholdSummary.class).setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
 
-	private void linkBillableEntitiesToBR(BillingRun billingRun, long count, BillingRunSummary billingRunSummary, long waitingMillis) {
-		Long min = billingRunSummary.getFirstBillingAccountId();
-		Long max = billingRunSummary.getLastBillingAccountId();
-		min = linkBAToBRByInterval(billingRun, min, (count > MAX_UPDATE_WITHOUT_INTERVAL ? min + MAX_UPDATE_PER_INTERVAL : max + 1));
-		while (min < max) {
-			min = linkBAToBRByInterval(billingRun, min, (max > min + MAX_UPDATE_PER_INTERVAL ? min + MAX_UPDATE_PER_INTERVAL : max + 1));
+	private void linkBillableEntitiesToBR(BillingRun billingRun, BillingRunSummary billingRunSummary) {
+		final Long count = billingRunSummary.getBillingAccountsCount();
+		if(count!=null&& count>0) {
+			Long min = billingRunSummary.getFirstBillingAccountId();
+			Long max = billingRunSummary.getLastBillingAccountId();
+			min = linkBAToBRByInterval(billingRun, min, (count > MAX_UPDATE_WITHOUT_INTERVAL ? min + MAX_UPDATE_PER_INTERVAL : max + 1));
+			while (min < max) {
+				min = linkBAToBRByInterval(billingRun, min, (max > min + MAX_UPDATE_PER_INTERVAL ? min + MAX_UPDATE_PER_INTERVAL : max + 1));
+			}
 		}
 	}
 
