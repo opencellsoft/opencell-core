@@ -571,9 +571,6 @@ public class CommercialOrderApi extends BaseApi {
 			}
 		} else {
 			userAccount = commercialOrder.getUserAccount();
-			if(userAccount == null) {
-				throw new BusinessApiException("Could not create a OrderOffer with empty userAccount");
-			}
 		}
 		orderOffer.setUserAccount(userAccount);
 		DiscountPlan discountPlan=null;
