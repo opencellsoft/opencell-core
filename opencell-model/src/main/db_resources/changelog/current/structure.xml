@@ -4045,4 +4045,11 @@ END $$;]]>
             <column name="token_3ds_id" type="varchar(250)"/>
     </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid">
+	  	<createIndex indexName="billing_wallet_operation_charge_instance_idx" tableName="billing_wallet_operation">
+	      	<column name="charge_instance_id"/>
+	  	</createIndex>
+	</changeSet>
+	
 </databaseChangeLog>
