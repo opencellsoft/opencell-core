@@ -709,7 +709,9 @@ public class CustomFieldValues implements Cloneable, Serializable {
      * @param cfts Custom field template definitions for description lookup
      */
     public void asDomElement(Document doc, Element parentElement, Map<String, CustomFieldTemplate> cfts) {
-
+        if (valuesByCode == null) {
+            return;
+        }
         for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
             CustomFieldTemplate cft = cfts.get(cfValueInfo.getKey());
 

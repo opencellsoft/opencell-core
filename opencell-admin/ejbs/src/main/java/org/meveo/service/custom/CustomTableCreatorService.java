@@ -92,7 +92,7 @@ public class CustomTableCreatorService implements Serializable {
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
 
         // Changeset for Postgress
-        ChangeSet pgChangeSet = new ChangeSet(dbTableName + "_CT_CP_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "postgresql", dbLog);
+        ChangeSet pgChangeSet = new ChangeSet(dbTableName + "_CT_CP_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "postgresql,oracle", dbLog);
 
         CreateSequenceChange createPgSequence = new CreateSequenceChange();
         createPgSequence.setSequenceName(dbTableName + "_seq");
@@ -391,7 +391,7 @@ public class CustomTableCreatorService implements Serializable {
         dbLog.addChangeSet(changeSet);
 
         // Changeset for Postgress
-        ChangeSet pgChangeSet = new ChangeSet(dbTableName + "_CT_CRP_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "postgresql", dbLog);
+        ChangeSet pgChangeSet = new ChangeSet(dbTableName + "_CT_CRP_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "postgresql,oracle", dbLog);
         pgChangeSet.setFailOnError(false);
 
         DropSequenceChange dropPgSequence = new DropSequenceChange();

@@ -9723,5 +9723,17 @@ public class OrderAdvancement extends ModuleScript {
     		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid">
+	  	<createIndex indexName="billing_wallet_operation_charge_instance_idx" tableName="billing_wallet_operation">
+	      	<column name="charge_instance_id"/>
+	  	</createIndex>
+	</changeSet>
+	
+	<changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid">
+		<createIndex indexName="cpq_attribute_instance_service_instance_idx" tableName="cpq_attribute_instance">
+	      	<column name="service_instance_id"/>
+	  	</createIndex>
+	</changeSet>
 
 </databaseChangeLog>

@@ -124,6 +124,13 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     @Column(name = "credit_debit_flag")
     protected OperationTypeEnum type;
+    
+    /**
+     * charge type
+     */
+    @Column(name = "charge_type", insertable = false, updatable = false, length = 5)
+    @Size(max = 5)
+    private String chargeType;
 
     /**
      * Is amount editable
@@ -575,4 +582,14 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setAttributes(Set<Attribute> attributes) {
         this.attributes = attributes;
     }
+
+	public String getChargeType() {
+		return chargeType;
+	}
+
+	public void setChargeType(String chargeType) {
+		this.chargeType = chargeType;
+	}
+    
+    
 }

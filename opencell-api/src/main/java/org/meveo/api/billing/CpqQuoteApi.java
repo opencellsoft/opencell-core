@@ -119,6 +119,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -132,6 +133,7 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
@@ -193,9 +195,9 @@ public class CpqQuoteApi extends BaseApi {
     private InvoiceTypeService invoiceTypeService;
     @Inject
     private InvoicingPlanService invoicingPlanService;
-
+    
     @Inject
-    private ServiceTemplateService serviceTemplateService;
+    private AttributeInstanceService attributeInstanceService;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -1174,9 +1176,11 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.PRODUCT);
         clearExistingQuotations(quoteVersion);
 
-        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+
 
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
@@ -1202,7 +1206,7 @@ public class CpqQuoteApi extends BaseApi {
                     .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
-            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
+            quoteTotalAmount = quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
         }
 
 
@@ -1424,9 +1428,9 @@ public class CpqQuoteApi extends BaseApi {
             if(quoteVersion.getQuoteArticleLines()!=null) {
             	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
                  if (!quoteArticleLines.isEmpty()) {
-                 	quoteVersion.getQuoteArticleLines().clear();
-                     quoteVersionService.update(quoteVersion);
-                     quoteArticleLineService.remove(quoteArticleLines);
+
+
+                   quoteArticleLineService.remove(quoteArticleLines);
                  }
             }
 
@@ -1446,7 +1450,11 @@ public class CpqQuoteApi extends BaseApi {
             ;
             // Add Service charges
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
+            	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
+                        .stream()
+                        .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance,serviceInstance, subscription))
+                        .collect(Collectors.toSet());
+            	
                 for (AttributeValue attributeValue : attributeValues) {
                     Attribute attribute = attributeValue.getAttribute();
                     Object value = attribute.getAttributeType().getValue(attributeValue);
@@ -1502,41 +1510,48 @@ public class CpqQuoteApi extends BaseApi {
                 // Add subscription charges
                 EDR edr =null;
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
-                	edr =new EDR();
-                	 try {
-                		 
-                		 edr.setAccessCode(null);
-                		 edr.setEventDate(usageCharge.getChargeDate());
-                		 edr.setSubscription(subscription);
-                		 edr.setStatus(EDRStatusEnum.OPEN);
-                		 edr.setCreated(new Date());
-                		 edr.setOriginBatch("QUOTE");
-                		 edr.setOriginRecord(System.currentTimeMillis()+"");
-                		 UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
-                		 Double quantity=(Double)attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                		 edr.setQuantity(new BigDecimal(quantity));
-                         List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-                         
-                         if (walletOperationsFromEdr != null) {
-                        	 for(WalletOperation walletOperation:walletOperationsFromEdr) {
-                        		 walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
-                                         .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
-                                 walletOperations.addAll(walletOperationsFromEdr);
-                        	 }
-                        	 
-                         }
-                        
+                	UsageChargeTemplate chargetemplate=(UsageChargeTemplate)usageCharge.getChargeTemplate();
+                	if(chargetemplate.getUsageQuantityAttribute()!=null) {
+                		edr =new EDR();
+                		try {
+                			Double quantity=0d;
+                			edr.setAccessCode(null);
+                			edr.setEventDate(usageCharge.getChargeDate());
+                			edr.setSubscription(subscription);
+                			edr.setStatus(EDRStatusEnum.OPEN);
+                			edr.setCreated(new Date());
+                			edr.setOriginBatch("QUOTE");
+                			edr.setOriginRecord(System.currentTimeMillis()+"");
 
-                     } catch (RatingException e) {
-                         log.trace("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+                			Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                			if(quantityValue!=null && quantityValue instanceof Double) {
+                				quantity = (Double) quantityValue;
+                			}else {
+                				throw new MissingParameterException("The attribute "+ chargetemplate.getUsageQuantityAttribute().getCode()+" for the usage charge "+usageCharge.getCode());
+                			}
+                			if(quantity!=0) {
+                				edr.setQuantity(new BigDecimal(quantity));
+                    			List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
 
+                    			if (walletOperationsFromEdr != null) {
+                    				for(WalletOperation walletOperation:walletOperationsFromEdr) {
+                    					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+                    							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
+                    					walletOperations.addAll(walletOperationsFromEdr);
+                    				}
+                			}
+                			}
 
-                     } catch (BusinessException e) {
-                         log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
+                		} catch (RatingException e) {
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
 
-                     }
+                		} catch (BusinessException e) {
+                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                			throw new BusinessApiException(e.getMessage()); 
+
+                		}
+                	}
+
                 }
             }
             
@@ -1918,31 +1933,5 @@ public class CpqQuoteApi extends BaseApi {
     	return priceDTO;
     }
 
-
-    public static Object getAttributeValue(QuoteProduct quoteProduct, Attribute attribute) {
-    	Optional<QuoteAttribute> quoteAttribute=null;
-    	if(!quoteProduct.getQuoteAttributes().isEmpty())
-    			quoteAttribute=quoteProduct.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attribute.getCode())).findFirst();
-
-    	if(attribute.getAttributeType()!=null) {
-    		switch (attribute.getAttributeType()) {
-			case TOTAL :
-			case COUNT :
-			case NUMERIC :
-			case INTEGER:
-				return quoteAttribute.get().getDoubleValue();
-			case LIST_MULTIPLE_TEXT:
-			case LIST_TEXT:
-			case EXPRESSION_LANGUAGE :
-			case TEXT:
-				return quoteAttribute.get().getStringValue();
-			case DATE:
-				return quoteAttribute.get().getDateValue();
-			default:
-				break;
-			}
-    	}
-    	return null;
-    }
 
 }

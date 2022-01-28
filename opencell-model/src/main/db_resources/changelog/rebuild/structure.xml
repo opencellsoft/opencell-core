@@ -6472,7 +6472,7 @@
             <column name="quote_id" type="bigint" />
             <column name="billing_cycle" type="bigint" />
             <column name="billing_run" type="bigint" />
-            <column name="order_number " type="varchar(255)" />
+            <column name="order_number" type="varchar(255)" />
             <column name="mailing_type" type="varchar(255)" />
             <column name="cced_emails" type="varchar(2000)" />
             <column name="email" type="varchar(255)" />
@@ -14245,6 +14245,8 @@
         <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
     	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
+    	<sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
+    	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -15972,6 +15974,8 @@
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#2333_20211021" author="anasseh"/>
     <changeSet id="INTRD-2868_20211105" author="TarikFA." />
+    <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
 
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 

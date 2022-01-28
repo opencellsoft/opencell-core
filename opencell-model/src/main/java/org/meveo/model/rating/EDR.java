@@ -54,11 +54,6 @@ import org.meveo.model.billing.Subscription;
 @NamedQueries({
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 
-        @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e where e.status='OPEN' order by e.id"),
-        @NamedQuery(name = "EDR.listToRateIdsLimitByDate", query = "SELECT e.id from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate order by e.id"),
-        @NamedQuery(name = "EDR.listToRateIdsLimitByRG", query = "SELECT e.id from EDR e where e.status='OPEN' and e.subscription.ratingGroup=:ratingGroup order by e.id"),
-        @NamedQuery(name = "EDR.listToRateIdsLimitByDateAndRG", query = "SELECT e.id from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup order by e.id"),
-
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select e.status, count(e.id) from EDR e group by e.status"),
 
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),

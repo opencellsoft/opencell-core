@@ -1,9 +1,10 @@
 package org.meveo.service.cpq;
 
+import static java.util.Collections.singletonList;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -40,8 +42,6 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-
-import static java.util.Collections.singletonList;
 
 /**
  * @author Tarik FAKHOURI.
@@ -177,22 +177,15 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
 
     
-    private boolean checkOperator(OperatorEnum operator, boolean isOnlyOneLine, boolean isLastLine, boolean isElementExists) {
-        if (isOnlyOneLine) {
-            return false;
+    private Boolean checkOperator(OperatorEnum operator, boolean isLastLine, boolean isElementExists) {
+        if (isLastLine) {
+            return Boolean.FALSE;
         }
-        if (!isElementExists && OperatorEnum.AND.equals(operator)) {
-            return false;
-        }
-        if (OperatorEnum.OR.equals(operator)) {
-            if(!isElementExists  && isLastLine ){
-        		return false;
-        	}
-        	if(!isElementExists  && !isLastLine ){
-        		return true;
-        	}	
-        } 
-        return true;
+        if (OperatorEnum.OR.equals(operator) && isElementExists) { 
+        		return Boolean.FALSE;
+        	} 
+        
+        return Boolean.TRUE;
     }
     
     public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,List<ProductContextDTO> selectedProducts,LinkedHashMap<String, Object> selectedOfferAttributes, Predicate<CommercialRuleHeader> commercialRuleHeaderFilter) {
@@ -202,22 +195,24 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .filter(rule -> !rule.isDisabled())
                 .filter(commercialRuleHeaderFilter)
                 .collect(Collectors.toList());
-        List<CommercialRuleItem> items = null;
-        boolean continueProcess = false;
+        List<CommercialRuleItem> items = null; 
+        MutableBoolean continueProcess=new MutableBoolean(false);
+        boolean isLastLine=false;
+        CommercialRuleLine line=null;
         for (CommercialRuleHeader commercialRule : commercialRules) {
             boolean isPreRequisite = RuleTypeEnum.PRE_REQUISITE.equals(commercialRule.getRuleType());
             items = commercialRule.getCommercialRuleItems();
-            for (CommercialRuleItem item : items) {
-                int linesCount = item.getCommercialRuleLines().size();
+            for (CommercialRuleItem item : items) { 
                 Iterator<CommercialRuleLine> lineIterator = item.getCommercialRuleLines().iterator();
                 while (lineIterator.hasNext()) {
-                    CommercialRuleLine line = lineIterator.next();
-                    continueProcess = checkOperator(item.getOperator(), linesCount == 1, !lineIterator.hasNext(), true);
-                    if ((isPreRequisite && line.getSourceOfferTemplate() != null
+                    line = lineIterator.next();
+                    isLastLine=!lineIterator.hasNext();
+                    continueProcess.setValue(checkOperator(item.getOperator(), isLastLine, true));
+                    if ((line.getSourceOfferTemplate() != null
                             && !line.getSourceOfferTemplate().getCode().equals(offerCode))
-                            || (!isPreRequisite && line.getSourceOfferTemplate() != null
+                            || (line.getSourceOfferTemplate() != null
                             && line.getSourceOfferTemplate().getCode().equals(offerCode) && line.getSourceProduct() == null)) {
-                        if (continueProcess) {
+                        if (continueProcess.isTrue()) {
                             continue;
                         } else {
                             return false;
@@ -225,7 +220,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
                     }
                     if(line.getSourceProduct() == null && line.getSourceOfferTemplate()!=null) {
-                    return isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode);
+                    	boolean isSelectedAttribute=isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode,isLastLine);
+                    	if (continueProcess.isTrue()) {
+                    		continue;
+                    	} else {
+                    		return isSelectedAttribute;
+                    	}
                     }
                     if (line.getSourceProduct() != null) {
                         String sourceProductCode = line.getSourceProduct().getCode();
@@ -235,7 +235,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
                         if ((isPreRequisite && productContext == null && !isSelectable)
                                 || (!isPreRequisite && productContext != null && line.getSourceAttribute() == null)) {
-                            if (checkOperator(item.getOperator(), linesCount == 1, !lineIterator.hasNext(), productContext != null)) {
+                            if (checkOperator(item.getOperator(), !lineIterator.hasNext(), productContext != null)==Boolean.TRUE) {
                                 continue;
                             } else {
                                 return false;
@@ -246,7 +246,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         	
                         }
                         if (line.getSourceAttribute() != null && productContext!=null){ 
-                        		return isSelectedAttribute(productContext.getSelectedAttributes(),line,continueProcess, isPreRequisite,offerCode) ;
+                        		boolean isSelectedAttribute= isSelectedAttribute(productContext.getSelectedAttributes(),line,continueProcess, isPreRequisite,offerCode,isLastLine) ; 
+                        		 if (continueProcess.isTrue()) {
+                                     continue;
+                                 } else {
+                                     return isSelectedAttribute;
+                                 }
                         }   
                         
                         if (line.getSourceGroupedAttributes() != null && productContext != null && productContext.getSelectedGroupedAttributes() != null) {
@@ -259,14 +264,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                     List<String> values = Arrays.asList(convertedValue.split(";"));
                                     if ((isPreRequisite && !values.contains(line.getSourceGroupedAttributeValue()))
                                             || !isPreRequisite && values.contains(line.getSourceGroupedAttributeValue())) {
-                                        if (continueProcess) {
-                                            continue;
-                                        } else {
+                                        if (continueProcess.isFalse()) {
                                             return false;
                                         }
                                     }
                                 }
-                            }
+                            } 
                         }
 
                     }
@@ -278,7 +281,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
     
     
-    private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, boolean continueProcess, boolean isPreRequisite,String offerCode) {
+    private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
     	boolean isSelected=true;
     	if(line.getSourceAttribute()==null) {
     		return true;
@@ -289,41 +292,33 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
     			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
-    				isSelected=true;
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
     					List<String> values = Arrays.asList(convertedValue.split(";"));
-    					if (!values.contains(line.getSourceAttributeValue())) {
-    						if (continueProcess) {
-    							continue;
-    						} else {
+    					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
+    							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
     							return false;
     						}
-    					}
+    					break;
     				case EXPRESSION_LANGUAGE:
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
-    					convertedValue = result;
     					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
-    						if (continueProcess) {
-    							continue;
-    						} else {
+    					 
     							return false;
     						}
-    					}
+    					break;
     				default:
     					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
-    						if (continueProcess) {
-    							continue;
-    						} else {
     							return false;
     						}
-    					}
 
     				}
+    			}else {
+    				continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, false));
     			}
     		}
     	}else if(isPreRequisite && line.getSourceAttribute()!=null) {
@@ -331,7 +326,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	}
     	return isSelected;
     }
-
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();
         List<CommercialRuleHeader> productRules = quoteProduct.getProductVersion().getProduct().getCommercialRuleHeader()

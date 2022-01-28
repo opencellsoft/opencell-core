@@ -287,4 +287,12 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
             log.error("error = {}", e);
         }
     }
+
+    public synchronized int findMaxNextPriority(String workflowCode) {
+    	 var maxPrio = (Integer) getEntityManager()
+    			 			.createQuery("select MAX(trans.priority) from " + GWFTransition.class.getSimpleName() + " trans where trans.genericWorkflow.code=:workflowCode")
+    			 			.setParameter("workflowCode", workflowCode)
+    			 			.getSingleResult();
+    	 return maxPrio != null ? maxPrio : 0;
+    }
 }
