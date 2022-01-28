@@ -2098,7 +2098,7 @@
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="uuid" value="billing_accounting_article-MIN-STD"/>
-        </insert>        
+        </insert>
         
         <insert tableName="cat_discount_plan">
             <column name="id" valueNumeric="-99" />
