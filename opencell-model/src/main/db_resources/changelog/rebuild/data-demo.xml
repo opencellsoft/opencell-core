@@ -2317,7 +2317,20 @@
             <column name="creator" value="applicationInitializer" />
      	</insert>
      </changeSet>
-    
+    <changeSet id="#4754-20220128" author="Abdelkader.bouazza">
+        <insert tableName="billing_accounting_article">
+            <column name="id" value='-5'/>
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="ADV-STD"/>
+            <column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
+            <column name="description" value='Advance payment'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ADV-STD" />
+        </insert>
+    </changeSet>
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-demo.xml'</sql>
