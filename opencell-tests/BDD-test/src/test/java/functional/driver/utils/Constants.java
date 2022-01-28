@@ -45,5 +45,8 @@ public class Constants {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    // Symbol
+    public static final String COMMA = ",";
+
 
 }

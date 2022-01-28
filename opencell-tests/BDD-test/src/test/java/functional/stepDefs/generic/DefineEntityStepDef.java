@@ -7,9 +7,9 @@ import io.cucumber.java.en.Given;
 
 public class DefineEntityStepDef {
 
-    @Given("^I define ([^\"]*) for ([^\"]*)$")
-    public void actorDefineEntity(String dataField, String intention, DataTable dataTable) throws Exception {
-        BasicConfig.getActor().attemptsTo(DefineEntity.called(dataField, intention, dataTable));
+    @Given("^I define( ([^\"]*))* to ([^\"]*)$")
+    public void actorDefineEntity(String dataFields, String purpose, DataTable dataTable) throws Exception {
+        BasicConfig.getActor().attemptsTo(DefineEntity.called(dataFields, purpose, dataTable));
     }
 
     @Given("I define following list")

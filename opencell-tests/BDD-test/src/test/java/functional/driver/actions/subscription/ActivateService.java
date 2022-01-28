@@ -1,6 +1,5 @@
 package functional.driver.actions.subscription;
 
-import functional.driver.utils.JsonUtils;
 import functional.driver.utils.Constants;
 import functional.driver.utils.KeyCloakAuthenticationHook;
 import io.cucumber.datatable.DataTable;
@@ -11,6 +10,7 @@ import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.rest.interactions.Post;
 import net.thucydides.core.annotations.Step;
 import org.apache.http.HttpStatus;
+import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -38,23 +38,55 @@ public class ActivateService implements Task {
 
         List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
 
-        for (Map<String, String> anInstance : table) {
-            Object jsonBody = JsonUtils.defineJson(anInstance, "", "", false);
+        ActivateServicesRequestDto jsonBody = defineDto(table);
 
-            actor.attemptsTo(
-                    Post.to(url)
-                            .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
-                            .with(request -> request.header(
-                                    HttpHeaders.AUTHORIZATION, Constants.OAUTH2 + " " + KeyCloakAuthenticationHook.getToken())
-                                    .body(jsonBody)
-                            )
-            );
+        actor.attemptsTo(
+                Post.to(url)
+                        .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                        .with(request -> request.header(
+                                HttpHeaders.AUTHORIZATION, Constants.OAUTH2 + " " + KeyCloakAuthenticationHook.getToken())
+                                .body(jsonBody)
+                        )
+        );
 
-            // Always add this piece of code in each task to verify whether or not the request is successfully executed (i.e. status code 200)
-            if (SerenityRest.lastResponse().statusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
-                    SerenityRest.lastResponse().statusCode() == HttpStatus.SC_CONFLICT){
-                assertThat(SerenityRest.lastResponse().jsonPath().get("status").toString()).isEqualTo("FAIL");
-            }
+        // Always add this piece of code in each task to verify whether or not the request is successfully executed (i.e. status code 200)
+        if (SerenityRest.lastResponse().statusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
+                SerenityRest.lastResponse().statusCode() == HttpStatus.SC_CONFLICT){
+            assertThat(SerenityRest.lastResponse().jsonPath().get("status").toString()).isEqualTo("FAIL");
         }
+
+//        for (Map<String, String> anInstance : table) {
+//            Object jsonBody = JsonUtils.defineJson(anInstance, "", "", false);
+//
+//            actor.attemptsTo(
+//                    Post.to(url)
+//                            .with(request -> request.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+//                            .with(request -> request.header(
+//                                    HttpHeaders.AUTHORIZATION, Constants.OAUTH2 + " " + KeyCloakAuthenticationHook.getToken())
+//                                    .body(jsonBody)
+//                            )
+//            );
+//
+//            // Always add this piece of code in each task to verify whether or not the request is successfully executed (i.e. status code 200)
+//            if (SerenityRest.lastResponse().statusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
+//                    SerenityRest.lastResponse().statusCode() == HttpStatus.SC_CONFLICT){
+//                assertThat(SerenityRest.lastResponse().jsonPath().get("status").toString()).isEqualTo("FAIL");
+//            }
+//        }
+    }
+
+    private ActivateServicesRequestDto defineDto(List<Map<String, String>> table) {
+        ActivateServicesRequestDto dto = new ActivateServicesRequestDto();
+
+//        dto.setSubscription(subCode);
+//        ServicesToActivateDto services = new ServicesToActivateDto();
+//        ServiceToActivateDto service = new ServiceToActivateDto();
+//        service.setServiceTemplate(serviceTempCode);
+//        List<ServiceToActivateDto> listServices = new ArrayList<>();
+//        listServices.add(service);
+//        services.setService(listServices);
+//        dto.setServicesToActivateDto();
+
+        return dto;
     }
 }

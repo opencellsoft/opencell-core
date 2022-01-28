@@ -1,4 +1,4 @@
-package functional.driver.actions.generic;
+package functional.driver.actions.generic.crud;
 
 import functional.SQLite.SQLiteManagement;
 import functional.driver.utils.Constants;

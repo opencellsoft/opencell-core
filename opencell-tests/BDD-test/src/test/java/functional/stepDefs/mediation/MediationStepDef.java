@@ -27,7 +27,7 @@ public class MediationStepDef {
         actor = Actor.named("I am the supervisor").whoCan(CallAnApi.at(restApiBaseUrl));
     }
 
-    @When("I activate services on subscription")
+    @When("I activate services")
     public void actorActivatesServiceOnSubscription(DataTable dataTable) {
         actor.attemptsTo(ActivateService.called(dataTable));
     }

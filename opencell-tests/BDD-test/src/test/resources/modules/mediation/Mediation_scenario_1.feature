@@ -11,7 +11,7 @@
         | accessCode   | subscriptionCode   |
         | <accessCode> | <subscriptionCode> |
        When  I charge following cdr <cdrLine>
-       Then  last response has field <field> whose value is <value>
+       Then  <field> has a value of <value>
 
       Examples:
         | accessCode | subscriptionCode | field         | value | cdrLine                                              |

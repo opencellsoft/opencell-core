@@ -1,10 +1,9 @@
-package functional.driver.actions.generic;
+package functional.driver.actions.generic.crud;
 
 import functional.SQLite.SQLiteManagement;
 import functional.driver.utils.ApiUtils;
 import functional.driver.utils.Constants;
 import functional.driver.utils.KeyCloakAuthenticationHook;
-import io.cucumber.datatable.DataTable;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
@@ -14,21 +13,19 @@ import net.thucydides.core.annotations.Step;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.Map;
 
-public class GetEntity implements Task {
+public class GetEntityBasedOnCode implements Task {
 
     private final String entityName;
-    private final DataTable dataTable;
+    private final String entityCodes;
 
-    public GetEntity(String entityName, DataTable dataTable) {
+    public GetEntityBasedOnCode(String entityName, String entityCodes) {
         this.entityName = entityName;
-        this.dataTable = dataTable;
+        this.entityCodes = entityCodes;
     }
 
-    public static GetEntity called(String entity, DataTable dataTable) {
-        return Tasks.instrumented(GetEntity.class, entity, dataTable);
+    public static GetEntityBasedOnCode called(String entityName, String entityCode) {
+        return Tasks.instrumented(GetEntityBasedOnCode.class, entityName, entityCode);
     }
 
     @Override
@@ -36,11 +33,10 @@ public class GetEntity implements Task {
     public <T extends Actor> void performAs(T actor) {
         String baseUrl = SQLiteManagement.selectTableEntityAndRs(entityName);
 
-        List<Map<String, String>> table = dataTable.asMaps(String.class, String.class);
+        String[] codes = entityCodes.split(Constants.COMMA);
 
-        for (Map<String, String> anInstance : table) {
-
-            String urlForGetRequest = ApiUtils.getUrlForGet(entityName, baseUrl, anInstance);
+        for (String entityCode : codes){
+            String urlForGetRequest = ApiUtils.getUrlForGetInLine(entityName, baseUrl, entityCode);
 
             actor.attemptsTo(
                     Get.resource(urlForGetRequest)
@@ -55,6 +51,7 @@ public class GetEntity implements Task {
                     ResponseConsequence.seeThatResponse(response -> response.statusCode(200))
             );
         }
+
     }
 
 }
