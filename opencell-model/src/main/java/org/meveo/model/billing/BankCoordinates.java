@@ -311,4 +311,19 @@ public class BankCoordinates implements Serializable, Cloneable {
 		}
 		return iban;
 	}
+	
+	public void anonymize(String code) {
+        setKey(code.substring(0,2));
+        setBankCode(code.substring(0,5));
+        setBranchCode(code.substring(0,5));
+        setAccountNumber(code.substring(0,11));
+        setIban(code);
+        setBic(code);
+        setAccountOwner(code);
+        setBankName(code);
+        setBankId(code);
+        setIssuerNumber(code);
+        setIssuerName(code);
+        setIcs(code.substring(0,35));
+    }
 }
