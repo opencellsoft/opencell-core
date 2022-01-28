@@ -1340,7 +1340,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         String code = (String) values.get(0);
         Date from = !isBlank(values.get(1)) ? (Date) values.get(1) : null;
-        Date to = !isBlank(values.get(1)) ? (Date) values.get(2) : null;
+        Date to = !isBlank(values.get(2)) ? (Date) values.get(2) : null;
 
         List<Subscription> matchedVersions = subscriptionService.getMatchingVersions(code, from, to, entity.getId());
 
