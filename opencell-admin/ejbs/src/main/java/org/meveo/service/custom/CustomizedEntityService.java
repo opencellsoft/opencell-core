@@ -128,7 +128,7 @@ public class CustomizedEntityService implements Serializable {
         List<CustomizedEntity> entities = new ArrayList<>();
         List<CustomEntityTemplate> customEntityTemplates = null;
         if (entityName == null || CustomEntityTemplate.class.getSimpleName().toLowerCase().contains(entityName)) {
-            customEntityTemplates = customEntityTemplateService.list();
+            customEntityTemplates = customEntityTemplateService.listNoCache();
         } else if (entityName != null) {
             customEntityTemplates = customEntityTemplateService.findByCodeLike(entityName);
         }
