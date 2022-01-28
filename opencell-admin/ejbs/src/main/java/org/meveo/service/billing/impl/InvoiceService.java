@@ -5146,7 +5146,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoiceLineGroupToInvoiceMap.isEmpty() && invoiceLinesGroupsPaged.isEmpty()) {
                 log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
-                if(existingInvoice.getInvoiceLines().isEmpty()) {
+                if(existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty()) {
                     cleanInvoiceAggregates(existingInvoice.getId());
                     initAmounts(existingInvoice.getId());
                 }
