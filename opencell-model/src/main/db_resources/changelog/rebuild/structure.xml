@@ -15820,6 +15820,8 @@
         <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
     	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
+    	<sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
+    	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -17056,6 +17058,8 @@
     <changeSet id="INTRD-3807_20211227" author="HHanine" />
 	<changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-4178_20220106" author="AmineBENAICHA" />
+	<changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
