@@ -71,6 +71,7 @@ import com.worldline.sips.util.SealCalculator;
 public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String WALLET_URL_PROPERTY = "atos.api.walletUrl";
     private static final String OFFICE_URL_PROPERTY = "atos.api.officeUrl";
+    private static final String WALLET_HOSTED_CHECK_OUT_URL_PROPERTY = "atos.api.walletUrl.hostedCheckOut";
     private static final String WALLET_ORDER_URI_PROPERTY = "atos.api.wallet.order.uri";
     private static final String WALLET_CREDIT_HOLDER_URI_PROPERTY = "atos.api.wallet.credit.uri";
 
@@ -273,7 +274,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	@Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
         String returnUrl = hostedCheckoutInput.getReturnUrl();
-        String walletUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "https://payment-webinit.test.sips-services.com/walletManagementInit");
+        String walletUrl = paramBean().getProperty(WALLET_HOSTED_CHECK_OUT_URL_PROPERTY, "changeIt");
 
         PaymentHostedCheckoutResponseDto response = new PaymentHostedCheckoutResponseDto();
         PaymentHostedCheckoutResponseDto.Result result = response.getResult();
