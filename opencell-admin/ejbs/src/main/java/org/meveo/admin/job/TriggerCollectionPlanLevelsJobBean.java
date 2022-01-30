@@ -3,10 +3,8 @@ package org.meveo.admin.job;
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
-import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.DONE;
 import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.TO_BE_DONE;
-import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.IN_PROGRESS;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
 import static org.meveo.model.payments.ActionChannelEnum.LETTER;
 import static org.meveo.model.payments.ActionModeEnum.AUTOMATIC;
@@ -17,6 +15,7 @@ import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -34,7 +33,10 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.io.File;
 import java.text.DateFormat;
@@ -74,14 +76,18 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
     @Inject
     private DunningActionInstanceService actionInstanceService;
 
+    @EJB
+    private TriggerCollectionPlanLevelsJobBean jobBean;
+
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         List<Long> collectionPlanToProcess = collectionPlanService.getActiveCollectionPlansIds();
         jobExecutionResult.setNbItemsToProcess(collectionPlanToProcess.size());
         for (Long collectionPlanId : collectionPlanToProcess) {
             try {
-                process(collectionPlanId, jobExecutionResult);
+                jobBean.process(collectionPlanId, jobExecutionResult);
             } catch (Exception exception) {
                 jobExecutionResult.addErrorReport(exception.getMessage());
             }
@@ -95,7 +101,9 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
      * @param collectionPlanId   Collection plan id to process
      * @param jobExecutionResult Job execution result
      */
-    private void process(Long collectionPlanId, JobExecutionResultImpl jobExecutionResult) {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void process(Long collectionPlanId, JobExecutionResultImpl jobExecutionResult) {
         DunningCollectionPlan collectionPlan = collectionPlanService.findById(collectionPlanId);
         Date dateToCompare;
         Date today = new Date();
@@ -104,6 +112,9 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         String lastAction = "";
         String nextAction = "";
         boolean updateCollectionPlan = false;
+        if(collectionPlan.getDunningLevelInstances() == null || collectionPlan.getDunningLevelInstances().isEmpty()) {
+            throw new BusinessException("Collection plan ID : " + collectionPlan.getId() + " has no levelInstances associated");
+        }
         for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
             dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
                     ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
@@ -111,7 +122,6 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
                     && today.after(dateToCompare)) {
                 nextLevel = index + 1;
-                int countAutoActions = 0;
                 for (int i = 0; i < levelInstance.getActions().size(); i++) {
                     DunningActionInstance actionInstance = levelInstance.getActions().get(i);
                     if (actionInstance.getActionMode().equals(AUTOMATIC)
@@ -125,7 +135,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                             if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
                                     || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
                                 sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
-                                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate(), jobExecutionResult);
+                                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
                             }
                         }
                         if(actionInstance.getActionType().equals(RETRY_PAYMENT)) {
@@ -157,7 +167,6 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                             levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
                             levelInstanceService.update(levelInstance);
                         }
-                        countAutoActions++;
                         lastAction = actionInstance.getCode();
                         if (i + 1 < levelInstance.getActions().size()) {
                             nextAction = levelInstance.getActions().get(i + 1).getCode();
@@ -190,7 +199,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 }
             }
             if(levelInstance.getDunningLevel() == null) {
-                jobExecutionResult.addErrorReport("No dunning level associated to level instance id " +  levelInstance.getId());
+                throw new BusinessException("No dunning level associated to level instance id " +  levelInstance.getId());
             } else {
                 levelInstanceService.update(levelInstance);
             }
@@ -201,8 +210,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         }
     }
 
-    private void sendEmail(EmailTemplate emailTemplate,
-                           Invoice invoice, Date lastActionDate, JobExecutionResultImpl jobExecutionResult) {
+    private void sendEmail(EmailTemplate emailTemplate, Invoice invoice, Date lastActionDate) {
         if(invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
                 && invoice.getSeller().getContactInformation().getEmail() != null
                 && !invoice.getSeller().getContactInformation().getEmail().isBlank()) {
@@ -262,13 +270,13 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
                             billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
                 } catch (Exception exception) {
-                    jobExecutionResult.addErrorReport(exception.getMessage());
+                    throw new BusinessException(exception.getMessage());
                 }
             } else {
-                jobExecutionResult.addErrorReport("Billing account email is missing");
+                throw new BusinessException("Billing account email is missing");
             }
         } else {
-            jobExecutionResult.addErrorReport("From email is missing, email sending skipped");
+            throw new BusinessException("From email is missing, email sending skipped");
         }
     }
 
@@ -295,7 +303,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     }
                 }
             } catch (Exception exception) {
-                throw new BusinessException("Error occurred during payment process : " + exception.getMessage());
+                throw new BusinessException("Error occurred during payment process for customer " + customerAccount.getCode(), exception);
             }
         }
     }
