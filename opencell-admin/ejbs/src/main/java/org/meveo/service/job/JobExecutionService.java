@@ -60,7 +60,7 @@ public class JobExecutionService extends BaseService {
     /**
      * Number of times to repeat a job when it did not finish in a first/subsequent runs
      */
-    private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 50;
+    private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 100000;
 
     /**
      * job instance service.
