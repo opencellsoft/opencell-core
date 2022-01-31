@@ -186,7 +186,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         for (Notification notif : notifications) {
 
-            CacheKeyStr cacheKey = getCacheKey(notif);
+            CacheKeyStr cacheKey = getCacheKey(notif, true);
 
             log.trace("Adding notification {} to notification cache under key {} of Provider {}.", notif.getCode(), cacheKey, currentUser.getProviderCode());
 
