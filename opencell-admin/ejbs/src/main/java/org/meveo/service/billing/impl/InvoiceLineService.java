@@ -502,12 +502,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 				}
 		}
-		
+		if(invoiceLine.getQuantity() == null) {
+		    invoiceLine.setQuantity(new BigDecimal(1));
+        }
 		if(invoiceLine.getUnitPrice() != null) {
-            if(invoiceLine.getQuantity() != null) {
-                invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
-                invoiceLine.setAmountWithTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
-            }
+            invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
+            invoiceLine.setAmountWithTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
         }
 		
 		if(resource.getServiceInstanceCode()!=null) {
