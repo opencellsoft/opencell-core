@@ -5143,6 +5143,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoiceLineGroupToInvoiceMap.isEmpty() && invoiceLinesGroupsPaged.isEmpty()) {
                 log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+                if(existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty()) {
+                    cleanInvoiceAggregates(existingInvoice.getId());
+                    initAmounts(existingInvoice.getId());
+                }
                 return new ArrayList<>();
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
                 for (InvoiceLinesGroup invoiceLinesGroup : invoiceLinesGroupsPaged) {
@@ -5279,6 +5283,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * initialize invoice amounts : amountWithTax, amountWithoutTax, amountToPay, taxAmount, amount
+     *
+     * @param invoiceId
+     */
+    private void initAmounts(Long invoiceId) {
+        getEntityManager()
+                .createNamedQuery("Invoice.initAmounts")
+                .setParameter("invoiceId", invoiceId)
+                .executeUpdate();
+    }
+
+    /**
      * delete invoice aggregates
      * 
      * @param invoiceId
@@ -5286,7 +5302,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cleanInvoiceAggregates(Long invoiceId) {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
-        getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoiceAgregate").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceAggregate.updateByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 

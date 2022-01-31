@@ -13,7 +13,6 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 import javax.ejb.Stateless;
@@ -28,7 +27,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
@@ -38,7 +36,6 @@ import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
@@ -103,9 +100,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private SellerService sellerService;
-
-    @Inject
-    private InvoiceAgregateService invoiceAgregateService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -478,6 +472,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 		}	
 		
+		if(invoiceLine.getQuantity() == null) {
+            invoiceLine.setQuantity(new BigDecimal(1));
+        }
+		
 		if(invoiceLine.getUnitPrice() == null) {
 				if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
 					invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
@@ -490,7 +488,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 				}
 		}
-		
+		else {
+		    invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
+            invoiceLine.setAmountWithTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
+		}
 		
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
@@ -587,17 +588,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param lineId
+	 * @param lineId invoiceLine id
 	 */
 	public void remove(Invoice invoice, Long lineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, lineId);
-		invoiceLine.setStatus(InvoiceLineStatusEnum.CANCELED);
-		if(invoiceLine.getInvoiceAggregateF() != null) {
-            InvoiceAgregate invoiceAgregate = invoiceAgregateService.findById(invoiceLine.getInvoiceAggregateF().getId());
-            invoiceAgregate.setInvoice(null);
-        }
-		invoiceLine.setInvoice(null);
-
+        remove(invoiceLine);
 	}
 
     public List<Object[]> getTotalPositiveILAmountsByBR(BillingRun billingRun) {

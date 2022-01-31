@@ -48,11 +48,12 @@ public interface SecurityDepositInput extends Resource {
     @Nullable
     SecurityDepositStatusEnum getStatus();
 
-
     @Nullable
     Resource getSubscription();
 
-
     @Nullable
     String getExternalReference();
+    
+    @Nullable
+    Resource getServiceInstance();
 }
