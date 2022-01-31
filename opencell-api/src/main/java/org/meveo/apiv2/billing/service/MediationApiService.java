@@ -176,10 +176,11 @@ public class MediationApiService {
 
         boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
-        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
-        if (nbThreads > cdrLines.size()) {
-            nbThreads = cdrLines.size();
-        }
+//        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+        int nbThreads = 1;
+//        if (nbThreads > cdrLines.size()) {
+//            nbThreads = cdrLines.size();
+//        }
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
         List<Future> futures = new ArrayList<>();

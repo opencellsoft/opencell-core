@@ -2307,7 +2307,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
+            	if(invoice.getStatus().equals(InvoiceStatusEnum.DRAFT)) {
+            		invoice.assignTemporaryInvoiceNumber();
+            	}else if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
                     invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
                 }
             } catch (Exception e) {
@@ -2378,9 +2380,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             // Create invoice lines from grouped and filtered RT
             List<RatedTransaction> ratedTransactions = getRatedTransactions(entity, filter, firstTransactionDate, lastTransactionDate, new Date(), isDraft);
-            List<Long> ratedTransactionIds = ratedTransactions.stream()
+            List<Long> ratedTransactionIds = ratedTransactions.stream().filter(Objects::nonNull)
                     .map(RatedTransaction::getId)
                     .collect(toList());
+            
             if (!ratedTransactionIds.isEmpty()) {
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
@@ -5140,6 +5143,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoiceLineGroupToInvoiceMap.isEmpty() && invoiceLinesGroupsPaged.isEmpty()) {
                 log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+                if(existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty()) {
+                    cleanInvoiceAggregates(existingInvoice.getId());
+                    initAmounts(existingInvoice.getId());
+                }
                 return new ArrayList<>();
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
                 for (InvoiceLinesGroup invoiceLinesGroup : invoiceLinesGroupsPaged) {
@@ -5207,7 +5214,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         subAggregate.setInvoiceLinesToAssociate(new ArrayList<>());
                     }
 
-                    setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    if (invoice.getDueDate() == null) {
+                        setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
+                    }
                     setInitialCollectionDate(invoice, invoiceLinesGroup.getBillingCycle(), billingRun);
 
                     EntityManager em = getEntityManager();
@@ -5274,6 +5283,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * initialize invoice amounts : amountWithTax, amountWithoutTax, amountToPay, taxAmount, amount
+     *
+     * @param invoiceId
+     */
+    private void initAmounts(Long invoiceId) {
+        getEntityManager()
+                .createNamedQuery("Invoice.initAmounts")
+                .setParameter("invoiceId", invoiceId)
+                .executeUpdate();
+    }
+
+    /**
      * delete invoice aggregates
      * 
      * @param invoiceId
@@ -5281,7 +5302,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cleanInvoiceAggregates(Long invoiceId) {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
-        getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoiceAgregate").setParameter("invoiceId", invoiceId).executeUpdate();
         getEntityManager().createNamedQuery("InvoiceAggregate.updateByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 
@@ -5734,9 +5754,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
         }
-        if (input.getDueDate() != null) {
-            toUpdate.setDueDate(input.getDueDate());
-        }
+
+        //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
+        toUpdate.setDueDate(input.getDueDate());
+        
         if (invoiceResource.getPaymentMethod() != null) {
             final Long pmId = invoiceResource.getPaymentMethod().getId();
             PaymentMethod pm = (PaymentMethod) tryToFindByEntityClassAndId(PaymentMethod.class, pmId);

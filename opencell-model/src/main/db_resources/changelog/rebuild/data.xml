@@ -9703,6 +9703,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="INTRD-3751_20211216" author="AmineBENAICHA" />
 	<changeSet author="ZBariki" id="INTRD-4227_20220110" />
 	<changeSet id="#4082_20190404" author="SaidRamli" />
+	<changeSet id="INTRD-3432_21012022_Manual_refund_by_card_KO" author="anasseh"/>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
