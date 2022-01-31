@@ -17,6 +17,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
@@ -24,6 +25,7 @@ import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -54,6 +56,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     @Inject
     private ProductService productService;
 
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+    
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         return null;
@@ -190,7 +195,10 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositInput.setSubscription(subscription);
         }
 
-
+        if (securityDepositInput.getServiceInstance() != null) {
+            ServiceInstance serviceInstance = serviceInstanceService.tryToFindByCodeOrId(securityDepositInput.getServiceInstance());
+            securityDepositInput.setServiceInstance(serviceInstance);
+        }
     }
 
     private <B extends BaseEntity> void validateNotNull(B input, B result) {

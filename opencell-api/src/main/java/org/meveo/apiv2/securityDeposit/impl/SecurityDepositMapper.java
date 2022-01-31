@@ -8,6 +8,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
@@ -32,6 +33,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .currentBalance(entity.getCurrentBalance())
                 .status(entity.getStatus())
                 .subscription(createResource(entity.getSubscription()))
+                .serviceInstance(createResource(entity.getServiceInstance()))
                 .externalReference(entity.getExternalReference())
                 .build();
     }
@@ -74,7 +76,11 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             subscription.setCode(resource.getSubscription().getCode());
             securityDeposit.setSubscription(subscription);
         }
-
+        if (resource.getServiceInstance() != null) {
+            ServiceInstance serviceInstance = new ServiceInstance();
+            serviceInstance.setId(resource.getServiceInstance().getId());
+            securityDeposit.setServiceInstance(serviceInstance);
+        }
         securityDeposit.setExternalReference(resource.getExternalReference());
         return securityDeposit;
     }
