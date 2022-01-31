@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @JsonDeserialize(as = ImmutableSecurityDepositTemplate.class)
 public interface SecurityDepositTemplate extends Resource {
 
-    @Schema(description = "The TemplateName")
+    @Schema(description = "The Template Name")
     @NotNull String getTemplateName();
 
     @Schema(description = "The Currency")
