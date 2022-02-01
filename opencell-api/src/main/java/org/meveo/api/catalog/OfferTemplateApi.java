@@ -381,16 +381,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
+        
         var datePeriod = new DatePeriod();
-        if(postData.getNewValidFrom() != null)
-        	datePeriod.setFrom(postData.getNewValidFrom());
-        else
-        	datePeriod.setFrom(postData.getValidFrom());
-        if(postData.getNewValidTo() != null)
-        		datePeriod.setTo(postData.getNewValidTo());
-        else
-    		datePeriod.setTo(postData.getValidTo());
+        datePeriod.setFrom(postData.getNewValidFrom());
+        datePeriod.setTo(postData.getNewValidTo());
         offerTemplate.setValidity(datePeriod);
+        
         var isValidityIsSet = offerTemplate.getValidity().getTo() != null && offerTemplate.getValidity().getFrom() != null;
         if(isValidityIsSet && offerTemplate.getValidity().getTo().compareTo(offerTemplate.getValidity().getFrom()) <= 0) {
         	throw new MeveoApiException("Date 'valid to' must be great than Data 'valid from'");  
