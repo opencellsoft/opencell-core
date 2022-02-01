@@ -37,13 +37,13 @@ import org.meveo.service.job.Job;
 
 
 /**
- * The Class InvoicingJobV2 launch invoicing for the available BillingRuns. It's a new job with limited features, be sure your it contains all needed features before using.
+ * The Class RefactoredInvoicingJob launch invoicing for the available BillingRuns. It's a new job with limited features, be sure your it contains all needed features before using.
  * 
  * @author Mohammed EL-AZZOUZI
  *
  */
 @Stateless
-public class InvoicingJobV2 extends Job {
+public class RefactoredInvoicingJob extends Job {
 
     public static final long LIMIT_UPDATE_BY_ID = 10000;
 	/** The invoicing job bean. */
@@ -70,7 +70,7 @@ public class InvoicingJobV2 extends Job {
         
         CustomFieldTemplate customFieldRecalculateTaxes = new CustomFieldTemplate();
         customFieldRecalculateTaxes.setCode("recalculateTaxes");
-        customFieldRecalculateTaxes.setAppliesTo("JobInstance_InvoicingJobV2");
+        customFieldRecalculateTaxes.setAppliesTo("JobInstance_RefactoredInvoicingJob");
         customFieldRecalculateTaxes.setActive(true);
         customFieldRecalculateTaxes.setDescription(resourceMessages.getString("jobExecution.recalculateTaxes"));
         customFieldRecalculateTaxes.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -79,7 +79,7 @@ public class InvoicingJobV2 extends Job {
         
         CustomFieldTemplate customFieldExpectingMassRTsProcessing = new CustomFieldTemplate();
         customFieldExpectingMassRTsProcessing.setCode("expectMassRTsProcessing");
-        customFieldExpectingMassRTsProcessing.setAppliesTo("JobInstance_InvoicingJobV2");
+        customFieldExpectingMassRTsProcessing.setAppliesTo("JobInstance_RefactoredInvoicingJob");
         customFieldExpectingMassRTsProcessing.setActive(true);
         customFieldExpectingMassRTsProcessing.setDescription(resourceMessages.getString("jobExecution.expectMassRTsProcessing"));
         customFieldExpectingMassRTsProcessing.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -88,7 +88,7 @@ public class InvoicingJobV2 extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JobInstance_InvoicingJobV2");
+        customFieldNbRuns.setAppliesTo("JobInstance_RefactoredInvoicingJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -98,7 +98,7 @@ public class InvoicingJobV2 extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JobInstance_InvoicingJobV2");
+        customFieldNbWaiting.setAppliesTo("JobInstance_RefactoredInvoicingJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
@@ -108,7 +108,7 @@ public class InvoicingJobV2 extends Job {
 
         CustomFieldTemplate customFieldBR = new CustomFieldTemplate();
         customFieldBR.setCode("billingRuns");
-        customFieldBR.setAppliesTo("JobInstance_InvoicingJobV2");
+        customFieldBR.setAppliesTo("JobInstance_RefactoredInvoicingJob");
         customFieldBR.setActive(true);
         customFieldBR.setDescription(resourceMessages.getString("jobExecution.billingRuns"));
         customFieldBR.setFieldType(CustomFieldTypeEnum.ENTITY);

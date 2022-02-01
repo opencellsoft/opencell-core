@@ -46,8 +46,8 @@ public class BillingAccountDetailsItem {
 		if(!StringUtils.isEmpty(thresholdType)){
 			this.checkThreshold = ThresholdOptionsEnum.valueOf(thresholdType);
 		}
-		if(!StringUtils.isEmpty(discountPlanInstancesSummary)){
-			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split(",", -1)).map(x->new DiscountPlanSummary(x)).collect(Collectors.toList());
+		if(!StringUtils.isEmpty(discountPlanInstancesSummary) && discountPlanInstancesSummary.length()>2){
+			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split("\\,", -1)).map(x->new DiscountPlanSummary(x)).collect(Collectors.toList());
 		}
 		//this.orderDueDateDelayEL = (String) fields[i++];
 	}

@@ -12,10 +12,15 @@ public class DiscountPlanSummary {
 	 * @param x
 	 */
 	public DiscountPlanSummary(String x) {
-		final String[] split = x.split("|");
+		final String[] split = x.split("\\|");
 		this.discountPlanId=Long.parseLong(split[0]);
-		this.startDate=DateUtils.parseDefaultDate(split[1]);
-		this.endDate=DateUtils.parseDefaultDate(split[2]);
+		if (split.length > 1) {
+			this.startDate = DateUtils.parseDefaultDate(split[1]);
+			if (split.length > 2) {
+				this.endDate = DateUtils.parseDefaultDate(split[2]);
+			}
+		}
+		
 	}
 	/**
 	 * @return the startDate

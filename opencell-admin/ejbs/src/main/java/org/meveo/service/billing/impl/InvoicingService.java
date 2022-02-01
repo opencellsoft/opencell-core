@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,7 +47,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.v2.invoicing.InvoicingJobV2;
+import org.meveo.admin.job.v2.invoicing.RefactoredInvoicingJob;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -250,7 +249,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 				DateUtils.setDateToEndOfDay(billingRun.getLastTransactionDate()) :DateUtils.setDateToStartOfDay(billingRun.getLastTransactionDate());
 
 		final Integer numberOfRTs = sca.getItemNumber();
-		if(numberOfRTs>InvoicingJobV2.LIMIT_UPDATE_BY_ID && numberOfRTs>2) {
+		if(numberOfRTs>RefactoredInvoicingJob.LIMIT_UPDATE_BY_ID && numberOfRTs>2) {
 			final long intervalSize = max-min+1;
 			List<Long[]>subIntervals = getIntervals(min, max, numberOfRTs);
 			int updatedRTs=0;
@@ -820,8 +819,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	
 	private DiscountPlan getDiscountPlan(long discountPlanId) {
 		if(discountPlans.isEmpty()) {
-			final BinaryOperator<DiscountPlan> mergeFunction = (x1, x2) -> {x1.getDiscountPlanItems().addAll(x2.getDiscountPlanItems());return x1;};
-			discountPlans =  getEntityManager().createNamedQuery("DiscountPlan.getAll",DiscountPlan.class).getResultList().stream().collect(Collectors.toMap(DiscountPlan::getId, Function.identity(), mergeFunction));
+			//final BinaryOperator<DiscountPlan> mergeFunction = (x1, x2) -> {x1.getDiscountPlanItems().addAll(x2.getDiscountPlanItems());return x1;};
+			discountPlans =  getEntityManager().createNamedQuery("DiscountPlan.getAll",DiscountPlan.class).getResultList().stream().collect(Collectors.toMap(DiscountPlan::getId, Function.identity(), (x1, x2) -> x1));
 		}
 		return discountPlans.get(discountPlanId);
 	}
@@ -881,7 +880,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
             return null;
         }
         // Apply discount if matches the category, subcategory, or applies to any category
-        if (!((discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null)
+        if (!((discountPlanItem.getInvoiceCategory() == null && discountPlanItem.getInvoiceSubCategory() == null)
                 || (discountPlanItem.getInvoiceSubCategory() != null && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
                 || (discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId())))) {
             return null;
@@ -917,9 +916,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
         discountAggregate.setDescription(discountPlanItem.getCode());
         
         InvoicingItem discountedItemSum= new InvoicingItem(itemsBySubCategory);
-        discountAggregate.setAmountWithoutTax(scAggregate.getAmountWithoutTax().subtract(discountedItemSum.getAmountWithoutTax()));
-        discountAggregate.setAmountWithTax(scAggregate.getAmountWithTax().subtract(discountedItemSum.getAmountWithTax()));
-        discountAggregate.setAmountTax(scAggregate.getAmountTax().subtract(discountedItemSum.getAmountTax()));
+        discountAggregate.setAmountWithoutTax(discountedItemSum.getAmountWithoutTax().subtract(scAggregate.getAmountWithoutTax()));
+        discountAggregate.setAmountWithTax(discountedItemSum.getAmountWithTax().subtract(scAggregate.getAmountWithTax()));
+        discountAggregate.setAmountTax(discountedItemSum.getAmountTax().subtract(scAggregate.getAmountTax()));
         addInvoiceAggregateWithAmounts(invoice, discountAggregate);
         return discountAggregate;
     }
@@ -951,7 +950,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	private BigDecimal[] getAppliedDiscount(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal percent) {
 		amountWithoutTax = applyDiscount(amountWithoutTax, percent);
 		amountWithTax = applyDiscount(amountWithTax, percent);
-        return new BigDecimal[] { amountWithoutTax, amountWithTax, amountWithTax.subtract(amountWithoutTax) };
+        return new BigDecimal[] { amountWithTax, amountWithoutTax, amountWithTax.subtract(amountWithoutTax) };
 	}
 
 	private RoundingMode getRoundingMode() {
