@@ -130,12 +130,12 @@ public class EdrService extends PersistenceService<EDR> {
  	        if(ratingGroup != null) {
  	        	query.setParameter("ratingGroup", ratingGroup.toLowerCase());
  	        }
- 	        if(parameter1!=null) {
- 	        	query.setParameter("parameter1", parameter1);
- 	        }
- 	        if(parameter2!=null) {
- 	        	query.setParameter("parameter1", parameter1);
- 	        }
+ 	       if(parameter1!=null) {
+	        	query.setParameter("parameter1", parameter1.toLowerCase());
+	        }
+	        if(parameter2!=null) {
+	        	query.setParameter("parameter2", parameter2.toLowerCase());
+	        }
  	        return query.getResultList();
 
     }
