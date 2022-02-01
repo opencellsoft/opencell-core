@@ -243,6 +243,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
       
         invoiceLine.setValueDate(new Date());
         create(invoiceLine);
+        commit();
         return invoiceLine;
     }
 
