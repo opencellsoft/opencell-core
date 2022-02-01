@@ -18,6 +18,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -103,6 +104,10 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject
 	@StatusUpdated
 	private Event<CommercialOrder> commercialOrderStatusUpdatedEvent;
+
+	@Inject
+	@AdvancementRateIncreased
+	protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -361,7 +366,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString())) {
 			throw new MeveoApiException("can not change order status, because the current status is Canceled");
 		}
-		
+		boolean shouldFireAdvancementRateIncreasedEvent = false;
 		if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString())) {
 			if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString()))
 				throw new MeveoApiException("The Order is not yet finalize");
@@ -371,6 +376,12 @@ public class CommercialOrderApi extends BaseApi {
 			
 		}else if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString())){
             order = serviceSingleton.assignCommercialOrderNumber(order);
+			if(order.getInvoicingPlan() != null &&
+				order.getInvoicingPlan().getInvoicingPlanItems().stream()
+						.filter(invoicingPlanItem -> invoicingPlanItem.getAdvancement() == null ||  invoicingPlanItem.getAdvancement()== 0)
+						.findFirst().isPresent()){
+				shouldFireAdvancementRateIncreasedEvent = true;
+			}
         }
 		List<String> status = allStatus(CommercialOrderEnum.class, "commercialOrder.status", "");
 
@@ -382,6 +393,9 @@ public class CommercialOrderApi extends BaseApi {
 
 		commercialOrderService.update(order);
 		commercialOrderStatusUpdatedEvent.fire(order);
+		if(shouldFireAdvancementRateIncreasedEvent){
+			entityAdvancementRateIncreasedEventProducer.fire(order);
+		}
 	}
 	
 	public CommercialOrderDto duplicate(Long commercialOrderId) {

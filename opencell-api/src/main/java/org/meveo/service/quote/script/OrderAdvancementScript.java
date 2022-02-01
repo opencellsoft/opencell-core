@@ -61,7 +61,7 @@ OrderAdvancementScript extends ModuleScript {
         if(commercialOrder == null) {
             throw new BusinessException("No Commercial order is found");
         }
-        Integer orderProgress = commercialOrder.getOrderProgress();
+        Integer orderProgress = commercialOrder.getOrderProgress() != null ? commercialOrder.getOrderProgress() : 0;
 
         if (commercialOrder.getInvoicingPlan() != null) {
 
