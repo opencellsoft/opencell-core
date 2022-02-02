@@ -213,7 +213,13 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
             myQuery = getEntityManager().createQuery(sqlQuery);
         }
 
+        try {
         return myQuery.getResultList();
+        } catch (Exception e) {
+            // added to prevent error in th GUI
+            log.error("Error : {} ", e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
     /**
