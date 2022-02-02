@@ -2318,11 +2318,6 @@
      	</insert>
      </changeSet>
     
-    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
-    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
-        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-demo.xml'</sql>
-    </changeSet>
-    
 	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-36" />
@@ -2421,5 +2416,10 @@
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
 		</insert>
 	</changeSet>
+    
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-demo.xml'</sql>
+    </changeSet>
     
 </databaseChangeLog>    
