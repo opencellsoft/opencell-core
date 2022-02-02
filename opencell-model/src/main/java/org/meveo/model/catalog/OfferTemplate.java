@@ -154,7 +154,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
-    private List<Tag> tags = new ArrayList<Tag>();
+    private List<Tag> tags = new ArrayList<>();
 
 
 
@@ -205,7 +205,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "offerTemplate", orphanRemoval = true)
-    private List<OfferTemplateAttribute> offerAttributes = new ArrayList<OfferTemplateAttribute>();
+    private List<OfferTemplateAttribute> offerAttributes = new ArrayList<>();
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
