@@ -413,9 +413,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param chargeInstance Charge instance to associate counter with
      * @throws CounterInstantiationException Failure to create counter period
      */
-    @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
         getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance);
     }
