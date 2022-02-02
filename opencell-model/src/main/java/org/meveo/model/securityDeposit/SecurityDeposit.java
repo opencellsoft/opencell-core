@@ -86,6 +86,12 @@ public class SecurityDeposit extends BusinessCFEntity {
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
 
+    @Column(name = "refund_reason")
+    private String refundReason;
+    
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+    
     public SecurityDepositTemplate getTemplate() {
         return template;
     }
@@ -188,5 +194,21 @@ public class SecurityDeposit extends BusinessCFEntity {
 
     public void setServiceInstance(ServiceInstance serviceInstance) {
         this.serviceInstance = serviceInstance;
+    }
+    
+    public String getRefundReason() {
+        return refundReason;
+    }
+
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 }
