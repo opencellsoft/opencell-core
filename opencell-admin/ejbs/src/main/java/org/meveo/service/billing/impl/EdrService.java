@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.billing.EDRDto;
@@ -102,23 +103,44 @@ public class EdrService extends PersistenceService<EDR> {
      * @param nbToRetrieve Number of items to retrieve for processing
      * @return List of EDR's we can rate until a given date.
      */
-    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
-
-        if (rateUntilDate == null && ratingGroup == null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
-
-        } else if (rateUntilDate != null && ratingGroup == null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve).getResultList();
-
-        } else if (rateUntilDate == null && ratingGroup != null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
-
-        } else {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
-                .getResultList();
+    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup,String parameter1, String parameter2, int nbToRetrieve) {
+        
+        StringBuilder strQuery = new StringBuilder();
+        
+        strQuery.append("SELECT e.id from EDR e where e.status='OPEN'");
+        
+	        if(rateUntilDate != null) {
+	        	strQuery.append(" AND e.eventDate<:rateUntilDate");
+	        }
+	        if(ratingGroup != null) {
+	        	strQuery.append(" AND lower(e.subscription.ratingGroup)=:ratingGroup");
+	        }
+	        if(parameter1!=null) {
+	        	strQuery.append(" AND lower(e.parameter1)=:parameter1");
+	        }
+	        if(parameter2!=null) {
+	        	strQuery.append(" AND lower(e.parameter2)=:parameter2");
+	        }
+	        strQuery.append(" order by e.id");
+	        
+	        log.info("getEDRsToRate query={}",strQuery);
+	        
+	        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(),Long.class);
+	        if(rateUntilDate != null) {
+	        	query.setParameter("rateUntilDate", rateUntilDate);
+	        }
+	        if(ratingGroup != null) {
+	        	query.setParameter("ratingGroup", ratingGroup.toLowerCase());
+	        }
+	        if(parameter1!=null) {
+	        	query.setParameter("parameter1", parameter1.toLowerCase());
+	        }
+	        if(parameter2!=null) {
+	        	query.setParameter("parameter2", parameter2.toLowerCase());
+	        }
+	        return query.getResultList();
+			
         }
-
-    }
 
     /**
      * Check if EDR exits matching an origin batch and record numbers
