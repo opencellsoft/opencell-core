@@ -687,12 +687,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public Map<Long, List<Long>> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        BasicStatistics basicStatistics = new BasicStatistics();
         Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+
+            basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+            basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             create(invoiceLine);
             commit();
             List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
@@ -701,6 +705,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .collect(toList());
             iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
         }
-        return iLIdsRtIdsCorrespondence;
+        basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
+        return basicStatistics;
     }
 }
