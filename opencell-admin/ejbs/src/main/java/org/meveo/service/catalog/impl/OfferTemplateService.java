@@ -52,7 +52,6 @@ import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -246,22 +245,22 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     	offer.setOfferModel(offerToDuplicate.getIsModel() ? offerToDuplicate : null);
 
         List<OfferServiceTemplate> offerServiceTemplates = offer.getOfferServiceTemplates();
-        offer.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
+        offer.setOfferServiceTemplates(new ArrayList<>());
 
         List<BusinessAccountModel> businessAccountModels = offer.getBusinessAccountModels();
-        offer.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+        offer.setBusinessAccountModels(new ArrayList<>());
 
         List<DigitalResource> attachments = offer.getAttachments();
-        offer.setAttachments(new ArrayList<DigitalResource>());
+        offer.setAttachments(new ArrayList<>());
 
         List<Channel> channels = offer.getChannels();
-        offer.setChannels(new ArrayList<Channel>());
+        offer.setChannels(new ArrayList<>());
 
         List<OfferProductTemplate> offerProductTemplates = offer.getOfferProductTemplates();
-        offer.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
+        offer.setOfferProductTemplates(new ArrayList<>());
 
         List<OfferTemplateCategory> offerTemplateCategories = offer.getOfferTemplateCategories();
-        offer.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+        offer.setOfferTemplateCategories(new ArrayList<>());
 
         List<Seller> sellers = offer.getSellers();
         offer.setSellers(new ArrayList<>());
@@ -270,13 +269,13 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offer.setOfferAttributes(new ArrayList<>());
 
         List<CustomerCategory> customerCategories = offer.getCustomerCategories();
-        offer.setCustomerCategories(new ArrayList<CustomerCategory>());
+        offer.setCustomerCategories(new ArrayList<>());
         
         List<Media> medias = offer.getMedias();
-        offer.setMedias(new ArrayList<Media>());
+        offer.setMedias(new ArrayList<>());
         
         List<OfferComponent> offerComponents = offer.getOfferComponents();
-        offer.setOfferComponents(new ArrayList<OfferComponent>());
+        offer.setOfferComponents(new ArrayList<>());
 
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
@@ -310,6 +309,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         
         if (offerAttributes != null) {
             for (OfferTemplateAttribute offerAttribute : offerAttributes) {
+                offerAttribute.setId(null);
                 offer.getOfferAttributes().add(offerAttribute);
             }
         }
@@ -319,7 +319,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 offer.getCustomerCategories().add(customerCategory);
             }
         }
-        offer.setCommercialRules(new ArrayList<CommercialRuleHeader>());
+        offer.setCommercialRules(new ArrayList<>());
         if (persist) {
             create(offer);
         }
@@ -371,7 +371,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                     serviceTemplate.getIncompatibleServices().size();
                     serviceTemplate.setId(null);
                     List<ServiceTemplate> incompatibleServices = serviceTemplate.getIncompatibleServices();
-                    serviceTemplate.setIncompatibleServices(new ArrayList<ServiceTemplate>());
+                    serviceTemplate.setIncompatibleServices(new ArrayList<>());
                     if (incompatibleServices != null) {
                         for (ServiceTemplate incompatibleService : incompatibleServices) {
                             serviceTemplate.addIncompatibleServiceTemplate(incompatibleService);
