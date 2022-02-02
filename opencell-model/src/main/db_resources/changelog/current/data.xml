@@ -6851,7 +6851,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 		</insert>
 	</changeSet>
 	
-	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
 		<insert tableName="billing_trading_language">
 			<column name="id" valueNumeric="-1" />
 			<column name="version" valueNumeric="0" />
