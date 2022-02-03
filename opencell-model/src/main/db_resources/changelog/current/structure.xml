@@ -3376,4 +3376,9 @@ END $$;]]>
             <column name="token_3ds_id" type="varchar(250)"/>
     </addColumn>
     </changeSet>
+    <changeSet id="#2029_20220202" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_cycle">
+            <column name="threshold_level" type="varchar(250)" defaultValue="NONE"/>
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>

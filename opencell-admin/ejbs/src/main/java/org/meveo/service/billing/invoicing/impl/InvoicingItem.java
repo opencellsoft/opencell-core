@@ -23,6 +23,7 @@ public class InvoicingItem {
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
 	private List<Long> rtIDs = new ArrayList<>();
 	private String invoiceCategoryId;
+	private BigDecimal positiveRTsAmount = null;
 
 	public InvoicingItem(Object[] fields) {
 		int i = 0;
@@ -38,6 +39,9 @@ public class InvoicingItem {
 		this.amountTax = (BigDecimal) fields[i++];
 		this.count = (Long) fields[i++];
 		this.rtIDs =  Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
+		if(fields.length>i) {
+			this.setPositiveRTsAmount((BigDecimal) fields[i++]);
+		}
 	}
 
 	/**
@@ -211,6 +215,20 @@ public class InvoicingItem {
 	 */
 	public void setInvoiceCategoryId(String invoiceCategoryId) {
 		this.invoiceCategoryId = invoiceCategoryId;
+	}
+
+	/**
+	 * @return the positiveRTsAmount
+	 */
+	public BigDecimal getPositiveRTsAmount() {
+		return positiveRTsAmount;
+	}
+
+	/**
+	 * @param positiveRTsAmount the positiveRTsAmount to set
+	 */
+	public void setPositiveRTsAmount(BigDecimal positiveRTsAmount) {
+		this.positiveRTsAmount = positiveRTsAmount;
 	}
 
 }

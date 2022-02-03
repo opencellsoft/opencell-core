@@ -15,7 +15,7 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.service.billing.impl;
+package org.meveo.service.billing.invoicing.impl;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -77,6 +77,7 @@ import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.threshold.ThresholdLevelEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -89,9 +90,10 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.invoicing.impl.BillingAccountDetailsItem;
-import org.meveo.service.billing.invoicing.impl.DiscountPlanSummary;
-import org.meveo.service.billing.invoicing.impl.InvoicingItem;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.RejectedBillingAccountService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.job.JobExecutionService;
@@ -144,9 +146,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
     private Map<Long, Tax> taxes=new TreeMap<Long, Tax>();
     private Map<Long, TradingLanguage> tradingLanguages=new TreeMap<Long, TradingLanguage>();
     private Map<Long, DiscountPlan> discountPlans=new TreeMap<Long, DiscountPlan>();
-    /**
-     * Description translation map.
-     */
     private Map<String, String> descriptionMap = new HashMap<>();
     
     /**
@@ -173,52 +172,81 @@ public class InvoicingService extends PersistenceService<Invoice> {
         return new AsyncResult<String>("OK");
     }
 
-	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle) {
+	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> billingAccountDetailsItemList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle) {
 		List<Invoice> invoices = new ArrayList<Invoice>();
-		for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
+		final BillingAccountDetailsItem fisrstItem = billingAccountDetailsItemList.get(0);
+		final long billingAccountId = fisrstItem.getBillingAccountId();
+		for (BillingAccountDetailsItem billingAccountDetailsItem : billingAccountDetailsItemList) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            final long billingAccountId = billingAccountDetailsItem.getBillingAccountId();
             try {
             	//group by invoicingKey and prepare invoice
-            	billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values().stream().forEach(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun, invoices, billingCycle));
+            	final Collection<List<InvoicingItem>> itemsByInvoice = billingAccountDetailsItem.getInvoicingItems().stream().collect(Collectors.groupingBy(InvoicingItem::getInvoiceKey)).values();
+				itemsByInvoice.stream().forEach(x->createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, x, billingRun, invoices, billingCycle));
             } catch (Exception e) {
                 log.error("Failed to create invoices for entity {}", billingAccountId, e);
                 rejectedBillingAccountService.create(billingAccountId, billingRun, e.getMessage());
             }
         }
+		return validateInvoices(billingRun, billingCycle, invoices, fisrstItem, billingAccountId);
+	}
+
+	private List<Invoice> validateInvoices(BillingRun billingRun, BillingCycle billingCycle, List<Invoice> invoices, final BillingAccountDetailsItem fisrstItem, final long billingAccountId) {
+		if(ThresholdLevelEnum.INVOICE.equals(billingCycle.getThresholdLevel()) && invoices.size()==0) {
+			rejectedBillingAccountService.create(billingAccountId, billingRun, "threshold not reached");
+		} else if(ThresholdOptionsEnum.AFTER_DISCOUNT.equals(billingCycle.getCheckThreshold()) && ThresholdLevelEnum.BILLING_ACCOUNT.equals(billingCycle.getThresholdLevel())) {
+			BigDecimal thresholdAfterDiscountAmount = getThresholdByInvoice(fisrstItem, billingCycle);
+			if (thresholdAfterDiscountAmount != null) {
+				BigDecimal amount = appProvider.isEntreprise() ? invoices.stream().map(x -> x.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add):invoices.stream().map(x->x.getAmountWithTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
+				if (thresholdAfterDiscountAmount.compareTo(amount) > 0) {
+					rejectedBillingAccountService.create(billingAccountId, billingRun, "threshold not reached");
+        			return new ArrayList<Invoice>();
+				}
+			}
+    	}
 		return invoices;
 	}
     
-    /**
-	 * @param billingAccountDetailsItem 
-     * @param invoicingItems
-	 * @param billingRun
-     * @param invoices 
-     * @param billingCycle 
-     * @param isFullAutomatic 
-	 * @return
-	 */
 	private void createAggregatesAndInvoiceFromInvoicingItems(BillingAccountDetailsItem billingAccountDetailsItem, List<InvoicingItem> invoicingItems, BillingRun billingRun, List<Invoice> invoices, BillingCycle billingCycle){
 		final InvoicingItem firstItem = invoicingItems.get(0);
-		BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, firstItem.getBillingAccountId());
-		final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount, billingCycle);
-		Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, invoicingItems, billingAccount, invoice);
-		if (!invoice.isPrepaid()) {
-			BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccountDetailsItem, ThresholdOptionsEnum.AFTER_DISCOUNT, billingCycle);
-			if (thresholdAfterDiscount != null) {
-				BigDecimal amount = (appProvider.isEntreprise()) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax();
-				if (thresholdAfterDiscount.compareTo(amount) > 0) {
-					rejectedBillingAccountService.create(billingAccount.getId(), billingRun, "Billing account did not reach invoicing threshold");
+		final boolean isThresholdByInvoice = ThresholdLevelEnum.INVOICE.equals(billingCycle.getThresholdLevel());
+		if(!firstItem.isPrepaid() && isThresholdByInvoice) {
+			if(ThresholdOptionsEnum.POSITIVE_RT.equals(billingCycle.getCheckThreshold())){
+				BigDecimal amount = invoicingItems.stream().map(x -> x.getPositiveRTsAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+				if(shouldRejectInvoice(billingAccountDetailsItem, billingCycle, amount)) {
+					return;
+				}
+			} else if(ThresholdOptionsEnum.BEFORE_DISCOUNT.equals(billingCycle.getCheckThreshold())) {
+				BigDecimal amount = appProvider.isEntreprise() ? invoicingItems.stream().map(x -> x.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add):invoicingItems.stream().map(x->x.getAmountWithTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
+				if(shouldRejectInvoice(billingAccountDetailsItem, billingCycle, amount)) {
 					return;
 				}
 			}
 		}
- 
+		
+		BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, firstItem.getBillingAccountId());
+		final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount, billingCycle);
+		Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, invoicingItems, billingAccount, invoice);
+		if (!invoice.isPrepaid() && isThresholdByInvoice && ThresholdOptionsEnum.AFTER_DISCOUNT.equals(billingCycle.getCheckThreshold())) {
+			BigDecimal amount = (appProvider.isEntreprise()) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax();
+			if(shouldRejectInvoice(billingAccountDetailsItem, billingCycle, amount)) {
+				return;
+			}
+		}
         evalDueDate(invoice, billingCycle, null, billingAccountDetailsItem.getCaDueDateDelayEL());
         invoice.setSubCategoryInvoiceAgregate(invoiceSCAs);
         invoices.add(invoice);
+	}
+
+	private boolean shouldRejectInvoice(BillingAccountDetailsItem billingAccountDetailsItem, BillingCycle billingCycle, BigDecimal amount) {
+		BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccountDetailsItem, billingCycle);
+		if (thresholdAfterDiscount != null) {
+			if (thresholdAfterDiscount.compareTo(amount) > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void writeInvoicingData(BillingRun billingRun, boolean isFullAutomatic, List<Invoice> invoices, BillingCycle billingCycle) {
@@ -431,15 +459,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		if (billingRun != null) {
 			invoice.setBillingRun(billingRun);
 		}
-		/*#MEL manage order.subscription cases
-		if (entity instanceof Order) {
-			Order order =(Order) entity;
-			invoice.setOrder(order);
-
-		} else if (entity instanceof Subscription) {
-			invoice.setSubscription((Subscription) entity);
-		}*/
-		
 		if (billingAccountDetailsItem.getPaymentMethodId() != null) {
 			invoice.setPaymentMethodType(billingAccountDetailsItem.getPaymentMethodType());
 			invoice.setPaymentMethod(getEntityManager().getReference(PaymentMethod.class, billingAccountDetailsItem.getPaymentMethodId()));
@@ -456,14 +475,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param billingAccount
 	 * @return
 	 */
-	private BigDecimal getThresholdByInvoice(BillingAccountDetailsItem billingAccountDetailsItem, ThresholdOptionsEnum type, BillingCycle bc) {
-		BigDecimal threshold = null;
-		if (billingAccountDetailsItem.getInvoicingThreshold() != null && (type == null || type == billingAccountDetailsItem.getCheckThreshold())) {
-			threshold = billingAccountDetailsItem.getInvoicingThreshold();
-		} else if ( !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (type == null || type == bc.getCheckThreshold())) {
-			threshold = bc.getInvoicingThreshold();
-		}
-		return threshold;
+	private BigDecimal getThresholdByInvoice(BillingAccountDetailsItem billingAccountDetailsItem, BillingCycle bc) {
+		return billingAccountDetailsItem.getInvoicingThreshold() != null ? billingAccountDetailsItem.getInvoicingThreshold() : bc.getInvoicingThreshold();
 	}
 
     /**
@@ -637,57 +650,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType &gt; BillingCycle &gt; default.
-     *
-     * @param invoice invoice
-     * @param billingCycle Billing cycle
-     * @param invoiceType Invoice type
-     * @return Invoice template name
-     */
-    public String getInvoiceTemplateName(Invoice invoice, BillingCycle billingCycle, InvoiceType invoiceType) {
-        String billingTemplateName = "default";
-        if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateNameEL())) {
-            billingTemplateName = evaluateBillingTemplateName(invoiceType.getBillingTemplateNameEL(), invoice);
-        } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateNameEL())) {
-            billingTemplateName = evaluateBillingTemplateName(billingCycle.getBillingTemplateNameEL(), invoice);
-        } else if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
-            billingTemplateName = invoiceType.getBillingTemplateName();
-        } else if (billingCycle != null && billingCycle.getInvoiceType() != null && !StringUtils.isBlank(billingCycle.getInvoiceType().getBillingTemplateName())) {
-            billingTemplateName = billingCycle.getInvoiceType().getBillingTemplateName();
-        } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateName())) {
-            billingTemplateName = billingCycle.getBillingTemplateName();
-        }
-        return billingTemplateName;
-    }
-
-    /**
-     * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices.
-     *
-     * @param billingRunId Billing run id
-     * @return A list of invoice identifiers
-     */
-    @SuppressWarnings("unchecked")
-    public List<InvoicesToNumberInfo> getInvoicesToNumberSummary(Long billingRunId) {
-        List<InvoicesToNumberInfo> invoiceSummaries = new ArrayList<>();
-        List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).getResultList();
-        for (Object[] summaryInfo : summary) {
-            invoiceSummaries.add(new InvoicesToNumberInfo((Long) summaryInfo[0], (Long) summaryInfo[1], (Date) summaryInfo[2], (Long) summaryInfo[3]));
-        }
-        return invoiceSummaries;
-    }
-
-    /**
-     * Nullify BR's invoices file names (xml and pdf).
-     *
-     * @param billingRun the billing run
-     */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void nullifyInvoiceFileNames(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("Invoice.nullifyInvoiceFileNames").setParameter("billingRun", billingRun).executeUpdate();
-    }
-
-    /**
      * A first part of invoiceService.create() method. Does not call PersistenceService.create(), Need to call InvoiceService.postCreate() separately
      *
      * @param invoice Invoice entity
@@ -722,11 +684,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		}
         int rtRounding = appProvider.getRounding();
         RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
-        // InvoiceType.taxScript will calculate all tax aggregates at once.
         boolean calculateTaxOnSubCategoryLevel = invoiceType.getTaxScript() == null;
-        // Should tax calculation on subcategory level be done externally
-        //boolean calculatesExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
-        // Tax change mapping. Key is ba.id_taxClass.id and value is an array of [Tax to apply, True/false if tax has changed]
         Map<String, Object[]> taxChangeMap = new HashMap<>();
 		Tax tax = ratedTransaction.getTax();
 		boolean taxWasRecalculated=false;
@@ -804,32 +762,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
                 }
             }
         }
-	}
-
-	/**
-	 * @param taxId
-	 * @return
-	 */
-	private Tax getTax(Long taxId) {
-		if(taxes.isEmpty()) {
-			taxes =  getEntityManager().createNamedQuery("Tax.getAllTaxes",Tax.class).getResultList().stream().collect(Collectors.toMap(Tax::getId, Function.identity()));
-		}
-		return taxes.get(taxId);
-	}
-	
-	private DiscountPlan getDiscountPlan(long discountPlanId) {
-		if(discountPlans.isEmpty()) {
-			//final BinaryOperator<DiscountPlan> mergeFunction = (x1, x2) -> {x1.getDiscountPlanItems().addAll(x2.getDiscountPlanItems());return x1;};
-			discountPlans =  getEntityManager().createNamedQuery("DiscountPlan.getAll",DiscountPlan.class).getResultList().stream().collect(Collectors.toMap(DiscountPlan::getId, Function.identity(), (x1, x2) -> x1));
-		}
-		return discountPlans.get(discountPlanId);
-	}
-	
-	private String getTradingLanguageCode(Long tradingLanguageId) {
-		if(tradingLanguages.isEmpty()) {
-			tradingLanguages =  getEntityManager().createNamedQuery("TradingLanguage.findAll",TradingLanguage.class).getResultList().stream().collect(Collectors.toMap(TradingLanguage::getId, Function.identity()));
-		}
-		return tradingLanguages.get(tradingLanguageId)!=null?tradingLanguages.get(tradingLanguageId).getLanguageCode():"";
 	}
 
 	private void setAggregationAmounts(List<InvoicingItem> items, InvoiceAgregate invoiceAggregate, InvoicingItem invoicingItem) {
@@ -1131,16 +1063,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
         }
     }
 
-    /**
-     * Retrun the total of positive rated transaction grouped by billing account for a billing run.
-     *
-     * @param billingRun the billing run
-     * @return a map of positive rated transaction grouped by billing account.
-     */
-    public List<Object[]> getTotalInvoiceableAmountByBR(BillingRun billingRun) {
-        return getEntityManager().createNamedQuery("Invoice.sumInvoiceableAmountByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
-    }
-    
 	/**
 	 * @param billingRun
 	 * @param max
@@ -1176,5 +1098,39 @@ public class InvoicingService extends PersistenceService<Invoice> {
 			final InvoiceType invoiceType = determineInvoiceType(rt.isPrepaid(), false, billingRun.getBillingCycle(), billingRun, billingAccount);
 			recalculateTaxIfNeeded(billingAccount, invoiceType, appProvider.isEntreprise(), rt, billingRun);
     	}
+	}
+	
+	public void initCommonData() {
+		taxes =  getEntityManager().createNamedQuery("Tax.findAll",Tax.class).getResultList().stream().collect(Collectors.toMap(Tax::getId, Function.identity()));
+		discountPlans =  getEntityManager().createNamedQuery("DiscountPlan.findAll",DiscountPlan.class).getResultList().stream().collect(Collectors.toMap(DiscountPlan::getId, Function.identity(), (x1, x2) -> x1));
+		tradingLanguages =  getEntityManager().createNamedQuery("TradingLanguage.findAll",TradingLanguage.class).getResultList().stream().collect(Collectors.toMap(TradingLanguage::getId, Function.identity()));
+	}
+	
+	public void removeCommonData() {
+		taxes =  null;
+		discountPlans =  null;
+		tradingLanguages =  null;
+		descriptionMap=null;
+	}
+	
+	private Tax getTax(Long taxId) {
+		if(taxes.isEmpty()) {
+			initCommonData();
+		}
+		return taxes.get(taxId);
+	}
+	
+	private DiscountPlan getDiscountPlan(long discountPlanId) {
+		if(discountPlans.isEmpty()) {
+			initCommonData();
+		}
+		return discountPlans.get(discountPlanId);
+	}
+	
+	private String getTradingLanguageCode(Long tradingLanguageId) {
+		if(tradingLanguages.isEmpty()) {
+			initCommonData();
+		}
+		return tradingLanguages.get(tradingLanguageId)!=null?tradingLanguages.get(tradingLanguageId).getLanguageCode():"";
 	}
 }

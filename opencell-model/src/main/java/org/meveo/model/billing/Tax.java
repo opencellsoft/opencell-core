@@ -64,7 +64,7 @@ import org.meveo.model.ObservableEntity;
         @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select tm.tax.id from TaxMapping tm where tm.tax.id is not null)"),
         @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByCode", query = "from Tax t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
-        @NamedQuery(name = "Tax.getAllTaxes", query = "from Tax t left join fetch t.accountingCode"),
+        @NamedQuery(name = "Tax.findAll", query = "from Tax t left join fetch t.accountingCode"),
 		@NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent ") })
 public class Tax extends BusinessCFEntity implements I18nDescripted{
     private static final long serialVersionUID = 1L;

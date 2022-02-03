@@ -41,6 +41,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.threshold.ThresholdLevelEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -181,6 +182,10 @@ public class BillingCycle extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "threshold_level")
+    private ThresholdLevelEnum thresholdLevel;
     
     /**
      * check threshold per entity?
@@ -438,4 +443,18 @@ public class BillingCycle extends BusinessCFEntity {
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
+
+	/**
+	 * @return the thresholdLevel
+	 */
+	public ThresholdLevelEnum getThresholdLevel() {
+		return thresholdLevel;
+	}
+
+	/**
+	 * @param thresholdLevel the thresholdLevel to set
+	 */
+	public void setThresholdLevel(ThresholdLevelEnum thresholdLevel) {
+		this.thresholdLevel = thresholdLevel;
+	}
 }

@@ -43,6 +43,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -52,7 +53,9 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.threshold.ThresholdLevelEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -531,27 +534,58 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return new AsyncResult<String>("OK");
     }
     
-	public List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun,Date lastTransactionDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
-		
-		String BillingAccountDetailsQueryName = "BillingAccount.getBillingAccountDetailsItems";
-		if(thresholdPerEntityFound) {
-			BillingAccountDetailsQueryName = BillingAccountDetailsQueryName+"ExcludingThresholdEntities";
-		} 
-		
+	public List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, Date lastTransactionDate, int pageSize, int pageIndex) {
+		String thresholdAmountColumn = "";
+		String sumPositiveAmounts="";
+		final ThresholdLevelEnum thresholdLevel = billingCycle.getThresholdLevel();
+		if (ThresholdLevelEnum.INVOICE.equals(thresholdLevel)) {
+			switch (thresholdLevel) {
+			case CUSTOMER: thresholdAmountColumn = ", c.invoicingThreshold as "; break;
+			case CUSTOMER_ACCOUNT: thresholdAmountColumn = ", ca.invoicingThreshold as "; break;
+			case BILLING_ACCOUNT: thresholdAmountColumn = ", ba.invoicingThreshold as "; break;
+			case INVOICE: thresholdAmountColumn = ", (case when ba.invoicingThreshold is not null then ba.invoicingThreshold else (case when ca.invoicingThreshold is not null then ca.invoicingThreshold else c.invoicingThreshold end) end) as "; 
+			sumPositiveAmounts=ThresholdOptionsEnum.POSITIVE_RT.equals(billingCycle.getCheckThreshold())? (appProvider.isEntreprise() ? ", sum(case when rt.amountWithoutTax > 0 then rt.amountWithoutTax else 0 end) ":", sum(case when rt.amountWithTax > 0 then rt.amountWithTax else 0 end) "):"";break;
+			default: break;
+			}
+		}
+		String thresholdAlias = thresholdAmountColumn == "" ? "" : " col_10_0_ ";
+		String thresholdGroupBy = thresholdAlias == "" ? "" : ", " + thresholdAlias;
+		String BillingAccountDetailsQuery = "select b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),',') "
+    			+ thresholdAmountColumn + thresholdAlias
+    			+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc "
+    			+ " left join ca.paymentMethods m "
+    			+ " left join b.discountPlanInstances dpi "
+    			+ " where b.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
+    			+ " group by b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType "+ thresholdGroupBy
+    			+ " order by b.id";
 
 		//split to 2 queries to avoid hibernate 'firstResult/maxResults specified with collection fetch; applying in memory!' 
-		List<Object[]> resultList = getEntityManager().createNamedQuery(BillingAccountDetailsQueryName).setParameter("billingRunId", billingRun.getId()).setMaxResults(pageSize)
+		List<Object[]> resultList = getEntityManager().createQuery(BillingAccountDetailsQuery).setParameter("billingRunId", billingRun.getId()).setMaxResults(pageSize)
 			      .setFirstResult(pageIndex * pageSize).getResultList();
 		if(resultList==null || resultList.isEmpty()) {
 			return new ArrayList<BillingAccountDetailsItem>();
 		}
 		
+		
 		final Map<Long, BillingAccountDetailsItem> billingAccountDetailsMap = resultList.stream().map(x-> new BillingAccountDetailsItem(x)).collect(Collectors.toMap(BillingAccountDetailsItem::getBillingAccountId, Function.identity()));
-		Query query = getEntityManager().createNamedQuery("RatedTransaction.getInvoicingItems").setParameter("ids", billingAccountDetailsMap.keySet()).setParameter("lastTransactionDate", lastTransactionDate).setParameter("limitUpdateById", RefactoredInvoicingJob.LIMIT_UPDATE_BY_ID);
+		
+		final String invoicingItemsQuery = "select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), count(rt.id),"
+				+ " (case  when count(rt.id)<:limitUpdateById then (string_agg(cast(rt.id as string),',')) else (CAST(min(rt.id) AS text)||','||CAST(max(rt.id) AS text)) end) "+sumPositiveAmounts
+				+ " FROM RatedTransaction rt left join rt.wallet w "
+				+ " where rt.billingAccount.id in (:ids) and rt.status='OPEN' and rt.usageDate<:lastTransactionDate "
+				+ " group by rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id "
+				+ " order by rt.billingAccount.id";
+		Query query = getEntityManager().createQuery(invoicingItemsQuery).setParameter("ids", billingAccountDetailsMap.keySet()).setParameter("lastTransactionDate", lastTransactionDate).setParameter("limitUpdateById", RefactoredInvoicingJob.LIMIT_UPDATE_BY_ID);
 		final Map<Long, List<InvoicingItem>> itemsByBAID = ((List<Object[]>)query.getResultList()).stream().map(x-> new InvoicingItem(x)).collect(Collectors.groupingBy(InvoicingItem::getBillingAccountId));
 		log.info("======= InvoicingItems ======="+itemsByBAID.size());
 		billingAccountDetailsMap.values().stream().forEach(x->x.setInvoicingItems(itemsByBAID.get(x.getBillingAccountId())));
 		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
+	}
+
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void unlinkRejectedBAs(Long id) {
+		getEntityManager().createNamedQuery("BillingAccount.unlinkRejected").setParameter("billingRunId", id).executeUpdate();
 	}
 
 }

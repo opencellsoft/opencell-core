@@ -2433,6 +2433,7 @@
             <column name="billing_cycle_type" type="varchar(256)" />
             <column name="script_instance_id" type="bigint" />
             <column name="reference_date" type="varchar(255)" />
+            <column name="threshold_level" type="varchar(250)" defaultValue="NONE"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -10001,5 +10002,6 @@ $$ LANGUAGE plpgsql;
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
+    <changeSet id="#2029_20220202" author="MohammedELAZZOUZI"/>
 </databaseChangeLog>
 

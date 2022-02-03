@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 public class BillingAccountDetailsItem {
@@ -25,8 +24,7 @@ public class BillingAccountDetailsItem {
 	private List<InvoicingItem> invoicingItems;
 	private String discountPlanInstancesSummary;
 	private List<DiscountPlanSummary> discountPlanSummaries;
-    private BigDecimal invoicingThreshold;
-    private ThresholdOptionsEnum checkThreshold;
+    private BigDecimal invoicingThreshold = null;
     private int totalRTs;
 	
 	public BillingAccountDetailsItem(Object[] fields) {
@@ -41,15 +39,12 @@ public class BillingAccountDetailsItem {
 		this.paymentMethodId = (Long) fields[i++];
 		this.paymentMethodType = (PaymentMethodEnum) fields[i++];
 		this.discountPlanInstancesSummary= (String) fields[i++];
-		this.invoicingThreshold=(BigDecimal) fields[i++];
-		String thresholdType=(String) fields[i++];
-		if(!StringUtils.isEmpty(thresholdType)){
-			this.checkThreshold = ThresholdOptionsEnum.valueOf(thresholdType);
-		}
 		if(!StringUtils.isEmpty(discountPlanInstancesSummary) && discountPlanInstancesSummary.length()>2){
 			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split("\\,", -1)).map(x->new DiscountPlanSummary(x)).collect(Collectors.toList());
 		}
-		//this.orderDueDateDelayEL = (String) fields[i++];
+		if(fields.length>i) {
+			this.invoicingThreshold=(BigDecimal) fields[i++];
+		}
 	}
 
 	/**
@@ -222,20 +217,6 @@ public class BillingAccountDetailsItem {
 	}
 
 	/**
-	 * @return the checkThreshold
-	 */
-	public ThresholdOptionsEnum getCheckThreshold() {
-		return checkThreshold;
-	}
-
-	/**
-	 * @param checkThreshold the checkThreshold to set
-	 */
-	public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
-		this.checkThreshold = checkThreshold;
-	}
-
-	/**
 	 * @return the invoicingThreshold
 	 */
 	public BigDecimal getInvoicingThreshold() {
@@ -262,6 +243,5 @@ public class BillingAccountDetailsItem {
 	public void setTotalRTs(int totalRTs) {
 		this.totalRTs = totalRTs;
 	}
-
 
 }
