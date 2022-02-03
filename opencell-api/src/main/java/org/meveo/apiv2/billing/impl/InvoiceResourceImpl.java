@@ -261,7 +261,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response cancelInvoiceLine(Long id) {
+	public Response cancelInvoice(Long id) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.cancelInvoice(invoice);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())

@@ -2463,6 +2463,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
         cancelInvoiceAndRts(invoice);
+        List<Long> invoicesIds = new ArrayList<Long>();
+        invoicesIds.add(invoice.getId());
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);
         if (remove) {
             super.remove(invoice);
         } else {
@@ -5143,7 +5146,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoiceLineGroupToInvoiceMap.isEmpty() && invoiceLinesGroupsPaged.isEmpty()) {
                 log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
-                if(existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty()) {
+                if(existingInvoice != null
+                        && (existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty())) {
                     cleanInvoiceAggregates(existingInvoice.getId());
                     initAmounts(existingInvoice.getId());
                 }

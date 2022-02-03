@@ -6851,7 +6851,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 		</insert>
 	</changeSet>
 	
-	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
 		<insert tableName="billing_trading_language">
 			<column name="id" valueNumeric="-1" />
 			<column name="version" valueNumeric="0" />
@@ -9299,4 +9299,104 @@ public class CustomGatewayPaymentScript extends PaymentScript{
            <where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
 	</update>
    </changeSet>	
+   
+	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-36" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="165000000" />
+			<column name="description" value="Deposits and sureties received"></column>
+			<column name="chart_of_account_type" value="LIABILITIES" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-51" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-3" />
+			<column name="account_code_client_side" valueNumeric="165000000" />
+			<column name="code" value="CRD_SD" />
+			<column name="description" value="Credit for Security deposit transfer" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="journal_id" value="-2" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-52" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="account_code_client_side" valueNumeric="41100000" />
+			<column name="code" value="DEB_SD" />
+			<column name="description" value="Debit for Security deposit transfer" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-53" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="account_code_client_side" valueNumeric="512010000" />
+			<column name="code" value="REF_SD" />
+			<column name="description" value="Refund of Security deposit transfer" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_seq_invoice">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="SECURITY_DEPOSIT" />
+			<column name="description" value="Security Deposit" />
+			<column name="sequence_size" valueNumeric="9" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_invoice_type">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="SECURITY_DEPOSIT" />
+			<column name="description" value="SD - Security Deposit" />
+			<column name="invoice_sequence_id" valueNumeric="-6" />
+			<column name="occ_template_id" valueNumeric="-52" />
+			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
+		</insert>
+		<insert tableName="billing_invoice_cat">
+			<column name="id" value='-4'/>
+			<column name="code" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_invoice_cat_icat_security_deposit" />
+		</insert>
+		<insert tableName="billing_invoice_sub_cat">
+			<column name="id" value='-4'/>
+			<column name="invoice_category_id" value='-4'/>
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="ISCAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="ISCAT_SECURITY_DEPOSIT"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_invoice_sub_cat_iscat_security_deposit" />
+		</insert>
+		<insert tableName="billing_accounting_article">
+			<column name="id" value='-11'/>
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="ART_SECURITY_DEPOSIT"/>
+			<column name="tax_class_id" value="-3"/>
+			<column name="invoice_sub_category_id" value="-4"/>
+			<column name="invoice_type_id" value="-6"/>
+			<column name="description" value="Article Security Deposit"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
+		</insert>
+	</changeSet>
+   
 </databaseChangeLog>
