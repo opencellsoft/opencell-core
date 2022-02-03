@@ -460,7 +460,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		BigDecimal threshold = null;
 		if (billingAccountDetailsItem.getInvoicingThreshold() != null && (billingAccountDetailsItem.getCheckThreshold() == null || type == billingAccountDetailsItem.getCheckThreshold())) {
 			threshold = billingAccountDetailsItem.getInvoicingThreshold();
-		} else if ( !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (billingAccountDetailsItem.getCheckThreshold() == null || type == bc.getCheckThreshold())) {
+		} else if ( !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (bc.getCheckThreshold() == null || type == bc.getCheckThreshold())) {
 			threshold = bc.getInvoicingThreshold();
 		}
 		return threshold;
