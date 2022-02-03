@@ -45,6 +45,8 @@ public class PriceDTO extends BaseEntityDto {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1054495149414405858L;
 
+	private Long id;
+
 	
 	@XmlAttribute
 	private PriceTypeEnum priceType;
@@ -78,6 +80,7 @@ public class PriceDTO extends BaseEntityDto {
     
 	public PriceDTO(QuotePrice quotePrice) {
 		super();
+		id = quotePrice.getId();
 		priceType=quotePrice.getPriceTypeEnum();
 	    unitPriceWithoutTax=quotePrice.getUnitPriceWithoutTax();
 	    taxAmount=quotePrice.getTaxAmount();

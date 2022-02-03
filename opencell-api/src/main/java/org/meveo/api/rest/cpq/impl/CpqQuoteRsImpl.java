@@ -30,6 +30,7 @@ import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
+import org.meveo.api.dto.cpq.OverridePricesDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -301,5 +302,15 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 		       return errorResponse(e, result.getActionStatus());
         }
 	}
-   
+
+	@Override
+	public Response overridePrices(OverridePricesDto overridePricesDto) {
+		try {
+			cpqQuoteApi.overridePrices(overridePricesDto);
+			return Response.ok().build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e);
+		}
+	}
+
 }
