@@ -11530,6 +11530,7 @@
 				<constraints nullable="true" />
 			</column>
 			<column name="description" type="varchar(255)" />
+			<column name="cf_values" type="${type.json}"></column>
 			<column name="security_deposit_id" type="bigint" />
 			<column name="account_operation_id" type="bigint" />
 			<column name="security_deposit_operation" type="varchar(255)" />	            
