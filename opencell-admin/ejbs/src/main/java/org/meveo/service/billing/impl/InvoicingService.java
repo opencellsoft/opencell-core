@@ -458,9 +458,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 */
 	private BigDecimal getThresholdByInvoice(BillingAccountDetailsItem billingAccountDetailsItem, ThresholdOptionsEnum type, BillingCycle bc) {
 		BigDecimal threshold = null;
-		if (billingAccountDetailsItem.getInvoicingThreshold() != null && (type == null || type == billingAccountDetailsItem.getCheckThreshold())) {
+		if (billingAccountDetailsItem.getInvoicingThreshold() != null && (billingAccountDetailsItem.getCheckThreshold() == null || type == billingAccountDetailsItem.getCheckThreshold())) {
 			threshold = billingAccountDetailsItem.getInvoicingThreshold();
-		} else if ( !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (type == null || type == bc.getCheckThreshold())) {
+		} else if ( !bc.isThresholdPerEntity() && bc.getInvoicingThreshold() != null && (billingAccountDetailsItem.getCheckThreshold() == null || type == bc.getCheckThreshold())) {
 			threshold = bc.getInvoicingThreshold();
 		}
 		return threshold;
