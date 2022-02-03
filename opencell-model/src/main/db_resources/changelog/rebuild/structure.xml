@@ -11480,6 +11480,7 @@
             <column name="status" type="varchar(255)" />
             <column name="number_instantiation" type="int" />
         </createTable>
+
         <createTable tableName="security_deposit">
 	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_pkey" />
@@ -11510,6 +11511,8 @@
             <column name="external_reference" type="varchar(255)"/>
             <column name="invoice_receipt_number" type="varchar(255)" />
             <column name="service_instance_id" type="bigint"/>
+			<column name="refund_reason" type="varchar(255)"/>
+			<column name="cancel_reason" type="varchar(255)"/>
 
 		</createTable>
         </changeSet>
@@ -17025,6 +17028,7 @@
 	<changeSet id="#INTRD-4677_20220125" author="hatimOUDAD" />
 	<changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
+	<changeSet id="INTRD-4654_20220203" author="AbdelmounaimAkadid" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
