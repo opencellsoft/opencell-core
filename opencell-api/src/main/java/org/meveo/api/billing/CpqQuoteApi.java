@@ -49,6 +49,7 @@ import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.OverridePricesDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -1944,5 +1945,17 @@ public class CpqQuoteApi extends BaseApi {
     }
 
 
-
+    public void overridePrices(OverridePricesDto overridePricesDto) {
+        overridePricesDto.getPrices()
+                .forEach(overridePriceDto -> {
+                    QuotePrice quotePrice = loadEntityById(quotePriceService, overridePriceDto.getId(), QuotePrice.class);
+                    BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax());
+                    quotePrice.setUnitPriceWithoutTax(overridePriceDto.getUnitAmountWithoutTax());
+                    quotePrice.setAmountWithoutTax(overridePriceDto.getUnitAmountWithoutTax().multiply(quantity));
+                    quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate()));
+                    quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
+                    quotePrice.setPriceOverCharged(true);
+                    quotePriceService.update(quotePrice);
+                });
+    }
 }
