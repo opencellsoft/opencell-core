@@ -4,8 +4,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -106,10 +105,11 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
                     if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                     	assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, VALIDATED, null);
+                    	billingRun.setStatus(VALIDATED);
                     }else{
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.DRAFT_INVOICES, null);
+                        billingRun.setStatus(DRAFT_INVOICES);
                     }
+                    billingRunService.update(billingRun);
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }

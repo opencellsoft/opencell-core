@@ -59,24 +59,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunAutomaticActionEnum;
-import org.meveo.model.billing.BillingRunList;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.BillingRunTypeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.PostInvoicingReportsDTO;
-import org.meveo.model.billing.PreInvoicingReportsDTO;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
@@ -1377,6 +1360,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
                                                  Long jobInstanceId) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+        billingRun.setBillableBillingAcountNumber(entities.size());
         SubListCreator<? extends IBillableEntity> subListCreator;
         try {
             subListCreator = new SubListCreator<>(entities, (int) nbRuns);
@@ -1423,15 +1407,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                                                                 MinAmountForAccounts minAmountForAccounts,
                                                                 MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        BigDecimal amountTax = BigDecimal.ZERO;
+        BigDecimal amountWithoutTax = BigDecimal.ZERO;
         for (IBillableEntity entityToInvoice : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
+                List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
                         billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
+                updateBillingRunWithStatistics(billingRun, invoices, amountTax, amountWithoutTax);
             } catch (Exception e1) {
                 log.error("Failed to create invoices for entity {}/{}",
                         entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
@@ -1439,6 +1426,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         return new AsyncResult<>("OK");
+    }
+
+    private void updateBillingRunWithStatistics(BillingRun billingRun, List<Invoice> invoices, BigDecimal amountTax, BigDecimal amountWithoutTax) {
+        amountTax = amountTax.add(invoices.stream().map(Invoice::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add));
+        amountWithoutTax = amountWithoutTax.add(invoices.stream().map(Invoice::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add));
+        billingRun.setPrAmountWithoutTax(amountWithoutTax);
+        billingRun.setPrAmountTax(amountTax);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
