@@ -87,8 +87,8 @@ public class PricePlanMatrixLineApi extends BaseApi {
 			var values = list.get(i).getPricePlanMatrixValues(); 
 			for (int k = i + 1; k < list.size(); k++) {
 				var valTobeCompared = list.get(k).getPricePlanMatrixValues();
-				if(!values.isEmpty() && !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {}))
-						&& list.get(i).getPriceWithoutTax().equals(list.get(k).getPriceWithoutTax()))
+				if(!values.isEmpty() 
+						&& !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {})))
 					throw new MeveoApiException("A line having similar values already exists!.");
 			}
 		}
