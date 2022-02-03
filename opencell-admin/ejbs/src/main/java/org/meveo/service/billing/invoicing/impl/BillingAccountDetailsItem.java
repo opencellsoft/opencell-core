@@ -42,9 +42,9 @@ public class BillingAccountDetailsItem {
 		this.paymentMethodType = (PaymentMethodEnum) fields[i++];
 		this.discountPlanInstancesSummary= (String) fields[i++];
 		this.invoicingThreshold=(BigDecimal) fields[i++];
-		String thresholdType=(String) fields[i++];
-		if(!StringUtils.isEmpty(thresholdType)){
-			this.checkThreshold = ThresholdOptionsEnum.valueOf(thresholdType);
+		Object thresholdType= fields[i++];
+		if(thresholdType!=null){
+			this.checkThreshold = (ThresholdOptionsEnum)thresholdType;
 		}
 		if(!StringUtils.isEmpty(discountPlanInstancesSummary) && discountPlanInstancesSummary.length()>2){
 			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split("\\,", -1)).map(x->new DiscountPlanSummary(x)).collect(Collectors.toList());

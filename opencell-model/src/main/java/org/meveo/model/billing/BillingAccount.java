@@ -83,8 +83,8 @@ import org.meveo.model.tax.TaxCategory;
 
         @NamedQuery(name = "BillingAccount.getBillingAccountDetailsItems", query = 
     		"select b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),','), "
-    			+ " (case when c.thresholdPerEntity=false then c.invoicingThreshold else (case when ca.thresholdPerEntity=false then ca.invoicingThreshold else (case when b.thresholdPerEntity=false then b.invoicingThreshold else null end) end) end) as col_10_0_, "
-    			+ " (case when c.thresholdPerEntity=false then c.checkThreshold else (case when ca.thresholdPerEntity=false then ca.checkThreshold else (case when b.thresholdPerEntity=false then b.checkThreshold else null end) end) end) as col_11_0_ "
+    			+ " (case when (c.thresholdPerEntity=false and c.invoicingThreshold is not null) then c.invoicingThreshold else (case when (ca.thresholdPerEntity=false and ca.invoicingThreshold is not null) then ca.invoicingThreshold else (case when b.thresholdPerEntity=false then b.invoicingThreshold else null end) end) end) as col_10_0_, "
+    			+ " (case when (c.thresholdPerEntity=false and c.invoicingThreshold is not null) then c.checkThreshold else (case when (ca.thresholdPerEntity=false and ca.invoicingThreshold is not null) then ca.checkThreshold else (case when b.thresholdPerEntity=false then b.checkThreshold else null end) end) end) as col_11_0_ "
     			+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc "
     			+ " left join ca.paymentMethods m "
     			+ " left join b.discountPlanInstances dpi "
