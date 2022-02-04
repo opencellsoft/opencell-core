@@ -63,7 +63,7 @@ public class RejectedBillingAccountService extends PersistenceService<RejectedBi
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createRejectedBAsForThreshold(BillingRun billingRun, BillingCycle billingCycle, Date lastTransactionDate) {
+	public int createRejectedBAsForThreshold(BillingRun billingRun, BillingCycle billingCycle, Date lastTransactionDate) {
 		final String positiveCondition = ThresholdOptionsEnum.POSITIVE_RT.equals(billingCycle.getCheckThreshold()) ? "and rt.amount_With_Tax>0 " : "";
 		final String amountToSum = appProvider.isEntreprise() ? "amount_Without_Tax" : "amount_With_Tax";
 		String query = null;
@@ -72,7 +72,7 @@ public class RejectedBillingAccountService extends PersistenceService<RejectedBi
 			query="insert into billing_rejected_billing_accounts(billing_account,billing_run,reject_cause) (select q.baID, "+billingRun.getId()+", 'threshold' FROM "+
 					" (select b.id as baID from billing_billing_account b left join ar_customer_account ca0 on ca0.id=b.customer_account_id  where b.billing_run="+billingRun.getId()+" and ca0.customer_id in (select c.id from billing_rated_transaction rt left join billing_billing_account ba on ba.id=rt.billing_account__id left join ar_customer_account ca on c.id=ba.customer_account_id"+
 					" where ba.billing_run="+billingRun.getId()+" and rt.status='OPEN' and rt.usage_date<:lastTransactionDate and c.check_threshold='"+billingCycle.getCheckThreshold()+"' "+positiveCondition+ 
-					" group by c.id having sum(rt."+amountToSum+") < (case when c.invoicing_threshold is not null then c.invoicing_threshold else "+billingCycle.getInvoicingThreshold()+" end)))as q)";;
+					" group by c.id having sum(rt."+amountToSum+") < (case when c.invoicing_threshold is not null then c.invoicing_threshold else "+billingCycle.getInvoicingThreshold()+" end)))as q)";
 
 			break;
 		case CUSTOMER_ACCOUNT:
@@ -92,8 +92,9 @@ public class RejectedBillingAccountService extends PersistenceService<RejectedBi
 			break;
 		}
 		if(query!=null) {
-			getEntityManager().createNativeQuery(query).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+			log.info("========== CHECK BillingAccount REJECTS BEFORE INVOICING BY THRESHOLD {}==========",billingCycle.getCheckThreshold());
+			return getEntityManager().createNativeQuery(query).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 		}
-		
+		return 0;
 	}
 }

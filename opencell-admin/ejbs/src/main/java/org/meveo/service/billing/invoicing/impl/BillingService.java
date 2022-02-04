@@ -36,9 +36,11 @@ import org.meveo.service.billing.impl.RejectedBillingAccountService;
 public class BillingService extends PersistenceService<BillingRun> {
 
 	// all may be configured as job CF
+	private static final int MAX_UPDATE_WITHOUT_INTERVAL = 1000000;
+	//must not be greater that Short.MAX_VALUE=32767
 	private static final int MAX_READ_TO_PROCESS = 30000;
 	private static final int MAX_UPDATE_PER_INTERVAL = 500000;
-	private static final int MAX_UPDATE_WITHOUT_INTERVAL = 1000000;
+	
 
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -99,9 +101,9 @@ public class BillingService extends PersistenceService<BillingRun> {
 			}
 			final boolean checkThresholdByQueryBeforeInvoicing = !ThresholdLevelEnum.INVOICE.equals(billingCycle.getThresholdLevel()) && (ThresholdOptionsEnum.BEFORE_DISCOUNT.equals(billingCycle.getCheckThreshold()) || ThresholdOptionsEnum.POSITIVE_RT.equals(billingCycle.getCheckThreshold()));
 			if(checkThresholdByQueryBeforeInvoicing){
-				log.info("========== CHECK BA REJECTS BY THRESHOLD {}==========",billingCycle.getCheckThreshold());
-				rejectedBillingAccountService.createRejectedBAsForThreshold(billingRun, billingCycle,lastTransactionDate);
-				billingAccountService.unlinkRejectedBAs(billingRun.getId());
+				if(rejectedBillingAccountService.createRejectedBAsForThreshold(billingRun, billingCycle,lastTransactionDate)>0) {
+					billingAccountService.unlinkRejectedBAs(billingRun.getId());
+				}
 			}
 			createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, isFullAutomatic, billingCycle, lastTransactionDate);
 			billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
@@ -223,6 +225,14 @@ public class BillingService extends PersistenceService<BillingRun> {
 		return nextInoiceDateLimits;
 	}
 
+	 /**
+	  * dispatching added that way to not send a list of invoices having hug number of RTs to only one thread
+	  * we try to make some equilibre between threads
+	  * 
+	  * @param items
+	  * @param threads
+	  * @return
+	  */
 	private List<List<BillingAccountDetailsItem>> dispatchInvoicingItems(List<BillingAccountDetailsItem> items, int threads) {
 		final List<List<BillingAccountDetailsItem>> result = IntStream.range(0, threads).mapToObj(ArrayList<BillingAccountDetailsItem>::new).collect(Collectors.toList());
 		int[] counters = new int[threads];

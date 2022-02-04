@@ -550,14 +550,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 		String thresholdAlias = thresholdAmountColumn == "" ? "" : " col_10_0_ ";
 		String thresholdGroupBy = thresholdAlias == "" ? "" : ", " + thresholdAlias;
-		String BillingAccountDetailsQuery = "select b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),',') "
+		String BillingAccountDetailsQuery = "select ba.id, ba.tradingLanguage.id, ba.nextInvoiceDate, ba.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),',') "
     			+ thresholdAmountColumn + thresholdAlias
-    			+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc "
+    			+ " FROM BillingAccount ba left join ba.customerAccount ca left join ca.customer c left join c.customerCategory cc "
     			+ " left join ca.paymentMethods m "
-    			+ " left join b.discountPlanInstances dpi "
-    			+ " where b.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
-    			+ " group by b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType "+ thresholdGroupBy
-    			+ " order by b.id";
+    			+ " left join ba.discountPlanInstances dpi "
+    			+ " where ba.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
+    			+ " group by ba.id, ba.tradingLanguage.id, ba.nextInvoiceDate, ba.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType "+ thresholdGroupBy
+    			+ " order by ba.id";
 
 		//split to 2 queries to avoid hibernate 'firstResult/maxResults specified with collection fetch; applying in memory!' 
 		List<Object[]> resultList = getEntityManager().createQuery(BillingAccountDetailsQuery).setParameter("billingRunId", billingRun.getId()).setMaxResults(pageSize)

@@ -148,19 +148,17 @@ public class InvoicingService extends PersistenceService<Invoice> {
     private Map<Long, DiscountPlan> discountPlans=new TreeMap<Long, DiscountPlan>();
     private Map<String, String> descriptionMap = new HashMap<>();
     
-    /**
-     * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
-     *
-     * @param invoicingItemsList             the entity objects
-     * @param billingRun           the billing run
-     * @param jobInstanceId        the job instance id
-     * @param minAmountForAccounts Check if min amount is enabled in any account level
-     * @param lastCurrentUser      Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *                             expirations), current user might be lost, thus there is a need to reestablish.
-     * @param isFullAutomatic 
-     * @param expectMassRtsPerInvoice 
-     * @return the future
-     */
+	/**
+	 * create invoices with all associated aggregations. update related RTs. all input items will be processed in the same transaction 
+	 * 
+	 * @param billingRun
+	 * @param billingCycle
+	 * @param invoicingItemsList
+	 * @param jobInstanceId
+	 * @param lastCurrentUser
+	 * @param isFullAutomatic
+	 * @return
+	 */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Future<String> createAgregatesAndInvoiceForJob(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
@@ -174,6 +172,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 
 	private List<Invoice> processData(BillingRun billingRun, List<BillingAccountDetailsItem> billingAccountDetailsItemList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle) {
 		List<Invoice> invoices = new ArrayList<Invoice>();
+		if(billingAccountDetailsItemList.isEmpty()) {
+			return invoices;
+		}
 		final BillingAccountDetailsItem fisrstItem = billingAccountDetailsItemList.get(0);
 		final long billingAccountId = fisrstItem.getBillingAccountId();
 		for (BillingAccountDetailsItem billingAccountDetailsItem : billingAccountDetailsItemList) {
@@ -241,10 +242,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
 
 	private boolean shouldRejectInvoice(BillingAccountDetailsItem billingAccountDetailsItem, BillingCycle billingCycle, BigDecimal amount) {
 		BigDecimal thresholdAfterDiscount = getThresholdByInvoice(billingAccountDetailsItem, billingCycle);
-		if (thresholdAfterDiscount != null) {
-			if (thresholdAfterDiscount.compareTo(amount) > 0) {
-				return true;
-			}
+		if (thresholdAfterDiscount != null && thresholdAfterDiscount.compareTo(amount) > 0) {
+			return true;
 		}
 		return false;
 	}
