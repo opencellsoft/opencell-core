@@ -24,6 +24,7 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -51,7 +52,7 @@ public interface DDRequestBuilderInterface {
     * @param ddRequestLot The DDRequestLot to process.
     * @throws BusinessException the BusinessException.
     */
-    void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
+    void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider, JobExecutionResultImpl result) throws BusinessException;
        
     
     /**

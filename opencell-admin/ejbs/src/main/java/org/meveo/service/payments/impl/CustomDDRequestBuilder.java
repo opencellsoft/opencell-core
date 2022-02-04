@@ -26,6 +26,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -60,11 +61,13 @@ public class CustomDDRequestBuilder extends AbstractDDRequestBuilder {
     }
 
     @Override
-    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider, JobExecutionResultImpl result) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);
         scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);
+        scriptContext.put(DDRequestBuilderScript.RESULT_VALUE, result);
         ddRequestBuilderScriptInterface.generateDDRequestLotFile(scriptContext);
+        result = (JobExecutionResultImpl) scriptContext.get(DDRequestBuilderScript.RESULT_VALUE);
     }
 
     @Override
