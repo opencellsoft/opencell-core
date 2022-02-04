@@ -54,7 +54,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @NotNull
     private VersionStatusEnum status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ppm_id")
     @NotNull
     private PricePlanMatrix pricePlanMatrix;
@@ -260,7 +260,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + Objects.hash(amountWithTax, amountWithTaxEL, amountWithoutTax, amountWithoutTaxEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
-            priority, status, statusDate, validity);
+                priority, status, statusDate, validity);
         return result;
     }
 
@@ -273,10 +273,10 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
-        return Objects.equals(amountWithTax, other.amountWithTax) && Objects.equals(amountWithTaxEL, other.amountWithTaxEL)
-                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(amountWithoutTaxEL, other.amountWithoutTaxEL)
-                && Objects.equals(columns, other.columns) && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label)
-                && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status && Objects.equals(statusDate, other.statusDate)
-                && Objects.equals(validity, other.validity);
+        return Objects.equals(amountWithTax, other.amountWithTax) && Objects.equals(amountWithTaxEL, other.amountWithTaxEL) && Objects.equals(amountWithoutTax,
+                other.amountWithoutTax) && Objects.equals(amountWithoutTaxEL, other.amountWithoutTaxEL) && Objects.equals(columns, other.columns)
+                && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label) && Objects.equals(pricePlanMatrix,
+                other.pricePlanMatrix) && priority == other.priority && status == other.status && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity,
+                other.validity);
     }
 }

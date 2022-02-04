@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.meveo.model.cpq;
 
@@ -48,273 +48,244 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
 @Table(name = "cpq_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_attribute_seq"), })
-@NamedQueries({
-	@NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id")})
-public class Attribute extends EnableBusinessCFEntity{	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5934892816847168643L;
-
-	  
+@NamedQueries({ @NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id") })
+public class Attribute extends EnableBusinessCFEntity {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -5934892816847168643L;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "attribute_type")
+    protected AttributeTypeEnum attributeType;
+    @Column(name = "unit_nb_decimal")
+    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Attribute parentAttribute;
-	 
-	
-    
-    
     /**
      * The lower number, the higher the priority is
      */
     @Column(name = "priority")
     private Integer priority = 0;
-     
-    
     /**
-	 * allowed values
-	 */
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Column(name = "allowed_values")
-	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
-	private Set<String> allowedValues=new HashSet<>();
-	
-	
-	   /**
+     * allowed values
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "allowed_values")
+    @CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
+    private Set<String> allowedValues = new HashSet<>();
+    /**
      * list of tag attached
-     */   
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
     private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
-    
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "attribute_type")
-    protected AttributeTypeEnum attributeType;
-
-    
-    
     /**
      * list of Media
-     */   
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<>();
-    
-    
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "cpq_attribute_tag", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
-    
     @OneToMany(mappedBy = "targetAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Attribute> assignedAttributes = new ArrayList<>();
-    
-    @Column(name = "unit_nb_decimal")
-    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
+    @ManyToMany(mappedBy = "attributes", fetch = FetchType.LAZY)
+    private List<GroupedAttributes> groupedAttributes;
 
-
-	@ManyToMany(mappedBy = "attributes")
-	private List<GroupedAttributes> groupedAttributes;
-	
-
-    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ProductVersionAttribute> productVersionAttributes = new ArrayList<>();
-    
 
-    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<OfferTemplateAttribute> offerTemplateAttribute = new ArrayList<>();
 
-    public Attribute(){
-	}
+    public Attribute() {
+    }
 
-	public Attribute(Long id) {
-		this.id = id;
-	}
+    public Attribute(Long id) {
+        this.id = id;
+    }
 
+    /**
+     * @return the priority
+     */
+    public Integer getPriority() {
+        return priority;
+    }
 
-	/**
-	 * @return the priority
-	 */
-	public Integer getPriority() {
-		return priority;
-	}
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
 
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
+    /**
+     * @return the allowedValues
+     */
+    public Set<String> getAllowedValues() {
+        return allowedValues;
+    }
 
+    /**
+     * @param allowedValues the allowedValues to set
+     */
+    public void setAllowedValues(Set<String> allowedValues) {
+        this.allowedValues = allowedValues;
+    }
 
-	/**
-	 * @return the allowedValues
-	 */
-	public Set<String> getAllowedValues() {
-		return allowedValues;
-	}
+    /**
+     * @return the serviceType
+     */
+    public AttributeTypeEnum getAttributeType() {
+        return attributeType;
+    }
 
-	/**
-	 * @param allowedValues the allowedValues to set
-	 */
-	public void setAllowedValues(Set<String> allowedValues) {
-		this.allowedValues = allowedValues;
-	}
+    /**
+     * @param attributeType the serviceType to set
+     */
+    public void setAttributeType(AttributeTypeEnum attributeType) {
+        this.attributeType = attributeType;
+    }
 
-	/**
-	 * @return the serviceType
-	 */
-	public AttributeTypeEnum getAttributeType() {
-		return attributeType;
-	}
+    /**
+     * @return the chargeTemplates
+     */
+    public Set<ChargeTemplate> getChargeTemplates() {
+        return chargeTemplates;
+    }
 
-	/**
-	 * @param attributeType the serviceType to set
-	 */
-	public void setAttributeType(AttributeTypeEnum attributeType) {
-		this.attributeType = attributeType;
-	}
+    /**
+     * @param chargeTemplates the chargeTemplates to set
+     */
+    public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
+        this.chargeTemplates = chargeTemplates;
+    }
 
-	/**
-	 * @return the chargeTemplates
-	 */
-	public Set<ChargeTemplate> getChargeTemplates() {
-		return chargeTemplates;
-	}
+    /**
+     * @return the tags
+     */
+    public List<Tag> getTags() {
+        return tags;
+    }
 
-	/**
-	 * @param chargeTemplates the chargeTemplates to set
-	 */
-	public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
-		this.chargeTemplates = chargeTemplates;
-	}
- 
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
 
-	/**
-	 * @return the tags
-	 */
-	public List<Tag> getTags() {
-		return tags;
-	}
+    /**
+     * @return the commercialRules
+     */
+    public List<CommercialRuleHeader> getCommercialRules() {
+        return commercialRules;
+    }
 
-	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(List<Tag> tags) {
-		this.tags = tags;
-	}
+    /**
+     * @param commercialRules the commercialRules to set
+     */
+    public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+        this.commercialRules = commercialRules;
+    }
 
-	/**
-	 * @return the commercialRules
-	 */
-	public List<CommercialRuleHeader> getCommercialRules() {
-		return commercialRules;
-	}
+    /**
+     * @return the assignedAttributes
+     */
+    public List<Attribute> getAssignedAttributes() {
+        return assignedAttributes;
+    }
 
-	/**
-	 * @param commercialRules the commercialRules to set
-	 */
-	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
-		this.commercialRules = commercialRules;
-	}
+    /**
+     * @param assignedAttributes the assignedAttributes to set
+     */
+    public void setAssignedAttributes(List<Attribute> assignedAttributes) {
+        this.assignedAttributes = assignedAttributes;
+    }
 
-	/**
-	 * @return the assignedAttributes
-	 */
-	public List<Attribute> getAssignedAttributes() {
-		return assignedAttributes;
-	}
+    /**
+     * @return the parentAttribute
+     */
+    public Attribute getParentAttribute() {
+        return parentAttribute;
+    }
 
-	/**
-	 * @param assignedAttributes the assignedAttributes to set
-	 */
-	public void setAssignedAttributes(List<Attribute> assignedAttributes) {
-		this.assignedAttributes = assignedAttributes;
-	}
+    /**
+     * @param parentAttribute the parentAttribute to set
+     */
+    public void setParentAttribute(Attribute parentAttribute) {
+        this.parentAttribute = parentAttribute;
+    }
 
-	/**
-	 * @return the parentAttribute
-	 */
-	public Attribute getParentAttribute() {
-		return parentAttribute;
-	}
+    /**
+     * @return the unitNbDecimal
+     */
+    public int getUnitNbDecimal() {
+        return unitNbDecimal;
+    }
 
-	/**
-	 * @param parentAttribute the parentAttribute to set
-	 */
-	public void setParentAttribute(Attribute parentAttribute) {
-		this.parentAttribute = parentAttribute;
-	}
+    /**
+     * @param unitNbDecimal the unitNbDecimal to set
+     */
+    public void setUnitNbDecimal(int unitNbDecimal) {
+        this.unitNbDecimal = unitNbDecimal;
+    }
 
-	/**
-	 * @return the unitNbDecimal
-	 */
-	public int getUnitNbDecimal() {
-		return unitNbDecimal;
-	}
+    /**
+     * @return the medias
+     */
+    public List<Media> getMedias() {
+        return medias;
+    }
 
-	/**
-	 * @param unitNbDecimal the unitNbDecimal to set
-	 */
-	public void setUnitNbDecimal(int unitNbDecimal) {
-		this.unitNbDecimal = unitNbDecimal;
-	}
+    /**
+     * @param medias the medias to set
+     */
+    public void setMedias(List<Media> medias) {
+        this.medias = medias;
+    }
 
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
+    public List<GroupedAttributes> getGroupedAttributes() {
+        return groupedAttributes;
+    }
 
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
+    public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
+        this.groupedAttributes = groupedAttributes;
+    }
 
+    /**
+     * @return the productVersionAttributes
+     */
+    public List<ProductVersionAttribute> getProductVersionAttributes() {
+        return productVersionAttributes;
+    }
 
-	public List<GroupedAttributes> getGroupedAttributes() {
-		return groupedAttributes;
-	}
+    /**
+     * @param productVersionAttributes the productVersionAttributes to set
+     */
+    public void setProductVersionAttributes(List<ProductVersionAttribute> productVersionAttributes) {
+        this.productVersionAttributes = productVersionAttributes;
+    }
 
-	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
-		this.groupedAttributes = groupedAttributes;
-	}
+    /**
+     * @return the offerTemplateAttribute
+     */
+    public List<OfferTemplateAttribute> getOfferTemplateAttribute() {
+        return offerTemplateAttribute;
+    }
 
-	/**
-	 * @return the productVersionAttributes
-	 */
-	public List<ProductVersionAttribute> getProductVersionAttributes() {
-		return productVersionAttributes;
-	}
-
-	/**
-	 * @param productVersionAttributes the productVersionAttributes to set
-	 */
-	public void setProductVersionAttributes(List<ProductVersionAttribute> productVersionAttributes) {
-		this.productVersionAttributes = productVersionAttributes;
-	}
-
-	/**
-	 * @return the offerTemplateAttribute
-	 */
-	public List<OfferTemplateAttribute> getOfferTemplateAttribute() {
-		return offerTemplateAttribute;
-	}
-
-	/**
-	 * @param offerTemplateAttribute the offerTemplateAttribute to set
-	 */
-	public void setOfferTemplateAttribute(List<OfferTemplateAttribute> offerTemplateAttribute) {
-		this.offerTemplateAttribute = offerTemplateAttribute;
-	}
+    /**
+     * @param offerTemplateAttribute the offerTemplateAttribute to set
+     */
+    public void setOfferTemplateAttribute(List<OfferTemplateAttribute> offerTemplateAttribute) {
+        this.offerTemplateAttribute = offerTemplateAttribute;
+    }
 }

@@ -1,12 +1,9 @@
 package org.meveo.model.quote;
 
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,7 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,11 +28,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
@@ -49,7 +42,8 @@ import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.crm.custom.CustomFieldValues;
+
+import static javax.persistence.FetchType.LAZY;
 
 @SuppressWarnings("serial")
 @Entity
@@ -58,327 +52,312 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @CustomFieldEntity(cftCodePrefix = "QuoteVersion")
 @ReferenceIdentifierCode("quote")
 @ReferenceIdentifierDescription("quoteVersion")
-@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "cpq_quote_id" , "quote_version"}))
+@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "cpq_quote_id", "quote_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
-@NamedQueries({ 
-	@NamedQuery(name = "QuoteVersion.findByCode", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code order by qv.quoteVersion desc"),
-	@NamedQuery(name = "QuoteVersion.countCode", query = "select count(*) from QuoteVersion qv left join qv.quote qq where qq.code=:code"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteId", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code and qv.quoteVersion=:quoteVersion")
-})
-public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
-
+@NamedQueries({ @NamedQuery(name = "QuoteVersion.findByCode", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code order by qv.quoteVersion desc"),
+        @NamedQuery(name = "QuoteVersion.countCode", query = "select count(*) from QuoteVersion qv left join qv.quote qq where qq.code=:code"),
+        @NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED"),
+        @NamedQuery(name = "QuoteVersion.findByQuoteId", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id"),
+        @NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code and qv.quoteVersion=:quoteVersion") })
+public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity {
 
     /**
      * quote
      */
-    @ManyToOne
-	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
-	@NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
+    @NotNull
     private CpqQuote quote;
-    
-	/**
-	 * quoteVersion
-	 */
-	@Column(name = "quote_version", nullable = false)
-	private Integer quoteVersion;
-	/**
-	 * status
-	 */
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false)
-	private VersionStatusEnum status;
-	
-	/**
-	 * status date
-	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "status_date", nullable = false)
-	private Date statusDate;
-	
-	/**
-	 * start date of quote version 
-	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "start_date")
-	private Date startDate;
-	
-	/**
-	 * end date of quote version
-	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "end_date")
-	private Date endDate;
-	
-	/**
-	 * invoicing plan 
-	 */ 
+
+    /**
+     * quoteVersion
+     */
+    @Column(name = "quote_version", nullable = false)
+    private Integer quoteVersion;
+    /**
+     * status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private VersionStatusEnum status;
+
+    /**
+     * status date
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "status_date", nullable = false)
+    private Date statusDate;
+
+    /**
+     * start date of quote version
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
+    private Date startDate;
+
+    /**
+     * end date of quote version
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
+    private Date endDate;
+
+    /**
+     * invoicing plan
+     */
     @ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "invoicing_plan_id", referencedColumnName = "id")
-	private InvoicingPlan invoicingPlan;
- 
+    @JoinColumn(name = "invoicing_plan_id", referencedColumnName = "id")
+    private InvoicingPlan invoicingPlan;
+
     @Column(name = "short_description", length = 255)
     @Size(max = 255)
     private String shortDescription;
-    
+
     @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<QuoteOffer> quoteOffers=new ArrayList<QuoteOffer>();
-    
-    
+    private List<QuoteOffer> quoteOffers = new ArrayList<QuoteOffer>();
+
     @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<QuoteArticleLine> quoteArticleLines=new ArrayList<QuoteArticleLine>();
-    
+    private List<QuoteArticleLine> quoteArticleLines = new ArrayList<QuoteArticleLine>();
+
     /**
-	 * discountPlan attached to this quote version
-	 */
+     * discountPlan attached to this quote version
+     */
     @ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
-	private DiscountPlan discountPlan;
-    
-    
+    @JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+    private DiscountPlan discountPlan;
+
     /**
- 	  * XML file name
- 	  */
- 	 @Column(name = "xml_filename", length = 255)
- 	 @Size(max = 255)
- 	 private String xmlFilename;
- 	 
- 	 
- 	 /**
-	  * PDF file name
-	  */
-	@Column(name = "pdf_filename", length = 255)
-	@Size(max = 255)
-	private String pdfFilename;
-	
-	
-	/**
-	 * contract
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "contract_id")
-	private Contract contract;
-	
-	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "cpq_quote_version_media", joinColumns = @JoinColumn(name = "cpq_quote_version_id"), inverseJoinColumns = @JoinColumn(name = "cpq_media_id"))
-	private List<Media> medias = new ArrayList<Media>();
-    
-	/**
-	 * @return the quoteVersion
-	 */
-	public Integer getQuoteVersion() {
-		return quoteVersion;
-	}
+     * XML file name
+     */
+    @Column(name = "xml_filename", length = 255)
+    @Size(max = 255)
+    private String xmlFilename;
 
-	/**
-	 * @param quoteVersion the quoteVersion to set
-	 */
-	public void setQuoteVersion(Integer quoteVersion) {
-		this.quoteVersion = quoteVersion;
-	}
+    /**
+     * PDF file name
+     */
+    @Column(name = "pdf_filename", length = 255)
+    @Size(max = 255)
+    private String pdfFilename;
 
-	/**
-	 * @return the status
-	 */
-	public VersionStatusEnum getStatus() {
-		return status;
-	}
+    /**
+     * contract
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
 
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(VersionStatusEnum status) {
-		this.status = status;
-	}
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "cpq_quote_version_media", joinColumns = @JoinColumn(name = "cpq_quote_version_id"), inverseJoinColumns = @JoinColumn(name = "cpq_media_id"))
+    private List<Media> medias = new ArrayList<Media>();
 
-	/**
-	 * @return the statusDate
-	 */
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    /**
+     * @return the quoteVersion
+     */
+    public Integer getQuoteVersion() {
+        return quoteVersion;
+    }
 
-	/**
-	 * @param statusDate the statusDate to set
-	 */
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    /**
+     * @param quoteVersion the quoteVersion to set
+     */
+    public void setQuoteVersion(Integer quoteVersion) {
+        this.quoteVersion = quoteVersion;
+    }
 
-	/**
-	 * @return the startDate
-	 */
-	public Date getStartDate() {
-		return startDate;
-	}
+    /**
+     * @return the status
+     */
+    public VersionStatusEnum getStatus() {
+        return status;
+    }
 
-	/**
-	 * @param startDate the startDate to set
-	 */
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(VersionStatusEnum status) {
+        this.status = status;
+    }
 
-	/**
-	 * @return the endDate
-	 */
-	public Date getEndDate() {
-		return endDate;
-	}
+    /**
+     * @return the statusDate
+     */
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	/**
-	 * @param endDate the endDate to set
-	 */
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
- 
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	/**
-	 * @return the quote
-	 */
-	public CpqQuote getQuote() {
-		return quote;
-	}
+    /**
+     * @return the startDate
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	/**
-	 * @param quote the quote to set
-	 */
-	public void setQuote(CpqQuote quote) {
-		this.quote = quote;
-	}
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(invoicingPlan, endDate, id, quote, quoteVersion, startDate, status, statusDate);
-		return result;
-	}
+    /**
+     * @return the endDate
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		QuoteVersion other = (QuoteVersion) obj;
-		return Objects.equals(invoicingPlan, other.invoicingPlan) && Objects.equals(endDate, other.endDate)
-				&& Objects.equals(id, other.id) && Objects.equals(quote, other.quote)
-				&& Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(startDate, other.startDate)
-				&& status == other.status && Objects.equals(statusDate, other.statusDate);
-	}
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	/**
-	 * @return the shortDescription
-	 */
-	public String getShortDescription() {
-		return shortDescription;
-	}
+    /**
+     * @return the quote
+     */
+    public CpqQuote getQuote() {
+        return quote;
+    }
 
-	/**
-	 * @param shortDescription the shortDescription to set
-	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
-	}
+    /**
+     * @param quote the quote to set
+     */
+    public void setQuote(CpqQuote quote) {
+        this.quote = quote;
+    }
 
-	/**
-	 * @return the quoteOffers
-	 */
-	public List<QuoteOffer> getQuoteOffers() {
-		return quoteOffers;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(invoicingPlan, endDate, id, quote, quoteVersion, startDate, status, statusDate);
+        return result;
+    }
 
-	/**
-	 * @param quoteOffers the quoteOffers to set
-	 */
-	public void setQuoteOffers(List<QuoteOffer> quoteOffers) {
-		this.quoteOffers = quoteOffers;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        QuoteVersion other = (QuoteVersion) obj;
+        return Objects.equals(invoicingPlan, other.invoicingPlan) && Objects.equals(endDate, other.endDate) && Objects.equals(id, other.id) && Objects.equals(quote, other.quote)
+                && Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(startDate, other.startDate) && status == other.status && Objects.equals(statusDate,
+                other.statusDate);
+    }
 
-	public InvoicingPlan getInvoicingPlan() {
-		return invoicingPlan;
-	}
+    /**
+     * @return the shortDescription
+     */
+    public String getShortDescription() {
+        return shortDescription;
+    }
 
-	public void setInvoicingPlan(InvoicingPlan invoicingPlan) {
-		this.invoicingPlan = invoicingPlan;
-	}
+    /**
+     * @param shortDescription the shortDescription to set
+     */
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
 
-	@Override
-	public String getReferenceCode() {
-		return quote.getCode();
-	}
+    /**
+     * @return the quoteOffers
+     */
+    public List<QuoteOffer> getQuoteOffers() {
+        return quoteOffers;
+    }
 
-	@Override
-	public void setReferenceCode(Object value) {
-		setQuote((CpqQuote) value);
-		
-	}
+    /**
+     * @param quoteOffers the quoteOffers to set
+     */
+    public void setQuoteOffers(List<QuoteOffer> quoteOffers) {
+        this.quoteOffers = quoteOffers;
+    }
 
-	@Override
-	public String getReferenceDescription() {
-		return "" + quoteVersion;
-	}
+    public InvoicingPlan getInvoicingPlan() {
+        return invoicingPlan;
+    }
 
-	public List<QuoteArticleLine> getQuoteArticleLines() {
-		return quoteArticleLines;
-	}
+    public void setInvoicingPlan(InvoicingPlan invoicingPlan) {
+        this.invoicingPlan = invoicingPlan;
+    }
 
-	public void setQuoteArticleLines(List<QuoteArticleLine> quoteArticleLines) {
-		this.quoteArticleLines = quoteArticleLines;
-	}
+    @Override
+    public String getReferenceCode() {
+        return quote.getCode();
+    }
 
-	public String getXmlFilename() {
-		return xmlFilename;
-	}
+    @Override
+    public void setReferenceCode(Object value) {
+        setQuote((CpqQuote) value);
 
-	public void setXmlFilename(String xmlFilename) {
-		this.xmlFilename = xmlFilename;
-	}
+    }
 
-	public Contract getContract() {
-		return contract;
-	}
+    @Override
+    public String getReferenceDescription() {
+        return "" + quoteVersion;
+    }
 
-	public void setContract(Contract contract) {
-		this.contract = contract;
-	}
+    public List<QuoteArticleLine> getQuoteArticleLines() {
+        return quoteArticleLines;
+    }
 
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
+    public void setQuoteArticleLines(List<QuoteArticleLine> quoteArticleLines) {
+        this.quoteArticleLines = quoteArticleLines;
+    }
 
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+    public String getXmlFilename() {
+        return xmlFilename;
+    }
 
-	public String getPdfFilename() {
-		return pdfFilename;
-	}
+    public void setXmlFilename(String xmlFilename) {
+        this.xmlFilename = xmlFilename;
+    }
 
-	public void setPdfFilename(String pdfFilename) {
-		this.pdfFilename = pdfFilename;
-	}
+    public Contract getContract() {
+        return contract;
+    }
 
-	public List<Media> getMedias() {
-		return medias;
-	}
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
 
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
-	
-	
-	
-	
-	
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
+
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
+
+    public String getPdfFilename() {
+        return pdfFilename;
+    }
+
+    public void setPdfFilename(String pdfFilename) {
+        this.pdfFilename = pdfFilename;
+    }
+
+    public List<Media> getMedias() {
+        return medias;
+    }
+
+    public void setMedias(List<Media> medias) {
+        this.medias = medias;
+    }
+
 }

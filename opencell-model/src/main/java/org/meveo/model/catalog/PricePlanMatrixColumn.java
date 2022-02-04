@@ -1,6 +1,5 @@
 package org.meveo.model.catalog;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,64 +32,55 @@ import org.meveo.model.cpq.Product;
 @Table(name = "cpq_price_plan_matrix_column")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_column_sq"), })
-@NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixColumn.findByAttributes", query = "select p from PricePlanMatrixColumn p where p.attribute in :attribute"),
+@NamedQueries({ @NamedQuery(name = "PricePlanMatrixColumn.findByAttributes", query = "select p from PricePlanMatrixColumn p where p.attribute in :attribute"),
         @NamedQuery(name = "PricePlanMatrixColumn.findByProduct", query = "select p from PricePlanMatrixColumn p where p.product in :product"),
-        @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select pv from PricePlanMatrixColumn pv LEFT JOIN   pv.pricePlanMatrixVersion pp where pv.code=:code and pp.id=:pricePlanMatrixVersionId"),
-})
+        @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select pv from PricePlanMatrixColumn pv LEFT JOIN   pv.pricePlanMatrixVersion pp where pv.code=:code and pp.id=:pricePlanMatrixVersionId"), })
 public class PricePlanMatrixColumn extends BusinessEntity {
 
-	public PricePlanMatrixColumn() {
-	}
-
-	public PricePlanMatrixColumn(PricePlanMatrixColumn copy) {
-		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
-		this.position = copy.position;
-		this.type = copy.type;
-		this.elValue = copy.elValue;
-		this.offerTemplate = copy.offerTemplate;
-		this.attribute = copy.attribute;
-		this.isRange = copy.isRange;
-		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
-		this.description = copy.description;
-		this.code = copy.code;
-	}
-
-	@ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ppm_version_id")
     @NotNull
     private PricePlanMatrixVersion pricePlanMatrixVersion;
-
     @Column(name = "position")
     @NotNull
     private Integer position;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     @NotNull
     private ColumnTypeEnum type;
-
     @Column(name = "el_value")
     private String elValue;
-
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private Product product;
-
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_id")
     private Attribute attribute;
-
     @Type(type = "numeric_boolean")
     @Column(name = "is_range")
     private Boolean isRange;
-
-    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.REFRESH }, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
+
+    public PricePlanMatrixColumn() {
+    }
+
+    public PricePlanMatrixColumn(PricePlanMatrixColumn copy) {
+        this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
+        this.position = copy.position;
+        this.type = copy.type;
+        this.elValue = copy.elValue;
+        this.offerTemplate = copy.offerTemplate;
+        this.attribute = copy.attribute;
+        this.isRange = copy.isRange;
+        this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
+        this.description = copy.description;
+        this.code = copy.code;
+    }
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
