@@ -392,6 +392,26 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "fields_el", length = 2000)
     @Size(max = 2000)
     private String fieldsEL;
+    
+    
+    /**
+     * Constructor
+     */
+    public CustomFieldTemplate() {
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param code Code
+     * @param description Description
+     * @param fieldType Field type
+     */
+    public CustomFieldTemplate(String code, String description, CustomFieldTypeEnum fieldType) {
+        this.code = code;
+        this.description = description;
+        this.fieldType = fieldType;
+    }
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
