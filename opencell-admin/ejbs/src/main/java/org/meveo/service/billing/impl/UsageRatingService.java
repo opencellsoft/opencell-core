@@ -62,6 +62,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
@@ -598,6 +599,13 @@ public class UsageRatingService implements Serializable {
         } else {
             chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
         }
+        
+    	if(chargeInstance.getServiceInstance()!=null) {
+    		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+        	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
+    	        if(anyFalseAttribute) return false;
+    	}
 
         String filter1 = chargeTemplate.getFilterParam1();
 
