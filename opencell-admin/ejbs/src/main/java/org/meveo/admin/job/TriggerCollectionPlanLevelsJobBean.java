@@ -81,7 +81,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
 
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         List<Long> collectionPlanToProcess = collectionPlanService.getActiveCollectionPlansIds();
         jobExecutionResult.setNbItemsToProcess(collectionPlanToProcess.size());
@@ -112,7 +112,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         String lastAction = "";
         String nextAction = "";
         boolean updateCollectionPlan = false;
-        if(collectionPlan.getDunningLevelInstances() == null || collectionPlan.getDunningLevelInstances().isEmpty()) {
+        if (collectionPlan.getDunningLevelInstances() == null || collectionPlan.getDunningLevelInstances().isEmpty()) {
             throw new BusinessException("Collection plan ID : " + collectionPlan.getId() + " has no levelInstances associated");
         }
         for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
@@ -126,50 +126,19 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     DunningActionInstance actionInstance = levelInstance.getActions().get(i);
                     if (actionInstance.getActionMode().equals(AUTOMATIC)
                             && actionInstance.getActionStatus().equals(TO_BE_DONE)) {
-                        if (actionInstance.getActionType().equals(SCRIPT)) {
-                            if (actionInstance.getDunningAction() != null) {
-                                scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
+                        try {
+                            triggerAction(actionInstance, collectionPlan);
+                            actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                            if (levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.TO_BE_DONE) {
+                                levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                                levelInstanceService.update(levelInstance);
                             }
-                        }
-                        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
-                            if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
-                                    || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
-                                sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
-                                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
+                            lastAction = actionInstance.getCode();
+                            if (i + 1 < levelInstance.getActions().size()) {
+                                nextAction = levelInstance.getActions().get(i + 1).getCode();
                             }
-                        }
-                        if(actionInstance.getActionType().equals(RETRY_PAYMENT)) {
-                            BillingAccount billingAccount = collectionPlan.getBillingAccount();
-                            if(billingAccount != null && billingAccount.getCustomerAccount() != null
-                                    && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
-                                PaymentMethod preferredPaymentMethod = billingAccount.getCustomerAccount()
-                                        .getPaymentMethods()
-                                        .stream()
-                                        .filter(PaymentMethod::isPreferred)
-                                        .findFirst()
-                                        .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
-                                                + billingAccount.getCustomerAccount().getCode()));
-                                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-                                //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
-                                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue() * 100;
-                                Invoice invoice = collectionPlan.getRelatedInvoice();
-                                if(invoice.getRecordedInvoice() == null) {
-                                    throw new BusinessException("No getRecordedInvoice for the invoice "
-                                            + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
-                                }
-                                PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
-                                doPayment(preferredPaymentMethod, customerAccount, amountToPay,
-                                        asList(invoice.getRecordedInvoice().getId()), paymentGateway);
-                            }
-                        }
-                        actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
-                        if(levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.TO_BE_DONE) {
-                            levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
-                            levelInstanceService.update(levelInstance);
-                        }
-                        lastAction = actionInstance.getCode();
-                        if (i + 1 < levelInstance.getActions().size()) {
-                            nextAction = levelInstance.getActions().get(i + 1).getCode();
+                        } catch (Exception exception) {
+                            jobExecutionResult.addErrorReport(exception.getMessage());
                         }
                     }
                     actionInstanceService.update(actionInstance);
@@ -194,12 +163,12 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 if (countActions > 0 && countActions < levelInstance.getActions().size()) {
                     levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
                 }
-                if(countActions == levelInstance.getActions().size()) {
+                if (countActions == levelInstance.getActions().size()) {
                     levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
                 }
             }
-            if(levelInstance.getDunningLevel() == null) {
-                throw new BusinessException("No dunning level associated to level instance id " +  levelInstance.getId());
+            if (levelInstance.getDunningLevel() == null) {
+                throw new BusinessException("No dunning level associated to level instance id " + levelInstance.getId());
             } else {
                 levelInstanceService.update(levelInstance);
             }
@@ -210,8 +179,48 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         }
     }
 
+    private void triggerAction(DunningActionInstance actionInstance, DunningCollectionPlan collectionPlan) {
+        if (actionInstance.getActionType().equals(SCRIPT)) {
+            if (actionInstance.getDunningAction() != null) {
+                scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
+            }
+        }
+        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
+            if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
+                    || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
+                sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
+                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
+            }
+        }
+        if (actionInstance.getActionType().equals(RETRY_PAYMENT)) {
+            BillingAccount billingAccount = collectionPlan.getBillingAccount();
+            if (billingAccount != null && billingAccount.getCustomerAccount() != null
+                    && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
+                PaymentMethod preferredPaymentMethod = billingAccount.getCustomerAccount()
+                        .getPaymentMethods()
+                        .stream()
+                        .filter(PaymentMethod::isPreferred)
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
+                                + billingAccount.getCustomerAccount().getCode()));
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
+                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue() * 100;
+                Invoice invoice = collectionPlan.getRelatedInvoice();
+                if (invoice.getRecordedInvoice() == null) {
+                    throw new BusinessException("No getRecordedInvoice for the invoice "
+                            + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+                }
+                PaymentGateway paymentGateway =
+                        paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+                jobBean.doPayment(preferredPaymentMethod, customerAccount, amountToPay,
+                        asList(invoice.getRecordedInvoice().getId()), paymentGateway);
+            }
+        }
+    }
+
     private void sendEmail(EmailTemplate emailTemplate, Invoice invoice, Date lastActionDate) {
-        if(invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
+        if (invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
                 && invoice.getSeller().getContactInformation().getEmail() != null
                 && !invoice.getSeller().getContactInformation().getEmail().isBlank()) {
             Seller seller = invoice.getSeller();
@@ -229,7 +238,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     billingAccount.getContactInformation().getPhone() : "");
 
             CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-            if(billingAccount.getIsCompany()) {
+            if (billingAccount.getIsCompany()) {
                 params.put("customerAccountLegalEntityTypeCode",
                         ofNullable(billingAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
             } else {
@@ -242,12 +251,12 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     customerAccount.getAddress().getAddress1() : "");
             params.put("customerAccountAddressZipCode", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getZipCode() : "");
-            params.put("customerAccountAddressCity",  customerAccount.getAddress() != null ?
+            params.put("customerAccountAddressCity", customerAccount.getAddress() != null ?
                     customerAccount.getAddress().getCity() : "");
             params.put("customerAccountDescription", customerAccount.getDescription());
-            params.put("customerAccountLastName",  customerAccount.getName() != null ?
+            params.put("customerAccountLastName", customerAccount.getName() != null ?
                     customerAccount.getName().getLastName() : "");
-            params.put("customerAccountFirstName",  customerAccount.getName() != null ?
+            params.put("customerAccountFirstName", customerAccount.getName() != null ?
                     customerAccount.getName().getFirstName() : "");
 
             params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
@@ -265,7 +274,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 log.warn("No Pdf file exists for the invoice : {}",
                         ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
             }
-            if(billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
+            if (billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
                 try {
                     collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
                             billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
@@ -280,12 +289,14 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         }
     }
 
-    private void doPayment(PaymentMethod preferredPaymentMethod, CustomerAccount customerAccount,
-                           long amountToPay, List<Long> accountOperationsToPayIds, PaymentGateway paymentGateway) {
-        if(preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD)) {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void doPayment(PaymentMethod preferredPaymentMethod, CustomerAccount customerAccount,
+                          long amountToPay, List<Long> accountOperationsToPayIds, PaymentGateway paymentGateway) {
+        if (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD)) {
             try {
-                if(accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
-                    if(preferredPaymentMethod.getPaymentType().equals(CARD)) {
+                if (accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
+                    if (preferredPaymentMethod.getPaymentType().equals(CARD)) {
                         if (preferredPaymentMethod instanceof HibernateProxy) {
                             preferredPaymentMethod = (PaymentMethod) ((HibernateProxy) preferredPaymentMethod).getHibernateLazyInitializer()
                                     .getImplementation();
@@ -299,7 +310,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                     } else {
                         paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
                                 true, true, paymentGateway, null, null,
-                                null,null,null, true, preferredPaymentMethod.getPaymentType());
+                                null, null, null, true, preferredPaymentMethod.getPaymentType());
                     }
                 }
             } catch (Exception exception) {
