@@ -111,7 +111,7 @@ public class DeletionService {
     }
 
     private boolean existsAsRecordInCustomTable(CustomFieldTemplate customField, IEntity entity) {
-        return customTableService.containsRecordOfTableByColumn(removePrefix(customField.getAppliesTo()), customField.getCode(), Long.valueOf(entity.getId().toString()));
+        return customTableService.containsRecordOfTableByColumn(removePrefix(customField.getAppliesTo()), customField.getDbFieldname(), Long.valueOf(entity.getId().toString()));
     }
 
     private boolean tryWithBusinessEntity(CustomFieldTemplate customField, IEntity dependency, Class entityClass) {
