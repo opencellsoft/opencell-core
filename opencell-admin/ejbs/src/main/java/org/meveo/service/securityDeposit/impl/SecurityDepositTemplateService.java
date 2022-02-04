@@ -77,5 +77,9 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
             throw new InvalidParameterException("At least allowValidityDate or allowValidityPeriod need to be checked");
         if(securityDepositTemplate.getMaxAmount()!=null && securityDepositTemplate.getMinAmount()!=null && securityDepositTemplate.getMaxAmount().compareTo(securityDepositTemplate.getMinAmount()) < 0 )
             throw new InvalidParameterException("The min amount cannot exceed the max amount");
+        if(financeSettings.getMaxAmountPerSecurityDeposit() != null && securityDepositTemplate.getMaxAmount() != null
+        && financeSettings.getMaxAmountPerSecurityDeposit().compareTo(securityDepositTemplate.getMaxAmount()) < 0 )
+            throw new InvalidParameterException("max amount cannot exceed thr max amount per SD configured at FinanceSettings");
+
     }
 }
