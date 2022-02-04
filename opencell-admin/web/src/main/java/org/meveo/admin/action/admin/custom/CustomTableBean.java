@@ -59,6 +59,7 @@ import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
 @Named
@@ -568,7 +569,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public void exportData() {
         exportFuture = null;
 
-        PaginationConfiguration config = new PaginationConfiguration(filters, "id", PagingAndFiltering.SortOrder.ASCENDING);
+        PaginationConfiguration config = new PaginationConfiguration(filters, "id", SortOrder.ASCENDING);
 
         try {
             exportFuture = customTableService.exportData(entity, config);
