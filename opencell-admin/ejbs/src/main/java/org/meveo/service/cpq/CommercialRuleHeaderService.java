@@ -299,6 +299,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					List<String> values = Arrays.asList(convertedValue.split(";"));
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return false;
     						}
     					break;
@@ -307,13 +308,14 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
     					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
-    					 
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return false;
     						}
     					break;
     				default:
     					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return false;
     						}
 
