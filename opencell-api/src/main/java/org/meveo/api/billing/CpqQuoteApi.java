@@ -1952,9 +1952,12 @@ public class CpqQuoteApi extends BaseApi {
                     BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax());
                     quotePrice.setUnitPriceWithoutTax(overridePriceDto.getUnitAmountWithoutTax());
                     quotePrice.setAmountWithoutTax(overridePriceDto.getUnitAmountWithoutTax().multiply(quantity));
-                    quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate()));
+                    quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
                     quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
-                    quotePrice.setPriceOverCharged(true);
+                    if(overridePriceDto.getPriceOverCharged() == null)
+                        quotePrice.setPriceOverCharged(true);
+                    else
+                        quotePrice.setPriceOverCharged(overridePriceDto.getPriceOverCharged());
                     quotePriceService.update(quotePrice);
                 });
     }

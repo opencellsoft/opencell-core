@@ -399,7 +399,7 @@ public interface CpqQuoteRs {
     public Response findQuoteItem(@Parameter(description = "quote offer id", required = true) @PathParam("quoteItemId") Long quoteItemId,	@Context UriInfo info);
 
     @PUT
-    @Path("/quotePrices")
+    @Path("/quotePrices/override")
     Response overridePrices(OverridePricesDto overridePricesDto);
     
 }

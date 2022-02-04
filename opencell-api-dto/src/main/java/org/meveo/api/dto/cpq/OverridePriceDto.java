@@ -6,6 +6,7 @@ public class OverridePriceDto {
 
     private Long id;
     private BigDecimal unitAmountWithoutTax;
+    private Boolean priceOverCharged;
 
     public Long getId() {
         return id;
@@ -21,5 +22,13 @@ public class OverridePriceDto {
 
     public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
         this.unitAmountWithoutTax = unitAmountWithoutTax;
+    }
+
+    public Boolean getPriceOverCharged() {
+        return priceOverCharged;
+    }
+
+    public void setPriceOverCharged(Boolean priceOverCharged) {
+        this.priceOverCharged = priceOverCharged;
     }
 }

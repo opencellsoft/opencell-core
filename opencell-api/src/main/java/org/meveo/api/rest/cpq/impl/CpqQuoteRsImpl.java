@@ -307,7 +307,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public Response overridePrices(OverridePricesDto overridePricesDto) {
 		try {
 			cpqQuoteApi.overridePrices(overridePricesDto);
-			return Response.ok().build();
+			return Response.ok(new GetQuoteOfferDtoResponse()).build();
 		} catch (MeveoApiException e) {
 			return errorResponse(e);
 		}
