@@ -263,18 +263,34 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         for (RecurringChargeInstance recurringChargeInstance : serviceInst.getRecurringChargeInstances()) {
             // INTRD-279 fix: if reactivate a suspended recurring charge then update its next charge date
             // and charged to date. Maybe to review this fix when implementing suspension prorata evol
-            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED ) {
+                log.debug("Reactivation of Recurring charge instance {} [id={}]. Current chargedToDate={} and nextChargeDate={}",
+                            recurringChargeInstance.getCode(), recurringChargeInstance.getId(), recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
+
                 DatePeriod reactivationCurrentPeriod = walletOperationService.getRecurringPeriod(recurringChargeInstance, reactivationDate);
-                recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
-                if (walletOperationService.isApplyInAdvance(recurringChargeInstance)) {
-                    recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getTo());
-                } else {
-                    recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getFrom());
+                Date reactivationCurrentPeriodEnd = reactivationCurrentPeriod.getTo();
+
+                if (reactivationCurrentPeriodEnd != null &&
+                        recurringChargeInstance.getNextChargeDate() != null &&
+                        recurringChargeInstance.getNextChargeDate().before(reactivationDate)) {
+
+                    // adjust nextChargeDate only if reactivationCurrentPeriodEnd is before charge termination date
+                    if (recurringChargeInstance.getTerminationDate() == null ||
+                        reactivationCurrentPeriodEnd.before(recurringChargeInstance.getTerminationDate())) {
+
+                        recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
+                        if (walletOperationService.isApplyInAdvance(recurringChargeInstance)) {
+                            recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getTo());
+                        } else {
+                            recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getFrom() != null ?
+                                    reactivationCurrentPeriod.getFrom() : recurringChargeInstance.getChargedToDate());
+                        }
+                        log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " +
+                                        "its chargedToDate and nextChargeDate are reajusted to {}, {}.",
+                                recurringChargeInstance.getCode(), recurringChargeInstance.getId(),
+                                recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
+                    }
                 }
-                log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " +
-                        "its chargedToDate and nextChargeDate are reajusted to {}, {}.",
-                        recurringChargeInstance.getCode(), recurringChargeInstance.getId(),
-                        recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
             }
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                 recurringChargeInstance.setTerminationDate(null);
