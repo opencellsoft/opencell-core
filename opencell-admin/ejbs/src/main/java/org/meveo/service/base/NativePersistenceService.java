@@ -1165,9 +1165,26 @@ public class NativePersistenceService extends BaseService {
     public String addCurrentSchema(String tableName) {
         CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
         String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+<<<<<<< HEAD
+        return addCurrentSchema(tableName, currentproviderCode);
+    }
+
+    /**
+     * Add a DB schema name to the table if not using a main provider
+     * 
+     * @param tableName DB table name
+     * @param providerCode Provider code
+     * @return DB Table name prefixed with a schema name
+     */
+    public String addCurrentSchema(String tableName, String providerCode) {
+
+        if (providerCode != null && tableName != null) {
+            String schema = entityManagerProvider.convertToSchemaName(providerCode) + ".";
+=======
         if (currentproviderCode != null && tableName != null) {
             EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
             String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+>>>>>>> parent of 08b62703e2... Merged in ticket-INTRD-4168-ak-CT-admin_gui (pull request #1896)
             if (!tableName.contains(schema)) {
                 return schema + tableName;
             }
