@@ -38,11 +38,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -50,11 +48,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 
@@ -341,9 +334,7 @@ public class DiscountPlanItemApi extends BaseApi {
         if (source.getExpressionEl() != null) {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }
-		if (source.getDiscountValue() != null) {
-			discountPlanItem.setDiscountValue(source.getDiscountValue());
-        }
+        discountPlanItem.setDiscountValue(source.getDiscountValue());
         if (source.getDiscountValueEL() != null) {
             discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
         }
