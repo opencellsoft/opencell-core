@@ -947,29 +947,35 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 		}
 		
 		
-    	log.info("OfferTemplateApi.list resultBaTag={}",resultTags); 
-    	String tags=null;
-    	if (!resultTags.isEmpty()) {
-    		 tags=resultTags.stream().collect(Collectors.joining(","));
-    	} 
-    		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
-    		if(pagingAndFiltering==null) {
-    		 pagingAndFiltering=new PagingAndFiltering();
-    		}
-    		pagingAndFiltering.addFilter("inList tags", tags);
-    	PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
-    	Long totalCount = offerTemplateService.count(paginationConfig); 
-    	result.setPaging(pagingAndFiltering);
-    	result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-    	if (totalCount > 0) {
-    		List<OfferTemplate> offers = offerTemplateService.list(paginationConfig);
-    		for (OfferTemplate offerTemplate : offers) {
-    			boolean loadTags=customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty();
-    			GetOfferTemplateResponseDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes());
-    			result.addOffer(new CpqOfferDto(offertemplateDTO));
-    		}
-    	}
-    	return result;
+		log.info("OfferTemplateApi.list resultBaTag={}",resultTags); 
+		String tags=null;
+		if (!resultTags.isEmpty()) {
+			tags=resultTags.stream().collect(Collectors.joining(","));
+		} 
+		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
+		if(pagingAndFiltering==null) {
+			pagingAndFiltering=new PagingAndFiltering();
+		}
+		List<OfferTemplate> offersWithoutTags =new ArrayList<>();
+		if(tags!=null) {
+		pagingAndFiltering.addFilter("inList tags", tags);
+		offersWithoutTags=offerTemplateService.list().stream().filter(offer -> offer.getTags().isEmpty()).collect(Collectors.toList());
+		}
+		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
+		List<OfferTemplate> offers=offerTemplateService.list(paginationConfig);
+		if(offersWithoutTags!=null && !offersWithoutTags.isEmpty()) {
+			offers.addAll(offersWithoutTags);
+		}
+		result.setPaging(pagingAndFiltering);
+		if(!offers.isEmpty()) {
+		result.getPaging().setTotalNumberOfRecords(offers.size());
+		for (OfferTemplate offerTemplate : offers) {
+			boolean loadTags=customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty();
+			GetOfferTemplateResponseDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes());
+			result.addOffer(new CpqOfferDto(offertemplateDTO));
+		}
+		}
+		return result;
     }
     
     
