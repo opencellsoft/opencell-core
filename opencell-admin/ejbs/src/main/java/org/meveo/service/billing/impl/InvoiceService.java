@@ -3855,7 +3855,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setOrder(order);
 
         } else if (entity instanceof Subscription) {
-            invoice.setSubscription((Subscription) entity);
+        	Subscription subscription = (Subscription) entity;
+            invoice.setSubscription(subscription);
+            invoice.setCommercialOrder(subscription.getOrder());
+            invoice.setCpqQuote(subscription.getOrder()!=null?subscription.getOrder().getQuote():null);
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
