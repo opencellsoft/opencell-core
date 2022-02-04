@@ -1539,10 +1539,13 @@ public class AccountHierarchyApi extends BaseApi {
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
             // update billing account
             log.debug("update ba");
-
-            BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
-            setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
+            if(StringUtils.isNotBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
+            	terminateCRMAccountHierarchy(postData);
+            }else {
+            	BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
+            	accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
+            	setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
+            }
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
