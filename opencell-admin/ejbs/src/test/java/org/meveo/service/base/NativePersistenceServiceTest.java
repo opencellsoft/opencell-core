@@ -371,10 +371,10 @@ public class NativePersistenceServiceTest {
     }
 
     private String getQuery() {
-        return sut.getQuery("tableName", new PaginationConfiguration(10, 40, filters, "text", List.of("selectField"), "selectField", "desc"),null).toString();
+        return sut.getQuery("tableName", new PaginationConfiguration(10, 40, filters, "text", List.of("selectField"), "selectField", "desc")).toString();
     }
 
     private String queryWithAggFields(PaginationConfiguration configuration) {
-        return sut.getQuery("tableName", configuration,null).toString();
+        return sut.getQuery("tableName", configuration).toString();
     }
 }
