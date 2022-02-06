@@ -170,4 +170,11 @@ public class ProviderContact extends BusinessEntity {
         this.genericMail = genericMail;
     }
 
+	@Override
+	public String toString() {
+		return "ProviderContact [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone="
+				+ phone + ", mobile=" + mobile + ", fax=" + fax + ", genericMail=" + genericMail + ", address="
+				+ address + "]";
+	}
+
 }

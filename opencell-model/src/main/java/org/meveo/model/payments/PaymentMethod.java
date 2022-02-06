@@ -218,4 +218,14 @@ public abstract class PaymentMethod extends EnableEntity {
     public void setAction(String action) {
         this.action = action;
     }
+
+	@Override
+	public String toString() {
+		return "PaymentMethod [alias=" + alias + ", preferred=" + preferred + ", customerAccount=" + customerAccount
+				+ ", paymentType=" + paymentType + ", userId=" + userId + ", info1=" + info1 + ", info2=" + info2
+				+ ", info3=" + info3 + ", info4=" + info4 + ", info5=" + info5 + ", tokenId=" + tokenId + ", action="
+				+ action + "]";
+	}
+    
+    
 }
