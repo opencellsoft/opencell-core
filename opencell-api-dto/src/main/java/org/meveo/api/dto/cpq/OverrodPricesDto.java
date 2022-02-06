@@ -2,7 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.List;
 
-public class OverridePricesDto {
+public class OverrodPricesDto {
 
     private List<OverridePriceDto> prices;
 

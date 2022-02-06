@@ -46,4 +46,12 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 				.setParameter("priceLevelEnum", priceLevel)
 				.executeUpdate();
 	}
+
+	public List<QuotePrice> loadByQuoteOfferAndArticleCodeAndPriceLevel(Long quoteOfferId, String accountingArticleCode){
+		return getEntityManager().createNamedQuery("QuotePrice.loadByQuoteOfferAndArticleCodeAndPriceLevel", QuotePrice.class)
+				.setParameter("quoteOfferId", quoteOfferId)
+				.setParameter("accountingArticleCode", accountingArticleCode)
+				.setParameter("priceLevelEnum", PriceLevelEnum.PRODUCT)
+				.getResultList();
+	}
 }

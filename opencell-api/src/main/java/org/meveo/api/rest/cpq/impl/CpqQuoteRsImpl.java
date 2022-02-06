@@ -29,8 +29,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
-import org.meveo.api.dto.cpq.OverridePricesDto;
+import org.meveo.api.dto.cpq.OverrodPricesDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -46,7 +45,6 @@ import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 
 @RequestScoped
@@ -304,9 +302,9 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	}
 
 	@Override
-	public Response overridePrices(OverridePricesDto overridePricesDto) {
+	public Response overridePrices(OverrodPricesDto overrodPricesDto) {
 		try {
-			cpqQuoteApi.overridePrices(overridePricesDto);
+			cpqQuoteApi.overridePrices(overrodPricesDto);
 			return Response.ok(new GetQuoteOfferDtoResponse()).build();
 		} catch (MeveoApiException e) {
 			return errorResponse(e);

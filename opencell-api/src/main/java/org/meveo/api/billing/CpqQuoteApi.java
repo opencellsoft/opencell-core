@@ -43,13 +43,14 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.print.attribute.standard.Media;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.cpq.OverridePricesDto;
+import org.meveo.api.dto.cpq.OverrodPricesDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -73,7 +74,6 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.BaseEntity;
@@ -1283,11 +1283,20 @@ public class CpqQuoteApi extends BaseApi {
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer) {
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        List<WalletOperation> walletOperations = quoteRating(subscription, true);
+        List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer, true);
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
         Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
         List<QuotePrice> accountingPrices = new ArrayList<>();
+        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
+            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
+                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
+                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
+                accountingPrices.addAll(overrodeLine.getQuotePrices());
+            }
+
+        }
+
         String accountingArticleCode = null;
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
         for (WalletOperation wo : walletOperations) {
@@ -1379,6 +1388,11 @@ public class CpqQuoteApi extends BaseApi {
         return accountingPrices;
     }
 
+    private boolean isAnOverridedPrice(QuoteOffer quoteOffer, QuoteArticleLine overrodeArticleLine, AccountingArticle woAccountingArticle) {
+        return overrodeArticleLine.getAccountingArticle().equals(woAccountingArticle.getCode())
+                && overrodeArticleLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId());
+    }
+
     private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration) {
         quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
         quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
@@ -1424,17 +1438,25 @@ public class CpqQuoteApi extends BaseApi {
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
         if (quoteVersion.getQuoteArticleLines() != null) {
-
-            quoteVersion.getQuoteArticleLines().clear();
+            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
+                    .collect(Collectors.toList());
+            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
             quoteVersionService.update(quoteVersion);
         }
     }
 
     @SuppressWarnings("unused")
-    public List<WalletOperation> quoteRating(Subscription subscription, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
         BillingAccount billingAccount = null;
+        Set<AccountingArticle> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
+                .stream()
+                .filter(articleLine -> articleLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId()))
+                .map(QuoteArticleLine::getAccountingArticle)
+                .collect(Collectors.toSet());
         if (subscription != null) {
 
             billingAccount = subscription.getUserAccount().getBillingAccount();
@@ -1459,13 +1481,16 @@ public class CpqQuoteApi extends BaseApi {
               // Add subscription charges
                 for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                     try {
-                        WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription,
-                                subscriptionCharge, serviceInstance.getSubscriptionDate(),
-                                serviceInstance.getQuantity());
-                        if (wo != null) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes)
-                                    .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+subscriptionCharge.getChargeTemplate())));
-                            walletOperations.add(wo);
+                        AccountingArticle subscriptionChargeArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate()));
+                        if (!overrodeArticle.contains(subscriptionChargeArticle)) {
+                            WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription,
+                                    subscriptionCharge, serviceInstance.getSubscriptionDate(),
+                                    serviceInstance.getQuantity());
+                            if (wo != null) {
+                                wo.setAccountingArticle(subscriptionChargeArticle);
+                                walletOperations.add(wo);
+                            }
                         }
 
                     } catch (RatingException e) {
@@ -1479,17 +1504,19 @@ public class CpqQuoteApi extends BaseApi {
                 // Add recurring charges
                 for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                     try {
-                        Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
+                        AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
+                        if (!overrodeArticle.contains(recurringArticle)) {
+                            Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
+                            List<WalletOperation> walletOps = recurringChargeInstanceService
+                                    .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
+                            if (walletOps != null && !walletOps.isEmpty()) {
+                                for (WalletOperation wo : walletOps) {
+                                    wo.setAccountingArticle(recurringArticle);
+                                    walletOperations.add(wo);
+                                }
 
-                        List<WalletOperation> walletOps = recurringChargeInstanceService
-                                .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
-                        if (walletOps != null && !walletOps.isEmpty()) {
-                            for (WalletOperation wo : walletOps) {
-                            	 wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes)
-                                         .orElseThrow(() -> new BusinessException(errorMsg+" and charge "+recurringCharge.getChargeTemplate())));
-                                walletOperations.add(wo);
                             }
-
                         }
 
                     } catch (RatingException e) {
@@ -1503,7 +1530,9 @@ public class CpqQuoteApi extends BaseApi {
                 EDR edr =null;
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
                     UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-                    if (chargetemplate.getUsageQuantityAttribute() != null) {
+                    AccountingArticle usageArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargetemplate, attributes)
+                            .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate()));
+                    if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
                         edr = new EDR();
                         try {
 
@@ -1541,11 +1570,7 @@ public class CpqQuoteApi extends BaseApi {
 
 								if (walletOperationsFromEdr != null) {
 									for (WalletOperation walletOperation : walletOperationsFromEdr) {
-										walletOperation.setAccountingArticle(accountingArticleService
-												.getAccountingArticle(serviceInstance.getProductVersion().getProduct(),
-														usageCharge.getChargeTemplate(), attributes)
-												.orElseThrow(() -> new BusinessException(
-														errorMsg + " and charge " + usageCharge.getChargeTemplate())));
+                                        walletOperation.setAccountingArticle(usageArticle);
 										walletOperations.addAll(walletOperationsFromEdr);
 									}
 								}
@@ -1945,20 +1970,25 @@ public class CpqQuoteApi extends BaseApi {
     }
 
 
-    public void overridePrices(OverridePricesDto overridePricesDto) {
-        overridePricesDto.getPrices()
-                .forEach(overridePriceDto -> {
-                    QuotePrice quotePrice = loadEntityById(quotePriceService, overridePriceDto.getId(), QuotePrice.class);
-                    BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax());
-                    quotePrice.setUnitPriceWithoutTax(overridePriceDto.getUnitAmountWithoutTax());
-                    quotePrice.setAmountWithoutTax(overridePriceDto.getUnitAmountWithoutTax().multiply(quantity));
-                    quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
-                    quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
-                    if(overridePriceDto.getPriceOverCharged() == null)
-                        quotePrice.setPriceOverCharged(true);
-                    else
-                        quotePrice.setPriceOverCharged(overridePriceDto.getPriceOverCharged());
-                    quotePriceService.update(quotePrice);
+    public void overridePrices(OverrodPricesDto overrodPricesDto) {
+        overrodPricesDto.getPrices()
+                .forEach(overrodePrice -> {
+                    List<QuotePrice> quotePrices = quotePriceService.loadByQuoteOfferAndArticleCodeAndPriceLevel(overrodePrice.getOfferId(), overrodePrice.getAccountingArticleCode());
+
+                    BigDecimal unitPriceWithoutTax = overrodePrice.getUnitAmountWithoutTax().divide(BigDecimal.valueOf(quotePrices.size()), 6, RoundingMode.HALF_UP);
+
+                    quotePrices.forEach(quotePrice -> {
+                        BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax());
+                        quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
+                        quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
+                        quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
+                        quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
+                        if (overrodePrice.getPriceOverCharged() == null)
+                            quotePrice.setPriceOverCharged(true);
+                        else
+                            quotePrice.setPriceOverCharged(overrodePrice.getPriceOverCharged());
+                        quotePriceService.update(quotePrice);
+                    });
                 });
     }
 }

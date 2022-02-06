@@ -4,16 +4,25 @@ import java.math.BigDecimal;
 
 public class OverridePriceDto {
 
-    private Long id;
+    private Long offerId;
+    private String accountingArticleCode;
     private BigDecimal unitAmountWithoutTax;
     private Boolean priceOverCharged;
 
-    public Long getId() {
-        return id;
+    public Long getOfferId() {
+        return offerId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOfferId(Long offerId) {
+        this.offerId = offerId;
+    }
+
+    public String getAccountingArticleCode() {
+        return accountingArticleCode;
+    }
+
+    public void setAccountingArticleCode(String accountingArticleCode) {
+        this.accountingArticleCode = accountingArticleCode;
     }
 
     public BigDecimal getUnitAmountWithoutTax() {
