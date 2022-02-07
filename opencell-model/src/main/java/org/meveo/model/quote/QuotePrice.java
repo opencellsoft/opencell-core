@@ -110,7 +110,7 @@ public class QuotePrice extends AuditableEntity {
 	@Column(name = "recurrence_periodicity")
 	private String recurrencePeriodicity;
 
-	@OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name= "charge_template_id")
 	private ChargeTemplate chargeTemplate;
 

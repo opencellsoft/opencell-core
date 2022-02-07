@@ -57,7 +57,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
 		this.code = copy.code;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ppm_version_id")
     @NotNull
     private PricePlanMatrixVersion pricePlanMatrixVersion;
@@ -74,15 +74,15 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @Column(name = "el_value")
     private String elValue;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_id")
     private Attribute attribute;
 

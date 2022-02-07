@@ -10067,7 +10067,6 @@ public class OrderAdvancement extends ModuleScript {
 				group by current_version, ppm_id having count(*)>1) as d)</sql>
 	    <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
 	</changeSet>
-
 	<changeSet id="#INTRD-2421_20211012" author="AndriusKarpavicius">
         <addColumn tableName="ar_customer_account">
             <column name="version" type="int4" />
@@ -11739,5 +11738,14 @@ order by date_trunc('month', i.invoice_date) DESC
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
 	</changeSet>
+
+    <changeSet id="#INTRD-4841-20220207" author="MohamedSTITANE">
+        <sql>
+            CREATE INDEX cpq_price_plan_matrix_line_version_index ON cpq_price_plan_matrix_line (ppm_version_id);
+            CREATE INDEX cpq_price_plan_matrix_value_line_index ON cpq_price_plan_matrix_value (ppml_id);
+            CREATE INDEX cpq_price_plan_matrix_column_version_index ON cpq_price_plan_matrix_column (ppm_version_id);
+            CREATE INDEX cpq_attribute_instance_service_index ON cpq_attribute_instance (service_instance_id);
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

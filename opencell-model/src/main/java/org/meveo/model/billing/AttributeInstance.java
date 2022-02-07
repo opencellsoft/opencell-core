@@ -3,8 +3,8 @@ package org.meveo.model.billing;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -20,17 +20,16 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.security.MeveoUser;
 
 @Entity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "AttributeInstance")
 @Table(name = "cpq_attribute_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
+        @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq") })
 public class AttributeInstance extends AttributeValue<AttributeInstance> {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 

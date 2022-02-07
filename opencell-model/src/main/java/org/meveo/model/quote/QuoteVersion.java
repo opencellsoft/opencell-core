@@ -1,12 +1,9 @@
 package org.meveo.model.quote;
 
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,7 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,11 +28,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
@@ -49,7 +42,8 @@ import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.crm.custom.CustomFieldValues;
+
+import static javax.persistence.FetchType.LAZY;
 
 @SuppressWarnings("serial")
 @Entity
@@ -74,7 +68,7 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
     /**
      * quote
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
 	@NotNull
     private CpqQuote quote;
