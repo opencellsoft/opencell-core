@@ -49,6 +49,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -75,10 +76,10 @@ import org.meveo.model.shared.DateUtils;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@DynamicUpdate
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "Invoice")
 @NamedQueries({
         @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
@@ -447,6 +448,11 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Transient
     private List<RatedTransaction> draftRatedTransactions = new ArrayList<>();
+
+    @Transient
+	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
+    @Transient
+	private Date nextInvoiceDate;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -1102,4 +1108,40 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public List<RatedTransaction> getDraftRatedTransactions() {
         return draftRatedTransactions;
     }
+
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public void setSubCategoryInvoiceAgregate(Set<SubCategoryInvoiceAgregate> invoiceSCAs) {
+		this.subCategoryInvoiceAgregates = invoiceSCAs;
+	}
+	
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregate() {
+		return this.subCategoryInvoiceAgregates;
+	}
+
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
+
+	/**
+	 * set all invoice amounts to 0
+	 */
+	public void initAmounts() {
+		this.amountTax=BigDecimal.ZERO;
+		this.amountWithTax=BigDecimal.ZERO;
+		this.amountWithoutTax=BigDecimal.ZERO;
+	}
 }

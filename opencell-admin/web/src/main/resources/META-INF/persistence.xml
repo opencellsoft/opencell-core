@@ -25,6 +25,11 @@
 
             <property name="hibernate.session_factory.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
+            
+            <property name="hibernate.jdbc.batch_size" value="1000" />
+            <property name="hibernate.order_inserts" value="true" />
+            <property name="hibernate.order_updates" value="true" />
+            <property name="hibernate.jdbc.batch_versioned_data" value="true" />
 
             <!--skip duplicate ID_GENERATOR ERROR IN WF17-->
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />

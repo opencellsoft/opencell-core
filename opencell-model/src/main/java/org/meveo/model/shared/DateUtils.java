@@ -107,6 +107,10 @@ public class DateUtils {
         gc.set(Calendar.MILLISECOND, 0);
         return gc.getTime();
     }
+    
+    public static Date parseDefaultDate(String dateValue) {
+    	return parseDateWithPattern(dateValue, DATE_PATTERN);
+    }
 
     public static Date parseDateWithPattern(String dateValue, String pattern) {
         if (dateValue == null || dateValue.trim().length() == 0) {

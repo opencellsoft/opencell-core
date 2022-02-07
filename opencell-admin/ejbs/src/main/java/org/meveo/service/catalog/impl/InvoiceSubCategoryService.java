@@ -17,9 +17,14 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -33,6 +38,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 
 /**
  * InvoiceSubCategory service implementation.
@@ -40,6 +46,8 @@ import org.meveo.service.base.ValueExpressionWrapper;
  */
 @Stateless
 public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategory> {
+	
+	private Map<Long, InvoiceSubCategory> invoiceSubCategoryMap = new TreeMap<Long, InvoiceSubCategory>();
 
     @SuppressWarnings("unchecked")
     public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory) {
@@ -100,4 +108,19 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         // Needed to remove from InvoiceCategory.invoiceSubCategories field as it is cached
         subCat.getInvoiceCategory().getInvoiceSubCategories().remove(subCat);
     }
+
+    public void initMap() {
+		if(invoiceSubCategoryMap.isEmpty()) {
+	        List<InvoiceSubCategory> invoiceSubCategories = getEntityManager().createNamedQuery("InvoiceSubCategory.listWithCategory").getResultList();
+			invoiceSubCategoryMap = invoiceSubCategories.stream().collect(Collectors.toMap(InvoiceSubCategory::getId, Function.identity()));
+		}
+	}
+	/**
+	 * @param invoiceSubCategoryId
+	 * @return
+	 */
+	public InvoiceSubCategory finFromMap(long invoiceSubCategoryId) {
+		initMap();
+		return invoiceSubCategoryMap.get(invoiceSubCategoryId);
+	}
 }

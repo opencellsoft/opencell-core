@@ -98,7 +98,7 @@ public class InvoiceServiceTest {
 
     @Mock
     private CustomFieldInstanceService customFieldInstanceService;
-
+/*
     @Before
     public void setUp() {
         when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
@@ -117,7 +117,7 @@ public class InvoiceServiceTest {
         doReturn(entityManager).when(invoiceService).getEntityManager();
 
     }
-
+*/
     private RatedTransaction getRatedTransaction(IBillableEntity entity, long sellerId) {
         RatedTransaction rt = new RatedTransaction();
         if (entity instanceof Subscription) {

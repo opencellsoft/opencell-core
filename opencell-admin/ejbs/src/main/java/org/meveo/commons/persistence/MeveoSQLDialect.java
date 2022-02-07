@@ -29,6 +29,8 @@ public class MeveoSQLDialect extends PostgreSQL94Dialect {
 	public MeveoSQLDialect() {
 		super();
 		registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
+		//concat function must be added as concat syntax was accepted before, but generated sql was using ||, what return null if any of concatenated fields is null!
+		registerFunction("concat", new StandardSQLFunction("concat", new org.hibernate.type.StringType()));
 		registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
 		registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
 		registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());

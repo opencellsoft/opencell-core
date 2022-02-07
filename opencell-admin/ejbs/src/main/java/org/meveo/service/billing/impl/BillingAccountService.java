@@ -23,33 +23,43 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
+import javax.ejb.AsyncResult;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.job.v2.invoicing.RefactoredInvoicingJob;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.*;
+import org.meveo.service.billing.invoicing.impl.BillingAccountDetailsItem;
+import org.meveo.service.billing.invoicing.impl.InvoicingItem;
 
 /**
  * The Class BillingAccountService.
@@ -67,9 +77,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @Inject
     private UserAccountService userAccountService;
 
-    /** The billing run service. */
-    @EJB
-    private BillingRunService billingRunService;
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
@@ -434,6 +441,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
         return isExonerated;
     }
+    
+    public boolean isExonerated(BillingAccount ba, Boolean customerCategoryExoneratedFromTaxes, String exonerationTaxEl) {
+        if (customerCategoryExoneratedFromTaxes.booleanValue()) {
+            return true;
+        }
+        if (!StringUtils.isBlank(exonerationTaxEl)) {
+        	ba = refreshOrRetrieve(ba);
+            return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(exonerationTaxEl, "ba", ba);
+        }
+        return false;
+    }
 
     /**
      * Find billing accounts by billing run.
@@ -485,5 +503,55 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
+
+	/**
+	 * @param billableAmountSummary 
+	 * @param billingRun
+	 * @param lastTransactionDate 
+	 * @param nextInoiceDateLimits 
+	 * @param nbRuns 
+	 * @return 
+	 */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Future<String> linkBillableEntitiesToBR(BillingRun billingRun, Date lastTransactionDate, Date[] nextInoiceDateLimits, Long min, Long max) {
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ? "Subscription.updateBR" :
+        	nextInoiceDateLimits == null ? "BillingAccount.updateBR" : "BillingAccount.updateBRLimitByNextInvoiceDate";
+        
+        Query query = getEntityManager().createNamedQuery(sqlName).setParameter("firstTransactionDate", new Date(0))
+                .setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingCycle", billingCycle);
+        query.setParameter("billingRun", billingRun);
+        if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && nextInoiceDateLimits != null) {
+            query.setParameter("startDate", nextInoiceDateLimits[0]).setParameter("endDate", nextInoiceDateLimits[1]);
+        }
+
+    	query.setParameter("min", min).setParameter("max", max);
+    	int updated = query.executeUpdate();
+    	log.info("LINK {} BAs TO BR",updated);
+        return new AsyncResult<String>("OK");
+    }
+    
+	public List<BillingAccountDetailsItem> getInvoicingItems(BillingRun billingRun,Date lastTransactionDate, int pageSize, int pageIndex, boolean thresholdPerEntityFound) {
+		
+		String BillingAccountDetailsQueryName = "BillingAccount.getBillingAccountDetailsItems";
+		if(thresholdPerEntityFound) {
+			BillingAccountDetailsQueryName = BillingAccountDetailsQueryName+"ExcludingThresholdEntities";
+		} 
+		
+
+		//split to 2 queries to avoid hibernate 'firstResult/maxResults specified with collection fetch; applying in memory!' 
+		List<Object[]> resultList = getEntityManager().createNamedQuery(BillingAccountDetailsQueryName).setParameter("billingRunId", billingRun.getId()).setMaxResults(pageSize)
+			      .setFirstResult(pageIndex * pageSize).getResultList();
+		if(resultList==null || resultList.isEmpty()) {
+			return new ArrayList<BillingAccountDetailsItem>();
+		}
+		
+		final Map<Long, BillingAccountDetailsItem> billingAccountDetailsMap = resultList.stream().map(x-> new BillingAccountDetailsItem(x)).collect(Collectors.toMap(BillingAccountDetailsItem::getBillingAccountId, Function.identity()));
+		Query query = getEntityManager().createNamedQuery("RatedTransaction.getInvoicingItems").setParameter("ids", billingAccountDetailsMap.keySet()).setParameter("lastTransactionDate", lastTransactionDate).setParameter("limitUpdateById", RefactoredInvoicingJob.LIMIT_UPDATE_BY_ID);
+		final Map<Long, List<InvoicingItem>> itemsByBAID = ((List<Object[]>)query.getResultList()).stream().map(x-> new InvoicingItem(x)).collect(Collectors.groupingBy(InvoicingItem::getBillingAccountId));
+		log.info("======= InvoicingItems ======="+itemsByBAID.size());
+		billingAccountDetailsMap.values().stream().forEach(x->x.setInvoicingItems(itemsByBAID.get(x.getBillingAccountId())));
+		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
+	}
 
 }
