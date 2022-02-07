@@ -59,7 +59,6 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
         auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
-        //(operationType, new Date(), policy, origin, updatedFields);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
 
     }
