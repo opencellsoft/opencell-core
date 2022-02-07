@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
@@ -85,6 +86,7 @@ import org.meveo.util.MeveoParamBean;
  * @author Abdellatif BARI
  * @lastModifiedVersion 9.3.1
  */
+@Named
 public class NativePersistenceService extends BaseService {
 
     /**
