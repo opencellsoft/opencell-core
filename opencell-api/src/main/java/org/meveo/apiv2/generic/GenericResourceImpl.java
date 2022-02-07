@@ -32,29 +32,38 @@ public class GenericResourceImpl implements GenericResource {
     public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth()))
+        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null, excludedFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
-    
+
     @Override
     public Response get(Boolean extractList, String entityName, Long id, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth())
-                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
-                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        if(genericFields != null && loadService.isCustomFieldQuery(genericFields)){
+            return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), id, null))
+                    .links(buildPaginatedResourceLink(entityName)).build();
+        } else {
+            return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), excludedFields)
+                    .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
+                    .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        }
     }
 
     @Override
