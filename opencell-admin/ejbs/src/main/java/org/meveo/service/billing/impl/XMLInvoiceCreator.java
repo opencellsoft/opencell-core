@@ -100,13 +100,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     if (script != null) {
                         script.execute(methodContext);
                     }
-                    file = (File) methodContext.get(Script.RESULT_VALUE);
+
 
                 }
 
-            } else {
+            } 
+                
                 file = defaultXmlInvoiceCreatorScript.createDocumentAndFile(invoice, isVirtual, fullXmlFilePath, rtBillingProcess);
-            }
 
             if (file != null) {
                 invoice.setXmlFilename(xmlFileName);
