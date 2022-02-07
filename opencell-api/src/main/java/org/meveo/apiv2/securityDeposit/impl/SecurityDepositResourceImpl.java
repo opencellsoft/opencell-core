@@ -1,6 +1,8 @@
 package org.meveo.apiv2.securityDeposit.impl;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
 public class SecurityDepositResourceImpl implements SecurityDepositResource {
@@ -25,6 +28,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Inject
     SecurityDepositService securityDepositService;
+    
+    @Inject
+    private AuditLogService auditLogService;
     
     SecurityDepositMapper securityDepositMapper = new SecurityDepositMapper();
 
@@ -43,12 +49,17 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     
     @Override
     public Response update(Long id, SecurityDepositInput securityDepositInput) {
-        SecurityDeposit securityDepositToUpdate = securityDepositApiService.findById(id).get();
+        SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
+        BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         if(securityDepositToUpdate == null) {
             throw new EntityDoesNotExistsException("security deposit template with id "+id+" does not exist.");
         }
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
+        securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
+        securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
+        auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        //(operationType, new Date(), policy, origin, updatedFields);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
 
     }
