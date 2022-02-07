@@ -9,7 +9,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -19,7 +18,6 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
 
 @Stateless
 public class SecurityDepositService extends BusinessService<SecurityDeposit> {
@@ -36,11 +34,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private ServiceInstanceService serviceInstanceService;
     
-    @Inject
-    private SubscriptionService serviceSubscriptionService;
-    
     public BigDecimal sumAmountPerCustomer(CustomerAccount customerAccount) {
-
         return getEntityManager()
                 .createNamedQuery("SecurityDeposit.sumAmountPerClient", BigDecimal.class)
                 .setParameter("customerAccount", customerAccount)
@@ -48,7 +42,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
     
     public Long countPerTemplate(SecurityDepositTemplate template) {
-
         return getEntityManager()
                 .createNamedQuery("SecurityDeposit.countPerTemplate", Long.class)
                 .setParameter("template", template)
