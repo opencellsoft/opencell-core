@@ -31,7 +31,7 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.payments.RejectedPayment;
+import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.script.finance.ReportExtractScript;
@@ -56,7 +56,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
             " WHERE (ao.transaction_type = 'P' AND ao.deposit_date is NOT null AND ao.payment_info1 is null) " +
             " OR( ao.transaction_type = 'OCC' AND ao.code = 'COM_PSP' AND ao.payment_info1 is null) " +
             " OR( ao.transaction_type = 'I' AND ao.payment_info is NOT null AND ao.payment_info1 is null) " +
-            " OR( ao.transaction_type = 'R' AND ao.deposit_date is NOT null AND ao.payment_info1 is null)";
+            " OR( ao.transaction_type = 'RF' AND ao.deposit_date is NOT null AND ao.payment_info1 is null)";
 
     private static final String CROID_SEQ_NEXT_VAL_QUERY = "select nextval('croid_seq')";
 
@@ -167,7 +167,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
     }
     private String addTransactionType(AccountOperation ao, String format) {
         String transactionType = ReportTransactionType.fromValue(ao.getType()).name();
-        if(transactionType!=null && "REJ_DDT".equalsIgnoreCase(transactionType)) {
+        if(transactionType!=null && "REF_DDT".equalsIgnoreCase(transactionType)) {
         	transactionType="PAY_DDT";
         }
         return format(format, transactionType != null ? transactionType : "");
@@ -271,7 +271,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
     						return matchedAO;
     					}
     				}
-    			}else if (ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) { 
+    			}else if (ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) { 
     				for(MatchingAmount matching:matchingCode.getMatchingAmounts()) {
     					matchedAO=matching.getAccountOperation();
     					if (matchedAO.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) ) {
@@ -309,7 +309,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
         Date accountingDate = null;
         if (ao.getType().equalsIgnoreCase(ReportTransactionType.COM_PSP.getLabel()) ||
-                ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) || ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) {
+                ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) || ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) {
             accountingDate = ao.getDepositDate();
         } else {
             if (!ao.getInvoices().isEmpty()) {
@@ -337,9 +337,9 @@ public class AOReportGeneratorScript extends ReportExtractScript {
         } else if (ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel())) {
         	Payment paymentAO=(Payment)ao;
         	ttc = paymentAO.getPaymentInfo2()!=null? new BigDecimal(paymentAO.getPaymentInfo2().trim()):new BigDecimal(0);
-        }else if (ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) {
-        	RejectedPayment rejectedPayment=(RejectedPayment)ao;
-        	ttc = rejectedPayment.getPaymentInfo2()!=null? new BigDecimal(rejectedPayment.getPaymentInfo2().trim()):new BigDecimal(0);
+        }else if (ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) {
+        	Refund refundPayment=(Refund)ao;
+        	ttc = refundPayment.getPaymentInfo2()!=null? new BigDecimal(refundPayment.getPaymentInfo2().trim()):new BigDecimal(0);
         }else {
             ttc = ao.getAmount().multiply(new BigDecimal(100));
         }
@@ -350,7 +350,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
         BigDecimal ht = BigDecimal.ZERO;
         if (ao.getType().equalsIgnoreCase(ReportTransactionType.INV_STD.getLabel())) {
             ht = ao.getAmountWithoutTax().multiply(new BigDecimal(100));
-        } else if (ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) || ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) {
+        } else if (ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) || ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) {
         	ht = ao.getAmount().multiply(new BigDecimal(100));//TTC facturé
         }else if (ao.getType().equalsIgnoreCase(ReportTransactionType.COM_PSP.getLabel())) {
             ht = ao.getAmount();//commission_amount
@@ -360,7 +360,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
 
     private String addTVA(AccountOperation ao) {
         BigDecimal tva = BigDecimal.ZERO;
-        if (ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) || ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) {
+        if (ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) || ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) {
         	 tva =  BigDecimal.ZERO;
         }
         if(ao.getType().equalsIgnoreCase(ReportTransactionType.INV_STD.getLabel())) {
@@ -378,9 +378,9 @@ public class AOReportGeneratorScript extends ReportExtractScript {
     		Payment paymentAO=(Payment)ao;
     		commissionAmount = paymentAO.getFees()!=null?paymentAO.getFees():new BigDecimal(0);     
     	}
-    	if (ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) {
-    		RejectedPayment rejectedPayment=(RejectedPayment)ao;
-    		commissionAmount = rejectedPayment.getPaymentInfo4()!=null?new BigDecimal(rejectedPayment.getPaymentInfo4().trim()):new BigDecimal(0);     
+    	if (ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) {
+    		Refund refundPayment=(Refund)ao;
+    		commissionAmount = refundPayment.getPaymentInfo4()!=null?new BigDecimal(refundPayment.getPaymentInfo4().trim()):new BigDecimal(0);     
     	}
     	return decimalFormat.format(commissionAmount);
     }
@@ -390,7 +390,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
         if (ao.getType().equalsIgnoreCase(ReportTransactionType.PAY_DDT.getLabel()) ) {
         	 AccountOperation matchedAO=getMatchedOperation(ao);
         	 libCRI = matchedAO!=null?matchedAO.getReference():"";
-        }if(ao.getType().equalsIgnoreCase(ReportTransactionType.REJ_DDT.getLabel())) {
+        }if(ao.getType().equalsIgnoreCase(ReportTransactionType.REF_DDT.getLabel())) {
         	libCRI="remboursement du paiement : "+ao.getReference().split("_")[0];
         }
         if (ao!=null && ao.getType().equalsIgnoreCase(ReportTransactionType.INV_STD.getLabel())) {
@@ -422,7 +422,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
     }
 
     enum ReportTransactionType {
-        INV_STD("I"), PAY_DDT("P"), COM_PSP("OCC"),REJ_DDT("R");
+        INV_STD("I"), PAY_DDT("P"), COM_PSP("OCC"),REF_DDT("RF");
         String label;
 
         ReportTransactionType(String label) {

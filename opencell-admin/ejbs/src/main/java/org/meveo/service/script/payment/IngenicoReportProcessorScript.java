@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +23,7 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.RejectedPayment;
-import org.meveo.model.payments.RejectedType;
+import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -99,8 +97,7 @@ public class IngenicoReportProcessorScript extends Script {
                 }
               log.info("Processing line OP type="+operationType);
               AccountOperation ao = null;
-              BigDecimal netAmount = StringUtils.isNotBlank((String)recordMap.get(NET_AMOUNT))? new BigDecimal((String) recordMap.get(NET_AMOUNT)):BigDecimal.ZERO;
-              BigDecimal grossAmount = StringUtils.isNotBlank((String)recordMap.get(GROSS_AMOUNT))? new BigDecimal((String) recordMap.get(GROSS_AMOUNT)):BigDecimal.ZERO;
+             BigDecimal netAmount = StringUtils.isNotBlank((String)recordMap.get(NET_AMOUNT))? new BigDecimal((String) recordMap.get(NET_AMOUNT)):BigDecimal.ZERO;
                 if (operationType.equalsIgnoreCase(TDEB_OPERATION_TYPE)) {
                 	ao = findByReferenceAndType(transactionID,"P");
                 	if(ao!=null) {
@@ -114,8 +111,8 @@ public class IngenicoReportProcessorScript extends Script {
  
                 }  else if (operationType.equalsIgnoreCase(TREF_OPERATION_TYPE)) {
                 	  log.info("Found TREF transaction Id="+transactionID);
-                	ao = findByReferenceAndType(transactionID,"R");
-                	Payment paymentAo = (Payment) findByReferenceAndType(transactionID, "P","AP");
+                	ao = findByReferenceAndType(transactionID,"RF");
+                	Payment paymentAo = (Payment) findByReferenceAndType(transactionID, "P");
                 	
                 	if(paymentAo==null) {
                 		 log.error(format("Payment refund [%s] has no correspending with payment operation", transactionID));
@@ -125,44 +122,38 @@ public class IngenicoReportProcessorScript extends Script {
                      log.info("create Rejected payment="+transactionID+"...");
                 	netAmount=	netAmount.divide(new BigDecimal(100));
                 	String occTemplateCode=null;
-                	RejectedPayment rejectedPayment = new RejectedPayment();
-                    rejectedPayment.setType("R");
-                    rejectedPayment.setDepositDate(dateFormat.parse(paymentDate));
-                    rejectedPayment.setPaymentInfo2(netAmount+"");
-            		rejectedPayment.setPaymentInfo4(commissionAmount+""); 
-                    rejectedPayment.setReference(transactionID+"_0"); 
-                    rejectedPayment.setMatchingStatus(MatchingStatusEnum.O);
-                    rejectedPayment.setUnMatchingAmount(grossAmount);
-                    rejectedPayment.setAmount(grossAmount);
-                    OCCTemplate occTemplate = occTemplateService.findByCode("REJ_DDT");
+                	Refund refundPayment = new Refund();
+                    refundPayment.setType("RF");
+                    refundPayment.setDepositDate(dateFormat.parse(paymentDate));
+                    refundPayment.setReference(transactionID+"_1"); 
+                    refundPayment.setMatchingStatus(MatchingStatusEnum.O);
+                    refundPayment.setUnMatchingAmount(netAmount);
+                    refundPayment.setAmount(netAmount);
+                    OCCTemplate occTemplate = occTemplateService.findByCode("REF_DDT");
                     if (occTemplate == null) {
                         throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
                     }
-                    rejectedPayment.setCustomerAccount(paymentAo.getCustomerAccount());
-                    rejectedPayment.setAccountingCode(occTemplate.getAccountingCode());
-                    rejectedPayment.setCode(occTemplate.getCode());
-                    rejectedPayment.setDescription(occTemplate.getDescription());
-                    rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
-                    rejectedPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
-                    rejectedPayment.setPaymentMethod(paymentAo.getPaymentMethod());   
-                    rejectedPayment.setRejectedType(RejectedType.M);
-                    rejectedPayment.setRejectedDate(new Date());
-                    rejectedPayment.setTransactionDate(new Date());
-                    rejectedPayment.setRejectedDescription("Manual refund in ingenico plateforme");
-                    rejectedPayment.setRejectedCode("RJCT"); 
+                    refundPayment.setCustomerAccount(paymentAo.getCustomerAccount());
+                    refundPayment.setAccountingCode(occTemplate.getAccountingCode());
+                    refundPayment.setCode(occTemplate.getCode());
+                    refundPayment.setDescription(occTemplate.getDescription());
+                    refundPayment.setTransactionCategory(occTemplate.getOccCategory());
+                    refundPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+                    refundPayment.setPaymentMethod(paymentAo.getPaymentMethod());
+                    refundPayment.setTransactionDate(new Date()); 
 
-                    accountOperationService.create(rejectedPayment);
-                    log.info(format("rejected payment [%s] created", transactionID));
+                    accountOperationService.create(refundPayment);
+                    log.info(format("refund payment [%s] created", transactionID));
                     List<Long> aos = new ArrayList<>();
                     aos.add(paymentAo.getId());
-                    aos.add(rejectedPayment.getId());
+                    aos.add(refundPayment.getId());
                     matchingCodeService.matchOperations(paymentAo.getCustomerAccount().getId(), paymentAo.getCustomerAccount().getCode(), aos, null);
                 	}else {
-                		RejectedPayment rejectedPayment=(RejectedPayment)ao;
-                		rejectedPayment.setDepositDate(dateFormat.parse(paymentDate));
-                		rejectedPayment.setPaymentInfo2(netAmount+"");
-                		rejectedPayment.setPaymentInfo4(commissionAmount+""); 
-                		accountOperationService.update(rejectedPayment);
+                		Refund refund=(Refund)ao;
+                		refund.setDepositDate(dateFormat.parse(paymentDate));
+                		refund.setPaymentInfo2(netAmount+"");
+                		refund.setPaymentInfo4(commissionAmount+""); 
+                		accountOperationService.update(refund);
                 	}
                 	
                 	
@@ -251,11 +242,11 @@ public class IngenicoReportProcessorScript extends Script {
             return description;
         }
     }
-    public AccountOperation findByReferenceAndType(String reference,String... type) {
+    public AccountOperation findByReferenceAndType(String reference,String type) {
         try {
             QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a");
             qb.addCriterionWildcard("reference", reference+"*", true);
-            qb.addCriterionInList("type", Arrays.asList(type),"in");
+            qb.addCriterion("type", "=", type, true);
             return (AccountOperation) qb.getQuery(accountOperationService.getEntityManager()).getSingleResult();
         } catch (NoResultException ne) {
             return null;

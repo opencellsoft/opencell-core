@@ -92,21 +92,18 @@ public class CustomIngenicoGatewayRefundScript extends PaymentScript {
     	if(ao!=null && ao instanceof RecordedInvoice ) {
           log.info("OK1----");
     		RecordedInvoice recordedInvoice=(RecordedInvoice)ao; 
-    		log.info("RecordedInvoice ID ==="+ao.getId()+"Status=="+recordedInvoice.getMatchingStatus());
-    		//credit note 
+    		log.info("RecordedInvoice ID = "+ao.getId()+"Status= "+recordedInvoice.getMatchingStatus());
+    		//credit note --> avoir
     		Invoice creditNote=recordedInvoice.getInvoice()!=null?recordedInvoice.getInvoice():null; 
-    		if(creditNote!=null) {
-              log.info("OK2----");
+    		if(creditNote!=null) { 
     			//commercial invoice  
-    			if(!creditNote.getLinkedInvoices().isEmpty()) {
-                  log.info("OK3----");
+    			if(!creditNote.getLinkedInvoices().isEmpty()) { 
     				if(creditNote.getLinkedInvoices().size()>1) {
     					throw new BusinessException("the credit note "+creditNote.getInvoiceNumber() +" has more than one orignal invoice");
     				}
     				Invoice originalInvoice = creditNote.getLinkedInvoices().iterator().next();
 
-    				if(originalInvoice!=null) {
-                      log.info("OK4----");
+    				if(originalInvoice!=null) { 
     					//AO of commercial invoice
     					RecordedInvoice linkedAo=recordedInvoiceService.findByInvoiceId(originalInvoice.getId());
     					if(linkedAo==null) {
@@ -131,7 +128,7 @@ public class CustomIngenicoGatewayRefundScript extends PaymentScript {
     								}
     								accountOperationService.remove(refundAOId);
     							}
-    							log.info("RecordedInvoice NO payment ==="+ao.getId()+"Status=="+recordedInvoice.getMatchingStatus());
+    							log.info("RecordedInvoice NO payment ="+ao.getId()+"Status=="+recordedInvoice.getMatchingStatus());
     							List<Long> listReferenceToMatch = new ArrayList<Long>();
     							listReferenceToMatch.add(recordedInvoice.getId());
     							listReferenceToMatch.add(linkedAo.getId());
