@@ -18,8 +18,6 @@
 
 package org.meveo.api.billing;
 
-import static org.meveo.commons.utils.StringUtils.isNotBlank;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -185,6 +183,8 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.PaymentMethodService;
+
+import static org.meveo.commons.utils.StringUtils.isNotBlank;
 
 /**
  * @author Edward P. Legaspi
@@ -2841,8 +2841,8 @@ public class SubscriptionApi extends BaseApi {
         }
         if (subscription.getSubscriptionDate().after(new Date())) {
             subscription.setStatus(SubscriptionStatusEnum.PENDING);
-        }else {
-            subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+        } else {
+            subscription.setStatus(SubscriptionStatusEnum.CREATED);
         }
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
