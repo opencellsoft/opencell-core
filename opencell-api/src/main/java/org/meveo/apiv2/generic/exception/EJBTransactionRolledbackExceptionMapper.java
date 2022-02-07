@@ -1,6 +1,7 @@
 package org.meveo.apiv2.generic.exception;
 
 import org.jboss.resteasy.api.validation.Validation;
+import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class EJBTransactionRolledbackExceptionMapper implements ExceptionMapper<
     @Override
     public Response toResponse(EJBTransactionRolledbackException exception) {
         log.error("A client exception occurred ", exception);
-        return Response.status(Response.Status.BAD_REQUEST).entity(exceptionSerializer.toApiError(exception))
+        return Response.status(Response.Status.BAD_REQUEST).entity(exceptionSerializer.rootCauseToApiError(exception))
                 .type(MediaType.APPLICATION_JSON).header(Validation.VALIDATION_HEADER, "true")
                 .build();
     }

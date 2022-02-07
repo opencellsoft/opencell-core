@@ -42,6 +42,27 @@ class ExceptionSerializer {
                 .build();
     }
 
+    public ApiException rootCauseToApiError(Exception exception) {
+        Throwable throwable = getRootCause(exception);
+
+        return ImmutableApiException.builder()
+                .status(status)
+                .details(throwable.getMessage() != null ? throwable.getMessage() : getStackTrace(throwable.getStackTrace()))
+                .build();
+    }
+
+
+
+public Throwable getRootCause(Throwable e) {
+    Throwable cause = null;
+    Throwable result = e;
+
+    while(null != (cause = result.getCause())  && (result != cause) ) {
+        result = cause;
+    }
+    return result;
+}
+
     private String getStackTrace(StackTraceElement[] stackTrace) {
         return Arrays.stream(stackTrace)
                 .map(StackTraceElement::toString)
