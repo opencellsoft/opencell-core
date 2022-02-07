@@ -304,7 +304,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             discountPlanService.commit();
         	} catch (Exception e) {
                 if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
-                    throw new DeleteReferencedEntityException(DiscountPlan.class, code);
+                    throw new BusinessException("The discount plan with code "+entity.getCode()+" is referenced, it Cannot be deleted");
                 }
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
             }
