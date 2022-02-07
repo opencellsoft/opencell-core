@@ -3565,6 +3565,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
+        if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
+            List<InvoiceLine> invoiceLines = invoice.getInvoiceLines();
+            subscriptionApplicableDiscountPlanItems.addAll(invoiceLines.stream()
+                    .filter(invoiceLine -> invoiceLine.getDiscountPlan() != null)
+                    .map(InvoiceLine::getDiscountPlan)
+                    .map(DiscountPlan::getDiscountPlanItems)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList()));
+        }
+
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
