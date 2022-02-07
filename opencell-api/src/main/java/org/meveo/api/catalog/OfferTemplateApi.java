@@ -526,6 +526,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     private void processCommercialRule(OfferTemplateDto postData, OfferTemplate offerTemplate) {
 		Set<String> commercialRuleCodes = new HashSet<String>(postData.getCommercialRuleCodes());
+        offerTemplate.getCommercialRules().clear();
 		if(commercialRuleCodes!= null && !commercialRuleCodes.isEmpty()) {
 			for (String commercialCode : commercialRuleCodes) {
 				CommercialRuleHeader commercialRuleHeader = loadEntityByCode(commercialRuleHeaderService, commercialCode, CommercialRuleHeader.class);
