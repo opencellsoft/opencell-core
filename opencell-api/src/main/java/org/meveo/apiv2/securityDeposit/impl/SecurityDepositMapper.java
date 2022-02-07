@@ -35,6 +35,8 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .subscription(createResource(entity.getSubscription()))
                 .serviceInstance(createResource(entity.getServiceInstance()))
                 .externalReference(entity.getExternalReference())
+                .refundReason(entity.getRefundReason())
+                .cancelReason(entity.getCancelReason())
                 .build();
     }
 
@@ -43,7 +45,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         return toEntity(new SecurityDeposit(), resource);
     }
 
-    private SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
+    protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
         securityDeposit.setId(resource.getId());
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
@@ -82,6 +84,8 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             securityDeposit.setServiceInstance(serviceInstance);
         }
         securityDeposit.setExternalReference(resource.getExternalReference());
+        securityDeposit.setRefundReason(resource.getRefundReason());
+        securityDeposit.setCancelReason(resource.getCancelReason());
         return securityDeposit;
     }
 
