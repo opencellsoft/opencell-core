@@ -584,7 +584,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
                 Contract contract = null;
                 if(contracts != null && !contracts.isEmpty()) {
-                	contract = contractService.getContractByAccount(customer, billingAccount, customerAccount).get(0);
+                	contract = contracts.get(0);
                 }
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
