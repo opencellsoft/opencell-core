@@ -885,31 +885,31 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     
     
     @SuppressWarnings("unchecked")
-    public List<CounterInstance> findByCounterAndAccounts(String counterTemplateCode,CounterTemplateLevel level) { 
-    	List<CounterInstance> counterInstances=new ArrayList<>();
+    public List<Long> findByCounterAndAccounts(String counterTemplateCode,CounterTemplateLevel level) { 
+    	List<Long> ids=new ArrayList<>();
     	try {
     		if(CounterTemplateLevel.CA.equals(level)){
-    			counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomer")
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomer")
     					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
 			}
     		if(CounterTemplateLevel.CUST.equals(level)){ 
-    			counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomerAccount")
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomerAccount")
     					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
 			}
     		if(CounterTemplateLevel.BA.equals(level)) {
-    			counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndBillingAccount")
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndBillingAccount")
     					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
 			}
     		if(CounterTemplateLevel.UA.equals(level)){ 
-    			counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndUserAccount")
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndUserAccount")
     					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
 			}
     		if(CounterTemplateLevel.SU.equals(level)){ 
-    			counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndSubscription")
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndSubscription")
     					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
 			}
     		if(CounterTemplateLevel.SI.equals(level)){
-    			counterInstances = (List<CounterInstance>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndService")
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndService")
     					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
     		}
     		
@@ -918,7 +918,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     		log.error("findByCounterAndAccounts error ", e.getMessage());
     	}
 
-    	return counterInstances;
+    	return ids;
     }    
     
 
