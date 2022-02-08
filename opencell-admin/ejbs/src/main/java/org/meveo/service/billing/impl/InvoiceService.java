@@ -5672,7 +5672,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             org.meveo.apiv2.billing.SubCategoryInvoiceAgregate subCatInvAgr, InvoiceSubCategory invoiceSubCategory, SubCategoryInvoiceAgregate invoiceAgregateSubcat) {
         if (subCatInvAgr.getInvoiceLines() != null) {
             for (org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource : subCatInvAgr.getInvoiceLines()) {
-                InvoiceLine il = invoiceLinesService.initInvoiceLineFromRessource(invoiceLineRessource, null);
+                InvoiceLine il = invoiceLinesService.initInvoiceLineFromResource(invoiceLineRessource, null);
                 linkIL(invoice, invoiceAgregateSubcat, il, isEnterprise);
             }
         }
