@@ -68,7 +68,7 @@ public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
 		List<Long> ids=new ArrayList<>();
 		if(!counterTemplates.isEmpty()) {
 			for(CounterTemplate counterTemplate : counterTemplates) {
-				ids.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
+				ids.addAll(counterInstanceService.findByCounterAndAccount(counterTemplate.getCode(),counterTemplate.getCounterLevel()));
 			}
 		}
 		   return Optional.of(new SynchronizedIterator<Long>(ids));
@@ -97,12 +97,12 @@ public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
 					if(counterInstance!=null) {
 					for(ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
 					counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-							counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+							chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),chargeInstance,counterInstance.getServiceInstance());
 					}
 					//UsageChargeInstances
 					for(ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
 						counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+						chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),chargeInstance,counterInstance.getServiceInstance());
 				}
 					}
 				}
