@@ -66,7 +66,7 @@ public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
         List<Long> ids = new ArrayList<>();
         if (!counterTemplates.isEmpty()) {
             for (CounterTemplate counterTemplate : counterTemplates) {
-                ids.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
+                ids.addAll(counterInstanceService.findByCounterAndAccount(counterTemplate.getCode(),counterTemplate.getCounterLevel()));
             }
         }
         return Optional.of(new SynchronizedIterator<Long>(ids));
@@ -93,13 +93,13 @@ public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
                     // accumulator chargeInstance
                     CounterInstance counterInstance = counterInstanceService.findById(id);
                     for (ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
-                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), counterInstance.getServiceInstance().getSubscriptionDate(),
+                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),
                             chargeInstance);
                         break;
                     }
                     // UsageChargeInstances
                     for (ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
-                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), counterInstance.getServiceInstance().getSubscriptionDate(),
+                        counterInstanceService.createCounterPeriodIfMissing(counterInstance, applicationDate != null ? applicationDate : new Date(), chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),
                             chargeInstance);
                         break;
                     }
