@@ -186,7 +186,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceLinesInput = invoiceApiService.createLines(invoice, invoiceLinesInput);
-		if(invoiceLinesInput.getSkipValidation()==null || !invoiceLinesInput.getSkipValidation()) {
+		if(invoiceLinesInput.getSkipValidation() == null || !invoiceLinesInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
 		}
 		return Response.ok().entity(invoiceLinesInput).build();
