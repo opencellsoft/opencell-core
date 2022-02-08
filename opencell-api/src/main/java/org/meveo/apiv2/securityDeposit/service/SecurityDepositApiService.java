@@ -173,7 +173,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         return of(securityDepositInput);
     }
 
-    private void linkRealEntities(SecurityDeposit securityDepositInput) {
+    public void linkRealEntities(SecurityDeposit securityDepositInput) {
         if (securityDepositInput.getTemplate() != null) {
             SecurityDepositTemplate securityDepositTemplate = securityDepositTemplateService.tryToFindByCodeOrId(securityDepositInput.getTemplate());
             securityDepositInput.setTemplate(securityDepositTemplate);
