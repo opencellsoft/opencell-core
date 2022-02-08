@@ -220,7 +220,12 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
                 @Override
                 protected String getTableName() {
-                    return tableName;
+                    if ("crm_customer".equalsIgnoreCase(tableName) || "ar_customer_account".equalsIgnoreCase(tableName) || "billing_billing_account".equalsIgnoreCase(tableName)
+                            || "billing_user_account".equalsIgnoreCase(tableName) || "com_contact".equalsIgnoreCase(tableName) || "crm_seller".equalsIgnoreCase(tableName)) {
+                        return "account_entity";
+                    } else {
+                        return tableName;
+                    }
                 }
 
                 @Override
@@ -303,7 +308,13 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
                             PaginationConfiguration criteria = new PaginationConfiguration(Map.of("inList " + NativePersistenceService.FIELD_ID, ids));
                             criteria.setFetchFields(Arrays.asList(NativePersistenceService.FIELD_ID, FIELD_CODE, FIELD_DESCRIPTION));
-                            List<Map<String, Object>> values = customTableService.list(referenceInfo.getValue().tableName, criteria);
+                            String refTableName = referenceInfo.getValue().tableName;
+                            if ("crm_customer".equalsIgnoreCase(refTableName) || "ar_customer_account".equalsIgnoreCase(refTableName) || "billing_billing_account".equalsIgnoreCase(refTableName)
+                                    || "billing_user_account".equalsIgnoreCase(refTableName) || "com_contact".equalsIgnoreCase(refTableName) || "crm_seller".equalsIgnoreCase(refTableName)) {
+                                refTableName = "account_entity";
+                            }
+
+                            List<Map<String, Object>> values = customTableService.list(refTableName, criteria);
                             Map<String, String> valuesById = values.stream().collect(Collectors.toMap(map -> map.get(NativePersistenceService.FIELD_ID).toString(),
                                 map -> (String) (map.get(FIELD_DESCRIPTION) != null ? map.get(FIELD_CODE) + " / " + map.get(FIELD_DESCRIPTION) : map.get(FIELD_CODE))));
 
