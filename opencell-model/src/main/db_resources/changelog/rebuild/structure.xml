@@ -11930,6 +11930,10 @@
 		<addUniqueConstraint columnNames="code, dunning_level_instance_id" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
 	</changeSet>
 
+    <changeSet id="#INTRD-4777_20200208-rebuild-str-uk" author="HichamELHALOUI">
+		<addUniqueConstraint columnNames="template_name" constraintName="uk_security_deposit_template_name" deferrable="false" disabled="false" initiallyDeferred="false" tableName="security_deposit_templat" />
+	</changeSet>
+
     <!-- end uk -->
     <!-- start fk -->
 
@@ -17066,6 +17070,7 @@
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham" />
+    <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
