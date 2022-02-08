@@ -33,6 +33,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -64,7 +65,7 @@ public class CounterPeriodJobBean extends BaseJobBean {
 		List<CounterInstance> counterInstances=new ArrayList<CounterInstance>();
 		if(!counterTemplates.isEmpty()) {
 			for(CounterTemplate counterTemplate : counterTemplates) {
-				counterInstances.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
+			    counterInstances.addAll(counterInstanceService.findByCounterAndAccounts(counterTemplate.getCode(),counterTemplate.getCounterLevel()));					
 			}
 		}
 		return counterInstances;
@@ -87,7 +88,7 @@ public class CounterPeriodJobBean extends BaseJobBean {
 					//UsageChargeInstances
 					for(ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
 						counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+								chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),chargeInstance,chargeInstance.getServiceInstance());
 				}
 				}
 			}
