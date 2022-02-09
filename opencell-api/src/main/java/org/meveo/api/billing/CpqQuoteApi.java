@@ -1226,7 +1226,7 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
-        clearExistingQuotations(quoteVersion);
+        cpqQuoteService.clearExistingQuotations(quoteVersion);
 
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
 
@@ -1472,22 +1472,6 @@ public class CpqQuoteApi extends BaseApi {
         return null;
     }
 
-    private void clearExistingQuotations(QuoteVersion quoteVersion) {
-        if(quoteVersion.getQuoteArticleLines() != null) {
-             if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
-                 quoteVersion.getQuoteArticleLines()
-                         .stream()
-                         .forEach(
-                        		 quoteArticleLine -> {
-                        			 quoteArticleLineService.remove(quoteArticleLine);
-                        			 quoteArticleLineService.commit();
-                        		 });
-                 quoteVersion.getQuoteArticleLines().clear();
-                 quoteVersionService.update(quoteVersion);
-                 quoteVersionService.commit();
-             }
-        }
-    }
 
     @SuppressWarnings("unused")
     public List<WalletOperation> quoteRating(Subscription subscription, boolean isVirtual) throws BusinessException {
