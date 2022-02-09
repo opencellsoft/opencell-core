@@ -1473,15 +1473,20 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
-            if(quoteVersion.getQuoteArticleLines() != null) {
-                 if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
-                     quoteVersion.getQuoteArticleLines()
-                             .stream()
-                             .forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
-                     quoteVersion.getQuoteArticleLines().clear();
-                     quoteVersionService.update(quoteVersion);
-                 }
-            }
+        if(quoteVersion.getQuoteArticleLines() != null) {
+             if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
+                 quoteVersion.getQuoteArticleLines()
+                         .stream()
+                         .forEach(
+                        		 quoteArticleLine -> {
+                        			 quoteArticleLineService.remove(quoteArticleLine);
+                        			 quoteArticleLineService.commit();
+                        		 });
+                 quoteVersion.getQuoteArticleLines().clear();
+                 quoteVersionService.update(quoteVersion);
+                 quoteVersionService.commit();
+             }
+        }
     }
 
     @SuppressWarnings("unused")
