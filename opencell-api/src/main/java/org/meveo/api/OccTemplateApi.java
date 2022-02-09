@@ -27,18 +27,24 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.OccTemplateDto;
+import org.meveo.api.dto.payment.AccountingSchemeDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.payments.AccountingScheme;
 import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.payments.impl.AccountingSchemeService;
 import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -49,27 +55,21 @@ public class OccTemplateApi extends BaseApi {
 
     @Inject
     private OCCTemplateService occTemplateService;
-    
+
     @Inject
     private AccountingCodeService accountingCodeService;
-    
+
     @Inject
     private JournalReportService journalService;
 
+    @Inject
+    private AccountingSchemeService accountingSchemeService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
+
     public void create(OccTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(OCCTemplate.class.getName(), postData);
-        }
-        if (StringUtils.isBlank(postData.getAccountingCode()) && StringUtils.isBlank(postData.getAccountCode())) {
-            missingParameters.add("accountCode / accountingCode");
-        }
-        if (StringUtils.isBlank(postData.getOccCategory())) {
-            missingParameters.add("occCategory");
-        }
-
-        handleMissingParametersAndValidate(postData);
-
-        
+        validateRequiredParams(postData);
 
         if (occTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(OCCTemplate.class, postData.getCode());
@@ -78,31 +78,21 @@ public class OccTemplateApi extends BaseApi {
         OCCTemplate occTemplate = new OCCTemplate();
         occTemplate.setCode(postData.getCode());
         occTemplate.setDescription(postData.getDescription());
-        if (!StringUtils.isBlank(postData.getAccountingCode())) {
-            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
-            if (accountingCode == null) {
-                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
-            }
-            occTemplate.setAccountingCode(accountingCode);
-        } else {
-            if (!StringUtils.isBlank(postData.getAccountCode())) {
-                AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountCode());
-                if (accountingCode == null) {
-                    throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountCode());
-                }
-                occTemplate.setAccountingCode(accountingCode);
-            }
-        }
+        validateAndSetAccountingCode(postData, occTemplate);
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
         if (!StringUtils.isBlank(postData.getJournalCode())) {
-        	Journal journal = journalService.findByCode(postData.getJournalCode());
+            Journal journal = journalService.findByCode(postData.getJournalCode());
             if (journal == null) {
                 throw new EntityDoesNotExistsException(Journal.class, postData.getJournalCode());
             }
             occTemplate.setJournal(journal);
         }
 
+        if (postData.getAccountingScheme() != null) {
+            AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
+            occTemplate.setAccountingScheme(accountingScheme);
+        }
         occTemplateService.create(occTemplate);
     }
 
@@ -120,38 +110,34 @@ public class OccTemplateApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        
-
         OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode());
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getCode());
         }
         occTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         occTemplate.setDescription(postData.getDescription());
-        if (!StringUtils.isBlank(postData.getAccountingCode())) {
-            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
-            if (accountingCode == null) {
-                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
-            }
-            occTemplate.setAccountingCode(accountingCode);
-        } else {
-            if (!StringUtils.isBlank(postData.getAccountCode())) {
-                AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountCode());
-                if (accountingCode == null) {
-                    throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountCode());
-                }
-                occTemplate.setAccountingCode(accountingCode);
-            }
-        }
+        validateAndSetAccountingCode(postData, occTemplate);
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
-        
+
         if (!StringUtils.isBlank(postData.getJournalCode())) {
-        	Journal journal = journalService.findByCode(postData.getJournalCode());
+            Journal journal = journalService.findByCode(postData.getJournalCode());
             if (journal == null) {
                 throw new EntityDoesNotExistsException(Journal.class, postData.getJournalCode());
             }
             occTemplate.setJournal(journal);
+        }
+
+        if (postData.getAccountingScheme() == null) {
+            // delete old one
+            AccountingScheme accountingScheme = occTemplate.getAccountingScheme();
+            if (accountingScheme != null) {
+                accountingSchemeService.remove(accountingScheme);
+            }
+            occTemplate.setAccountingScheme(null);
+        } else {
+            AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
+            occTemplate.setAccountingScheme(accountingScheme);
         }
 
         occTemplateService.update(occTemplate);
@@ -196,15 +182,14 @@ public class OccTemplateApi extends BaseApi {
 
     /**
      * create or update occ template based on occ template code.
-     * 
+     *
      * @param postData posted data.
-
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception.
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(OccTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        if(!StringUtils.isBlank(postData.getCode()) && occTemplateService.findByCode(postData.getCode()) != null) {
+        if (!StringUtils.isBlank(postData.getCode()) && occTemplateService.findByCode(postData.getCode()) != null) {
             update(postData);
         } else {
             create(postData);
@@ -213,13 +198,13 @@ public class OccTemplateApi extends BaseApi {
 
     /**
      * retrieve a list of occ templates.
+     *
      * @param pagingAndFiltering pagingAndFiltering
      * @return OCCTemplateDto.
      * @throws MeveoApiException meveo api exception.
      */
     public GetOccTemplatesResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
-            OCCTemplate.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering, OCCTemplate.class);
 
         Long totalCount = occTemplateService.count(paginationConfiguration);
 
@@ -231,12 +216,94 @@ public class OccTemplateApi extends BaseApi {
         if (totalCount > 0) {
             List<OCCTemplate> occTemplates = occTemplateService.list(paginationConfiguration);
             if (occTemplates != null) {
-                result.getOccTemplates().setOccTemplate(occTemplates.stream().map(p -> {
-                    return new OccTemplateDto(p);
-                }).collect(Collectors.toList()));
+                result.getOccTemplates().setOccTemplate(occTemplates.stream().map(OccTemplateDto::new).collect(Collectors.toList()));
             }
         }
-        
         return result;
+    }
+
+    /**
+     * create or update an accounting scheme.
+     *
+     * @param dto an accounting scheme DTO
+     * @return an accounting scheme
+     */
+    private AccountingScheme createOrUpdateAccountingScheme(OccTemplateDto dto) {
+
+        AccountingSchemeDto accSchemeDto = dto.getAccountingScheme();
+        ScriptInstance scriptInstance = scriptInstanceService.findByCode(accSchemeDto.getScriptCode());
+
+        if (scriptInstance == null)
+            throw new EntityDoesNotExistsException(ScriptInstance.class, accSchemeDto.getScriptCode());
+        else if ("FILE_ACCOUNTING_SCHEMES".equals(scriptInstance.getScriptInstanceCategory().getCode())) {
+            throw new MissingParameterException("the script with code=" + accSchemeDto.getScriptCode() + " does not belong to category ‘File accounting schemes’");
+        }
+
+        String code = accSchemeDto.getCode();
+        if (StringUtils.isNotBlank(code)) {
+            AccountingScheme accountingScheme = accountingSchemeService.findByCode(code);
+
+            if (accountingScheme == null) {
+                createNewAccountingScheme(accSchemeDto, scriptInstance, code);
+            } else {
+                updateTheAccountingScheme(accSchemeDto, scriptInstance, accountingScheme);
+            }
+        } else if (StringUtils.isNotBlank(accSchemeDto.getLongDescription())) {
+            code = dto.getCode() + "-" + getGenericCode(OCCTemplate.class.getSimpleName());
+            createNewAccountingScheme(accSchemeDto, scriptInstance, code);
+        }
+        return accountingSchemeService.findByCode(code);
+    }
+
+    private void updateTheAccountingScheme(AccountingSchemeDto accSchemeDto, ScriptInstance scriptInstance, AccountingScheme accountingScheme) {
+        accountingScheme.setDescription(accSchemeDto.getDescription());
+        accountingScheme.setLongDescription(accSchemeDto.getLongDescription());
+        accountingScheme.setScriptInstance(scriptInstance);
+        accountingSchemeService.update(accountingScheme);
+    }
+
+    private void createNewAccountingScheme(AccountingSchemeDto accSchemeDto, ScriptInstance scriptInstance, String code) {
+        AccountingScheme accountingScheme;
+        accountingScheme = new AccountingScheme();
+        accountingScheme.setCode(code);
+        accountingScheme.setDescription(accSchemeDto.getDescription());
+        accountingScheme.setLongDescription(accSchemeDto.getLongDescription());
+        accountingScheme.setScriptInstance(scriptInstance);
+        accountingSchemeService.create(accountingScheme);
+    }
+
+    private void validateRequiredParams(OccTemplateDto postData) {
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(OCCTemplate.class.getName(), postData);
+        }
+        if (StringUtils.isBlank(postData.getAccountingCode()) && StringUtils.isBlank(postData.getAccountCode())) {
+            missingParameters.add("accountCode / accountingCode");
+        }
+        if (StringUtils.isBlank(postData.getOccCategory())) {
+            missingParameters.add("occCategory");
+        }
+        if (postData.getAccountingScheme() != null && StringUtils.isNotBlank(postData.getAccountingScheme().getScriptCode())) {
+            missingParameters.add("accountingScheme -> scriptCode");
+        }
+
+        handleMissingParametersAndValidate(postData);
+    }
+
+    private void validateAndSetAccountingCode(OccTemplateDto postData, OCCTemplate occTemplate) {
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            occTemplate.setAccountingCode(accountingCode);
+        } else {
+            if (!StringUtils.isBlank(postData.getAccountCode())) {
+                AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountCode());
+                if (accountingCode == null) {
+                    throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountCode());
+                }
+                occTemplate.setAccountingCode(accountingCode);
+            }
+        }
     }
 }

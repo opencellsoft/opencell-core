@@ -23,10 +23,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.api.dto.payment.AccountingSchemeDto;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class OccTemplateDto.
@@ -64,6 +64,10 @@ public class OccTemplateDto extends BusinessEntityDto {
     /** The journal code. */
     @Schema(description = "The journal code")
     private String journalCode;
+
+    /** The accounting scheme. */
+    @XmlElement
+    private AccountingSchemeDto accountingScheme;
 
     /**
      * Instantiates a new occ template dto.
@@ -164,12 +168,39 @@ public class OccTemplateDto extends BusinessEntityDto {
         this.accountCode = accountCode;
     }
 
-	public String getJournalCode() {
+    /**
+     * Gets journal code.
+     *
+     * @return the journal code
+     */
+    public String getJournalCode() {
 		return journalCode;
 	}
 
-	public void setJournalCode(String journalCode) {
+    /**
+     * Sets journal code.
+     *
+     * @param journalCode the journal code
+     */
+    public void setJournalCode(String journalCode) {
 		this.journalCode = journalCode;
 	}
-    
+
+    /**
+     * Gets accounting scheme.
+     *
+     * @return the accounting scheme
+     */
+    public AccountingSchemeDto getAccountingScheme() {
+        return accountingScheme;
+    }
+
+    /**
+     * Sets accounting scheme.
+     *
+     * @param accountingScheme the accounting scheme
+     */
+    public void setAccountingScheme(AccountingSchemeDto accountingScheme) {
+        this.accountingScheme = accountingScheme;
+    }
 }
