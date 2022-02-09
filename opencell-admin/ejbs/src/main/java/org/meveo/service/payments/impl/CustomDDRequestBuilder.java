@@ -30,6 +30,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.payment.DDRequestBuilderScript;
 import org.meveo.service.script.payment.DDRequestBuilderScriptInterface;
 import org.slf4j.Logger;
@@ -65,9 +66,8 @@ public class CustomDDRequestBuilder extends AbstractDDRequestBuilder {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);
         scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);
-        scriptContext.put(DDRequestBuilderScript.RESULT_VALUE, result);
+        scriptContext.put(Script.RESULT_VALUE, result);
         ddRequestBuilderScriptInterface.generateDDRequestLotFile(scriptContext);
-        result = (JobExecutionResultImpl) scriptContext.get(DDRequestBuilderScript.RESULT_VALUE);
     }
 
     @Override
