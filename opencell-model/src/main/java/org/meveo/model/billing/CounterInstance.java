@@ -53,7 +53,14 @@ import org.meveo.model.shared.DateUtils;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
 @NamedQueries({ 
-	@NamedQuery(name = "CounterInstance.findByCounterAndActiveService", query = "SELECT ci FROM CounterInstance ci left join ci.serviceInstance si where si.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode")
+	@NamedQuery(name = "CounterInstance.findByCounterAndCustomer", query = "SELECT ci FROM CounterInstance ci left join ci.customer ca where ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndCustomerAccount", query = "SELECT ci.id FROM CounterInstance ci left join ci.customerAccount cust where cust.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndBillingAccount", query = "SELECT ci.id FROM CounterInstance ci left join ci.billingAccount ba where ba.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndUserAccount", query = "SELECT ci.id FROM CounterInstance ci left join ci.userAccount ua where ua.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndSubscription", query = "SELECT ci.id FROM CounterInstance ci left join ci.subscription su where su.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndService", query = "SELECT ci.id FROM CounterInstance ci left join ci.serviceInstance si where si.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode")
+	
+	
 })
 public class CounterInstance extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;

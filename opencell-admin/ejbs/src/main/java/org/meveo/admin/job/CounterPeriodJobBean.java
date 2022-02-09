@@ -33,6 +33,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -59,12 +60,12 @@ public class CounterPeriodJobBean extends BaseJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	
-	private List<CounterInstance> getCounterInstances() {
+	private List<Long> getCounterInstances() {
 		List<CounterTemplate> counterTemplates= counterTemplateService.listAll();
-		List<CounterInstance> counterInstances=new ArrayList<CounterInstance>();
+		List<Long> counterInstances=new ArrayList<>();
 		if(!counterTemplates.isEmpty()) {
 			for(CounterTemplate counterTemplate : counterTemplates) {
-				counterInstances.addAll(counterInstanceService.findByCounterAndActiveService(counterTemplate.getCode()));
+			    counterInstances.addAll(counterInstanceService.findByCounterAndAccounts(counterTemplate.getCode(),counterTemplate.getCounterLevel()));					
 			}
 		}
 		return counterInstances;
@@ -76,21 +77,23 @@ public class CounterPeriodJobBean extends BaseJobBean {
 		Date applicationDate = (Date) this.getParamOrCFValue(jobInstance, "applicationDate");
 
 		try {
-			List<CounterInstance> counterInstances=getCounterInstances();
-			if(!counterInstances.isEmpty()) {
-				for(CounterInstance counterInstance : counterInstances) {
+			List<Long> counterInstanceIds=getCounterInstances();
+			if(!counterInstanceIds.isEmpty()) {
+				 for (Long id : counterInstanceIds) {
+					  CounterInstance counterInstance = counterInstanceService.findById(id);  
 					//accumulator chargeInstance
 					for(ChargeInstance chargeInstance : counterInstance.getChargeInstances()) {
 					counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-							counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+							chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),chargeInstance,counterInstance.getServiceInstance());
 					}
 					//UsageChargeInstances
 					for(ChargeInstance chargeInstance : counterInstance.getUsageChargeInstances()) {
 						counterInstanceService.getOrCreateCounterPeriod(counterInstance,applicationDate!=null?applicationDate:new Date(),
-						counterInstance.getServiceInstance().getSubscriptionDate(),chargeInstance,counterInstance.getServiceInstance());
+								chargeInstance.getSubscription()!=null?chargeInstance.getSubscription().getSubscriptionDate():new Date(),chargeInstance,chargeInstance.getServiceInstance());
 				}
 				}
 			}
+			
 		}catch(Exception e) {
 			log.error("Failed to get or create counterPeriod", e);
 			result.registerError(e.getMessage());
