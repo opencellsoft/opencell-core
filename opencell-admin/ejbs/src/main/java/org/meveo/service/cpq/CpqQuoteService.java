@@ -81,6 +81,12 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
+	
+	@Inject
+	private QuoteArticleLineService quoteArticleLineService;
+	
+	@Inject
+	private QuoteVersionService quoteVersionService;
 
 	@Inject
 	private EmailSender emailSender;
@@ -388,6 +394,24 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        }
 
 	        return null;
+	    }
+	    
+
+	   public void clearExistingQuotations(QuoteVersion quoteVersion) {
+	        if(quoteVersion.getQuoteArticleLines() != null) {
+	             if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
+	                 quoteVersion.getQuoteArticleLines()
+	                         .stream()
+	                         .forEach(
+	                        		 quoteArticleLine -> {
+	                        			 quoteArticleLineService.remove(quoteArticleLine);
+	                        			 quoteArticleLineService.commit();
+	                        		 });
+	                 quoteVersion.getQuoteArticleLines().clear();
+	                 quoteVersionService.update(quoteVersion);
+	                 quoteVersionService.commit();
+	             }
+	        }
 	    }
 	     
 	    /**
