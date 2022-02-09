@@ -8198,7 +8198,7 @@
      
     <changeSet id="#4044_30122021_counter_period_job" author="Mbarek-Ay">
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="id" valueNumeric="-49" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2021-12-30 00:00:00.000" />
             <column name="job_category" value="UTILS" />
