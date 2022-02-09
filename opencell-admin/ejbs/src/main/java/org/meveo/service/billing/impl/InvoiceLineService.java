@@ -438,28 +438,26 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param invoiceLineRessource
+	 * @param invoiceLineResource
 	 * @return
 	 */
-	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
-		InvoiceLine invoiceLine=new InvoiceLine();
+	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
+		InvoiceLine invoiceLine = new InvoiceLine();
 		invoiceLine.setInvoice(invoice);
-		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		create(invoiceLine);
 		return invoiceLine;
 	}
 
-	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
-		if(invoiceLine==null) {
+	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
 		}
 		Optional.ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
 		Optional.ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
 		Optional.ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
 		Optional.ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
-		Optional.ofNullable(resource.getAmountWithoutTax()).ifPresent(invoiceLine::setAmountWithoutTax);
 		Optional.ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
-		Optional.ofNullable(resource.getAmountWithTax()).ifPresent(invoiceLine::setAmountWithTax);
 		Optional.ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
 		Optional.ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
 		Optional.ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
@@ -469,7 +467,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
 		AccountingArticle accountingArticle=null;
-		if (resource.getAccountingArticleCode() != null){
+		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 		}	
 		
@@ -481,10 +479,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 						invoiceLine.setAmountWithTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
 						/****amountWithoutTax and amountWithTax will be recalculated bellow according to tax percent and the business model (b2b or b2c)*/
 					}
-				}else {
+				} else {
 					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 				}
-		}
+		} else {
+            invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
+            invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
+                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+        }
 		
 		
 		if(resource.getServiceInstanceCode()!=null) {
@@ -563,12 +565,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param invoiceLineRessource
+	 * @param invoiceLineResource
 	 * @param invoiceLineId
 	 */
-	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
+	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		update(invoiceLine);
 	}
 
