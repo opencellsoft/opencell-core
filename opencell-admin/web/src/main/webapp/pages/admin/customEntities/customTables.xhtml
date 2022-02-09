@@ -196,7 +196,7 @@
 								</h:outputText>
 								<h:outputText id="#{entity[field.dbFieldname]}_out_entity" value="#{entity[field.dbFieldname.concat('_TXTlabel')]}" styleClass="field-value"
 									rendered="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
-<!-- 									<f:converter converterId="javax.faces.Long" /> -->
+									<!-- 									<f:converter converterId="javax.faces.Long" /> -->
 								</h:outputText>
 							</f:facet>
 							<f:facet name="input">
@@ -350,10 +350,10 @@
 										</p:selectOneMenu>
 									</c:if>
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
-<!-- 										<p:inputText id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" required="#{field.valueRequired}" disabled="true"> -->
-<!-- 											<f:converter converterId="javax.faces.Long" /> -->
-<!-- 										</p:inputText> -->
-										<p:inputText id="#{field.dbFieldname}_TXTlabel" value="#{customTableBean.rowValues[field.dbFieldname.concat('_TXTlabel')]}" disabled="true"/>
+										<!-- 										<p:inputText id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" required="#{field.valueRequired}" disabled="true"> -->
+										<!-- 											<f:converter converterId="javax.faces.Long" /> -->
+										<!-- 										</p:inputText> -->
+										<p:inputText id="#{field.dbFieldname}_TXTlabel" value="#{customTableBean.rowValues[field.dbFieldname.concat('_TXTlabel')]}" disabled="true" />
 										<p:commandButton immediate="true" onclick="PF('#{field.dbFieldname}_dlg').show()" icon="ui-icon-search" type="button" />
 										<p:commandButton immediate="true" rendered="#{!field.valueRequired}" update="#{field.dbFieldname}_TXTlabel" icon="ui-icon-close">
 											<f:setPropertyActionListener target="#{customTableBean.rowValues[field.dbFieldname]}" value="#{null}" />
@@ -391,7 +391,51 @@
 								<p:outputPanel styleClass="search-panel-fields">
 									<c:forEach items="#{customTableBean.getEntityTypeFields(field)}" var="fieldField">
 										<hftl:decorateFormField fieldId="#{fieldField.dbFieldname}" label="#{fieldField.descriptionOrCode}" componentWidth="20">
-											<p:inputText id="#{fieldField.dbFieldname}" value="#{customTableBean.getFieldFilters(field)[fieldField.dbFieldname]}" size="20" maxlength="60" />
+											<c:if test="#{fieldField.fieldType eq CustomFieldTypeEnum.STRING}">
+												<p:inputText id="#{fieldField.dbFieldname}" value="#{customTableBean.getFieldFilters(field)[fieldField.dbFieldname]}" size="20" maxlength="60" />
+											</c:if>
+
+											<c:if test="#{fieldField.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+												<p:selectBooleanButton id="#{fieldField.dbFieldname}" value="#{customTableBean.getFieldFilters(field)[fieldField.dbFieldname]}" size="20" />
+											</c:if>
+											<c:if test="#{fieldField.fieldType eq CustomFieldTypeEnum.DATE}">
+												<p:calendar id="#{fieldField.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" showButtonPanel="true"
+													pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" size="15" />
+											</c:if>
+											<c:if test="#{fieldField.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+												<p:inputText id="#{fieldField.dbFieldname}" value="#{customTableBean.getFieldFilters(field)[fieldField.dbFieldname]}" size="10">
+													<f:convertNumber minFractionDigits="2" />
+													<c:if test="#{fieldField.minValue!=null and fieldField.maxValue!=null}">
+														<f:validateLongRange minimum="#{fieldField.minValue}" maximum="#{fieldField.maxValue}" />
+													</c:if>
+													<c:if test="#fieldField.minValue!=null and fieldField.maxValue==null}">
+														<f:validateLongRange minimum="#{fieldField.minValue}" />
+													</c:if>
+													<c:if test="#{fieldField.minValue==null and fieldField.maxValue!=null}">
+														<f:validateLongRange maximum="#{fieldField.maxValue}" />
+													</c:if>
+												</p:inputText>
+											</c:if>
+											<c:if test="#{fieldField.fieldType eq CustomFieldTypeEnum.LONG or fieldField.fieldType eq CustomFieldTypeEnum.ENTITY}">
+												<p:inputText id="#{fieldField.dbFieldname}" value="#{customTableBean.getFieldFilters(field)[fieldField.dbFieldname]}" size="10">
+													<f:convertNumber integerOnly="true" />
+													<c:if test="#{fieldField.minValue!=null and fieldField.maxValue!=null}">
+														<f:validateLongRange minimum="#{fieldField.minValue}" maximum="#{fieldField.maxValue}" />
+													</c:if>
+													<c:if test="#{fieldField.minValue!=null and fieldField.maxValue==null}">
+														<f:validateLongRange minimum="#{fieldField.minValue}" />
+													</c:if>
+													<c:if test="#{fieldField.minValue==null and fieldField.maxValue!=null}">
+														<f:validateLongRange maximum="#{fieldField.maxValue}" />
+													</c:if>
+												</p:inputText>
+											</c:if>
+											<c:if test="#{fieldField.fieldType eq CustomFieldTypeEnum.LIST}">
+												<p:selectOneMenu id="#{fieldField.dbFieldname}" value="#{customTableBean.getFieldFilters(field)[fieldField.dbFieldname]}">
+													<f:selectItem itemValue="#{null}" itemLabel="" />
+													<f:selectItems value="#{fieldField.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+												</p:selectOneMenu>
+											</c:if>
 										</hftl:decorateFormField>
 									</c:forEach>
 								</p:outputPanel>
