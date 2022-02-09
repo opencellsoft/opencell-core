@@ -18,15 +18,6 @@
 
 package org.meveo.api.rest.account;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
@@ -40,9 +31,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import io.swagger.v3.oas.annotations.Operation;
-
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
@@ -120,8 +114,14 @@ public interface UserAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{userAccountCode}")
-    @Operation(summary = "Remove an existing user account with a given code", tags = { "User account management" })
-    ActionStatus remove(@PathParam("userAccountCode") String userAccountCode);
+    @Operation(summary = "Remove an existing user account with a given code", tags = { "User account management" },
+    responses = {
+            @ApiResponse(responseCode="200", description = "the user account is successfully deleted",
+                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "unknown user account code"),
+            @ApiResponse(responseCode = "400", description = "the user account is referenced")
+    })
+    Response remove(@PathParam("userAccountCode") String userAccountCode);
 
     /**
      * List user accounts filtered by a billing account's code.

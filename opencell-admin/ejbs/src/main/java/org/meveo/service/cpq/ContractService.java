@@ -117,14 +117,12 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-    public Contract getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
-
-		try {
-			return (Contract) getEntityManager().createNamedQuery("Contract.findByAccounts")
+    public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
+    	try {
+			return getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).getSingleResult();
-
-        } catch (NoResultException e) {
+					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
+    	} catch (NoResultException e) {
             return null;
         }
     }

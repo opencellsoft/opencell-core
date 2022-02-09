@@ -393,10 +393,7 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
      * @return paymentMethod updated.
      */
     public final PaymentMethod updateFromDto(PaymentMethod paymentMethod) {
-        if (isPreferred()) {
-            paymentMethod.setPreferred(true);
-        }
-
+        paymentMethod.setPreferred(isPreferred());
         if (getAlias() != null) {
             paymentMethod.setAlias(getAlias());
         }
