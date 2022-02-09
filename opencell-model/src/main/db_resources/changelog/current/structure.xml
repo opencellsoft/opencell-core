@@ -4051,5 +4051,9 @@ END $$;]]>
 	      	<column name="charge_instance_id"/>
 	  	</createIndex>
 	</changeSet>
-	
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="crm_customer">
+            <column name="anonymization_date" type="datetime" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
