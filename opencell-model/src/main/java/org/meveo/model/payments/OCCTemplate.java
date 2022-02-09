@@ -56,7 +56,7 @@ public class OCCTemplate extends BusinessEntity {
     /**
      * @deprecated As of version 5.0. All accountingCode now use {@link #accountingCode}
      */
-    @Deprecated
+    @Deprecated(since = "5.0")
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
     private String accountCodeClientSide;
@@ -71,6 +71,13 @@ public class OCCTemplate extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "journal_id")
     private Journal journal;
+
+    /**
+     * AccountingScheme
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_scheme_code")
+    private AccountingScheme accountingScheme;
 
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
@@ -133,4 +140,11 @@ public class OCCTemplate extends BusinessEntity {
 		this.journal = journal;
 	}
 
+    public AccountingScheme getAccountingScheme() {
+        return accountingScheme;
+    }
+
+    public void setAccountingScheme(AccountingScheme accountingScheme) {
+        this.accountingScheme = accountingScheme;
+    }
 }

@@ -9398,5 +9398,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
 		</insert>
 	</changeSet>
-   
+	<changeSet id="#INTRD-4950-20220208" author="MohammedSTITANE">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="FILE_ACCOUNTING_SCHEMES"/>
+			<column name="description" value="File accounting schemes"/>
+		</insert>
+	</changeSet>
 </databaseChangeLog>
