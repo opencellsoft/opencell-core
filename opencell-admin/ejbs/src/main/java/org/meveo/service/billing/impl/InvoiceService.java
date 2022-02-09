@@ -2147,10 +2147,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
+        produceInvoicePdfNoUpdate(invoice);
         if (!xmlFile.exists()) {
             throw new BusinessException("Invoice XML was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
         }
-
         try {
             return new String(Files.readAllBytes(Paths.get(xmlFileName)), StandardCharsets.UTF_8);
         } catch (Exception e) {
