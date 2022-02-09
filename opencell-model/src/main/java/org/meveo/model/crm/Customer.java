@@ -21,9 +21,11 @@ package org.meveo.model.crm;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +36,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
@@ -73,6 +77,13 @@ public class Customer extends AccountEntity implements IWFEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * anonymization date
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "anonymization_date")
+    private Date anonymizationDate;
+
+    /**
      * Address book
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -110,6 +121,18 @@ public class Customer extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
+
+    public Date getAnonymizationDate() {
+        return anonymizationDate;
+    }
+
+    public void setAnonymizationDate(Date anonymizationDate) {
+        this.anonymizationDate = anonymizationDate;
+    }
+
+    public boolean isAnonymized(){
+        return anonymizationDate != null;
+    }
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -189,6 +212,7 @@ public class Customer extends AccountEntity implements IWFEntity {
         if (isNotEmpty(this.customerAccounts)) {
             this.customerAccounts.forEach(ca -> ca.anonymize(code));
         }
+        setAnonymizationDate(new Date());
     }
 
 }

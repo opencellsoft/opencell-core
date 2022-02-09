@@ -83,7 +83,8 @@
 										label="#{messages['seller.parent']}" field="seller"
 										valueLabelField="descriptionOrCode" listBean="#{sellerBean}" listenerUpdate="@this"/> 
 <!--                                         popup="true" popupId="sellerParentPopup" /> -->
-								
+								<hftl:formField label="#{messages['customer.anonymized']}" field="anonymizationDate"
+												rendered="#{customerBean.entity.isAnonymized()}" />
 							</p:tab>
 
 
