@@ -163,6 +163,13 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new BadRequestException("The amount should be lesser or equal to maximum amount (of SD template) : " + template.getMaxAmount());
         }
 
+        // Check The if subscription not null the serviceInstance cannot be null 
+        if(securityDepositInput.getSubscription() != null) {
+        	if(securityDepositInput.getServiceInstance() == null) {
+                throw new BadRequestException("The Service Instance is mandatory when the Subscription is selected");
+        	}
+        }
+
         securityDepositService.create(securityDepositInput);
 
         // Increment template.NumberOfInstantiation after each instantiation
