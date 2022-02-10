@@ -67,7 +67,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(securityDepositInput.getCancelReason() != null) {
             msgErrValidation += msgErrValidation == "" ? "Cancel Reason " : "- Cancel Reason ";
         }
-        if(msgErrValidation != "") {
+        if(!"".equals(msgErrValidation)) {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
         
