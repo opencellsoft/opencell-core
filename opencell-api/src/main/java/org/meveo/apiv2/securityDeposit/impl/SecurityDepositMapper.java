@@ -29,9 +29,13 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .validityPeriod(entity.getValidityPeriod())
                 .validityPeriodUnit(entity.getValidityPeriodUnit())
                 .amount(entity.getAmount())
+                .currentBalance(entity.getCurrentBalance())
+                .status(entity.getStatus())
                 .subscription(createResource(entity.getSubscription()))
                 .serviceInstance(createResource(entity.getServiceInstance()))
                 .externalReference(entity.getExternalReference())
+                .refundReason(entity.getRefundReason())
+                .cancelReason(entity.getCancelReason())
                 .build();
     }
 
@@ -64,7 +68,13 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());
         securityDeposit.setValidityPeriodUnit(resource.getValidityPeriodUnit());
-        securityDeposit.setAmount(resource.getAmount());
+        securityDeposit.setAmount(resource.getAmount());        
+        if(resource.getCurrentBalance() != null) {
+            securityDeposit.setCurrentBalance(resource.getCurrentBalance());
+        }
+        if(resource.getStatus() != null) {
+            securityDeposit.setStatus(resource.getStatus());
+        }
         if (resource.getSubscription() != null) {
             Subscription subscription = new Subscription();
             subscription.setId(resource.getSubscription().getId());
@@ -77,6 +87,12 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             securityDeposit.setServiceInstance(serviceInstance);
         }
         securityDeposit.setExternalReference(resource.getExternalReference());
+        if(resource.getRefundReason() != null) {
+            securityDeposit.setRefundReason(resource.getRefundReason());
+        }
+        if(resource.getCancelReason() != null) {
+            securityDeposit.setCancelReason(resource.getCancelReason());
+        }        
         return securityDeposit;
     }
 
