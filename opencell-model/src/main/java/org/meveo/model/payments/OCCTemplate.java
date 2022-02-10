@@ -76,7 +76,7 @@ public class OCCTemplate extends BusinessEntity {
      * AccountingScheme
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_scheme_code")
+    @JoinColumn(name = "accounting_scheme_id")
     private AccountingScheme accountingScheme;
 
     public String getAccountCodeClientSide() {

@@ -2284,8 +2284,18 @@
     </changeSet>
     <changeSet id="#INTRD-4950_20220209-rebuild" author="MohammedSTITANE">
         <createTable tableName="ar_accounting_scheme">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_accounting_scheme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
             </column>
             <column name="description" type="${type.text}"/>
             <column name="long_description" type="${type.longText}"/>
@@ -2310,7 +2320,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="journal_id" type="bigint" />
-            <column name="accounting_scheme_code" type="varchar(255)" />
+            <column name="accounting_scheme_id" type="${cast.long}"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -15591,8 +15601,8 @@
                                  constraintName="fk_acc_scheme_script_inst_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="meveo_script_instance"/>
-        <addForeignKeyConstraint baseColumnNames="accounting_scheme_code" baseTableName="ar_occ_template" constraintName="fk_occ_tmplt_accnt_scheme_code"
-                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="code"
+        <addForeignKeyConstraint baseColumnNames="accounting_scheme_id" baseTableName="ar_occ_template" constraintName="fk_occ_tmplt_accnt_scheme_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="ar_accounting_scheme"/>
 
     </changeSet>
