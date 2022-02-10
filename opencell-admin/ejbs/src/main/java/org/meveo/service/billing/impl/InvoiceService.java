@@ -207,6 +207,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRPropertiesUtil;
@@ -389,6 +390,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private CpqQuoteService cpqQuoteService;
+
 
     @PostConstruct
     private void init() {
@@ -2147,10 +2149,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
-        produceInvoicePdfNoUpdate(invoice);
         if (!xmlFile.exists()) {
-            throw new BusinessException("Invoice XML was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
-        }
+            produceInvoicePdfNoUpdate(invoice);        }
         try {
             return new String(Files.readAllBytes(Paths.get(xmlFileName)), StandardCharsets.UTF_8);
         } catch (Exception e) {
@@ -2159,6 +2159,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return null;
     }
+   
 
     /**
      * Check if invoice's PDF file exists.
