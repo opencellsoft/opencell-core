@@ -79,7 +79,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
      * @param jobExecutionResult Job execution result
      */
     private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
-
-        ratingService.reRate(walletOperationId, useSamePricePlan);
+    	    	
+        ratingService.reRate(walletOperationId, useSamePricePlan,(Boolean)jobExecutionResult.getJobInstance().getCfValue("ReRatingJob_reRateRecChInst"));
     }
 }
