@@ -4717,6 +4717,7 @@
             <column name="check_threshold" type="varchar(25)"/>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
+            <column name="anonymization_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -15976,6 +15977,7 @@
     <changeSet id="INTRD-2868_20211105" author="TarikFA." />
     <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
 
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
