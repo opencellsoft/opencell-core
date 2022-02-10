@@ -55,9 +55,6 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         
         //Not Allowed in Update
         String msgErrValidation = "";
-        String msgErrValidationTmp = "";
-        msgErrValidationTmp = msgErrValidationTmp +"a";
-        msgErrValidationTmp += "b";
         if(securityDepositInput.getStatus() != null) {
             msgErrValidation = "Status ";
         }  
