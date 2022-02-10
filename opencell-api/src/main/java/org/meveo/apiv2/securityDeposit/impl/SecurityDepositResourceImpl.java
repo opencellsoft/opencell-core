@@ -59,13 +59,13 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             msgErrValidation = "Status ";
         }  
         if(securityDepositInput.getCurrentBalance() != null) {
-            msgErrValidation += msgErrValidation == "" ? "Current Balance " : "- Current Balance ";
+            msgErrValidation += "".equals(msgErrValidation) ? "Current Balance " : "- Current Balance ";
         }
         if(securityDepositInput.getRefundReason() != null) {
-            msgErrValidation += msgErrValidation == "" ? "Refund Reason " : "- Refund Reason ";
+            msgErrValidation += "".equals(msgErrValidation) ? "Refund Reason " : "- Refund Reason ";
         }
         if(securityDepositInput.getCancelReason() != null) {
-            msgErrValidation += msgErrValidation == "" ? "Cancel Reason " : "- Cancel Reason ";
+            msgErrValidation += "".equals(msgErrValidation) ? "Cancel Reason " : "- Cancel Reason ";
         }
         if(!"".equals(msgErrValidation)) {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
