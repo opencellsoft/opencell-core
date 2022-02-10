@@ -1,0 +1,43 @@
+{
+	"info": {
+		"_postman_id": "b48f6c08-6420-461b-b912-6f7e77f5cbad",
+		"name": "outscale",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "configuration",
+			"item": []
+		},
+		{
+			"name": "test",
+			"item": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "territoryCode",
+			"value": ""
+		}
+	]
+}
