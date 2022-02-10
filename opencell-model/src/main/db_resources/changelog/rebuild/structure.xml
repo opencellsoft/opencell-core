@@ -313,6 +313,7 @@
         <createSequence sequenceName="security_deposit_templat_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_transaction_seq" startValue="1" />
+        <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
     </changeSet>
 
 
