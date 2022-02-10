@@ -164,10 +164,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
 
         // Check The if subscription not null the serviceInstance cannot be null 
-        if(securityDepositInput.getSubscription() != null) {
-        	if(securityDepositInput.getServiceInstance() == null) {
-                throw new BadRequestException("The Service Instance is mandatory when the Subscription is selected");
-        	}
+        if(securityDepositInput.getSubscription() != null && securityDepositInput.getServiceInstance() == null) {
+            throw new BadRequestException("The Service Instance is mandatory when the Subscription is selected");
         }
 
         securityDepositService.create(securityDepositInput);
