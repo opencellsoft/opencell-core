@@ -1233,6 +1233,10 @@ public class CpqQuoteApi extends BaseApi {
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
+        if(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
+        		quoteVersion) == null) {
+        	throw new MeveoApiException("The amount of the wallet operation is 0");
+        }
         accountingArticlePrices.addAll(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
         		quoteVersion));
 
