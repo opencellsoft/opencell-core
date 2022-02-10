@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
-import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.model.securityDeposit.ValidityPeriodUnit;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
