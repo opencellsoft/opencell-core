@@ -5342,6 +5342,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
+            invoiceAgregateService.create(scAggregate);
         }
 
         if (moreInvoiceLinesExpected) {

@@ -1432,9 +1432,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
-            } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}",
-                        entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+            } catch (Exception exception) {
+                throw new BusinessException(exception);
             }
         }
 
