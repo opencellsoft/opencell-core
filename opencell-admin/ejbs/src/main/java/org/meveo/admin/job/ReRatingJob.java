@@ -84,8 +84,18 @@ public class ReRatingJob extends Job {
 
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
-
-        result.put("waitingMillis", waitingMillis);
+        
+        CustomFieldTemplate reRateRecChInst = new CustomFieldTemplate();
+        reRateRecChInst.setCode("ReRatingJob_reRateRecChInst");
+        reRateRecChInst.setAppliesTo("JobInstance_" + this.getClass().getSimpleName());
+        reRateRecChInst.setActive(true);
+        reRateRecChInst.setDescription(resourceMessages.getString("ReRatingJob.reRateRecChInst"));
+        reRateRecChInst.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        reRateRecChInst.setValueRequired(false);
+        reRateRecChInst.setDefaultValue("false");
+        reRateRecChInst.setGuiPosition("tab:Configuration:0;field:0");
+        result.put("ReRatingJob_reRateRecChInst", reRateRecChInst);
+        
         return result;
     }
 }

@@ -70,6 +70,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -100,6 +101,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -166,6 +168,13 @@ public class RatingService extends PersistenceService<WalletOperation> {
     
     @Inject
     private ContractItemService contractItemService;
+    
+    @Inject
+    private RecurringChargeInstanceService recurringChargeInstanceService;
+    
+    
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -1072,65 +1081,125 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
-
-        WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
-        if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
-            return;
-        }
-
-        // Change related OPEN or REJECTED Rated transaction status to RERATED
-        RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
-                ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
-            }
-
-        WalletOperation operation = operationToRerate.getUnratedClone();
-        PricePlanMatrix priceplan = operation.getPriceplan();
-        WalletInstance wallet = operation.getWallet();
-        UserAccount userAccount = wallet.getUserAccount();
-
-        if (useSamePricePlan && priceplan != null) {
-            BigDecimal unitAmountWithTax = operation.getUnitAmountWithTax();
-            BigDecimal unitAmountWithoutTax = operation.getUnitAmountWithoutTax();
-
-            if (appProvider.isEntreprise()) {
-                unitAmountWithoutTax = priceplan.getAmountWithoutTax();
-                if (priceplan.getAmountWithoutTaxEL() != null) {
-                    unitAmountWithoutTax = evaluateAmountExpression(priceplan.getAmountWithoutTaxEL(), operation, userAccount, priceplan, unitAmountWithoutTax);
-                    if (unitAmountWithoutTax == null) {
-                        throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithoutTaxEL());
-                    }
-                }
-
-            } else {
-                unitAmountWithTax = priceplan.getAmountWithTax();
-                if (priceplan.getAmountWithTaxEL() != null) {
-                    unitAmountWithTax = evaluateAmountExpression(priceplan.getAmountWithTaxEL(), operation, userAccount, priceplan, unitAmountWithoutTax);
-                    if (unitAmountWithTax == null) {
-                        throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithTaxEL());
-                    }
-                }
-            }
-
-            calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
-
-        } else {
-            operation.setUnitAmountWithoutTax(null);
-            operation.setUnitAmountWithTax(null);
-            operation.setUnitAmountTax(null);
-            operation.setChargeMode(ChargeApplicationModeEnum.RERATING);
-
-            rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
-                priceplan != null ? priceplan.getTradingCurrency() : null);
-        }
-        create(operation);
-
-        getEntityManager().createNamedQuery("WalletOperation.setStatusToReratedWithReratedWo").setParameter("now", new Date()).setParameter("newWo", operation).setParameter("id", operationToRerateId).executeUpdate();
-
-    }
-
+	public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
+		reRate(operationToRerateId, useSamePricePlan,false);
+	}
     /**
+     * Rerate wallet operation
+     *
+     * @param operationToRerateId wallet operation to be rerated
+     * @param useSamePricePlan true if same price plan will be used
+     * @param reRateRecChIns true if the recurringChangeInstance should be reRatin, for example the calendar changing
+     * @throws BusinessException business exception
+     * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+	public void reRate(Long operationToRerateId, boolean useSamePricePlan,boolean reRateRecChIns) throws BusinessException, RatingException {
+
+		WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
+		if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
+			return;
+		}
+
+		ChargeInstance chargeInstance = operationToRerate.getChargeInstance();
+		ChargeMainTypeEnum chargeType = chargeInstance.getChargeMainType();
+		WalletOperation operationReRated = operationToRerate.getUnratedClone();
+
+		if (chargeType == ChargeMainTypeEnum.RECURRING) {
+			RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(operationToRerate.getChargeInstance().getId());
+			if (!reRateRecChIns) {
+
+				Date partFrom = operationToRerate.getStartDate();
+				Date partTo = operationToRerate.getEndDate();
+				Date overallFrom = walletOperationService.getRecurringPeriodStartDate(recurringChargeInstance, operationToRerate.getOperationDate());
+				Date overallTo = walletOperationService.getRecurringPeriodEndDate(recurringChargeInstance, operationToRerate.getOperationDate());
+            	BigDecimal prorata = DateUtils.calculateProrataRatio(partFrom, partTo, overallFrom, overallTo, false);
+
+				if(prorateSubscriptionCharges(operationToRerate, recurringChargeInstance) || prorateTerminationCharges(operationToRerate, recurringChargeInstance) ) {					
+					operationReRated.setQuantity(recurringChargeInstance.getQuantity().multiply(prorata));
+				} else {
+					operationReRated.setQuantity(recurringChargeInstance.getQuantity());
+				}
+				
+
+				log.debug("operationReRated.quantity:" + operationReRated.getQuantity());
+
+			} else {
+
+				recurringChargeInstanceService.rerateRecurringCharge(chargeInstance.getId(), recurringChargeInstance.getSubscriptionDate(),
+						recurringChargeInstance.getNextChargeDate(), false);
+				return;
+			}
+		}
+
+		// Change related OPEN or REJECTED Rated transaction status to RERATED
+		RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
+		if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
+			ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
+		}
+
+		PricePlanMatrix priceplan = operationReRated.getPriceplan();
+		WalletInstance wallet = operationReRated.getWallet();
+		UserAccount userAccount = wallet.getUserAccount();
+
+		if (useSamePricePlan && priceplan != null) {
+			BigDecimal unitAmountWithTax = operationReRated.getUnitAmountWithTax();
+			BigDecimal unitAmountWithoutTax = operationReRated.getUnitAmountWithoutTax();
+
+			if (appProvider.isEntreprise()) {
+				unitAmountWithoutTax = priceplan.getAmountWithoutTax();
+				if (priceplan.getAmountWithoutTaxEL() != null) {
+					unitAmountWithoutTax = evaluateAmountExpression(priceplan.getAmountWithoutTaxEL(), operationReRated, userAccount, priceplan, unitAmountWithoutTax);
+					if (unitAmountWithoutTax == null) {
+						throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithoutTaxEL());
+					}
+				}
+
+			} else {
+				unitAmountWithTax = priceplan.getAmountWithTax();
+				if (priceplan.getAmountWithTaxEL() != null) {
+					unitAmountWithTax = evaluateAmountExpression(priceplan.getAmountWithTaxEL(), operationReRated, userAccount, priceplan, unitAmountWithoutTax);
+					if (unitAmountWithTax == null) {
+						throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithTaxEL());
+					}
+				}
+			}
+
+			calculateAmounts(operationReRated, unitAmountWithoutTax, unitAmountWithTax);
+
+		} else {
+			operationReRated.setUnitAmountWithoutTax(null);
+			operationReRated.setUnitAmountWithTax(null);
+			operationReRated.setUnitAmountTax(null);
+			operationReRated.setChargeMode(ChargeApplicationModeEnum.RERATING);
+
+			rateBareWalletOperation(operationReRated, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
+					priceplan != null ? priceplan.getTradingCurrency() : null);
+		}
+		create(operationReRated);
+
+		getEntityManager().createNamedQuery("WalletOperation.setStatusToReratedWithReratedWo").setParameter("now", new Date()).setParameter("newWo", operationReRated)
+				.setParameter("id", operationToRerateId).executeUpdate();
+
+	}
+
+    private boolean prorateSubscriptionCharges(WalletOperation operationToRerate, RecurringChargeInstance recurringChargeInstance) {
+    	boolean prorateSubscription = recurringChargeInstance.getRecurringChargeTemplate().getSubscriptionProrata() != null
+				&& recurringChargeInstance.getRecurringChargeTemplate().getSubscriptionProrata();
+    	    	
+		if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getSubscriptionProrataEl())) {
+			prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getSubscriptionProrataEl(),
+					recurringChargeInstance.getServiceInstance(), null, recurringChargeInstance.getRecurringChargeTemplate(), recurringChargeInstance);
+		}
+				
+		return prorateSubscription  && DateUtils.compare(recurringChargeInstance.getServiceInstance().getSubscriptionDate(), operationToRerate.getStartDate()) == 0;
+	}
+    
+    private boolean prorateTerminationCharges(WalletOperation operationToRerate, RecurringChargeInstance recurringChargeInstance) {
+    	    	
+    	return walletOperationService.prorateTerminationCharges(recurringChargeInstance) &&  DateUtils.compare(recurringChargeInstance.getServiceInstance().getTerminationDate(), operationToRerate.getEndDate()) == 0;
+	}
+
+	/**
      * Evaluate EL expression with BigDecimal as result
      *
      * @param expression EL exception to evaluate
