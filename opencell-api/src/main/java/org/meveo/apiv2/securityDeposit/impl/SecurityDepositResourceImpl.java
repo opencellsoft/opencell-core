@@ -12,10 +12,12 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositSuccessResponse;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
@@ -59,15 +61,15 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             msgErrValidation = "Status ";
         }  
         if(securityDepositInput.getCurrentBalance() != null) {
-            msgErrValidation += msgErrValidation == "" ? "Current Balance " : "- Current Balance ";
+            msgErrValidation += "".equals(msgErrValidation) ? "Current Balance " : "- Current Balance ";
         }
         if(securityDepositInput.getRefundReason() != null) {
-            msgErrValidation += msgErrValidation == "" ? "Refund Reason " : "- Refund Reason ";
+            msgErrValidation += "".equals(msgErrValidation) ? "Refund Reason " : "- Refund Reason ";
         }
         if(securityDepositInput.getCancelReason() != null) {
-            msgErrValidation += msgErrValidation == "" ? "Cancel Reason " : "- Cancel Reason ";
+            msgErrValidation += "".equals(msgErrValidation) ? "Cancel Reason " : "- Cancel Reason ";
         }
-        if(msgErrValidation != "") {
+        if(!"".equals(msgErrValidation)) {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
         
@@ -81,6 +83,25 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     }
 
+    @Override
+    public Response refund(Long id, SecurityDepositRefundInput securityDepositInput) {
+        SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
+        if(securityDepositToUpdate == null) {
+            throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
+        }        
+        if(!SecurityDepositStatusEnum.LOCKED.equals(securityDepositToUpdate.getStatus()) 
+                && !SecurityDepositStatusEnum.UNLOCKED.equals(securityDepositToUpdate.getStatus())
+                && !SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus()))
+            throw new EntityDoesNotExistsException("The refund is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
+        
+        if(securityDepositInput.getRefundReason() == null) {
+            throw new EntityDoesNotExistsException("Refund Reason does not exist.");
+        }
+        
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput);
+        return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
+    }
+    
     private Map<String, Object> buildResponse(SecurityDepositInput resource) {
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
