@@ -13,26 +13,51 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ExtraMinAmount;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.MinAmountsResult;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -100,6 +125,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+	private BillingRunService billingRunService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -703,4 +731,33 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
         return basicStatistics;
     }
+
+	/**
+	 * @param result
+	 * @param aggregationConfiguration
+	 * @param billingRun
+	 * @param billableEntity
+	 * @param basicStatistics
+	 * @return
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+    	log.info("createInvoiceLines");
+		List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null, null);
+		List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
+		if (!ratedTransactionIds.isEmpty()) {
+		    List<Map<String, Object>> groupedRTs;
+		    if (aggregationConfiguration.getAggregationOption() == AggregationOption.NO_AGGREGATION) {
+		        groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
+		    } else {
+		        groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
+		    }
+		    BasicStatistics ilBasicStatistics = createInvoiceLines(groupedRTs, aggregationConfiguration, result);
+		    ratedTransactionService.linkRTWithInvoiceLine(ilBasicStatistics.getiLIdsRtIdsCorrespondence());
+		    basicStatistics.append(ilBasicStatistics);
+		}
+	}
+
 }

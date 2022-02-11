@@ -41,7 +41,7 @@ public class AggregationConfiguration {
         this.aggregationOption = aggregationOption;
     }
 
-    enum AggregationOption {
+    public enum AggregationOption {
         NO_AGGREGATION, ARTICLE_LABEL, UNIT_AMOUNT, DATE;
 
         public static AggregationOption fromValue(String value) {
