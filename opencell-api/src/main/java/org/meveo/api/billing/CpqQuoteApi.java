@@ -1875,7 +1875,11 @@ public class CpqQuoteApi extends BaseApi {
                       if(quoteproduct == null)
                       	throw new MeveoApiException("No product found for this discount : " + discountPlanItem.getCode());
 
-                      unitDiscountAmount = unitDiscountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
+                      BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues);
+                      if(discountAmount != null) {
+                    	  unitDiscountAmount = unitDiscountAmount.add(discountAmount);
+            	  	  }
+                      
                       if (unitDiscountAmount != null && unitDiscountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                           String accountingArticleCode = discountAccountingArticle.getCode();
                           if (!quoteArticleLines.containsKey(accountingArticleCode)) {
