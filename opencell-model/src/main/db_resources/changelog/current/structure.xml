@@ -11813,6 +11813,11 @@ order by date_trunc('month', i.invoice_date) DESC
      <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI">
 		<addUniqueConstraint columnNames="template_name" constraintName="uk_security_deposit_template_name" deferrable="false" disabled="false" initiallyDeferred="false" tableName="security_deposit_templat" />
 	</changeSet>
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="crm_customer">
+            <column name="anonymization_date" type="datetime" />
+        </addColumn>
+    </changeSet>
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE">
         <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
         <createTable tableName="ar_accounting_scheme">

@@ -4937,6 +4937,7 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="anonymization_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -17101,6 +17102,7 @@
 	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham" />
     <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI" />
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

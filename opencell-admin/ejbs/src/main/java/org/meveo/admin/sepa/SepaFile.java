@@ -72,6 +72,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -167,7 +168,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	}
 
 	@Override
-	public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+	public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider, JobExecutionResultImpl result) throws BusinessException {
 		if (ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.DEBIT) {
 			generateDDRequestLotFileForSSD(ddRequestLot, appProvider);
 		} else {
