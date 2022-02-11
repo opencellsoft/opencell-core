@@ -666,9 +666,15 @@ public class CpqQuoteApi extends BaseApi {
                     if(!Strings.isEmpty(quoteVersionDto.getDiscountPlanCode())) {
                         qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
                     }
-                    if(!Strings.isEmpty(quoteVersionDto.getContractCode())) {
-       				 qv.setContract(contractService.findByCode(quoteVersionDto.getContractCode()));
-       		        }
+                    if(quoteVersionDto.getContractCode() == null) {
+                    	qv.setContract(null);
+                    }else {
+                    	Contract contract = contractService.findByCode(quoteVersionDto.getContractCode());
+                    	if (contract == null) {
+                            throw new EntityDoesNotExistsException(Contract.class, quoteVersionDto.getContractCode());
+                        }
+       				    qv.setContract(contract);
+                    }
                     qv.getMedias().clear();
                     if(quoteVersionDto.getMediaCodes() != null) {
                     	quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
