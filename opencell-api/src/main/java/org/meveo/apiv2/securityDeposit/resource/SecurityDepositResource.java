@@ -47,7 +47,7 @@ public interface SecurityDepositResource {
     Response update(@Parameter(description = "contain the code of Security deposit te be updated by its id", required = true) @PathParam("id") Long id,
             @Parameter(description = "Security Deposit input", required = true) SecurityDepositInput securityDepositInput);
     
-    @PUT
+    @POST
     @Path("/refund/{id}")
     @Operation(summary = "Refund Security Deposit",
             tags = {"Post"},
@@ -62,4 +62,6 @@ public interface SecurityDepositResource {
             })
     Response refund(@Parameter(description = "contain the code of Security deposit te be refunded by its id", required = true) @PathParam("id") Long id,
             @Parameter(description = "Security Deposit input", required = true) SecurityDepositRefundInput securityDepositInput);
+    
+    
 }
