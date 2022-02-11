@@ -34,7 +34,7 @@ public class BasicStatistics {
         return sumAmountWithoutTax;
     }
 
-    public BigDecimal getGetSumAmountWithTax() {
+    public BigDecimal getSumAmountWithTax() {
         return sumAmountWithTax;
     }
 
@@ -55,4 +55,14 @@ public class BasicStatistics {
     public void setBillableEntitiesCount(Integer billableEntitiesCount) {
         this.billableEntitiesCount = billableEntitiesCount;
     }
+
+	/**
+	 * @param statistics
+	 */
+	public void append(BasicStatistics statistics) {
+		this.billableEntitiesCount+=statistics.getBillableEntitiesCount();
+		 this.iLIdsRtIdsCorrespondence.putAll(statistics.getiLIdsRtIdsCorrespondence());
+		 this.sumAmountWithoutTax=this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
+	     this.sumAmountWithTax=this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
+	}
 }

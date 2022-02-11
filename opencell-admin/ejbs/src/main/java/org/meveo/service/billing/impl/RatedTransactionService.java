@@ -942,27 +942,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException General exception
      */
     @SuppressWarnings("unchecked")
-    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, Filter ratedTransactionFilter, int rtPageSize) throws BusinessException {
+    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, Filter ratedTransactionFilter, Integer rtPageSize) throws BusinessException {
 
+    	TypedQuery<RatedTransaction> query=null;
         if (ratedTransactionFilter != null) {
             return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
-
         } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate)
-                .setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+        	 query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId());
 
         } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate)
-                .setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId());
 
         } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate)
-                .setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+        	 query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
         }
-
+        if(query!=null) {
+        	if(rtPageSize!=null) {
+        		query.setMaxResults(rtPageSize);
+        	}
+        	return query.setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate).setHint("org.hibernate.readOnly", true).getResultList();
+        }
         return new ArrayList<>();
     }
 
@@ -1453,18 +1452,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT  string_agg(concat(id), ',') as rated_transaction_ids, rt.billing_account__id, \n" +
-                "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, \n"
-                + "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
-                + "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, \n"
-                + "                 rt.offer_id, rt.service_instance_id,\n"
-                + "                 rt.usage_date, rt.start_date, rt.end_date,\n"
+        String query = "SELECT  string_agg(concat(id), ',') as rated_transaction_ids, rt.billing_account__id, " +
+                "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
+                + "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax, "
+                + "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, "
+                + "                 rt.offer_id, rt.service_instance_id,"
+                + "                 rt.usage_date, rt.start_date, rt.end_date,"
                 + "                 rt.order_number, rt.subscription_id, rt.tax_percent, rt.tax_id, "
-                + "                 rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id\n"
-                + " FROM billing_rated_transaction rt WHERE id in (:ids) \n"
-                + " GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, \n"
-                + "         rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n"
-                + "         rt.offer_id, rt.service_instance_id, rt.usage_date, rt.start_date,\n"
+                + "                 rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id "
+                + " FROM billing_rated_transaction rt WHERE id in (:ids) "
+                + " GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
+                + "         rt.unit_amount_without_tax, rt.unit_amount_with_tax,"
+                + "         rt.offer_id, rt.service_instance_id, rt.usage_date, rt.start_date,"
                 + "         rt.end_date, rt.order_number, rt.subscription_id, rt.tax_percent, rt.tax_id, "
                 + "         rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
         return executeNativeSelectQuery(query, params);
