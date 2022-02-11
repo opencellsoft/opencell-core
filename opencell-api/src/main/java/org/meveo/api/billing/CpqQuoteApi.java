@@ -1233,10 +1233,7 @@ public class CpqQuoteApi extends BaseApi {
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
-        if(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
-        		quoteVersion) == null) {
-        	throw new MeveoApiException("The amount of the wallet operation is 0");
-        }
+       
         accountingArticlePrices.addAll(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
         		quoteVersion));
 
@@ -1881,8 +1878,12 @@ public class CpqQuoteApi extends BaseApi {
                       	throw new EntityDoesNotExistsException("Discount plan item ("+discountPlanItem.getCode()+") doesn't have an accounting article");
                       if(quoteproduct == null)
                       	throw new MeveoApiException("No product found for this discount : " + discountPlanItem.getCode());
-
-                      unitDiscountAmount = unitDiscountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
+                      
+                      BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues);
+                      if(discountAmount != null) {
+                    	  unitDiscountAmount = unitDiscountAmount.add(discountAmount);
+            	  	  }
+                      
                       if (unitDiscountAmount != null && unitDiscountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                           String accountingArticleCode = discountAccountingArticle.getCode();
                           if (!quoteArticleLines.containsKey(accountingArticleCode)) {
