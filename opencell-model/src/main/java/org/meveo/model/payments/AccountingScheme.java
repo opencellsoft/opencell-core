@@ -29,6 +29,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -40,6 +42,8 @@ import org.meveo.model.scripts.ScriptInstance;
  */
 @Entity
 @Table(name = "ar_accounting_scheme", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_accounting_scheme_seq"), })
 public class AccountingScheme extends BusinessEntity {
 
     private static final long serialVersionUID = -4989724064567423956L;
