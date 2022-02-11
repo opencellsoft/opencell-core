@@ -400,7 +400,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     while (nextChargeToDate != null && nextChargeToDate.getTime() <= endContractDate.getTime()) {
                         log.debug("Schedule applicationDate={}", nextChargeToDate);
                         nextChargeToDate = DateUtils.setTimeToZero(nextChargeToDate);
-                        walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, true, null, null, false);
+                        walletOperationService.applyReccuringCharge(recurringChargeInstance, applicationMode, true, null, null, false);
 
                         log.debug("chargeDate {},nextChargeDate {}", recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate());
                         nextChargeToDate = recurringChargeInstance.getNextChargeDate();

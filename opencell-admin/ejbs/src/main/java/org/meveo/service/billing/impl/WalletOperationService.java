@@ -687,7 +687,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param chargeInstance Recurring charge instance
      * @return True if termination charges should be prorated
      */
-    private boolean prorateTerminationCharges(RecurringChargeInstance chargeInstance) {
+    public boolean prorateTerminationCharges(RecurringChargeInstance chargeInstance) {
 
         RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
         boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() != null && recurringChargeTemplate.getTerminationProrata();
