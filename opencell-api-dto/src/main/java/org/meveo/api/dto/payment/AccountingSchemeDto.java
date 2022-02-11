@@ -18,12 +18,16 @@
 
 package org.meveo.api.dto.payment;
 
+import java.util.Optional;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.model.payments.AccountingScheme;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * The Class AccountingSchemeDto.
@@ -46,6 +50,15 @@ public class AccountingSchemeDto extends BusinessEntityDto {
      */
     @Schema(description = "the script code", required = true)
     private String scriptCode;
+
+    public AccountingSchemeDto(){}
+
+    public AccountingSchemeDto(AccountingScheme accountingScheme) {
+        code = accountingScheme.getCode();
+        description = accountingScheme.getDescription();
+        longDescription = accountingScheme.getLongDescription();
+        scriptCode = Optional.ofNullable(accountingScheme.getScriptInstance()).map(ScriptInstance::getCode).orElse(null);
+    }
 
     public String getLongDescription() {
         return longDescription;

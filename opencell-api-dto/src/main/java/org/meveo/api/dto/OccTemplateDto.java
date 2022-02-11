@@ -86,6 +86,9 @@ public class OccTemplateDto extends BusinessEntityDto {
         accountCode = occTemplate.getAccountingCode().getCode();
         occCategory = occTemplate.getOccCategory();
         accountCodeClientSide = occTemplate.getAccountCodeClientSide();
+        if (occTemplate.getAccountingScheme() != null) {
+            accountingScheme = new AccountingSchemeDto(occTemplate.getAccountingScheme());
+        }
     }
 
     /**
