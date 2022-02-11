@@ -50,6 +50,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
     private RatingService ratingService;
 
     private boolean useSamePricePlan;
+    private boolean reRateRecChInst;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -68,6 +69,12 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
         List<Long> ids = walletOperationService.listToRerate();
 
         useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
+        
+        if(jobExecutionResult.getJobInstance().getCfValue("ReRatingJob_reRateRecChInst") != null) {
+    		reRateRecChInst = (Boolean)jobExecutionResult.getJobInstance().getCfValue("ReRatingJob_reRateRecChInst");
+    	}else {
+    		reRateRecChInst = false;
+    	}
 
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
@@ -78,8 +85,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
      * @param walletOperationId Wallet operation id
      * @param jobExecutionResult Job execution result
      */
-    private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
-    	    	
-        ratingService.reRate(walletOperationId, useSamePricePlan,(Boolean)jobExecutionResult.getJobInstance().getCfValue("ReRatingJob_reRateRecChInst"));
+    private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {        	    	
+        ratingService.reRate(walletOperationId, useSamePricePlan,reRateRecChInst);
     }
 }
