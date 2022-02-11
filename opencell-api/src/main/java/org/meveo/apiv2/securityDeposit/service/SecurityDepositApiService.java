@@ -125,7 +125,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             if (sumAmountPerCustomer != null) {
                 BigDecimal totalAmount = securityDepositAmount.add(sumAmountPerCustomer);
                 if (totalAmount.compareTo(maxAmountPerCustomer) > 0) {
-                    throw new BadRequestException("The amount is greater than the maximum per customer : " + maxAmountPerCustomer);
+                    throw new BadRequestException("Security deposit amount is greater than the maximum per customer");
                 }
             }
         }
