@@ -315,10 +315,18 @@ public class CommercialRuleLine extends BaseEntity {
 				&& Objects.equals(sourceProductVersion, other.sourceProductVersion)
 				&& Objects.equals(sourceTag, other.sourceTag);
 	}
-	
-	
 
- 
 
+	public boolean isSourceOfferAttribute() {
+		return sourceProduct == null;
+	}
+
+	public String getSourceOfferTemplateCode() {
+		return sourceOfferTemplate != null ? sourceOfferTemplate.getCode() : null;
+	}
+
+	public String getSourceProductCode() {
+		return sourceProduct != null ? sourceProduct.getCode() : null;
+	}
 }
 

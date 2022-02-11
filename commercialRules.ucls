@@ -186,7 +186,7 @@
   </association>  
   <association id="36">    
     <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="37" name="commercialRuleHeader">        
+      <attribute id="37" name="targetAttribute">
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="38" minimum="0" maximum="1">        
