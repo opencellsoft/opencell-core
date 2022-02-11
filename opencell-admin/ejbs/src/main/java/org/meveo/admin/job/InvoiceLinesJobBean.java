@@ -9,7 +9,19 @@ import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.apache.commons.collections.map.HashedMap;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -17,24 +29,19 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BasicStatistics;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.*;
 
 @Stateless
 public class InvoiceLinesJobBean extends BaseJobBean {
@@ -50,6 +57,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     @Inject
     private InvoiceLineService invoiceLinesService;
+    
+    @Inject
+    private IteratorBasedJobProcessing iteratorBasedJobProcessing;
 
     @Inject
     @ApplicationProvider
@@ -89,22 +99,22 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 } else {
                     AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(),
                             AggregationOption.fromValue(aggregationOption));
-                    List<RatedTransaction> ratedTransactions = billingRunService.loadRTsByBillingRuns(billingRuns);
-                    List<Long> ratedTransactionIds = ratedTransactions.stream()
-                            .map(RatedTransaction::getId)
-                            .collect(toList());
-                    if (!ratedTransactionIds.isEmpty()) {
-                        List<Map<String, Object>> groupedRTs;
-                        if (aggregationConfiguration.getAggregationOption() == AggregationOption.NO_AGGREGATION) {
-                            groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
-                        } else {
-                            groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
+                    for(BillingRun billingRun : billingRuns) {
+                        List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
+                        
+                        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+                        if (nbRuns == -1) {
+                            nbRuns = (long) Runtime.getRuntime().availableProcessors();
                         }
-                        Map<Long, List<Long>> iLIdsRtIdsCorrespondence
-                                = invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
-                        ratedTransactionService.makeAsProcessed(ratedTransactionIds);
-                        ratedTransactionService.linkRTWithInvoiceLine(iLIdsRtIdsCorrespondence);
-                        result.setNbItemsCorrectlyProcessed(groupedRTs.size());
+                        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+                        BasicStatistics basicStatistics = new BasicStatistics();
+                        BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
+                        iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, false, jobInstance.getJobSpeed(),true);
+                        
+						updateBillingRunStatistics(billingRun, basicStatistics);
+            		    result.setNbItemsCorrectlyProcessed(billableEntities.size());
+            		    basicStatistics.setBillableEntitiesCount(billableEntities.size());
+            		    
                     }
                 }
                 for(BillingRun billingRun : billingRuns) {
@@ -130,5 +140,15 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored", br.getId())));
         billingRuns.removeAll(excludedBRs);
         return excludedBRs.size();
+    }
+
+    private BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics) {
+        billingRun.setBillableBillingAcountNumber(basicStatistics.getBillableEntitiesCount().intValue());
+        billingRun.setPrAmountTax(basicStatistics.getSumAmountWithTax());
+        billingRun.setPrAmountWithoutTax(basicStatistics.getSumAmountWithoutTax());
+        billingRun.setProcessDate(new Date());
+        billingRun.setStatus(INVOICE_LINES_CREATED);
+        billingRunService.update(billingRun);
+        return billingRun;
     }
 }
