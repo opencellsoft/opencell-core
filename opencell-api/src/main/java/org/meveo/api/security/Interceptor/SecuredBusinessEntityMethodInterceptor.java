@@ -61,7 +61,6 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,8 +79,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private static final long serialVersionUID = 4656634337151866255L;
 
     private static final Logger log = LoggerFactory.getLogger(SecuredBusinessEntityMethodInterceptor.class);
-
-    private static final String AND_OR_FIELD_SUFFIX = "_secured";
 
     @Inject
     private SecuredBusinessEntityService securedBusinessEntityService;
@@ -122,12 +119,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      */
     @AroundInvoke
     public Object aroundInvoke(InvocationContext context) throws Exception {
-        // Check if secured entities are enabled.
-        boolean secureEntitesEnabled = paramBeanFactory.getInstance().getPropertyAsBoolean("secured.entities.enabled", true);
-        if (!secureEntitesEnabled) {
-            return context.proceed();
-        }
-
         SecuredBusinessEntityConfig sbeConfig = this.securedBusinessEntityConfigFactory.get(context);
         return checkForSecuredEntities(context, sbeConfig);
     }
@@ -142,6 +133,12 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      */
     protected Object checkForSecuredEntities(InvocationContext context, SecuredBusinessEntityConfig sbeConfig) throws Exception {
         if (sbeConfig == null || sbeConfig.getSecuredMethodConfig() == null) {
+            return context.proceed();
+        }
+        String secureSetting = paramBeanFactory.getInstance().getProperty("secured.entities.enabled", "true");
+        boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
+        // if not, immediately return.
+        if (!secureEntitesEnabled) {
             return context.proceed();
         }
 
@@ -208,10 +205,10 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
         User user = userService.findByUsername(currentUser.getUserName());
-        allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
+        allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.isDisabled()).collect(Collectors.toList()));
 
         List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class).setParameter("currentUserRoles", currentUser.getRoles()).getResultList();
-        allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
+        allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).filter(securedEntity -> !securedEntity.isDisabled()).collect(Collectors.toList()));
 
         // group secured entites by types into Map
         Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
@@ -269,10 +266,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      */
     private Map<String, Object> updateFilters(List<SecuredEntity> securedEntities, Map<String, Object> filters, FilterResultsConfig filterResultsConfig) {
 
-        if (filterResultsConfig.getItemPropertiesToFilter().length == 0) {
-            return filters;
-        }
-
         Map<String, List<String>> newFilterCriteria = new HashMap<String, List<String>>();
         for (FilterPropertyConfig propertyToFilter : filterResultsConfig.getItemPropertiesToFilter()) {
 
@@ -294,17 +287,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                 if (newFilterCriteria.containsKey(propertyToFilterPath)) {
                     newFilterCriteria.get(propertyToFilterPath).add(securedEntity.getCode());
                 } else {
-                    List<String> list = new ArrayList<>();
-                    list.add(securedEntity.getCode());
-                    newFilterCriteria.put(propertyToFilterPath, list);
+                    newFilterCriteria.put(propertyToFilterPath, Arrays.asList(securedEntity.getCode()));
                 }
-            }
 
-            // Add IS NULL as a possible value if field is optional
-            if (propertyToFilter.isAllowAccessIfNull()) {
-                List<String> list = new ArrayList<>();
-                list.add(PersistenceService.SEARCH_IS_NULL);
-                newFilterCriteria.put(PersistenceService.SEARCH_AND + AND_OR_FIELD_SUFFIX + " " + fieldName, list);
             }
         }
 
@@ -312,10 +297,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         if (newFilterCriteria.isEmpty()) {
             throw new AccessDeniedException("Access to entity list is not allowed.");
         }
-
-        boolean singleCriteria = newFilterCriteria.size() == 1;
-
-        Map<String, Object> orFilterItems = new HashMap<String, Object>();
 
         for (Entry<String, List<String>> filterInfo : newFilterCriteria.entrySet()) {
 
@@ -326,14 +307,14 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             log.debug("Adding an access limit filter for {} field by {}", propertyToFilterPath, filterInfo.getValue());
 
             // A search is already done by that field - verify if it is a permitted value according to the secured entities
-            if (singleCriteria && filters.containsKey(propertyToFilterPath)) {
+            if (filters.containsKey(propertyToFilterPath)) {
                 final Object initialValue = filters.get(propertyToFilterPath);
                 if (!allowedValues.contains(initialValue)) {
                     throw new AccessDeniedException("Search for '" + propertyToFilterPath + "' by " + initialValue + " is not allowed.");
                 }
 
                 // A search is already done by a list of values - remove what is not permitted and throw AccessDeniedException if all values were eliminated
-            } else if (singleCriteria && filters.containsKey(propertyToFilterPathAsList)) {
+            } else if (filters.containsKey(propertyToFilterPathAsList)) {
                 final Object initialValue = filters.get(propertyToFilterPathAsList);
                 List<String> initialValues = null;
                 if (initialValue instanceof String) {
@@ -350,26 +331,14 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
                 filters.put(propertyToFilterPathAsList, initialValues);
 
-                // In case of a single additional query filter to be added, if no current search for a given field, add it as a search criteria
-            } else if (singleCriteria) {
+                // No current search for a given field, add it as a search criteria
+            } else {
                 if (allowedValues.size() == 1) {
                     filters.put(propertyToFilterPath, allowedValues.get(0));
                 } else {
                     filters.put(propertyToFilterPathAsList, allowedValues);
                 }
-
-                // // In case of a multiple additional query filters to be added, add it as a search criteria inside the OR clause
-            } else {
-                if (allowedValues.size() == 1) {
-                    orFilterItems.put(propertyToFilterPath, allowedValues.get(0));
-                } else {
-                    orFilterItems.put(propertyToFilterPathAsList, allowedValues);
-                }
             }
-        }
-
-        if (!orFilterItems.isEmpty()) {
-            filters.put(PersistenceService.SEARCH_OR + AND_OR_FIELD_SUFFIX, orFilterItems);
         }
         return filters;
 
@@ -407,16 +376,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
             // User is allowed to access Customer and is accessing a userAccount - need to construct the whole hierarchy to climb up
         } else {
-
-            // Check if seller is considered as parent entity
-            if ("Seller".equals(allowedToAccessEntityClass) && !paramBeanFactory.getInstance().getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", true)) {
-                return null;
-            }
-
             if (propertyName.equals("code")) {
                 propertyName = null;
             }
-
             for (int i = posTryAccess; i < posAllowed; i++) {
                 propertyName = (propertyName == null ? "" : propertyName + ".") + classHierarchyByPosition[i];
             }
