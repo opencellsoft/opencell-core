@@ -1,5 +1,6 @@
 package org.meveo.service.billing;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
@@ -34,7 +35,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringRatingService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.util.ApplicationProvider;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -51,9 +51,6 @@ public class RecurringChargeInstanceServiceTest {
     @Spy
     @InjectMocks
     private RecurringChargeInstanceService recurringChargeInstanceService;
-
-    @Mock
-    private WalletOperationService walletOperationService;
 
     @Mock
     private RecurringRatingService recurringRatingService;
@@ -90,13 +87,22 @@ public class RecurringChargeInstanceServiceTest {
         calendar.setDays(days);
 
         when(recurringRatingService.getRecurringPeriod(any(), any())).thenCallRealMethod();
+        when(recurringRatingService.getRecurringPeriodEndDate(any(), any())).thenCallRealMethod();
         when(recurringRatingService.isApplyInAdvance(any())).thenCallRealMethod();
         when(recurringRatingService.rateReccuringCharge(any(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
-            @SuppressWarnings("deprecation")
             public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 RecurringChargeInstance chargeInstance = (RecurringChargeInstance) invocation.getArguments()[0];
-                chargeInstance.getNextChargeDate().setMonth(chargeInstance.getNextChargeDate().getMonth() + 1);
+
+                boolean isApplyInAdvance = recurringRatingService.isApplyInAdvance(chargeInstance);
+
+                Date currentPeriodToDate = recurringRatingService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getChargedToDate());
+                if (isApplyInAdvance) {
+                    chargeInstance.advanceChargeDates(chargeInstance.getChargedToDate(), currentPeriodToDate, currentPeriodToDate);
+                } else {
+                    chargeInstance.advanceChargeDates(currentPeriodToDate, recurringRatingService.getRecurringPeriodEndDate(chargeInstance, currentPeriodToDate), currentPeriodToDate);
+                }
+
                 RatingResult ratingResult = new RatingResult();
                 ratingResult.addWalletOperation(new WalletOperation());
                 return ratingResult;
@@ -150,6 +156,26 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 4, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(0)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-06-01");
+
+        recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 2, 0, 0, 0), false, false, null);
+
+        verify(recurringRatingService, times(1)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-07-01");
+
+        recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 6, 2, 0, 0, 0), false, false, null);
+
+        verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-08-01");
     }
 
     @Test
@@ -160,6 +186,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 4, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(0)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-07-01");
     }
 
     @Test
@@ -170,6 +200,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(0)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-06-01");
     }
 
     @Test
@@ -180,6 +214,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(1)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-07-01");
     }
 
     @Test
@@ -190,6 +228,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(0)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-07-01");
     }
 
     @Test
@@ -200,6 +242,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(0)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-06-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-07-01");
     }
 
     @Test
@@ -210,6 +256,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-08-01");
     }
 
     @Test
@@ -220,6 +270,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(3)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-09-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     @Test
@@ -230,6 +284,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(1)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-08-01");
     }
 
     @Test
@@ -240,6 +298,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     // -- TEST existing subscriptions
@@ -254,6 +316,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-08-01");
     }
 
     @Test
@@ -266,6 +332,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(3)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-09-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     @Test
@@ -278,6 +348,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(3)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-09-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     @Test
@@ -290,6 +364,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(3)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-09-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     @Test
@@ -302,6 +380,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(1)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-07-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-08-01");
     }
 
     @Test
@@ -314,6 +396,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     @Test
@@ -326,6 +412,10 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), false, false, null);
 
         verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 
     @Test
@@ -338,5 +428,9 @@ public class RecurringChargeInstanceServiceTest {
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), true, false, null);
 
         verify(recurringRatingService, times(2)).rateReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean(), anyBoolean());
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo("2019-08-01");
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo("2019-09-01");
     }
 }
