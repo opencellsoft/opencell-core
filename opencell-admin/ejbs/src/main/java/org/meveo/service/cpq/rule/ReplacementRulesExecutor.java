@@ -35,6 +35,7 @@ public class ReplacementRulesExecutor {
     public void executeReplacements(SelectedAttributes selectedAttributes, List<SelectedAttributes> sourceAttributes, List<CommercialRuleHeader> commercialRuleHeaders) {
             commercialRuleHeaders.stream()
                     .filter(rule -> rule.getRuleType().equals(RuleTypeEnum.REPLACEMENT))
+                    .filter(rule -> rule.isDisabled() == false)
                     .filter(rule -> selectedAttributes.match(rule.getTargetOfferTemplateCode(), rule.getTargetProductCode(), rule.getTargetAttribute()))
                     .forEach(
                             rule -> executeItems(rule.getCommercialRuleItems(), rule.getTargetOfferTemplateCode(), rule.getTargetAttribute(), selectedAttributes, sourceAttributes)

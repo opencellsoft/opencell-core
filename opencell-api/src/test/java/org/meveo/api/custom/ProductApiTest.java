@@ -180,7 +180,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void can_eplace_product_attribute_from_other_offer_product_attribute_if_scope_is_quote() {
+    public void can_replace_product_attribute_from_other_offer_product_attribute_if_scope_is_quote() {
         SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
 
@@ -189,6 +189,30 @@ public class ProductApiTest {
         ReplacementResult result = new ReplacementRulesExecutor(true).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), singletonList(commercialRuleHeader));
 
         assertThat(result.getSelectedProductAttributes().get("attr1")).isEqualTo("value2");
+    }
+
+    @Test
+    public void can_replace_product_offer_attribute_from_an_other_product_attribute_without_offer() {
+        SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
+        SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
+
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", "offer2", "product2", "attr1");
+
+        ReplacementResult result = new ReplacementRulesExecutor(true).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
+
+        assertThat(result.getSelectedProductAttributes().get("attr1")).isEqualTo("value2");
+    }
+
+    @Test
+    public void can_not_replace_product_offer_attribute_from_an_other_product_attribute_without_offer_when_offers_are_differents_and_score_is_not_quote() {
+        SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
+        SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
+
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", "offer2", "product2", "attr1");
+
+        ReplacementResult result = new ReplacementRulesExecutor(false).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
+
+        assertThat(result.getSelectedProductAttributes().get("attr1")).isEqualTo("value1");
     }
 
     private CommercialRuleHeader buildCommercialRuleHeader(String targetOfferTemplateCode, String targetProductCode, String targetAttributeCode, String sourceOfferTemplateCode, String sourceProductCode, String sourceAttributeCode) {
