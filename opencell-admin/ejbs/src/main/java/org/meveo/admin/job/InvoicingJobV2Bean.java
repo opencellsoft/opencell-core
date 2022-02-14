@@ -109,14 +109,12 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     }else{
                     	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.DRAFT_INVOICES, null);
                     }
-                    
-                    
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
         } catch (Exception exception) {
             result.registerError(exception.getMessage());
-            log.error(format("Failed to run invoice lines job: %s", exception));
+            log.error(format("Failed to run invoicing job: %s", exception));
         }
     }
 

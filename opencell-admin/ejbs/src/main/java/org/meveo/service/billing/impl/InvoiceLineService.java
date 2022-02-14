@@ -13,20 +13,31 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
@@ -114,6 +125,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
+    
+    @Inject
+	private BillingRunService billingRunService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class).setParameter("quote", quote).getResultList();
@@ -678,12 +692,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public Map<Long, List<Long>> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        BasicStatistics basicStatistics = new BasicStatistics();
         Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+            basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+            basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             create(invoiceLine);
             commit();
             List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
@@ -692,6 +709,36 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .collect(toList());
             iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
         }
-        return iLIdsRtIdsCorrespondence;
+        basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
+        return basicStatistics;
     }
+
+	/**
+	 * @param result
+	 * @param aggregationConfiguration
+	 * @param billingRun
+	 * @param billableEntity
+	 * @param basicStatistics
+	 * @return
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+    	log.info("createInvoiceLines");
+		List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null, null);
+		List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
+		if (!ratedTransactionIds.isEmpty()) {
+		    List<Map<String, Object>> groupedRTs;
+		    if (aggregationConfiguration.getAggregationOption() == AggregationOption.NO_AGGREGATION) {
+		        groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
+		    } else {
+		        groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
+		    }
+		    BasicStatistics ilBasicStatistics = createInvoiceLines(groupedRTs, aggregationConfiguration, result);
+		    ratedTransactionService.linkRTWithInvoiceLine(ilBasicStatistics.getiLIdsRtIdsCorrespondence());
+		    basicStatistics.append(ilBasicStatistics);
+		}
+	}
+
 }

@@ -18,12 +18,17 @@
 
 package org.meveo.admin.job;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -50,5 +55,23 @@ public class ReRatingJob extends Job {
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.RATING;
+    }
+
+    @Override
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
+        
+        CustomFieldTemplate reRateRecChInst = new CustomFieldTemplate();
+        reRateRecChInst.setCode("ReRatingJob_reRateRecChInst");
+        reRateRecChInst.setAppliesTo("JobInstance_" + this.getClass().getSimpleName());
+        reRateRecChInst.setActive(true);
+        reRateRecChInst.setDescription(resourceMessages.getString("ReRatingJob.reRateRecChInst"));
+        reRateRecChInst.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        reRateRecChInst.setValueRequired(false);
+        reRateRecChInst.setDefaultValue("false");
+        reRateRecChInst.setGuiPosition("tab:Configuration:0;field:0");
+        result.put("ReRatingJob_reRateRecChInst", reRateRecChInst);
+        
+        return result;
     }
 }

@@ -22,6 +22,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
@@ -85,6 +88,13 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * anonymization date
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "anonymization_date")
+    private Date anonymizationDate;
 
     /**
      * Address book
@@ -180,6 +190,18 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @JoinColumn(name = "minimum_article_id")
     private AccountingArticle minimumArticle;
 
+    public Date getAnonymizationDate() {
+        return anonymizationDate;
+    }
+
+    public void setAnonymizationDate(Date anonymizationDate) {
+        this.anonymizationDate = anonymizationDate;
+    }
+
+    public boolean isAnonymized(){
+        return anonymizationDate != null;
+    }
+
     public AddressBook getAddressbook() {
         return addressbook;
     }
@@ -264,6 +286,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
         if (isNotEmpty(this.customerAccounts)) {
             this.customerAccounts.forEach(ca -> ca.anonymize(code));
         }
+        setAnonymizationDate(new Date());
     }
 
     /**
