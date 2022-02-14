@@ -703,4 +703,28 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
         return basicStatistics;
     }
+
+    public void deleteByBillingRun(long billingRunId) {
+        List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRunId);
+        if(!invoiceLinesIds.isEmpty()) {
+            detachRatedTransactions(invoiceLinesIds);
+            getEntityManager()
+                    .createNamedQuery("InvoiceLine.deleteByBillingRun")
+                    .setParameter("billingRunId", billingRunId)
+                    .executeUpdate();
+        }
+    }
+
+    public List<Long> loadInvoiceLinesIdByBillingRun(long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.listByBillingRun")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
+    }
+
+    public void detachRatedTransactions(List<Long> invoiceLinesIds) {
+        ratedTransactionService.getEntityManager()
+                .createNamedQuery("RatedTransaction.detachFromInvoiceLines")
+                .setParameter("ids", invoiceLinesIds)
+                .executeUpdate();
+    }
 }

@@ -1,6 +1,7 @@
 package org.meveo.model.cpq.commercial;
 
 import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
@@ -101,6 +102,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuote", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote"),
 		@NamedQuery(name = "InvoiceLine.deleteInvoiceAggrByInvoice", query = "UPDATE InvoiceLine il set il.invoiceAggregateF=null where il.invoice.id=:invoiceId"),
+		@NamedQuery(name = "InvoiceLine.listByBillingRun", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
+		@NamedQuery(name = "InvoiceLine.deleteByBillingRun", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId")
 		})
 public class InvoiceLine extends AuditableEntity {
 
