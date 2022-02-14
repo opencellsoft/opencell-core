@@ -267,10 +267,10 @@ public class BankCoordinates implements Serializable, Cloneable {
     }
     
     public void anonymize(String code) {
-        setBankCode(code);
-        setBranchCode(code);
-        setAccountNumber(code);
-        setKey(code);
+        setKey(code.substring(0,2));
+        setBankCode(code.substring(0,5));
+        setBranchCode(code.substring(0,5));
+        setAccountNumber(code.substring(0,11));
         setIban(code);
         setBic(code);
         setAccountOwner(code);
@@ -278,7 +278,7 @@ public class BankCoordinates implements Serializable, Cloneable {
         setBankId(code);
         setIssuerNumber(code);
         setIssuerName(code);
-        setIcs(code);
+        setIcs(code.substring(0,35));
     }
 
     @Override
