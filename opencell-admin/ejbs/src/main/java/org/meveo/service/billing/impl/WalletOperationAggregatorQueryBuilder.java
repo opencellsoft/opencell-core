@@ -107,6 +107,10 @@ public class WalletOperationAggregatorQueryBuilder {
 			where = getWhere(aggregationSettings.getWalletOperationFilter());
 		}
 
+		log.info("prepareQuery select {}", select);
+		log.info("prepareQuery where {}", where);
+		log.info("prepareQuery groupBy {}", groupBy);
+		
 	}
 
 	private String getWhere(Filter filter) {
