@@ -10,7 +10,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
@@ -35,6 +34,8 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .subscription(createResource(entity.getSubscription()))
                 .serviceInstance(createResource(entity.getServiceInstance()))
                 .externalReference(entity.getExternalReference())
+                .refundReason(entity.getRefundReason())
+                .cancelReason(entity.getCancelReason())
                 .build();
     }
 
@@ -43,7 +44,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         return toEntity(new SecurityDeposit(), resource);
     }
 
-    private SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
+    protected SecurityDeposit toEntity(SecurityDeposit securityDeposit, SecurityDepositInput resource) {
         securityDeposit.setId(resource.getId());
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
@@ -67,9 +68,13 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());
         securityDeposit.setValidityPeriodUnit(resource.getValidityPeriodUnit());
-        securityDeposit.setAmount(resource.getAmount());
-        securityDeposit.setCurrentBalance(resource.getCurrentBalance());
-        securityDeposit.setStatus(resource.getStatus());
+        securityDeposit.setAmount(resource.getAmount());        
+        if(resource.getCurrentBalance() != null) {
+            securityDeposit.setCurrentBalance(resource.getCurrentBalance());
+        }
+        if(resource.getStatus() != null) {
+            securityDeposit.setStatus(resource.getStatus());
+        }
         if (resource.getSubscription() != null) {
             Subscription subscription = new Subscription();
             subscription.setId(resource.getSubscription().getId());
@@ -82,6 +87,12 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             securityDeposit.setServiceInstance(serviceInstance);
         }
         securityDeposit.setExternalReference(resource.getExternalReference());
+        if(resource.getRefundReason() != null) {
+            securityDeposit.setRefundReason(resource.getRefundReason());
+        }
+        if(resource.getCancelReason() != null) {
+            securityDeposit.setCancelReason(resource.getCancelReason());
+        }        
         return securityDeposit;
     }
 

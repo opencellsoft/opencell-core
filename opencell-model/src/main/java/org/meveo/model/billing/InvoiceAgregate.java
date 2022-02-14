@@ -48,7 +48,7 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "billing_invoice_agregate")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
-@NamedQueries({ @NamedQuery(name = "InvoiceAgregate.deleteByBR", query = "delete from InvoiceAgregate ia where ia.billingRun.id=:billingRunId"),
+@NamedQueries({ @NamedQuery(name = "InvoiceAgregate.deleteByBR", query = "delete from InvoiceAgregate ia where ia.billingRun.id=:billingRunId AND ia.invoice.status <> 'VALIDATED'"),
         @NamedQuery(name = "InvoiceAgregate.deleteByInvoiceIds", query = "delete from InvoiceAgregate ia where ia.invoice.id IN (:invoicesIds)"),
         @NamedQuery(name = "InvoiceAggregate.updateByInvoiceIds", query = "update InvoiceAgregate ia set ia.invoice = null where ia.invoice.id IN (:invoicesIds)") })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })

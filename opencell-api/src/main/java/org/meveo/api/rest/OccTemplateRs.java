@@ -70,15 +70,15 @@ public interface OccTemplateRs extends IBaseRs {
 			description=" Create OccTemplate.  ",
 			operationId="    POST_OccTemplate_create",
 			responses= {
-				@ApiResponse(description=" action status. ",
+				@ApiResponse(description=" account operation template ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= GetOccTemplateResponseDto.class
 											)
 								)
 				)}
 	)
-    ActionStatus create(OccTemplateDto postData);
+    GetOccTemplateResponseDto create(OccTemplateDto postData);
 
     /**
      * Update OccTemplate.
@@ -93,15 +93,15 @@ public interface OccTemplateRs extends IBaseRs {
 			description=" Update OccTemplate.  ",
 			operationId="    PUT_OccTemplate_update",
 			responses= {
-				@ApiResponse(description=" action status. ",
+				@ApiResponse(description=" account operation template ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= GetOccTemplateResponseDto.class
 											)
 								)
 				)}
 	)
-    ActionStatus update(OccTemplateDto postData);
+    GetOccTemplateResponseDto update(OccTemplateDto postData);
 
     /**
      * Search OccTemplate with a given code.

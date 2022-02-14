@@ -17,18 +17,17 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
-
 import org.meveo.model.admin.User;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.index.ElasticClient;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
+import java.util.*;
 
 @Named
 @ConversationScoped
@@ -42,7 +41,7 @@ public class UserListBean extends UserBean {
 		
 		if (filteredUsers == null) {
 
-			filteredUsers = new LazyDataModelWSize<User>() {
+			filteredUsers = new ServiceBasedLazyDataModel<User>() {
 				private static final long serialVersionUID = 1L;
 	
 				@Override
@@ -67,12 +66,32 @@ public class UserListBean extends UserBean {
 								return new ArrayList<User>();
 							}
 						}else {
-							entities = userService.list();
+							return super.load(first, pageSize, sortField, sortOrder,  loadingFilters);
+
+
+
 						}
 					}
+
+
 					setRowCount(entities.size());
 	
 					return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+				}
+
+				@Override
+				protected Map<String, Object> getSearchCriteria() {
+					return new HashMap<>();
+				}
+
+				@Override
+				protected IPersistenceService<User> getPersistenceServiceImpl() {
+					return userService;
+				}
+
+				@Override
+				protected ElasticClient getElasticClientImpl() {
+					return null;
 				}
 			};
 			

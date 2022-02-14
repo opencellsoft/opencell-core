@@ -666,9 +666,15 @@ public class CpqQuoteApi extends BaseApi {
                     if(!Strings.isEmpty(quoteVersionDto.getDiscountPlanCode())) {
                         qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
                     }
-                    if(!Strings.isEmpty(quoteVersionDto.getContractCode())) {
-       				 qv.setContract(contractService.findByCode(quoteVersionDto.getContractCode()));
-       		        }
+                    if(quoteVersionDto.getContractCode() == null) {
+                    	qv.setContract(null);
+                    }else {
+                    	Contract contract = contractService.findByCode(quoteVersionDto.getContractCode());
+                    	if (contract == null) {
+                            throw new EntityDoesNotExistsException(Contract.class, quoteVersionDto.getContractCode());
+                        }
+       				    qv.setContract(contract);
+                    }
                     qv.getMedias().clear();
                     if(quoteVersionDto.getMediaCodes() != null) {
                     	quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
@@ -1226,7 +1232,7 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
-        clearExistingQuotations(quoteVersion);
+        cpqQuoteService.clearExistingQuotations(quoteVersion);
 
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
 
@@ -1472,17 +1478,6 @@ public class CpqQuoteApi extends BaseApi {
         return null;
     }
 
-    private void clearExistingQuotations(QuoteVersion quoteVersion) {
-            if(quoteVersion.getQuoteArticleLines() != null) {
-                 if (!quoteVersion.getQuoteArticleLines().isEmpty()) {
-                     quoteVersion.getQuoteArticleLines()
-                             .stream()
-                             .forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
-                     quoteVersion.getQuoteArticleLines().clear();
-                     quoteVersionService.update(quoteVersion);
-                 }
-            }
-    }
 
     @SuppressWarnings("unused")
     public List<WalletOperation> quoteRating(Subscription subscription, boolean isVirtual) throws BusinessException {
@@ -1886,7 +1881,11 @@ public class CpqQuoteApi extends BaseApi {
                       if(quoteproduct == null)
                       	throw new MeveoApiException("No product found for this discount : " + discountPlanItem.getCode());
 
-                      unitDiscountAmount = unitDiscountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
+                      BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues);
+                      if(discountAmount != null) {
+                    	  unitDiscountAmount = unitDiscountAmount.add(discountAmount);
+            	  	  }
+                      
                       if (unitDiscountAmount != null && unitDiscountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                           String accountingArticleCode = discountAccountingArticle.getCode();
                           if (!quoteArticleLines.containsKey(accountingArticleCode)) {

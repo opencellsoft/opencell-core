@@ -243,6 +243,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
       
         invoiceLine.setValueDate(new Date());
         create(invoiceLine);
+        commit();
         return invoiceLine;
     }
 
@@ -437,28 +438,26 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param invoiceLineRessource
+	 * @param invoiceLineResource
 	 * @return
 	 */
-	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
-		InvoiceLine invoiceLine=new InvoiceLine();
+	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
+		InvoiceLine invoiceLine = new InvoiceLine();
 		invoiceLine.setInvoice(invoice);
-		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		create(invoiceLine);
 		return invoiceLine;
 	}
 
-	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
-		if(invoiceLine==null) {
+	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
 		}
 		Optional.ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
 		Optional.ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
 		Optional.ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
 		Optional.ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
-		Optional.ofNullable(resource.getAmountWithoutTax()).ifPresent(invoiceLine::setAmountWithoutTax);
 		Optional.ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
-		Optional.ofNullable(resource.getAmountWithTax()).ifPresent(invoiceLine::setAmountWithTax);
 		Optional.ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
 		Optional.ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
 		Optional.ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
@@ -468,7 +467,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
 		AccountingArticle accountingArticle=null;
-		if (resource.getAccountingArticleCode() != null){
+		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 		}	
 		
@@ -484,15 +483,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 						invoiceLine.setAmountWithTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
 						/****amountWithoutTax and amountWithTax will be recalculated bellow according to tax percent and the business model (b2b or b2c)*/
 					}
-				}else {
+				} else {
 					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 				}
-		}
-		else {
-		    invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
-            invoiceLine.setAmountWithTax(invoiceLine.getUnitPrice().multiply(invoiceLine.getQuantity()));
-		}
-		
+		} else {
+            invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
+            invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
+                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+        }
+
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
 		}
@@ -569,12 +568,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param invoiceLineRessource
+	 * @param invoiceLineResource
 	 * @param invoiceLineId
 	 */
-	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
+	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		update(invoiceLine);
 	}
 
@@ -602,15 +601,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public void uninvoiceILs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds")
+        getEntityManager().createNamedQuery("InvoiceLine.unInvoiceByInvoiceIds")
                 .setParameter("now", new Date())
                 .setParameter("invoiceIds", invoicesIds)
                 .executeUpdate();
 
     }
 
-    public void deleteSupplementalILs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds")
+    public void cancelIlByInvoices(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("InvoiceLine.cancelByInvoiceIds")
+        .setParameter("now", new Date())
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }
@@ -685,12 +685,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public Map<Long, List<Long>> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        BasicStatistics basicStatistics = new BasicStatistics();
         Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+
+            basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+            basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             create(invoiceLine);
             commit();
             List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
@@ -699,6 +703,31 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .collect(toList());
             iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
         }
-        return iLIdsRtIdsCorrespondence;
+        basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
+        return basicStatistics;
+    }
+
+    public void deleteByBillingRun(long billingRunId) {
+        List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRunId);
+        if(!invoiceLinesIds.isEmpty()) {
+            detachRatedTransactions(invoiceLinesIds);
+            getEntityManager()
+                    .createNamedQuery("InvoiceLine.deleteByBillingRun")
+                    .setParameter("billingRunId", billingRunId)
+                    .executeUpdate();
+        }
+    }
+
+    public List<Long> loadInvoiceLinesIdByBillingRun(long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.listByBillingRun")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
+    }
+
+    public void detachRatedTransactions(List<Long> invoiceLinesIds) {
+        ratedTransactionService.getEntityManager()
+                .createNamedQuery("RatedTransaction.detachFromInvoiceLines")
+                .setParameter("ids", invoiceLinesIds)
+                .executeUpdate();
     }
 }

@@ -1,6 +1,6 @@
 package org.meveo.admin.job;
 
-import static javax.ejb.TransactionAttributeType.NEVER;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.jobs.MeveoJobCategoryEnum.DUNNING;
 
 import org.meveo.admin.exception.BusinessException;
@@ -20,7 +20,7 @@ public class TriggerCollectionPlanLevelsJob extends Job {
     private TriggerCollectionPlanLevelsJobBean collectionPlanLevelsJobBean;
 
     @Override
-    @TransactionAttribute(NEVER)
+    @TransactionAttribute(REQUIRES_NEW)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         collectionPlanLevelsJobBean.execute(result, jobInstance);
         return result;

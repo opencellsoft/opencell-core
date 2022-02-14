@@ -18,6 +18,14 @@
 
 package org.meveo.api.rest.account.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
+
 import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -27,6 +35,7 @@ import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -35,12 +44,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -102,16 +105,14 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     }
 
     @Override
-    public ActionStatus remove(String userAccountCode) {
+    public Response remove(String userAccountCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
         try {
             userAccountApi.remove(userAccountCode);
-        } catch (Exception e) {
-            processException(e, result);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
         }
-
-        return result;
     }
 
     @Override

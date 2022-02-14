@@ -45,26 +45,28 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
     private OccTemplateApi occTemplateApi;
 
     @Override
-    public ActionStatus create(OccTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public GetOccTemplateResponseDto create(OccTemplateDto postData) {
+        GetOccTemplateResponseDto result = new GetOccTemplateResponseDto();
 
         try {
             occTemplateApi.create(postData);
+            result.setOccTemplate(occTemplateApi.find(postData.getCode()));
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;
     }
 
     @Override
-    public ActionStatus update(OccTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public GetOccTemplateResponseDto update(OccTemplateDto postData) {
+        GetOccTemplateResponseDto result = new GetOccTemplateResponseDto();
 
         try {
             occTemplateApi.update(postData);
+            result.setOccTemplate(occTemplateApi.find(postData.getCode()));
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;

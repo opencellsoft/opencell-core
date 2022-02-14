@@ -1,6 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,6 +46,7 @@ import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -74,6 +76,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	private SubscriptionService subscriptionService;
     @Inject
     private DiscountPlanService discountPlanService;
+    @Inject
+    private OrderLotService orderLotService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -91,11 +95,25 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		duplicate.setUserAccount(entity.getUserAccount());
 		duplicate.setSeller(entity.getSeller());
 		duplicate.setDescription(entity.getDescription());
-		duplicate.setInvoicingPlan(entity.getInvoicingPlan());
 		duplicate.setOrderInvoiceType(entity.getOrderInvoiceType());
 		duplicate.setOrderDate(new Date());
 		duplicate.setProgressDate(new Date());
+		if(entity.getDeliveryDate() != null && entity.getDeliveryDate().compareTo(new Date()) >= 0) {
+			duplicate.setDeliveryDate(entity.getDeliveryDate());
+		}
 		create(duplicate);
+		duplicate.setOrderLots(new ArrayList<OrderLot>());
+		var orderLots = new ArrayList<OrderLot>(entity.getOrderLots());
+		for (OrderLot orderLot : orderLots) {
+			OrderLot duplicateOrderLot = new OrderLot();
+			duplicateOrderLot.setCode(UUID.randomUUID().toString());
+			duplicateOrderLot.setOrder(duplicate);
+			duplicateOrderLot.setName(orderLot.getName());
+			duplicateOrderLot.setQuoteLot(orderLot.getQuoteLot());
+			orderLotService.create(duplicateOrderLot);
+			duplicate.getOrderLots().add(duplicateOrderLot);
+			
+		}
 		return duplicate;
 	}
 	

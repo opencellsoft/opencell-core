@@ -23,6 +23,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -124,7 +125,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             if (sumAmountPerCustomer != null) {
                 BigDecimal totalAmount = securityDepositAmount.add(sumAmountPerCustomer);
                 if (totalAmount.compareTo(maxAmountPerCustomer) > 0) {
-                    throw new BadRequestException("The amount is greater than the maximum per customer : " + maxAmountPerCustomer);
+                    throw new BadRequestException("Security deposit amount is greater than the maximum per customer");
                 }
             }
         }
@@ -137,6 +138,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
+        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
 
         // Check validity dates
         if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
@@ -163,6 +165,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new BadRequestException("The amount should be lesser or equal to maximum amount (of SD template) : " + template.getMaxAmount());
         }
 
+        // Check The if subscription not null the serviceInstance cannot be null 
+        if(securityDepositInput.getSubscription() != null && securityDepositInput.getServiceInstance() == null) {
+            throw new BadRequestException("The service instance is mandatory if subscription is set");
+        }
+
         securityDepositService.create(securityDepositInput);
 
         // Increment template.NumberOfInstantiation after each instantiation
@@ -173,7 +180,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         return of(securityDepositInput);
     }
 
-    private void linkRealEntities(SecurityDeposit securityDepositInput) {
+    public void linkRealEntities(SecurityDeposit securityDepositInput) {
         if (securityDepositInput.getTemplate() != null) {
             SecurityDepositTemplate securityDepositTemplate = securityDepositTemplateService.tryToFindByCodeOrId(securityDepositInput.getTemplate());
             securityDepositInput.setTemplate(securityDepositTemplate);

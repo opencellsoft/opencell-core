@@ -1,11 +1,11 @@
 package org.meveo.admin.job;
 
 import static java.lang.String.format;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +27,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
@@ -103,13 +102,17 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                             result.setReport("Exceptional Billing filters returning no invoice line to process");
                         }
                     }
+                    billingRun.setPrAmountWithoutTax(ZERO);
+                    billingRun.setPrAmountWithTax(ZERO);
+                    billingRun.setPrAmountTax(ZERO);
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
                     if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
-                    	assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, VALIDATED, null);
-                    }else{
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.DRAFT_INVOICES, null);
+                        assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
+                        billingRun.setStatus(VALIDATED);
+                    }else {
+                        billingRun.setStatus(DRAFT_INVOICES);
                     }
+                    billingRunService.update(billingRun);
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }

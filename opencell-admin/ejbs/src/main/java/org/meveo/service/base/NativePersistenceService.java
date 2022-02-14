@@ -746,7 +746,7 @@ public class NativePersistenceService extends BaseService {
      *
      * @param tableName A name of a table to query
      * @param config    Data filtering, sorting and pagination criteria
-     * @param id 
+     * @param id Id field value to explicitly extract data by ID 
      * @return Query builder to filter entities according to pagination configuration data.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})

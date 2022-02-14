@@ -312,6 +312,8 @@
     	<createSequence sequenceName="finance_settings_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_templat_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_seq" startValue="1" />
+        <createSequence sequenceName="security_deposit_transaction_seq" startValue="1" />
+        <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
     </changeSet>
 
 
@@ -2281,6 +2283,26 @@
             <column name="updater" type="varchar(100)" />
         </createTable>
     </changeSet>
+    <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE">
+        <createTable tableName="ar_accounting_scheme">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_accounting_scheme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
+            </column>
+            <column name="description" type="${type.text}"/>
+            <column name="long_description" type="${type.longText}"/>
+            <column name="script_instance_id" type="${cast.long}"/>
+        </createTable>
+    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-159">
         <createTable tableName="ar_occ_template">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -2299,6 +2321,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="journal_id" type="bigint" />
+            <column name="accounting_scheme_id" type="${cast.long}"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -4914,6 +4937,7 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="anonymization_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -11510,7 +11534,35 @@
             <column name="external_reference" type="varchar(255)"/>
             <column name="invoice_receipt_number" type="varchar(255)" />
             <column name="service_instance_id" type="bigint"/>
-
+			<column name="refund_reason" type="varchar(255)"/>
+			<column name="cancel_reason" type="varchar(255)"/>
+		</createTable>		
+		
+		<createTable tableName="security_deposit_transaction">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_transaction_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+			<column name="security_deposit_id" type="bigint" />
+			<column name="account_operation_id" type="bigint" />
+			<column name="security_deposit_operation" type="varchar(255)" />	            
+			<column name="amount" type="numeric(23, 12)" />
+			<column name="transaction_date" type="date" />
+			<column name="transaction_category" type="varchar(255)" />
 		</createTable>
         </changeSet>
 
@@ -11899,6 +11951,10 @@
 
 	<changeSet id="#INTRD-2973_20211110-rebuild-str-uk" author="AmineBENAICHA">
 		<addUniqueConstraint columnNames="code, dunning_level_instance_id" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
+	</changeSet>
+
+    <changeSet id="#INTRD-4777_20200208-rebuild-str-uk" author="HichamELHALOUI">
+		<addUniqueConstraint columnNames="template_name" constraintName="uk_security_deposit_template_name" deferrable="false" disabled="false" initiallyDeferred="false" tableName="security_deposit_templat" />
 	</changeSet>
 
     <!-- end uk -->
@@ -15542,7 +15598,15 @@
 			constraintName="fk_dunning_policy_id" deferrable="false"
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="dunning_policy" />
-			
+
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_accounting_scheme"
+                                 constraintName="fk_acc_scheme_script_inst_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="meveo_script_instance"/>
+        <addForeignKeyConstraint baseColumnNames="accounting_scheme_id" baseTableName="ar_occ_template" constraintName="fk_occ_tmplt_accnt_scheme_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="ar_accounting_scheme"/>
+
     </changeSet>
     <changeSet id="rebuild-str-fk-540-1641" author="ZBariki">
         <addForeignKeyConstraint baseColumnNames="min_balance_trigger_currency_id" baseTableName="dunning_policy"
@@ -15650,6 +15714,16 @@
 			constraintName="fk_billing_service_instance_security_deposit" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
 
+    </changeSet>
+    
+    <changeSet id="#INTRD-4654_20220203-rebuild-str-fk" author="HanineHicham">
+		<addForeignKeyConstraint baseColumnNames="security_deposit_id" baseTableName="security_deposit_transaction"
+			constraintName="fk_security_deposit_security_deposit_transaction" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="security_deposit" />
+			
+		<addForeignKeyConstraint baseColumnNames="account_operation_id" baseTableName="security_deposit_transaction"
+			constraintName="fk_ar_account_operation_security_deposit_transaction" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
     </changeSet>
     
     <changeSet author="Ilyasstalal" id="rebuild-str-fk-1644">
@@ -15780,6 +15854,8 @@
         <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
     	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
+    	<sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
+    	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -17016,15 +17092,17 @@
     <changeSet id="INTRD-3807_20211227" author="HHanine" />
 	<changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-4178_20220106" author="AmineBENAICHA" />
-
 	<changeSet id="#INTRD-4410_20220114" author="IlyassTalal" />
-
     <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui" />
     <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui" />
 	<changeSet id="#INTRD-4410_20220117" author="IlyassTalal" />
 	<changeSet id="#INTRD-4677_20220125" author="hatimOUDAD" />
-
-
+	<changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham" />
+    <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI" />
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

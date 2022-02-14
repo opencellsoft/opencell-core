@@ -207,6 +207,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRPropertiesUtil;
@@ -389,6 +390,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private CpqQuoteService cpqQuoteService;
+
 
     @PostConstruct
     private void init() {
@@ -2148,9 +2150,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
-            throw new BusinessException("Invoice XML was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
-        }
-
+            produceInvoicePdfNoUpdate(invoice);        }
         try {
             return new String(Files.readAllBytes(Paths.get(xmlFileName)), StandardCharsets.UTF_8);
         } catch (Exception e) {
@@ -2159,6 +2159,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return null;
     }
+   
 
     /**
      * Check if invoice's PDF file exists.
@@ -2463,6 +2464,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
         cancelInvoiceAndRts(invoice);
+        List<Long> invoicesIds = new ArrayList<Long>();
+        invoicesIds.add(invoice.getId());
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);
         if (remove) {
             super.remove(invoice);
         } else {
@@ -3562,6 +3566,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
+        if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
+            List<InvoiceLine> invoiceLines = invoice.getInvoiceLines();
+            subscriptionApplicableDiscountPlanItems.addAll(invoiceLines.stream()
+                    .filter(invoiceLine -> invoiceLine.getDiscountPlan() != null)
+                    .map(InvoiceLine::getDiscountPlan)
+                    .map(DiscountPlan::getDiscountPlanItems)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList()));
+        }
+
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
@@ -3948,7 +3962,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setOrder(order);
 
         } else if (entity instanceof Subscription) {
-            invoice.setSubscription((Subscription) entity);
+        	Subscription subscription = (Subscription) entity;
+            invoice.setSubscription(subscription);
+            invoice.setCommercialOrder(subscription.getOrder());
+            invoice.setCpqQuote(subscription.getOrder()!=null?subscription.getOrder().getQuote():null);
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
@@ -5143,7 +5160,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoiceLineGroupToInvoiceMap.isEmpty() && invoiceLinesGroupsPaged.isEmpty()) {
                 log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
-                if(existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty()) {
+                if(existingInvoice != null
+                        && (existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty())) {
                     cleanInvoiceAggregates(existingInvoice.getId());
                     initAmounts(existingInvoice.getId());
                 }
@@ -5667,7 +5685,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             org.meveo.apiv2.billing.SubCategoryInvoiceAgregate subCatInvAgr, InvoiceSubCategory invoiceSubCategory, SubCategoryInvoiceAgregate invoiceAgregateSubcat) {
         if (subCatInvAgr.getInvoiceLines() != null) {
             for (org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource : subCatInvAgr.getInvoiceLines()) {
-                InvoiceLine il = invoiceLinesService.initInvoiceLineFromRessource(invoiceLineRessource, null);
+                InvoiceLine il = invoiceLinesService.initInvoiceLineFromResource(invoiceLineRessource, null);
                 linkIL(invoice, invoiceAgregateSubcat, il, isEnterprise);
             }
         }

@@ -61,6 +61,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.notification.Notification;
@@ -878,17 +879,41 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     @SuppressWarnings("unchecked")
-    public List<Long> findByCounterAndActiveService(String counterTemplateCode) {
-        List<Long> ids = new ArrayList<>();
-        try {
-            ids = (List<Long>) getEntityManager().createNamedQuery("CounterInstance.findByCounterAndActiveService").setParameter("counterTemplateCode", counterTemplateCode).getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("findByCounterAndActiveService error ", e.getMessage());
-        }
+    public List<Long> findByCounterAndAccount(String counterTemplateCode,CounterTemplateLevel level) { 
+    	List<Long> ids=new ArrayList<>();
+    	try {
+    		if(CounterTemplateLevel.CA.equals(level)){
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomer")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.CUST.equals(level)){ 
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomerAccount")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.BA.equals(level)) {
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndBillingAccount")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.UA.equals(level)){ 
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndUserAccount")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.SU.equals(level)){ 
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndSubscription")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.SI.equals(level)){
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndService")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+    		}
+    		
+    		
+    	} catch (Exception e) {
+    		log.error("findByCounterAndAccounts error ", e.getMessage());
+    	}
 
-        return ids;
-    }
+    	return ids;
+    }    
 
     /**
      * Get a list of updated counter periods
