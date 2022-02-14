@@ -348,6 +348,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     throw new RatingException("Can not determine a next charge period for charge instance " + recurringChargeInstance.getId() + " and subscription date " + recurringChargeInstance.getSubscriptionDate());
                 }
                 recurringChargeInstance.setChargeDate(recurringChargeInstance.getSubscriptionDate());
+                recurringChargeInstance.setChargedToDate(new Date(recurringChargeInstance.getSubscriptionDate().getTime()));                
                 recurringChargeInstance.setNextChargeDate(isApplyInAdvance && !recurringChargeInstance.getSubscriptionDate().after(period.getFrom()) ? recurringChargeInstance.getSubscriptionDate() : nextChargeDate);
                 chargeWasUpdated = true;
 

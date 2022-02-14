@@ -19,8 +19,8 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,14 +35,19 @@ import java.util.stream.Collectors;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Column;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
@@ -71,7 +76,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private static final String FIELD_DESCRIPTION = "description";
 
-    private static final String FIELD_ENTITY_SUFFIX = "_TXTlabel";
+    private static final String FIELD_ENTITY_TXT_SUFFIX = "_TXTlabel";
 
     @Inject
     private CustomTableService customTableService;
@@ -113,6 +118,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         super(CustomEntityTemplate.class);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public CustomEntityTemplate initEntity() {
         super.initEntity();
@@ -154,13 +160,46 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
                 } else {
                     cetFieldInfo.referenceType = EntityFieldTypeReference.BusinessEntity;
                     try {
-                        cetFieldInfo.tableName = ((Table) Class.forName(cetField.getEntityClazz()).getAnnotation(Table.class)).name();
+
+                        Class entityClazz = Class.forName(cetField.getEntityClazz());
+                        if (entityClazz.isAnnotationPresent(Table.class)) {
+                            cetFieldInfo.tableName = ((Table) entityClazz.getAnnotation(Table.class)).name();
+                        } else {
+
+                            Class superClass = entityClazz.getSuperclass();
+                            while (superClass != null) {
+                                if (superClass.isAnnotationPresent(Table.class)) {
+                                    cetFieldInfo.tableName = ((Table) superClass.getAnnotation(Table.class)).name();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (entityClazz.isAnnotationPresent(ReferenceIdentifierCode.class)) {
+                            String entityFieldName = ((ReferenceIdentifierCode) entityClazz.getAnnotation(ReferenceIdentifierCode.class)).value();
+                            Field entityField = FieldUtils.getField(entityClazz, entityFieldName, true);
+                            String dbFieldName = entityFieldName;
+                            if (entityField.isAnnotationPresent(Column.class)) {
+                                dbFieldName = entityField.getAnnotation(Column.class).name();
+                            }
+
+                            cetFieldInfo.fields.add(new CustomFieldTemplate(dbFieldName, StringUtils.capitalize(entityFieldName), CustomFieldTypeEnum.STRING));
+                        }
+                        if (entityClazz.isAnnotationPresent(ReferenceIdentifierDescription.class)) {
+                            String entityFieldName = ((ReferenceIdentifierDescription) entityClazz.getAnnotation(ReferenceIdentifierDescription.class)).value();
+                            Field entityField = FieldUtils.getField(entityClazz, entityFieldName, true);
+                            String dbFieldName = entityFieldName;
+                            if (entityField.isAnnotationPresent(Column.class)) {
+                                dbFieldName = entityField.getAnnotation(Column.class).name();
+                            }
+
+                            cetFieldInfo.fields.add(new CustomFieldTemplate(dbFieldName, StringUtils.capitalize(entityFieldName), CustomFieldTypeEnum.STRING));
+                        }
+
                     } catch (ClassNotFoundException e) {
                         log.error("Class {} referenced from a Custom field not found", cetField.getEntityClazz());
                     }
 
-                    cetFieldInfo.fields.add(new CustomFieldTemplate(FIELD_CODE, "Code", CustomFieldTypeEnum.STRING));
-                    cetFieldInfo.fields.add(new CustomFieldTemplate(FIELD_DESCRIPTION, "Description", CustomFieldTypeEnum.STRING));
                 }
 
                 entityReferences.put(cetField.getDbFieldname(), cetFieldInfo);
@@ -291,9 +330,16 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
                     for (Entry<String, CETEntityTypeFieldInfo> referenceInfo : entityReferences.entrySet()) {
 
                         String dbFieldname = referenceInfo.getKey();
+                        CETEntityTypeFieldInfo reference = referenceInfo.getValue();
 
                         // Nothing else to retrieve for Custom table - there is no clear code/description field equivalent
-                        if (referenceInfo.getValue().referenceType == EntityFieldTypeReference.CT) {
+                        if (reference.referenceType == EntityFieldTypeReference.CT) {
+
+                            for (Map<String, Object> dataRow : data) {
+                                if (dataRow.get(dbFieldname) != null) {
+                                    dataRow.put(dbFieldname + FIELD_ENTITY_TXT_SUFFIX, dataRow.get(dbFieldname));
+                                }
+                            }
                             continue;
                         }
 
@@ -302,14 +348,31 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
                         if (!ids.isEmpty()) {
 
                             PaginationConfiguration criteria = new PaginationConfiguration(Map.of("inList " + NativePersistenceService.FIELD_ID, ids));
-                            criteria.setFetchFields(Arrays.asList(NativePersistenceService.FIELD_ID, FIELD_CODE, FIELD_DESCRIPTION));
+
+                            List<String> fetchFields = new ArrayList<String>();
+                            fetchFields.add(NativePersistenceService.FIELD_ID);
+                            fetchFields.addAll(reference.getFieldDBfieldnames());
+
+                            criteria.setFetchFields(fetchFields);
+
                             List<Map<String, Object>> values = customTableService.list(referenceInfo.getValue().tableName, criteria);
-                            Map<String, String> valuesById = values.stream().collect(Collectors.toMap(map -> map.get(NativePersistenceService.FIELD_ID).toString(),
-                                map -> (String) (map.get(FIELD_DESCRIPTION) != null ? map.get(FIELD_CODE) + " / " + map.get(FIELD_DESCRIPTION) : map.get(FIELD_CODE))));
+                            Map<String, String> valuesById = values.stream().collect(Collectors.toMap(map -> map.get(NativePersistenceService.FIELD_ID).toString(), map -> {
+
+                                List<String> refValues = new ArrayList<String>();
+                                for (String field : reference.getFieldDBfieldnames()) {
+                                    if (map.get(field) != null) {
+                                        refValues.add(map.get(field).toString());
+                                    }
+                                }
+                                return org.meveo.commons.utils.StringUtils.concatenate(" / ", refValues);
+
+                            })
+
+                            );
 
                             for (Map<String, Object> dataRow : data) {
                                 if (dataRow.get(dbFieldname) != null && valuesById.containsKey(dataRow.get(dbFieldname).toString())) {
-                                    dataRow.put(dbFieldname + FIELD_ENTITY_SUFFIX, valuesById.get(dataRow.get(dbFieldname).toString()));
+                                    dataRow.put(dbFieldname + FIELD_ENTITY_TXT_SUFFIX, valuesById.get(dataRow.get(dbFieldname).toString()));
                                 }
                             }
                         }
@@ -441,7 +504,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         // Remove any entity id to label translation fields before saving
         Map<String, Object> rowValuesCopy = new HashMap<String, Object>(rowValues);
         for (String fieldname : rowValues.keySet()) {
-            if (fieldname.endsWith(FIELD_ENTITY_SUFFIX)) {
+            if (fieldname.endsWith(FIELD_ENTITY_TXT_SUFFIX)) {
                 rowValuesCopy.remove(fieldname);
             }
         }
@@ -603,17 +666,22 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         String dbFieldname = ((DataTable) selectEvent.getSource()).getId().substring(0, ((DataTable) selectEvent.getSource()).getId().indexOf("_datatable"));
         rowValues.put(dbFieldname, id);
 
+        CETEntityTypeFieldInfo reference = entityReferences.get(dbFieldname);
+
         String idPlusDescriptionOrCode = id.toString();
-        if (valueSelected.containsKey(FIELD_DESCRIPTION) && valueSelected.containsKey(FIELD_CODE)) {
-            idPlusDescriptionOrCode = (String) valueSelected.get(FIELD_CODE) + " / " + (String) valueSelected.get(FIELD_DESCRIPTION);
 
-        } else if (valueSelected.containsKey(FIELD_CODE)) {
-            idPlusDescriptionOrCode = (String) valueSelected.get(FIELD_CODE);
+        if (reference.referenceType != EntityFieldTypeReference.CT) {
 
-        } else if (valueSelected.containsKey(FIELD_DESCRIPTION)) {
-            idPlusDescriptionOrCode = (String) valueSelected.get(FIELD_DESCRIPTION);
+            List<String> values = new ArrayList<String>();
+            for (String field : reference.getFieldDBfieldnames()) {
+                if (valueSelected.get(field) != null) {
+                    values.add(valueSelected.get(field).toString());
+                }
+            }
+            idPlusDescriptionOrCode = org.meveo.commons.utils.StringUtils.concatenate(" / ", values);
+
         }
-        rowValues.put(dbFieldname + FIELD_ENTITY_SUFFIX, idPlusDescriptionOrCode);
+        rowValues.put(dbFieldname + FIELD_ENTITY_TXT_SUFFIX, idPlusDescriptionOrCode);
     }
 
     /**

@@ -95,7 +95,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		duplicate.setUserAccount(entity.getUserAccount());
 		duplicate.setSeller(entity.getSeller());
 		duplicate.setDescription(entity.getDescription());
-		duplicate.setInvoicingPlan(entity.getInvoicingPlan());
 		duplicate.setOrderInvoiceType(entity.getOrderInvoiceType());
 		duplicate.setOrderDate(new Date());
 		duplicate.setProgressDate(new Date());
