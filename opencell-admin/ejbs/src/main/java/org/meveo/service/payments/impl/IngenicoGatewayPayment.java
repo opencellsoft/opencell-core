@@ -332,7 +332,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		
     		if (customerAccount.getName() != null) {
     			name.setFirstName(isEntreprise?"-":formatIngenicoData(customerAccount.getName().getFirstName(), false));
-    			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), false)); 
+    			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), true)); 
     			personalInformation.setTitle(isEntreprise?"Mr":(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription()));
     		}  
     		
