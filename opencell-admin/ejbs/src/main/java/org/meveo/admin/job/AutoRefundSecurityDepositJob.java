@@ -17,12 +17,12 @@ import javax.inject.Inject;
 public class AutoRefundSecurityDepositJob extends Job {
 
     @Inject
-    private TriggerCollectionPlanLevelsJobBean collectionPlanLevelsJobBean;
+    private AutoRefundSecurityDepositJobBean autoRefundSecurityDepositJobBean;
 
     @Override
     @TransactionAttribute(NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        collectionPlanLevelsJobBean.execute(result, jobInstance);
+    	autoRefundSecurityDepositJobBean.execute(result, jobInstance);
         return result;
     }
 
