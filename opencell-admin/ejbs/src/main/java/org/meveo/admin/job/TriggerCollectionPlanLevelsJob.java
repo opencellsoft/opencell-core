@@ -1,5 +1,8 @@
 package org.meveo.admin.job;
 
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static org.meveo.model.jobs.MeveoJobCategoryEnum.DUNNING;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -10,9 +13,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 
-import static javax.ejb.TransactionAttributeType.NEVER;
-import static org.meveo.model.jobs.MeveoJobCategoryEnum.DUNNING;
-
 @Stateless
 public class TriggerCollectionPlanLevelsJob extends Job {
 
@@ -20,7 +20,7 @@ public class TriggerCollectionPlanLevelsJob extends Job {
     private TriggerCollectionPlanLevelsJobBean collectionPlanLevelsJobBean;
 
     @Override
-    @TransactionAttribute(NEVER)
+    @TransactionAttribute(REQUIRES_NEW)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         collectionPlanLevelsJobBean.execute(result, jobInstance);
         return result;

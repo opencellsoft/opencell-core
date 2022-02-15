@@ -17,16 +17,14 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceLineService;
-import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -89,27 +87,32 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 } else {
                     AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(),
                             AggregationOption.fromValue(aggregationOption));
-                    List<RatedTransaction> ratedTransactions = billingRunService.loadRTsByBillingRuns(billingRuns);
-                    List<Long> ratedTransactionIds = ratedTransactions.stream()
-                            .map(RatedTransaction::getId)
-                            .collect(toList());
-                    if (!ratedTransactionIds.isEmpty()) {
-                        List<Map<String, Object>> groupedRTs;
-                        if (aggregationConfiguration.getAggregationOption() == AggregationOption.NO_AGGREGATION) {
-                            groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
-                        } else {
-                            groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
+                    List<RatedTransaction> ratedTransactions = new ArrayList<>();
+                    for(BillingRun billingRun : billingRuns) {
+                        List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
+                        for (IBillableEntity be :  billableEntities) {
+                            ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+                                    billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null, 30000));
                         }
-                        Map<Long, List<Long>> iLIdsRtIdsCorrespondence
-                                = invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
-                        ratedTransactionService.makeAsProcessed(ratedTransactionIds);
-                        ratedTransactionService.linkRTWithInvoiceLine(iLIdsRtIdsCorrespondence);
-                        result.setNbItemsCorrectlyProcessed(groupedRTs.size());
+                        List<Long> ratedTransactionIds = ratedTransactions.stream()
+                                .map(RatedTransaction::getId)
+                                .collect(toList());
+                        if (!ratedTransactionIds.isEmpty()) {
+                            List<Map<String, Object>> groupedRTs;
+                            if (aggregationConfiguration.getAggregationOption() == AggregationOption.NO_AGGREGATION) {
+                                groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
+                            } else {
+                                groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
+                            }
+                            BasicStatistics basicStatistics
+                                    = invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
+                            basicStatistics.setBillableEntitiesCount(billableEntities.size());
+                            updateBillingRunStatistics(billingRun, basicStatistics);
+                            ratedTransactionService.makeAsProcessed(ratedTransactionIds);
+                            ratedTransactionService.linkRTWithInvoiceLine(basicStatistics.getiLIdsRtIdsCorrespondence());
+                            result.setNbItemsCorrectlyProcessed(groupedRTs.size());
+                        }
                     }
-                }
-                for(BillingRun billingRun : billingRuns) {
-                	  billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-                              INVOICE_LINES_CREATED, new Date());
                 }
             }
         } catch(BusinessException exception) {
@@ -130,5 +133,15 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored", br.getId())));
         billingRuns.removeAll(excludedBRs);
         return excludedBRs.size();
+    }
+
+    private BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics) {
+        billingRun.setBillableBillingAcountNumber(basicStatistics.getBillableEntitiesCount().intValue());
+        billingRun.setPrAmountTax(basicStatistics.getGetSumAmountWithTax());
+        billingRun.setPrAmountWithoutTax(basicStatistics.getSumAmountWithoutTax());
+        billingRun.setProcessDate(new Date());
+        billingRun.setStatus(INVOICE_LINES_CREATED);
+        billingRunService.update(billingRun);
+        return billingRun;
     }
 }
