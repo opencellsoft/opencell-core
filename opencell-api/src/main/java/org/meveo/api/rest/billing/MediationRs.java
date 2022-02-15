@@ -49,6 +49,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Andrius Karpavicius
  */
 @Path("/billing/mediation")
+@Tag(name = "Mediation", description = "@%Mediation")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface MediationRs extends IBaseRs {
