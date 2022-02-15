@@ -9426,4 +9426,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
 	</changeSet>
+    <changeSet id="INTRD-5089_20220215" author="TarikRabeh">
+        <update tableName="billing_accounting_article">
+			<column name="accounting_code_id" value="-36"/>
+            <where>code='ART_SECURITY_DEPOSIT'</where>
+        </update>
+    </changeSet>	
 </databaseChangeLog>
