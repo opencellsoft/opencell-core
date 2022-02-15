@@ -18,6 +18,14 @@
 
 package org.meveo.api.payment;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -50,7 +58,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.service.billing.impl.AccountingCodeService;
@@ -58,14 +65,6 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The Class AccountOperationApi.
@@ -94,10 +93,6 @@ public class AccountOperationApi extends BaseApi {
     /** The matching amount service. */
     @Inject
     private MatchingAmountService matchingAmountService;
-
-    /** The recorded invoice service. */
-    @Inject
-    private RecordedInvoiceService recordedInvoiceService;
     
     @Inject
     private AccountingCodeService accountingCodeService;
@@ -406,11 +401,7 @@ public class AccountOperationApi extends BaseApi {
         }
         if (!customerAccount.getAccountOperations().contains(accountOperation)) {
             throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
-        }
-
-        if (!(accountOperation instanceof RecordedInvoice)) {
-            throw new BusinessException("The operationId " + postData.getAccountOperationId() + " should be invoice");
-        }
+        }       
     }
 
     /**
@@ -420,9 +411,9 @@ public class AccountOperationApi extends BaseApi {
      * @throws BusinessException the business exception
      * @throws Exception the exception
      */
-    public void addLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
+	public void addLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         checkingLitigation(postData);
-        recordedInvoiceService.addLitigation(postData.getAccountOperationId());
+        accountOperationService.addLitigation(postData.getAccountOperationId());
     }
 
     /**
@@ -434,7 +425,7 @@ public class AccountOperationApi extends BaseApi {
      */
     public void cancelLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         checkingLitigation(postData);
-        recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
+        accountOperationService.cancelLitigation(postData.getAccountOperationId());
     }
 
     /**
