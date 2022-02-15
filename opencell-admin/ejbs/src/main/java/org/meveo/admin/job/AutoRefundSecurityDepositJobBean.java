@@ -185,13 +185,6 @@ public class AutoRefundSecurityDepositJobBean extends BaseJobBean {
 										new HashMap<>());
 							}
 						}
-						if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
-							if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
-									|| actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
-								sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
-										collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
-							}
-						}
 						if (actionInstance.getActionType().equals(RETRY_PAYMENT)) {
 							BillingAccount billingAccount = collectionPlan.getBillingAccount();
 							if (billingAccount != null && billingAccount.getCustomerAccount() != null
@@ -265,80 +258,6 @@ public class AutoRefundSecurityDepositJobBean extends BaseJobBean {
 		}
 		if (updateCollectionPlan) {
 			collectionPlanService.update(collectionPlan);
-		}
-	}
-
-	private void sendEmail(EmailTemplate emailTemplate, Invoice invoice, Date lastActionDate) {
-		if (invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
-				&& invoice.getSeller().getContactInformation().getEmail() != null
-				&& !invoice.getSeller().getContactInformation().getEmail().isBlank()) {
-			Seller seller = invoice.getSeller();
-			Map<Object, Object> params = new HashMap<>();
-			BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId(),
-					asList("customerAccount"));
-			params.put("billingAccountDescription", billingAccount.getDescription());
-			params.put("billingAccountAddressAddress1",
-					billingAccount.getAddress() != null ? billingAccount.getAddress().getAddress1() : "");
-			params.put("billingAccountAddressZipCode",
-					billingAccount.getAddress() != null ? billingAccount.getAddress().getZipCode() : "");
-			params.put("billingAccountAddressCity",
-					billingAccount.getAddress() != null ? billingAccount.getAddress().getCity() : "");
-			params.put("billingAccountContactInformationPhone",
-					billingAccount.getContactInformation() != null ? billingAccount.getContactInformation().getPhone()
-							: "");
-
-			CustomerAccount customerAccount = customerAccountService
-					.findById(billingAccount.getCustomerAccount().getId());
-			if (billingAccount.getIsCompany()) {
-				params.put("customerAccountLegalEntityTypeCode",
-						ofNullable(billingAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-			} else {
-				Name name = ofNullable(billingAccount.getName()).orElse(null);
-				Title title = ofNullable(name).map(Name::getTitle).orElse(null);
-				params.put("customerAccountLegalEntityTypeCode",
-						ofNullable(title).map(Title::getDescription).orElse(""));
-			}
-			params.put("customerAccountAddressAddress1",
-					customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
-			params.put("customerAccountAddressZipCode",
-					customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
-			params.put("customerAccountAddressCity",
-					customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
-			params.put("customerAccountDescription", customerAccount.getDescription());
-			params.put("customerAccountLastName",
-					customerAccount.getName() != null ? customerAccount.getName().getLastName() : "");
-			params.put("customerAccountFirstName",
-					customerAccount.getName() != null ? customerAccount.getName().getFirstName() : "");
-
-			params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
-			params.put("invoiceTotal", invoice.getAmountWithTax());
-			params.put("invoiceDueDate", formatter.format(invoice.getDueDate()));
-			params.put("dayDate", formatter.format(new Date()));
-
-			params.put("dunningCollectionPlanLastActionDate",
-					lastActionDate != null ? formatter.format(lastActionDate) : "");
-			List<File> attachments = new ArrayList<>();
-			String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
-			File attachment = new File(invoiceFileName);
-			if (attachment.exists()) {
-				attachments.add(attachment);
-			} else {
-				log.warn("No Pdf file exists for the invoice : {}",
-						ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
-			}
-			if (billingAccount.getContactInformation() != null
-					&& billingAccount.getContactInformation().getEmail() != null) {
-				try {
-					collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
-							billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
-				} catch (Exception exception) {
-					throw new BusinessException(exception.getMessage());
-				}
-			} else {
-				throw new BusinessException("Billing account email is missing");
-			}
-		} else {
-			throw new BusinessException("From email is missing, email sending skipped");
 		}
 	}
 
