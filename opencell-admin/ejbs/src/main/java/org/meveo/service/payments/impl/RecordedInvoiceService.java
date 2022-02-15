@@ -68,63 +68,49 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     @Inject
     private OCCTemplateService occTemplateService;
+    
+    @Inject
+    private AccountOperationService accountOperationService;
 
-    /**
+     /**
      * @param recordedInvoiceId recored invoice id
      * @throws BusinessException business exception
+     * @deprecated use accountOperationService.addLitigation
      */
+    @Deprecated
     public void addLitigation(Long recordedInvoiceId) throws BusinessException {
-        if (recordedInvoiceId == null) {
-            throw new BusinessException("recordedInvoiceId is null");
-        }
-        addLitigation(findById(recordedInvoiceId));
+    	accountOperationService.addLitigation(recordedInvoiceId);
     }
 
     /**
      * @param recordedInvoice recorded invoice
      * @throws BusinessException business exception.
+     * @deprecated use accountOperationService.addLitigation
      */
+    @Deprecated
     public void addLitigation(RecordedInvoice recordedInvoice) throws BusinessException {
-
-        if (recordedInvoice == null) {
-            throw new BusinessException("recordedInvoice is null");
-        }
-        log.info("addLitigation recordedInvoice.Reference:" + recordedInvoice.getReference() + "status:" + recordedInvoice.getMatchingStatus());
-        if (recordedInvoice.getMatchingStatus() != MatchingStatusEnum.O) {
-            throw new BusinessException("recordedInvoice is not open");
-        }
-        recordedInvoice.setMatchingStatus(MatchingStatusEnum.I);
-        update(recordedInvoice);
-        log.info("addLitigation recordedInvoice.Reference:" + recordedInvoice.getReference() + " ok");
+    	accountOperationService.addLitigation(recordedInvoice);
     }
 
     /**
      * @param recordedInvoiceId recored invoice id
      * @throws BusinessException business exception.
+     * @deprecated use accountOperationService.cancelLitigation
      */
+    @Deprecated
     public void cancelLitigation(Long recordedInvoiceId) throws BusinessException {
-        if (recordedInvoiceId == null) {
-            throw new BusinessException("recordedInvoiceId is null");
-        }
-        cancelLitigation(findById(recordedInvoiceId));
+    	accountOperationService.cancelLitigation(recordedInvoiceId);
     }
 
     /**
      * @param recordedInvoice recored invoice
      * @throws BusinessException business exception.
+     * @deprecated use accountOperationService.cancelLitigation
      */
+    @Deprecated
     public void cancelLitigation(RecordedInvoice recordedInvoice) throws BusinessException {
 
-        if (recordedInvoice == null) {
-            throw new BusinessException("recordedInvoice is null");
-        }
-        log.info("cancelLitigation recordedInvoice.Reference:" + recordedInvoice.getReference());
-        if (recordedInvoice.getMatchingStatus() != MatchingStatusEnum.I) {
-            throw new BusinessException("recordedInvoice is not on Litigation");
-        }
-        recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-        update(recordedInvoice);
-        log.info("cancelLitigation recordedInvoice.Reference:" + recordedInvoice.getReference() + " ok");
+    	accountOperationService.cancelLitigation(recordedInvoice);
     }
 
     /**

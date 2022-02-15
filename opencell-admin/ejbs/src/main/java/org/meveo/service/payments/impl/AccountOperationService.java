@@ -43,6 +43,7 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
@@ -454,5 +455,69 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             // Update the old account operation
             accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
         }
+    }
+    
+    /**
+     * @param accountOperationId the accountOperation id.
+     * @throws BusinessException business exception
+     */
+    public void addLitigation(Long accountOperationId) throws BusinessException {
+        if (accountOperationId == null) {
+            throw new BusinessException("accountOperationId is null");
+        }
+        addLitigation(findById(accountOperationId));
+    }
+
+    /**
+     * @param accountOperation the accountOperation.
+     * @throws BusinessException business exception.
+     */
+    public void addLitigation(AccountOperation accountOperation) throws BusinessException {
+
+        if (accountOperation == null) {
+            throw new BusinessException("accountOperation is null");
+        }
+        log.info("addLitigation accountOperation.Reference:" + accountOperation.getReference() + "status:" + accountOperation.getMatchingStatus());
+
+        accountOperation.setMatchingStatus(MatchingStatusEnum.I);
+        update(accountOperation);
+        log.info("addLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok");
+    }
+
+    /**
+     * @param accountOperationId accountOperation id.
+     * @throws BusinessException business exception.
+     */
+    public void cancelLitigation(Long accountOperationId) throws BusinessException {
+        if (accountOperationId == null) {
+            throw new BusinessException("accountOperationId is null");
+        }
+        cancelLitigation(findById(accountOperationId));
+    }
+
+    /**
+     * @param accountOperation recored invoice
+     * @throws BusinessException business exception.
+     */
+    public void cancelLitigation(AccountOperation accountOperation) throws BusinessException {
+
+        if (accountOperation == null) {
+            throw new BusinessException("accountOperation is null");
+        }
+        log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference());
+        if (accountOperation.getMatchingStatus() != MatchingStatusEnum.I) {
+            throw new BusinessException("accountOperation is not on Litigation");
+        }
+        if(accountOperation.getAmount().compareTo(accountOperation.getMatchingAmount()) == 0) {
+        	accountOperation.setMatchingStatus(MatchingStatusEnum.L);
+        }else
+        if(accountOperation.getAmount().compareTo(accountOperation.getUnMatchingAmount()) == 0) {
+        	accountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        }else {
+        	accountOperation.setMatchingStatus(MatchingStatusEnum.P);
+        }
+        
+        update(accountOperation);
+        log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
     }
 }
