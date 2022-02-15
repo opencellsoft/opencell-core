@@ -7,7 +7,455 @@
 	"item": [
 		{
 			"name": "configuration",
-			"item": []
+			"item": [
+				{
+					"name": "Country",
+					"item": [
+						{
+							"name": "Create Country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"countryCode\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"languageCode\": \"FRA\",\r\n    \"currencyCode\": \"EUR\"\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/countryIso/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"countryIso",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/countryIso?countryCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"countryIso"
+									],
+									"query": [
+										{
+											"key": "countryCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));",
+									"pm.variables.set(\"codeIdentifier\", \"countryCode\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Provider",
+					"item": [
+						{
+							"name": "Update Provider",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"enterprise\": \"true\",\r\n    \"rounding\": \"5\",\r\n    \"invoiceConfiguration\": {\r\n        \"displaySubscriptions\": \"true\",\r\n        \"displayServices\": \"true\",\r\n        \"displayOffers\": \"true\",\r\n        \"displayEdrs\": \"true\",\r\n        \"displayProvider\": \"true\",\r\n        \"displayCfAsXML\": \"true\",\r\n        \"displayPricePlans\": \"true\",\r\n        \"displayDetail\": \"true\",\r\n        \"displayChargesPeriods\": \"true\",\r\n        \"displayFreeTransacInInvoice\": \"false\",\r\n        \"displayBillingCycle\": \"true\",\r\n        \"displayOrders\": \"true\"\r\n    },\r\n    \"bankCoordinates\": {\r\n        \"iban\": \"30004 01234 12345678901 23\",\r\n        \"bic\": \"BNPAFRPPXXX\",\r\n        \"ics\": \"\"\r\n    }\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/provider",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"provider"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read provider",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/provider",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"provider"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seller",
+					"item": [
+						{
+							"name": "Create or Update Seller",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"parentSeller\": \"SELLER_FR\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Seller",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller?sellerCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller"
+									],
+									"query": [
+										{
+											"key": "sellerCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"sellerCode\", pm.variables.get(\"entityCode\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "test",
