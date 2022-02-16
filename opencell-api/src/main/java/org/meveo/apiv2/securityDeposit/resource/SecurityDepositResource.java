@@ -1,6 +1,5 @@
 package org.meveo.apiv2.securityDeposit.resource;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -12,7 +11,6 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
-import org.meveo.model.securityDeposit.FinanceSettings;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
