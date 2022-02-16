@@ -1,23 +1,37 @@
 package org.meveo.apiv2.billing.service;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.*;
-import static org.meveo.model.billing.BillingRunStatusEnum.*;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
+import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
-import static org.meveo.model.jobs.JobLauncherEnum.*;
+import static org.meveo.model.jobs.JobLauncherEnum.API;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
+import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import java.util.*;
 
 public class BillingRunApiService implements ApiService<BillingRun> {
 
@@ -29,6 +43,18 @@ public class BillingRunApiService implements ApiService<BillingRun> {
 
     @Inject
     private JobInstanceService jobInstanceService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private InvoiceService invoiceService;
+    
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
+    
+    @Inject
+    private InvoiceLineService invoiceLineService;
 
     private static final String INVOICING_JOB_CODE = "Invoicing_Job_V2";
 
@@ -115,4 +141,21 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                     + exception.getMessage(), exception.getCause());
         }
     }
+
+	public Optional<BillingRun> cancelBillingRun(Long billingRunId) {
+		 BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        if (billingRun.getStatus() == POSTVALIDATED && billingRun.getStatus() == BillingRunStatusEnum.VALIDATED
+	                && billingRun.getStatus() == BillingRunStatusEnum.CANCELLING && billingRun.getStatus() == BillingRunStatusEnum.CANCELED) {
+	            throw new BadRequestException("The billing run cannot be cancelled");
+	        }
+	        ratedTransactionService.deleteSupplementalRTs(billingRun);
+	        ratedTransactionService.uninvoiceRTs(billingRun);
+	        invoiceLineService.DeleteInvoiceLines(billingRun);
+	        invoiceService.deleteInvoices(billingRun);
+	        invoiceAgregateService.deleteInvoiceAgregates(billingRun);
+		return of(billingRun);
+	}
 }
