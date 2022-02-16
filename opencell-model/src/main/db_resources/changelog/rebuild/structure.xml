@@ -6461,7 +6461,7 @@
             <column name="entity_class" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="disable" type="${type.boolean}" defaultValueNumeric="0">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -17071,6 +17071,7 @@
 	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham" />
     <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
