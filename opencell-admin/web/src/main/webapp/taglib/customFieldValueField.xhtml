@@ -73,7 +73,10 @@
             <f:convertDateTime type="date" pattern="#{datePattern}" />
         </h:outputText>
         <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field.dateValue}" required="#{cft.valueRequired and !hasInheritedValue}" rendered="#{edit and !disabled}"
-            label="#{cft.description}" />
+            label="#{cft.description}" widgetVar="calendarWidget_#{cft.code}" />
+        <p:commandButton value="#{messages['action.reset']" onclick="PF('calendarWidget_#{cft.code}').setDate(null)"
+                         type="button" rendered="#{edit and !disabled}"/>
+
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <h:outputText value="#{field.doubleValue}" styleClass="field-value" rendered="#{! edit or disabled}" />

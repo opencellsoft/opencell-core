@@ -83,8 +83,7 @@ import org.meveo.model.shared.InterBankTitle;
 @CustomFieldEntity(cftCodePrefix = "Provider")
 @ExportIdentifier("code")
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_provider_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "crm_provider_seq"), })
 public class Provider extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -350,8 +349,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      * RUM number sequence
      */
     @Embedded
-    @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")),
-            @AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")),
+    @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), @AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")),
             @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb")) })
     private GenericSequence rumSequence = new GenericSequence();
 
@@ -359,8 +357,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      * Customer number sequence
      */
     @Embedded
-    @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")),
-            @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")),
+    @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")),
             @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")) })
     private GenericSequence customerNoSequence = new GenericSequence();
 
@@ -606,6 +603,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
         return invoiceConfiguration;
     }
 
+    /**
+     * @return Invoice configuration or a default invoice configuration if one was not setup already
+     */
+    public InvoiceConfiguration getInvoiceConfigurationOrDefault() {
+        return invoiceConfiguration != null ? invoiceConfiguration : new InvoiceConfiguration();
+    }
+
     public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
         this.invoiceConfiguration = invoiceConfiguration;
     }
@@ -642,14 +646,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      */
     @PrePersist
     public void setUUIDIfNull() {
-    	if (uuid == null) {
-    		uuid = UUID.randomUUID().toString();
-    	}
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
-    
+
     @Override
     public String getUuid() {
-    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 

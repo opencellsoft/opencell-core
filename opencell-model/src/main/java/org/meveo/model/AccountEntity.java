@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -50,6 +51,7 @@ import org.meveo.model.shared.Name;
  * @lastModifiedVersion 5.2
  */
 @Entity
+@DynamicUpdate
 @ObservableEntity
 @Cacheable
 @Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type" }))

@@ -715,6 +715,12 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@Override
 	public void anonymize(String code) {
 		super.anonymize(code);
+		
+		setDateStatus(new Date(0));
+		setDateDunningLevel(new Date(0));
+		if(isNotEmpty(this.getPaymentMethods())) {
+			this.getPaymentMethods().forEach(payment -> payment.anonymize(code));
+		}
 		if (isNotEmpty(this.billingAccounts)) {
 			this.billingAccounts.forEach(ba -> ba.anonymize(code));
 		}

@@ -38,6 +38,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -67,6 +68,7 @@ import org.meveo.model.tax.TaxClass;
  */
 @Entity
 @ObservableEntity
+@DynamicUpdate
 @Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({ @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
@@ -100,6 +102,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle group by r.billingAccount.id"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle and :startDate<=r.billingAccount.nextInvoiceDate AND r.billingAccount.nextInvoiceDate<:endDate group by r.billingAccount.id"),
 
+        @NamedQuery(name = "RatedTransaction.sumBRByBA", query = "SELECT new org.meveo.service.billing.invoicing.impl.BillingRunSummary(count(distinct r.billingAccount.id), sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), min(r.billingAccount.id), max(r.billingAccount.id)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle"),
+        @NamedQuery(name = "RatedTransaction.sumBRByBALimitByNextInvoiceDate", query = "SELECT new org.meveo.service.billing.invoicing.impl.BillingRunSummary(count(distinct r.billingAccount.id), sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), min(r.billingAccount.id), max(r.billingAccount.id)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle and :startDate<=r.billingAccount.nextInvoiceDate AND r.billingAccount.nextInvoiceDate<:endDate"),
+
+        
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByOrderNumber", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByOrderNumberExcludePrpaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.wallet.id NOT IN (:walletsIds)"),
 
@@ -139,6 +145,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT wo.ratedTransaction FROM WalletOperation wo WHERE wo.id=:walletOperationId"),
 
         @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoUsingScKey", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.status='OPEN' AND r.usageDate<:lastTransactionDate AND r.id>=:minId and r.id<:maxId and r.billingAccount.id=:baId and r.seller.id=:sellerId and r.wallet.id=:walletId and r.invoiceSubCategory.id=:scId and r.userAccount.id=:uaId"),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoUsingInterval", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.status='OPEN' AND r.usageDate<:lastTransactionDate AND r.id>=:minId and r.id<:maxId"),
 
         @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r where r.status!='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.id>:lastId order by r.id "),
         @NamedQuery(name = "RatedTransaction.listBetweenTwoDatesByStatus", query = "SELECT r FROM RatedTransaction r where r.status in (:status) AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.id>:lastId order by r.id "),
@@ -156,6 +164,24 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.moveNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.status='OPEN' AND r.subscription=:subscription"),
         @NamedQuery(name = "RatedTransaction.moveAndRerateNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.status='RERATED', r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.status='TO_RERATE' AND o.subscription=:subscription) OR (r.status='OPEN' AND r.subscription=:subscription)"),
 
+        @NamedQuery(name = "RatedTransaction.getRecalculableRTDetails", query = "select rt, m " + 
+        		"from RatedTransaction rt join fetch rt.billingAccount ba join ba.customerAccount ca join ca.customer c join c.customerCategory cc join rt.seller cs join ba.billingRun br " +
+        		"join TaxMapping m on (rt.tax.id<> m.tax.id and m.accountTaxCategory.id=(case when ba.taxCategory is not null then ba.taxCategory when ba.taxCategory is null then cc.taxCategory end) " + 
+        		"and (m.chargeTaxClass=rt.taxClass or m.chargeTaxClass is null) and (m.sellerCountry=cs.tradingCountry or m.sellerCountry is null)  " + 
+        		"and (m.buyerCountry=ba.tradingCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=br.invoiceDate) AND (br.invoiceDate<m.valid.to or m.valid.to is null)) ) " + 
+        		"where br.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, m.priority DESC "),
+
+        @NamedQuery(name = "RatedTransaction.getUsedTaxesSummary", query = "select distinct rt.taxClass.id, cc.taxCategory.id, s.tradingCountry.id, ba.tradingCountry.id, rt.tax.id " + 
+        		" from RatedTransaction rt join rt.billingAccount ba join ba.customerAccount ca join ca.customer c join c.customerCategory cc join rt.seller s" +
+        		" where ba.billingRun.id=:billingRunId and rt.status='OPEN' and rt.taxClass is not null"),
+
+        @NamedQuery(name = "RatedTransaction.getInvoicingItems", query = 
+    	"select rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id, sum(rt.amountWithoutTax), sum(rt.amountWithTax), sum(rt.amountTax), count(rt.id), (case  when count(rt.id)<:limitUpdateById then (string_agg(cast(rt.id as string),',')) else (CAST(min(rt.id) AS text)||','||CAST(max(rt.id) AS text)) end) "
+    		+ " FROM RatedTransaction rt left join rt.wallet w "
+    		+ " where rt.billingAccount.id in (:ids) and rt.status='OPEN' and rt.usageDate<:lastTransactionDate "
+    		+ " group by rt.billingAccount.id, rt.seller.id, w.id, w.walletTemplate.id, rt.invoiceSubCategory.id, rt.userAccount.id, rt.tax.id "
+    		+ " order by rt.billingAccount.id"),
+        
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query =
                 "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                         + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),

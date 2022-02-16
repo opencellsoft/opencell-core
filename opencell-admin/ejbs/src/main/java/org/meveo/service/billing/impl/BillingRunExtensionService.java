@@ -26,12 +26,14 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.invoicing.impl.BillingRunSummary;
 
 /**
  * @author Edward P. Legaspi
@@ -43,7 +45,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateBRAmounts(Long billingRunId, List<IBillableEntity> entites) throws BusinessException {
 
-        log.debug("Update BillingRun {} total amounts", billingRunId);
+        log.info("Update BillingRun {} total amounts", billingRunId);
         BigDecimal amountWithoutTax = BigDecimal.ZERO;
         BigDecimal amountWithTax = BigDecimal.ZERO;
         BigDecimal amountTax = BigDecimal.ZERO;
@@ -62,6 +64,25 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         billingRun.setPrAmountWithTax(amountWithTax);
         billingRun.setPrAmountTax(amountTax);
 
+        billingRun = updateNoCheck(billingRun);
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void updateBRAmounts(Long billingRunId,BillingRunSummary summury, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
+        BillingRun billingRun = findById(billingRunId);
+        billingRun.setPrAmountWithoutTax(summury.getAmountsToInvoice().getAmountWithoutTax());
+        billingRun.setPrAmountWithTax(summury.getAmountsToInvoice().getAmountWithTax());
+        billingRun.setPrAmountTax(summury.getAmountsToInvoice().getAmountTax());
+        Integer billableBA = summury.getBillingAccountsCount().intValue();
+        if (billableBA != null) {
+            billingRun.setBillingAccountNumber(billableBA);
+            billingRun.setBillableBillingAcountNumber(billableBA);
+        }
+        if (dateStatus != null) {
+            billingRun.setProcessDate(dateStatus);
+        }
+        billingRun.setStatus(status);
         billingRun = updateNoCheck(billingRun);
     }
 

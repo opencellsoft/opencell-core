@@ -29,6 +29,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -59,6 +61,7 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
+@NamedQueries({@NamedQuery(name = "DiscountPlan.getAll", query = "select dp from DiscountPlan dp left join fetch dp.discountPlanItems")})
 public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable {
 
 	private static final long serialVersionUID = -2762453947446654646L;

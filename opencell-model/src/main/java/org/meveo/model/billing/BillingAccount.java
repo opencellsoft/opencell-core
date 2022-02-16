@@ -45,6 +45,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
@@ -71,6 +72,7 @@ import org.meveo.model.tax.TaxCategory;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@DynamicUpdate
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "BillingAccount", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
@@ -78,8 +80,36 @@ import org.meveo.model.tax.TaxCategory;
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
+
+        @NamedQuery(name = "BillingAccount.getBillingAccountDetailsItems", query = 
+    		"select b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),','), "
+    			+ " (case when (c.thresholdPerEntity=false and c.invoicingThreshold is not null) then c.invoicingThreshold else (case when (ca.thresholdPerEntity=false and ca.invoicingThreshold is not null) then ca.invoicingThreshold else (case when b.thresholdPerEntity=false then b.invoicingThreshold else null end) end) end) as col_10_0_, "
+    			+ " (case when (c.thresholdPerEntity=false and c.invoicingThreshold is not null) then c.checkThreshold else (case when (ca.thresholdPerEntity=false and ca.invoicingThreshold is not null) then ca.checkThreshold else (case when b.thresholdPerEntity=false then b.checkThreshold else null end) end) end) as col_11_0_ "
+    			+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc "
+    			+ " left join ca.paymentMethods m "
+    			+ " left join b.discountPlanInstances dpi "
+    			+ " where b.billingRun.id=:billingRunId and (m is null or m.preferred=true) "
+    			+ " group by b.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, col_10_0_, col_11_0_"
+    			+ " order by b.id"),
+        
+        @NamedQuery(name = "BillingAccount.findEntitiesToInvoiceHavingThresholdPerEntity", query = "SELECT new org.meveo.model.billing.ThresholdSummary( (case when c.invoicingThreshold is not null then c.id else null end), (case when ca.invoicingThreshold is not null then ca.id else null end), count(ba.id))" + 
+        		" from BillingAccount ba join ba.customerAccount ca join ca.customer c " + 
+        		" where ba.billingRun.id=:billingRunId and (c.thresholdPerEntity=true and c.invoicingThreshold is not null) or (ca.thresholdPerEntity=true and ca.invoicingThreshold is not null)" +
+        		" group by (case when c.invoicingThreshold is not null then c.id else null end), (case when ca.invoicingThreshold is not null then ca.id else null end)"),
+        
+        @NamedQuery(name = "BillingAccount.findBillableEntityIdsForInvoicing", query = "select b.id FROM BillingAccount b where b.billingRun=:billingRun order by b.id"),
+        
+        @NamedQuery(name = "BillingAccount.findBillableEntityIdsForInvoicingExcludingThresholdEntities", query = "select b.id FROM BillingAccount b join b.customerAccount ca join ca.customer c "
+        		+ " where b.billingRun=:billingRun and not ((c.thresholdPerEntity=true and c.invoicingThreshold is not null) or (ca.thresholdPerEntity=true and ca.invoicingThreshold is not null))"),
+
+        
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
+        
+        @NamedQuery(name = "BillingAccount.getMinMaxToUpdate", query = "SELECT min(r.billingAccount.id), max(r.billingAccount.id), count(r.billingAccount.id), min(r.id), max(r.id) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle"),
+        @NamedQuery(name = "BillingAccount.updateBR", query = "update BillingAccount ba set ba.billingRun =:billingRun where id in (SELECT distinct r.billingAccount.id FROM RatedTransaction r WHERE r.billingAccount.id>=:min and r.billingAccount.id<:max and r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle)"),
+
+        
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount")})
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 

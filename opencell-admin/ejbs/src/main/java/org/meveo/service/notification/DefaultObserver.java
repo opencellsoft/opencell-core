@@ -145,12 +145,12 @@ public class DefaultObserver {
     }
 
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
+        //log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
 
     public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
+        //log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
     }
 
