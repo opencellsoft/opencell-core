@@ -18,6 +18,34 @@
 
 package org.meveo.api;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -25,9 +53,17 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.*;
+import org.meveo.api.dto.AuditableEntityDto;
+import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomEntityInstanceDto;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldValueDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -59,7 +95,6 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -68,7 +103,12 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
-import org.meveo.service.base.*;
+import org.meveo.service.base.BusinessEntityService;
+import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.NativePersistenceService;
+import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.base.expressions.ExpressionParser;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -78,23 +118,6 @@ import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Edward P. Legaspi
@@ -1314,16 +1337,18 @@ public abstract class BaseApi {
             String key = filterInfo.getKey();
             Object value = filterInfo.getValue();
 
-            String[] fieldInfo = key.split(" ");
-            String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-            String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+            ExpressionParser expressionParser = new ExpressionParser(key.split(" "));
+            String condition = expressionParser.getCondition();
+            String fieldName = expressionParser.getFieldName();
 
             // Nothing to convert
-            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)
+            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || key.startsWith(PersistenceService.SEARCH_SQL)
                     || (value instanceof String && (PersistenceService.SEARCH_IS_NOT_NULL.equals((String) value) || PersistenceService.SEARCH_IS_NULL.equals((String) value)))) {
                 filters.put(key, value);
 
-                // Filter already contains a special
+                // OR condition is a map of filters - convert them
+            } else if (key.startsWith(PersistenceService.SEARCH_OR)) {
+                filters.put(key, convertFilters(targetClass, (Map<String, Object>) value, cfts));
 
                 // Determine what the target field type is and convert to that data type
             } else {

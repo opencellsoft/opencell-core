@@ -9321,4 +9321,9 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
+    
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+     </changeSet>
 </databaseChangeLog>
