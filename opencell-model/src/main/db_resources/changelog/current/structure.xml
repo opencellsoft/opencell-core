@@ -3376,10 +3376,5 @@ END $$;]]>
             <column name="token_3ds_id" type="varchar(250)"/>
     </addColumn>
     </changeSet>
-    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA">
-        <addColumn tableName="crm_customer">
-            <column name="anonymization_date" type="datetime" />
-        </addColumn>
-    </changeSet>
 
 </databaseChangeLog>
