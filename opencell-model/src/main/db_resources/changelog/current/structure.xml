@@ -11813,6 +11813,42 @@ order by date_trunc('month', i.invoice_date) DESC
      <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI">
 		<addUniqueConstraint columnNames="template_name" constraintName="uk_security_deposit_template_name" deferrable="false" disabled="false" initiallyDeferred="false" tableName="security_deposit_templat" />
 	</changeSet>
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="crm_customer">
+            <column name="anonymization_date" type="datetime" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE">
+        <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
+        <createTable tableName="ar_accounting_scheme">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_accounting_scheme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
+            </column>
+            <column name="description" type="${type.text}"/>
+            <column name="long_description" type="${type.longText}"/>
+            <column name="script_instance_id" type="${cast.long}"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_accounting_scheme" constraintName="fk_acc_scheme_script_inst_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="meveo_script_instance"/>
+
+        <addColumn tableName="ar_occ_template">
+            <column name="accounting_scheme_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="accounting_scheme_id" baseTableName="ar_occ_template" constraintName="fk_occ_tmplt_accnt_scheme_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="ar_accounting_scheme"/>
+    </changeSet>
     
      <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
         <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>

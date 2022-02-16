@@ -192,8 +192,12 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public InvoiceLinesInput createLines(Invoice invoice, InvoiceLinesInput invoiceLinesInput) {
 		ImmutableInvoiceLinesInput.Builder result = ImmutableInvoiceLinesInput.builder();
 		for(InvoiceLine invoiceLineResource : invoiceLinesInput.getInvoiceLines()) {
-			org.meveo.model.cpq.commercial.InvoiceLine invoiceLine  = invoiceLinesService.create(invoice, invoiceLineResource);
-			invoiceLineResource =  ImmutableInvoiceLine.copyOf(invoiceLineResource).withId(invoiceLine.getId());
+			org.meveo.model.cpq.commercial.InvoiceLine invoiceLine = invoiceLinesService.create(invoice, invoiceLineResource);
+			invoiceLineResource = ImmutableInvoiceLine.copyOf(invoiceLineResource)
+					.withId(invoiceLine.getId())
+					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
+					.withAmountWithTax(invoiceLine.getAmountWithTax())
+					.withAmountTax(invoiceLine.getAmountTax());
 			result.addInvoiceLines(invoiceLineResource);
 		}
 		invoiceService.calculateInvoice(invoice);

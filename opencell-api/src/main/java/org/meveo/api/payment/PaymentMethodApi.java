@@ -36,6 +36,7 @@ import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -140,6 +141,10 @@ public class PaymentMethodApi extends BaseApi {
         paymentMethod = paymentMethodService.findById(paymentMethodDto.getId());
         if (paymentMethod == null) {
             throw new EntityDoesNotExistsException(PaymentMethod.class, paymentMethodDto.getId());
+        }
+        
+        if(!paymentMethod.getPaymentType().equals(paymentMethodDto.getPaymentMethodType())) {
+            throw new BusinessApiException("The payment method type can not be changed.");
         }
 
         if (Objects.nonNull(paymentMethodDto.getReferenceDocumentCode())) {

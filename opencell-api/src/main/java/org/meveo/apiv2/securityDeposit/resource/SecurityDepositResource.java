@@ -9,8 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,6 +44,23 @@ public interface SecurityDepositResource {
                     @ApiResponse(responseCode = "404",
                             description = "Following security deposit does not exist : {securityDeposit ids}")
             })
-    Response update(@Parameter(description = "contain the code of Security deposit template te be updated by its id", required = true) @PathParam("id") Long id,
+    Response update(@Parameter(description = "contain the code of Security deposit te be updated by its id", required = true) @PathParam("id") Long id,
             @Parameter(description = "Security Deposit input", required = true) SecurityDepositInput securityDepositInput);
+
+    @POST
+    @Path("/credit/{id}")
+    @Operation(summary = "Credit Security Deposit",
+            tags = { "SecurityDeposit", "Post", "Credit" },
+            description = "Credit Security Deposit",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Security deposit was successfully credited"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Bad Request"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Following security deposit does not exist : {securityDeposit ids}")
+            })
+    Response credit(@Parameter(description = "contain the code of Security deposit te be credited by its id", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Security Deposit input", required = true) SecurityDepositCreditInput securityDepositInput);
+
 }
