@@ -98,7 +98,7 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
     /**
      * Categories
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_product_offer_tmpl_cat", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "offer_template_cat_id"))
     @OrderColumn(name = "INDX")
     private List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<>();
@@ -121,7 +121,7 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
     /**
      * Attachments
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_product_offer_digital_res", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "digital_resource_id"))
     @OrderColumn(name = "INDX")
     private List<DigitalResource> attachments = new ArrayList<>();
@@ -137,7 +137,7 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
      * @deprecated As of v 5.0, replaced by ${@link #customerCategories}}
      */
     @Deprecated
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))
     @OrderColumn(name = "INDX")
     private List<BusinessAccountModel> businessAccountModels = new ArrayList<>();
@@ -145,7 +145,7 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
     /**
      * Sales channels
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_product_offer_channels", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "channel_id"))
     @OrderColumn(name = "INDX")
     private List<Channel> channels = new ArrayList<>();
@@ -181,14 +181,14 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
     /**
      * Sellers that provide this offering. If empty - any seller is available.
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_product_offer_seller", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
     private List<Seller> sellers = new ArrayList<>();
 
     /**
      * Customer categories that offering is available to
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_product_offer_customer_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "customer_category_id"))
     @OrderColumn(name = "INDX")
     private List<CustomerCategory> customerCategories = new ArrayList<>();

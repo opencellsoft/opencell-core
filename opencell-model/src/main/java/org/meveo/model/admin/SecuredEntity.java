@@ -55,7 +55,7 @@ public class SecuredEntity implements Serializable {
     private String entityClass;
     
     @Type(type = "numeric_boolean")
-	@Column(name = "disable", nullable = false)
+	@Column(name = "disabled", nullable = false)
 	@NotNull
 	private boolean disabled;
 
@@ -71,6 +71,18 @@ public class SecuredEntity implements Serializable {
         this.setCode(securedEntity.getCode());
         this.setEntityClass(securedEntity.getEntityClass());
         this.setDisabled(securedEntity.isDisabled());
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param entityClass Secured entity class
+     * @param code Secured entity code
+     */
+    public SecuredEntity(String entityClass, String code) {
+        super();
+        this.code = code;
+        this.entityClass = entityClass;
     }
 
     public String getCode() {
