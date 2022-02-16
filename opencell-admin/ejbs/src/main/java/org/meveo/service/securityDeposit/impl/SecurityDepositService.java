@@ -102,19 +102,17 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             }
         }
         
-        if(SecurityDepositStatusEnum.NEW.equals(securityDepositToUpdate.getStatus()) 
-                || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())){
-            if(securityDepositToUpdate.getAmount() != null) {
-                BigDecimal nAmount = securityDepositToUpdate.getAmount().add(securityDepositInput.getAmountToCredit().negate());            
-                if(nAmount.compareTo(BigDecimal.ZERO) <= 0) {
-                    securityDepositToUpdate.setAmount(null);
-                    securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.LOCKED);
-                }
-                else {
-                    securityDepositToUpdate.setAmount(nAmount);
-                    securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.HOLD);
-                }  
+        if(securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.NEW.equals(securityDepositToUpdate.getStatus()) 
+                || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus()))){
+            BigDecimal nAmount = securityDepositToUpdate.getAmount().add(securityDepositInput.getAmountToCredit().negate());            
+            if(nAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                securityDepositToUpdate.setAmount(null);
+                securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.LOCKED);
             }
+            else {
+                securityDepositToUpdate.setAmount(nAmount);
+                securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.HOLD);
+            }  
         }
         update(securityDepositToUpdate);
     }

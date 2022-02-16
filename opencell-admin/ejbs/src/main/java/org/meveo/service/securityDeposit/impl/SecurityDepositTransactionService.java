@@ -1,5 +1,6 @@
 package org.meveo.service.securityDeposit.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -23,12 +24,10 @@ public class SecurityDepositTransactionService extends BusinessService<SecurityD
         Query query = this.getEntityManager().createQuery("select m from SecurityDepositTransaction m where m.securityDeposit.id=:id", SecurityDepositTransaction.class);
         query.setParameter("id", securityDepositId);
         try {
-            List<SecurityDepositTransaction> resultList = (List<SecurityDepositTransaction>) (query.getResultList());
-            return resultList;
-
+            return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting 'Security Deposit Transaction' list by 'Security Deposit'", e);
-            return null;
+            return new ArrayList<>();
         }
     }
     
