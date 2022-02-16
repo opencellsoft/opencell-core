@@ -47,10 +47,10 @@ public interface SecurityDepositResource {
     Response update(@Parameter(description = "contain the code of Security deposit te be updated by its id", required = true) @PathParam("id") Long id,
             @Parameter(description = "Security Deposit input", required = true) SecurityDepositInput securityDepositInput);
 
-    @PUT
+    @POST
     @Path("/credit/{id}")
     @Operation(summary = "Credit Security Deposit",
-            tags = {"Put"},
+            tags = { "SecurityDeposit", "Post", "Credit" },
             description = "Credit Security Deposit",
             responses = {
                     @ApiResponse(responseCode = "200",
