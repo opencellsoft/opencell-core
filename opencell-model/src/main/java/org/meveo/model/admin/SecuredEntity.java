@@ -53,8 +53,10 @@ public class SecuredEntity implements Serializable {
     @Size(max = 255)
     private String entityClass;
 
-    @Column(name = "disabled", nullable = false)
-    private int disabled = 0;
+    @Type(type = "numeric_boolean")
+	@Column(name = "disabled", nullable = false)
+	@NotNull
+	private boolean disabled;
 
     public SecuredEntity() {
     }
