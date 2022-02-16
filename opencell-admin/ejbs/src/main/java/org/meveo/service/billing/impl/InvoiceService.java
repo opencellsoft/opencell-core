@@ -5147,6 +5147,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             ilUpdates.add(new Object[] { subAggregate, invoiceLines });
                         }
                         subAggregate.setInvoiceLinesToAssociate(new ArrayList<>());
+                        invoiceAgregateService.create(subAggregate);
                     }
 
                     setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
@@ -5342,7 +5343,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
-            invoiceAgregateService.create(scAggregate);
+//            invoiceAgregateService.create(scAggregate);
         }
 
         if (moreInvoiceLinesExpected) {
