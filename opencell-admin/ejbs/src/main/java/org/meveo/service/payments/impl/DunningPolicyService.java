@@ -1,6 +1,5 @@
 package org.meveo.service.payments.impl;
 
-import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Comparator.comparing;
 import static java.util.Optional.*;
@@ -8,7 +7,10 @@ import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.dunning.PolicyConditionTargetEnum.valueOf;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -49,6 +51,8 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public DunningPolicy findByName(String policyName) {
         try {
@@ -272,17 +276,23 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
     private boolean invoiceEligibilityCheck(Invoice invoice, DunningPolicy policy, Integer dayOverDue) {
         boolean dayOverDueAndThresholdCondition;
         invoice = invoiceService.refreshOrRetrieve(invoice);
-        Date today = new Date();
+        Date today;
+        Date dueDate;
+        try {
+            today = simpleDateFormat.parse(simpleDateFormat.format(new Date()));
+            dueDate = simpleDateFormat.parse(simpleDateFormat.format(invoice.getDueDate()));
+        } catch (ParseException exception) {
+            throw new BusinessException(exception);
+        }
+        long daysDiff = TimeUnit.DAYS.convert((today.getTime() - dueDate.getTime()), TimeUnit.MILLISECONDS);
         if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
-            dayOverDueAndThresholdCondition =
-                    (dayOverDue.longValue() == DAYS.between(today.toInstant(), invoice.getDueDate().toInstant()));
+            dayOverDueAndThresholdCondition = (dayOverDue.longValue() == daysDiff);
         } else {
             BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
                                             .map(RecordedInvoice::getUnMatchingAmount)
                                             .orElse(BigDecimal.ZERO);
             dayOverDueAndThresholdCondition =
-                    (dayOverDue.longValue() == DAYS.between(today.toInstant(), invoice.getDueDate().toInstant())
-                            || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
+                    (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
         }
         return invoice.getPaymentStatus().equals(UNPAID)
                 && collectionPlanService.findByInvoiceId(invoice.getId()).isEmpty() && dayOverDueAndThresholdCondition;
