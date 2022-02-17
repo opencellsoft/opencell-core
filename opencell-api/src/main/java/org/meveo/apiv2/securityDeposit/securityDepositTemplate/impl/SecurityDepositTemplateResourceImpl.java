@@ -1,10 +1,12 @@
 package org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl;
 
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.securityDeposit.SDTemplateListStatus;
 import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
 import org.meveo.apiv2.securityDeposit.securityDepositTemplate.SecurityDepositTemplateResource;
+import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 
 import javax.inject.Inject;
@@ -32,14 +34,15 @@ public class SecurityDepositTemplateResourceImpl implements SecurityDepositTempl
 
     @Override
     public Response update(Long id, SecurityDepositTemplate securityDepositTemplate) {
-         org.meveo.model.securityDeposit.SecurityDepositTemplate securityDepositTemplateToUpdate = securityDepositTemplateService.findById(id);
-        if(securityDepositTemplateToUpdate == null) {
-            throw new EntityDoesNotExistsException("security deposit template with id "+id+" does not exist.");
+        org.meveo.model.securityDeposit.SecurityDepositTemplate securityDepositTemplateToUpdate = securityDepositTemplateService.findById(id);
+        if (securityDepositTemplateToUpdate == null) {
+            throw new EntityDoesNotExistsException("security deposit template with id " + id + " does not exist.");
+        } else if (SecurityTemplateStatusEnum.ACTIVE.equals(securityDepositTemplateToUpdate.getStatus())) {
+            throw new ValidationException("Cannot update an active security deposit template");
         }
-       securityDepositTemplateToUpdate = securityDepositTemplateMapper.toEntity(securityDepositTemplateToUpdate, securityDepositTemplate);
+        securityDepositTemplateToUpdate = securityDepositTemplateMapper.toEntity(securityDepositTemplateToUpdate, securityDepositTemplate);
         securityDepositTemplateService.update(securityDepositTemplateToUpdate);
         return Response.ok().entity(buildResponse(securityDepositTemplateMapper.toResource(securityDepositTemplateToUpdate))).build();
-
     }
 
     @Override
