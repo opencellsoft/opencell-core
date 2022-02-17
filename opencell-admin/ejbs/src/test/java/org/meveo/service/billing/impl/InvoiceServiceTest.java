@@ -1186,6 +1186,7 @@ public class InvoiceServiceTest {
         InvoiceCategory cat1 = new InvoiceCategory();
         cat1.setCode("cat1");
         cat1.setId(11L);
+        BillingRun billingRun = new BillingRun();
 
         InvoiceCategory cat2 = new InvoiceCategory();
         cat2.setCode("cat2");
@@ -1347,7 +1348,7 @@ public class InvoiceServiceTest {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
-        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false);
+        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false, null);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(12);
         SubCategoryInvoiceAgregate subAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0);

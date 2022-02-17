@@ -39,6 +39,7 @@ import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.service.billing.impl.InvoicingPlanItemService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
+import org.meveo.api.exception.InvalidParameterException;
 
 /**
  * CRUD API for {@link InvoicingPlanItem}.
@@ -122,20 +123,20 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 			if(!items.isEmpty() && postData.getAdvancement() != null) {
 				boolean isAdvancementExist = items.stream().anyMatch(ipi -> ipi.getAdvancement() == postData.getAdvancement());
 				if(isAdvancementExist) {
-					throw new BusinessApiException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
+					throw new EntityAlreadyExistsException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
 				}
 				BigDecimal rateToBill =  items.stream().map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal totalRate = rateToBill.add(postData.getRateToBill() != null ? postData.getRateToBill() : BigDecimal.ZERO);
 				totalRate.add(rateToBill);
 				if(totalRate.intValue() > 100) {
-					throw new BusinessApiException("Down payment of invoicing plan can not be more than 100, current down payment is : " + totalRate.intValue());
+					throw new InvalidParameterException("Down payment of invoicing plan can not be more than 100, current down payment is : " + totalRate.intValue());
 				}
 			}
 			if(postData.getAdvancement() != null && postData.getAdvancement() > 100) {
-				throw new BusinessApiException("Advancement of invoicing plan can not be more than 100");
+				throw new InvalidParameterException("Advancement of invoicing plan can not be more than 100");
 			}
 			if(postData.getRateToBill() != null && postData.getRateToBill().intValue() > 100) {
-				throw new BusinessApiException("Down payment of invoicing plan can not be more than 100");
+				throw new InvalidParameterException("Down payment of invoicing plan can not be more than 100");
 			}
 		}
 		invoicingPlanItem.setCode(
