@@ -54,7 +54,7 @@
 								<p:commandButton action="#{userRoleBean.deleteSecuredEntity(securedEntity)}" rendered="#{userRoleBean.canUserUpdateEntity()}" icon="ui-icon-trash" update=":roleFormId:tabView:selectedEntitiesPanel" />
 								
 								<p:commandButton icon="ui-icon-circle-check"
-						                         rendered="#{securedEntity.disabled and userRoleBean.canUserUpdateEntity()}" 
+						                         rendered="#{securedEntity.disabledAsBoolean and userRoleBean.canUserUpdateEntity()}" 
 												 action="#{userRoleBean.enableOrDisable(securedEntity, false)}" 
 												 update=":roleFormId:tabView:selectedEntitiesPanel">
 						            <f:setPropertyActionListener target="#{userRoleBean.entity}" value="#{entity}"/>
@@ -62,7 +62,7 @@
 						        </p:commandButton>
 						
 						        <p:commandButton icon="ui-icon-circle-close"
-						                         rendered="#{!securedEntity.disabled and userRoleBean.canUserUpdateEntity()}" 
+						                         rendered="#{!securedEntity.disabledAsBoolean and userRoleBean.canUserUpdateEntity()}" 
 												 action="#{userRoleBean.enableOrDisable(securedEntity, true)}" 
 												 update=":roleFormId:tabView:selectedEntitiesPanel">
 						            <f:setPropertyActionListener target="#{userRoleBean.entity}" value="#{entity}"/>

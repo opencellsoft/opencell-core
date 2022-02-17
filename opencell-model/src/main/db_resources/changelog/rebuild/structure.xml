@@ -2298,8 +2298,8 @@
             <column name="code" type="varchar(255)">
                 <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
             </column>
-            <column name="description" type="${type.text}"/>
-            <column name="long_description" type="${type.longText}"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="long_description" type="varchar(2000)"/>
             <column name="script_instance_id" type="${cast.long}"/>
         </createTable>
     </changeSet>
@@ -6484,7 +6484,7 @@
             <column name="entity_class" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="disable" type="${type.boolean}" defaultValueNumeric="0">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -8097,7 +8097,7 @@
 			<column name="entity_class" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-            <column name="disable" type="${type.boolean}" defaultValueNumeric="0" >
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0" >
                 <constraints nullable="false" />
             </column>
 		</createTable>
@@ -15598,7 +15598,7 @@
 			constraintName="fk_dunning_policy_id" deferrable="false"
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="dunning_policy" />
-
+			
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_accounting_scheme"
                                  constraintName="fk_acc_scheme_script_inst_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
@@ -17103,6 +17103,7 @@
 	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham" />
     <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI" />
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
+    <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
