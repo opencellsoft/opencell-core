@@ -1531,6 +1531,18 @@ public class CpqQuoteApi extends BaseApi {
                 			}
                 			if(quantity!=0) {
                 				edr.setQuantity(new BigDecimal(quantity));
+                				 Object param1 = attributes.get("EDR_text_parameter_1");
+                				 if(param1!=null) {
+                					 edr.setParameter1(param1.toString());
+                				 }
+                				 Object param2 = attributes.get("EDR_text_parameter_2");
+                				 if(param2!=null) {
+                					 edr.setParameter2(param2.toString());
+                				 }
+                				 Object param3 = attributes.get("EDR_text_parameter_3");
+                				 if(param3!=null) {
+                					 edr.setParameter3(param3.toString());
+                				 }
                     			List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
 
                     			if (walletOperationsFromEdr != null) {
