@@ -52,9 +52,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
-    
-    @Inject
-    BillingRunExtensionService billingRunExtensionService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -137,8 +134,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     private BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics) {
         billingRun.setBillableBillingAcountNumber(basicStatistics.getBillableEntitiesCount().intValue());
-        billingRun.setPrAmountTax(basicStatistics.getGetSumAmountWithTax());
-        billingRun.setPrAmountWithoutTax(basicStatistics.getSumAmountWithoutTax());
+        billingRun.setPrAmountTax(basicStatistics.getAmountTax());
+        billingRun.setPrAmountWithTax(basicStatistics.getAmountWithTax());
+        billingRun.setPrAmountWithoutTax(basicStatistics.getAmountWithoutTax());
         billingRun.setProcessDate(new Date());
         billingRun.setStatus(INVOICE_LINES_CREATED);
         billingRunService.update(billingRun);
