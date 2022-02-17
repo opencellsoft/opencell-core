@@ -11,14 +11,16 @@ import java.util.Map;
 public class BasicStatistics {
 
     private Map<Long, List<Long>> iLIdsRtIdsCorrespondence;
-    private BigDecimal sumAmountWithoutTax;
-    private BigDecimal sumAmountWithTax;
+    private BigDecimal amountWithoutTax;
+    private BigDecimal amountWithTax;
+    private BigDecimal amountTax;
     private Integer billableEntitiesCount;
 
     public BasicStatistics() {
         this.iLIdsRtIdsCorrespondence = new HashMap<>();
-        this.sumAmountWithoutTax = ZERO;
-        this.sumAmountWithTax = ZERO;
+        this.amountWithoutTax = ZERO;
+        this.amountWithTax = ZERO;
+        this.amountTax = ZERO;
         this.billableEntitiesCount = valueOf(0);
     }
 
@@ -26,26 +28,35 @@ public class BasicStatistics {
         return iLIdsRtIdsCorrespondence;
     }
 
-    public void setiLIdsRtIdsCorrespondence(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
+    public void setILIdsRtIdsCorrespondence(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
         this.iLIdsRtIdsCorrespondence = iLIdsRtIdsCorrespondence;
     }
 
-    public BigDecimal getSumAmountWithoutTax() {
-        return sumAmountWithoutTax;
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
     }
 
-    public BigDecimal getGetSumAmountWithTax() {
-        return sumAmountWithTax;
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
+
+    public BigDecimal getAmountTax() {
+        return amountTax;
     }
 
     public BigDecimal addToAmountWithoutTax(BigDecimal amount) {
-        sumAmountWithoutTax = this.sumAmountWithoutTax.add(amount);
-        return sumAmountWithoutTax;
+        amountWithoutTax = this.amountWithoutTax.add(amount);
+        return amountWithoutTax;
+    }
+
+    public BigDecimal addToAmountTax(BigDecimal amount) {
+        this.amountTax = this.amountTax.add(amount);
+        return amountTax;
     }
 
     public BigDecimal addToAmountWithTax(BigDecimal amount) {
-        this.sumAmountWithTax = this.sumAmountWithTax.add(amount);
-        return sumAmountWithTax;
+        this.amountWithTax = this.amountWithTax.add(amount);
+        return amountWithTax;
     }
 
     public Integer getBillableEntitiesCount() {
