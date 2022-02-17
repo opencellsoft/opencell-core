@@ -692,6 +692,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+            basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
             List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
@@ -700,7 +701,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .collect(toList());
             iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
         }
-        basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
+        basicStatistics.setILIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
         return basicStatistics;
     }
 
