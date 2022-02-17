@@ -17,29 +17,8 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.meveo.commons.utils.NumberUtils.toPlainString;
-import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -105,6 +84,36 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static org.meveo.commons.utils.NumberUtils.toPlainString;
+import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
 /**
  * A default implementation of XML invoice creation.
@@ -226,9 +235,18 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
             File xmlFile = new File(fullXmlFilePath);
-            StreamResult result = new StreamResult(xmlFile);
+//            StreamResult result = new StreamResult(xmlFile); // old code
+            OutputStream outStream = StorageFactory.getOutputStream(fullXmlFilePath); // new code
+            StreamResult result = new StreamResult(outStream); // new code
             trans.transform(source, result);
             log.info("XML file '{}' produced for invoice {}", fullXmlFilePath, invoice.getInvoiceNumberOrTemporaryNumber());
+            try {
+                assert outStream != null;
+                outStream.close();
+            }
+            catch (IOException e) {
+                System.out.println("Transformer exception : " + e.getMessage());
+            }
             return xmlFile;
         } catch (TransformerException e) {
             throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumberOrTemporaryNumber(), e);
