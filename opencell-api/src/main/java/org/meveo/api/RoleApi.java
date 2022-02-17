@@ -168,7 +168,7 @@ public class RoleApi extends BaseApi {
                 securedEntity = new SecuredEntity();
                 securedEntity.setCode(securedEntityDto.getCode());
                 securedEntity.setEntityClass(securedEntityDto.getEntityClass());
-                securedEntity.setDisabled(false);
+                securedEntity.setDisabledAsBoolean(false);
                 BusinessEntity businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
                 if (businessEntity == null) {
                     throw new EntityDoesNotExistsException(securedEntity.getEntityClass(), securedEntity.getCode());

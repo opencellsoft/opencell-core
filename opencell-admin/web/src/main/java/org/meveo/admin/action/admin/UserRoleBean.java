@@ -223,7 +223,7 @@ public class UserRoleBean extends BaseBean<Role> {
     public void enableOrDisable(SecuredEntity selectedSecuredEntity, boolean disable) throws BusinessException {
         for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
             if (securedEntity.equals(selectedSecuredEntity)) {
-            	securedEntity.setDisabled(disable);
+                securedEntity.setDisabledAsBoolean(disable);
                 break;
             }
         }
