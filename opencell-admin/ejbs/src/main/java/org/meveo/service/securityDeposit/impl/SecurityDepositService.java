@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -92,6 +93,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             throw new EntityDoesNotExistsException("Cannot find customer account in the this Security Deposit");
         }
         
+        if(securityDepositToUpdate.getCurrentBalance() == null){
+            securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
+        }
         BigDecimal nCurrentBalance = securityDepositInput.getAmountToCredit().add(securityDepositToUpdate.getCurrentBalance());
         securityDepositToUpdate.setCurrentBalance(nCurrentBalance);
         
