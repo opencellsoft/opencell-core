@@ -3,6 +3,7 @@ package org.meveo.api.custom;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.api.billing.CpqQuoteApi;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
@@ -62,7 +63,7 @@ public class ProductApiTest {
         SelectedAttributes selectedProductAttributesContext = new SelectedAttributes(null, "code1", selectedProductAttributes);
         SelectedAttributes selectedOfferAttributesContext = new SelectedAttributes(null, null, selectedOfferAttributes);
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "code1", "attr1", null, "code1", "attr2");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "code1", "attr1", null, "code1", "attr2", RuleOperatorEnum.EXISTS);
 
         ReplacementResult replacementResult = replacementRulesExecutor.execute(Optional.of(selectedProductAttributesContext), Optional.of(selectedOfferAttributesContext), asList(selectedProductAttributesContext, selectedOfferAttributesContext), singletonList(commercialRuleHeader));
 
@@ -78,7 +79,7 @@ public class ProductApiTest {
         SelectedAttributes selectedOfferAttributesContext = new SelectedAttributes(null, null, selectedOfferAttributes);
 
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, null, "attr1", null, "code1", "attr2");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, null, "attr1", null, "code1", "attr2", RuleOperatorEnum.EXISTS);
 
         ReplacementResult replacementResult = replacementRulesExecutor.execute(Optional.of(selectedProductAttributesContext), Optional.of(selectedOfferAttributesContext), asList(selectedProductAttributesContext, selectedOfferAttributesContext), singletonList(commercialRuleHeader));
 
@@ -94,7 +95,7 @@ public class ProductApiTest {
         SelectedAttributes selectedProductAttributesContext = new SelectedAttributes(null, "product1", selectedProductAttributes);
         SelectedAttributes selectedOfferAttributesContext = new SelectedAttributes(null, null, selectedOfferAttributes);
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, null, "attr1", null, null, "attr3");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, null, "attr1", null, null, "attr3", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = replacementRulesExecutor.execute(Optional.of(selectedProductAttributesContext), Optional.of(selectedOfferAttributesContext), asList(selectedProductAttributesContext, selectedOfferAttributesContext), singletonList(commercialRuleHeader));
 
@@ -109,7 +110,7 @@ public class ProductApiTest {
         SelectedAttributes selectedProductAttributesContext = new SelectedAttributes(null, "product1", selectedProductAttributes);
         SelectedAttributes selectedOfferAttributesContext = new SelectedAttributes(null, null, selectedOfferAttributes);
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", null, null, "attr7");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", null, null, "attr7", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = replacementRulesExecutor.execute(Optional.of(selectedProductAttributesContext), Optional.of(selectedOfferAttributesContext), asList(selectedProductAttributesContext, selectedOfferAttributesContext), singletonList(commercialRuleHeader));
 
@@ -124,7 +125,7 @@ public class ProductApiTest {
         LinkedHashMap<String, Object> product2Attributes = initSelectedAttributes("attr4", "value5");
         SelectedAttributes selectedProduct2AttributesContext = new SelectedAttributes(null, "product2", product2Attributes);
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", null, "product2", "attr4");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", null, "product2", "attr4", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = replacementRulesExecutor.execute(Optional.of(selectedProduct1AttributesContext), Optional.of(selectedOfferAttributesContext), asList(selectedProduct1AttributesContext, selectedProduct2AttributesContext, selectedOfferAttributesContext), singletonList(commercialRuleHeader));
 
@@ -136,7 +137,7 @@ public class ProductApiTest {
         SelectedAttributes selectedOffer1Context = new SelectedAttributes("offer1", null, initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedOffer2Context = new SelectedAttributes("offer2", null, initSelectedAttributes("attr2", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", null, "attr1", "offer2", null, "attr2");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", null, "attr1", "offer2", null, "attr2", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(true).execute(Optional.empty(), Optional.of(selectedOffer1Context), asList(selectedOffer1Context, selectedOffer2Context), singletonList(commercialRuleHeader));
 
@@ -148,7 +149,7 @@ public class ProductApiTest {
         SelectedAttributes selectedOffer1Context = new SelectedAttributes("offer1", null, initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedOffer2Context = new SelectedAttributes("offer7", null, initSelectedAttributes("attr2", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, null, "attr1", null, null, "attr2");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, null, "attr1", null, null, "attr2", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(true).execute(Optional.empty(), Optional.of(selectedOffer1Context), asList(selectedOffer1Context, selectedOffer2Context), singletonList(commercialRuleHeader));
 
@@ -160,7 +161,7 @@ public class ProductApiTest {
         SelectedAttributes selectedOffer1Context = new SelectedAttributes("offer1", null, initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedOffer2Context = new SelectedAttributes("offer2", null, initSelectedAttributes("attr2", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", null, "attr1", "offer2", null, "attr2");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", null, "attr1", "offer2", null, "attr2", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(false).execute(Optional.empty(), Optional.of(selectedOffer1Context), asList(selectedOffer1Context, selectedOffer2Context), singletonList(commercialRuleHeader));
 
@@ -172,7 +173,7 @@ public class ProductApiTest {
         SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", "product1", "attr1", "offer2", "product2", "attr1");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", "product1", "attr1", "offer2", "product2", "attr1", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(false).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), singletonList(commercialRuleHeader));
 
@@ -184,7 +185,7 @@ public class ProductApiTest {
         SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", "product1", "attr1", "offer2", "product2", "attr1");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader("offer1", "product1", "attr1", "offer2", "product2", "attr1", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(true).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), singletonList(commercialRuleHeader));
 
@@ -192,11 +193,11 @@ public class ProductApiTest {
     }
 
     @Test
-    public void can_replace_product_offer_attribute_from_an_other_product_attribute_without_offer() {
+    public void given_no_condition_upon_the_rule_target_offer_and_scope_is_not_quote_should_replace_target_attribute_by_source_attributes_on_other_offer() {
         SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", "offer2", "product2", "attr1");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", "offer2", "product2", "attr1", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(true).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
 
@@ -204,20 +205,48 @@ public class ProductApiTest {
     }
 
     @Test
-    public void can_not_replace_product_offer_attribute_from_an_other_product_attribute_without_offer_when_offers_are_differents_and_score_is_not_quote() {
+    public void given_no_condition_upon_the_rule_target_offer_and_scope_is_not_quote_should_not_replace_target_attribute_by_source_attributes_of_other_offer() {
         SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
         SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer2", "product2", initSelectedAttributes("attr1", "value2"));
 
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", "offer2", "product2", "attr1");
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1", "offer2", "product2", "attr1", RuleOperatorEnum.EXISTS);
 
         ReplacementResult result = new ReplacementRulesExecutor(false).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
 
         assertThat(result.getSelectedProductAttributes().get("attr1")).isEqualTo("value1");
     }
 
-    private CommercialRuleHeader buildCommercialRuleHeader(String targetOfferTemplateCode, String targetProductCode, String targetAttributeCode, String sourceOfferTemplateCode, String sourceProductCode, String sourceAttributeCode) {
+    @Test
+    public void given_no_condition_on_target_offer_should_replace_attributes_of_products_within_the_same_offer() {
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1",
+                "offer1", "product2", "attr1", RuleOperatorEnum.EXISTS);
+
+        SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
+        SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer1", "product2", initSelectedAttributes("attr1", "value2"));
+
+        ReplacementResult result = new ReplacementRulesExecutor(false).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
+
+        assertThat(result.getSelectedProductAttributes().get("attr1")).isEqualTo("value2");
+        System.out.println(null instanceof String);
+    }
+
+    @Test(expected = BusinessApiException.class)
+    public void replacement_commercial_rule_allow_only_exist_operator() {
+        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1",
+                "offer1", "product2", "attr1", RuleOperatorEnum.EQUAL);
+
+        SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
+        SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer1", "product2", initSelectedAttributes("attr1", "value1"));
+
+       new ReplacementRulesExecutor(false).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
+
+
+
+    }
+
+    private CommercialRuleHeader buildCommercialRuleHeader(String targetOfferTemplateCode, String targetProductCode, String targetAttributeCode, String sourceOfferTemplateCode, String sourceProductCode, String sourceAttributeCode, RuleOperatorEnum lineOperator) {
         CommercialRuleHeader commercialRuleHeader = createCommercialRuleHeader(targetOfferTemplateCode, targetProductCode, createAttribute(targetAttributeCode));
-        CommercialRuleItem item = createCommercialRuleItem(OperatorEnum.AND, singletonList(createCommercialRuleLine(sourceOfferTemplateCode, sourceProductCode, createAttribute(sourceAttributeCode), RuleOperatorEnum.EXISTS)));
+        CommercialRuleItem item = createCommercialRuleItem(OperatorEnum.AND, singletonList(createCommercialRuleLine(sourceOfferTemplateCode, sourceProductCode, createAttribute(sourceAttributeCode), lineOperator)));
         commercialRuleHeader.setCommercialRuleItems(singletonList(item));
         return commercialRuleHeader;
     }
@@ -247,9 +276,9 @@ public class ProductApiTest {
         return commercialRuleLine;
     }
 
-    private CommercialRuleHeader createCommercialRuleHeader(String targetOfferTemplateCode, String targetProductCode, Attribute targetAttribute) {
+    private CommercialRuleHeader createCommercialRuleHeader(String targetOfferTemplateCode, String targetProductCode, Attribute attribute) {
         CommercialRuleHeader commercialRuleHeader = new CommercialRuleHeader();
-        commercialRuleHeader.setTargetAttribute(targetAttribute);
+        commercialRuleHeader.setTargetAttribute(attribute);
         if(targetProductCode != null) {
             Product targetProduct = new Product();
             targetProduct.setCode(targetProductCode);

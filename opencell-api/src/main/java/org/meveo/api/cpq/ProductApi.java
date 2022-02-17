@@ -82,6 +82,7 @@ import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
+import org.meveo.service.cpq.rule.ReplacementRulesExecutor;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.primefaces.model.SortOrder;
 
@@ -932,6 +933,7 @@ public class ProductApi extends BaseApi {
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode, "offerCode");
         }
+
         log.info("OfferTemplateApi requestedTagTypes={}", requestedTagTypes);
         GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes);
         for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {

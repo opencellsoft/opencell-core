@@ -1,5 +1,6 @@
 package org.meveo.service.cpq.rule;
 
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 
@@ -17,13 +18,13 @@ public class CommercialRuleLineCommandFactory {
         this.sourceSelectedAttributes = sourceSelectedAttributes;
     }
 
-    public CommercialRuleLineCommand create(RuleOperatorEnum ruleOperator){
+    public CommercialRuleLineCommand create(RuleOperatorEnum ruleOperator, boolean isQuoteScope){
         switch (ruleOperator){
             case EXISTS:
-                return new ExistLineCommand(targetAttribute, selectedAttributes, sourceSelectedAttributes);
+                return new ExistLineCommand(targetAttribute, selectedAttributes, sourceSelectedAttributes, isQuoteScope);
 
             default:
-                return null;
+                throw new BusinessApiException("Only Exist operator can be applied on commercial rules of type replacement");
         }
     }
 }

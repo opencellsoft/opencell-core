@@ -1,7 +1,7 @@
 package org.meveo.service.cpq.rule;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 
 import java.util.LinkedHashMap;
@@ -26,15 +26,17 @@ public class SelectedAttributes {
         return productCode;
     }
 
-    public LinkedHashMap<String, Object> getSelectedAttributes() {
+    public LinkedHashMap<String, Object> getSelectedAttributesMap() {
         return selectedAttributes;
     }
 
-    public boolean isSourceOfferAttribute() {
-        return productCode == null;
+
+    public boolean match(CommercialRuleHeader rule) {
+        return (rule.getTargetOfferTemplate() == null || StringUtils.equals(offerCode, rule.getTargetOfferTemplateCode())) && StringUtils.equals(this.productCode, rule.getTargetProductCode()) && selectedAttributes.containsKey(rule.getTargetAttribute().getCode());
     }
 
-    public boolean match(String offerTemplateCode, String productCode, Attribute attribute) {
-        return StringUtils.equals(offerCode, offerTemplateCode) && StringUtils.equals(this.productCode, productCode) && selectedAttributes.containsKey(attribute.getCode());
+    public boolean match(CommercialRuleLine commercialRuleLine) {
+        return StringUtils.equals(offerCode, commercialRuleLine.getSourceOfferTemplateCode()) && StringUtils.equals(this.productCode, commercialRuleLine.getSourceProductCode()) && selectedAttributes.containsKey(commercialRuleLine.getSourceAttribute().getCode());
     }
+
 }
