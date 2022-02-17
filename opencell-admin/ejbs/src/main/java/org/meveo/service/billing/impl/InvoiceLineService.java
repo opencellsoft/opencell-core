@@ -731,4 +731,22 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("ids", invoiceLinesIds)
                 .executeUpdate();
     }
+    
+    public List<Long> loadInvoiceLinesByBillingRunNotValidatedInvoices(long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.listByBillingRunNotValidatedInvoices")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
+    }
+
+	public void deleteInvoiceLines(BillingRun billingRun) {
+		List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRun.getId());
+        if(!invoiceLinesIds.isEmpty()) {
+            detachRatedTransactions(invoiceLinesIds);
+            getEntityManager()
+                    .createNamedQuery("InvoiceLine.deleteByBillingRunNotValidatedInvoices")
+                    .setParameter("billingRunId", billingRun.getId())
+                    .executeUpdate();
+        }
+		
+	}
 }
