@@ -5,9 +5,11 @@ import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static org.meveo.model.billing.BillingProcessTypesEnum.AUTOMATIC;
+import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
 import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
-import java.util.Collection;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -25,7 +27,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -35,7 +36,6 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -56,9 +56,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private BillingRunService billingRunService;
     
     @Inject
-    private BillingRunExtensionService billingRunExtensionService;
-    
-    @Inject
     private InvoiceService invoiceService;
     
     @Inject
@@ -72,7 +69,10 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
+    private static BigDecimal amountTax = ZERO;
+    private static BigDecimal amountWithTax = ZERO;
+    private static BigDecimal amountWithoutTax = ZERO;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -102,17 +102,11 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                             result.setReport("Exceptional Billing filters returning no invoice line to process");
                         }
                     }
-                    billingRun.setPrAmountWithoutTax(ZERO);
-                    billingRun.setPrAmountWithTax(ZERO);
-                    billingRun.setPrAmountTax(ZERO);
-                    billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
-                    if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
-                        assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                        billingRun.setStatus(VALIDATED);
-                    }else {
-                        billingRun.setStatus(DRAFT_INVOICES);
+                    boolean updateBillingRun = executeBillingRun(billingRun, jobInstance, result);
+                    if(updateBillingRun) {
+                        billingRunService.update(billingRun);
                     }
-                    billingRunService.update(billingRun);
+                    initAmounts();
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
@@ -130,7 +124,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     private void validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
         List<BillingRun> excludedBRs = billingRuns.stream()
-                                            .filter(br -> br.getStatus() != INVOICE_LINES_CREATED)
+                                            .filter(br -> br.getStatus() == NEW)
                                             .collect(toList());
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored. " +
                                         "Only Billing runs with status=INVOICE_LINES_CREATED can be processed", br.getId())));
@@ -147,6 +141,35 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 .map(InvoiceLine::getId)
                 .collect(toList()));
         return billingRun.getExceptionalILIds().size();
+    }
+
+    private boolean executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
+        boolean billingRunUpdated = false;
+        if(billingRun.getStatus() == INVOICE_LINES_CREATED
+                && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
+            billingRunUpdated = true;
+            billingRun.setStatus(PREVALIDATED);
+        }
+        if(billingRun.getStatus() == PREVALIDATED) {
+            billingRun.setStatus(INVOICES_CREATED);
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
+            billingRun.setPrAmountWithTax(amountWithTax);
+            billingRun.setPrAmountWithoutTax(amountWithoutTax);
+            billingRun.setPrAmountTax(amountTax);
+            billingRun.setStatus(DRAFT_INVOICES);
+        }
+        if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
+            billingRun.setStatus(POSTVALIDATED);
+        }
+        if(!billingRunService.isBillingRunValid(billingRun)) {
+            billingRun.setStatus(REJECTED);
+        }
+        if(billingRun.getStatus() == POSTVALIDATED) {
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
+            billingRun.setStatus(VALIDATED);
+        }
+        return billingRunUpdated;
     }
 
     /**
@@ -202,7 +225,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
@@ -211,8 +234,19 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 invoiceService.incrementBAInvoiceDate(billingRun, baId);
             };
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
         }
     }
 
+    public static void addNewAmounts(BigDecimal amountTax, BigDecimal amountWithoutTax, BigDecimal amountWithTax) {
+        InvoicingJobV2Bean.amountTax = InvoicingJobV2Bean.amountTax.add(amountTax);
+        InvoicingJobV2Bean.amountWithTax = InvoicingJobV2Bean.amountWithTax.add(amountWithTax);
+        InvoicingJobV2Bean.amountWithoutTax = InvoicingJobV2Bean.amountWithoutTax.add(amountWithoutTax);
+    }
+
+    private void initAmounts() {
+        amountTax = ZERO;
+        amountWithTax = ZERO;
+        amountWithoutTax = ZERO;
+    }
 }

@@ -42,6 +42,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
@@ -304,7 +305,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             discountPlanService.commit();
         	} catch (Exception e) {
                 if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
-                	throw new BusinessException("The discount plan with code "+entity.getCode()+" is referenced, it Cannot be deleted");
+                	throw new DeleteReferencedEntityException(DiscountPlan.class, code);
                 }
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
             }

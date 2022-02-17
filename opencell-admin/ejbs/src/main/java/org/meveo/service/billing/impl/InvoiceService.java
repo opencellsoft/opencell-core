@@ -5111,6 +5111,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     minInvoiceLine.setAccountingArticle(accountingArticleService.retrieveIfNotManaged(minInvoiceLine.getAccountingArticle()));
                     invoiceLinesService.create(minInvoiceLine);
                 }
+                if(billingRun != null) {
+                    billingRun.setStatus(BillingRunStatusEnum.MINIMUM_ADDED);
+                }
                 hasMin = true;
                 commit();
             }
@@ -5205,7 +5208,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
                     invoice.setHasMinimum(hasMin);
 
-                    appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
+                    appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun, billingRun);
+                    if(billingRun != null) {
+                        billingRun.setStatus(BillingRunStatusEnum.DISCOUNT_ADDED);
+                    }
                     List<Object[]> ilMassUpdates = new ArrayList<>();
                     List<Object[]> ilUpdates = new ArrayList<>();
 
@@ -5294,6 +5300,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
+            if(billingRun != null) {
+                billingRun.setStatus(BillingRunStatusEnum.THRESHOLD_CHECKED);
+            }
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         return invoiceList;
@@ -5339,7 +5348,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     protected void appendInvoiceAggregatesIL(IBillableEntity entityToInvoice, BillingAccount billingAccount, Invoice invoice, List<InvoiceLine> invoiceLines, boolean isInvoiceAdjustment,
-            InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo, boolean moreInvoiceLinesExpected) throws BusinessException {
+            InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo, boolean moreInvoiceLinesExpected, BillingRun billingRun) throws BusinessException {
 
         boolean isAggregateByUA = paramBeanFactory.getInstance().getPropertyAsBoolean("invoice.agregateByUA", true);
 
@@ -5441,6 +5450,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
+        }
+        if(billingRun != null) {
+            billingRun.setStatus(BillingRunStatusEnum.TAX_COMPUTED);
         }
 
         if (moreInvoiceLinesExpected) {

@@ -2408,6 +2408,7 @@
 			<column name="version" valueNumeric="0" />
 			<column name="code" value="ART_SECURITY_DEPOSIT"/>
 			<column name="tax_class_id" value="-3"/>
+			<column name="accounting_code_id" value="-36"/>
 			<column name="invoice_sub_category_id" value="-4"/>
 			<column name="invoice_type_id" value="-6"/>
 			<column name="description" value="Article Security Deposit"/>
@@ -2416,6 +2417,7 @@
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
 		</insert>
 	</changeSet>
+    <changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
     
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
