@@ -107,10 +107,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
             throw new BadRequestException("instantiation is not allowed in general settings");
         }
-
-        linkRealEntities(securityDepositInput);
-
         BigDecimal securityDepositAmount = securityDepositInput.getAmount();
+        if (securityDepositAmount == null) {
+            throw new EntityDoesNotExistsException("The Amount == null.");
+        }
+        linkRealEntities(securityDepositInput);        
 
         // Check Maximum amount per Security deposit
         BigDecimal maxAmountPerSecurityDeposit = financeSettings.getMaxAmountPerSecurityDeposit();

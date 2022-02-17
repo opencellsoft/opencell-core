@@ -41,7 +41,7 @@ public interface SecurityDepositInput extends Resource {
     @Nullable
     ValidityPeriodUnit getValidityPeriodUnit();
 
-    @NotNull
+    @Nullable
     BigDecimal getAmount();
 
     @Nullable
