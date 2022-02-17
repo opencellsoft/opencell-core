@@ -153,7 +153,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
 	        }
 	        ratedTransactionService.deleteSupplementalRTs(billingRun);
 	        ratedTransactionService.uninvoiceRTs(billingRun);
-	        invoiceLineService.DeleteInvoiceLines(billingRun);
+	        invoiceLineService.deleteInvoiceLines(billingRun);
 	        invoiceService.deleteInvoices(billingRun);
 	        invoiceAgregateService.deleteInvoiceAgregates(billingRun);
 	        billingRun.setStatus(BillingRunStatusEnum.CANCELED);

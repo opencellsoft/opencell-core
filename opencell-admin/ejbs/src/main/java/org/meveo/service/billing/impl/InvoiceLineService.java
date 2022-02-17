@@ -737,7 +737,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .getResultList();
     }
 
-	public void DeleteInvoiceLines(BillingRun billingRun) {
+	public void deleteInvoiceLines(BillingRun billingRun) {
 		List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRun.getId());
         if(!invoiceLinesIds.isEmpty()) {
             detachRatedTransactions(invoiceLinesIds);
