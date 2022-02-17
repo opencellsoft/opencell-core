@@ -147,15 +147,17 @@ public class BillingRunApiService implements ApiService<BillingRun> {
 	        if (billingRun == null) {
 	            return empty();
 	        }
-	        if (billingRun.getStatus() == POSTVALIDATED && billingRun.getStatus() == BillingRunStatusEnum.VALIDATED
-	                && billingRun.getStatus() == BillingRunStatusEnum.CANCELLING && billingRun.getStatus() == BillingRunStatusEnum.CANCELED) {
-	            throw new BadRequestException("The billing run cannot be cancelled");
+	        if (billingRun.getStatus() == POSTVALIDATED || billingRun.getStatus() == BillingRunStatusEnum.VALIDATED
+	        		|| billingRun.getStatus() == BillingRunStatusEnum.CANCELLING || billingRun.getStatus() == BillingRunStatusEnum.CANCELED) {
+	            throw new BadRequestException("The billing run with status "+billingRun.getStatus()+" cannot be cancelled");
 	        }
 	        ratedTransactionService.deleteSupplementalRTs(billingRun);
 	        ratedTransactionService.uninvoiceRTs(billingRun);
 	        invoiceLineService.DeleteInvoiceLines(billingRun);
 	        invoiceService.deleteInvoices(billingRun);
 	        invoiceAgregateService.deleteInvoiceAgregates(billingRun);
+	        billingRun.setStatus(BillingRunStatusEnum.CANCELED);
+	        billingRunService.update(billingRun);
 		return of(billingRun);
 	}
 }
