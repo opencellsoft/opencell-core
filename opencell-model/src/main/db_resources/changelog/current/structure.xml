@@ -11834,8 +11834,8 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="code" type="varchar(255)">
                 <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
             </column>
-            <column name="description" type="${type.text}"/>
-            <column name="long_description" type="${type.longText}"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="long_description" type="varchar(2000)"/>
             <column name="script_instance_id" type="${cast.long}"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_accounting_scheme" constraintName="fk_acc_scheme_script_inst_id"
@@ -11849,4 +11849,9 @@ order by date_trunc('month', i.invoice_date) DESC
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="ar_accounting_scheme"/>
     </changeSet>
+    
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
+        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
+     </changeSet>
 </databaseChangeLog>

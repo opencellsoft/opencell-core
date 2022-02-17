@@ -39,4 +39,19 @@ public interface InvoicingResource {
             })
     Response advanceStatus(@PathParam("billingRunId") Long billingRunId,
                            @QueryParam("executeInvoicingJob") boolean executeInvoicingJob);
+    
+    @POST
+    @Path("/{billingRunId}/cancelBillingRun")
+    @Operation(summary = "cancel the billing run",
+            tags = {"Invoicing"},
+            description = "Cancel the billing run",
+            responses = {
+            		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+                            description = "The billing canceled successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
+                            description = "The billing run does not exists"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409",
+                            description = "The billing run cannot be cancelled")
+            })
+    Response cancelBillingRun(@PathParam("billingRunId") Long billingRunId);
 }

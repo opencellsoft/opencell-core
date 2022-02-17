@@ -92,6 +92,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             throw new EntityDoesNotExistsException("Cannot find customer account in the this Security Deposit");
         }
         
+        if(securityDepositToUpdate.getCurrentBalance() == null){
+            securityDepositToUpdate.setCurrentBalance(BigDecimal.ZERO);
+        }
         BigDecimal nCurrentBalance = securityDepositInput.getAmountToCredit().add(securityDepositToUpdate.getCurrentBalance());
         securityDepositToUpdate.setCurrentBalance(nCurrentBalance);
         

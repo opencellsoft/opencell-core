@@ -88,6 +88,10 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
         
+        if (securityDepositInput.getAmount() == null) {
+            throw new EntityDoesNotExistsException("The Amount == null.");
+        }
+        
         BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
         securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
@@ -122,7 +126,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     private PaymentDto createPaymentDto(SecurityDepositCreditInput securityDepositInput) {
         PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setToMatching(false);
+        paymentDto.setToMatching(securityDepositInput.getIsToMatching());
         paymentDto.setCustomerAccountCode(securityDepositInput.getCustomerAccountCode());        
         paymentDto.setPaymentMethod(securityDepositInput.getPaymentMethod());
         paymentDto.setAmount(securityDepositInput.getAmountToCredit());
