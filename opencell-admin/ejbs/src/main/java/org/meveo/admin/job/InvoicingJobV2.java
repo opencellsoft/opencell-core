@@ -31,7 +31,7 @@ public class InvoicingJobV2 extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.UTILS;
+        return MeveoJobCategoryEnum.INVOICING;
     }
     
 

@@ -52,6 +52,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
+import org.meveo.admin.job.InvoicingJobV2Bean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
@@ -612,7 +613,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param status the status
      * @return the billing runs
      */
-    public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
+    public List<BillingRun> getBillingRuns(BillingRunStatusEnum... status) {
         return getBillingRuns(null, status);
     }
 
@@ -627,7 +628,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public List<BillingRun> getBillingRuns(String code, BillingRunStatusEnum... status) {
 
         BillingRunStatusEnum bRStatus;
-        log.debug("getbillingRuns ");
+        log.debug("getBillingRuns ");
         QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
 
         if (code != null) {
@@ -1417,23 +1418,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
-                updateBillingRunWithStatistics(billingRun, invoices);
-            } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}",
-                        entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+                updateBillingRunWithStatistics(invoices);
+            } catch (Exception exception) {
+                throw new BusinessException(exception);
             }
         }
 
         return new AsyncResult<>("OK");
     }
 
-    private void updateBillingRunWithStatistics(BillingRun billingRun, List<Invoice> invoices) {
+    private void updateBillingRunWithStatistics(List<Invoice> invoices) {
         BigDecimal amountWithTax = invoices.stream().map(Invoice::getAmountWithTax).reduce(ZERO, BigDecimal::add);
         BigDecimal amountWithoutTax = invoices.stream().map(Invoice::getAmountWithoutTax).reduce(ZERO, BigDecimal::add);
         BigDecimal amountTax = invoices.stream().map(Invoice::getAmountTax).reduce(ZERO, BigDecimal::add);
-        billingRun.setPrAmountWithoutTax(billingRun.getPrAmountWithoutTax().add(amountWithoutTax));
-        billingRun.setPrAmountWithTax(billingRun.getPrAmountWithTax().add(amountWithTax));
-        billingRun.setPrAmountTax(billingRun.getPrAmountTax().add(amountTax));
+        InvoicingJobV2Bean.addNewAmounts(amountTax, amountWithoutTax, amountWithTax);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
