@@ -153,6 +153,9 @@ public class GenericOpencellRestful extends Application {
                     versionInfo.put("name", (String) jsonObject.get("name"));
                     versionInfo.put("version", (String) jsonObject.get("version"));
                     versionInfo.put("commit", (String) jsonObject.get("commit"));
+                    if(jsonObject.get("commitDate") != null) {
+                        versionInfo.put("commitDate", (String) jsonObject.get("commitDate"));
+                    }
 
                     VERSION_INFO.add(versionInfo);
                 } catch (ParseException | IOException e) {
