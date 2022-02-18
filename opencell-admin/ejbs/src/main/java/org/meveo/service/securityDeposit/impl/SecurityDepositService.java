@@ -111,7 +111,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
     }
     
-    public void refund(SecurityDeposit securityDepositToUpdate, SecurityDepositRefundInput securityDepositInput)
+    public void refund(SecurityDeposit securityDepositToUpdate, String refundReason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum)
     {
         Refund refund = createRefund(securityDepositToUpdate);
         if(refund == null){
@@ -119,13 +119,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
         else{        
             createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
-                SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
+            		securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund); 
     
-            securityDepositToUpdate.setRefundReason(securityDepositInput.getRefundReason());
-            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.REFUNDED);
+            securityDepositToUpdate.setRefundReason(refundReason);
+            securityDepositToUpdate.setStatus(securityDepositStatusEnum);
             securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
             update(securityDepositToUpdate);
-            auditLogService.trackOperation("REFUND", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+            auditLogService.trackOperation(refundReason, new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         }
     }
     
@@ -247,4 +247,15 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositTransaction.setAccountOperation(accountOperation);
         securityDepositTransactionService.create(securityDepositTransaction);        
     }
+
+	public List<Long> getSecurityDepositsToRefundIds() {
+		return getEntityManager()
+                .createNamedQuery("SecurityDeposit.securityDepositsToRefundIds", Long.class)
+                .getResultList();
+	}
+
+	public void checkPeriod(SecurityDeposit securityDeposit) {
+		// TODO Auto-generated method stub
+		
+	}
 }
