@@ -1,17 +1,30 @@
 package org.meveo.admin.job;
 
-import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.MONTH_OF_USAGE_DATE;
 import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.ProductVersion;
@@ -19,7 +32,10 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.billing.impl.*;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -29,14 +45,6 @@ import org.meveo.util.ApplicationProvider;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceLinesFactoryTest {
@@ -143,7 +151,7 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_withoutAgg() throws ParseException {
-        AggregationConfiguration configuration = new AggregationConfiguration(false, NO_AGGREGATION);
+        AggregationConfiguration configuration = new AggregationConfiguration(false, Arrays.asList(NO_AGGREGATION),DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
         InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
@@ -158,7 +166,7 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_withAgg() throws ParseException {
-        AggregationConfiguration configuration = new AggregationConfiguration(false, MONTH_OF_USAGE_DATE);
+    	AggregationConfiguration configuration = new AggregationConfiguration(false, Arrays.asList(NO_AGGREGATION),DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
         InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
@@ -171,7 +179,7 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_enterprise() throws ParseException {
-        AggregationConfiguration configuration = new AggregationConfiguration(true, NO_AGGREGATION);
+    	AggregationConfiguration configuration = new AggregationConfiguration(false, Arrays.asList(NO_AGGREGATION),DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
         when(appProvider.isEntreprise()).thenReturn(Boolean.TRUE);
 
