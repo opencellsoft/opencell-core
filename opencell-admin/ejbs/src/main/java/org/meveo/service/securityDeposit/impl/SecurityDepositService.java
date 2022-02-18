@@ -16,22 +16,20 @@ import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -43,7 +41,6 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RefundService;
@@ -71,9 +68,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
      
     @Inject
     private SecurityDepositTransactionService securityDepositTransactionService;
-
-    @Inject
-    private OCCTemplateService oCCTemplateService;
     
     @Inject
     private RefundService refundService;
@@ -168,8 +162,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 accountOperationsToPayIds.add(aOSecurityDepositTransaction.getId());
             }            
         }
-        Long refundId = null;
+        
+        Long refundId = null;        
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+        if(paymentGateway == null) {
+            msgExceptionPaymentGateway(customerAccount, preferredPaymentMethod);
+        } 
+        
         if(paymentGateway!=null && (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD))) {
             try {
                 if(!accountOperationsToPayIds.isEmpty()) {
@@ -197,6 +196,24 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         else{
             return refundService.findById(refundId);
         }
+    }
+
+    private void msgExceptionPaymentGateway(CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod) {
+        Seller seller = null;
+        CreditCardTypeEnum cardTypeToCheck = null;
+        
+        if (preferredPaymentMethod != null && preferredPaymentMethod instanceof CardPaymentMethod) {
+            cardTypeToCheck = ((CardPaymentMethod) preferredPaymentMethod).getCardType();
+        }
+        if(customerAccount.getCustomer() != null) {
+            seller = customerAccount.getCustomer().getSeller();
+        }            
+        String err = " paymenType:"+(preferredPaymentMethod == null ? PaymentMethodEnum.CARD : preferredPaymentMethod.getPaymentType());
+        err = err + " country:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry());
+        err = err + " tradingCurrency:"+(customerAccount.getTradingCurrency());
+        err = err + " cardType:"+(cardTypeToCheck);
+        err = err + " seller:"+(seller == null ?  null : seller.getCode());
+        throw new BusinessException("paymentGateway == null ( " + err + " )");
     }
     
     public void credit(SecurityDeposit securityDepositToUpdate, SecurityDepositCreditInput securityDepositInput)
