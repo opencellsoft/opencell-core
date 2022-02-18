@@ -97,18 +97,27 @@ public class NativeExpressionFactory {
                 queryBuilder.addSearchWildcardOrIgnoreCasFilters(tableNameAlias, exp.getAllFields(), value);
                 break;
             default: {
-                if (key.startsWith(PersistenceService.SEARCH_SQL))
+                if (key.startsWith(PersistenceService.SEARCH_SQL)) {
                     queryBuilder.addSearchSqlFilters(value);
-                else if (value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value))
+                } else if (key.startsWith(PersistenceService.SEARCH_OR)) {
+                    queryBuilder.startOrClause();
+
+                    Map<String, Object> orClauseItems = (Map<String, Object>) value;
+                    orClauseItems.keySet().stream().filter(orItemKey -> orClauseItems.get(orItemKey) != null).forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
+
+                    queryBuilder.endOrClause();
+
+                } else if (value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value)) {
                     addNullFilters(exp.getFieldName(), false);
-                else if (value instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(value))
+                } else if (value instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(value)) {
                     addNullFilters(exp.getFieldName(), true);
-                else if (BaseEntity.class.isAssignableFrom(value.getClass()) || value instanceof UniqueEntity || value instanceof IEntity)
+                } else if (BaseEntity.class.isAssignableFrom(value.getClass()) || value instanceof UniqueEntity || value instanceof IEntity) {
                     addFiltersToEntity(value, exp.getCondition(), exp.getFieldName());
-                else if ("auditable".equalsIgnoreCase(exp.getFieldName()) && value instanceof Map)
+                } else if ("auditable".equalsIgnoreCase(exp.getFieldName()) && value instanceof Map) {
                     addAuditableFilters(value);
-                else if (value instanceof String || value instanceof Date || value instanceof Number || value instanceof Boolean || value instanceof Enum || value instanceof List)
+                } else if (value instanceof String || value instanceof Date || value instanceof Number || value instanceof Boolean || value instanceof Enum || value instanceof List) {
                     queryBuilder.addValueIsEqualToField(extractFieldWithAlias(exp.getFieldName()), value, exp.getCondition().startsWith("ne"), exp.getCondition().endsWith("Optional"));
+                }
             }
         }
     }

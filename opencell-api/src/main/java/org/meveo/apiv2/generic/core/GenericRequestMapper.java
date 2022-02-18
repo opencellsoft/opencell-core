@@ -68,7 +68,7 @@ public class GenericRequestMapper {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
-                    if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
+                    if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject)){
 
                     	String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
                     	String[] fields=fieldName.split(" ");

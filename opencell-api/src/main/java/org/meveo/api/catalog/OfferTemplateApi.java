@@ -18,6 +18,8 @@
 
 package org.meveo.api.catalog;
 
+import static org.meveo.service.base.PersistenceService.SEARCH_IS_NULL;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -973,6 +975,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 		if(tags!=null) {
 		pagingAndFiltering.addFilter("inList tags", tags);
 		offersWithoutTags=offerTemplateService.list().stream().filter(offer -> offer.getTags().isEmpty()).collect(Collectors.toList());
+		}else {
+			pagingAndFiltering.addFilter("tags", SEARCH_IS_NULL);
 		}
 		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
 		List<OfferTemplate> offers=offerTemplateService.list(paginationConfig);
