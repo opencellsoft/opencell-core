@@ -74,7 +74,7 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
     /**
      * quote
      */
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
 	@NotNull
     private CpqQuote quote;
