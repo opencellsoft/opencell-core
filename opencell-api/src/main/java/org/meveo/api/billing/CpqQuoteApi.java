@@ -50,6 +50,7 @@ import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OverrodPricesDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;

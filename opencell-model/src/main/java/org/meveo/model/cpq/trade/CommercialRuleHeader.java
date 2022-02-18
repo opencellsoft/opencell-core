@@ -329,4 +329,16 @@ public class CommercialRuleHeader extends BusinessEntity {
 	public void setScopeType(ScopeTypeEnum scopeType) {
 		this.scopeType = scopeType;
 	}
+
+	public boolean isTargetOfferAttribute() {
+		return targetProduct == null;
+	}
+
+	public String getTargetOfferTemplateCode() {
+		return targetOfferTemplate != null ? targetOfferTemplate.getCode() : null;
+	}
+
+	public String getTargetProductCode() {
+		return targetProduct != null ? targetProduct.getCode() : null;
+	}
 }

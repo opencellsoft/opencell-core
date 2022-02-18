@@ -149,8 +149,11 @@ public class AttributeDTO extends EnableBusinessDto {
 
 	@Schema(description = "Validation label")
 	protected String validationLabel;
-    
-    public AttributeDTO() {
+
+	@Schema(description = "replaced value")
+	private Object replacedValue;
+
+	public AttributeDTO() {
     }
 
  
@@ -528,5 +531,13 @@ public class AttributeDTO extends EnableBusinessDto {
 
 	public void setValidationLabel(String validationLabel) {
 		this.validationLabel = validationLabel;
+	}
+
+	public void setReplacedValue(Object replacedValue) {
+		this.replacedValue = replacedValue;
+	}
+
+	public Object getReplacedValue() {
+		return replacedValue;
 	}
 }

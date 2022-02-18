@@ -1,5 +1,6 @@
 package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -65,6 +66,9 @@ public class OfferProductsDto extends BaseEntityDto {
 
     @Schema(description = "product set regroup product in the pack")
     private String productSet;
+
+	@Schema(description = "the replaced offer attributes")
+    private LinkedHashMap<String, Object> replacedOfferAttributes;
     
     /**
      * Instantiates a new Offer Component dto.
@@ -285,6 +289,11 @@ public class OfferProductsDto extends BaseEntityDto {
 		this.productSet = productSet;
 	}
 
-	
-   
+	public LinkedHashMap<String, Object> getReplacedOfferAttributes() {
+		return replacedOfferAttributes;
+	}
+
+	public void setReplacedOfferAttributes(LinkedHashMap<String, Object> replacedOfferAttributes) {
+		this.replacedOfferAttributes = replacedOfferAttributes;
+	}
 }
