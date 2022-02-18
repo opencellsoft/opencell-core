@@ -209,15 +209,11 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param aoIdsToPay list of account operation's id to refund
-     * @param createAO if true refund account operation will be created.
-     * @param matchingAO if true matching account operation will be created.
      * @param paymentGateway the set this payment gateway will be used.
-     * @return instance of PaymentResponseDto
-     * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
-     * @throws UnbalanceAmountException balance amount exception.
+     * @return id Refund
+.
      */
-    public Long refundByMandatSD(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+    public Long refundByMandatSD(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, PaymentGateway paymentGateway) {
         return doPaymentSD(customerAccount, ctsAmount, aoIdsToPay, paymentGateway, null, null, null, null, null, PaymentMethodEnum.DIRECTDEBIT);
     }
 
@@ -268,24 +264,15 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Refund by card for Security Deposit. A new card payment type is registered as token if refund was successfull.
+     * Refund by card for Security Deposit.
      *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
-     * @param cardNumber card's number
-     * @param ownerName card's owner name
-     * @param cvv cvv number
-     * @param expiryDate expiry date
-     * @param cardType card type
-     * @param aoToRefund list of account operation's id to refund
-     * @param createAO if true payment account operation will be created.
-     * @param matchingAO if true matching account operation will be created.
+     * @param aoIdsToPay list of account operation's id to refund
      * @param paymentGateway the set this payment gateway will be used.
-     * @return instance of PaymentResponseDto
-     * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
-     * @throws UnbalanceAmountException balance amount exception.
-     */ 
+     * @return id Refund
+.
+     */
     public Long refundByCardSD(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
             CreditCardTypeEnum cardType, List<Long> aoToRefund, PaymentGateway paymentGateway)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -470,8 +457,6 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param aoIdsToPay list of account operation's id to refund
-     * @param createAO if true payment account operation will be created.
-     * @param matchingAO if true matching account operation will be created.
      * @param paymentGateway the set this payment gateway will be used.
      * @param cardNumber card's number
      * @param ownerName card's owner name
@@ -480,10 +465,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param cardType card type
      * @param isPayment if true is a payment else is a refund.
      * @param paymentMethodType payment method to use, CARD or DIRECTDEIBT.
-     * @return instance of PaymentResponseDto
-     * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
-     * @throws UnbalanceAmountException balance amount exception.
+     * @return id Refund
      */
     public Long doPaymentSD(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, PaymentGateway paymentGateway,
             String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, PaymentMethodEnum paymentMethodType)
