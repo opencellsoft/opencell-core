@@ -4,31 +4,19 @@ import static java.lang.Integer.valueOf;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BasicStatistics {
 
-    private Map<Long, List<Long>> iLIdsRtIdsCorrespondence;
     private BigDecimal sumAmountWithoutTax;
     private BigDecimal sumAmountWithTax;
-    private Integer billableEntitiesCount;
+    private Integer count;
 
     public BasicStatistics() {
-        this.iLIdsRtIdsCorrespondence = new HashMap<>();
         this.sumAmountWithoutTax = ZERO;
         this.sumAmountWithTax = ZERO;
-        this.billableEntitiesCount = valueOf(0);
+        this.count = valueOf(0);
     }
 
-    public Map<Long, List<Long>> getiLIdsRtIdsCorrespondence() {
-        return iLIdsRtIdsCorrespondence;
-    }
-
-    public void setiLIdsRtIdsCorrespondence(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
-        this.iLIdsRtIdsCorrespondence = iLIdsRtIdsCorrespondence;
-    }
 
     public BigDecimal getSumAmountWithoutTax() {
         return sumAmountWithoutTax;
@@ -48,20 +36,19 @@ public class BasicStatistics {
         return sumAmountWithTax;
     }
 
-    public Integer getBillableEntitiesCount() {
-        return billableEntitiesCount;
+    public Integer getCount() {
+        return count;
     }
 
-    public void setBillableEntitiesCount(Integer billableEntitiesCount) {
-        this.billableEntitiesCount = billableEntitiesCount;
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
 	/**
 	 * @param statistics
 	 */
 	public void append(BasicStatistics statistics) {
-		this.billableEntitiesCount+=statistics.getBillableEntitiesCount();
-		 this.iLIdsRtIdsCorrespondence.putAll(statistics.getiLIdsRtIdsCorrespondence());
+		this.count+=statistics.getCount();
 		 this.sumAmountWithoutTax=this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
 	     this.sumAmountWithTax=this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
 	}

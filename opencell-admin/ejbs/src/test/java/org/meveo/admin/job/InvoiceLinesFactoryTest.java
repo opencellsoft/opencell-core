@@ -1,6 +1,6 @@
 package org.meveo.admin.job;
 
-import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.DATE;
+import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.MONTH_OF_USAGE_DATE;
 import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.mockito.ArgumentMatchers.any;
@@ -158,7 +158,7 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_withAgg() throws ParseException {
-        AggregationConfiguration configuration = new AggregationConfiguration(false, DATE);
+        AggregationConfiguration configuration = new AggregationConfiguration(false, MONTH_OF_USAGE_DATE);
         Map<String, Object> record = buildRecord();
 
         InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
