@@ -285,7 +285,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Comment
      */
-    @Column(name = "comment", length = 1200)
+    @Column(name = "comment_text", length = 1200)
     @Size(max = 1200)
     private String comment;
 
