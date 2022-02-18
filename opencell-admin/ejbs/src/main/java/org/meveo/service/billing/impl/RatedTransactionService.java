@@ -17,6 +17,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -42,10 +44,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
+import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -84,6 +90,7 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -1469,19 +1476,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT  string_agg(concat(id), ',') as rated_transaction_ids, rt.billing_account__id,  \n"
-                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity,  \n"
-                + "              sum(rt.amount_without_tax) as sum_amount_without_tax, \n"
-                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price, \n"
-                + "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, \n"
-                + "              EXTRACT(MONTH FROM rt.usage_date) valueDate, min(rt.start_date) as start_date, \n"
+        String query = "SELECT  string_agg(concat(id), ',') as rated_transaction_ids, rt.billing_account__id, "
+                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
+                + "              sum(rt.amount_without_tax) as sum_amount_without_tax,"
+                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
+                + "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, "
+                + "              EXTRACT(MONTH FROM rt.usage_date) valueDate, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id \n"
-                + "    FROM billing_rated_transaction rt WHERE id in (:ids) \n"
-                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description,  \n"
-                + "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, \n"
+                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id "
+                + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
+                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
+                + "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, "
                 + "             rt.end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id";
+                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id ";
         return executeNativeSelectQuery(query, params);
     }
 
@@ -1492,13 +1499,94 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .executeUpdate();
     }
 
-    public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
-        for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
-            getEntityManager()
-                    .createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
-                    .setParameter("il", invoiceLineService.findById(entry.getKey()))
-                    .setParameter("ids", entry.getValue())
-                    .executeUpdate();
+	public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
+		for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
+			final List<Long> ratedTransactionsIDs = entry.getValue();
+			final Long invoiceLineID = entry.getKey();
+			linkRTsToIL(ratedTransactionsIDs, invoiceLineID);
+		}
+	}
+
+	public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
+		if (ratedTransactionsIDs.size() > SHORT_MAX_VALUE) {
+			SubListCreator<Long> subLists = new SubListCreator<Long>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / SHORT_MAX_VALUE)));
+			while (subLists.isHasNext()) {
+				linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
+			}
+		} else {
+			linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs);
+		}
+	}
+
+	private void linkRTsWithILByIds( Long invoiceLineId, final List<Long> ids) {
+		getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
+		        .setParameter("il", invoiceLineId)
+		        .setParameter("ids", ids).executeUpdate();
+	}
+
+	/**
+	 * @param aggregationConfiguration
+	 * @param be
+	 * @param lastTransactionDate
+	 * @param invoiceDate
+	 * @param object
+	 * @return
+	 */
+	public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
+			BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
+		
+		if (filter != null) {
+			//TODO #MEL use of filter must be reviewed
+			List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
+			List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
+			if (!ratedTransactionIds.isEmpty()) {
+				if (aggregationConfiguration.getAggregationOption().contains(AggregationOption.NO_AGGREGATION)) {
+			        return getGroupedRTs(ratedTransactionIds);
+			    } else {
+			        return getGroupedRTsWithAggregation(ratedTransactionIds);
+			    }
+			}
         }
-    }
+		
+		Map<String, Object> params = new HashMap<>();
+        params.put("firstTransactionDate", new Date(0));
+    	params.put("lastTransactionDate", lastTransactionDate);
+    	params.put("invoiceUpToDate", billingRun.getInvoiceDate());
+    	String entityCondition ="";
+		if (be instanceof Subscription) {
+			params.put("entityKey", be.getId());
+        	entityCondition = " rt.subscription_id=:entityKey";
+        } else if (be instanceof BillingAccount) {
+        	params.put("entityKey", be.getId());
+        	entityCondition = " rt.billing_account__id=:entityKey ";
+        } else if (be instanceof Order) {
+        	params.put("entityKey", ((Order)be).getOrderNumber());
+        	entityCondition = " rt.order_number=:entityKey ";
+        }
+		String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
+		
+		final String unitAmount = aggregationConfiguration.getAggregationOption().contains(AggregationOption.UNIT_AMOUNT)? "sum(rt.amount_without_tax) / sum(rt.quantity) as unit_amount_without_tax, sum(rt.amount_with_tax) / sum(rt.quantity)  as unit_amount_with_tax,":"rt.unit_amount_without_tax, rt.unit_amount_with_tax, ";
+		final String unitAmountGroupBy = aggregationConfiguration.getAggregationOption().contains(AggregationOption.UNIT_AMOUNT)? "":" rt.unit_amount_without_tax, rt.unit_amount_with_tax, ";
+		String query = "SELECT  string_agg(concat(rt.id), ',') as rated_transaction_ids, rt.billing_account__id, rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, " + 
+				"                          "+unitAmount+" SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, rt.offer_id, rt.service_instance_id, " + 
+				"                          "+usageDateAggregation+" valueDate, min(rt.start_date) as start_date, max(rt.end_date) as end_date, rt.order_number, subscription_id,  s.commercial_order_id, rt.tax_percent, rt.tax_id, " + 
+				"                          rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id " + 
+				"                FROM billing_rated_transaction rt join billing_subscription s on s.id=rt.subscription_id WHERE "+ entityCondition +" AND rt.status='OPEN' AND :firstTransactionDate<=rt.usage_date AND rt.usage_date<:lastTransactionDate and (rt.invoicing_Date is NULL or rt.invoicing_Date<:invoiceUpToDate) " + 
+				"                GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, " + 
+				"                         rt.offer_id, rt.service_instance_id, " + unitAmountGroupBy + usageDateAggregation+", rt.start_date, " + 
+				"                         rt.end_date, rt.order_number, subscription_id,  s.commercial_order_id, rt.tax_percent, rt.tax_id, " + 
+				"                         rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id ";
+        return executeNativeSelectQuery(query, params);
+	}
+
+	private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration) {
+		String usageDateAggregation = "EXTRACT(MONTH FROM rt.usage_date)";
+		switch (aggregationConfiguration.getDateAggregationOption()) {
+		case MONTH_OF_USAGE_DATE:usageDateAggregation = " EXTRACT(MONTH FROM rt.usage_date) ";break;
+		case DAY_OF_USAGE_DATE: usageDateAggregation = " EXTRACT(DAY FROM rt.usage_date) ";break;
+		case WEEK_OF_USAGE_DATE: usageDateAggregation = " EXTRACT(WEEK FROM rt.usage_date) ";break;
+		case NO_DATE_AGGREGATION : usageDateAggregation = " rt.usage_date";break;
+		}
+		return usageDateAggregation;
+	}
 }
