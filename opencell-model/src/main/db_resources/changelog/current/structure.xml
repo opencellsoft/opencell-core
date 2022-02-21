@@ -9741,4 +9741,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="anonymization_date" type="datetime" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE">
+        <!--  comment is reserved word in oracle database-->
+        <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
+        <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+    </changeSet>
 </databaseChangeLog>
