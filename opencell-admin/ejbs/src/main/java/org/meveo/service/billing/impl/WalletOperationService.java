@@ -856,10 +856,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param chargeInstance charge Instance
      * @param recurringChargeTemplate recurringCharge Template
      * @param endAgreementDate end agreement date
+     * @param applyAgreementImmediately
+     * @param terminationDate
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata)
+    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata, boolean applyAgreementImmediately, Date terminationDate)
             throws BusinessException, RatingException {
 
         // we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
@@ -928,6 +930,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 ChargeApplicationModeEnum.AGREEMENT, null, false, false);
 
             WalletOperation walletOperation = ratingResult.getWalletOperation();
+            //INTRD-4424: if applyAgreementImmediately is checked the the agreement charges rating
+            // should appear in the next invoice following the sub's termination date
+            if (applyAgreementImmediately) {
+                walletOperation.setOperationDate(terminationDate);
+            }
+
             chargeWalletOperation(walletOperation);
 
             // create(chargeApplication);
