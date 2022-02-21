@@ -22,14 +22,30 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+
+
+/**
+ * StorageFactory
+ *
+ * @author Thang Nguyen
+ * @author Wassim Drira
+ * @author Andrius Karpavicius
+ * @lastModifiedVersion 12.0.0
+ *
+ */
 
 public class StorageFactory {
 
@@ -37,31 +53,39 @@ public class StorageFactory {
 //    private static OutputStream outStream;
     private static String storageType;
     private static String bucketName;
+    private static String bucketEndpointUrl;
+    private static String region;
 
     private static S3FileSystem s3FileSystem;
 
     private static final String NFS = "NFS";
     private static final String S3 = "S3";
+//    private static final String SCALEWAY_ENDPOINT_URL = "https://s3.fr-par.scw.cloud";
+//    private static final String SCALEWAY_REGION = "fr-par";
+    private static String accessKeyId;
+    private static String secretAccessKey;
 
     static {
-        final String SCALEWAY_ENDPOINT_URL = "https://s3.fr-par.scw.cloud";
-
-        final String SCALEWAY_REGION = "fr-par";
-
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         storageType = tmpParamBean.getProperty("storage.type", NFS);
+        bucketEndpointUrl = tmpParamBean.getProperty("S3.bucketEndpointUrl", "endPointUrl");
+        region = tmpParamBean.getProperty("S3.region", "region");
         bucketName = tmpParamBean.getProperty("S3.bucketName", "bucketName");
+        accessKeyId = tmpParamBean.getProperty("S3.accessKeyId", "accessKeyId");
+        secretAccessKey = tmpParamBean.getProperty("S3.secretAccessKey", "secretAccessKey");
 
         S3Client client =
-                S3Client.builder().region(Region.of(SCALEWAY_REGION))
-                        .endpointOverride(URI.create(SCALEWAY_ENDPOINT_URL))
+                S3Client.builder().region(Region.of(region))
+                        .endpointOverride(URI.create(bucketEndpointUrl))
                         .credentialsProvider(
                                 StaticCredentialsProvider.create(
-                                        AwsBasicCredentials.create("SCW45136BHFPSPW0CQDG","517313e6-c47f-424b-8d31-972022cf864b")))
-
+                                        AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
                         .build();
 
-        s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), "SCW45136BHFPSPW0CQDG", client, SCALEWAY_ENDPOINT_URL);
+//        accessKeyId = "SCW45136BHFPSPW0CQDG";
+//        secretAccessKey = "517313e6-c47f-424b-8d31-972022cf864b";
+
+        s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, bucketEndpointUrl);
     }
 
     public static Path connectToS3Bucket(String bucketName) {
@@ -103,35 +127,155 @@ public class StorageFactory {
         return null;
     }
 
-//    public static FileWriter getFileWriter(File file) {
-//        if (storageType.equals(NFS)) {
-//            try {
-//                return new FileWriter(file, false);
-//            }
-//            catch (IOException e) {
-//                System.out.println("file not found : " + e.getMessage());
-//            }
-//        }
-//        else if (storageType.equalsIgnoreCase(S3)) {
-//            OutputStream outStream;
-//            FileWriter fileWriter;
-//            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
-//
-//            Path objectPath = getObjectPath(fileName);
-//
-//            try {
-//                outStream = s3FileSystem.provider().newOutputStream(objectPath);
-//                s3FileSystem.provider().new
-//                fileWriter = new FileWriter(outStream);
-//                System.out.println("objectPath getPrintWriter Thang : " + objectPath.toString());
-//
-//                return fileWriter;
-//            }
-//            catch (IOException e) {
-//                System.out.println("error message : " + e.getMessage());
-//            }
-//        }
-//    }
+    public static Reader getReader(File file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new FileReader(file);
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("File not found exception : " + e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            InputStream inStream;
+            InputStreamReader inputStreamReader;
+            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+
+            Path objectPath = getObjectPath(fileName);
+
+            try {
+                inStream = s3FileSystem.provider().newInputStream(objectPath);
+
+                inputStreamReader = new InputStreamReader(inStream, StandardCharsets.US_ASCII);
+
+                return inputStreamReader;
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public static Reader getReader(String file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new FileReader(file);
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("File not found exception : " + e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            InputStream inStream;
+            InputStreamReader inputStreamReader;
+            String fileName = bucketName + file.substring(1).replace("\\", "/");
+
+            Path objectPath = getObjectPath(fileName);
+
+            try {
+                inStream = s3FileSystem.provider().newInputStream(objectPath);
+
+                inputStreamReader = new InputStreamReader(inStream, StandardCharsets.US_ASCII);
+
+                return inputStreamReader;
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public static Writer getWriter(String file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new FileWriter(file);
+            }
+            catch (IOException e) {
+                System.out.println("IO exception : " + e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            OutputStream outStream;
+            OutputStreamWriter outputStreamWriter;
+            String fileName = bucketName + file.substring(1).replace("\\", "/");
+
+            Path objectPath = getObjectPath(fileName);
+
+            try {
+                outStream = s3FileSystem.provider().newOutputStream(objectPath);
+
+                outputStreamWriter = new OutputStreamWriter(outStream, StandardCharsets.US_ASCII);
+
+                return outputStreamWriter;
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public static Writer getWriter(File file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new FileWriter(file);
+            }
+            catch (IOException e) {
+                System.out.println("File not found exception : " + e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            OutputStream outStream;
+            OutputStreamWriter outputStreamWriter;
+            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+
+            Path objectPath = getObjectPath(fileName);
+
+            try {
+                outStream = s3FileSystem.provider().newOutputStream(objectPath);
+
+                outputStreamWriter = new OutputStreamWriter(outStream, StandardCharsets.US_ASCII);
+
+                return outputStreamWriter;
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public static void createNewFile(File file) {
+        if (storageType.equals(NFS)) {
+            try {
+                file.createNewFile();
+            }
+            catch (IOException e) {
+                System.out.println("IO Exception : " + e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            OutputStream outStream;
+            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+
+            Path bucketPath = getObjectPath(fileName);
+
+            try {
+                outStream = s3FileSystem.provider().newOutputStream(bucketPath);
+
+                outStream.close();
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+    }
 
     public static PrintWriter getPrintWriter(File file) {
         if (storageType.equals(NFS)) {
