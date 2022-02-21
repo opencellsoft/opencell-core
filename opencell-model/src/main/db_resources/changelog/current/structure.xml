@@ -11854,4 +11854,9 @@ order by date_trunc('month', i.invoice_date) DESC
         <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
         <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
      </changeSet>
+    <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE">
+    <!--  comment is reserved word in oracle database-->
+    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
+    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+</changeSet>
 </databaseChangeLog>
