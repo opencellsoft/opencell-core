@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="quote.xml"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="integr.xml"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -180,10 +180,10 @@
 		<field name="priceType" class="java.lang.String">
 			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax" class="java.lang.Double">
+		<field name="amountWithtax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithtax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.Double">
+		<field name="taxAmount" class="java.lang.String">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
 		</field>
 		<field name="billingAccountCode" class="java.lang.String">
@@ -195,7 +195,7 @@
 		<field name="taxRate" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxRate]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.Double">
+		<field name="amountWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
 		<field name="label" class="java.lang.String">
@@ -240,16 +240,16 @@
 		<field name="priceType" class="java.lang.String">
 			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax" class="java.lang.Double">
+		<field name="amountWithtax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithtax]]></fieldDescription>
 		</field>
-		<field name="unitPriceWithoutTax" class="java.lang.Double">
+		<field name="unitPriceWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.Double">
+		<field name="amountWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.Double">
+		<field name="taxAmount" class="java.lang.String">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
 		</field>
 		<field name="taxRate" class="java.lang.Double">
@@ -288,16 +288,16 @@
 		<field name="priceType" class="java.lang.String">
 			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax" class="java.lang.Double">
+		<field name="amountWithtax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithtax]]></fieldDescription>
 		</field>
-		<field name="unitPriceWithoutTax" class="java.lang.Double">
+		<field name="unitPriceWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.Double">
+		<field name="amountWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.Double">
+		<field name="taxAmount" class="java.lang.String">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
 		</field>
 		<field name="taxRate" class="java.lang.Double">
@@ -315,7 +315,7 @@
 		<field name="accountingArticleLabel" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleLabel]]></fieldDescription>
 		</field>
-		<field name="quantity" class="java.lang.Double">
+		<field name="quantity" class="java.lang.Integer">
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
 		</field>
 		<field name="consumer" class="java.lang.String">
@@ -333,10 +333,16 @@
 		<![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price]]>
 	</queryString>
 	<field name="name" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/billingAccount/name]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/billingAccount/name/name]]></fieldDescription>
 	</field>
-	<field name="address" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/billingAccount/address]]></fieldDescription>
+	<field name="address1" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="quoteDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/details/quote/@quoteDate]]></fieldDescription>
+	</field>
+	<field name="quoteNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/details/quote/@quoteNumber]]></fieldDescription>
 	</field>
 	<field name="unitPriceWithoutTax_recurring" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='RECURRING']//unitPriceWithoutTax]]></fieldDescription>
@@ -395,13 +401,20 @@
 	<field name="quantity2" class="java.lang.String">
 		<fieldDescription><![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/quantity]]></fieldDescription>
 	</field>
-	<field name="quoteNumber" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/details/quote/quoteNumber"/>
-		<fieldDescription><![CDATA[/quote/details/quote/quoteNumber]]></fieldDescription>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/city]]></fieldDescription>
 	</field>
-	<field name="quoteDate" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/details/quote/quoteDate"/>
-		<fieldDescription><![CDATA[/quote/details/quote/quoteDate]]></fieldDescription>
+	<field name="countryName" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/countryName]]></fieldDescription>
+	</field>
+	<field name="state" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/state]]></fieldDescription>
+	</field>
+	<field name="zipCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/zipCode]]></fieldDescription>
+	</field>
+	<field name="address2" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address2]]></fieldDescription>
 	</field>
 	<group name="1">
 		<groupExpression><![CDATA[]]></groupExpression>
@@ -460,7 +473,7 @@
 						<textElement markup="html">
 							<font size="8" isBold="true"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[($F{address1}==null?"":$F{address1})+" "+($F{address2}==null?"":$F{address2})+"<br/>"+($F{state}==null?"":$F{state}+" ")+($F{zipCode}==null?"":$F{zipCode}+" ")+($F{city}==null?"":$F{city}+" ")+($F{countryName}==null?"":$F{countryName})]]></textFieldExpression>
 					</textField>
 				</elementGroup>
 				<staticText>
@@ -557,7 +570,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="105" height="30" isPrintWhenDetailOverflows="true" uuid="b24f86a6-c699-434d-b125-5e14f737e8c4"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{amountWithoutTax}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -590,7 +603,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="111" height="30" isPrintWhenDetailOverflows="true" uuid="6c08e40b-5fcc-4a7e-b327-e45fc7321e95"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{amountWithtax}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -623,7 +636,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="68" height="30" isPrintWhenDetailOverflows="true" uuid="4ca2d59c-2814-47f0-8166-720ec2de18e5"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{taxAmount}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -656,7 +669,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="2" y="0" width="63" height="30" isPrintWhenDetailOverflows="true" uuid="89c3f7c2-56dc-43e3-97e3-e9c55ab66447"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{taxRate}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -821,10 +834,10 @@
 									<bottomPen lineWidth="0.25"/>
 									<rightPen lineWidth="0.25"/>
 								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
+								<textField isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="90" height="30" isPrintWhenDetailOverflows="true" uuid="2107769c-6e18-48ed-a39e-0d5c938a1848"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{amountWithoutTax}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -859,7 +872,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="99" height="30" isPrintWhenDetailOverflows="true" uuid="53423ada-4d55-4b45-b18a-d77b02eb75cc"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{amountWithtax}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -894,7 +907,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="68" height="30" isPrintWhenDetailOverflows="true" uuid="fd62bc24-c1e5-445c-92f0-e8f3af0a6766"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{taxAmount}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -929,7 +942,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="2" y="0" width="63" height="30" isPrintWhenDetailOverflows="true" uuid="616b0753-a93f-4d36-830e-8074b3c965f7"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{taxRate}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1142,7 +1155,7 @@
 									<bottomPen lineWidth="0.25"/>
 									<rightPen lineWidth="0.25"/>
 								</box>
-								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="52" height="30" uuid="db40bd06-58ce-4bbb-9d30-fed7359e93e0"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
 									<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
@@ -1180,7 +1193,7 @@
 								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="70" height="30" isPrintWhenDetailOverflows="true" uuid="d9c99dea-cba6-4306-a503-ced2f4dee53a"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{amountWithoutTax}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1215,7 +1228,7 @@
 								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="70" height="30" isPrintWhenDetailOverflows="true" uuid="5a98f398-96c2-4da4-9858-1da6b6039661"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{amountWithtax}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1250,7 +1263,7 @@
 								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="a60755fe-28f9-47b3-a460-1951a6b3a802"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{taxAmount}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1285,7 +1298,7 @@
 								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="2" y="0" width="58" height="30" isPrintWhenDetailOverflows="true" uuid="9f94cbdd-63f4-44d5-ba3c-0520d457703b"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{taxRate}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1340,7 +1353,7 @@
 				<textElement textAlignment="Right">
 					<font size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quoteDate}.split("T",0)[0].trim()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quoteDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="423" y="32" width="62" height="9" backcolor="#CCCCCC" uuid="a3d705b3-efa8-4e0a-b1fd-43a8afbaee78"/>
