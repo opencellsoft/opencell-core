@@ -46,7 +46,7 @@ public class CommercialRuleItem extends BaseEntity {
 		this.commercialRuleHeader = copy.commercialRuleHeader;
 		this.operator = copy.operator;
 		this.ruleItemEl = copy.ruleItemEl;
-		this.commercialRuleLines = new ArrayList<CommercialRuleLine>();
+		this.commercialRuleLines = new ArrayList<>();
 	}
 
 
