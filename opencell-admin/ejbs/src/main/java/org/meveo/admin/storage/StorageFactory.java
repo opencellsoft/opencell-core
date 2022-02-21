@@ -49,26 +49,22 @@ import java.nio.file.Path;
 
 public class StorageFactory {
 
-//    private static InputStream inStream;
-//    private static OutputStream outStream;
     private static String storageType;
     private static String bucketName;
-    private static String bucketEndpointUrl;
+    private static String endpointUrl;
     private static String region;
 
     private static S3FileSystem s3FileSystem;
 
-    private static final String NFS = "NFS";
+    private static final String NFS = "FileSystem";
     private static final String S3 = "S3";
-//    private static final String SCALEWAY_ENDPOINT_URL = "https://s3.fr-par.scw.cloud";
-//    private static final String SCALEWAY_REGION = "fr-par";
     private static String accessKeyId;
     private static String secretAccessKey;
 
     static {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         storageType = tmpParamBean.getProperty("storage.type", NFS);
-        bucketEndpointUrl = tmpParamBean.getProperty("S3.bucketEndpointUrl", "endPointUrl");
+        endpointUrl = tmpParamBean.getProperty("S3.endpointUrl", "endPointUrl");
         region = tmpParamBean.getProperty("S3.region", "region");
         bucketName = tmpParamBean.getProperty("S3.bucketName", "bucketName");
         accessKeyId = tmpParamBean.getProperty("S3.accessKeyId", "accessKeyId");
@@ -76,16 +72,13 @@ public class StorageFactory {
 
         S3Client client =
                 S3Client.builder().region(Region.of(region))
-                        .endpointOverride(URI.create(bucketEndpointUrl))
+                        .endpointOverride(URI.create(endpointUrl))
                         .credentialsProvider(
                                 StaticCredentialsProvider.create(
                                         AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
                         .build();
 
-//        accessKeyId = "SCW45136BHFPSPW0CQDG";
-//        secretAccessKey = "517313e6-c47f-424b-8d31-972022cf864b";
-
-        s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, bucketEndpointUrl);
+        s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
     }
 
     public static Path connectToS3Bucket(String bucketName) {
