@@ -661,7 +661,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             // chargedToDate is null means that charge was never charged
             if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
-                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
+                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination,
+                            terminationReason.isApplyAgreementImmediately(), terminationDate);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
