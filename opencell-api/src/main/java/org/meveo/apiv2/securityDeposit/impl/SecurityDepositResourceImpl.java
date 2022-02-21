@@ -128,13 +128,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(securityDepositToUpdate == null) {
             throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
         }
-        
-        if(!SecurityDepositStatusEnum.LOCKED.equals(securityDepositToUpdate.getStatus()) 
-                && !SecurityDepositStatusEnum.UNLOCKED.equals(securityDepositToUpdate.getStatus())
-                && !SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())){
-            throw new EntityDoesNotExistsException("The Cancel is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
-        }
-        
+
         securityDepositService.cancel(securityDepositToUpdate, securityDepositInput);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
