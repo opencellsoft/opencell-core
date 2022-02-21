@@ -339,10 +339,10 @@
 		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address1]]></fieldDescription>
 	</field>
 	<field name="quoteDate" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/details/quote/@quoteDate]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/details/quote/quoteDate]]></fieldDescription>
 	</field>
 	<field name="quoteNumber" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/details/quote/@quoteNumber]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/details/quote/quoteNumber]]></fieldDescription>
 	</field>
 	<field name="unitPriceWithoutTax_recurring" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='RECURRING']//unitPriceWithoutTax]]></fieldDescription>
@@ -1345,7 +1345,7 @@
 	<pageHeader>
 		<band height="106">
 			<rectangle>
-				<reportElement mode="Opaque" x="424" y="23" width="156" height="18" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="301bc202-ec47-4be4-9144-1ccecccd72cc"/>
+				<reportElement mode="Opaque" x="443" y="23" width="136" height="18" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="301bc202-ec47-4be4-9144-1ccecccd72cc"/>
 			</rectangle>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement mode="Transparent" x="485" y="32" width="95" height="9" backcolor="#CCCCCC" uuid="9254a0b5-42c6-4759-be1f-610ef29327b3"/>
@@ -1353,18 +1353,18 @@
 				<textElement textAlignment="Right">
 					<font size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quoteDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quoteDate}!=null?new java.text.SimpleDateFormat("dd/mm/yyyy").format(new java.text.SimpleDateFormat("yyyy-mm-dd").parse($F{quoteDate})):" "]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Transparent" x="423" y="32" width="62" height="9" backcolor="#CCCCCC" uuid="a3d705b3-efa8-4e0a-b1fd-43a8afbaee78"/>
-				<textElement textAlignment="Right" markup="none">
+				<reportElement mode="Transparent" x="443" y="32" width="42" height="9" backcolor="#CCCCCC" uuid="a3d705b3-efa8-4e0a-b1fd-43a8afbaee78"/>
+				<textElement textAlignment="Left" markup="none">
 					<font size="6"/>
 				</textElement>
 				<text><![CDATA[Date de devis]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="423" y="23" width="62" height="9" backcolor="#CCCCCC" uuid="a5410dab-b69a-4ee2-bdd6-403382a425c5"/>
-				<textElement textAlignment="Right" markup="none">
+				<reportElement mode="Transparent" x="443" y="23" width="42" height="9" backcolor="#CCCCCC" uuid="a5410dab-b69a-4ee2-bdd6-403382a425c5"/>
+				<textElement textAlignment="Left" markup="none">
 					<font size="6"/>
 				</textElement>
 				<text><![CDATA[N° de devis]]></text>
