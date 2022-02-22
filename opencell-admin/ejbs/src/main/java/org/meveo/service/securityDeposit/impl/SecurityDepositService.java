@@ -99,7 +99,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             securityDeposit.setAmount(oldAmountSD);
         if(securityDeposit.getServiceInstance() != null && securityDeposit.getSubscription() != null){           
             ServiceInstance serviceInstance = serviceInstanceService.retrieveIfNotManaged(securityDeposit.getServiceInstance());
-            if(serviceInstance.getSubscription() != null && serviceInstance.getSubscription().getId() != securityDeposit.getSubscription().getId()){
+            if(serviceInstance.getSubscription() != null && !serviceInstance.getSubscription().getId().equals(securityDeposit.getSubscription().getId())){
                 throw new InvalidParameterException("ServiceInstance must have the same chosen in subscription");
             }
         }
