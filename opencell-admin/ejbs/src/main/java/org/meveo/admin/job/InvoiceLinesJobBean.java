@@ -101,8 +101,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                             } else {
                                 groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
                             }
-                            BasicStatistics basicStatistics
-                                    = invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result);
+                            BasicStatistics basicStatistics =
+                                    invoiceLinesService.createInvoiceLines(groupedRTs, aggregationConfiguration, result, billingRun);
                             basicStatistics.setBillableEntitiesCount(billableEntities.size());
                             updateBillingRunStatistics(billingRun, basicStatistics);
                             ratedTransactionService.makeAsProcessed(ratedTransactionIds);
