@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.LockModeType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -117,7 +118,7 @@ public class UnitSepaDirectDebitJobBean {
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
+		ddrequestItem = dDRequestItemService.refreshOrRetrieveLock(ddrequestItem,LockModeType.OPTIMISTIC);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
 		log.debug("processing DD requestItem id  : " + ddrequestItem.getId());
 		AccountOperation automatedPayment = null;
