@@ -1101,7 +1101,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings, customFieldTemplateService, filterService);
 
         String strQuery = woa.getGroupQuery();
-        log.debug("aggregated query={}", strQuery);
+        log.info("aggregated query={}", strQuery);
 
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("invoicingDate", invoicingDate);
@@ -1138,6 +1138,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             queryTemplate = queryTemplate.replace(key, parameters.get(key));
         }
         Query q = getEntityManager().createNativeQuery(queryTemplate);
+        log.info("TTT : {}", queryTemplate);
         q.executeUpdate();
 
     }

@@ -106,6 +106,10 @@ public class WalletOperationAggregatorQueryBuilder {
 		if (aggregationSettings.getWalletOperationFilter() != null) {
 			where = getWhere(aggregationSettings.getWalletOperationFilter());
 		}
+		
+		log.info("TTT : select {}", select);
+		log.info("TTT : groupBy {}", groupBy);
+		log.info("TTT : groupBy {}", groupBy);
 
 	}
 
