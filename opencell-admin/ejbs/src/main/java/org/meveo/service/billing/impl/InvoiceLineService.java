@@ -683,12 +683,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         BasicStatistics basicStatistics = new BasicStatistics();
         Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
-            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
 
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
