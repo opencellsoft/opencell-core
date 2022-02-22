@@ -29,7 +29,7 @@ pipelines:                 # More info here: https://confluence.atlassian.com/bi
 #    '{integration,*.X}':
 #      - step: *build-test-sonarcloud
     'release/*':
-      - step: *build-test-sonarcloud
+      #- step: *build-test-sonarcloud
       - step: *mirror-to-github
   pull-requests:
     '**':
