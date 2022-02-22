@@ -15686,7 +15686,7 @@
         	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_accounting_article"
 	            constraintName="fk_billing_accounting_article_invoice_type" deferrable="false"
 	            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-	            referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+	            referencedColumnNames="id" referencedTableName="billing_invoice_type" />
 		</changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-fk" author="hichamElHaloui">
          <addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="security_deposit_templat"
@@ -17105,6 +17105,7 @@
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
+    <changeSet id="#INTRD-5274_2022-02-22" author="HichamHANINE"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
