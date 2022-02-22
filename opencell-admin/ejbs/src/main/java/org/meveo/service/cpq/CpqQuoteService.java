@@ -334,7 +334,8 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	            Map<String, Object> parameters = new HashMap<>();
 	            String templateDir = new StringBuilder(resDir).toString();
 	            parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir + File.separator);
-	            
+				parameters.put(PdfGeneratorConstants.SUBREPORT_DIR, templateDir);
+
 	            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
 	            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);   
