@@ -68,7 +68,9 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());
         securityDeposit.setValidityPeriodUnit(resource.getValidityPeriodUnit());
-        securityDeposit.setAmount(resource.getAmount());        
+        if(resource.getAmount() != null) {
+            securityDeposit.setAmount(resource.getAmount()); 
+        }               
         if(resource.getCurrentBalance() != null) {
             securityDeposit.setCurrentBalance(resource.getCurrentBalance());
         }

@@ -90,11 +90,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(!"".equals(msgErrValidation)) {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
-        
-        if (securityDepositInput.getAmount() == null) {
-            throw new EntityDoesNotExistsException("The Amount == null.");
-        }
-        
+
         BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
         securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
