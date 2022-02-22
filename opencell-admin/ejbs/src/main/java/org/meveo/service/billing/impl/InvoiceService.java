@@ -2387,7 +2387,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (!ratedTransactionIds.isEmpty()) {
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
-                invoiceLinesService.createInvoiceLines(groupedRTs, configuration, null);
+                invoiceLinesService.createInvoiceLines(groupedRTs, configuration, null, null);
                 ratedTransactionService.makeAsProcessed(ratedTransactionIds);
                 invoices = createAggregatesAndInvoiceWithIL(entity, null, filter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, !generateInvoiceRequestDto.getSkipValidation(), false);
             }
