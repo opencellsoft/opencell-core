@@ -13,7 +13,11 @@ import org.meveo.service.job.Job;
 @Stateless
 public class InvoiceLinesJob extends Job {
 
-    @Inject
+	public static final String  INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE = "JobInstance_InvoiceLinesJob_AggregationPerUnitAmount";
+	
+	public static final String  INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS = "JobInstance_InvoiceLinesJob_ILDateAggregationOptions";
+	
+	@Inject
     private InvoiceLinesJobBean invoiceLinesBean;
 
     @Override
@@ -21,7 +25,8 @@ public class InvoiceLinesJob extends Job {
         invoiceLinesBean.execute(result, jobInstance);
         return result;
     }
-
+    
+    
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.INVOICING;

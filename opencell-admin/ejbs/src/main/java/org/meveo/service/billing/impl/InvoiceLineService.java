@@ -31,7 +31,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
-import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -694,22 +693,25 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+        return createInvoiceLines(groupedRTs, configuration, result, null);
+    }
+    
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
+            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         BasicStatistics basicStatistics = new BasicStatistics();
-        Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
+        InvoiceLine invoiceLine = null;
+        List<Long> associatedRtIds = null;
         for (Map<String, Object> record : groupedRTs) {
-            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+            invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             create(invoiceLine);
             commit();
-            List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
-                    .split(","))
-                    .map(Long::parseLong)
-                    .collect(toList());
-            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
+            associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            basicStatistics.setCount(associatedRtIds.size());
+            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
         }
-        basicStatistics.setiLIdsRtIdsCorrespondence(iLIdsRtIdsCorrespondence);
         return basicStatistics;
     }
 
@@ -724,21 +726,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-    	log.info("createInvoiceLines");
-		List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
-		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null, null);
-		List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
-		if (!ratedTransactionIds.isEmpty()) {
-		    List<Map<String, Object>> groupedRTs;
-		    if (aggregationConfiguration.getAggregationOption() == AggregationOption.NO_AGGREGATION) {
-		        groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
-		    } else {
-		        groupedRTs = ratedTransactionService.getGroupedRTsWithAggregation(ratedTransactionIds);
-		    }
-		    BasicStatistics ilBasicStatistics = createInvoiceLines(groupedRTs, aggregationConfiguration, result);
-		    ratedTransactionService.linkRTWithInvoiceLine(ilBasicStatistics.getiLIdsRtIdsCorrespondence());
-		    basicStatistics.append(ilBasicStatistics);
-		}
+	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result, billingRun);
+	    basicStatistics.append(ilBasicStatistics);
 	}
 
 }
