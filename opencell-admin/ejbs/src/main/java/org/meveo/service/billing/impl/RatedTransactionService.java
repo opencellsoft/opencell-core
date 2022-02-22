@@ -44,14 +44,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
-import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
-import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -91,7 +88,6 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -1545,11 +1541,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
 			List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
 			if (!ratedTransactionIds.isEmpty()) {
-				if (aggregationConfiguration.getAggregationOption().contains(AggregationOption.NO_AGGREGATION)) {
-			        return getGroupedRTs(ratedTransactionIds);
-			    } else {
-			        return getGroupedRTsWithAggregation(ratedTransactionIds);
-			    }
+			    return getGroupedRTsWithAggregation(ratedTransactionIds);
 			}
         }
 		
@@ -1570,8 +1562,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 		String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration);
 		
-		final String unitAmount = aggregationConfiguration.getAggregationOption().contains(AggregationOption.UNIT_AMOUNT)? "sum(rt.amount_without_tax) / sum(rt.quantity) as unit_amount_without_tax, sum(rt.amount_with_tax) / sum(rt.quantity)  as unit_amount_with_tax,":"rt.unit_amount_without_tax, rt.unit_amount_with_tax, ";
-		final String unitAmountGroupBy = aggregationConfiguration.getAggregationOption().contains(AggregationOption.UNIT_AMOUNT)? "":" rt.unit_amount_without_tax, rt.unit_amount_with_tax, ";
+		final String unitAmount = aggregationConfiguration.isAggregationPerUnitAmount()? "sum(rt.amount_without_tax) / sum(rt.quantity) as unit_amount_without_tax, sum(rt.amount_with_tax) / sum(rt.quantity)  as unit_amount_with_tax,":"rt.unit_amount_without_tax, rt.unit_amount_with_tax, ";
+		final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount()? "":" rt.unit_amount_without_tax, rt.unit_amount_with_tax, ";
 		String query = "SELECT  string_agg(concat(rt.id), ',') as rated_transaction_ids, rt.billing_account__id, rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, " + 
 				"                          "+unitAmount+" SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, rt.offer_id, rt.service_instance_id, " + 
 				"                          "+usageDateAggregation+" valueDate, min(rt.start_date) as start_date, max(rt.end_date) as end_date, rt.order_number, subscription_id,  s.commercial_order_id, rt.tax_percent, rt.tax_id, " + 
@@ -1585,12 +1577,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 	private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration) {
-		String usageDateAggregation = "EXTRACT(MONTH FROM rt.usage_date)";
+		String usageDateAggregation = " rt.usage_date ";
 		switch (aggregationConfiguration.getDateAggregationOption()) {
-		case MONTH_OF_USAGE_DATE:usageDateAggregation = " EXTRACT(MONTH FROM rt.usage_date) ";break;
-		case DAY_OF_USAGE_DATE: usageDateAggregation = " EXTRACT(DAY FROM rt.usage_date) ";break;
-		case WEEK_OF_USAGE_DATE: usageDateAggregation = " EXTRACT(WEEK FROM rt.usage_date) ";break;
-		case NO_DATE_AGGREGATION : usageDateAggregation = " rt.usage_date";break;
+		case MONTH_OF_USAGE_DATE:usageDateAggregation = " TO_CHAR(rt.usage_date, 'YYYY-MM') ";break;
+		case DAY_OF_USAGE_DATE: usageDateAggregation = " TO_CHAR(rt.usage_date, 'YYYY-MM-DD') ";break;
+		case WEEK_OF_USAGE_DATE: usageDateAggregation = " TO_CHAR(rt.usage_date, 'YYYY-WW') ";break;
+		case NO_DATE_AGGREGATION : usageDateAggregation = " rt.usage_date ";break;
 		}
 		return usageDateAggregation;
 	}
