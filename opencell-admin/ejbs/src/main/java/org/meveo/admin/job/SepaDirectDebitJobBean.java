@@ -189,18 +189,26 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						log.info("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
-						log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
-						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
-						log.info("end createDDRquestLot");
-						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-							dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(), Arrays.asList("ddrequestItems") ), ddRequestBuilderInterface, appProvider);
-							log.info("end generateDDRquestLotFile");
-							result.addReport(ddRequestLOT.getRejectedCause());
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");
-							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								result.registerSucces();
+						
+						if (listAoToPay == null || listAoToPay.isEmpty()) {
+							result.setNbItemsToProcess(0);
+							result.registerWarning("no invoices!");
+							continue;
+						} else {
+							log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
+							DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
+							log.info("end createDDRquestLot");
+							if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
+								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
+								dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(), Arrays.asList("ddrequestItems")),
+										ddRequestBuilderInterface, appProvider);
+								log.info("end generateDDRquestLotFile");
+								result.addReport(ddRequestLOT.getRejectedCause());
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
+								log.info("end createPaymentsOrRefundsForDDRequestLot");
+								if (isEmpty(ddRequestLOT.getRejectedCause())) {
+									result.registerSucces();
+								}
 							}
 						}
 					}
