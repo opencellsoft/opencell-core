@@ -693,12 +693,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+        return createInvoiceLines(groupedRTs, configuration, result, null);
+    }
+    
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
+            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         BasicStatistics basicStatistics = new BasicStatistics();
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
         for (Map<String, Object> record : groupedRTs) {
-            invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+            invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             create(invoiceLine);
@@ -722,7 +727,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
 	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
-		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result);
+		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
 	}
 

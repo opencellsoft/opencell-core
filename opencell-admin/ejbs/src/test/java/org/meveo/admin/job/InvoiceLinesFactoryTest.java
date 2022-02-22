@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -10,7 +9,6 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -151,10 +149,10 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_withoutAgg() throws ParseException {
-        AggregationConfiguration configuration = new AggregationConfiguration(false, Arrays.asList(NO_AGGREGATION),DateAggregationOption.NO_DATE_AGGREGATION);
+        AggregationConfiguration configuration = new AggregationConfiguration(false, false,DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider,null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -166,10 +164,10 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_withAgg() throws ParseException {
-    	AggregationConfiguration configuration = new AggregationConfiguration(false, Arrays.asList(NO_AGGREGATION),DateAggregationOption.NO_DATE_AGGREGATION);
+    	AggregationConfiguration configuration = new AggregationConfiguration(false, false,DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider,null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -179,11 +177,11 @@ public class InvoiceLinesFactoryTest {
 
     @Test
     public void test_create_invoiceLines_enterprise() throws ParseException {
-    	AggregationConfiguration configuration = new AggregationConfiguration(false, Arrays.asList(NO_AGGREGATION),DateAggregationOption.NO_DATE_AGGREGATION);
+    	AggregationConfiguration configuration = new AggregationConfiguration(false, false,DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
         when(appProvider.isEntreprise()).thenReturn(Boolean.TRUE);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider,null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");

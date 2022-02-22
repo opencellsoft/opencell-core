@@ -4,33 +4,26 @@ import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -74,10 +67,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
         try {
-            List<EntityReferenceWrapper> billingRunWrappers =
-                    (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
-            List<AggregationOption> aggregationOptions = getTargetStatusList(jobInstance, AggregationOption.class, InvoiceLinesJob.INVOICE_LINES_IL_AGGREGATION_OPTIONS);
-            DateAggregationOption dateAggregationOptions = (DateAggregationOption) getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, DateAggregationOption.MONTH_OF_USAGE_DATE);
+            List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
+            boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
+            DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption.valueOf((String)getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, "MONTH_OF_USAGE_DATE"));
 
             List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream()
                     .map(br -> valueOf(br.getCode().split("/")[0]))
@@ -96,7 +88,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 if (excludedBRCount == billingRuns.size()) {
                     result.registerError("No valid billing run with status = NEW found");
                 } else {
-                    AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationOptions, dateAggregationOptions);
+                    AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
                     for(BillingRun billingRun : billingRuns) {
                         List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
                         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", (long) Runtime.getRuntime().availableProcessors());
