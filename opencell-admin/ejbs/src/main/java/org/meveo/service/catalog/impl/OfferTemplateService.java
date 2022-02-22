@@ -432,7 +432,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 for (CommercialRuleLine ruleLine : ruleItem.getCommercialRuleLines()) {
                     commercialRuleLineService.detach(ruleLine);
                     CommercialRuleLine duplicatedRuleLine = new CommercialRuleLine(ruleLine);
-                    duplicatedRuleLine.setCommercialRuleItem(ruleItem);
+                    duplicatedRuleLine.setSourceOfferTemplate(offer);
+                    duplicatedRuleLine.setCommercialRuleItem(duplicatedRuleItem);
                     commercialRuleLineService.create(duplicatedRuleLine);
                     commercialRuleLines.add(duplicatedRuleLine);
                 }
