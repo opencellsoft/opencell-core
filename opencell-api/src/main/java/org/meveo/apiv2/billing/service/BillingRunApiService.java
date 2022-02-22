@@ -57,8 +57,10 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     private InvoiceLineService invoiceLineService;
 
     private static final String INVOICING_JOB_CODE = "Invoicing_Job_V2";
+    private static final String INVOICE_LINES_JOB_CODE = "Invoice_Lines_Job_V2";
 
     private static final String INVOICING_JOB_PARAMETERS = "InvoicingJobV2_billingRun";
+    private static final String INVOICE_LIENS_JOB_PARAMETERS = "InvoiceLinesJob_billingRun";
 
     @Override
     public BillingRun create(BillingRun billingRun) {
@@ -110,30 +112,48 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 && billingRun.getStatus() != DRAFT_INVOICES && billingRun.getStatus() != REJECTED) {
             throw new BadRequestException("Billing run status must be either {NEW, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
         }
-        if(billingRun.getStatus() == INVOICE_LINES_CREATED || billingRun.getStatus() == DRAFT_INVOICES) {
-            if (billingRun.getStatus() == INVOICE_LINES_CREATED) {
-                billingRun.setStatus(PREVALIDATED);
+        if(billingRun.getStatus() == NEW || billingRun.getStatus() == INVOICE_LINES_CREATED
+                || billingRun.getStatus() == DRAFT_INVOICES || billingRun.getStatus() == REJECTED) {
+            if(billingRun.getStatus() == NEW) {
+                if (executeInvoicingJob) {
+                    Map<String, Object> jobParams = new HashMap();
+                    jobParams.put(INVOICE_LIENS_JOB_PARAMETERS,
+                            asList(new EntityReferenceWrapper(BillingRun.class.getName(), null, billingRun.getReferenceCode())));
+                    executeJob(INVOICE_LINES_JOB_CODE, jobParams);
+                }
+            } else {
+                BillingRunStatusEnum initialStatus = billingRun.getStatus();
+                if (billingRun.getStatus() == INVOICE_LINES_CREATED) {
+                    billingRun.setStatus(PREVALIDATED);
+                }
+                if (billingRun.getStatus() == DRAFT_INVOICES) {
+                    billingRun.setStatus(POSTVALIDATED);
+                }
+                if(billingRun.getStatus() == REJECTED) {
+                    if(billingRunService.isBillingRunValid(billingRun)) {
+                        billingRun.setStatus(POSTVALIDATED);
+                    }
+                }
+                if(initialStatus != billingRun.getStatus()) {
+                    billingRunService.update(billingRun);
+                }
             }
-            if (billingRun.getStatus() == DRAFT_INVOICES) {
-                billingRun.setStatus(POSTVALIDATED);
-            }
-            billingRunService.update(billingRun);
         }
         if (executeInvoicingJob) {
-            executeJob(INVOICING_JOB_CODE, billingRun.getReferenceCode());
+            Map<String, Object> jobParams = new HashMap();
+            jobParams.put(INVOICING_JOB_PARAMETERS,
+                    asList(new EntityReferenceWrapper(BillingRun.class.getName(),null, billingRun.getReferenceCode())));
+            executeJob(INVOICING_JOB_CODE, jobParams);
         }
         return of(billingRun);
     }
 
-    private long executeJob(String jobCode, String billingRungCode) {
+    private long executeJob(String jobCode, Map<String, Object> jobParams) {
         try {
             JobInstance jobInstance = jobInstanceService.findByCode(jobCode);
             if (jobInstance == null) {
-                throw new BusinessException("Invoicing job not found");
+                throw new BusinessException("Job with code " +  jobCode + " not found");
             }
-            Map<String, Object> jobParams = new HashMap();
-            jobParams.put(INVOICING_JOB_PARAMETERS,
-                    asList(new EntityReferenceWrapper(BillingRun.class.getName(),null, billingRungCode)));
             jobInstance.setRunTimeValues(jobParams);
             return jobExecutionService.executeJob(jobInstance, jobParams, API);
         } catch (Exception exception) {

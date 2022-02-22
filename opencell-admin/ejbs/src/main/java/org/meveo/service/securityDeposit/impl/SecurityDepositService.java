@@ -12,14 +12,25 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.hibernate.proxy.HibernateProxy;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.Refund;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
@@ -30,13 +41,15 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RefundService;
 
 @Stateless
 public class SecurityDepositService extends BusinessService<SecurityDeposit> {
+
+    @Inject
+    private AuditLogService auditLogService;
     
     @Inject
     private FinanceSettingsService financeSettingsService;
@@ -46,10 +59,19 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     
     @Inject
     CustomerAccountService customerAccountService;    
-
+   
+    @Inject
+    private PaymentService paymentService;
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
+     
     @Inject
     private SecurityDepositTransactionService securityDepositTransactionService;
-
+    
+    @Inject
+    private RefundService refundService;
+    
     protected List<String> missingParameters = new ArrayList<>();
 
     public BigDecimal sumAmountPerCustomer(CustomerAccount customerAccount) {
@@ -81,6 +103,117 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 throw new InvalidParameterException("ServiceInstance must have the same chosen in subscription");
             }
         }
+    }
+    
+    public void refund(SecurityDeposit securityDepositToUpdate, SecurityDepositRefundInput securityDepositInput)
+    {
+        Refund refund = createRefund(securityDepositToUpdate);
+        if(refund == null){
+            throw new BusinessException("Cannot create Refund.");
+        }
+        else{        
+            createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
+                SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
+    
+            securityDepositToUpdate.setRefundReason(securityDepositInput.getRefundReason());
+            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.REFUNDED);
+            securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
+            update(securityDepositToUpdate);
+            auditLogService.trackOperation("REFUND", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        }
+    }
+    
+    public void cancel(SecurityDeposit securityDepositToUpdate, SecurityDepositCancelInput securityDepositInput)
+    {
+        Refund refund = createRefund(securityDepositToUpdate);        
+        if(refund == null){
+            throw new BusinessException("Cannot create Refund.");
+        }
+        else{
+            createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
+                SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
+
+            securityDepositToUpdate.setRefundReason(securityDepositInput.getCancelReason());
+            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.CANCELED);
+            securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
+            update(securityDepositToUpdate);
+            auditLogService.trackOperation("CANCEL", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        }
+    }
+
+    private Refund createRefund(SecurityDeposit securityDepositToUpdate) {
+        securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
+        long amountToPay = securityDepositToUpdate.getCurrentBalance().longValue();
+        List<Long> accountOperationsToPayIds = new ArrayList<Long>();
+        CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
+        
+        if(customerAccount == null){
+            throw new EntityDoesNotExistsException("Customer Account = null");        
+        }
+        PaymentMethod preferredPaymentMethod = customerAccountService.getPreferredPaymentMethod(customerAccount.getId());
+        if(preferredPaymentMethod == null){
+            throw new EntityDoesNotExistsException("Customer Account [" + customerAccount.getCode() + "] Preferred Payment Method = null");
+        }
+        List<SecurityDepositTransaction> listSecurityDepositTransaction = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDepositToUpdate.getId());
+        for (int i = 0; i < listSecurityDepositTransaction.size(); i++) {
+            SecurityDepositTransaction securityDepositTransaction = listSecurityDepositTransaction.get(i);
+            AccountOperation aOSecurityDepositTransaction = securityDepositTransaction.getAccountOperation();
+            if(OperationCategoryEnum.CREDIT.equals(aOSecurityDepositTransaction.getTransactionCategory())) {
+                accountOperationsToPayIds.add(aOSecurityDepositTransaction.getId());
+            }            
+        }
+        
+        Long refundId = null;        
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+        if(paymentGateway == null) {
+            msgExceptionPaymentGateway(customerAccount, preferredPaymentMethod);
+        } 
+        
+        if(paymentGateway!=null && (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD))) {
+            try {
+                if(!accountOperationsToPayIds.isEmpty()) {
+                    if(preferredPaymentMethod.getPaymentType().equals(CARD)) {
+                        if (preferredPaymentMethod instanceof HibernateProxy) {
+                            preferredPaymentMethod = (PaymentMethod) ((HibernateProxy) preferredPaymentMethod).getHibernateLazyInitializer()
+                                    .getImplementation();
+                        }
+                        CardPaymentMethod paymentMethod = (CardPaymentMethod) preferredPaymentMethod;
+                        refundId = paymentService.refundByCardSD(customerAccount, amountToPay, paymentMethod.getCardNumber(),
+                            paymentMethod.getCardNumber(), paymentMethod.getHiddenCardNumber(), 
+                            paymentMethod.getExpirationMonthAndYear(), paymentMethod.getCardType(), 
+                            accountOperationsToPayIds, paymentGateway);
+                    } else {
+                        refundId = paymentService.refundByMandatSD(customerAccount, amountToPay, accountOperationsToPayIds, paymentGateway);
+                    }
+                }
+            } catch (Exception exception) {
+                throw new BusinessException("Error occurred during payment process for customer " + customerAccount.getCode(), exception);
+            }
+        }
+        if(refundId == null){
+            return null;
+        }
+        else{
+            return refundService.findById(refundId);
+        }
+    }
+
+    private void msgExceptionPaymentGateway(CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod) {
+        Seller seller = null;
+        CreditCardTypeEnum cardTypeToCheck = null;
+        
+        if (preferredPaymentMethod != null && preferredPaymentMethod instanceof CardPaymentMethod) {
+            cardTypeToCheck = ((CardPaymentMethod) preferredPaymentMethod).getCardType();
+        }
+        if(customerAccount.getCustomer() != null) {
+            seller = customerAccount.getCustomer().getSeller();
+        }            
+        String err = " paymenType:"+(preferredPaymentMethod == null ? PaymentMethodEnum.CARD : preferredPaymentMethod.getPaymentType());
+        err = err + " country:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry());
+        err = err + " tradingCurrency:"+(customerAccount.getTradingCurrency());
+        err = err + " cardType:"+(cardTypeToCheck);
+        err = err + " seller:"+(seller == null ?  null : seller.getCode());
+        throw new BusinessException("paymentGateway == null ( " + err + " )");
     }
     
     public void credit(SecurityDeposit securityDepositToUpdate, SecurityDepositCreditInput securityDepositInput)

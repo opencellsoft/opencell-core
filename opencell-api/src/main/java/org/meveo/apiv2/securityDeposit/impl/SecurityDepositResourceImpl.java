@@ -18,14 +18,17 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositSuccessResponse;
+import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
+import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
@@ -98,6 +101,35 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         securityDepositApiService.linkRealEntities(securityDepositToUpdate);        
         securityDepositService.update(securityDepositToUpdate);
         auditLogService.trackOperation("UPDATE", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+        return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
+
+    }
+
+    @Override
+    public Response refund(Long id, SecurityDepositRefundInput securityDepositInput) {
+        SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
+        if(securityDepositToUpdate == null) {
+            throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
+        }
+        
+        if(!SecurityDepositStatusEnum.LOCKED.equals(securityDepositToUpdate.getStatus()) 
+                && !SecurityDepositStatusEnum.UNLOCKED.equals(securityDepositToUpdate.getStatus())
+                && !SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())){
+            throw new EntityDoesNotExistsException("The refund is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
+        }    
+        
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput);
+        return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
+    }
+    
+    @Override
+    public Response cancel(Long id, SecurityDepositCancelInput securityDepositInput) {
+        SecurityDeposit securityDepositToUpdate = securityDepositService.findById(id);
+        if(securityDepositToUpdate == null) {
+            throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
+        }
+
+        securityDepositService.cancel(securityDepositToUpdate, securityDepositInput);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     
