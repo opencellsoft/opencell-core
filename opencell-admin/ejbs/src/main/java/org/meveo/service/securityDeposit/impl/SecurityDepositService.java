@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.PaymentException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
@@ -27,6 +28,7 @@ import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentErrorEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -166,7 +168,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         Long refundId = null;        
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
         if(paymentGateway == null) {
-            msgExceptionPaymentGateway(customerAccount, preferredPaymentMethod);
+            throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
         } 
         
         if(paymentGateway!=null && (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD))) {
@@ -196,24 +198,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         else{
             return refundService.findById(refundId);
         }
-    }
-
-    private void msgExceptionPaymentGateway(CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod) {
-        Seller seller = null;
-        CreditCardTypeEnum cardTypeToCheck = null;
-        
-        if (preferredPaymentMethod != null && preferredPaymentMethod instanceof CardPaymentMethod) {
-            cardTypeToCheck = ((CardPaymentMethod) preferredPaymentMethod).getCardType();
-        }
-        if(customerAccount.getCustomer() != null) {
-            seller = customerAccount.getCustomer().getSeller();
-        }            
-        String err = " paymenType:"+(preferredPaymentMethod == null ? PaymentMethodEnum.CARD : preferredPaymentMethod.getPaymentType());
-        err = err + " country:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry());
-        err = err + " tradingCurrency:"+(customerAccount.getTradingCurrency());
-        err = err + " cardType:"+(cardTypeToCheck);
-        err = err + " seller:"+(seller == null ?  null : seller.getCode());
-        throw new BusinessException("paymentGateway == null ( " + err + " )");
     }
     
     public void credit(SecurityDeposit securityDepositToUpdate, SecurityDepositCreditInput securityDepositInput)
