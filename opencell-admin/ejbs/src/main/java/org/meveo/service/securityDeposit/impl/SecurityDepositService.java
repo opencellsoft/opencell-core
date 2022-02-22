@@ -1,10 +1,9 @@
 package org.meveo.service.securityDeposit.impl;
 
-import java.math.BigDecimal;
-
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,8 +19,10 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
+
 import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
 import org.meveo.model.admin.Seller;
+
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -39,6 +40,8 @@ import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityDepositTransaction;
+import org.meveo.model.securityDeposit.ValidityPeriodUnit;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -74,6 +77,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private RefundService refundService;
     
+    @Inject
+    private SecurityDepositService securityDepositService;
+    
+    
     protected List<String> missingParameters = new ArrayList<>();
 
     public BigDecimal sumAmountPerCustomer(CustomerAccount customerAccount) {
@@ -107,7 +114,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
     }
     
-    public void refund(SecurityDeposit securityDepositToUpdate, SecurityDepositRefundInput securityDepositInput)
+    public void refund(SecurityDeposit securityDepositToUpdate, String refundReason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum)
     {
         Refund refund = createRefund(securityDepositToUpdate);
         if(refund == null){
@@ -115,13 +122,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
         else{        
             createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
-                SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
+            		securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund); 
     
-            securityDepositToUpdate.setRefundReason(securityDepositInput.getRefundReason());
-            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.REFUNDED);
+            securityDepositToUpdate.setRefundReason(refundReason);
+            securityDepositToUpdate.setStatus(securityDepositStatusEnum);
             securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
             update(securityDepositToUpdate);
-            auditLogService.trackOperation("REFUND", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+            auditLogService.trackOperation(refundReason, new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         }
     }
     
@@ -248,4 +255,43 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositTransaction.setAccountOperation(accountOperation);
         securityDepositTransactionService.create(securityDepositTransaction);        
     }
+
+	public List<Long> getSecurityDepositsToRefundIds() {
+		return getEntityManager()
+                .createNamedQuery("SecurityDeposit.securityDepositsToRefundIds", Long.class)
+                .setParameter("sysDate", new Date())
+                .getResultList();
+	}
+
+	public List<SecurityDeposit> checkPeriod(List<Long> securityDeposits) {
+		List<SecurityDeposit> securityDepositsToRefund = new ArrayList<SecurityDeposit>();
+		for (Long securityDepositId : securityDeposits) {
+			SecurityDeposit securityDeposit = securityDepositService.findById(securityDepositId);
+			
+			if (securityDeposit.getValidityDate() != null) {
+				securityDepositsToRefund.add(securityDeposit);
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.DAYS) ) {
+				if(DateUtils.addDaysToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.WEEKS) ) {
+				if(DateUtils.addWeeksToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.MONTHS) ) {
+				if(DateUtils.addMonthsToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.YEARS) ) {
+				if(DateUtils.addYearsToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}
+		}
+		return securityDepositsToRefund;
+	}
 }

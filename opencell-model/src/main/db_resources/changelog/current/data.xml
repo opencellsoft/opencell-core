@@ -8101,6 +8101,22 @@ Opencell team.
 			<column name="uuid" value="TriggerCollectionPlanLevelsJob_Job" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="INTRD-3507_20220218" author="HatimOUDAD">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="PAYMENT" />
+			<column name="job_template" value="AutoRefundSecurityDepositJob" />
+			<column name="code" value="AutoRefundSecurityDepositJob_Job" />
+
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="AutoRefundSecurityDepositJob_Job" />
+		</insert>
+	</changeSet>
 
 	<changeSet id="INTRD-3678_20211214" author="AmineBENAICHA">
 		<update tableName="meveo_script_instance">

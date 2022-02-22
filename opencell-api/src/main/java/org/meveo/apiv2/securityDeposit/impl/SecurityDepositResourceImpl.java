@@ -118,7 +118,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new EntityDoesNotExistsException("The refund is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
         }    
         
-        securityDepositService.refund(securityDepositToUpdate, securityDepositInput);
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     
