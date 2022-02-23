@@ -14,10 +14,14 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +38,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 
 
@@ -109,6 +115,30 @@ public class StorageFactory {
 
             try {
                 inStream = s3FileSystem.provider().newInputStream(objectPath);
+
+                return inStream;
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public static InputStream getInputStream(byte[] bytes) {
+        if (storageType.equals(NFS)) {
+            return new ByteArrayInputStream(bytes);
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            InputStream inStream;
+
+            Path objectPath = getObjectPath("");
+
+            try {
+                inStream = s3FileSystem.provider().newInputStream(objectPath);
+
+                inStream.read(bytes);
 
                 return inStream;
             }
@@ -244,6 +274,66 @@ public class StorageFactory {
         return null;
     }
 
+    public static void deleteFile(File file) {
+        if (storageType.equals(NFS)) {
+            file.delete();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String fullObjectKey = formatFullObjectKey(file.toString());
+
+            Path objectPath = getObjectPath(fullObjectKey);
+
+            try {
+                s3FileSystem.provider().delete(objectPath);
+            }
+            catch (IOException e) {
+                System.out.println("IOException message : " + e.getMessage());
+            }
+        }
+    }
+
+    public static boolean exists(String fileName) {
+        if (storageType.equals(NFS)) {
+            return new File(fileName).exists();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(fileName);
+
+            ListObjectsV2Response response =
+                    s3FileSystem.getClient().listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).prefix(objectKey).build());
+
+            for (S3Object object : response.contents()) {
+                if (object.key().equals(objectKey))
+                    return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    public static boolean exists(File file) {
+        if (storageType.equals(NFS)) {
+            return file.exists();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String objectKey = formatObjectKey(file.getPath());
+
+            ListObjectsV2Response response =
+                    s3FileSystem.getClient().listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).prefix(objectKey).build());
+
+            for (S3Object object : response.contents()) {
+                if (object.key().equals(objectKey))
+                    return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
     public static void createNewFile(File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -312,14 +402,61 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             InputStream inStream;
-            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
-
-            Path objectPath = getObjectPath(fileName);
+//            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+            String fullObjectKey = formatFullObjectKey(file.getPath());
+            Path objectPath = getObjectPath(fullObjectKey);
 
             try {
                 inStream = s3FileSystem.provider().newInputStream(objectPath);
 
                 return inStream;
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public static void createDirectory(File file) {
+        if (storageType.equals(NFS)) {
+            file.mkdirs();
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            String fullObjectKey = formatFullObjectKey(file.toString());
+
+            Path objectPath = getObjectPath(fullObjectKey);
+
+            try {
+                s3FileSystem.provider().createDirectory(objectPath);
+            }
+            catch (IOException e) {
+                System.out.println("IOException message : " + e.getMessage());
+            }
+        }
+
+    }
+
+    public static OutputStream getOutputStream(File file) {
+        if (storageType.equals(NFS)) {
+            try {
+                return new FileOutputStream(file);
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("file not found : " + e.getMessage());
+            }
+        }
+        else if (storageType.equalsIgnoreCase(S3)) {
+            OutputStream outStream;
+            String fullObjectKey = formatFullObjectKey(file.getPath());
+
+            Path objectPath = getObjectPath(fullObjectKey);
+
+            try {
+                outStream = s3FileSystem.provider().newOutputStream(objectPath);
+
+                return outStream;
             }
             catch (IOException e) {
                 System.out.println("error message : " + e.getMessage());
@@ -340,9 +477,10 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             OutputStream outStream;
-            fileName = bucketName + fileName.substring(1).replace("\\", "/");
+//            fileName = bucketName + fileName.substring(1).replace("\\", "/");
+            String fullObjectKey = formatFullObjectKey(fileName);
 
-            Path bucketPath = getObjectPath(fileName);
+            Path bucketPath = getObjectPath(fullObjectKey);
 
             try {
                 outStream = s3FileSystem.provider().newOutputStream(bucketPath);
@@ -357,6 +495,35 @@ public class StorageFactory {
         return null;
     }
 
+    public static void write(Path path, byte[] bytes, OpenOption... options) {
+        if (storageType.equals(NFS)) {
+            try {
+                Files.write(path, bytes, options);
+            }
+            catch (IOException e) {
+                System.out.println("IOException exception : " + e.getMessage());
+            }
+        }
+        else if (storageType.equals(S3)) {
+            OutputStream outStream;
+            String fullObjectKey = formatFullObjectKey(path.toString());
+
+            Path bucketPath = getObjectPath(fullObjectKey);
+
+            try {
+                outStream = Files.newOutputStream(bucketPath);
+
+                outStream.write(bytes);
+
+                outStream.close();
+            }
+            catch (IOException e) {
+                System.out.println("error message : " + e.getMessage());
+            }
+
+        }
+    }
+
     public static Document parse(DocumentBuilder db, File file) {
         if (storageType.equals(NFS)) {
             try {
@@ -368,9 +535,10 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             InputStream inStream;
-            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+//            String fileName = bucketName + file.getPath().substring(1).replace("\\", "/");
+            String fullObjectKey = formatFullObjectKey(file.getPath());
 
-            Path objectPath = getObjectPath(fileName);
+            Path objectPath = getObjectPath(fullObjectKey);
 
             try {
                 inStream = s3FileSystem.provider().newInputStream(objectPath);
@@ -396,19 +564,9 @@ public class StorageFactory {
         }
         else if (storageType.equalsIgnoreCase(S3)) {
             OutputStream outStream;
-            String fullFileName;
-            String filePath = file.getPath();
-            if (filePath.charAt(0) == '.') {
-                fullFileName = bucketName + filePath.substring(1).replace("\\", "/");
-            }
-            else {
-                if (filePath.charAt(1) == '\\')
-                    fullFileName = bucketName + filePath.replace("\\", "/");
-                else
-                    fullFileName = bucketName + '/' + filePath.replace("\\", "/");
-            }
+            String fullObjectKey = formatFullObjectKey(file.getPath());
 
-            Path bucketPath = getObjectPath(fullFileName);
+            Path bucketPath = getObjectPath(fullObjectKey);
 
             try {
                 outStream = s3FileSystem.provider().newOutputStream(bucketPath);
@@ -421,6 +579,34 @@ public class StorageFactory {
                 System.out.println("IO Exception or JAXBException in marshal method : " + e.getMessage());
             }
         }
+    }
+
+    public static String formatFullObjectKey(String filePath){
+        String fullObjectKey = bucketName;
+        if (filePath.charAt(0) == '.') {
+            fullObjectKey += filePath.substring(1).replace("\\", "/");
+        }
+        else {
+            if (filePath.charAt(1) == '\\')
+                fullObjectKey += filePath.replace("\\", "/");
+            else
+                fullObjectKey += '/' + filePath.replace("\\", "/");
+        }
+
+        return fullObjectKey;
+    }
+
+    public static String formatObjectKey(String filePath){
+        String objectKey = "";
+
+        if (filePath.charAt(0) == '.' && filePath.charAt(1) == '/') {
+            objectKey += filePath.substring(2).replace("\\", "/");
+        }
+        else if (filePath.charAt(0) == '.' && filePath.charAt(1) == '\\'){
+            objectKey += filePath.substring(2).replace("\\", "/");
+        }
+
+        return objectKey;
     }
 
     public static void uploadJasperTemplate(File file) throws IOException {
