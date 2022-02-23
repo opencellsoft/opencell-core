@@ -2905,6 +2905,7 @@
             <column name="commercial_order_id" type="bigint"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="cpq_quote_id" type="bigint" />
+            <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -17063,6 +17064,7 @@
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
 	<changeSet id="#4065_2022" author="Mounir_BOUKAYOUA"/>
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
+    <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
