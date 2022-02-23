@@ -1,55 +1,96 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.exception.BusinessException;
-
 import static java.util.Arrays.stream;
+
+import org.meveo.admin.exception.BusinessException;
 
 public class AggregationConfiguration {
 
-    /**
-     * Is application running in B2B or B2C mode.
-     */
-    private boolean enterprise;
+	/**
+	 * Is application running in B2B or B2C mode.
+	 */
+	private boolean enterprise;
 
-    /**
-     * InvoiceLine Aggregation types
-     */
-    private AggregationOption aggregationOption = AggregationOption.NO_AGGREGATION;
-    
-    public AggregationConfiguration(boolean enterprise) {
-        this.enterprise = enterprise;
-    }
+	private DateAggregationOption dateAggregationOption = DateAggregationOption.MONTH_OF_USAGE_DATE;
 
-    public AggregationConfiguration(boolean enterprise, AggregationOption aggregationOption) {
-        this.enterprise = enterprise;
-        this.aggregationOption = aggregationOption;
-    }
+	private boolean aggregationPerUnitAmount;
 
-    public boolean isEnterprise() {
-        return enterprise;
-    }
+	public AggregationConfiguration(boolean enterprise) {
+		this.enterprise = enterprise;
+	}
 
-    public void setEnterprise(boolean enterprise) {
-        this.enterprise = enterprise;
-    }
+	public AggregationConfiguration(boolean enterprise, boolean AggregationPerUnitAmount, DateAggregationOption dateAggregationOption) {
+		this.enterprise = enterprise;
+		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
+		this.dateAggregationOption = dateAggregationOption;
+	}
 
-    public AggregationOption getAggregationOption() {
-        return aggregationOption;
-    }
+	public boolean isEnterprise() {
+		return enterprise;
+	}
 
-    public void setAggregationOption(AggregationOption aggregationOption) {
-        this.aggregationOption = aggregationOption;
-    }
+	public void setEnterprise(boolean enterprise) {
+		this.enterprise = enterprise;
+	}
 
-    enum AggregationOption {
-        NO_AGGREGATION, ARTICLE_LABEL, UNIT_AMOUNT, DATE;
+	/**
+	 * @return the dateAggregationOptions
+	 */
+	public DateAggregationOption getDateAggregationOption() {
+		return dateAggregationOption;
+	}
 
-        public static AggregationOption fromValue(String value) {
-            return stream(AggregationOption.values())
-                        .filter(option -> option.name().equalsIgnoreCase(value))
-                        .findFirst()
-                        .orElseThrow(() -> new BusinessException());
-        }
-    }
+	/**
+	 * @param dateAggregationOptions the dateAggregationOptions to set
+	 */
+	public void setDateAggregationOption(DateAggregationOption dateAggregationOption) {
+		this.dateAggregationOption = dateAggregationOption;
+	}
+
+	/**
+	 * @return the AggregationPerUnitAmount
+	 */
+	public boolean isAggregationPerUnitAmount() {
+		return aggregationPerUnitAmount;
+	}
+
+	/**
+	 * @param AggregationPerUnitAmount the AggregationPerUnitAmount to set
+	 */
+	public void setAggregationPerUnitAmount(boolean AggregationPerUnitAmount) {
+		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
+	}
+
+	public enum DateAggregationOption {
+		NO_DATE_AGGREGATION("no.date.aggregation"), MONTH_OF_USAGE_DATE("month.of.usage.date"),
+		WEEK_OF_USAGE_DATE("week.of.usage.date"), DAY_OF_USAGE_DATE("day.of.usage.date");
+		private String label;
+
+		/**
+		 * 
+		 */
+		private DateAggregationOption(String label) {
+			setLabel(label);
+		}
+
+		public static DateAggregationOption fromValue(String value) {
+			return stream(DateAggregationOption.values()).filter(option -> option.name().equalsIgnoreCase(value))
+					.findFirst().orElseThrow(() -> new BusinessException());
+		}
+
+		/**
+		 * @return the label
+		 */
+		public String getLabel() {
+			return label;
+		}
+
+		/**
+		 * @param label the label to set
+		 */
+		public void setLabel(String label) {
+			this.label = label;
+		}
+	}
 
 }
