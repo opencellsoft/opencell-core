@@ -6517,6 +6517,25 @@ public class ProcessCustomerPaymentsFileScript extends Script {
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
 	</changeSet>
+	
+	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
+		<insert tableName="billing_trading_language">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+
+			<column name="created" valueDate="2015-03-19 00:04:19.152" />
+			<column name="pr_description" value="English" />
+			<column name="language_id" valueNumeric="2" />
+		</insert>
+		<insert tableName="billing_trading_language">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+
+			<column name="created" valueDate="2015-03-19 00:04:19.174" />
+			<column name="pr_description" value="French" />
+			<column name="language_id" valueNumeric="12" />
+		</insert>
+	</changeSet>
 
 	<changeSet id="INTRD-2634_20211027" author="YoussefIZEM">
         <insert tableName="com_message_template">
@@ -6848,25 +6867,6 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="code" value="DUNNING_ACTION" />
 			<column name="description" value="dunning action" />
-		</insert>
-	</changeSet>
-	
-	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
-		<insert tableName="billing_trading_language">
-			<column name="id" valueNumeric="-1" />
-			<column name="version" valueNumeric="0" />
-
-			<column name="created" valueDate="2015-03-19 00:04:19.152" />
-			<column name="pr_description" value="English" />
-			<column name="language_id" valueNumeric="2" />
-		</insert>
-		<insert tableName="billing_trading_language">
-			<column name="id" valueNumeric="-2" />
-			<column name="version" valueNumeric="0" />
-
-			<column name="created" valueDate="2015-03-19 00:04:19.174" />
-			<column name="pr_description" value="French" />
-			<column name="language_id" valueNumeric="12" />
 		</insert>
 	</changeSet>
 

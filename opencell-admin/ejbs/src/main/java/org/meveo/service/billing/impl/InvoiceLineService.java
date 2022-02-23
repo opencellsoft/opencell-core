@@ -724,6 +724,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+            basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
             associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
@@ -749,4 +750,27 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	    basicStatistics.append(ilBasicStatistics);
 	}
 
+    public void deleteByBillingRun(long billingRunId) {
+        List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRunId);
+        if(!invoiceLinesIds.isEmpty()) {
+            detachRatedTransactions(invoiceLinesIds);
+            getEntityManager()
+                    .createNamedQuery("InvoiceLine.deleteByBillingRun")
+                    .setParameter("billingRunId", billingRunId)
+                    .executeUpdate();
+        }
+    }
+
+    public List<Long> loadInvoiceLinesIdByBillingRun(long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.listByBillingRun")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
+    }
+
+    public void detachRatedTransactions(List<Long> invoiceLinesIds) {
+        ratedTransactionService.getEntityManager()
+                .createNamedQuery("RatedTransaction.detachFromInvoiceLines")
+                .setParameter("ids", invoiceLinesIds)
+                .executeUpdate();
+    }
 }

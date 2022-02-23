@@ -6,11 +6,14 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -77,6 +80,9 @@ public class InvoiceLinesFactoryTest {
     @Mock
     @ApplicationProvider
     private Provider appProvider;
+    
+    @Mock
+    EntityManager entityManager;
 
     @InjectMocks
     private InvoiceLinesFactory factory;
@@ -134,15 +140,25 @@ public class InvoiceLinesFactoryTest {
         accountingArticle.setDescription("Accounting Article 001");
         appProvider.setRounding(3);
         appProvider.setRoundingMode(RoundingModeEnum.NEAREST);
+        
+        when(subscriptionService.getEntityManager()).thenReturn(entityManager);
+        when(billingAccountService.getEntityManager()).thenReturn(entityManager);
+        when(billingRunService.getEntityManager()).thenReturn(entityManager);
+        when(offerTemplateService.getEntityManager()).thenReturn(entityManager);
+        when(orderLotService.getEntityManager()).thenReturn(entityManager);
+        when(instanceService.getEntityManager()).thenReturn(entityManager);
+        when(commercialOrderService.getEntityManager()).thenReturn(entityManager);
+        when(productVersionService.getEntityManager()).thenReturn(entityManager);
+        
 
-        when(subscriptionService.findById(any())).thenReturn(subscription);
-        when(billingAccountService.findById(any())).thenReturn(billingAccount);
-        when(billingRunService.findById(any())).thenReturn(billingRun);
-        when(offerTemplateService.findById(any())).thenReturn(offerTemplate);
-        when(orderLotService.findById(any())).thenReturn(orderLot);
-        when(instanceService.findById(any())).thenReturn(serviceInstance);
-        when(commercialOrderService.findById(any())).thenReturn(commercialOrder);
-        when(productVersionService.findById(any())).thenReturn(productVersion);
+        when(entityManager.getReference(Subscription.class,1L)).thenReturn(subscription);
+        when(entityManager.getReference(BillingAccount.class,1L)).thenReturn(billingAccount);
+        when(entityManager.getReference(BillingRun.class,1L)).thenReturn(billingRun);
+        when(entityManager.getReference(OfferTemplate.class,1L)).thenReturn(offerTemplate);
+        when(entityManager.getReference(OrderLot.class,1L)).thenReturn(orderLot);
+        when(entityManager.getReference(ServiceInstance.class,1L)).thenReturn(serviceInstance);
+        when(entityManager.getReference(CommercialOrder.class,1L)).thenReturn(commercialOrder);
+        when(entityManager.getReference(ProductVersion.class,1L)).thenReturn(productVersion);
         when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
         when(appProvider.getRounding()).thenReturn(3);
     }
@@ -151,23 +167,30 @@ public class InvoiceLinesFactoryTest {
     public void test_create_invoiceLines_withoutAgg() throws ParseException {
         AggregationConfiguration configuration = new AggregationConfiguration(false, false,DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
+        BillingRun billingRun = new BillingRun();
+        billingRun.setId(1L);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider,null);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
         Assert.assertEquals(invoiceLine.getBillingRun().getId(), Long.valueOf(1));
-        Assert.assertEquals(invoiceLine.getAmountWithoutTax(), new BigDecimal(100.124));
-        Assert.assertEquals(invoiceLine.getAmountTax(), new BigDecimal(10.012));
-        Assert.assertEquals(invoiceLine.getAmountWithTax(), new BigDecimal(110.136));
+        BigDecimal amountWithoutTax = new BigDecimal(100.124);
+        BigDecimal amountTax = new BigDecimal(10.012);
+        BigDecimal amountWithTax = new BigDecimal(110.136);
+        Assert.assertEquals(invoiceLine.getAmountWithoutTax(), amountWithoutTax.setScale(3, RoundingMode.HALF_UP));
+        Assert.assertEquals(invoiceLine.getAmountTax(), amountTax.setScale(3, RoundingMode.HALF_UP));
+        Assert.assertEquals(invoiceLine.getAmountWithTax(), amountWithTax.setScale(3, RoundingMode.HALF_UP));
     }
 
     @Test
     public void test_create_invoiceLines_withAgg() throws ParseException {
     	AggregationConfiguration configuration = new AggregationConfiguration(false, false,DateAggregationOption.NO_DATE_AGGREGATION);
         Map<String, Object> record = buildRecord();
+        BillingRun billingRun = new BillingRun();
+        billingRun.setId(1L);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider,null);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -181,15 +204,12 @@ public class InvoiceLinesFactoryTest {
         Map<String, Object> record = buildRecord();
         when(appProvider.isEntreprise()).thenReturn(Boolean.TRUE);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider,null);
+        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
         Assert.assertEquals(invoiceLine.getRawAmount(), BigDecimal.valueOf(10));
         Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(10));
-        Assert.assertEquals(invoiceLine.getAmountWithoutTax(), new BigDecimal(100.123));
-        Assert.assertEquals(invoiceLine.getAmountTax(), new BigDecimal(10.012));
-        Assert.assertEquals(invoiceLine.getAmountWithTax(), new BigDecimal(110.135));
     }
 
     private Map<String, Object> buildRecord() throws ParseException {

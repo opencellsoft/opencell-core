@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.math.BigDecimal.*;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
 
@@ -51,6 +52,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
+import org.meveo.admin.job.InvoicingJobV2Bean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
@@ -262,11 +264,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Integer wiretransferBillableBANumber = 0;
         Integer creditDebitCardBillableBANumber = 0;
 
-        BigDecimal checkBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal directDebitBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal tipBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal wiretransferBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal creditDebitCardBillableBAAmountHT = BigDecimal.ZERO;
+        BigDecimal checkBillableBAAmountHT = ZERO;
+        BigDecimal directDebitBillableBAAmountHT = ZERO;
+        BigDecimal tipBillableBAAmountHT = ZERO;
+        BigDecimal wiretransferBillableBAAmountHT = ZERO;
+        BigDecimal creditDebitCardBillableBAAmountHT = ZERO;
 
         for (BillingAccount billingAccount : billingAccounts) {
 
@@ -365,18 +367,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         log.info("generatePostInvoicingReports billingRun={}", billingRun.getId());
         PostInvoicingReportsDTO postInvoicingReportsDTO = new PostInvoicingReportsDTO();
 
-        BigDecimal globalAmountHT = BigDecimal.ZERO;
-        BigDecimal globalAmountTTC = BigDecimal.ZERO;
+        BigDecimal globalAmountHT = ZERO;
+        BigDecimal globalAmountTTC = ZERO;
 
         Integer positiveInvoicesNumber = 0;
-        BigDecimal positiveInvoicesAmountHT = BigDecimal.ZERO;
-        BigDecimal positiveInvoicesAmount = BigDecimal.ZERO;
-        BigDecimal positiveInvoicesTaxAmount = BigDecimal.ZERO;
+        BigDecimal positiveInvoicesAmountHT = ZERO;
+        BigDecimal positiveInvoicesAmount = ZERO;
+        BigDecimal positiveInvoicesTaxAmount = ZERO;
 
         Integer negativeInvoicesNumber = 0;
-        BigDecimal negativeInvoicesAmountHT = BigDecimal.ZERO;
-        BigDecimal negativeInvoicesTaxAmount = BigDecimal.ZERO;
-        BigDecimal negativeInvoicesAmount = BigDecimal.ZERO;
+        BigDecimal negativeInvoicesAmountHT = ZERO;
+        BigDecimal negativeInvoicesTaxAmount = ZERO;
+        BigDecimal negativeInvoicesAmount = ZERO;
 
         Integer emptyInvoicesNumber = 0;
         Integer electronicInvoicesNumber = 0;
@@ -388,19 +390,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Integer creditDebitCardInvoicesNumber = 0;
         Integer npmInvoicesNumber = 0;
 
-        BigDecimal checkAmuontHT = BigDecimal.ZERO;
-        BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
-        BigDecimal tipAmuontHT = BigDecimal.ZERO;
-        BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
-        BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
-        BigDecimal npmAmountHT = BigDecimal.ZERO;
+        BigDecimal checkAmuontHT = ZERO;
+        BigDecimal directDebitAmuontHT = ZERO;
+        BigDecimal tipAmuontHT = ZERO;
+        BigDecimal wiretransferAmuontHT = ZERO;
+        BigDecimal creditDebitCardAmountHT = ZERO;
+        BigDecimal npmAmountHT = ZERO;
 
-        BigDecimal checkAmuont = BigDecimal.ZERO;
-        BigDecimal directDebitAmuont = BigDecimal.ZERO;
-        BigDecimal tipAmuont = BigDecimal.ZERO;
-        BigDecimal wiretransferAmuont = BigDecimal.ZERO;
-        BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
-        BigDecimal npmAmount = BigDecimal.ZERO;
+        BigDecimal checkAmuont = ZERO;
+        BigDecimal directDebitAmuont = ZERO;
+        BigDecimal tipAmuont = ZERO;
+        BigDecimal wiretransferAmuont = ZERO;
+        BigDecimal creditDebitCardAmount = ZERO;
+        BigDecimal npmAmount = ZERO;
 
         List<Object[]> invoiceSummary = getEntityManager().createNamedQuery("Invoice.portInvoiceReport").setParameter("billingRunId", billingRun.getId()).getResultList();
 
@@ -449,12 +451,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
             }
 
-            if ((amountWithoutTax != null) && (amountWithoutTax.compareTo(BigDecimal.ZERO) > 0)) {
+            if ((amountWithoutTax != null) && (amountWithoutTax.compareTo(ZERO) > 0)) {
                 positiveInvoicesNumber++;
                 positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(amountWithoutTax);
-                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(amountTax == null ? BigDecimal.ZERO : amountTax);
+                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(amountTax == null ? ZERO : amountTax);
                 positiveInvoicesAmount = positiveInvoicesAmount.add(amountWithTax);
-            } else if ((amountWithoutTax == null) || (amountWithoutTax.compareTo(BigDecimal.ZERO) == 0)) {
+            } else if ((amountWithoutTax == null) || (amountWithoutTax.compareTo(ZERO) == 0)) {
                 emptyInvoicesNumber++;
             } else {
                 negativeInvoicesNumber++;
@@ -611,7 +613,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param status the status
      * @return the billing runs
      */
-    public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
+    public List<BillingRun> getBillingRuns(BillingRunStatusEnum... status) {
         return getBillingRuns(null, status);
     }
 
@@ -626,7 +628,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public List<BillingRun> getBillingRuns(String code, BillingRunStatusEnum... status) {
 
         BillingRunStatusEnum bRStatus;
-        log.debug("getbillingRuns ");
+        log.debug("getBillingRuns ");
         QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
 
         if (code != null) {
@@ -1050,7 +1052,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private void checkThresholdInvoices(Collection<Long> rejectedBillingAccounts, List<Long> invoicesToRemove, Collection<Long> billableEntities, Long billableEntityId, BigDecimal threshold, boolean isThresholdPerEntity,
             Map<Long, Amounts> thresholdAmounts) {
         if (isThresholdPerEntity) {
-            BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalAmount = ZERO;
             for (Amounts amounts : thresholdAmounts.values()) {
                 totalAmount = totalAmount.add((appProvider.isEntreprise()) ? amounts.getAmountWithoutTax() : amounts.getAmountWithTax());
             }
@@ -1407,8 +1409,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                                                                 MinAmountForAccounts minAmountForAccounts,
                                                                 MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        BigDecimal amountTax = BigDecimal.ZERO;
-        BigDecimal amountWithoutTax = BigDecimal.ZERO;
         for (IBillableEntity entityToInvoice : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
@@ -1418,21 +1418,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
-                updateBillingRunWithStatistics(billingRun, invoices, amountTax, amountWithoutTax);
-            } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}",
-                        entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+                updateBillingRunWithStatistics(invoices);
+            } catch (Exception exception) {
+                throw new BusinessException(exception);
             }
         }
 
         return new AsyncResult<>("OK");
     }
 
-    private void updateBillingRunWithStatistics(BillingRun billingRun, List<Invoice> invoices, BigDecimal amountTax, BigDecimal amountWithoutTax) {
-        amountTax = amountTax.add(invoices.stream().map(Invoice::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add));
-        amountWithoutTax = amountWithoutTax.add(invoices.stream().map(Invoice::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add));
-        billingRun.setPrAmountWithoutTax(amountWithoutTax);
-        billingRun.setPrAmountTax(amountTax);
+    private void updateBillingRunWithStatistics(List<Invoice> invoices) {
+        BigDecimal amountWithTax = invoices.stream().map(Invoice::getAmountWithTax).reduce(ZERO, BigDecimal::add);
+        BigDecimal amountWithoutTax = invoices.stream().map(Invoice::getAmountWithoutTax).reduce(ZERO, BigDecimal::add);
+        BigDecimal amountTax = invoices.stream().map(Invoice::getAmountTax).reduce(ZERO, BigDecimal::add);
+        InvoicingJobV2Bean.addNewAmounts(amountTax, amountWithoutTax, amountWithTax);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {

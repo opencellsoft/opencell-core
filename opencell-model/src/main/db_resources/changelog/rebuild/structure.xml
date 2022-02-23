@@ -1960,7 +1960,7 @@
             <column name="order_num" type="varchar(500)" />
             <column name="payment_order" type="varchar(70)" />
             <column name="payment_fees" type="numeric(23, 12)" />
-            <column name="comment" type="${type.longtext}" />
+            <column name="comment_text" type="${type.longtext}" />
             <column name="cf_values" type="${type.json}" />
             <column name="recorded_invoice_id" type="bigint" />
             <column name="cat_inv_agregate_id" type="bigint" />
@@ -2829,7 +2829,7 @@
             <column name="amount_tax" type="numeric(23, 12)" />
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="comment" type="varchar(1200)" />
+            <column name="comment_text" type="varchar(1200)" />
             <column name="discount" type="numeric(23, 12)" />
             <column name="due_date" type="datetime" />
             <column name="iban" type="varchar(255)" />
@@ -17062,7 +17062,7 @@
 	<changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
 	<changeSet id="#4065_2022" author="Mounir_BOUKAYOUA"/>
-
+    <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

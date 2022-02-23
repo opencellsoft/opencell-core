@@ -63,7 +63,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,9 +95,6 @@ public class AccountOperationApi extends BaseApi {
     @Inject
     private MatchingAmountService matchingAmountService;
 
-    /** The recorded invoice service. */
-    @Inject
-    private RecordedInvoiceService recordedInvoiceService;
     
     @Inject
     private AccountingCodeService accountingCodeService;
@@ -475,9 +472,6 @@ public class AccountOperationApi extends BaseApi {
             throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
         }
 
-        if (!(accountOperation instanceof RecordedInvoice)) {
-            throw new BusinessException("The operationId " + postData.getAccountOperationId() + " should be invoice");
-        }
     }
 
     /**
@@ -489,7 +483,7 @@ public class AccountOperationApi extends BaseApi {
      */
     public void addLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         checkingLitigation(postData);
-        recordedInvoiceService.addLitigation(postData.getAccountOperationId());
+        accountOperationService.addLitigation(postData.getAccountOperationId());
     }
 
     /**
@@ -501,7 +495,7 @@ public class AccountOperationApi extends BaseApi {
      */
     public void cancelLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         checkingLitigation(postData);
-        recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
+        accountOperationService.cancelLitigation(postData.getAccountOperationId());
     }
 
     /**
