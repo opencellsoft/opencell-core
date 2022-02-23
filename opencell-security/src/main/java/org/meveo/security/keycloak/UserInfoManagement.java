@@ -34,6 +34,7 @@ public class UserInfoManagement {
      * Map<providerCode, Map<roleName, rolePermissions>>
      */
     private static Map<String, Map<String, Set<String>>> roleToPermissionMapping = new HashMap<>();
+    private static final Map<String, Long> lastLoginUsers = new HashMap<>();
 
     @Inject
     private Event<User> userEventProducer;
@@ -44,12 +45,12 @@ public class UserInfoManagement {
     /**
      * Update user's last login date in db
      *
-     * @param currentUser Currently logged in user
-     * @param em Entity manager
+     * @param currentUser    Currently logged in user
+     * @param em             Entity manager
      * @param forcedUsername
      * @return False if user does not exist yet. True if user was updated or does not apply (anonymous users, forced users)
      */
-//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    //    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean supplementUserInApp(MeveoUser currentUser, EntityManager em, String forcedUsername) {
 
         // Takes care of anonymous or forced users
@@ -59,35 +60,26 @@ public class UserInfoManagement {
 
         // Update last login date
         try {
+            boolean b = !userAuthTimeProducer.isUnsatisfied() && currentUser.getAuthenticationTokenId() != null && !currentUser.getAuthenticationTokenId()
+                    .equals(userAuthTimeProducer.get().getAuthenticationTokenId());
+            if (true) {
 
-            // Andrius This is an alternative if we need to populate full name from DB. But full name comes from Keycloak, so there is no need for that.
-//            User user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
-//            currentUser.setFullName(user.getNameOrUsername());
-//
-//            if (!userAuthTimeProducer.isUnsatisfied() && userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
-//                userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
-//
-//                 em.createNamedQuery("User.updateLastLoginById").setParameter("lastLoginDate", new Date()).setParameter("id", user.getId()).executeUpdate();
-//
-//                return nrUpdated > 0;
-//            }
-//            return true;
-//
-//        } catch (NoResultException e) {
-//            return false;
+                //INTRD-5295 : Only update the last_login_date if the delay is more than a 5s threshold in order to avoid delays in response to each API call.
+                Date value = new Date();
+                boolean updateLastLogin = checkLastUpdatedDateForUser(value, currentUser.getUserName());
+                if (updateLastLogin) {
+                    log.debug("User username {} updated with a new login date", currentUser.getUserName());
 
-            if (!userAuthTimeProducer.isUnsatisfied() && currentUser.getAuthenticationTokenId() != null && !currentUser.getAuthenticationTokenId().equals(userAuthTimeProducer.get().getAuthenticationTokenId())) {
+                    int nrUpdated = em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", value)
+                            .setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
 
-                log.debug("User username {} updated with a new login date", currentUser.getUserName());
-
-                int nrUpdated = em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", new Date()).setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
-
-                if (nrUpdated > 0) {
-                    userAuthTimeProducer.get().setAuthenticatedAt(currentUser.getAuthenticatedAt());
-                    userAuthTimeProducer.get().setAuthenticationTokenId(currentUser.getAuthenticationTokenId());
-                    return true;
-                } else {
-                    return false;
+                    if (nrUpdated > 0) {
+                        userAuthTimeProducer.get().setAuthenticatedAt(currentUser.getAuthenticatedAt());
+                        userAuthTimeProducer.get().setAuthenticationTokenId(currentUser.getAuthenticationTokenId());
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
 
@@ -104,8 +96,8 @@ public class UserInfoManagement {
     /**
      * Register a new user in application when loging in for the first time with a new user created in Keycloak
      *
-     * @param currentUser Current user information
-     * @param em Entity manager
+     * @param currentUser    Current user information
+     * @param em             Entity manager
      * @param forcedUsername
      */
     public void createUserInApp(MeveoUser currentUser, EntityManager em, String forcedUsername) {
@@ -236,10 +228,28 @@ public class UserInfoManagement {
         }
     }
 
-	/**
-	 *
-	 */
-	public static void invalidateRoleToPermissionMapping() {
-		roleToPermissionMapping = new HashMap<>();
-	}
+    /**
+     *
+     */
+    public static void invalidateRoleToPermissionMapping() {
+        roleToPermissionMapping = new HashMap<>();
+    }
+
+    /**
+     * check if the current user has already updated in the last 5 seconds
+     *
+     * @param date     a current date
+     * @param userName the user's name
+     * @return true or false
+     */
+    private boolean checkLastUpdatedDateForUser(Date date, String userName) {
+        boolean ok = true;
+        if (lastLoginUsers.containsKey(userName)) {
+            Long lastTime = lastLoginUsers.getOrDefault(userName, 0L);
+            if (date.getTime() - lastTime < 5000)
+                ok = false;
+        }
+        lastLoginUsers.put(userName, date.getTime());
+        return ok;
+    }
 }
