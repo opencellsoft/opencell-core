@@ -28,9 +28,11 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
@@ -57,7 +59,8 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Inject
 	protected ResourceBundle resourceMessages;
 
-	
+	private List<String> fieldToFetch = asList("invoiceLines");
+
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
@@ -72,7 +75,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	@Override
 	public Optional<Invoice> findById(Long id) {
-		return ofNullable(invoiceService.findById(id));
+		return ofNullable(invoiceService.findById(id, fieldToFetch));
 	}
 
 	@Override
