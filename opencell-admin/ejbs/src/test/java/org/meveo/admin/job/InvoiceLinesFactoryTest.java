@@ -195,7 +195,7 @@ public class InvoiceLinesFactoryTest {
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
         Assert.assertEquals("labe", invoiceLine.getLabel());
-        Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(11));
+        Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(20));
     }
 
     @Test
@@ -208,8 +208,8 @@ public class InvoiceLinesFactoryTest {
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
-        Assert.assertEquals(invoiceLine.getRawAmount(), BigDecimal.valueOf(10));
-        Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(10));
+        Assert.assertEquals(invoiceLine.getRawAmount(), new BigDecimal(110.13574));
+        Assert.assertEquals(invoiceLine.getUnitPrice(), BigDecimal.valueOf(20));
     }
 
     private Map<String, Object> buildRecord() throws ParseException {
