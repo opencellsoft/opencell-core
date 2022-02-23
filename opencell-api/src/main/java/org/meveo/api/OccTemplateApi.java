@@ -131,11 +131,7 @@ public class OccTemplateApi extends BaseApi {
         }
 
         if (postData.getAccountingScheme() == null) {
-            // delete old one
-            AccountingScheme accountingScheme = occTemplate.getAccountingScheme();
-            if (accountingScheme != null) {
-                accountingSchemeService.remove(accountingScheme);
-            }
+            // unlink the previous one
             occTemplate.setAccountingScheme(null);
         } else {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);

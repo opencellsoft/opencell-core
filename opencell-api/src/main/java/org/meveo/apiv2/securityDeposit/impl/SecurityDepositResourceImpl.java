@@ -90,11 +90,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(!"".equals(msgErrValidation)) {
             throw new ValidationException(msgErrValidation + "not allowed for Update.");
         }
-        
-        if (securityDepositInput.getAmount() == null) {
-            throw new EntityDoesNotExistsException("The Amount == null.");
-        }
-        
+
         BigDecimal oldAmountSD = securityDepositToUpdate.getAmount();
         securityDepositToUpdate = securityDepositMapper.toEntity(securityDepositToUpdate, securityDepositInput);
         securityDepositService.checkParameters(securityDepositToUpdate, securityDepositInput, oldAmountSD);
@@ -118,7 +114,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             throw new EntityDoesNotExistsException("The refund is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
         }    
         
-        securityDepositService.refund(securityDepositToUpdate, securityDepositInput);
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED);
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     

@@ -621,6 +621,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Transient
     private List<InvoiceLine> draftInvoiceLines = new ArrayList<>();
 
+    /**
+     * Amount without tax before discount
+     */
+    @Column(name = "amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTaxBeforeDiscount;
+
 
     public Invoice() {
 	}
@@ -1596,6 +1602,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setCpqQuote(CpqQuote cpqQuote) {
 		this.cpqQuote = cpqQuote;
 	}
-    
-    
+
+
+    public BigDecimal getAmountWithoutTaxBeforeDiscount() {
+        return amountWithoutTaxBeforeDiscount;
+    }
+
+    public void setAmountWithoutTaxBeforeDiscount(BigDecimal amountWithoutTaxBeforeDiscount) {
+        this.amountWithoutTaxBeforeDiscount = amountWithoutTaxBeforeDiscount;
+    }
 }

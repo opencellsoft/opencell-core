@@ -324,8 +324,9 @@ public class DiscountPlanItemApi extends BaseApi {
         
         if (!StringUtils.isBlank(source.getAccountingArticleCode())) {
         	AccountingArticle accountingArticle = accountingArticleService.findByCode(source.getAccountingArticleCode());
-        	if (accountingArticle == null)
-        		throw new EntityDoesNotExistsException(AccountingArticle.class, source.getAccountingArticleCode());
+        	if (accountingArticle == null){
+                accountingArticle = discountPlanItemService.getDiscountDefaultAccountingArticle();
+            }
         	discountPlanItem.setAccountingArticle(accountingArticle);
         }
 

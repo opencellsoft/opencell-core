@@ -218,8 +218,8 @@
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="10,20,30">
 
-				<p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}"
-					partialSubmit="true"
+				<p:ajax event="cellEdit" process="@this" update="#{messagesId} #{updateOnAddEdit}"
+					immediate="true"
 					partialSubmitFilter=":not([name*='addNewFields'])" />
 				<p:columns value="#{cft.matrixColumns}" var="column"
 					headerText="#{column.label}" sortBy="#{mapValues[column.code]}"
