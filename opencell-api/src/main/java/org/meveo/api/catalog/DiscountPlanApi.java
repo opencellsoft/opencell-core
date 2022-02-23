@@ -167,6 +167,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 	            }
 	        }
 	        if (postData.getStatus() != null) {
+	            if(postData.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) && discountPlan.getDiscountPlanItems().isEmpty()){
+	                throw new BusinessException("User can not be able to activate a DP if no Discount Line exists");
+                }
 	            discountPlan.setStatus(postData.getStatus());
 	            discountPlan.setStatusDate(new Date());
 	        }
