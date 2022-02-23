@@ -1573,7 +1573,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
 //            reportTemplate = new FileInputStream(jasperFile); // old code
-//            StorageFactory.uploadJasperTemplate(jasperFile); // to update Jasper template to S3
             reportTemplate = StorageFactory.getInputStream(jasperFile); // new code
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
