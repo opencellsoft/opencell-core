@@ -11903,4 +11903,10 @@ order by date_trunc('month', i.invoice_date) DESC
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="billing_invoice_type" />
 	</changeSet>
+
+    <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki">
+        <addColumn tableName="billing_invoice">
+            <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
