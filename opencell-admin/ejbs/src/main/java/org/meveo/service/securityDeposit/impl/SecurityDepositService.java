@@ -20,19 +20,14 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 
-import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
-import org.meveo.model.admin.Seller;
-
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentErrorEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -113,7 +108,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             }
         }
     }
-    
+
     public void refund(SecurityDeposit securityDepositToUpdate, String refundReason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum)
     {
         Refund refund = createRefund(securityDepositToUpdate);
@@ -128,7 +123,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             securityDepositToUpdate.setStatus(securityDepositStatusEnum);
             securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
             update(securityDepositToUpdate);
-            auditLogService.trackOperation(refundReason, new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+            auditLogService.trackOperation("REFUND", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         }
     }
     
@@ -149,6 +144,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             auditLogService.trackOperation("CANCEL", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         }
     }
+
 
     private Refund createRefund(SecurityDeposit securityDepositToUpdate) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
@@ -178,6 +174,18 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
         } 
         
+        refundId = doPayment(amountToPay, accountOperationsToPayIds, customerAccount, preferredPaymentMethod, refundId, paymentGateway);
+        if(refundId == null){
+            return null;
+        }
+        else{
+            return refundService.findById(refundId);
+        }
+    }
+    
+    
+    private Long doPayment(long amountToPay, List<Long> accountOperationsToPayIds, CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod, Long refundId,
+            PaymentGateway paymentGateway) {
         if(paymentGateway!=null && (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD))) {
             try {
                 if(!accountOperationsToPayIds.isEmpty()) {
@@ -199,12 +207,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 throw new BusinessException("Error occurred during payment process for customer " + customerAccount.getCode(), exception);
             }
         }
-        if(refundId == null){
-            return null;
-        }
-        else{
-            return refundService.findById(refundId);
-        }
+        return refundId;
     }
     
     public void credit(SecurityDeposit securityDepositToUpdate, SecurityDepositCreditInput securityDepositInput)
