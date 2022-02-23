@@ -60,9 +60,8 @@ public class UserInfoManagement {
 
         // Update last login date
         try {
-            boolean b = !userAuthTimeProducer.isUnsatisfied() && currentUser.getAuthenticationTokenId() != null && !currentUser.getAuthenticationTokenId()
-                    .equals(userAuthTimeProducer.get().getAuthenticationTokenId());
-            if (true) {
+            if (!userAuthTimeProducer.isUnsatisfied() && currentUser.getAuthenticationTokenId() != null && !currentUser.getAuthenticationTokenId()
+                    .equals(userAuthTimeProducer.get().getAuthenticationTokenId())) {
 
                 //INTRD-5295 : Only update the last_login_date if the delay is more than a 5s threshold in order to avoid delays in response to each API call.
                 Date value = new Date();
