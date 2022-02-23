@@ -279,6 +279,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceResource) {
 		final Invoice invoice = findInvoiceEligibleToUpdate(id);
+		if(invoice.getInvoiceLines() == null
+				|| (invoice.getInvoiceLines() != null && invoice.getInvoiceLines().isEmpty())){
+			throw new ActionForbiddenException("invoices with no invoice line can not be updated.") ;
+		}
 		invoiceApiService.update(invoice, invoiceMapper.toEntity(invoiceResource), invoiceResource);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();

@@ -19,6 +19,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -60,14 +61,20 @@ public class InvoiceLinesFactory {
      * @param record        map of ratedTransaction
      * @param configuration aggregation configuration
      * @param result        JobExecutionResultImpl
+     * @param appProvider        Provider
+     * @param billingRun        BillingRun
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider) throws BusinessException {
+    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration,
+                              JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
         InvoiceLine invoiceLine = initInvoiceLine(record, result, appProvider);
         if (configuration.getAggregationOption() == NO_AGGREGATION) {
             withNoAggregationOption(invoiceLine, record, configuration.isEnterprise());
         } else {
             withAggregationOption(invoiceLine, record, configuration.isEnterprise());
+        }
+        if(invoiceLine.getBillingRun() == null) {
+            invoiceLine.setBillingRun(billingRun);
         }
         return invoiceLine;
     }

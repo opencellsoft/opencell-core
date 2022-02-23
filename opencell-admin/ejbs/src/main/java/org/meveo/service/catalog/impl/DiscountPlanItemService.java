@@ -34,7 +34,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -60,6 +62,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 /**
  * @author Edward P. Legaspi
@@ -83,6 +86,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	
 	@Inject
 	InvoiceLineService invoiceLinesService;
+
+	@Inject
+    AccountingArticleService accountingArticleService;
 	
 	private final static BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -292,5 +298,14 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
         }
         return discountPrices;
+    }
+
+    public AccountingArticle getDiscountDefaultAccountingArticle() {
+        String articleCode = ParamBean.getInstance().getProperty("accountingArticle.discount.default.code", "DISC-STD");
+        AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
+        if (accountingArticle == null) {
+            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
+        }
+        return accountingArticle;
     }
 }
