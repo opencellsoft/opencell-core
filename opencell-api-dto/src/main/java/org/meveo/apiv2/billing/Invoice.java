@@ -298,4 +298,12 @@ public interface Invoice extends Resource {
 	@Schema(description = "The temporary invoice number")
 	@Nullable
 	String getTemporaryInvoiceNumber();
+
+	@Schema(description = "Amount without tax before discount")
+	@Nullable
+	BigDecimal getAmountWithoutTaxBeforeDiscount();
+
+	@Schema(description = "discount amount without tax")
+	@Nullable
+	BigDecimal getDiscountAmountWithoutTax();
 }
