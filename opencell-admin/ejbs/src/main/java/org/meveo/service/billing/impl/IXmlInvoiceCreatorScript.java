@@ -46,7 +46,7 @@ public interface IXmlInvoiceCreatorScript extends ScriptInterface {
      * @throws SAXException                 sax exception
      * @throws IOException                  IO exception
      */
-    public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException;
+    public Document createDocument(Invoice invoice, boolean isVirtual, boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException;
 
     /**
      * Store XML DOM into a file.

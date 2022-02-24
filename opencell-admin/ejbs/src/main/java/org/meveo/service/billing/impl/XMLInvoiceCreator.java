@@ -161,6 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     @Deprecated
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
-        return ((XmlInvoiceCreatorScript) defaultXmlInvoiceCreatorScript).createDocument(invoice, isVirtual, true);
+        return defaultXmlInvoiceCreatorScript.createDocument(invoice, isVirtual, true);
     }
 }
