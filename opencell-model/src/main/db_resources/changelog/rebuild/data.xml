@@ -7927,14 +7927,28 @@
             <column name="inh_as_def_value" value="0"/>
             <column name="cf_protectable" value="0"/>
         </insert>
+	    <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_AggregationPerUnitAmount"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="aggregation per unit amount"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="AggregationOptions"/>
-            <column name="description" value="Aggregation options"/>
-            <column name="field_type" value="STRING"/>
+            <column name="code" value="JobInstance_InvoiceLinesJob_ILDateAggregationOptions"/>
+            <column name="description" value="date aggregation options"/>
+            <column name="field_type" value="LIST"/>
             <column name="value_required" value="0"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="versionable" value="0"/>
@@ -9733,7 +9747,46 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="INTRD-3507_20220218" author="HatimOUDAD">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="PAYMENT" />
+			<column name="job_template" value="AutoRefundSecurityDepositJob" />
+			<column name="code" value="AutoRefundSecurityDepositJob_Job" />
 
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="AutoRefundSecurityDepositJob_Job" />
+		</insert>
+	</changeSet>
+
+    
+    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="NO_DATE_AGGREGATION"/>
+            <column name="listvalues_key" value="NO_DATE_AGGREGATION"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="MONTH_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="MONTH_OF_USAGE_DATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="WEEK_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="WEEK_OF_USAGE_DATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="DAY_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
+        </insert>
+    </changeSet>
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

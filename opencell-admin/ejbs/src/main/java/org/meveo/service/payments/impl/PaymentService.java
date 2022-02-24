@@ -33,6 +33,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -529,8 +530,10 @@ public class PaymentService extends PersistenceService<Payment> {
             aoIdsToMatch.add(aoPaymentId);
             matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
             doPaymentResponseDto.setMatchingCreated(true);
-        } catch (Exception e) {
-            log.warn("Cant create matching :", e);
+        } catch (BusinessException e) {
+            throw new BusinessException(e);
+        } catch (MeveoApiException | NoAllOperationUnmatchedException | UnbalanceAmountException e) {
+            throw new MeveoApiException(e);
         }
         
         if (PaymentMethodEnum.CARD == paymentMethodType) {

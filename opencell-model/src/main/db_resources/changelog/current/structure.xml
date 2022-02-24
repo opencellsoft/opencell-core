@@ -8771,6 +8771,41 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
  	</changeSet>
+ 	
+ 	<changeSet id="#FIX-INTRD-634_20210706" author="AkadidAbdelmounaim" failOnError="false">
+        <addColumn tableName="dunning_payment_retries">
+            <column name="pay_retry_frequency" type="int4" defaultValueNumeric="0">
+             	<constraints nullable="false" />
+           	</column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#FIX2-INTRD-634_20210706" author="AkadidAbdelmounaim" failOnError="false">
+    	<createTable tableName="invoice_dunning_statuses">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="language" type="varchar(50)" />
+            <column name="status" type="varchar(50)" />
+            <column name="context" type="varchar(255)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses"
+                                 constraintName="fk_dunning_settings_invoice_statuses_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+    </changeSet>       
+ 	
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
         <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
@@ -11176,12 +11211,14 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="INTRD-2601_20211102" author="AmineBENAICHA" failOnError="false">
     	<dropForeignKeyConstraint baseTableName="dunning_collection_management" constraintName="fk_dunning_collection_management_dunning_settings"/>
 	    <dropPrimaryKey constraintName="dunning_collection_management_pkey" tableName="dunning_collection_management"/>
-		<renameTable oldTableName="dunning_collection_management" newTableName="dunning_agent"/>
+    </changeSet>
+    
+    <changeSet id="#FIX-INTRD-2601_20211102-changeset" author="AbdelmounaimAkadid" failOnError="false">
+    	<renameTable oldTableName="dunning_collection_management" newTableName="dunning_agent"/>
 		<renameSequence oldSequenceName="dunning_collection_management_seq" newSequenceName="dunning_agent_seq" />
-    	<addPrimaryKey columnNames="id" constraintName="dunning_agent_pkey" tableName="dunning_agent" />
+    	<!--  <addPrimaryKey columnNames="id" constraintName="dunning_agent_pkey" tableName="dunning_agent" />  -->
 		<addForeignKeyConstraint constraintName="fk_dunning_agent_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_agent" referencedColumnNames="id" />
-
 		<addColumn tableName="ar_dunning_action">
 			<column name="dunning_agent_id" type="bigint"/>
 		</addColumn>
@@ -11855,8 +11892,21 @@ order by date_trunc('month', i.invoice_date) DESC
         <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
      </changeSet>
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE">
-    <!--  comment is reserved word in oracle database-->
-    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
-    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
-</changeSet>
+	    <!--  comment is reserved word in oracle database-->
+	    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
+	    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+	</changeSet>
+	<changeSet id="#INTRD-5274_2022-02-22" author="HichamHANINE">
+	    <dropForeignKeyConstraint baseTableName="billing_accounting_article" constraintName="fk_billing_accounting_article_invoice_type"/>
+		<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_accounting_article"
+            constraintName="fk_billing_accounting_article_invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+	</changeSet>
+
+    <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki">
+        <addColumn tableName="billing_invoice">
+            <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
