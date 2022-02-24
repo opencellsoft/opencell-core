@@ -5151,6 +5151,9 @@
 			<column name="action_on_remaining_amount" type="varchar(255)" />
 			<column name="clearing_priority" type="varchar(255)" />
 			<column name="dunning_default_pause_reason_id" type="BIGINT" />
+            <column name="functional_currency_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -17108,6 +17111,7 @@
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
     <changeSet id="#INTRD-5274_2022-02-22" author="HichamHANINE"/>
     <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki" />
+    <changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
