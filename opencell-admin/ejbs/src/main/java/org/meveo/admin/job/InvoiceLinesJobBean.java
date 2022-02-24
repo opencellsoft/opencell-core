@@ -91,7 +91,10 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
                     for(BillingRun billingRun : billingRuns) {
                         List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
-                        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", (long) Runtime.getRuntime().availableProcessors());
+                        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+						if (nbRuns == -1) {
+							nbRuns = (long) Runtime.getRuntime().availableProcessors();
+						}
                         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
                         BasicStatistics basicStatistics = new BasicStatistics();
                         BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
