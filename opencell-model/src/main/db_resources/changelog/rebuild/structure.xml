@@ -4299,7 +4299,6 @@
             <column name="seller_id" type="bigint" />
             <column name="additional_details_id" type="bigint" />
             <column name="address_book_id" type="bigint" />
-            <column name="anonymization_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
