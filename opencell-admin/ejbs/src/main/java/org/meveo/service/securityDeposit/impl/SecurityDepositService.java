@@ -115,7 +115,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
     }
 
-    public void refund(SecurityDeposit securityDepositToUpdate, String refundReason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum)
+    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType)
     {
         Refund refund = createRefund(securityDepositToUpdate);
         if(refund == null){
@@ -125,36 +125,18 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
             		securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund); 
     
-            securityDepositToUpdate.setRefundReason(refundReason);
+            securityDepositToUpdate.setRefundReason(reason);
             securityDepositToUpdate.setStatus(securityDepositStatusEnum);
             securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
             update(securityDepositToUpdate);
-            auditLogService.trackOperation("REFUND", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+            String nameSDandExplanation = securityDepositToUpdate.getCode() + ", explanation: " + reason;
+            auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
         }
     }
     
-    public void cancel(SecurityDeposit securityDepositToUpdate, SecurityDepositCancelInput securityDepositInput)
-    {
-        Refund refund = createRefund(securityDepositToUpdate);        
-        if(refund == null){
-            throw new BusinessException("Cannot create Refund.");
-        }
-        else{
-            createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
-                SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
-
-            securityDepositToUpdate.setRefundReason(securityDepositInput.getCancelReason());
-            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.CANCELED);
-            securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
-            update(securityDepositToUpdate);
-            auditLogService.trackOperation("CANCEL", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
-        }
-    }
-
-
     private Refund createRefund(SecurityDeposit securityDepositToUpdate) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
-        long amountToPay = securityDepositToUpdate.getCurrentBalance().longValue();
+        long amountToPay = securityDepositToUpdate.getCurrentBalance().longValue() * 100;
         List<Long> accountOperationsToPayIds = new ArrayList<Long>();
         CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
         
@@ -188,7 +170,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
             return refundService.findById(refundId);
         }
     }
-    
     
     private Long doPayment(long amountToPay, List<Long> accountOperationsToPayIds, CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod, Long refundId,
             PaymentGateway paymentGateway) {
