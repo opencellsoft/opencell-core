@@ -177,6 +177,10 @@ public class CustomerApi extends AccountEntityApi {
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
 
+        if (postData.getIsCompany() != null) {
+            customer.setIsCompany(postData.getIsCompany());
+        }
+
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
