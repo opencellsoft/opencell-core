@@ -1,22 +1,43 @@
 package org.meveo.service.cpq;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRPropertiesUtil;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.util.IOUtils;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VFSUtils;
+import org.jboss.vfs.VirtualFile;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ConfigurationException;
+import org.meveo.admin.exception.InvoiceJasperNotFoundException;
+import org.meveo.admin.job.PdfGeneratorConstants;
+import org.meveo.admin.storage.StorageFactory;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.PDFGenerated;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.quote.QuoteStatusEnum;
+import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
+import org.meveo.service.communication.impl.EmailSender;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -30,49 +51,24 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.util.IOUtils;
-import org.elasticsearch.common.io.stream.InputStreamStreamInput;
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VFSUtils;
-import org.jboss.vfs.VirtualFile;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ConfigurationException;
-import org.meveo.admin.exception.InvoiceJasperNotFoundException;
-import org.meveo.admin.job.PdfGeneratorConstants;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.qualifier.PDFGenerated;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Media;
-import org.meveo.model.quote.QuoteStatusEnum;
-import org.meveo.model.quote.QuoteVersion;
-import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
-import org.meveo.service.communication.impl.EmailSender;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRPropertiesUtil;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRXmlDataSource;
-import net.sf.jasperreports.engine.util.JRLoader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Stateless
 public class CpqQuoteService extends BusinessService<CpqQuote> {
@@ -267,9 +263,9 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        ParamBean paramBean = paramBeanFactory.getInstance();
 	        String quoteDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
 	        String quoteXmlFileName = getFullXmlFilePath(quoteVersion, false); 
-	        String QUOTE_TAG_NAME = "quote"; 
+	        String QUOTE_TAG_NAME = "quote";
 	        File quoteXmlFile = new File(quoteXmlFileName);
-	        if (!quoteXmlFile.exists()) {
+	        if (!StorageFactory.exists(quoteXmlFile)) {
 	            //createXmlQuote(quote);
 	        }    
 	        String resDir = quoteDir + "quotes"  + File.separator + "jasper";
@@ -289,10 +285,10 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/quote");
 	                    log.info("default jaspers path :" + vfDir.getPathName());
 	                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-	                    sourceFile = new File(vfPath.getPath());  
+	                    sourceFile = new File(vfPath.getPath());
 	                    if (!sourceFile.exists()) {
 	                        throw new BusinessException("embedded jasper report for quote is missing..");
-	                    }  
+	                    }
 	                }
 	                destDir.mkdirs();
 	                FileUtils.copyDirectory(sourceFile, destDir);
@@ -311,7 +307,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	            reportTemplate = new FileInputStream(jasperFile);
 	            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	            DocumentBuilder db = dbf.newDocumentBuilder();
-	            Document xmlDocument = db.parse(quoteXmlFile);
+				Document xmlDocument = StorageFactory.parse(db, quoteXmlFile);
 	            xmlDocument.getDocumentElement().normalize();
 	            Node quoteNode = xmlDocument.getElementsByTagName(QUOTE_TAG_NAME).item(0);
 	            Transformer trans = TransformerFactory.newInstance().newTransformer();
@@ -334,14 +330,17 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	            Map<String, Object> parameters = new HashMap<>();
 	            String templateDir = new StringBuilder(resDir).toString();
 	            parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir + File.separator);
-	            
+
 	            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-	            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);   
+				OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename);
+				JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
+				assert outStream != null; // new code for S3
+				outStream.close(); // new code for S3
 
 	            log.info("PDF file '{}' produced for quote {}", pdfFullFilename, quote.getQuoteNumber());
 
-	        } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
+	        } catch (IOException | JRException | TransformerException | ParserConfigurationException e) {
 	            throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
 	        } finally {
 	            IOUtils.closeQuietly(reportTemplate);
@@ -365,19 +364,20 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	        String pdfFileName = getFullPdfFilePath(quoteVersion, false);
 	        File pdfFile = new File(pdfFileName);
-	        if (!pdfFile.exists()) {
+			if (!StorageFactory.exists(pdfFileName)) {
 	            throw new BusinessException("quote PDF was not produced yet for quote {} and quoteVersion {} " +quoteVersion.getQuote().getQuoteNumber());
 	        }
 
-	        FileInputStream fileInputStream = null;
+	        InputStream fileInputStream = null;
 	        try {
 	            long fileSize = pdfFile.length();
 	            if (fileSize > Integer.MAX_VALUE) {
 	                throw new IllegalArgumentException("File is too big to put it to buffer in memory.");
 	            }
 	            byte[] fileBytes = new byte[(int) fileSize];
-	            fileInputStream = new FileInputStream(pdfFile);
+				fileInputStream = StorageFactory.getInputStream(pdfFile);
 	            fileInputStream.read(fileBytes);
+				fileInputStream.close();
 	            return fileBytes;
 
 	        } catch (Exception e) {
