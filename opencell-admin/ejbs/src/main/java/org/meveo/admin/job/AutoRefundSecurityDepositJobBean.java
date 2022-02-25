@@ -73,7 +73,7 @@ public class AutoRefundSecurityDepositJobBean extends BaseJobBean {
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void process(SecurityDeposit securityDeposit, JobExecutionResultImpl jobExecutionResult) {
-		securityDepositService.refund(securityDeposit, "AUTO-REFUND", SecurityDepositOperationEnum.AUTO_REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.AUTO_REFUND);
+		securityDepositService.refund(securityDeposit, securityDeposit.getRefundReason(), SecurityDepositOperationEnum.AUTO_REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.AUTO_REFUND, "AUTO-REFUND");
 	}
 
 }
