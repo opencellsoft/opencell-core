@@ -243,7 +243,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Description - corresponds in majority of cases to charge description
      */
-    @Type(type = "longText")
+    @Size(max = 4000)
     @Column(name = "description")
     private String description;
 
