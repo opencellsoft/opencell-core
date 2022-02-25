@@ -64,14 +64,12 @@ public class FileProducer {
      * @param parameters template parameters
      */
     public void generatePDFfile(File dataSourceFile, String fileName, String reportFileName, Map<String, Object> parameters) {
-//        try(InputStream reportTemplate = new FileInputStream(reportFileName)) { // old code
-        try(InputStream reportTemplate = StorageFactory.getInputStream(reportFileName)) { // new code
+        try(InputStream reportTemplate = StorageFactory.getInputStream(reportFileName)) {
                 jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
             if (dataSourceFile != null) {
                 JRCsvDataSource dataSource = createDataSource(dataSourceFile);
                 jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-//                JasperExportManager.exportReportToPdfFile(jasperPrint, fileName); // old code
-                JasperExportManager.exportReportToPdfStream(jasperPrint, StorageFactory.getOutputStream(fileName)); // new code
+                JasperExportManager.exportReportToPdfStream(jasperPrint, StorageFactory.getOutputStream(fileName));
             }
         } catch (FileNotFoundException e) {
             throw new NoTemplateException();

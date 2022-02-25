@@ -235,9 +235,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
             File xmlFile = new File(fullXmlFilePath);
-//            StreamResult result = new StreamResult(xmlFile); // old code
-            OutputStream outStream = StorageFactory.getOutputStream(fullXmlFilePath); // new code
-            StreamResult result = new StreamResult(outStream); // new code
+            OutputStream outStream = StorageFactory.getOutputStream(fullXmlFilePath);
+            StreamResult result = new StreamResult(outStream);
             trans.transform(source, result);
             log.info("XML file '{}' produced for invoice {}", fullXmlFilePath, invoice.getInvoiceNumberOrTemporaryNumber());
             try {
