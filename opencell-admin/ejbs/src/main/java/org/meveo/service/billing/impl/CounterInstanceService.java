@@ -954,7 +954,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     	}
 
     	return ids;
-    }    
+    }
+    
+    public CounterPeriod instanciateOrRetrieveCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
+        // Same transaction creation of counter period
+    	try {
+            return getCounterPeriodByDate(counterInstance, date);
+        } catch (NoResultException e) {
+            return createPeriod(counterInstance, date, initDate, chargeInstance, serviceInstance);
+        }
+    }
     
 
 }

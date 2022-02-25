@@ -1153,13 +1153,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     	// accumulatorCounter
     	for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
     		if (counterInstance != null) {
-    			counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance,chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+    			counterPeriod = counterInstanceService.instanciateOrRetrieveCounterPeriod(counterInstance,chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
     					chargeInstance, chargeInstance.getServiceInstance());
     		}
     	}
     	// standard counter
     	if (chargeInstance.getCounter() != null) {
-    		counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(),chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+    		counterPeriod = counterInstanceService.instanciateOrRetrieveCounterPeriod(chargeInstance.getCounter(),chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
     				chargeInstance, chargeInstance.getServiceInstance());
     	}
     }
