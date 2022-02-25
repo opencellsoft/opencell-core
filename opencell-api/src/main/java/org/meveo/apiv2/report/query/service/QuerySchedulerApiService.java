@@ -2,21 +2,15 @@ package org.meveo.apiv2.report.query.service;
 
 import static java.util.Optional.empty;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import org.assertj.core.util.Arrays;
-import org.hibernate.Hibernate;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobInstance;
@@ -28,8 +22,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.report.QuerySchedulerService;
-
-import com.google.common.collect.Lists;
 
 public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
 
