@@ -3718,6 +3718,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Update net to pay amount
         final BigDecimal amountWithTax = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+
+        if(discountAggregates != null && !discountAggregates.isEmpty()) {
+            BigDecimal amountDiscount = discountAggregates.get(0).getAmountWithoutTax();
+            if(amountDiscount != null && !amountDiscount.equals(BigDecimal.ZERO)) {
+                invoice.setDiscountAmount(amountDiscount.abs());
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
+            }
+        }
     }
 
     private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
@@ -5455,6 +5463,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
+            if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null) {
+                BigDecimal hundred = new BigDecimal(100);
+                BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
+                for (DiscountPlanItem discountPlanItem : invoiceLine.getDiscountPlan().getDiscountPlanItems()) {
+                    if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
+                        invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
+                    } else {
+                        invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(
+                                (discountPlanItem.getDiscountValue().divide(hundred)).multiply(invoiceLine.getAmountWithoutTax()));
+                    }
+                }
+                invoiceLine.setDiscountRate(invoiceLineDiscountAmount);
+                invoiceLinesService.update(invoiceLine);
+            }
         }
         if(billingRun != null) {
             billingRun.setStatus(BillingRunStatusEnum.TAX_COMPUTED);
