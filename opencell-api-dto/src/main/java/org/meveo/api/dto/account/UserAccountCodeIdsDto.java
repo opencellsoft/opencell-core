@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.response.BaseResponse;
+
 /**
  * The Class UserAccountCodeIdsDto.
  *
@@ -33,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "UserAccountCodeIdsDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserAccountCodeIdsDto implements Serializable {
+public class UserAccountCodeIdsDto extends BaseResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8214042837650403747L;

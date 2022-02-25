@@ -9,7 +9,6 @@ import javax.validation.ValidationException;
 
 import org.meveo.api.dto.account.UserAccountCodeIdsDto;
 import org.meveo.api.dto.account.UserAccountIdCodeDto;
-import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;

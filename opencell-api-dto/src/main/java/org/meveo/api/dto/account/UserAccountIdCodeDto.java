@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.account;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,7 +35,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @XmlRootElement(name = "UserAccountIdCodeDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserAccountIdCodeDto {
+public class UserAccountIdCodeDto  implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1332916104721562009L;

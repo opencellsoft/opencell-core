@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.meveo.api.dto.account.UserAccountCodeIdsDto;
 import org.meveo.apiv2.accounts.resource.UserAccountsResource;
 import org.meveo.apiv2.accounts.service.UserAccountsApiService;
-import org.meveo.model.billing.UserAccount;
 
 public class UserAccountsResourceImpl implements UserAccountsResource {
 
