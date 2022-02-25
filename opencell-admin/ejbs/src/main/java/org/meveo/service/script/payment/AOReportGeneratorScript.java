@@ -292,13 +292,17 @@ public class AOReportGeneratorScript extends ReportExtractScript {
         }
         if (ao!=null && ao.getType().equalsIgnoreCase(ReportTransactionType.INV_STD.getLabel())) {
             RecordedInvoice recordedInvoice = (RecordedInvoice)ao;
+            log.info("recordedInvoice={},invoice={}",recordedInvoice.getId(),recordedInvoice.getInvoice().getId());
             if (recordedInvoice.getInvoice().getInvoiceAgregates()!=null) {
                 operationType = "ACT";
                 for(InvoiceAgregate invoiceAgregate:recordedInvoice.getInvoice().getInvoiceAgregates()) {
+                	if(invoiceAgregate.getDescription()!=null) {
+                	log.info("invoiceAgregate description= ",invoiceAgregate.getDescription());
                     if(invoiceAgregate.getDescription().contains("Abonnement")) {
                         operationType="ABO";
                         break;
                     }
+                	}
                 }
             }
         }
