@@ -524,24 +524,31 @@ public class InvoiceApi extends BaseApi {
     /**
      * 
      * @param invoiceId invoice id
-     * 
+     * @param generateAO generate AO, default value false
+     *
      * @return invoice number.
      * @throws MissingParameterException missing parameter exception
      * @throws EntityDoesNotExistsException entity does not exist exception
      * @throws BusinessException business exception
+     * @throws InvoiceExistException Invoice already exists exception
+     * @throws ImportInvoiceException Failed to import invoice exception
      */
-    public String validateInvoice(Long invoiceId) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public String validateInvoice(Long invoiceId, boolean generateAO)
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-       Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
+        Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
+        if(generateAO) {
+            invoiceService.generateRecordedInvoiceAO(invoiceId);
+        }
         return invoice.getInvoiceNumber();
     }
 
     /**
      *
-     * @param invoiceId invoice id
+     * @param invoice invoice
      *
      * @return invoice number.
      * @throws MissingParameterException missing parameter exception
