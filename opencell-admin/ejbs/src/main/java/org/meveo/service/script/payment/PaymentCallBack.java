@@ -49,7 +49,7 @@ import com.ingenico.connect.gateway.sdk.java.webhooks.WebhooksHelper;
 
  
 
-public class PaymentCallBackScript extends Script {
+public class PaymentCallBack extends Script {
 
     private PaymentService paymentService = (PaymentService) getServiceInterface("PaymentService");
     private PaymentGatewayService paymentGatewayService = (PaymentGatewayService) getServiceInterface("PaymentGatewayService");
