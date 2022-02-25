@@ -8735,5 +8735,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
         </insert>
     </changeSet>
+	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza">
+		<update tableName="cpq_attribute">
+			<column name="el_value">${sub.getSubscriptionDate()}</column>
+			<where>id=-8</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
