@@ -297,8 +297,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private int writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results, long maxLinePerFile, String decimalSeparator) throws BusinessException {
-//        FileWriter fileWriter = null; // old code
-        Writer fileWriter = null; // new code for S3
+        Writer fileWriter = null;
         StringBuilder line = new StringBuilder();
         Object value = null;
         int rowNumber = 0;
@@ -314,10 +313,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             filename = new StringBuilder(path[0]).append("_").append(format("%04d", fileSufix)).append(".").append(path[1]).toString();
             globalFileName = filename;
             File file = new File(sbDir + File.separator + filename);
-//            file.createNewFile(); // old code
-            StorageFactory.createNewFile(file); // new code for S3
-//            fileWriter = new FileWriter(file); // old code
-            fileWriter = StorageFactory.getWriter(file); // new code for S3
+            StorageFactory.createNewFile(file);
+            fileWriter = StorageFactory.getWriter(file);
             fileNames.add(filename);
 
             // get the header
@@ -424,8 +421,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     private List<Map<String, Object>> readGeneratedFile(String path, String separator) {
         List<Map<String, Object>> records = new ArrayList<>();
-//        try (BufferedReader br = new BufferedReader(new FileReader(path))) { // old code
-        try (BufferedReader br = new BufferedReader(Objects.requireNonNull(StorageFactory.getReader(path)))) { // new code for S3
+        try (BufferedReader br = new BufferedReader(Objects.requireNonNull(StorageFactory.getReader(path)))) {
             String line;
             String[] header = br.readLine().split(separator);
             while ((line = br.readLine()) != null) {
@@ -452,13 +448,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             dir.mkdirs();
         }
         File file = new File(sbDir + File.separator + filename);
-//        try { // old code
-//            file.createNewFile();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
-        StorageFactory.createNewFile(file); // new code for S3
+        StorageFactory.createNewFile(file);
     }
 
 }

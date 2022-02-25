@@ -62,7 +62,6 @@ public class JAXBUtils {
         if (schemaLocation != null) {
             marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
         }
-//        marshaller.marshal(obj, file); // old code
-        StorageFactory.marshal(marshaller, obj, file); // new code for S3
+        StorageFactory.marshal(marshaller, obj, file);
     }
 }
