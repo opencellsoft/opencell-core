@@ -1,10 +1,9 @@
 package org.meveo.service.securityDeposit.impl;
 
-import java.math.BigDecimal;
-
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,22 +13,21 @@ import javax.inject.Inject;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.PaymentException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
-import org.meveo.model.admin.Seller;
+
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentErrorEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
@@ -37,6 +35,8 @@ import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityDepositTransaction;
+import org.meveo.model.securityDeposit.ValidityPeriodUnit;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -72,6 +72,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private RefundService refundService;
     
+    @Inject
+    private SecurityDepositService securityDepositService;
+    
+    
     protected List<String> missingParameters = new ArrayList<>();
 
     public BigDecimal sumAmountPerCustomer(CustomerAccount customerAccount) {
@@ -91,21 +95,27 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     public void checkParameters(SecurityDeposit securityDeposit,SecurityDepositInput securityDepositInput, BigDecimal oldAmountSD)
     {
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
-        if(securityDeposit.getCurrency() == null)
+        if(securityDepositInput.getCurrency() == null)
+        {
             throw new EntityDoesNotExistsException("currency does not exist.");
+        }
         if(!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null))
+        {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
+        }  
         if(!SecurityDepositStatusEnum.NEW.equals(securityDeposit.getStatus()) && !SecurityDepositStatusEnum.HOLD.equals(securityDeposit.getStatus()))
+        {
             securityDeposit.setAmount(oldAmountSD);
+        }   
         if(securityDeposit.getServiceInstance() != null && securityDeposit.getSubscription() != null){           
             ServiceInstance serviceInstance = serviceInstanceService.retrieveIfNotManaged(securityDeposit.getServiceInstance());
-            if(serviceInstance.getSubscription() != null && serviceInstance.getSubscription().getId() != securityDeposit.getSubscription().getId()){
+            if(serviceInstance.getSubscription() != null && !serviceInstance.getSubscription().getId().equals(securityDeposit.getSubscription().getId())){
                 throw new InvalidParameterException("ServiceInstance must have the same chosen in subscription");
             }
         }
     }
-    
-    public void refund(SecurityDeposit securityDepositToUpdate, SecurityDepositRefundInput securityDepositInput)
+
+    public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType)
     {
         Refund refund = createRefund(securityDepositToUpdate);
         if(refund == null){
@@ -113,37 +123,20 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
         else{        
             createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
-                SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
+            		securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund); 
     
-            securityDepositToUpdate.setRefundReason(securityDepositInput.getRefundReason());
-            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.REFUNDED);
+            securityDepositToUpdate.setRefundReason(reason);
+            securityDepositToUpdate.setStatus(securityDepositStatusEnum);
             securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
             update(securityDepositToUpdate);
-            auditLogService.trackOperation("REFUND", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
+            String nameSDandExplanation = securityDepositToUpdate.getCode() + ", explanation: " + reason;
+            auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
         }
     }
     
-    public void cancel(SecurityDeposit securityDepositToUpdate, SecurityDepositCancelInput securityDepositInput)
-    {
-        Refund refund = createRefund(securityDepositToUpdate);        
-        if(refund == null){
-            throw new BusinessException("Cannot create Refund.");
-        }
-        else{
-            createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
-                SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, OperationCategoryEnum.DEBIT, refund); 
-
-            securityDepositToUpdate.setRefundReason(securityDepositInput.getCancelReason());
-            securityDepositToUpdate.setStatus(SecurityDepositStatusEnum.CANCELED);
-            securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
-            update(securityDepositToUpdate);
-            auditLogService.trackOperation("CANCEL", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
-        }
-    }
-
     private Refund createRefund(SecurityDeposit securityDepositToUpdate) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
-        long amountToPay = securityDepositToUpdate.getCurrentBalance().longValue();
+        long amountToPay = securityDepositToUpdate.getCurrentBalance().longValue() * 100;
         List<Long> accountOperationsToPayIds = new ArrayList<Long>();
         CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
         
@@ -166,9 +159,20 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         Long refundId = null;        
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
         if(paymentGateway == null) {
-            msgExceptionPaymentGateway(customerAccount, preferredPaymentMethod);
+            throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
         } 
         
+        refundId = doPayment(amountToPay, accountOperationsToPayIds, customerAccount, preferredPaymentMethod, refundId, paymentGateway);
+        if(refundId == null){
+            return null;
+        }
+        else{
+            return refundService.findById(refundId);
+        }
+    }
+    
+    private Long doPayment(long amountToPay, List<Long> accountOperationsToPayIds, CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod, Long refundId,
+            PaymentGateway paymentGateway) {
         if(paymentGateway!=null && (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD))) {
             try {
                 if(!accountOperationsToPayIds.isEmpty()) {
@@ -190,30 +194,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 throw new BusinessException("Error occurred during payment process for customer " + customerAccount.getCode(), exception);
             }
         }
-        if(refundId == null){
-            return null;
-        }
-        else{
-            return refundService.findById(refundId);
-        }
-    }
-
-    private void msgExceptionPaymentGateway(CustomerAccount customerAccount, PaymentMethod preferredPaymentMethod) {
-        Seller seller = null;
-        CreditCardTypeEnum cardTypeToCheck = null;
-        
-        if (preferredPaymentMethod != null && preferredPaymentMethod instanceof CardPaymentMethod) {
-            cardTypeToCheck = ((CardPaymentMethod) preferredPaymentMethod).getCardType();
-        }
-        if(customerAccount.getCustomer() != null) {
-            seller = customerAccount.getCustomer().getSeller();
-        }            
-        String err = " paymenType:"+(preferredPaymentMethod == null ? PaymentMethodEnum.CARD : preferredPaymentMethod.getPaymentType());
-        err = err + " country:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry());
-        err = err + " tradingCurrency:"+(customerAccount.getTradingCurrency());
-        err = err + " cardType:"+(cardTypeToCheck);
-        err = err + " seller:"+(seller == null ?  null : seller.getCode());
-        throw new BusinessException("paymentGateway == null ( " + err + " )");
+        return refundId;
     }
     
     public void credit(SecurityDeposit securityDepositToUpdate, SecurityDepositCreditInput securityDepositInput)
@@ -264,4 +245,43 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDepositTransaction.setAccountOperation(accountOperation);
         securityDepositTransactionService.create(securityDepositTransaction);        
     }
+
+	public List<Long> getSecurityDepositsToRefundIds() {
+		return getEntityManager()
+                .createNamedQuery("SecurityDeposit.securityDepositsToRefundIds", Long.class)
+                .setParameter("sysDate", new Date())
+                .getResultList();
+	}
+
+	public List<SecurityDeposit> checkPeriod(List<Long> securityDeposits) {
+		List<SecurityDeposit> securityDepositsToRefund = new ArrayList<SecurityDeposit>();
+		for (Long securityDepositId : securityDeposits) {
+			SecurityDeposit securityDeposit = securityDepositService.findById(securityDepositId);
+			
+			if (securityDeposit.getValidityDate() != null) {
+				securityDepositsToRefund.add(securityDeposit);
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.DAYS) ) {
+				if(DateUtils.addDaysToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.WEEKS) ) {
+				if(DateUtils.addWeeksToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.MONTHS) ) {
+				if(DateUtils.addMonthsToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}else if(securityDeposit.getValidityPeriod() == null && securityDeposit.getValidityPeriodUnit() == null
+					&& securityDeposit.getValidityPeriodUnit().equals(ValidityPeriodUnit.YEARS) ) {
+				if(DateUtils.addYearsToDate(securityDeposit.getAuditable().getCreated(), securityDeposit.getValidityPeriod()).after(new Date())) {
+					securityDepositsToRefund.add(securityDeposit);
+				}
+			}
+		}
+		return securityDepositsToRefund;
+	}
 }

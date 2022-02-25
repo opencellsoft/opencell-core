@@ -187,7 +187,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()))) {
 			throw new BusinessException("Can not validate order with status different than DRAFT or FINALIZED or COMPLETED, order id: " + order.getId());
 		}
-		UserAccount userAccount = order.getUserAccount();
+		UserAccount userAccount = order.getUserAccount() != null ? order.getUserAccount() : order.getOffers().get(0).getUserAccount();
 		if(userAccount==null) {
 			throw new BusinessException("Can not validate order with empty user account: " + order.getId());
 		}
@@ -204,7 +204,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		for(OrderOffer offer : validOffers){
 			Subscription subscription = new Subscription();
 			subscription.setSeller(getSelectedSeller(order));
-			subscription.setUserAccount(order.getUserAccount());
+			subscription.setUserAccount(userAccount);
 			subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
 			subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));

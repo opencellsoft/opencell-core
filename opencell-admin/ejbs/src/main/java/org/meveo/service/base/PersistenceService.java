@@ -172,6 +172,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
     
+    public static final int SHORT_MAX_VALUE = 32767;
     /**
      * Is custom field accumulation being used
      */

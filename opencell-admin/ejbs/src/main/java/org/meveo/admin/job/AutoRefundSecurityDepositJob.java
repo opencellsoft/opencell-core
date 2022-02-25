@@ -1,7 +1,7 @@
 package org.meveo.admin.job;
 
 import static javax.ejb.TransactionAttributeType.NEVER;
-import static org.meveo.model.jobs.MeveoJobCategoryEnum.DUNNING;
+import static org.meveo.model.jobs.MeveoJobCategoryEnum.PAYMENT;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -28,6 +28,6 @@ public class AutoRefundSecurityDepositJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return DUNNING;
+        return PAYMENT;
     }
 }

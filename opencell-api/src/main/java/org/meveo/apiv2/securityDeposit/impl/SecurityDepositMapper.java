@@ -48,18 +48,18 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         securityDeposit.setId(resource.getId());
         securityDeposit.setCode(resource.getCode());
         securityDeposit.setDescription(resource.getDescription());
-        if (resource.getTemplate() != null) {
+        if (resource.getTemplate() != null && resource.getTemplate().getId() != null) {
             SecurityDepositTemplate template = new SecurityDepositTemplate();
             template.setId(resource.getTemplate().getId());
             template.setCode(resource.getTemplate().getCode());
             securityDeposit.setTemplate(template);
         }
-        if (resource.getCurrency() != null) {
+        if (resource.getCurrency() != null && resource.getCurrency().getId() != null) {
             Currency currency = new Currency();
             currency.setId(resource.getCurrency().getId());
             securityDeposit.setCurrency(currency);
         }
-        if (resource.getCustomerAccount() != null) {
+        if (resource.getCustomerAccount() != null && resource.getCustomerAccount().getId() != null) {
             CustomerAccount customerAccount = new CustomerAccount();
             customerAccount.setId(resource.getCustomerAccount().getId());
             customerAccount.setCode(resource.getCustomerAccount().getCode());
@@ -68,24 +68,33 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         securityDeposit.setValidityDate(resource.getValidityDate());
         securityDeposit.setValidityPeriod(resource.getValidityPeriod());
         securityDeposit.setValidityPeriodUnit(resource.getValidityPeriodUnit());
-        securityDeposit.setAmount(resource.getAmount());        
+        if(resource.getAmount() != null) {
+            securityDeposit.setAmount(resource.getAmount()); 
+        }               
         if(resource.getCurrentBalance() != null) {
             securityDeposit.setCurrentBalance(resource.getCurrentBalance());
         }
         if(resource.getStatus() != null) {
             securityDeposit.setStatus(resource.getStatus());
         }
-        if (resource.getSubscription() != null) {
+        
+        if (resource.getSubscription() != null && resource.getSubscription().getId() != null) {
             Subscription subscription = new Subscription();
             subscription.setId(resource.getSubscription().getId());
             subscription.setCode(resource.getSubscription().getCode());
             securityDeposit.setSubscription(subscription);
+        }else {
+            securityDeposit.setSubscription(null);
         }
-        if (resource.getServiceInstance() != null) {
+        
+        if (resource.getServiceInstance() != null && resource.getServiceInstance().getId() != null) {
             ServiceInstance serviceInstance = new ServiceInstance();
             serviceInstance.setId(resource.getServiceInstance().getId());
             securityDeposit.setServiceInstance(serviceInstance);
+        }else {
+            securityDeposit.setServiceInstance(null);
         }
+        
         securityDeposit.setExternalReference(resource.getExternalReference());
         if(resource.getRefundReason() != null) {
             securityDeposit.setRefundReason(resource.getRefundReason());
