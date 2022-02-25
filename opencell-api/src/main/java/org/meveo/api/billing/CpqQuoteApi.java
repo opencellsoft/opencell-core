@@ -18,36 +18,12 @@
 
 package org.meveo.api.billing;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
-
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.PriceDTO;
@@ -157,6 +133,29 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.print.attribute.standard.Media;
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -560,8 +559,8 @@ public class CpqQuoteApi extends BaseApi {
             }
             String fileName = cpqQuoteService.generateFileName(quoteVersion);
             quoteVersion.setXmlFilename(fileName);
-            String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
-            Files.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
+            String xmlFilename = quoteXmlDir.getPath() + File.separator + fileName + ".xml";
+            StorageFactory.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
@@ -1188,6 +1187,11 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
 
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
+            if(quoteVersionService.findByQuoteCode(quoteCode).stream()
+                    .filter(quoteVersion -> VersionStatusEnum.PUBLISHED.equals(quoteVersion.getStatus()))
+                    .findAny().isEmpty()){
+                throw new BusinessException("APPROVE a QUOTE is not be possible if at least one QUOTE Version is not published");
+            }
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
         try {
@@ -1728,7 +1732,7 @@ public class CpqQuoteApi extends BaseApi {
         if (quote == null) {
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
         }
-        QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion); 
+        QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
        if (generatePdfIfNotExist) {
             	cpqQuoteService.produceQuotePdf(quoteVersion);
             }
