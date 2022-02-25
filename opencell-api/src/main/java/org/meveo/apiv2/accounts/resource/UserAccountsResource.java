@@ -8,9 +8,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.apiv2.models.ApiException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/userAccounts")
@@ -25,7 +28,8 @@ public interface UserAccountsResource {
     description ="fine allowed parents for a giving user account",
     responses = {
             @ApiResponse(responseCode="200", description = "the UserAccounts allowed to be parent for userAccountCode successfully retrieved"),
-            @ApiResponse(responseCode = "400", description = "bad request userAccountCode contains an error")
+            @ApiResponse(responseCode = "404", description = "the full list of entities not found",
+                    content = @Content(schema = @Schema(implementation = ApiException.class)))            
     })
     Response allowedUserAccountParents(@Parameter(description = "user Account code", required = true) @PathParam("userAccountCode") String userAccountCode);
 

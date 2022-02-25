@@ -7,6 +7,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
+import org.meveo.api.dto.account.UserAccountCodeIdsDto;
+import org.meveo.api.dto.account.UserAccountIdCodeDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -30,14 +32,16 @@ public class UserAccountsApiService {
 
     @Inject 
     private BillingAccountService billingAccountService;
-
+    
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
     protected List<String> missingParameters = new ArrayList<>();
 
-    public UserAccountsDto allowedUserAccountParents(String userAccountCode) throws MeveoApiException {
+    public UserAccountCodeIdsDto allowedUserAccountParents(String userAccountCode) throws MeveoApiException {
+    	
+    	UserAccountCodeIdsDto accountCodeIdsDto = new UserAccountCodeIdsDto();
 
         if (StringUtils.isBlank(userAccountCode)) {
         	throw new ValidationException("The user account code must be non-null");
@@ -55,25 +59,35 @@ public class UserAccountsApiService {
         }
         
         
-        UserAccountsDto result = new UserAccountsDto();
         List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
         
         if (userAccounts != null) {
+        	List<UserAccount> userAccountsToRemove = new ArrayList<>();
 			for (UserAccount ua : userAccounts) {
 				if(ua.getParentUserAccount() != null && ua.getParentUserAccount().equals(userAccount)) {
-					removeChildrenUserAccount(userAccounts, ua);
+					removeChildrenUserAccount(userAccounts, userAccountsToRemove , ua);
 				}
 			}
+			
+			userAccounts.removeAll(userAccountsToRemove);
+		}
+        
+		for (UserAccount ua : userAccounts) {
+			UserAccountIdCodeDto accountIdCodeDto = new UserAccountIdCodeDto();
+			accountIdCodeDto.setId(ua.getId());
+			accountIdCodeDto.setCode(ua.getCode());
+			
+			accountCodeIdsDto.getUserAccounts().add(accountIdCodeDto);
 		}
 
-        return result;
+        return accountCodeIdsDto;
     }
     
-    private void removeChildrenUserAccount(List<UserAccount> userAccounts, UserAccount userAccountToRemove) {
-    	userAccounts.remove(userAccountToRemove);
+    private void removeChildrenUserAccount(List<UserAccount> userAccounts,List<UserAccount> userAccountListToRemove, UserAccount userAccountToRemove) {
+    	userAccountListToRemove.add(userAccountToRemove);
     	for(UserAccount ua:userAccounts) {
     		if(ua.getParentUserAccount() != null && ua.getParentUserAccount().getId().equals(userAccountToRemove.getId())) {
-    			removeChildrenUserAccount(userAccounts, ua);
+    			removeChildrenUserAccount(userAccounts, userAccountListToRemove , ua);
     		}
     	}
     }
