@@ -307,8 +307,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	            reportTemplate = new FileInputStream(jasperFile);
 	            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	            DocumentBuilder db = dbf.newDocumentBuilder();
-//	            Document xmlDocument = db.parse(quoteXmlFile);// old code
-				Document xmlDocument = StorageFactory.parse(db, quoteXmlFile); // new code
+				Document xmlDocument = StorageFactory.parse(db, quoteXmlFile);
 	            xmlDocument.getDocumentElement().normalize();
 	            Node quoteNode = xmlDocument.getElementsByTagName(QUOTE_TAG_NAME).item(0);
 	            Transformer trans = TransformerFactory.newInstance().newTransformer();
@@ -334,9 +333,8 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-//				JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename); // old code
-				OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename); // new code for S3
-				JasperExportManager.exportReportToPdfStream(jasperPrint, outStream); // new code for S3
+				OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename);
+				JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
 				assert outStream != null; // new code for S3
 				outStream.close(); // new code for S3
 
@@ -366,8 +364,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	        String pdfFileName = getFullPdfFilePath(quoteVersion, false);
 	        File pdfFile = new File(pdfFileName);
-//			if (!pdfFile.exists()) { // old code
-			if (!StorageFactory.exists(pdfFileName)) { // new code for S3
+			if (!StorageFactory.exists(pdfFileName)) {
 	            throw new BusinessException("quote PDF was not produced yet for quote {} and quoteVersion {} " +quoteVersion.getQuote().getQuoteNumber());
 	        }
 
@@ -378,8 +375,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	                throw new IllegalArgumentException("File is too big to put it to buffer in memory.");
 	            }
 	            byte[] fileBytes = new byte[(int) fileSize];
-//				fileInputStream = new FileInputStream(pdfFile); // old code
-				fileInputStream = StorageFactory.getInputStream(pdfFile); // new code for S3
+				fileInputStream = StorageFactory.getInputStream(pdfFile);
 	            fileInputStream.read(fileBytes);
 				fileInputStream.close();
 	            return fileBytes;

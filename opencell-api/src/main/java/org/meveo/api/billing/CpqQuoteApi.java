@@ -560,8 +560,7 @@ public class CpqQuoteApi extends BaseApi {
             String fileName = cpqQuoteService.generateFileName(quoteVersion);
             quoteVersion.setXmlFilename(fileName);
             String xmlFilename = quoteXmlDir.getPath() + File.separator + fileName + ".xml";
-//            Files.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);// old code
-            StorageFactory.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE); // new code for S3
+            StorageFactory.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);

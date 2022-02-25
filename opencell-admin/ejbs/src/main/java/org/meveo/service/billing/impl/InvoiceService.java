@@ -1572,12 +1572,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
-//            reportTemplate = new FileInputStream(jasperFile); // old code
-            reportTemplate = StorageFactory.getInputStream(jasperFile); // new code
+            reportTemplate = StorageFactory.getInputStream(jasperFile);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-//            Document xmlDocument = db.parse(invoiceXmlFile); // old code
-            Document xmlDocument = StorageFactory.parse(db, invoiceXmlFile); // new code
+            Document xmlDocument = StorageFactory.parse(db, invoiceXmlFile);
             xmlDocument.getDocumentElement().normalize();
             Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
             Transformer trans = TransformerFactory.newInstance().newTransformer();
@@ -1599,8 +1597,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-//            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename); // old code
-            // new code
             OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename);
             JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
             outStream.close();
