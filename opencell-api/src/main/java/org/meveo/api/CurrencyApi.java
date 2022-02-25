@@ -19,12 +19,15 @@
 package org.meveo.api;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrenciesDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
@@ -212,5 +215,24 @@ public class CurrencyApi extends BaseApi {
         } else {
             tradingCurrencyService.disable(tradingCurrency);
         }
+    }
+
+    public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
+        if(postData.getCode()== null)
+        {
+            throw new MissingParameterException("code of the currency is mandatory");
+        }
+        Currency currency = currencyService.findByCode(postData.getCode());
+        if(currency == null)
+        {
+            throw new NotFoundException(new ActionStatus(ActionStatusEnum.FAIL, "currency not found"));
+        }
+
+        appProvider.setCurrency(currency);
+        appProvider.setMulticurrencyFlag(true);
+        appProvider.setFunctionalCurrencyFlag(true);
+
+
+        return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
     }
 }

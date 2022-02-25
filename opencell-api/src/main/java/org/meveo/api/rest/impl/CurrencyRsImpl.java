@@ -27,6 +27,8 @@ import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -42,6 +44,10 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Inject
     private CurrencyApi currencyApi;
+
+      @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     @Override
     public TradingCurrenciesResponseDto list() {
@@ -146,5 +152,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
+
+        return currencyApi.addFunctionalCurrency(postData);
     }
 }

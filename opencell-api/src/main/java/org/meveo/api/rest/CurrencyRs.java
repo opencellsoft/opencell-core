@@ -19,18 +19,14 @@
 package org.meveo.api.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -230,4 +226,28 @@ public interface CurrencyRs extends IBaseRs {
 				)}
 	)
     ActionStatus disable(@PathParam("code") String code);
+
+
+	/**
+     * add functional currency to the main provider
+     *
+     * @param postData Currency dto
+     * @return Request processing status
+     */
+    @POST
+    @Path("/addFunctionalCurrency")
+	@Operation(
+			summary=" API to add functional currency to the main provider  ",
+			description=" API to add functional currency to the main provider ",
+			operationId="ADD_FUNCTIONAL_CURRENCY",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus addFunctionalCurrency(CurrencyDto postData);
 }
