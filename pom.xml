@@ -63,6 +63,10 @@
             <id>opencell-repo</id>
             <url>http://libs.opencellsoft.com/</url>
         </repository>
+        <repository>
+            <id>opencell-nexus</id>
+            <url>http://nexus.int.opencell.work/repository/maven-snapshots/</url>
+        </repository>
     </repositories>
     
     <pluginRepositories>

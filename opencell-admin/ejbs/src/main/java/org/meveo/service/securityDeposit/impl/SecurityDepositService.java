@@ -117,26 +117,33 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType)
     {
-        Refund refund = createRefund(securityDepositToUpdate);
-        if(refund == null){
-            throw new BusinessException("Cannot create Refund.");
+        if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0)  {
+            Refund refund = createRefund(securityDepositToUpdate);
+            if(refund == null){
+                throw new BusinessException("Cannot create Refund.");
+            }
+            else{        
+                createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
+                        securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund); 
+            }
         }
-        else{        
-            createSecurityDepositTransaction(securityDepositToUpdate, securityDepositToUpdate.getCurrentBalance(), 
-            		securityDepositOperationEnum, OperationCategoryEnum.DEBIT, refund); 
-    
+        
+        if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositStatusEnum)){
+            securityDepositToUpdate.setCancelReason(reason);
+        }
+        else if(SecurityDepositStatusEnum.REFUNDED.equals(securityDepositStatusEnum)){
             securityDepositToUpdate.setRefundReason(reason);
-            securityDepositToUpdate.setStatus(securityDepositStatusEnum);
-            securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
-            update(securityDepositToUpdate);
-            String nameSDandExplanation = securityDepositToUpdate.getCode() + ", explanation: " + reason;
-            auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
-        }
+        }                
+        securityDepositToUpdate.setStatus(securityDepositStatusEnum);
+        securityDepositToUpdate.setCurrentBalance(new BigDecimal(0));
+        update(securityDepositToUpdate);
+        String nameSDandExplanation = securityDepositToUpdate.getCode() + ", explanation: " + reason;
+        auditLogService.trackOperation(operationType, new Date(), securityDepositToUpdate, nameSDandExplanation);
     }
     
     private Refund createRefund(SecurityDeposit securityDepositToUpdate) {
         securityDepositToUpdate = retrieveIfNotManaged(securityDepositToUpdate);
-        long amountToPay = securityDepositToUpdate.getCurrentBalance().longValue() * 100;
+        long amountToPay = securityDepositToUpdate.getCurrentBalance().multiply(new BigDecimal(100)).longValue();
         List<Long> accountOperationsToPayIds = new ArrayList<Long>();
         CustomerAccount customerAccount = securityDepositToUpdate.getCustomerAccount();
         

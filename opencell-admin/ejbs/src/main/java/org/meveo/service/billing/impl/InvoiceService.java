@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -96,6 +97,7 @@ import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.PDFParametersConstruction;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
@@ -1570,10 +1572,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
-            reportTemplate = new FileInputStream(jasperFile);
+            reportTemplate = StorageFactory.getInputStream(jasperFile);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document xmlDocument = db.parse(invoiceXmlFile);
+            Document xmlDocument = StorageFactory.parse(db, invoiceXmlFile);
             xmlDocument.getDocumentElement().normalize();
             Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
             Transformer trans = TransformerFactory.newInstance().newTransformer();
@@ -1595,7 +1597,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
+            OutputStream outStream = StorageFactory.getOutputStream(pdfFullFilename);
+            JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
+            outStream.close();
+
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
                 if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
@@ -1605,7 +1610,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
-        } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
+        } catch (IOException | JRException | TransformerException | ParserConfigurationException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } finally {
             IOUtils.closeQuietly(reportTemplate);

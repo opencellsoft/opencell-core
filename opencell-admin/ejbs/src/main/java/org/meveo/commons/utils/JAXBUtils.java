@@ -17,12 +17,13 @@
  */
 package org.meveo.commons.utils;
 
-import java.io.File;
+import org.meveo.admin.storage.StorageFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.io.File;
 
 /**
  * Utils class for working with jaxb.
@@ -61,7 +62,6 @@ public class JAXBUtils {
         if (schemaLocation != null) {
             marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
         }
-        marshaller.marshal(obj, file);
-
+        StorageFactory.marshal(marshaller, obj, file);
     }
 }
