@@ -37,6 +37,7 @@ public class BillingRunApiServiceTest {
         billingRun.setId(1L);
         billingRun.setStatus(DRAFT_INVOICES);
         when(billingRunService.findById(1L)).thenReturn(billingRun);
+        when(billingRunService.update(billingRun)).thenReturn(billingRun);
 
         BillingRun updatedBR = billingRunApiService.advancedStatus(1L, false).get();
 
