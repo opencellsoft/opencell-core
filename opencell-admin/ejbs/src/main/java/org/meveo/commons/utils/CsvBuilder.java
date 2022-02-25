@@ -148,15 +148,13 @@ public class CsvBuilder {
 	 * @param absolutFfilename the absolut ffilename
 	 */
 	public void toFile(String absolutFfilename) {
-//		FileWriter fw = null; // old code
-		Writer fw = null; // new code for S3
+		Writer fw = null;
 		try {
 			File tmp = new File(absolutFfilename);
 			File createDir = tmp.getParentFile();
 
 			createDir.mkdirs();
-//			fw = new FileWriter(absolutFfilename, false); // old code
-			fw = StorageFactory.getWriter(absolutFfilename); // new code for S3
+			fw = StorageFactory.getWriter(absolutFfilename);
 			fw.write(sb.toString());
 			fw.close();
 		} catch (Exception e) {

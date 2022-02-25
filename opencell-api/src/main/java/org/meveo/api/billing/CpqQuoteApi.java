@@ -560,8 +560,7 @@ public class CpqQuoteApi extends BaseApi {
             String fileName = cpqQuoteService.generateFileName(quoteVersion);
             quoteVersion.setXmlFilename(fileName);
             String xmlFilename = quoteXmlDir.getPath() + File.separator + fileName + ".xml";
-//            Files.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);// old code
-            StorageFactory.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE); // new code for S3
+            StorageFactory.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
@@ -1188,6 +1187,11 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
 
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
+            if(quoteVersionService.findByQuoteCode(quoteCode).stream()
+                    .filter(quoteVersion -> VersionStatusEnum.PUBLISHED.equals(quoteVersion.getStatus()))
+                    .findAny().isEmpty()){
+                throw new BusinessException("APPROVE a QUOTE is not be possible if at least one QUOTE Version is not published");
+            }
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
         try {
