@@ -158,16 +158,13 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             throw new BadRequestException("There is already a reminder level for this policy, remove the existing level to select a new one");
         }
         if (countEndOfDunningLevel > 1) {
-            throw new BadRequestException("Dunning policy should have only 1 end of dunning level");
+            throw new BadRequestException("There is already an end of dunning level for this policy");
         }
-        if (totalDunningLevels < 1) {
-            throw new BadRequestException("Dunning policy should have at least 1 dunning level other than the reminder level");
-        }
-        if (countReminderLevels == 0) {
-            throw new BadRequestException("Reminder level is mandatory");
+        if (totalDunningLevels  < 1) {
+            throw new BadRequestException("Dunning policy should have at least one dunning level other the reminder level");
         }
         if (countEndOfDunningLevel == 0) {
-            throw new BadRequestException("Dunning policy should have at least 1 dunning level other than the reminder level");
+            throw new BadRequestException("Dunning policy should have an end of dunning level");
         }
     }
 
