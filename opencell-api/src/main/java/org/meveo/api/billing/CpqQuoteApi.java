@@ -1187,6 +1187,11 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
 
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
+            if(quoteVersionService.findByQuoteCode(quoteCode).stream()
+                    .filter(quoteVersion -> VersionStatusEnum.PUBLISHED.equals(quoteVersion.getStatus()))
+                    .findAny().isEmpty()){
+                throw new BusinessException("APPROVE a QUOTE is not be possible if at least one QUOTE Version is not published");
+            }
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
         try {
