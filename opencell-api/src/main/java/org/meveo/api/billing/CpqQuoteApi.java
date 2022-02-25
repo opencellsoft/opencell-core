@@ -18,31 +18,6 @@
 
 package org.meveo.api.billing;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -50,7 +25,6 @@ import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OverrodPricesDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
@@ -158,6 +132,30 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.print.attribute.standard.Media;
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -1530,63 +1528,65 @@ public class CpqQuoteApi extends BaseApi {
                 // Add subscription charges
                 EDR edr =null;
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
-                    UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-                    AccountingArticle usageArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargetemplate, attributes)
-                            .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate()));
-                    if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
-                        edr = new EDR();
-                        try {
+                    if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
+                        UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
+                        AccountingArticle usageArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargetemplate, attributes)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate()));
+                        if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
+                            edr = new EDR();
+                            try {
 
-							edr.setAccessCode(null);
-							edr.setEventDate(usageCharge.getChargeDate());
-							edr.setSubscription(subscription);
-							edr.setStatus(EDRStatusEnum.OPEN);
-							edr.setCreated(new Date());
-							edr.setOriginBatch("QUOTE");
-							edr.setOriginRecord(System.currentTimeMillis() + "");
-							Double quantity = 0d;
-							Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-							if (quantityValue != null && quantityValue instanceof Double) {
-								quantity = (Double) quantityValue;
-							} else {
-								throw new MissingParameterException(
-										"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-												+ " for the usage charge " + usageCharge.getCode());
-							}
-							if (quantity != 0) {
-								edr.setQuantity(new BigDecimal(quantity));
-								Object param1 = attributes.get("EDR_text_parameter_1");
-								if (param1 != null) {
-									edr.setParameter1(param1.toString());
-								}
-								Object param2 = attributes.get("EDR_text_parameter_2");
-								if (param2 != null) {
-									edr.setParameter2(param2.toString());
-								}
-								Object param3 = attributes.get("EDR_text_parameter_3");
-								if (param3 != null) {
-									edr.setParameter3(param3.toString());
-								}
-								List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+                                edr.setAccessCode(null);
+                                edr.setEventDate(usageCharge.getChargeDate());
+                                edr.setSubscription(subscription);
+                                edr.setStatus(EDRStatusEnum.OPEN);
+                                edr.setCreated(new Date());
+                                edr.setOriginBatch("QUOTE");
+                                edr.setOriginRecord(System.currentTimeMillis() + "");
+                                Double quantity = 0d;
+                                Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                                if (quantityValue != null && quantityValue instanceof Double) {
+                                    quantity = (Double) quantityValue;
+                                } else {
+                                    throw new MissingParameterException(
+                                            "The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
+                                                    + " for the usage charge " + usageCharge.getCode());
+                                }
+                                if (quantity != 0) {
+                                    edr.setQuantity(new BigDecimal(quantity));
+                                    Object param1 = attributes.get("EDR_text_parameter_1");
+                                    if (param1 != null) {
+                                        edr.setParameter1(param1.toString());
+                                    }
+                                    Object param2 = attributes.get("EDR_text_parameter_2");
+                                    if (param2 != null) {
+                                        edr.setParameter2(param2.toString());
+                                    }
+                                    Object param3 = attributes.get("EDR_text_parameter_3");
+                                    if (param3 != null) {
+                                        edr.setParameter3(param3.toString());
+                                    }
+                                    List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
 
-								if (walletOperationsFromEdr != null) {
-									for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                        walletOperation.setAccountingArticle(usageArticle);
-										walletOperations.addAll(walletOperationsFromEdr);
-									}
-								}
-							}
+                                    if (walletOperationsFromEdr != null) {
+                                        for (WalletOperation walletOperation : walletOperationsFromEdr) {
+                                            walletOperation.setAccountingArticle(usageArticle);
+                                            walletOperations.addAll(walletOperationsFromEdr);
+                                        }
+                                    }
+                                }
 
 
-                    	} catch (RatingException e) {
-                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                			throw new BusinessApiException(e.getMessage());
+                            } catch (RatingException e) {
+                                log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                                throw new BusinessApiException(e.getMessage());
 
-                		} catch (BusinessException e) {
-                			log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                			throw new BusinessApiException(e.getMessage()); 
+                            } catch (BusinessException e) {
+                                log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                                throw new BusinessApiException(e.getMessage());
 
-                		}
+                            }
+                        }
                     }
                 }
             }
