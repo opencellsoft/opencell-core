@@ -121,12 +121,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     }
                     dunningPolicyLevels.add(policyLevel);
                 }
-                if (countReminderLevels == 0) {
-                    throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
-                }
-                if (countEndOfDunningLevel == 0) {
-                    throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
-                }
+                
                 validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
                 dunningPolicy.setTotalDunningLevels(totalDunningLevels);
                 validateLevels(dunningPolicyLevels, endOfLevelDayOverDue);
@@ -159,20 +154,20 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public void validateLevelsNumber(int countReminderLevels, int countEndOfDunningLevel, int totalDunningLevels) {
-        if (totalDunningLevels == 0) {
-            throw new BadRequestException("Policy should have at least one dunning level other the reminder level");
+        if (countReminderLevels > 1) {
+            throw new BadRequestException("There is already a reminder level for this policy, remove the existing level to select a new one");
+        }
+        if (countEndOfDunningLevel > 1) {
+            throw new BadRequestException("Dunning policy should have only 1 end of dunning level");
+        }
+        if (totalDunningLevels < 1) {
+            throw new BadRequestException("Dunning policy should have at least 1 dunning level other than the reminder level");
         }
         if (countReminderLevels == 0) {
             throw new BadRequestException("Reminder level is mandatory");
         }
         if (countEndOfDunningLevel == 0) {
-            throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.totalDunningLevels.inf"));
-        }
-        if (countReminderLevels > 1) {
-            throw new BadRequestException(resourceMessages.getString("error.dunningPolicy.dunningLevel.isReminderLevel"));
-        }
-        if (countEndOfDunningLevel > 1) {
-            throw new BadRequestException("A policy can have only 1 level with isEndOfDunningLevel = TRUE");
+            throw new BadRequestException("Dunning policy should have at least 1 dunning level other than the reminder level");
         }
     }
 
