@@ -1096,9 +1096,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate, WalletOperationAggregationSettings aggregationSettings) {
 
-        updateWalletOperationPeriodView(aggregationSettings);
-
         WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings, customFieldTemplateService, filterService);
+
+        String groupBy = woa.getGroupBy();
+        
+        updateWalletOperationPeriodView(aggregationSettings, groupBy);
 
         String strQuery = woa.getGroupQuery();
         log.info("aggregated query={}", strQuery);
@@ -1112,10 +1114,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return result;
     }
 
-    private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings) {
+    private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings, String groupBy) {
         String queryTemplate =
-                "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
-                        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
+                "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by " + groupBy + " order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
+                        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by " + groupBy + " order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
                         + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
         Map<String, String> parameters = new HashMap<>();
         if (aggregationSettings.isPeriodEndDateIncluded()) {
@@ -1137,6 +1139,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         for (String key : parameters.keySet()) {
             queryTemplate = queryTemplate.replace(key, parameters.get(key));
         }
+        
+        log.info("TTTTTT : {}", queryTemplate);
+        
         Query q = getEntityManager().createNativeQuery(queryTemplate);
         log.info("TTT : {}", queryTemplate);
         q.executeUpdate();
