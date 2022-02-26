@@ -66,7 +66,6 @@ public class TradingCurrency extends EnableEntity {
     /**
      * Description. Deprecated in 5.3 for not use.
      */
-    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
@@ -83,6 +82,13 @@ public class TradingCurrency extends EnableEntity {
      */
     @Transient
     String currencyCode;
+
+    @Column(name = "symbol", length = 255)
+    @Size(max = 255)
+    private String symbol;
+
+    @Column(name = "decimal_places")
+    private Integer decimalPlaces;
 
     public BigDecimal getPrCurrencyToThis() {
         return prCurrencyToThis;
