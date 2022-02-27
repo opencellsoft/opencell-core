@@ -70,7 +70,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
      private String symbol;
 
       /** trading currency symbol. */
-     private Integer decimalPlaces;
+     private int decimalPlaces;
 
     /**
      * Instantiates a new currency dto.
