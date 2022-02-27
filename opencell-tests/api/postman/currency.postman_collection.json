@@ -130,6 +130,58 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create Currency",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\":\"MAD\",\n    \"description\":\"Dirham marrocan\",\n    \"decimalPlaces\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Currency Copy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"MAD\",\n    \"description\": \"Dirham marrocan\",\n    \"decimalPlaces\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
