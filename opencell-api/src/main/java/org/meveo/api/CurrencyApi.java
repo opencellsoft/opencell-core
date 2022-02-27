@@ -100,6 +100,8 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setActive(true);
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
+        tradingCurrency.setSymbol(postData.getSymbol() != null ? postData.getSymbol() : postData.getCode());
+        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
         if (postData.isDisabled() != null) {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
@@ -159,6 +161,8 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
+        tradingCurrency.setSymbol(postData.getSymbol() != null ? postData.getSymbol() : postData.getCode());
+        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
     }
