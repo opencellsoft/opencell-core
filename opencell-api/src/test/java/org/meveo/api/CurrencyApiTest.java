@@ -9,6 +9,7 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -91,18 +92,18 @@ public class CurrencyApiTest {
             currencyApi.create(currencyDto);
 
             verify(tradingCurrencyService).create(any());
-            verify(currencyService).create(any());
 
 
     }
 
     @Test
     public void updateCurrency() {
-         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(null);
+         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
+         when(currencyService.findByCode(any())).thenReturn(new Currency());
             CurrencyDto currencyDto = new CurrencyDto();
             currencyDto.setCode("MAD");
             currencyDto.setSymbol(null);
-            currencyApi.create(currencyDto);
+            currencyApi.update(currencyDto);
 
             verify(tradingCurrencyService).update(any());
             verify(currencyService).update(any());
