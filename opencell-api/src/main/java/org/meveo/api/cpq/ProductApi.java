@@ -1,25 +1,10 @@
 package org.meveo.api.cpq;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -86,6 +71,18 @@ import org.meveo.service.cpq.rule.ReplacementRulesExecutor;
 import org.meveo.service.cpq.rule.SelectedAttributes;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Tarik FAKHOURI
@@ -934,14 +931,14 @@ public class ProductApi extends BaseApi {
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode, "offerCode");
         }
-//		ReplacementRulesExecutor replacementRulesExecutor = new ReplacementRulesExecutor(false);
+		ReplacementRulesExecutor replacementRulesExecutor = new ReplacementRulesExecutor(false);
 
-		/*SelectedAttributes offerSourceSelectedAttributes = new SelectedAttributes(offerContextDTO.getOfferCode(), null, offerContextDTO.getSelectedOfferAttributes());
+		SelectedAttributes offerSourceSelectedAttributes = new SelectedAttributes(offerContextDTO.getOfferCode(), null, offerContextDTO.getSelectedOfferAttributes());
 		List<SelectedAttributes> productSourceSelectedAttributes = offerContextDTO.getSelectedProducts()
 				.stream()
 				.map(product -> new SelectedAttributes(offerContextDTO.getOfferCode(), product.getProductCode(), product.getSelectedAttributes()))
 				.collect(Collectors.toList());
-		productSourceSelectedAttributes.add(offerSourceSelectedAttributes);*/
+		productSourceSelectedAttributes.add(offerSourceSelectedAttributes);
 		log.info("OfferTemplateApi requestedTagTypes={}", requestedTagTypes);
         GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes);
         for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
@@ -978,13 +975,13 @@ public class ProductApi extends BaseApi {
                         boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> true);
                         //processReplacementRules(attributeCommercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                         attributeDto.setSelectable(isSelectable);
-						/*Optional<SelectedAttributes> selectedAttribute = productSourceSelectedAttributes.stream()
+						Optional<SelectedAttributes> selectedAttribute = productSourceSelectedAttributes.stream()
 								.filter(selectedAttributes -> selectedAttributes.match(offerProduct.getOfferTemplateCode(), offerProduct.getProduct().getCode()))
 								.findFirst();
 						if(selectedAttribute.isPresent() && selectedAttribute.get().getSelectedAttributesMap() != null && selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()) != null) {
 							replacementRulesExecutor.executeReplacements(selectedAttribute.get(), productSourceSelectedAttributes,attributeCommercialRules);
-							attributeDto.setReplacedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()));
-						}*/
+							attributeDto.setAssignedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()));
+						}
                     }
                     List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
                     if (sourceRules != null && !sourceRules.isEmpty()) {
@@ -1023,11 +1020,11 @@ public class ProductApi extends BaseApi {
                 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                 boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), rule -> true);
                 //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
-				/*attributeDto.setSelectable(isSelectable);
+				attributeDto.setSelectable(isSelectable);
 				replacementRulesExecutor.executeReplacements(offerSourceSelectedAttributes, productSourceSelectedAttributes, commercialRules);
                 if(offerSourceSelectedAttributes.getSelectedAttributesMap() != null){
-                	attributeDto.setReplacedValue(offerSourceSelectedAttributes.getSelectedAttributesMap().get(attributeDto.getCode()));
-				}*/
+					attributeDto.setAssignedValue(offerSourceSelectedAttributes.getSelectedAttributesMap().get(attributeDto.getCode()));
+				}
             }
             List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getCode(), offerCode);
             if (sourceRules != null && !sourceRules.isEmpty()) {

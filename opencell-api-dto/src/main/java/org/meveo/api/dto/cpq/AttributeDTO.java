@@ -18,19 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.BaseEntity;
@@ -38,7 +26,17 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The Class ServiceDto.
@@ -151,7 +149,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	protected String validationLabel;
 
 	@Schema(description = "replaced value")
-	private Object replacedValue;
+	private Object assignedValue;
 
 	public AttributeDTO() {
     }
@@ -533,11 +531,11 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.validationLabel = validationLabel;
 	}
 
-	public void setReplacedValue(Object replacedValue) {
-		this.replacedValue = replacedValue;
+	public void setAssignedValue(Object assignedValue) {
+		this.assignedValue = assignedValue;
 	}
 
-	public Object getReplacedValue() {
-		return replacedValue;
+	public Object getAssignedValue() {
+		return assignedValue;
 	}
 }
