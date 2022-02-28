@@ -138,7 +138,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"code\":\"MAD\",\n    \"description\":\"Dirham marrocan\",\n    \"decimalPlaces\" : 2\n}",
+					"raw": "{\n    \"code\":\"DAM\",\n    \"description\":\"Dirham marrocan \",\n    \"decimalPlaces\" : 2\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -164,7 +164,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"code\": \"MAD\",\n    \"description\": \"Dirham marrocan\",\n    \"decimalPlaces\": 2\n}",
+					"raw": "{\n    \"code\": \"DAM\",\n    \"description\": \"Dirham marrocan \",\n    \"decimalPlaces\": 2\n}",
 					"options": {
 						"raw": {
 							"language": "json"
