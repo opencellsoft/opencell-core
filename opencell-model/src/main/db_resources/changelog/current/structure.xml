@@ -11774,4 +11774,12 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-5380_2022_02_28" author="ZBariki">
+        <update tableName="billing_tax_mapping">
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
