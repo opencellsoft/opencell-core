@@ -90,7 +90,7 @@ public class QuotePrice extends AuditableEntity {
 	private BigDecimal amountWithoutTax;
 
 	@Column(name = "amount_without_tax_with_discount")
-	private BigDecimal amountWithoutTaxWithDiscount;
+	private BigDecimal amountWithoutTaxWithDiscount = BigDecimal.ZERO;
 
 	@Column(name = "tax_amount")
 	private BigDecimal taxAmount;
