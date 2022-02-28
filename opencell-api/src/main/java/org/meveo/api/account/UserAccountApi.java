@@ -151,6 +151,10 @@ public class UserAccountApi extends AccountEntityApi {
         
 		userAccountParent(postData, userAccount);
 		
+
+        if (postData.getIsCompany() != null) {
+            userAccount.setIsCompany(postData.getIsCompany());
+        }
         userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
