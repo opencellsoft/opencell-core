@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fd502ce1-684f-4f90-a617-445620356382",
+		"_postman_id": "5602d406-9b3a-4ec7-97a0-2134058b162e",
 		"name": "currency",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -158,7 +158,7 @@
 			"response": []
 		},
 		{
-			"name": "Update Currency",
+			"name": "Create Currency Copy",
 			"request": {
 				"method": "PUT",
 				"header": [],
