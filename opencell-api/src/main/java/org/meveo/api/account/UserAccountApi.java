@@ -120,6 +120,9 @@ public class UserAccountApi extends AccountEntityApi {
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
 
+        if (postData.getIsCompany() != null) {
+            userAccount.setIsCompany(postData.getIsCompany());
+        }
         userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
