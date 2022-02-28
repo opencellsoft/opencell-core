@@ -64,6 +64,12 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
 
+     /** trading currency symbol. */
+     private String symbol;
+
+      /** trading currency symbol. */
+     private int decimalPlaces;
+
     /**
      * Instantiates a new currency dto.
      */
@@ -166,5 +172,21 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
 
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public int getDecimalPlaces() {
+        return decimalPlaces;
+    }
+
+    public void setDecimalPlaces(int decimalPlaces) {
+        this.decimalPlaces = decimalPlaces;
     }
 }
