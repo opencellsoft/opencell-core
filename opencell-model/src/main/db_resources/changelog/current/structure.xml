@@ -11918,5 +11918,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-5343_2022-02_25" author="hichamELHALOUI">
+        <addColumn tableName="billing_trading_currency">
+            <column name="symbol" type="varchar(255)" />
+            <column name="decimal_places" type="int" />
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>

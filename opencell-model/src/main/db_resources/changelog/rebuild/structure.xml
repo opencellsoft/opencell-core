@@ -3542,6 +3542,8 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="currency_id" type="bigint" />
+            <column name="symbol" type="varchar(255)" />
+            <column name="decimal_places" type="int" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-198">
@@ -17112,6 +17114,7 @@
     <changeSet id="#INTRD-5274_2022-02-22" author="HichamHANINE"/>
     <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki" />
     <changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-5343_2022-02_25" author="hichamELHALOUI" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
