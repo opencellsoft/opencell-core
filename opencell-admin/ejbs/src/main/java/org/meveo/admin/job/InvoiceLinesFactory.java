@@ -125,7 +125,7 @@ public class InvoiceLinesFactory {
                     .orElseThrow(() -> new BusinessException("No accountingArticle found"));
             invoiceLine.setAccountingArticle(accountingArticle);
         }
-        invoiceLine.setLabel(invoiceLine.getAccountingArticle().getDescription());
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         return invoiceLine;
     }
 
