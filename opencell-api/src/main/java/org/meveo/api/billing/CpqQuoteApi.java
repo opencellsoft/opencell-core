@@ -18,6 +18,32 @@
 
 package org.meveo.api.billing;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.print.attribute.standard.Media;
+
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -560,7 +586,8 @@ public class CpqQuoteApi extends BaseApi {
             String fileName = cpqQuoteService.generateFileName(quoteVersion);
             quoteVersion.setXmlFilename(fileName);
             String xmlFilename = quoteXmlDir.getPath() + File.separator + fileName + ".xml";
-            StorageFactory.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
+            Path xmlPath = Paths.get(xmlFilename);
+            Files.write(xmlPath, xmlContent, xmlPath.toFile().exists() ? StandardOpenOption.TRUNCATE_EXISTING : StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
