@@ -7,8 +7,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
-import org.meveo.api.dto.account.UserAccountCodeIdsDto;
-import org.meveo.api.dto.account.UserAccountIdCodeDto;
+import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -38,9 +38,8 @@ public class UserAccountsApiService {
 
     protected List<String> missingParameters = new ArrayList<>();
 
-    public UserAccountCodeIdsDto allowedUserAccountParents(String userAccountCode) throws MeveoApiException {
-    	
-    	UserAccountCodeIdsDto accountCodeIdsDto = new UserAccountCodeIdsDto();
+    public UserAccountsDto allowedUserAccountParents(String userAccountCode) throws MeveoApiException {
+    	UserAccountsDto userAccountsDto = new UserAccountsDto();
 
         if (StringUtils.isBlank(userAccountCode)) {
         	throw new ValidationException("The user account code must be non-null");
@@ -72,14 +71,14 @@ public class UserAccountsApiService {
 		}
         
 		for (UserAccount ua : userAccounts) {
-			UserAccountIdCodeDto accountIdCodeDto = new UserAccountIdCodeDto();
-			accountIdCodeDto.setId(ua.getId());
-			accountIdCodeDto.setCode(ua.getCode());
-			
-			accountCodeIdsDto.getUserAccounts().add(accountIdCodeDto);
+			UserAccountDto userAccountDto = new UserAccountDto();
+			userAccountDto.setId(ua.getId());
+			userAccountDto.setCode(ua.getCode());
+
+			userAccountsDto.getUserAccount().add(userAccountDto);
 		}
 
-        return accountCodeIdsDto;
+        return userAccountsDto;
     }
     
     private void removeChildrenUserAccount(List<UserAccount> userAccounts,List<UserAccount> userAccountListToRemove, UserAccount userAccountToRemove) {
