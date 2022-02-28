@@ -203,6 +203,9 @@ public class BillingAccountApi extends AccountEntityApi {
         processTags(postData,billingAccount);
 
         billingAccountService.createBillingAccount(billingAccount);
+        if (postData.getIsCompany() != null) {
+            billingAccount.setIsCompany(postData.getIsCompany());
+        }
 
         // instantiate the discounts
         if (postData.getDiscountPlansForInstantiation() != null) {

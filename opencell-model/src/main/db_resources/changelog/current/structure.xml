@@ -11925,5 +11925,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-5380_2022_02_28" author="ZBariki">
+        <update tableName="billing_tax_mapping">
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
+
 
 </databaseChangeLog>

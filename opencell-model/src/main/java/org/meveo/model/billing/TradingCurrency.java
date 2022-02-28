@@ -122,6 +122,22 @@ public class TradingCurrency extends EnableEntity {
         this.currencyCode = currencyCode;
     }
 
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Integer getDecimalPlaces() {
+        return decimalPlaces;
+    }
+
+    public void setDecimalPlaces(Integer decimalPlaces) {
+        this.decimalPlaces = decimalPlaces;
+    }
+
     @Override
     public boolean equals(Object obj) {
 
