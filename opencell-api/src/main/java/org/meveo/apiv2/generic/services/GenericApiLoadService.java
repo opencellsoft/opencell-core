@@ -56,6 +56,7 @@ public class GenericApiLoadService {
                     .map(line -> addResultLine(line, genericFields.iterator()))
                     .collect(Collectors.toList()));
         }else if(genericFields != null &&  isCustomFieldQuery(genericFields)){
+        	SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
                     .find(nativePersistenceService.getEntityManager()).stream()
@@ -65,8 +66,10 @@ public class GenericApiLoadService {
             .map(line -> addResultLine(line, genericFields.iterator()))
             .collect(Collectors.toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
+            results.put("total", searchResult.getCount());
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
-            results.put("total", 20);
             return serializeResults(results);
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
