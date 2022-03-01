@@ -57,34 +57,33 @@ public class StorageFactory {
 
     private static String storageType;
     private static String bucketName;
-    private static String endpointUrl;
-    private static String region;
 
     private static S3FileSystem s3FileSystem;
 
     private static final String NFS = "FileSystem";
     private static final String S3 = "S3";
-    private static String accessKeyId;
-    private static String secretAccessKey;
 
     static {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         storageType = tmpParamBean.getProperty("storage.type", NFS);
-        endpointUrl = tmpParamBean.getProperty("S3.endpointUrl", "endPointUrl");
-        region = tmpParamBean.getProperty("S3.region", "region");
-        bucketName = tmpParamBean.getProperty("S3.bucketName", "bucketName");
-        accessKeyId = tmpParamBean.getProperty("S3.accessKeyId", "accessKeyId");
-        secretAccessKey = tmpParamBean.getProperty("S3.secretAccessKey", "secretAccessKey");
 
-        S3Client client =
-                S3Client.builder().region(Region.of(region))
-                        .endpointOverride(URI.create(endpointUrl))
-                        .credentialsProvider(
-                                StaticCredentialsProvider.create(
-                                        AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
-                        .build();
+        if (storageType.equalsIgnoreCase(S3)) {
+            String endpointUrl = tmpParamBean.getProperty("S3.endpointUrl", "endPointUrl");
+            String region = tmpParamBean.getProperty("S3.region", "region");
+            bucketName = tmpParamBean.getProperty("S3.bucketName", "bucketName");
+            String accessKeyId = tmpParamBean.getProperty("S3.accessKeyId", "accessKeyId");
+            String secretAccessKey = tmpParamBean.getProperty("S3.secretAccessKey", "secretAccessKey");
 
-        s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
+            S3Client client =
+                    S3Client.builder().region(Region.of(region))
+                            .endpointOverride(URI.create(endpointUrl))
+                            .credentialsProvider(
+                                    StaticCredentialsProvider.create(
+                                            AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
+                            .build();
+
+            s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
+        }
     }
 
     public static Path connectToS3Bucket(String bucketName) {
