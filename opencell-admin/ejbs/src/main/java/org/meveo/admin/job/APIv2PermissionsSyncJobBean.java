@@ -80,7 +80,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
      * @param jobInstance Job instance
      */
     @Interceptors({JobLoggingInterceptor.class, PerformanceInterceptor.class})
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Job {}: Start synchronisation between APIv2 permissions " +
                 "and existing entities", jobInstance.getCode());
