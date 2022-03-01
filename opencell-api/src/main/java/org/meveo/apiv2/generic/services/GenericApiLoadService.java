@@ -56,6 +56,7 @@ public class GenericApiLoadService {
                     .map(line -> addResultLine(line, genericFields.iterator()))
                     .collect(Collectors.toList()));
         }else if(genericFields != null &&  isCustomFieldQuery(genericFields)){
+        	// get specific custom fields with meta data 
         	SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
