@@ -45,8 +45,8 @@ public class GenericApiLoadService {
     @Inject
     private GenericApiPersistenceDelegate persistenceDelegate;
 
-    public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id) {
-        if(genericFields != null && (isAggregationQueries(genericFields) || isCustomFieldQuery(genericFields))){
+    public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
+        if(genericFields != null && isAggregationQueries(genericFields)){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
                     .find(nativePersistenceService.getEntityManager()).stream()
@@ -55,6 +55,23 @@ public class GenericApiLoadService {
             return serializeResult(list.stream()
                     .map(line -> addResultLine(line, genericFields.iterator()))
                     .collect(Collectors.toList()));
+        }else if(genericFields != null &&  isCustomFieldQuery(genericFields)){
+        	// get specific custom fields with meta data 
+        	SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
+            searchConfig.setFetchFields(new ArrayList<>(genericFields));
+            List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
+                    .find(nativePersistenceService.getEntityManager()).stream()
+                    .map(ObjectArrays -> Arrays.asList(ObjectArrays))
+                    .collect(Collectors.toList());
+            List<Map<String, Object>> mapResult = list.stream()
+            .map(line -> addResultLine(line, genericFields.iterator()))
+            .collect(Collectors.toList());
+            Map<String, Object> results = new LinkedHashMap<String, Object>();
+            results.put("total", searchResult.getCount());
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            results.put("data", mapResult);
+            return serializeResults(results);
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
@@ -68,7 +85,7 @@ public class GenericApiLoadService {
                     .withNestedEntities(fetchFields)
                     .withNestedDepth(nestedDepth)
                     .build()
-                    .toJson(genericFields, entityClass, genericPaginatedResource);
+                    .toJson(genericFields, entityClass, genericPaginatedResource, excludedFields);
         }
     }
 
@@ -100,6 +117,15 @@ public class GenericApiLoadService {
             throw new RuntimeException("json formatting exception", e);
         }
     }
+    
+    private String serializeResults(Map<String, Object> results) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(results);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("json formatting exception", e);
+        }
+    }
 
     private boolean isAggregationField(String field) {
         return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
@@ -124,7 +150,7 @@ public class GenericApiLoadService {
                 .isPresent();
     }
 
-    public Optional<String> findByClassNameAndId(Boolean extractList, Class entityClass, Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities, Long nestedDepth) {
+    public Optional<String> findByClassNameAndId(Boolean extractList, Class entityClass, Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities, Long nestedDepth, Set<String> excludedFields) {
         checkId(id);
         IEntity iEntity = persistenceDelegate.find(entityClass, id, searchConfig.getFetchFields());
 
@@ -135,7 +161,7 @@ public class GenericApiLoadService {
                         .withNestedEntities(nestedEntities)
                         .withNestedDepth(nestedDepth)
                         .build()
-                        .toJson(genericFields, entityClass, Collections.singletonMap("data", entity)));
+                        .toJson(genericFields, entityClass, Collections.singletonMap("data", entity), excludedFields));
     }
     
 
