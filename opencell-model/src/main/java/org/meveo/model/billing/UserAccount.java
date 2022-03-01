@@ -155,7 +155,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
      */
     @Type(type = "numeric_boolean")
     @Column(name = "is_consumer")
-    private boolean isConsumer;
+    private boolean isConsumer=Boolean.TRUE;
 
     public BillingAccount getBillingAccount() {
         return billingAccount;
