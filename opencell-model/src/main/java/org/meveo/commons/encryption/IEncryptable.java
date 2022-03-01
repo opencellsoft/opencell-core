@@ -21,16 +21,13 @@
  */
 package org.meveo.commons.encryption;
 
-import java.security.MessageDigest;
-import java.util.Base64;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.security.MessageDigest;
 
 /**
  * @author melyoussoufi
@@ -67,10 +64,8 @@ public interface IEncryptable {
 				if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
 					return strToEncrypt;
 				}
-				SecretKeySpec secretKey = buildSecretKey();
-				Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-				cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-				String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+				String encrypted = EncryptionFactory.encrypt(strToEncrypt); // new code for 992
+System.out.println("encrypted DAY NE THANG I Encryptable : "  +encrypted);
 				return ENCRYPTION_CHECK_STRING + encrypted;
 			}
 			
@@ -93,11 +88,9 @@ public interface IEncryptable {
 			if (strToDecrypt != null) {
 				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
 					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
-					SecretKeySpec secretKey = buildSecretKey();
-					Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-					cipher.init(Cipher.DECRYPT_MODE, secretKey);
-					String res = new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
-					return res;
+
+					String decrypted = EncryptionFactory.decrypt(strToDecrypt); // new code for 992
+					return decrypted;
 				}
 				return strToDecrypt;
 				

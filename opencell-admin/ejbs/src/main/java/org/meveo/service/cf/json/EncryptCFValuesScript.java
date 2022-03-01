@@ -1,29 +1,26 @@
 package org.meveo.service.cf.json;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.service.crm.impl.AccountEntitySearchService;
-import org.meveo.service.script.Script;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.encryption.EncryptionFactory;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.service.crm.impl.AccountEntitySearchService;
+import org.meveo.service.script.Script;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class EncryptCFValuesScript extends Script  {
 
@@ -33,7 +30,6 @@ public class EncryptCFValuesScript extends Script  {
     
     private static final long serialVersionUID = 1L;
     static final String UTF_8_ENCODING = "UTF-8";
-    static final String ENCRYPTION_ALGORITHM = "AES/ECB/PKCS5PADDING";
     static final String INTERNAL_SECRET_KEY = "staySafe";
     static final String SHA_256_HASHING = "SHA-256";
     static final String AES_ALOGRITHM = "AES";
@@ -105,7 +101,7 @@ public class EncryptCFValuesScript extends Script  {
             String cfValue = (String) result[1];
             
             log.info("encrypting line id = "+cfId+", value = "+cfValue+", table = "+tableName);
-            
+
             accountentityService.getEntityManager()
                         .createNativeQuery("update " + tableName + " set cf_Values='" + encryptCfvaluesStr(cfValue) + "' where  id="+cfId)
                         .executeUpdate();
@@ -123,10 +119,8 @@ public class EncryptCFValuesScript extends Script  {
                 if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
                     return strToEncrypt;
                 }
-                SecretKeySpec secretKey = buildSecretKey();
-                Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-                String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+                String encrypted = EncryptionFactory.encrypt(strToEncrypt); // new code for 992
+
                 return ENCRYPTION_CHECK_STRING + encrypted;
             }
             
@@ -148,12 +142,18 @@ public class EncryptCFValuesScript extends Script  {
             List<Map> list = maps.getValue();
             for (Map<String, Object> map : list) {
                 for (Entry<String, Object> cfValues : map.entrySet()) {
+System.out.println("cfValues class value day : " + cfValues.getValue().getClass());
                     if (cfValues.getValue() instanceof String) {
                         if (!cfValues.getValue().equals("")) {
                             map.put(cfValues.getKey(), encrypt(cfValues.getValue().toString()));
                             listCfvalues.add(map);
                         }
-                    } else if (cfValues.getValue() instanceof List) {
+                    }
+                    else if (cfValues.getValue() instanceof Integer) {
+                        map.put(cfValues.getKey(), encrypt(String.valueOf(cfValues.getValue())));
+                        listCfvalues.add(map);
+                    }
+                    else if (cfValues.getValue() instanceof List) {
                         Map<String, List<String>> mapListCfValues = new HashMap<String, List<String>>();
                         List<String> listValueStrings = new ArrayList<String>();
                         for (Object typeListCfvalues : (List) cfValues.getValue()) {
@@ -163,7 +163,8 @@ public class EncryptCFValuesScript extends Script  {
                             }
                         }
                         listCfvalues.add(mapListCfValues);
-                    } else if (cfValues.getValue() instanceof Map) {
+                    }
+                    else if (cfValues.getValue() instanceof Map) {
                         for (Entry<String, List> typeMapsCfvalues : ((Map<String, List>) cfValues.getValue())
                                 .entrySet()) {
                             Object o = typeMapsCfvalues.getKey();
