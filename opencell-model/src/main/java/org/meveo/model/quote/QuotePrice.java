@@ -53,7 +53,7 @@ public class QuotePrice extends AuditableEntity {
 		this.amountWithTax = copy.amountWithTax;
 		this.unitPriceWithoutTax = copy.unitPriceWithoutTax;
 		this.amountWithoutTax = copy.amountWithoutTax;
-		this.amountWithoutTaxWithDiscount = copy.amountWithoutTaxWithDiscount;
+		this.amountWithoutTaxWithoutDiscount = copy.amountWithoutTaxWithoutDiscount;
 		this.taxAmount = copy.taxAmount;
 		this.taxRate = copy.taxRate;
 		this.priceOverCharged = copy.priceOverCharged;
@@ -62,6 +62,7 @@ public class QuotePrice extends AuditableEntity {
 		this.recurrencePeriodicity = copy.recurrencePeriodicity;
 		this.chargeTemplate = copy.chargeTemplate;
 		this.quantity = copy.quantity;
+		this.discountedQuotePrice = copy.discountedQuotePrice;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -91,7 +92,7 @@ public class QuotePrice extends AuditableEntity {
 	private BigDecimal amountWithoutTax;
 
 	@Column(name = "amount_without_tax_without_discount")
-	private BigDecimal amountWithoutTaxWithDiscount = BigDecimal.ZERO;
+	private BigDecimal amountWithoutTaxWithoutDiscount = BigDecimal.ZERO;
 
 	@Column(name = "tax_amount")
 	private BigDecimal taxAmount;
@@ -185,12 +186,12 @@ public class QuotePrice extends AuditableEntity {
 		this.amountWithoutTax = amountWithoutTax;
 	}
 
-	public BigDecimal getAmountWithoutTaxWithDiscount() {
-		return amountWithoutTaxWithDiscount;
+	public BigDecimal getAmountWithoutTaxWithoutDiscount() {
+		return amountWithoutTaxWithoutDiscount;
 	}
 
-	public void setAmountWithoutTaxWithDiscount(BigDecimal amountWithoutTaxWithDiscount) {
-		this.amountWithoutTaxWithDiscount = amountWithoutTaxWithDiscount;
+	public void setAmountWithoutTaxWithoutDiscount(BigDecimal amountWithoutTaxWithDiscount) {
+		this.amountWithoutTaxWithoutDiscount = amountWithoutTaxWithDiscount;
 	}
 
 	public BigDecimal getTaxAmount() {
