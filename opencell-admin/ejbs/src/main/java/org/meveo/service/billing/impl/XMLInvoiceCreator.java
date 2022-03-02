@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Handles the logic of XML invoice generation
- * 
+ *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
@@ -115,16 +115,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber(),
-                e);
+                    e);
         }
 
     }
 
     /**
      * Store invoice XML DOM into a file.
-     * 
+     *
      * Deprecated in v11. Use XmlInvoiceCreatorScript.createAndSetFileOnInvoice() instead
-     * 
+     *
      * @param doc DOM invoice
      * @param invoice invoice used to build xml
      * @return xml file
@@ -146,7 +146,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     /**
      * Create Invoice XML document
-     * 
+     *
      * Deprecated in v11. Use XmlInvoiceCreatorScript.createDocument() instead
      *
      * @param invoice invoice used to create xml
