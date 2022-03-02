@@ -1279,10 +1279,10 @@ public class CpqQuoteApi extends BaseApi {
 	            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
 	            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
 	            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-	            quotePrice.setAmountWithoutTaxWithDiscount(a.getAmountWithoutTax());
+	            quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
 	            
             	 if(a.getAmountWithoutTax().compareTo(BigDecimal.ZERO) >= 0 && b.getAmountWithoutTax().compareTo(BigDecimal.ZERO) >= 0)
-                 	quotePrice.setAmountWithoutTaxWithDiscount(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
+                 	quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             		 
             	 
 	            quotePrice.setTaxRate(a.getTaxRate());
@@ -1419,8 +1419,8 @@ public class CpqQuoteApi extends BaseApi {
     private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration) {
         quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
         quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
-        quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTaxWithDiscount() != null ?
-                quotePrice.getAmountWithoutTaxWithDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+        quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount() != null ?
+                quotePrice.getAmountWithoutTaxWithoutDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
         quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ?
                 quotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
     }
@@ -1853,6 +1853,7 @@ public class CpqQuoteApi extends BaseApi {
 
                       discountQuotePrice.setTaxRate(taxPercent);
                       quotePriceService.create(discountQuotePrice);
+                      quoteArticleLine.getQuotePrices().add(discountQuotePrice);
                       quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
                       log.debug("applyFixedDiscount discountPlan code={},unitDiscountAmount={},Article code={}",discountPlan.getCode(),unitDiscountAmount,quoteArticleLine.getAccountingArticle().getCode());
                   }
@@ -1967,9 +1968,9 @@ public class CpqQuoteApi extends BaseApi {
                             overrideAmounts(quotePrice, usageQuantity);
                         }
                         discountQuotePrice.setTaxRate(taxPercent);
+                        discountQuotePrice.setDiscountedQuotePrice(quotePrice);
                         quotePriceService.create(discountQuotePrice);
-                        quotePrice.setDiscountedQuotePrice(discountQuotePrice);
-                        quoteArticleLine.getQuotePrices().add(quotePrice);
+                        quoteArticleLine.getQuotePrices().add(discountQuotePrice);
                         quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
                         discountPrices.add(discountQuotePrice);
                     }

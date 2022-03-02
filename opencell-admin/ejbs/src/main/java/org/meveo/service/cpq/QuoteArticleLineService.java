@@ -36,4 +36,5 @@ public class QuoteArticleLineService extends PersistenceService<QuoteArticleLine
 		});
 		return result;
 	}
+
 }
