@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -1642,6 +1643,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private Function<Tuple, Map<String, Object>> mapTuplesAsMap() {
-        return data -> data.getElements().stream().collect(Collectors.toMap(TupleElement::getAlias, data::get));
+        return data -> {
+            Map<String, Object> map = new HashMap<>();
+            for (TupleElement<?> tuple : data.getElements()) {
+                map.put(tuple.getAlias(), data.get(tuple.getAlias()));
+            }
+            return map;
+        };
     }
 }
