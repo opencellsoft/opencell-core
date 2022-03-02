@@ -3,7 +3,6 @@ package org.meveo.api.custom;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.api.billing.CpqQuoteApi;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductApiTest {
@@ -228,20 +227,6 @@ public class ProductApiTest {
 
         assertThat(result.getSelectedProductAttributes().get("attr1")).isEqualTo("value2");
         System.out.println(null instanceof String);
-    }
-
-    @Test(expected = BusinessApiException.class)
-    public void replacement_commercial_rule_allow_only_exist_operator() {
-        CommercialRuleHeader commercialRuleHeader = buildCommercialRuleHeader(null, "product1", "attr1",
-                "offer1", "product2", "attr1", RuleOperatorEnum.EQUAL);
-
-        SelectedAttributes selectedProduct1Context = new SelectedAttributes("offer1", "product1", initSelectedAttributes("attr1", "value1"));
-        SelectedAttributes selectedProduct2Context = new SelectedAttributes("offer1", "product2", initSelectedAttributes("attr1", "value1"));
-
-       new ReplacementRulesExecutor(false).execute(Optional.of(selectedProduct1Context), Optional.empty(), asList(selectedProduct1Context, selectedProduct2Context), asList(commercialRuleHeader));
-
-
-
     }
 
     private CommercialRuleHeader buildCommercialRuleHeader(String targetOfferTemplateCode, String targetProductCode, String targetAttributeCode, String sourceOfferTemplateCode, String sourceProductCode, String sourceAttributeCode, RuleOperatorEnum lineOperator) {

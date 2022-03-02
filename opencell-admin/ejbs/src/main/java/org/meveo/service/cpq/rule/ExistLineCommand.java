@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,17 +24,16 @@ public class ExistLineCommand implements CommercialRuleLineCommand {
 
     @Override
     public void execute(CommercialRuleLine commercialRuleLine) {
-        Optional<LinkedHashMap<String, Object>> exist = evaluate(this.selectedSourceAttributes, commercialRuleLine);
+        Optional<SelectedAttributes> exist = getSelectedSourceAttributeWitchMatchWithRuleLine(this.selectedSourceAttributes, commercialRuleLine);
         if(exist.isPresent() && (isQuoteScope || StringUtils.equals(this.selectedAttributes.getOfferCode(), commercialRuleLine.getSourceOfferTemplateCode()))) {
-            this.selectedAttributes.getSelectedAttributesMap().put(this.targetAttribute.getCode(), exist.get().get(commercialRuleLine.getSourceAttribute().getCode()));
+            this.selectedAttributes.getSelectedAttributesMap().put(this.targetAttribute.getCode(), exist.get().getSelectedAttributesMap().get(commercialRuleLine.getSourceAttribute().getCode()));
         }
     }
 
-    private Optional<LinkedHashMap<String, Object>> evaluate(List<SelectedAttributes> selectedSourceAttributes, CommercialRuleLine commercialRuleLine) {
+    private Optional<SelectedAttributes> getSelectedSourceAttributeWitchMatchWithRuleLine(List<SelectedAttributes> selectedSourceAttributes, CommercialRuleLine commercialRuleLine) {
         return selectedSourceAttributes
                 .stream()
                 .filter(selectedAttributes -> selectedAttributes.match(commercialRuleLine))
-                .map(SelectedAttributes::getSelectedAttributesMap)
                 .findAny();
     }
 }
