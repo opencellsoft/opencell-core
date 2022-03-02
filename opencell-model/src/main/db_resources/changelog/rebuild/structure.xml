@@ -9380,6 +9380,7 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
+     		<column name="quantity" type="bigint" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
