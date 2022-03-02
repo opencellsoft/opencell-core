@@ -9365,7 +9365,7 @@
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="unit_price_without_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="amount_without_tax_with_discount" type="numeric(23, 12)" />
+            <column name="amount_without_tax_without_discount" type="numeric(23, 12)" />
             <column name="tax_amount" type="numeric(23, 12)" />
             <column name="tax_rate" type="numeric(23, 12)" />
 
@@ -9380,7 +9380,8 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
-     		<column name="quantity" type="bigint" defaultValueNumeric="0" />
+     		<column name="quantity" type="numeric(19,2)"/>
+     		<column name="discounted_quote_price" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -14848,6 +14849,12 @@ $$ LANGUAGE plpgsql;
         <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
    	</changeSet>
+   	
+   	
+    <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
+        <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -15862,6 +15869,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="INTRD-2252_20211006" author="TarikFA." />
     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
+     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

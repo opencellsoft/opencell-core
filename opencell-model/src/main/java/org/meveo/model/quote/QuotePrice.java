@@ -90,7 +90,7 @@ public class QuotePrice extends AuditableEntity {
 	@Column(name = "amount_without_tax")
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "amount_without_tax_with_discount")
+	@Column(name = "amount_without_tax_without_discount")
 	private BigDecimal amountWithoutTaxWithDiscount = BigDecimal.ZERO;
 
 	@Column(name = "tax_amount")
@@ -123,6 +123,11 @@ public class QuotePrice extends AuditableEntity {
 
 	@Column(name = "quantity")
 	private BigDecimal quantity = BigDecimal.ONE;
+	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_quote_price")
+	private QuotePrice discountedQuotePrice;
 	
 	public BigDecimal getQuantity() {
 		return quantity;
@@ -258,6 +263,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setQuoteOffer(QuoteOffer quoteOffer) {
 		this.quoteOffer = quoteOffer;
+	}
+
+	public QuotePrice getDiscountedQuotePrice() {
+		return discountedQuotePrice;
+	}
+
+	public void setDiscountedQuotePrice(QuotePrice discountedQuotePrice) {
+		this.discountedQuotePrice = discountedQuotePrice;
 	}
 
 	
