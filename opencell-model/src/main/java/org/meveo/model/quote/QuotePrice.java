@@ -61,6 +61,7 @@ public class QuotePrice extends AuditableEntity {
 		this.recurrenceDuration = copy.recurrenceDuration;
 		this.recurrencePeriodicity = copy.recurrencePeriodicity;
 		this.chargeTemplate = copy.chargeTemplate;
+		this.quantity = copy.quantity;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -89,8 +90,8 @@ public class QuotePrice extends AuditableEntity {
 	@Column(name = "amount_without_tax")
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "amount_without_tax_with_discount")
-	private BigDecimal amountWithoutTaxWithDiscount;
+	@Column(name = "amount_without_tax_without_discount")
+	private BigDecimal amountWithoutTaxWithDiscount = BigDecimal.ZERO;
 
 	@Column(name = "tax_amount")
 	private BigDecimal taxAmount;
@@ -119,7 +120,23 @@ public class QuotePrice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_offer_id")
 	private QuoteOffer quoteOffer;
+
+	@Column(name = "quantity")
+	private BigDecimal quantity = BigDecimal.ONE;
 	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_quote_price")
+	private QuotePrice discountedQuotePrice;
+	
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
 	}
@@ -246,6 +263,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setQuoteOffer(QuoteOffer quoteOffer) {
 		this.quoteOffer = quoteOffer;
+	}
+
+	public QuotePrice getDiscountedQuotePrice() {
+		return discountedQuotePrice;
+	}
+
+	public void setDiscountedQuotePrice(QuotePrice discountedQuotePrice) {
+		this.discountedQuotePrice = discountedQuotePrice;
 	}
 
 	
