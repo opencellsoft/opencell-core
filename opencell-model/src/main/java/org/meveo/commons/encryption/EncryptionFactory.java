@@ -45,13 +45,15 @@ public class EncryptionFactory {
     private static final StandardByteDigester byteDigester;
 
     static {
-        ParamBean tmpParamBean = ParamBean.getInstanceByProvider("");
+//        ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
+//
+//                ParamBean.getInstance().getProperty
 
-        encryptionAlgo = tmpParamBean.getProperty("encryption.algorithm", BY_DEFAULT_ENCRYPTION_ALGO);
-        nbIterations = tmpParamBean.getProperty("digest.numberIterations", BY_DEFAULT_ITERATION);
-        enableEncryption = Boolean.parseBoolean(tmpParamBean.getProperty("encryption.enable", BY_DEFAULT_ENABLE_ENCRYPTION));
-        digestAlgo = tmpParamBean.getProperty("digest.algorithm", BY_DEFAULT_DIGEST_ALGO);
-        symEncSecretKey = tmpParamBean.getProperty("symmetricEncryption.secretKey", null);
+        encryptionAlgo = ParamBean.getInstance().getProperty("encryption.algorithm", BY_DEFAULT_ENCRYPTION_ALGO);
+        nbIterations = ParamBean.getInstance().getProperty("digest.numberIterations", BY_DEFAULT_ITERATION);
+        enableEncryption = Boolean.parseBoolean(ParamBean.getInstance().getProperty("encryption.enable", BY_DEFAULT_ENABLE_ENCRYPTION));
+        digestAlgo = ParamBean.getInstance().getProperty("digest.algorithm", BY_DEFAULT_DIGEST_ALGO);
+        symEncSecretKey = ParamBean.getInstance().getProperty("symmetricEncryption.secretKey", null);
 
         // initialize a byteDigester
         byteDigester = new StandardByteDigester();
@@ -84,12 +86,10 @@ public class EncryptionFactory {
         }
     }
 
-    private static String buildSecretPassword() {
-System.out.println("buildSecretPassword 1 DAY NE");
+    public static String buildSecretPassword() {
         if (!StringUtils.isBlank(symEncSecretKey)) {
             byte[] fileKey = symEncSecretKey.getBytes(StandardCharsets.UTF_8);
-System.out.println("fileKey.length DAY NE : " + fileKey.length);
-System.out.println("password encrypted DAY NE : " + new String(byteDigester.digest(fileKey)));
+
             return new String(byteDigester.digest(fileKey));
         }
 
@@ -138,14 +138,26 @@ System.out.println("encryptor != null day ne : " + (encryptor != null));
     }
 
     public static void main(String[] args) {
-        EncryptionFactory.testCryptageAlgo();
-
+//        EncryptionFactory.testCryptageAlgo();
+//
 //        String clearText = "this text";
 //        String algorithm = "PBEWITHSHA256AND128BITAES-CBC-BC";
 //        String password = "myPass";
 //        String encryptedText = EncryptionFactory.encrypt(clearText);
 //        String decryptedText = EncryptionFactory.decrypt(encryptedText);
 //        System.out.println("decryptedText DAY NE : " + decryptedText);
+
+
+
+        // initialize an encryptor
+        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+        encryptor.setProvider(new BouncyCastleProvider());
+        encryptor.setAlgorithm(encryptionAlgo);
+        String password1 = buildSecretPassword();
+        assert password1 != null;
+        encryptor.setPassword(password1);
+        String encrypted = encryptor.encrypt("a message");
+System.out.println("encrypted : " + encrypted);
     }
 
 }
