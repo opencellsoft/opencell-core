@@ -1,18 +1,33 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 /**
  * 
  */
 package org.meveo.commons.encryption;
 
-import java.security.MessageDigest;
-import java.util.Base64;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.security.MessageDigest;
 
 /**
  * @author melyoussoufi
@@ -49,10 +64,9 @@ public interface IEncryptable {
 				if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
 					return strToEncrypt;
 				}
-				SecretKeySpec secretKey = buildSecretKey();
-				Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-				cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-				String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+
+				String encrypted = EncryptionFactory.encrypt(strToEncrypt);
+
 				return ENCRYPTION_CHECK_STRING + encrypted;
 			}
 			
@@ -75,11 +89,10 @@ public interface IEncryptable {
 			if (strToDecrypt != null) {
 				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
 					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
-					SecretKeySpec secretKey = buildSecretKey();
-					Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-					cipher.init(Cipher.DECRYPT_MODE, secretKey);
-					String res = new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
-					return res;
+
+					String decrypted = EncryptionFactory.decrypt(strToDecrypt);
+
+					return decrypted;
 				}
 				return strToDecrypt;
 				
