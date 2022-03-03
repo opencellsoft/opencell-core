@@ -60,6 +60,7 @@ public class QuotePrice extends AuditableEntity {
 		this.recurrenceDuration = copy.recurrenceDuration;
 		this.recurrencePeriodicity = copy.recurrencePeriodicity;
 		this.chargeTemplate = copy.chargeTemplate;
+		this.quantity = copy.quantity;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -118,7 +119,18 @@ public class QuotePrice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_offer_id")
 	private QuoteOffer quoteOffer;
+
+	@Column(name = "quantity")
+	private BigDecimal quantity = BigDecimal.ONE;
 	
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
 	}

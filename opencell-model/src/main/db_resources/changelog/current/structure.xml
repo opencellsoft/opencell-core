@@ -9747,4 +9747,15 @@ public class OrderAdvancement extends ModuleScript {
         <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
         <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
     </changeSet>
+
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+     </changeSet>
+     
+     <changeSet id="#INTRD-5385_20220228" author="TarikFA.">
+     	<addColumn tableName="cpq_quote_price">
+     		<column name="quantity" type="numeric(19,2)"/>
+     	</addColumn>
+     </changeSet>
 </databaseChangeLog>
