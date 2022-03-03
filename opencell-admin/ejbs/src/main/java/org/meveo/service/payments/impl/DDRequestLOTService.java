@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.LockModeType;
 
 import org.jfree.util.Log;
 import org.meveo.admin.async.SepaDirectDebitAsync;
@@ -106,10 +107,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			throws BusinessEntityException, Exception {
 
 		try {
-			if (listAoToPay == null || listAoToPay.isEmpty()) {
-				throw new BusinessEntityException("no invoices!");
-			}
-
+			
 			DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
 
 			DDRequestLOT ddRequestLOT = new DDRequestLOT();
@@ -174,7 +172,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.CA) {
 				Map<CustomerAccount, List<AccountOperation>> aosByCA = new HashMap<CustomerAccount, List<AccountOperation>>();
 				for (AccountOperation ao : listAoToPay) {
-					ao = accountOperationService.refreshOrRetrieve(ao);
+					ao = accountOperationService.refreshOrRetrieveLock(ao,LockModeType.OPTIMISTIC);
 					List<AccountOperation> aos = new ArrayList<AccountOperation>();
 					if (aosByCA.containsKey(ao.getCustomerAccount())) {
 						aos = aosByCA.get(ao.getCustomerAccount());

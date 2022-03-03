@@ -74,7 +74,7 @@
         </h:outputText>
         <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field.dateValue}" required="#{cft.valueRequired and !hasInheritedValue}" rendered="#{edit and !disabled}"
             label="#{cft.description}" widgetVar="calendarWidget_#{cft.code}" />
-        <p:commandButton value="#{messages['action.reset']" onclick="PF('calendarWidget_#{cft.code}').setDate(null)"
+        <p:commandButton value="X" title="#{messages['action.reset']}" onclick="PF('calendarWidget_#{cft.code}').setDate(null)"
                          type="button" rendered="#{edit and !disabled}"/>
 
     </c:if>

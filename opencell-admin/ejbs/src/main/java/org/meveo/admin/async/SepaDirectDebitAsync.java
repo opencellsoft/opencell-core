@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.LockModeType;
 
 import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
@@ -42,6 +43,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
+
 
 /**
  * The Class SepaDirectDebitAsync.
@@ -74,6 +76,7 @@ public class SepaDirectDebitAsync {
 	
 	@Inject
 	private DDRequestLOTService ddRequestLOTService;
+	
 	
 	/**
 	 * Create payments for all items from the ddRequestLot. One Item at a time in a
@@ -124,7 +127,7 @@ public class SepaDirectDebitAsync {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 
 		for (AccountOperation ao : listAoToPay) {
-			ao = accountOperationService.refreshOrRetrieve(ao);
+			ao = accountOperationService.refreshOrRetrieveLock(ao,LockModeType.OPTIMISTIC);
 			CustomerAccount ca = ao.getCustomerAccount();
 			String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
 			String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";

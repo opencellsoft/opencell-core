@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -41,6 +42,8 @@ public interface IPersistenceService<E extends IEntity> {
      * @return Entity found.
      */
     E findById(Long id);
+    
+    E findByIdLock(Long id,LockModeType lockModeType);
 
     /**
      * Find an entity by its id and fetch required fields.
@@ -219,6 +222,7 @@ public interface IPersistenceService<E extends IEntity> {
      * @return Refreshed/retrieved entity.
      */
     E refreshOrRetrieve(E entity);
+    E refreshOrRetrieveLock(E entity,LockModeType lockModeType);
 
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.

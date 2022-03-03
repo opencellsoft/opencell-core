@@ -553,7 +553,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             if (nextChargeDate != null && endDate.after(nextChargeDate)) {
                 try {
-                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate, overrideProrata);
+                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate, overrideProrata,
+                            applyAgreement && terminationReason.isApplyAgreementImmediately(), terminationDate);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

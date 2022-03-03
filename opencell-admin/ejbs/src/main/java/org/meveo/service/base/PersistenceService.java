@@ -44,6 +44,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
+import javax.persistence.LockModeType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
@@ -247,7 +248,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return getEntityManager().find(entityClass, id);
 
     }
+    
+    @Override
+    public E findByIdLock(Long id, LockModeType lockModeType) {
 
+        log.trace("Find {}/{} by id", entityClass.getSimpleName(), id);
+        return getEntityManager().find(entityClass, id,lockModeType);
+
+    }
+
+    
+   
+    
     /**
      * Use by API.
      */
@@ -676,6 +688,23 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
     }
 
+    @Override
+    public E refreshOrRetrieveLock(E entity,LockModeType lockModeType) {
+
+        if (entity == null) {
+            return null;
+        }
+
+        if (getEntityManager().contains(entity)) {
+            log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
+            getEntityManager().refresh(entity,lockModeType);
+            return entity;
+        } else if (entity.getId() != null) {
+            return findByIdLock((Long) entity.getId(),lockModeType);
+        } else {
+            return entity;
+        }
+    }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#refreshOrRetrieve(java.util.List)
      */
