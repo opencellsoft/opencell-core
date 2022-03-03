@@ -315,6 +315,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = new CounterPeriod();
@@ -428,6 +431,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return Found or created counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
         CounterPeriod counterPeriod = getCounterPeriodByDate(counterInstance, date);
 
@@ -543,6 +549,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) {
 
         BigDecimal deducedQuantity = null;
