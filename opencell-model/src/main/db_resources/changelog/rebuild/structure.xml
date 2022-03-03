@@ -9341,7 +9341,7 @@
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="unit_price_without_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="amount_without_tax_with_discount" type="numeric(23, 12)" />
+            <column name="amount_without_tax_without_discount" type="numeric(23, 12)" />
             <column name="tax_amount" type="numeric(23, 12)" />
             <column name="tax_rate" type="numeric(23, 12)" />
 
@@ -9356,7 +9356,8 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
-     		<column name="quantity" type="bigint" defaultValueNumeric="0" />
+     		<column name="quantity" type="numeric(19,2)"/>
+     		<column name="discounted_quote_price" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -14989,6 +14990,12 @@
         <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
    	</changeSet>
+   	
+   	
+    <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
+        <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -15980,6 +15987,7 @@
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
+     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
 	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
     <!-- DONT REMOVE THIS CHANGESET -->
