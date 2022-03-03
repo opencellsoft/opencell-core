@@ -115,50 +115,32 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	}
 	
 	 private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
-	    	if(pricesPerType.get(key) != null && pricesPerType.get(key).size()==1){
-	    		QuotePrice accountingArticlePrice =pricesPerType.get(key).get(0);
-	    		QuotePrice quotePrice = new QuotePrice();
-	            quotePrice.setPriceTypeEnum(key);
-	            quotePrice.setPriceLevelEnum(level);
-	            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
-	            quotePrice.setQuoteOffer(quoteOffer);
-	            quotePrice.setTaxAmount(accountingArticlePrice.getTaxAmount());
-	            quotePrice.setAmountWithTax(accountingArticlePrice.getAmountWithTax());
-	            quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
-                quotePrice.setAmountWithoutTaxWithDiscount(accountingArticlePrice.getAmountWithoutTaxWithDiscount());
-	            quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
-	            quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
-	            quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
-	            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
-	            quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
-	            return Optional.of(quotePrice);
+	     	if(pricesPerType.get(key).size() == 1){
+	            return Optional.of(pricesPerType.get(key).get(0));
 	    	}
-	    	return pricesPerType.get(key).stream().reduce((a, b) -> {
-	    		QuotePrice quotePrice = new QuotePrice();
-	            quotePrice.setPriceTypeEnum(key);
-	            quotePrice.setPriceLevelEnum(level);
-	            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
-	            quotePrice.setQuoteOffer(quoteOffer);
-	            quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
-	            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
-	            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
-	            if(a.getAmountWithoutTaxWithDiscount() != null && b.getAmountWithoutTaxWithDiscount() != null) {
-                 	quotePrice.setAmountWithoutTaxWithDiscount(a.getAmountWithoutTaxWithDiscount().add(b.getAmountWithoutTaxWithDiscount()));
-                 }else if(a.getAmountWithoutTaxWithDiscount() != null) 
-                 	quotePrice.setAmountWithoutTaxWithDiscount(a.getAmountWithoutTaxWithDiscount());
-                 else 
-                 	quotePrice.setAmountWithoutTaxWithDiscount(b.getAmountWithoutTaxWithDiscount());
-	            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
-	            quotePrice.setTaxRate(a.getTaxRate());
-	            if(a.getRecurrenceDuration()!=null) {
-	            	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
-	            }
-	            if(a.getRecurrencePeriodicity()!=null) {
-	            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
-	            }
-	            quotePrice.setChargeTemplate(a.getChargeTemplate());
-	            return quotePrice;
-	        });
+			QuotePrice quotePrice = new QuotePrice();
+	        quotePrice.setPriceTypeEnum(key);
+	        quotePrice.setPriceLevelEnum(level);
+	        quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
+	        quotePrice.setQuoteOffer(quoteOffer);
+	    		Optional<QuotePrice> price = pricesPerType.get(key).stream().reduce((a, b) -> {
+		            quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
+		            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
+		            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
+		            quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
+		            quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTaxWithoutDiscount()));
+		            quotePrice.setTaxRate(a.getTaxRate());
+		            quotePrice.setChargeTemplate(a.getChargeTemplate());
+		            if(a.getRecurrenceDuration()!=null) {
+		            	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
+		            }
+		            if(a.getRecurrencePeriodicity()!=null) {
+		            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
+		            }
+		            return quotePrice;
+		        });
+	            return price;
+	    		
 	    }
 
 	public AccountingArticlePricesDTO() {
