@@ -9338,4 +9338,21 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
      </changeSet>
+
+    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
+        <sql>
+            create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
+            create index cpq_tag_seller_id_index on cpq_tag (seller_id);
+            create index cpq_tag_tag_type_id_index on cpq_tag (tag_type_id);
+            create index cpq_tag_type_seller_id_index on cpq_tag_type (seller_id);
+            create index cpq_commercial_rule_header_attribute_id_index on cpq_commercial_rule_header (attribute_id);
+            create index cpq_commercial_rule_header_grouped_attributes_id_index on cpq_commercial_rule_header (grouped_attributes_id);
+            create index cpq_commercial_rule_header_grouped_service_id_index on cpq_commercial_rule_header (grouped_service_id);
+            create index cpq_commercial_rule_header_offer_template_id_index on cpq_commercial_rule_header (offer_template_id);
+            create index cpq_commercial_rule_header_product_id_index on cpq_commercial_rule_header (product_id);
+            create index cpq_commercial_rule_header_product_version_id_index on cpq_commercial_rule_header (product_version_id);
+            create index cpq_commercial_rule_header_service_template_id_index on cpq_commercial_rule_header (service_template_id);
+            create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
+        </sql>
+    </changeSet>
 </databaseChangeLog>
