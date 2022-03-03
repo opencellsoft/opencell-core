@@ -18,24 +18,8 @@
 
 package org.meveo.admin.parse.csv;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 import org.meveo.admin.exception.InvalidELException;
+import org.meveo.commons.encryption.EncryptionFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
@@ -46,6 +30,22 @@ import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 /**
  * A default CDR file Reader
@@ -169,21 +169,13 @@ public class MEVEOCdrReader implements ICdrCsvReader {
      * @return CDR's unique key
      */
     private String getOriginRecord(String cdr) {
-
-        if (messageDigest != null) {
-            synchronized (messageDigest) {
-                messageDigest.reset();
-                messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
-                final byte[] resultByte = messageDigest.digest();
-                StringBuffer sb = new StringBuffer();
-                for (int i = 0; i < resultByte.length; ++i) {
-                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                }
-                return sb.toString();
-            }
+        final byte[] resultByte = EncryptionFactory.digest(cdr.getBytes(StandardCharsets.UTF_8));
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < resultByte.length; ++i) {
+            sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
         }
 
-        return null;
+        return sb.toString();
     }
 
     @Override

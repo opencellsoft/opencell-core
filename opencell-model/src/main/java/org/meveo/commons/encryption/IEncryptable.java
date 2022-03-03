@@ -21,18 +21,13 @@
  */
 package org.meveo.commons.encryption;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
-import java.security.Security;
-import java.util.Base64;
 
 /**
  * @author melyoussoufi
@@ -70,23 +65,7 @@ public interface IEncryptable {
 					return strToEncrypt;
 				}
 
-				Security.addProvider(new BouncyCastleProvider());
-				StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-				encryptor.setProvider(new BouncyCastleProvider());
-				encryptor.setAlgorithm(ParamBean.getInstance().getProperty("encryption.algorithm", "PBEWITHSHA256AND128BITAES-CBC-BC"));
-				String password = ParamBean.getInstance().getProperty("opencell.sha.key", "");
-				assert password != null;
-				if (password.equals("")) {
-					throw new Exception("Password is empty");
-				}
-				encryptor.setPassword(password);
-				String encrypted = encryptor.encrypt(strToEncrypt);
-
-
-//				SecretKeySpec secretKey = buildSecretKey();
-//				Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-//				cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-//				String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+				String encrypted = EncryptionFactory.encrypt(strToEncrypt);
 
 				return ENCRYPTION_CHECK_STRING + encrypted;
 			}
@@ -111,11 +90,9 @@ public interface IEncryptable {
 				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
 					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
 
-					SecretKeySpec secretKey = buildSecretKey();
-					Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-					cipher.init(Cipher.DECRYPT_MODE, secretKey);
-					String res = new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
-					return res;
+					String decrypted = EncryptionFactory.decrypt(strToDecrypt);
+
+					return decrypted;
 				}
 				return strToDecrypt;
 				

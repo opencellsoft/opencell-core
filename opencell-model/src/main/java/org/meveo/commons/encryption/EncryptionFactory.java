@@ -3,7 +3,6 @@ package org.meveo.commons.encryption;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.digest.StandardByteDigester;
-import org.jasypt.digest.StandardStringDigester;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.meveo.commons.utils.ParamBean;
 
@@ -12,7 +11,7 @@ import java.security.Provider;
 import java.security.Security;
 
 /**
- * StorageFactory
+ * EncryptionFactory
  *
  * @author Thang Nguyen
  * @author Wassim Drira
@@ -21,16 +20,9 @@ import java.security.Security;
  */
 public class EncryptionFactory {
 
+    private static final String encryptionAlgo;
 
-    private static String encryptionAlgo;
-
-    private static String nbIterations;
-
-    private static boolean enableEncryption;
-
-    private static String digestAlgo;
-
-    private static String symEncSecretKey;
+    private static final String symEncSecretKey;
 
     private static final String BY_DEFAULT_ENCRYPTION_ALGO = "PBEWITHSHA256AND128BITAES-CBC-BC";
 
@@ -44,16 +36,14 @@ public class EncryptionFactory {
 
     private static final StandardByteDigester byteDigester;
 
-    static {
-//        ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
-//
-//                ParamBean.getInstance().getProperty
+//    private static final String CURRENT_ENCRYPTION_ALGO_AND_KEY = "encryption.currentEncAlgoAndKey";
 
+    static {
         encryptionAlgo = ParamBean.getInstance().getProperty("encryption.algorithm", BY_DEFAULT_ENCRYPTION_ALGO);
-        nbIterations = ParamBean.getInstance().getProperty("digest.numberIterations", BY_DEFAULT_ITERATION);
-        enableEncryption = Boolean.parseBoolean(ParamBean.getInstance().getProperty("encryption.enable", BY_DEFAULT_ENABLE_ENCRYPTION));
-        digestAlgo = ParamBean.getInstance().getProperty("digest.algorithm", BY_DEFAULT_DIGEST_ALGO);
-        symEncSecretKey = ParamBean.getInstance().getProperty("symmetricEncryption.secretKey", null);
+        String nbIterations = ParamBean.getInstance().getProperty("digest.numberIterations", BY_DEFAULT_ITERATION);
+        boolean enableEncryption = Boolean.parseBoolean(ParamBean.getInstance().getProperty("encryption.enable", BY_DEFAULT_ENABLE_ENCRYPTION));
+        String digestAlgo = ParamBean.getInstance().getProperty("digest.algorithm", BY_DEFAULT_DIGEST_ALGO);
+        symEncSecretKey = ParamBean.getInstance().getProperty("encryption.secretKey", null);
 
         // initialize a byteDigester
         byteDigester = new StandardByteDigester();
@@ -64,9 +54,16 @@ public class EncryptionFactory {
         encryptor = new StandardPBEStringEncryptor();
         encryptor.setProvider(new BouncyCastleProvider());
         encryptor.setAlgorithm(encryptionAlgo);
-        String password = buildSecretPassword();
-        assert password != null;
-        encryptor.setPassword(password);
+        encryptor.setPassword(symEncSecretKey);
+
+//        // if currentEncryptionAlgoAndKey is empty, we set new value
+//        if (ParamBean.getInstance().getProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, "").isBlank())
+//            ParamBean.getInstance().setProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, encryptionAlgo + " | " + symEncSecretKey);
+//
+//        if (! ParamBean.getInstance().getProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, "").equals(encryptionAlgo + " | " + symEncSecretKey)) {
+//            ParamBean.getInstance().setProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, encryptionAlgo + " | " + symEncSecretKey); // update with new encryption algorithm and secret key
+//            updateEncryptedValues(encryptionAlgo, symEncSecretKey);
+//        }
     }
 
     public static void listOfSecurityProviders() {
@@ -105,8 +102,6 @@ public class EncryptionFactory {
     }
 
     public static String encrypt(String clearText){
-System.out.println("clearText day ne : " + clearText);
-System.out.println("encryptor != null day ne : " + (encryptor != null));
         return encryptor.encrypt(clearText);
     }
 
@@ -114,50 +109,49 @@ System.out.println("encryptor != null day ne : " + (encryptor != null));
         return encryptor.decrypt(encryptedText);
     }
 
-    public static void testCryptageAlgo() {
-        System.out.println("Hello World!");
-
-        StandardStringDigester digester = new StandardStringDigester();
-        digester.setAlgorithm("SHA-256"); // optionally set the algorithm
-        digester.setIterations(50000); // increase security by performing 50000 hashing iterations
-        String digest = digester.digest("myMessage");
-        System.out.println("digest:" + digest);
-
-
-//        // second way : using provider name
-//        Security.addProvider(new BouncyCastleProvider());
-//
-//        StandardPBEStringEncryptor mySecondEncryptor = new StandardPBEStringEncryptor();
-//        mySecondEncryptor.setProviderName("BC");
-//        mySecondEncryptor.setAlgorithm("PBEWITHSHA256AND128BITAES-CBC-BC");
-//        mySecondEncryptor.setPassword("myPass");
-//
-//        encryptedText = mySecondEncryptor.encrypt(clearText);
-//        System.out.println("second way enc:" + encryptedText);
-
+    public static byte[] digest(byte[] bytesToDigest){
+        return byteDigester.digest(bytesToDigest);
     }
 
-    public static void main(String[] args) {
-//        EncryptionFactory.testCryptageAlgo();
+//    private static void updateEncryptedValues(String encryptionAlgo, String key){
+//        // get tables with CF values
+//        List<String> tablesWithCfValues = getTablesWithCfValues();
+//for (String tableName : tablesWithCfValues) {
+//    System.out.println("tableName with CF : " + tableName);
+//}
+//System.out.println("--------------------updateEncryptedValues--------------------------");
+//        for (String tableName : tablesWithCfValues) {
+//System.out.println("tableName decrypt with CF : " + tableName);
+//            decryptCfvalues(tableName);
+//        }
+//    }
 //
-//        String clearText = "this text";
-//        String algorithm = "PBEWITHSHA256AND128BITAES-CBC-BC";
-//        String password = "myPass";
-//        String encryptedText = EncryptionFactory.encrypt(clearText);
-//        String decryptedText = EncryptionFactory.decrypt(encryptedText);
-//        System.out.println("decryptedText DAY NE : " + decryptedText);
-
-
-
-        // initialize an encryptor
-        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-        encryptor.setProvider(new BouncyCastleProvider());
-        encryptor.setAlgorithm(encryptionAlgo);
-        String password1 = buildSecretPassword();
-        assert password1 != null;
-        encryptor.setPassword(password1);
-        String encrypted = encryptor.encrypt("a message");
-System.out.println("encrypted : " + encrypted);
-    }
-
+//    private static List<String> getTablesWithCfValues() {
+//        assert accountEntityService != null;
+//
+//        return accountEntityService.getEntityManager()
+//                .createNativeQuery("select table_name from information_schema.columns where column_name='cf_values'")
+//                .getResultList();
+//    }
+//
+//    private static void decryptCfvalues(String tableName) {
+//        assert accountEntityService != null;
+//        List<Object[]> entities = accountEntityService.getEntityManager()
+//                .createNativeQuery("select id, cast(cf_values as varchar) from " + tableName + " where cf_values like 'AES%'")
+//                .getResultList();
+//
+//        for (Object[] result : entities) {
+//            long cfId = ((BigInteger) result[0]).longValue();
+//            String cfValue = (String) result[1];
+//
+//System.out.println("descrypting line id = " + cfId + ", value = " + cfValue + ", table = " + tableName);
+//
+//            String decryptedCf = decrypt(cfValue);
+//            if(decryptedCf != null) {
+//                accountEntityService.getEntityManager()
+//                        .createNativeQuery("update  " + tableName + " set cf_values='"+decryptedCf+"' where  id="+cfId)
+//                        .executeUpdate();
+//            }
+//        }
+//    }
 }
