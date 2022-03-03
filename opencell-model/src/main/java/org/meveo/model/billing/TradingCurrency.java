@@ -66,7 +66,6 @@ public class TradingCurrency extends EnableEntity {
     /**
      * Description. Deprecated in 5.3 for not use.
      */
-    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
@@ -83,6 +82,13 @@ public class TradingCurrency extends EnableEntity {
      */
     @Transient
     String currencyCode;
+
+    @Column(name = "symbol", length = 255)
+    @Size(max = 255)
+    private String symbol;
+
+    @Column(name = "decimal_places")
+    private Integer decimalPlaces;
 
     public BigDecimal getPrCurrencyToThis() {
         return prCurrencyToThis;
@@ -114,6 +120,22 @@ public class TradingCurrency extends EnableEntity {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Integer getDecimalPlaces() {
+        return decimalPlaces;
+    }
+
+    public void setDecimalPlaces(Integer decimalPlaces) {
+        this.decimalPlaces = decimalPlaces;
     }
 
     @Override

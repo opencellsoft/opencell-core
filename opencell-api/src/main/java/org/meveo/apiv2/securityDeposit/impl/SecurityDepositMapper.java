@@ -59,7 +59,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
             currency.setId(resource.getCurrency().getId());
             securityDeposit.setCurrency(currency);
         }
-        if (resource.getCustomerAccount() != null && resource.getCustomerAccount().getId() != null) {
+        if (resource.getCustomerAccount() != null) {
             CustomerAccount customerAccount = new CustomerAccount();
             customerAccount.setId(resource.getCustomerAccount().getId());
             customerAccount.setCode(resource.getCustomerAccount().getCode());

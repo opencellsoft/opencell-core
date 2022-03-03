@@ -33,8 +33,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.crm.impl.ProviderService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -52,6 +54,9 @@ public class CurrencyApi extends BaseApi {
 
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+
+    @Inject
+    private ProviderService providerService;
 
     public CurrenciesDto list() {
         CurrenciesDto result = new CurrenciesDto();
@@ -100,6 +105,8 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setActive(true);
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
+        tradingCurrency.setSymbol(postData.getSymbol() != null ? postData.getSymbol() : postData.getCode());
+        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
         if (postData.isDisabled() != null) {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
@@ -159,6 +166,8 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
+        tradingCurrency.setSymbol(postData.getSymbol() != null ? postData.getSymbol() : postData.getCode());
+        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
     }
@@ -228,9 +237,11 @@ public class CurrencyApi extends BaseApi {
             throw new NotFoundException(new ActionStatus(ActionStatusEnum.FAIL, "currency not found"));
         }
 
-        appProvider.setCurrency(currency);
-        appProvider.setMulticurrencyFlag(true);
-        appProvider.setFunctionalCurrencyFlag(true);
+        Provider provider = providerService.findById(appProvider.getId());
+        provider.setCurrency(currency);
+        provider.setMulticurrencyFlag(true);
+        provider.setFunctionalCurrencyFlag(true);
+        providerService.update(provider);
 
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
