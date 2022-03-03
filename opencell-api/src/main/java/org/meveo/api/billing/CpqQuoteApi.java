@@ -92,7 +92,9 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -1185,8 +1187,6 @@ public class CpqQuoteApi extends BaseApi {
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
-        accountingArticlePrices.addAll(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
-        		quoteVersion));
 
         Map<BigDecimal, List<QuotePrice>> pricesPerTaux = accountingArticlePrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
@@ -1208,14 +1208,6 @@ public class CpqQuoteApi extends BaseApi {
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
             quoteTotalAmount = quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
         }
-
-
-
-
-
-
-
-
         CpqQuote quote=quoteVersion.getQuote();
         applyFixedDiscount(quoteVersion.getDiscountPlan(), quoteTotalAmount, quote.getSeller(),
         		quote.getBillableAccount(), null, null,null, quoteVersion);
@@ -1245,6 +1237,11 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
+            
+       	 	if(quoteOffer != null) {
+                quotePrice.setAmountWithoutTaxWithDiscount(accountingArticlePrice.getAmountWithoutTaxWithDiscount());
+       	 	}
+       	 
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
             }
@@ -1261,6 +1258,15 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
+            
+            if(quoteOffer != null) {
+            	 if(a.getAmountWithoutTaxWithDiscount() != null && b.getAmountWithoutTaxWithDiscount() != null) {
+                 	quotePrice.setAmountWithoutTaxWithDiscount(a.getAmountWithoutTaxWithDiscount().add(b.getAmountWithoutTaxWithDiscount()));
+                 }else if(a.getAmountWithoutTaxWithDiscount() != null) 
+                 	quotePrice.setAmountWithoutTaxWithDiscount(a.getAmountWithoutTaxWithDiscount());
+                 else 
+                 	quotePrice.setAmountWithoutTaxWithDiscount(b.getAmountWithoutTaxWithDiscount());
+            }
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
             if(a.getRecurrenceDuration()!=null) {
@@ -1286,6 +1292,15 @@ public class CpqQuoteApi extends BaseApi {
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
         Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
         List<QuotePrice> accountingPrices = new ArrayList<>();
+        List<QuotePrice> accountingPricesDiscount = new ArrayList<>();
+        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
+            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
+                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
+                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
+                accountingPrices.addAll(overrodeLine.getQuotePrices());
+            }
+
+        }
         String accountingArticleCode = null;
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
         for (WalletOperation wo : walletOperations) {
@@ -1317,7 +1332,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
             quotePrice.setPriceLevelEnum(PriceLevelEnum.PRODUCT);
             quotePrice.setAmountWithoutTax(wo.getAmountWithoutTax());
-            quotePrice.setAmountWithoutTaxWithDiscount(wo.getAmountWithoutTax());
+//            quotePrice.setAmountWithoutTaxWithDiscount(wo.getAmountWithoutTax());
             quotePrice.setAmountWithTax(wo.getAmountWithTax());
             quotePrice.setTaxAmount(wo.getAmountTax());
             quotePrice.setCurrencyCode(wo.getCurrency() != null ? wo.getCurrency().getCurrencyCode() : null);
@@ -1345,26 +1360,24 @@ public class CpqQuoteApi extends BaseApi {
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);
         }
-
+        accountingPricesDiscount.addAll(applyDiscounts(accountingPrices, quoteOffer.getQuoteVersion().getQuote().getSeller(), quoteOffer.getQuoteVersion().getQuote().getBillableAccount(),
+        		quoteOffer.getQuoteVersion()));
         //Calculate totals by offer
-
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
         log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());
-        pricesPerType
-        .keySet()
-        .stream()
-        .map(key -> reducePrices(key, pricesPerType, null,quoteOffer,PriceLevelEnum.OFFER))
-        .filter(Optional::isPresent)
-        .map(price -> {
-            QuotePrice quotePrice = price.get();
-            quotePriceService.create(quotePrice);
-            quoteOffer.getQuotePrices().add(quotePrice);
-            pricesDTO.add(new PriceDTO(quotePrice));
-            return pricesDTO;
-        }).collect(Collectors.toList());
+        pricesDTO = pricesPerType.keySet().stream()
+        			.map(key -> reducePrices(key, pricesPerType, null,quoteOffer,PriceLevelEnum.OFFER))
+        			.filter(Optional::isPresent)
+			        .map(price -> {
+			            QuotePrice quotePrice = price.get();
+			            quotePriceService.create(quotePrice);
+			            quoteOffer.getQuotePrices().add(quotePrice);
+			            return new PriceDTO(quotePrice);
+			        })
+			        .collect(Collectors.toList());
 
         //apply fixed discounts on products
         quoteProductTotalAmount.forEach((id, amount) -> {
@@ -1378,6 +1391,7 @@ public class CpqQuoteApi extends BaseApi {
         applyFixedDiscount(quoteOffer.getDiscountPlan(), offerTotalAmount, quoteOffer.getQuoteVersion().getQuote().getSeller(),
         		quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount(), quoteOffer, null, null,quoteOffer.getQuoteVersion());
 
+        accountingPrices.addAll(accountingPricesDiscount);
         return accountingPrices;
     }
 
@@ -1886,7 +1900,7 @@ public class CpqQuoteApi extends BaseApi {
                         discountQuotePrice.setQuoteArticleLine(quoteArticleLine);
                         discountQuotePrice.setQuoteVersion(quoteVersion);
                         discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
-                        if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
+                        if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum()) ) {
                             RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) quotePrice.getChargeTemplate();
                             Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth(), quoteOffer, quoteproduct));
                             discountQuotePrice.setRecurrenceDuration(recurrenceDuration);
@@ -1903,6 +1917,9 @@ public class CpqQuoteApi extends BaseApi {
                             Long usageQuantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, quoteproduct));
                             quotePrice.setRecurrenceDuration(usageQuantity);
                             overrideAmounts(quotePrice, usageQuantity);
+                        }else if (PriceTypeEnum.ONE_SHOT_SUBSCRIPTION.equals(discountQuotePrice.getPriceTypeEnum()) || 
+                        		PriceTypeEnum.ONE_SHOT_OTHER.equals(discountQuotePrice.getPriceTypeEnum())) {
+                        	quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTax().add(discountQuotePrice.getAmountWithoutTax()));
                         }
                         discountQuotePrice.setTaxRate(taxPercent);
                         quotePriceService.create(discountQuotePrice);
