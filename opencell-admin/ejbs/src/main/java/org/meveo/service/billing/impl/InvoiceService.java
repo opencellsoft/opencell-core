@@ -2746,13 +2746,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (isPrepaid) {
             invoiceType = invoiceTypeService.getDefaultPrepaid();
-
-        } else if (isDraft) {
-            invoiceType = invoiceTypeService.getDefaultDraft();
-
         } else if (isDepositInvoice) {
             invoiceType = invoiceTypeService.getDefaultDeposit();
-
         } else {
             if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
                 String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
