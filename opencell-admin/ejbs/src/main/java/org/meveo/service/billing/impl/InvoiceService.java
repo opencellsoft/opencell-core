@@ -1050,6 +1050,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             rtUpdates.add(new Object[] { subAggregate, rts });
                         }
                         subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
+                        invoiceAgregateService.create(subAggregate);
                     }
 
                     setInvoiceDueDate(invoice, rtGroup.getBillingCycle());
