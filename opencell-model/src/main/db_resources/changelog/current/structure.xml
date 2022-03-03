@@ -9723,7 +9723,7 @@ public class OrderAdvancement extends ModuleScript {
     		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid">
 	  	<createIndex indexName="billing_wallet_operation_charge_instance_idx" tableName="billing_wallet_operation">
 	      	<column name="charge_instance_id"/>
@@ -9746,6 +9746,23 @@ public class OrderAdvancement extends ModuleScript {
         <!--  comment is reserved word in oracle database-->
         <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
         <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
+        <sql>
+            create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
+            create index cpq_tag_seller_id_index on cpq_tag (seller_id);
+            create index cpq_tag_tag_type_id_index on cpq_tag (tag_type_id);
+            create index cpq_tag_type_seller_id_index on cpq_tag_type (seller_id);
+            create index cpq_commercial_rule_header_attribute_id_index on cpq_commercial_rule_header (attribute_id);
+            create index cpq_commercial_rule_header_grouped_attributes_id_index on cpq_commercial_rule_header (grouped_attributes_id);
+            create index cpq_commercial_rule_header_grouped_service_id_index on cpq_commercial_rule_header (grouped_service_id);
+            create index cpq_commercial_rule_header_offer_template_id_index on cpq_commercial_rule_header (offer_template_id);
+            create index cpq_commercial_rule_header_product_id_index on cpq_commercial_rule_header (product_id);
+            create index cpq_commercial_rule_header_product_version_id_index on cpq_commercial_rule_header (product_version_id);
+            create index cpq_commercial_rule_header_service_template_id_index on cpq_commercial_rule_header (service_template_id);
+            create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
+        </sql>
     </changeSet>
 
     <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql">

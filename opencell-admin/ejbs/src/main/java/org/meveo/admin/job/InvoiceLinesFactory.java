@@ -101,7 +101,6 @@ public class InvoiceLinesFactory {
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);
         
-        invoiceLine.setLabel((String) record.get("label"));
         invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) record.getOrDefault("unit_amount_without_tax", ZERO) : (BigDecimal) record.getOrDefault("unit_amount_with_tax", ZERO));
         invoiceLine.setRawAmount(isEnterprise ? amountWithoutTax : amountWithTax);
         DatePeriod validity = new DatePeriod();
@@ -126,7 +125,7 @@ public class InvoiceLinesFactory {
                     .orElseThrow(() -> new BusinessException("No accountingArticle found"));
             invoiceLine.setAccountingArticle(accountingArticle);
         }
-
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         return invoiceLine;
     }
 
