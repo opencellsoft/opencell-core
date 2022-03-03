@@ -181,7 +181,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         if (isLastLine) {
             return Boolean.FALSE;
         }
-        if (OperatorEnum.OR.equals(operator) && isElementExists) { 
+        if ((OperatorEnum.OR.equals(operator) && isElementExists) || (OperatorEnum.AND.equals(operator) && !isElementExists)) { 
         		return Boolean.FALSE;
         	} 
         
@@ -211,11 +211,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                     if ((line.getSourceOfferTemplate() != null
                             && !line.getSourceOfferTemplate().getCode().equals(offerCode))
                             || (line.getSourceOfferTemplate() != null
-                            && line.getSourceOfferTemplate().getCode().equals(offerCode) && line.getSourceProduct() == null)) {
-                        if (continueProcess.isTrue()) {
+                            && line.getSourceOfferTemplate().getCode().equals(offerCode) && line.getSourceProduct() == null && line.getSourceAttribute()==null)) {
+                        if (continueProcess.isTrue() ||commercialRules.iterator().hasNext()) {
                             continue;
                         } else {
-                            return false;
+                               return false;
                         }
 
                     }
@@ -281,6 +281,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
     
     
+    
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
     	boolean isSelected=true;
     	if(line.getSourceAttribute()==null) {
@@ -298,8 +299,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					List<String> values = Arrays.asList(convertedValue.split(";"));
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, values.contains(line.getSourceAttributeValue())));
     							return false;
+    						}else if (isPreRequisite && values.contains(line.getSourceAttributeValue())){
+    							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    							return true;
     						}
     					break;
     				case EXPRESSION_LANGUAGE:
@@ -307,16 +311,23 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
     					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, result.equals(line.getSourceAttributeValue())));
     							return false;
+    						}else if (isPreRequisite && result.equals(line.getSourceAttributeValue())){
+    							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    							return true;
     						}
     					break;
     				default:
     					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
     							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, convertedValue.equals(line.getSourceAttributeValue())));
     							return false;
+    						}else if (isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())){
+    							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    							return true;
     						}
+    					
 
     				}
     			}else {
@@ -328,6 +339,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	}
     	return isSelected;
     }
+
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();
         List<CommercialRuleHeader> productRules = quoteProduct.getProductVersion().getProduct().getCommercialRuleHeader()
