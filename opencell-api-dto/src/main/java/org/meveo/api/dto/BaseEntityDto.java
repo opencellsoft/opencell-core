@@ -30,7 +30,7 @@ import java.io.Serializable;
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
  **/
-@JsonInclude(Include.NON_EMPTY)
+@JsonInclude(Include.NON_NULL)
 public abstract class BaseEntityDto implements Serializable {
 
     private static final long serialVersionUID = 4456089256601996946L;
