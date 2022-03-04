@@ -11,8 +11,14 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaxPricesDto extends BaseEntityDto {
 
-    private BigDecimal taxRate;
-    private List<PriceDTO> prices;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private BigDecimal taxRate;
+    private BigDecimal unitPriceAmountWithoutTax;
+
+	private List<PriceDTO> prices;
 
     public TaxPricesDto(BigDecimal taxRate, List<PriceDTO> prices) {
         this.taxRate = taxRate;
@@ -34,4 +40,11 @@ public class TaxPricesDto extends BaseEntityDto {
     public void setPrices(List<PriceDTO> prices) {
         this.prices = prices;
     }
+    public BigDecimal getUnitPriceAmountWithoutTax() {
+		return unitPriceAmountWithoutTax;
+	}
+
+	public void setUnitPriceAmountWithoutTax(BigDecimal unitPriceAmountWithoutTax) {
+		this.unitPriceAmountWithoutTax = unitPriceAmountWithoutTax;
+	}
 }
