@@ -1302,14 +1302,16 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     }
 
     public static boolean isORChargeMatch(ChargeInstance chargeInstance) throws InvalidELException {
-    	if(chargeInstance.getServiceInstance()!=null) {
-    		boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN).
-    	        	 filter(attributeInstance -> attributeInstance.getBooleanValue()!=null)
-    	            .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-    	            .anyMatch(attributeInstance -> attributeInstance.getBooleanValue()==null || !attributeInstance.getBooleanValue());
-  	        
-    		if(anyFalseAttribute) return false;
-  	}
+        if (chargeInstance.getServiceInstance() != null) {
+            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream()
+                    .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                    .filter(attributeInstance -> attributeInstance.getBooleanValue() != null)
+                    .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                    .anyMatch(attributeInstance -> attributeInstance.getBooleanValue() == null || !attributeInstance.getBooleanValue());
+
+            if (anyFalseAttribute)
+                return false;
+        }
         if (StringUtils.isBlank(chargeInstance.getChargeTemplate().getFilterExpression())) {
             return true;
         }
