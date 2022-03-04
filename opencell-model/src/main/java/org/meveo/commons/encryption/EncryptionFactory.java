@@ -39,11 +39,11 @@ public class EncryptionFactory {
 //    private static final String CURRENT_ENCRYPTION_ALGO_AND_KEY = "encryption.currentEncAlgoAndKey";
 
     static {
-        encryptionAlgo = ParamBean.getInstance().getProperty("encryption.algorithm", BY_DEFAULT_ENCRYPTION_ALGO);
+        encryptionAlgo = ParamBean.getInstance().getProperty("encrypt.algorithm", BY_DEFAULT_ENCRYPTION_ALGO);
+        symEncSecretKey = ParamBean.getInstance().getProperty("encrypt.secretKey", null);
         String nbIterations = ParamBean.getInstance().getProperty("digest.numberIterations", BY_DEFAULT_ITERATION);
         boolean enableEncryption = Boolean.parseBoolean(ParamBean.getInstance().getProperty("encryption.enable", BY_DEFAULT_ENABLE_ENCRYPTION));
         String digestAlgo = ParamBean.getInstance().getProperty("digest.algorithm", BY_DEFAULT_DIGEST_ALGO);
-        symEncSecretKey = ParamBean.getInstance().getProperty("encryption.secretKey", null);
 
         // initialize a byteDigester
         byteDigester = new StandardByteDigester();
