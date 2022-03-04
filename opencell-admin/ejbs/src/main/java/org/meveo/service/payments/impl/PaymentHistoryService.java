@@ -1,29 +1,13 @@
-/*
- * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
- * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
- * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
- * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
- * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
- * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
- *
- * For more information on the GNU Affero General Public License, please consult
- * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+/**
+ * 
  */
-
 package org.meveo.service.payments.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -47,6 +31,7 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @lastModifiedVersion 5.0.2
  */
+@Stateless
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 	
     /** The account operation service. */
@@ -55,8 +40,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 	
 
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
+    public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
     	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
     	if(aoIdsToPay != null) {
@@ -64,13 +48,12 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         		aoToPay.add(accountOperationService.findById(aoId));
             }
     	}
-    	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
+    	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, externalPaymentId, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
     }
     
 	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void addHistoryAOs(CustomerAccount customerAccount, Payment payment, Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage,
-			PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
+			String externalPaymentId, PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
 			throws BusinessException {
 		PaymentHistory paymentHistory = new PaymentHistory();
 		paymentHistory.setCustomerAccountCode(customerAccount.getCode());
@@ -86,8 +69,8 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		paymentHistory.setErrorCode(errorCode);
 		paymentHistory.setErrorMessage(errorMessage);
 		paymentHistory.setErrorType(errorType);
-		paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
-		paymentHistory.setOperationCategory(payment != null ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT );
+		paymentHistory.setExternalPaymentId(externalPaymentId);
+		paymentHistory.setOperationCategory(operationCategory);
 		paymentHistory.setSyncStatus(status);
 		paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
 		paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
@@ -115,9 +98,16 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		}
 
 		for (AccountOperation ao : aoToPay) {
+			if (ao.getPaymentHistories() == null) {
+				ao.setPaymentHistories(new ArrayList<>());
+			}
 			ao.getPaymentHistories().add(paymentHistory);
+
+			if (paymentHistory.getListAoPaid() == null) {
+				paymentHistory.setListAoPaid(new ArrayList<>());
+			}
 			paymentHistory.getListAoPaid().add(ao);
-		}
+		}		
 		super.create(paymentHistory);
 	}
     
