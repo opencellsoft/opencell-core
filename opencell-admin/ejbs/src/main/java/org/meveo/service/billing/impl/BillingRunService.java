@@ -1374,7 +1374,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
                                                  Long jobInstanceId) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
