@@ -5464,7 +5464,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                 (discountPlanItem.getDiscountValue().divide(hundred)).multiply(invoiceLine.getAmountWithoutTax()));
                     }
                 }
-                invoiceLine.setDiscountRate(invoiceLineDiscountAmount);
+                invoiceLine.setDiscountAmount(invoiceLineDiscountAmount);
                 invoiceLinesService.update(invoiceLine);
             }
         }
