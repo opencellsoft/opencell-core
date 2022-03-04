@@ -743,7 +743,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param result
 	 * @param aggregationConfiguration
 	 * @param billingRun
-	 * @param billableEntity
+	 * @param be billableEntity
 	 * @param basicStatistics
 	 * @return
 	 */
