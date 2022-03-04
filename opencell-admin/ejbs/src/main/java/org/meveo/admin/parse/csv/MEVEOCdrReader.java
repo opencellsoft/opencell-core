@@ -19,7 +19,6 @@
 package org.meveo.admin.parse.csv;
 
 import org.apache.logging.log4j.util.Strings;
-import org.meveo.commons.encryption.EncryptionFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
@@ -41,7 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -160,20 +159,26 @@ public class MEVEOCdrReader implements ICdrCsvReader {
      * @return CDR's unique key
      */
     private String getOriginRecord(String cdr) {
-System.out.println("getOriginRecord Test Thang");
-        if (StringUtils.isBlank(username) || CDR_ORIGIN_ENUM.JOB == origin) {
-            final byte[] resultByte = EncryptionFactory.digest(cdr.getBytes(StandardCharsets.UTF_8));
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < resultByte.length; ++i) {
-                sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-            }
 
-System.out.println("sb.toString() Test Thang : " + sb.toString());
-            return sb.toString();
+        if (StringUtils.isBlank(username) || CDR_ORIGIN_ENUM.JOB == origin) {
+
+            if (messageDigest != null) {
+                synchronized (messageDigest) {
+                    messageDigest.reset();
+                    messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
+                    final byte[] resultByte = messageDigest.digest();
+                    StringBuffer sb = new StringBuffer();
+                    for (int i = 0; i < resultByte.length; ++i) {
+                        sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
+                    }
+                    return sb.toString();
+                }
+            }
         } else {
             return username + "_" + new Date().getTime();
         }
 
+        return null;
     }
 
     @Override

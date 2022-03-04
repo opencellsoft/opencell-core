@@ -110,8 +110,9 @@ public class EncryptionFactory {
     }
 
     public static byte[] digest(byte[] bytesToDigest){
-System.out.println("digest Test Thang");
-        return byteDigester.digest(bytesToDigest);
+        synchronized (byteDigester) {
+            return byteDigester.digest(bytesToDigest);
+        }
     }
 
 //    private static void updateEncryptedValues(String encryptionAlgo, String key){
