@@ -1296,7 +1296,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
-        invoice = invoiceService.refreshOrRetrieve(invoice);
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
             ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
             if (scriptInstance != null) {
