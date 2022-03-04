@@ -3,7 +3,7 @@ package org.meveo.admin.parse.csv;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.meveo.commons.encryption.EncryptionFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CSVCDRParser;
@@ -20,7 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -257,13 +257,26 @@ public class MEVEOCdrParser implements CSVCDRParser {
      * @return CDR's unique key
      */
     private String getOriginRecord(String cdr) {
-        final byte[] resultByte = EncryptionFactory.digest(cdr.getBytes(StandardCharsets.UTF_8));
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < resultByte.length; ++i) {
-            sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
+
+        if (StringUtils.isBlank(username) || CDR_ORIGIN_ENUM.JOB == origin) {
+
+            if (messageDigest != null) {
+                synchronized (messageDigest) {
+                    messageDigest.reset();
+                    messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
+                    final byte[] resultByte = messageDigest.digest();
+                    StringBuffer sb = new StringBuffer();
+                    for (int i = 0; i < resultByte.length; ++i) {
+                        sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
+                    }
+                    return sb.toString();
+                }
+            }
+        } else {
+            return username + "_" + new Date().getTime();
         }
 
-        return sb.toString();
+        return null;
     }
 
     @Override
