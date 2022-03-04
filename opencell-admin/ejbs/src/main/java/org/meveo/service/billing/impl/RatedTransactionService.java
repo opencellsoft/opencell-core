@@ -1450,10 +1450,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT  string_agg(rt.id, ',') as rated_transaction_ids, rt.billing_account__id, " +
+        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, " +
                 "                 rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax, "
-                + "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, "
+                + "                 SUM(rt.amount_without_tax) as sum_without_tax, SUM(rt.amount_with_tax) as sum_with_tax, "
                 + "                 rt.offer_id, rt.service_instance_id,"
                 + "                 rt.usage_date, rt.start_date, rt.end_date,"
                 + "                 rt.order_number, rt.subscription_id, rt.tax_percent, rt.tax_id, "
@@ -1472,12 +1472,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
 
-        String query = "SELECT  string_agg(rt.id, ',') as rated_transaction_ids, rt.billing_account__id, "
+        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "              sum(rt.amount_without_tax) as sum_amount_without_tax,"
                 + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
                 + "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, "
-                + "              EXTRACT(MONTH FROM rt.usage_date) valueDate, min(rt.start_date) as start_date, "
+                + "              EXTRACT(MONTH FROM rt.usage_date) as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
@@ -1562,9 +1562,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 "rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax,  ";
         final String unitAmountGroupBy = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : " rt.unitAmountWithoutTax, rt.unitAmountWithTax,  ";
         String query =
-                "SELECT  string_agg(rt.id, ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                        + "" + unitAmount + " SUM(rt.amountWithoutTax) as sum_without_Tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
-                        + usageDateAggregation + " as valueDate, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
+                "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
+                        + "" + unitAmount + " SUM(rt.amountWithoutTax) as sum_without_tax, SUM(rt.amountWithTax) as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
+                        + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
                         + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
                         + " rt.chargeInstance.id as charge_instance_id "

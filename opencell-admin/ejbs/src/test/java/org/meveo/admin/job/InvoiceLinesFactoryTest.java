@@ -209,7 +209,7 @@ public class InvoiceLinesFactoryTest {
         record.put("quantity", new BigDecimal(10));
         record.put("tax_percent", new BigDecimal(10));
         record.put("sum_with_tax", new BigDecimal(110.13574));
-        record.put("sum_without_Tax", new BigDecimal(100.1234));
+        record.put("sum_without_tax", new BigDecimal(100.1234));
         record.put("label", "labe");
         record.put("unit_amount_without_tax", new BigDecimal(10));
         record.put("unit_amount_with_tax", new BigDecimal(20));

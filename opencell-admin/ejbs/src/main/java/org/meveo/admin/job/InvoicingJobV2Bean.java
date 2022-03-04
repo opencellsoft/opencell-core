@@ -74,7 +74,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private RatedTransactionService ratedTransactionService;
     
 
-    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
