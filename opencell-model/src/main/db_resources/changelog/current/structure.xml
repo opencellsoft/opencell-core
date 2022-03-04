@@ -11799,4 +11799,17 @@ order by date_trunc('month', i.invoice_date) DESC
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+    
+     <changeSet id="#INTRD-5385_20220228" author="TarikFA.">
+	     <addColumn tableName="cpq_quote_price">
+	     	<column name="quantity" type="numeric(19,2)"/>
+	     </addColumn>
+	     <addColumn tableName="cpq_quote_price">
+	     	<column name="discounted_quote_price" type="bigint"/>
+	     </addColumn>
+	     <renameColumn tableName="cpq_quote_price" oldColumnName="amount_without_tax_with_discount" newColumnName="amount_without_tax_without_discount"/>
+	     <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" 
+	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+      </changeSet>
+      
 </databaseChangeLog>
