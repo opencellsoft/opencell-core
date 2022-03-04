@@ -24,6 +24,8 @@ import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.UserAccount;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -86,6 +88,9 @@ public class UserAccountDto extends AccountDto {
     
     /** The termination reason. */
     private String terminationReason;
+    
+    /** Indicate if this is a consumer **/
+    protected Boolean isConsumer=Boolean.TRUE;
     
     /** List of GDPR information**/
     private List<GDPRInfoDto> infoGdpr;
@@ -399,6 +404,19 @@ public class UserAccountDto extends AccountDto {
         this.customerDescription = customerDescription;
     }
 
+    /**
+	 * @return the isConsumer
+	 */
+	public Boolean getIsConsumer() {
+		return isConsumer;
+	}
+
+	/**
+	 * @param isConsumer the isConsumer to set
+	 */
+	public void setIsConsumer(Boolean isConsumer) {
+		this.isConsumer = isConsumer;
+	}
 
     @Override
     public String toString() {

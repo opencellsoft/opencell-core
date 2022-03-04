@@ -8771,7 +8771,7 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
  	</changeSet>
- 	
+
  	<changeSet id="#FIX-INTRD-634_20210706" author="AkadidAbdelmounaim" failOnError="false">
         <addColumn tableName="dunning_payment_retries">
             <column name="pay_retry_frequency" type="int4" defaultValueNumeric="0">
@@ -8779,7 +8779,7 @@ public class OrderAdvancement extends ModuleScript {
            	</column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#FIX2-INTRD-634_20210706" author="AkadidAbdelmounaim" failOnError="false">
     	<createTable tableName="invoice_dunning_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -8804,8 +8804,8 @@ public class OrderAdvancement extends ModuleScript {
                                  constraintName="fk_dunning_settings_invoice_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
-    </changeSet>       
- 	
+    </changeSet>
+
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
         <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
@@ -11212,7 +11212,7 @@ order by date_trunc('month', i.invoice_date) DESC
     	<dropForeignKeyConstraint baseTableName="dunning_collection_management" constraintName="fk_dunning_collection_management_dunning_settings"/>
 	    <dropPrimaryKey constraintName="dunning_collection_management_pkey" tableName="dunning_collection_management"/>
     </changeSet>
-    
+
     <changeSet id="#FIX-INTRD-2601_20211102-changeset" author="AbdelmounaimAkadid" failOnError="false">
     	<renameTable oldTableName="dunning_collection_management" newTableName="dunning_agent"/>
 		<renameSequence oldSequenceName="dunning_collection_management_seq" newSequenceName="dunning_agent_seq" />
@@ -11786,7 +11786,7 @@ order by date_trunc('month', i.invoice_date) DESC
 	      	<column name="charge_instance_id"/>
 	  	</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid">
 		<createIndex indexName="cpq_attribute_instance_service_instance_idx" tableName="cpq_attribute_instance">
 	      	<column name="service_instance_id"/>
@@ -11933,4 +11933,34 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
 
+
+    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
+        <sql>
+            create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
+            create index cpq_tag_seller_id_index on cpq_tag (seller_id);
+            create index cpq_tag_tag_type_id_index on cpq_tag (tag_type_id);
+            create index cpq_tag_type_seller_id_index on cpq_tag_type (seller_id);
+            create index cpq_commercial_rule_header_attribute_id_index on cpq_commercial_rule_header (attribute_id);
+            create index cpq_commercial_rule_header_grouped_attributes_id_index on cpq_commercial_rule_header (grouped_attributes_id);
+            create index cpq_commercial_rule_header_grouped_service_id_index on cpq_commercial_rule_header (grouped_service_id);
+            create index cpq_commercial_rule_header_offer_template_id_index on cpq_commercial_rule_header (offer_template_id);
+            create index cpq_commercial_rule_header_product_id_index on cpq_commercial_rule_header (product_id);
+            create index cpq_commercial_rule_header_product_version_id_index on cpq_commercial_rule_header (product_version_id);
+            create index cpq_commercial_rule_header_service_template_id_index on cpq_commercial_rule_header (service_template_id);
+            create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
+        </sql>
+    </changeSet>
+    
+     <changeSet id="#INTRD-5385_20220228" author="TarikFA.">
+	     <addColumn tableName="cpq_quote_price">
+	     	<column name="quantity" type="numeric(19,2)"/>
+	     </addColumn>
+	     <addColumn tableName="cpq_quote_price">
+	     	<column name="discounted_quote_price" type="bigint"/>
+	     </addColumn>
+	     <renameColumn tableName="cpq_quote_price" oldColumnName="amount_without_tax_with_discount" newColumnName="amount_without_tax_without_discount"/>
+	     <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" 
+	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+      </changeSet>
+      
 </databaseChangeLog>

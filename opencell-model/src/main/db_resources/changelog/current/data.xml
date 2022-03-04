@@ -9511,5 +9511,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>id=-8</where>
 		</update>
 	</changeSet>
+	<changeSet id="INTRD-4680-01032022" author="TarikRabeh">
+		<update tableName="billing_user_account">
+			<column name="is_consumer">1</column>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
