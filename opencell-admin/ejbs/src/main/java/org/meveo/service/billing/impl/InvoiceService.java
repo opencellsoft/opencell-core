@@ -186,6 +186,8 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -389,6 +391,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private CpqQuoteService cpqQuoteService;
+
+    @Inject
+    private DiscountPlanService discountPlanService;
+
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
+    
 
     @PostConstruct
     private void init() {
@@ -3560,14 +3569,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
-        if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
-            List<InvoiceLine> invoiceLines = invoice.getInvoiceLines();
-            subscriptionApplicableDiscountPlanItems.addAll(invoiceLines.stream()
-                    .filter(invoiceLine -> invoiceLine.getDiscountPlan() != null)
-                    .map(InvoiceLine::getDiscountPlan)
-                    .map(DiscountPlan::getDiscountPlanItems)
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList()));
+//        if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
+//            List<InvoiceLine> invoiceLines = invoice.getInvoiceLines();
+//            subscriptionApplicableDiscountPlanItems.addAll(invoiceLines.stream()
+//                    .filter(invoiceLine -> invoiceLine.getDiscountPlan() != null)
+//                    .map(InvoiceLine::getDiscountPlan)
+//                    .map(DiscountPlan::getDiscountPlanItems)
+//                    .flatMap(Collection::stream)
+//                    .collect(Collectors.toList()));
+//        }
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,invoice.getInvoiceDate())) {
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null, null, null);
+        	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
 
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
