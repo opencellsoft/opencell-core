@@ -194,7 +194,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
                 return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
             }
             for (IEntity operation : getSelectedEntities()) {
-                recordedInvoiceService.addLitigation((Long) operation.getId());
+                accountOperationService.addLitigation((Long) operation.getId());
             }
             messages.info(new BundleKey("messages", "save.successful"));
         } catch (Exception e) {
@@ -217,7 +217,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
                 return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
             }
             for (IEntity operation : getSelectedEntities()) {
-                recordedInvoiceService.cancelLitigation((Long) operation.getId());
+            	accountOperationService.cancelLitigation((Long) operation.getId());
             }
             messages.info(new BundleKey("messages", "save.successful"));
         } catch (Exception e) {
