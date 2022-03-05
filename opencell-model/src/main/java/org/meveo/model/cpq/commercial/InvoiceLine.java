@@ -267,6 +267,11 @@ public class InvoiceLine extends AuditableEntity {
 	@JoinColumn(name = "order_offer_id")
 	private OrderOffer orderOffer;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_invoice_line")
+	private InvoiceLine discountedInvoiceLine;
+	
+
 	public InvoiceLine() {
 	}
 
@@ -636,6 +641,14 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
+	}
+
+	public InvoiceLine getDiscountedInvoiceLine() {
+		return discountedInvoiceLine;
+	}
+
+	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
+		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
 	
 	
