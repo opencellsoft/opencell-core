@@ -2,7 +2,12 @@ package org.meveo.apiv2.export;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -22,5 +27,30 @@ public interface ImportExportResource {
 			@ApiResponse(responseCode = "400", description = "bad request when entity information contains an error")
 	})
 	Response exportData(@Parameter(required = true, description = "Export configuration") ExportConfig exportConfig);
+
+	    /**
+     * Send a file to be imported. ImportExportResponseDto.executionId contains
+     *
+     * @param input file containing a list of object for import
+     * @return As import is async process, ImportExportResponseDto.executionId contains and ID to be used to query for execution results via a call to
+     *         /importExport/checkImportDataResult?id=..
+     */
+    @POST
+    @Path("/importData")
+	@Operation(
+			summary=" Send a file to be imported. ImportExportResponseDto.executionId contains  ",
+			description=" Send a file to be imported. ImportExportResponseDto.executionId contains  ",
+			operationId="    POST_ImportExport_importData",
+			responses= {
+				@ApiResponse(description=" As import is async process, ImportExportResponseDto.executionId contains and ID to be used to query for execution results via a call to/importExport/checkImportDataResult?id=.. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
+    @Consumes(MULTIPART_FORM_DATA)
+    ImportExportResponseDto importData(MultipartFormDataInput input);
 
 }
