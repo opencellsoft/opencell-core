@@ -33,6 +33,7 @@ import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.exceptions.PaymentException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedRefund;
@@ -293,7 +294,7 @@ public class PaymentService extends PersistenceService<Payment> {
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         try {
             boolean isNewCard = !StringUtils.isBlank(cardNumber);
-            preferredMethod = customerAccount.getPreferredPaymentMethod();
+            preferredMethod = customerAccount.getPreferredPaymentMethod();           
             if (!isNewCard) {
                 if (preferredMethod == null) {
                     throw new PaymentException(PaymentErrorEnum.NO_PAY_METHOD_FOR_CA, "There no payment method for customerAccount:" + customerAccount.getCode());
@@ -315,6 +316,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 paymentGateway = matchedPaymentGatewayForTheCA;
             }
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+            preferredMethod = PersistenceUtils.initializeAndUnproxy(preferredMethod);
             if (PaymentMethodEnum.CARD == paymentMethodType) {
                 if (!(preferredMethod instanceof CardPaymentMethod)) {
                     throw new PaymentException(PaymentErrorEnum.PAY_CARD_CANNOT_BE_PREFERED, "Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
