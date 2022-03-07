@@ -13,6 +13,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -37,6 +38,9 @@ public class CurrencyApiTest {
 
     @Mock
     private Provider provider;
+
+    @Mock
+    private ProviderService providerService;
 
 
 
@@ -73,10 +77,13 @@ public class CurrencyApiTest {
 
     @Test
     public void addFunctionalCurrency() {
+        when(providerService.findById(any())).thenReturn(new Provider());
+
             CurrencyDto currencyDto = new CurrencyDto();
             currencyDto.setCode("MAD");
              ActionStatus actionStatus = currencyApi.addFunctionalCurrency(currencyDto);
 
+             verify(providerService).update(any());
             assertEquals(ActionStatusEnum.SUCCESS, actionStatus.getStatus());
 
 

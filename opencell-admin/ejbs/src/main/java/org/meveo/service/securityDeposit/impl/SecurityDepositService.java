@@ -222,12 +222,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         if (securityDepositToUpdate.getTemplate().getMaxAmount() != null) {
             BigDecimal maxAmount = securityDepositToUpdate.getTemplate().getMaxAmount();
             if (nCurrentBalance.compareTo(maxAmount) > 0) {
-                throw new EntityDoesNotExistsException("The Current Balance + Amount to Credit must be less than or equal to the Maximum Amount of the Template.");
+                throw new EntityDoesNotExistsException("The current balance + amount to credit must be less than or equal to the maximum amount of the template");
             }
         }
         
         if(securityDepositToUpdate.getAmount() != null && (SecurityDepositStatusEnum.NEW.equals(securityDepositToUpdate.getStatus()) 
-                || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus()))){
+                || SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())
+                || SecurityDepositStatusEnum.REFUNDED.equals(securityDepositToUpdate.getStatus()))){
             BigDecimal nAmount = securityDepositToUpdate.getAmount().add(securityDepositInput.getAmountToCredit().negate());            
             if(nAmount.compareTo(BigDecimal.ZERO) <= 0) {
                 securityDepositToUpdate.setAmount(null);

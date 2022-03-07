@@ -116,21 +116,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	
 	 private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
 	    	if(pricesPerType.get(key) != null && pricesPerType.get(key).size()==1){
-	    		QuotePrice accountingArticlePrice =pricesPerType.get(key).get(0);
-	    		QuotePrice quotePrice = new QuotePrice();
-	            quotePrice.setPriceTypeEnum(key);
-	            quotePrice.setPriceLevelEnum(level);
-	            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
-	            quotePrice.setQuoteOffer(quoteOffer);
-	            quotePrice.setTaxAmount(accountingArticlePrice.getTaxAmount());
-	            quotePrice.setAmountWithTax(accountingArticlePrice.getAmountWithTax());
-	            quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
-	            quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
-	            quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
-	            quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
-	            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
-	            quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
-	            return Optional.of(quotePrice);
+	    		return Optional.of(pricesPerType.get(key).get(0));
 	    	}
 	    	return UtilsDto.reducePrices(key, pricesPerType, PriceLevelEnum.PRODUCT, quoteVersion, quoteOffer);
 	    }

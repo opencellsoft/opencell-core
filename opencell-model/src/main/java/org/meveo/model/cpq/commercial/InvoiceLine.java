@@ -35,6 +35,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -61,6 +62,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  *
  */
 @Entity
+@ObservableEntity
 @Table(name = "cpq_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
@@ -106,7 +108,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.listByBillingRun", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRun", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.listByBillingRunNotValidatedInvoices", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId and il.invoice.status <> 'VALIDATED'"),
-		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)")
+		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))")
 		})
 public class InvoiceLine extends AuditableEntity {
 
@@ -266,6 +268,11 @@ public class InvoiceLine extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_offer_id")
 	private OrderOffer orderOffer;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_invoice_line")
+	private InvoiceLine discountedInvoiceLine;
+	
 
 	public InvoiceLine() {
 	}
@@ -636,6 +643,14 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
+	}
+
+	public InvoiceLine getDiscountedInvoiceLine() {
+		return discountedInvoiceLine;
+	}
+
+	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
+		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
 	
 	
