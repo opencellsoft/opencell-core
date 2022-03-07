@@ -11962,6 +11962,15 @@ order by date_trunc('month', i.invoice_date) DESC
 	     <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false"
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
       </changeSet>
+      
+      <changeSet id="#INTRD-5529_20220304" author="TarikFA.">
+      	<addColumn tableName="cpq_invoice_line">
+	     	<column name="discounted_invoice_line" type="bigint"/>
+      	</addColumn>
+	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
+	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+      </changeSet>
+      
 
     <changeSet id="#INTRD-5458_20220304" author="TarikRabeh">
     	<addColumn tableName="billing_invoice_configuration">
@@ -11985,5 +11994,12 @@ order by date_trunc('month', i.invoice_date) DESC
             where long_description is not null ;
         </sql>
         <dropColumn columnName="long_description" tableName="billing_rated_transaction" />
+    </changeSet>
+
+    <changeSet id="#INTRD-5533_2022_03_07" author="ZBariki">
+        <update tableName="billing_invoice_type">
+            <column name="use_self_sequence" value="0"/>
+            <where>use_self_sequence is null</where>
+        </update>
     </changeSet>
 </databaseChangeLog>
