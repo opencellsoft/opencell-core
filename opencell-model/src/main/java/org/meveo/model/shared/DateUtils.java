@@ -1035,6 +1035,19 @@ public class DateUtils {
     }
 
     /**
+     * return the first day of the week.
+     *  @param year a year
+     * @param week a week number
+     * @return a date
+     */
+    public static Date getFirstDayFromYearAndWeek(int year, int week) {
+        Calendar cld = Calendar.getInstance();
+        cld.set(Calendar.YEAR, year);
+        cld.set(Calendar.WEEK_OF_YEAR, week);
+        return cld.getTime();
+    }
+
+    /**
      * Used to normalize overlapping date periods holding some value into smaller non-overlapping periods by priority. Priority can either be a string or an integer. <br/>
      * It must be of same data type across all the periods to normalize
      */
