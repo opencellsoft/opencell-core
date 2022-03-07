@@ -1568,7 +1568,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				"                          "+unitAmount+" SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, rt.offer_id, rt.service_instance_id, " + 
 				"                          "+usageDateAggregation+" valueDate, min(rt.start_date) as start_date, max(rt.end_date) as end_date, rt.order_number, subscription_id,  s.commercial_order_id, rt.tax_percent, rt.tax_id, " + 
 				"                          rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.parameter_2 " +
-				"                FROM billing_rated_transaction rt join billing_subscription s on s.id=rt.subscription_id WHERE "+ entityCondition +" AND rt.status='OPEN' AND :firstTransactionDate<=rt.usage_date AND rt.usage_date<:lastTransactionDate and (rt.invoicing_Date is NULL or rt.invoicing_Date<:invoiceUpToDate) " + 
+				"                FROM billing_rated_transaction rt left join billing_subscription s on s.id=rt.subscription_id WHERE "+ entityCondition +" AND rt.status='OPEN' AND :firstTransactionDate<=rt.usage_date AND rt.usage_date<:lastTransactionDate and (rt.invoicing_Date is NULL or rt.invoicing_Date<:invoiceUpToDate) " + 
 				"                GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, " + 
 				"                         rt.offer_id, rt.service_instance_id, " + unitAmountGroupBy + usageDateAggregation+", rt.start_date, " + 
 				"                         rt.end_date, rt.order_number, subscription_id,  s.commercial_order_id, rt.tax_percent, rt.tax_id, " + 
