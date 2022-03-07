@@ -3043,7 +3043,7 @@
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="code" type="varchar(255)" />
-            <column name="description" type="${type.text}" />
+            <column name="description" type="varchar(4000)" />
             <column name="do_not_trigger_invoicing" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -14990,14 +14990,14 @@
         <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
    	</changeSet>
-   	
+
    	
     <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
         <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
 	</changeSet>
 
-   	
+
     <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
         <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
@@ -16009,8 +16009,10 @@
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
-     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
-	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+    <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql"/>
+    <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle"/>
+    <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -9780,4 +9780,21 @@ public class OrderAdvancement extends ModuleScript {
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+
+    <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql">
+        <modifyDataType columnName="description" newDataType="varchar(4000)" tableName="billing_rated_transaction" />
+    </changeSet>
+    <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle">
+        <!-- fixing compatibility problem with oracle-->
+        <renameColumn newColumnName="long_description" oldColumnName="description" tableName="billing_rated_transaction"/>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="description" type="varchar(4000)"/>
+        </addColumn>
+        <sql>
+            update billing_rated_transaction
+            set description = DBMS_LOB.SUBSTR(long_description, 4000, 1)
+            where long_description is not null ;
+        </sql>
+        <dropColumn columnName="long_description" tableName="billing_rated_transaction" />
+    </changeSet>
 </databaseChangeLog>
