@@ -74,7 +74,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private static BigDecimal amountWithTax = ZERO;
     private static BigDecimal amountWithoutTax = ZERO;
 
-    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
