@@ -75,7 +75,6 @@ public class ImportExportResourceImpl implements ImportExportResource {
     @Override
     public ImportExportResponseDto importData(MultipartFormDataInput input) {
 
-        try {
             // Check user has utilities/remoteImport permission
             checkPermissionsForImportingData();
             cleanupOldImportResults();
@@ -96,20 +95,8 @@ public class ImportExportResourceImpl implements ImportExportResource {
             executionResults.put(executionId, exportImportFuture);
             return new ImportExportResponseDto(executionId);
 
-        } catch (RemoteAuthenticationException e) {
-            log.error("Failed to authenticate for a rest call {}", e.getMessage());
-            return new ImportExportResponseDto(FAIL, MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
 
-        } catch (MissingParameterException e) {
-            return new ImportExportResponseDto(FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, e.getMessage());
-        }
-        catch (IOException e){
-            return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
-        }
-        catch (Exception e) {
-            log.error("Failed to import data from rest call", e);
-            return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
-        }
+
 
     }
 
@@ -120,15 +107,15 @@ public class ImportExportResourceImpl implements ImportExportResource {
     }
 
     private InputPart extractFileInputPart(MultipartFormDataInput input) {
-        List<InputPart> inputParts = input.getFormDataMap().get("file");
+        List<InputPart> inputParts = input.getFormDataMap().get("uploadedFile");
         if (inputParts == null) {
-            throw new MissingParameterException("Missing a file. File is expected as part name 'file'");
+            throw new MissingParameterException("Missing a file. File is expected as part name 'uploadedFile'");
         }
         return inputParts.get(0);
 
     }
 
-    private File extractImportFile(InputPart inputPart, String fileName) throws IOException {
+    private File extractImportFile(InputPart inputPart, String fileName) {
 
         File tempFile = null;
             try {
@@ -138,7 +125,7 @@ public class ImportExportResourceImpl implements ImportExportResource {
                 return tempFile;
             } catch (IOException e) {
                 log.error("Failed to save uploaded {} file to temp file {}", fileName, tempFile, e);
-                throw e;
+                throw new RuntimeException(e);
             }
     }
 
