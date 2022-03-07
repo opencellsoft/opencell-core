@@ -11829,4 +11829,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </sql>
         <dropColumn columnName="long_description" tableName="billing_rated_transaction" />
     </changeSet>
+
+    <changeSet id="#INTRD-5533_2022_03_07" author="ZBariki">
+        <update tableName="billing_invoice_type">
+            <column name="use_self_sequence" value="0"/>
+            <where>use_self_sequence is null</where>
+        </update>
+    </changeSet>
+      
 </databaseChangeLog>
