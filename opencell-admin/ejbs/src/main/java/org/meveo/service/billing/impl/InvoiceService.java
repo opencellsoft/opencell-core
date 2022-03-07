@@ -4807,7 +4807,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     protected InvoiceLinesToInvoice getInvoiceLinesGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
             Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum) throws BusinessException {
         List<InvoiceLine> invoiceLines = existingInvoice != null ? invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId())
-                : getInvoiceLines(entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
+                : getInvoiceLines(billingRun, entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
         boolean moreIls = invoiceLines.size() == rtPaginationSize;
         if (log.isDebugEnabled()) {
             log.debug("Split {} Invoice Lines for {}/{} in to billing account/seller/invoice type groups. {} invoice Lines to retrieve.", invoiceLines.size(), entityToInvoice.getClass().getSimpleName(),
@@ -4886,10 +4886,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return defaultPaymentMethod;
     }
 
-    private List<InvoiceLine> getInvoiceLines(IBillableEntity entityToInvoice, Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
-        return invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter,filterParams, rtPaginationSize);
+    private List<InvoiceLine> getInvoiceLines(BillingRun billingRun,IBillableEntity entityToInvoice, Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
+        return invoiceLinesService.listInvoiceLinesToInvoice(billingRun, entityToInvoice, firstTransactionDate, lastTransactionDate, filter,filterParams, rtPaginationSize);
     }
-
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
