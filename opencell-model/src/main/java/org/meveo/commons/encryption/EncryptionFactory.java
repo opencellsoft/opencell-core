@@ -36,8 +36,6 @@ public class EncryptionFactory {
 
     private static final StandardByteDigester byteDigester;
 
-//    private static final String CURRENT_ENCRYPTION_ALGO_AND_KEY = "encryption.currentEncAlgoAndKey";
-
     static {
         encryptionAlgo = ParamBean.getInstance().getProperty("encrypt.algorithm", BY_DEFAULT_ENCRYPTION_ALGO);
         symEncSecretKey = ParamBean.getInstance().getProperty("encrypt.secretKey", null);
@@ -55,15 +53,6 @@ public class EncryptionFactory {
         encryptor.setProvider(new BouncyCastleProvider());
         encryptor.setAlgorithm(encryptionAlgo);
         encryptor.setPassword(symEncSecretKey);
-
-//        // if currentEncryptionAlgoAndKey is empty, we set new value
-//        if (ParamBean.getInstance().getProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, "").isBlank())
-//            ParamBean.getInstance().setProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, encryptionAlgo + " | " + symEncSecretKey);
-//
-//        if (! ParamBean.getInstance().getProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, "").equals(encryptionAlgo + " | " + symEncSecretKey)) {
-//            ParamBean.getInstance().setProperty(CURRENT_ENCRYPTION_ALGO_AND_KEY, encryptionAlgo + " | " + symEncSecretKey); // update with new encryption algorithm and secret key
-//            updateEncryptedValues(encryptionAlgo, symEncSecretKey);
-//        }
     }
 
     public static void listOfSecurityProviders() {
@@ -113,45 +102,4 @@ public class EncryptionFactory {
         return byteDigester.digest(bytesToDigest);
     }
 
-//    private static void updateEncryptedValues(String encryptionAlgo, String key){
-//        // get tables with CF values
-//        List<String> tablesWithCfValues = getTablesWithCfValues();
-//for (String tableName : tablesWithCfValues) {
-//    System.out.println("tableName with CF : " + tableName);
-//}
-//System.out.println("--------------------updateEncryptedValues--------------------------");
-//        for (String tableName : tablesWithCfValues) {
-//System.out.println("tableName decrypt with CF : " + tableName);
-//            decryptCfvalues(tableName);
-//        }
-//    }
-//
-//    private static List<String> getTablesWithCfValues() {
-//        assert accountEntityService != null;
-//
-//        return accountEntityService.getEntityManager()
-//                .createNativeQuery("select table_name from information_schema.columns where column_name='cf_values'")
-//                .getResultList();
-//    }
-//
-//    private static void decryptCfvalues(String tableName) {
-//        assert accountEntityService != null;
-//        List<Object[]> entities = accountEntityService.getEntityManager()
-//                .createNativeQuery("select id, cast(cf_values as varchar) from " + tableName + " where cf_values like 'AES%'")
-//                .getResultList();
-//
-//        for (Object[] result : entities) {
-//            long cfId = ((BigInteger) result[0]).longValue();
-//            String cfValue = (String) result[1];
-//
-//System.out.println("descrypting line id = " + cfId + ", value = " + cfValue + ", table = " + tableName);
-//
-//            String decryptedCf = decrypt(cfValue);
-//            if(decryptedCf != null) {
-//                accountEntityService.getEntityManager()
-//                        .createNativeQuery("update  " + tableName + " set cf_values='"+decryptedCf+"' where  id="+cfId)
-//                        .executeUpdate();
-//            }
-//        }
-//    }
 }
