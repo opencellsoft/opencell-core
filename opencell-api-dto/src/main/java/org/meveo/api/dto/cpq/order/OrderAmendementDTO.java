@@ -1,225 +1,105 @@
 package org.meveo.api.dto.cpq.order;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.cpq.OrderAttributeDto;
-import org.meveo.api.dto.cpq.OrderProductDto;
-import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @SuppressWarnings("serial") 
 public class OrderAmendementDTO extends BaseEntityDto {
+	
+	/** The subscription code. */
+	@Schema(description = "The subscription code") 
+    private String subscriptionCode;
+	
+	/** The consumer. */
+	@Schema(description = "The consumer") 
+    private String consumer;
  
-	@Schema(description = "The id of the order offer")
-	private Long orderOfferId;
-	
-    /** The commercial order id. */
-	@Schema(description = "The commercial order id") 
-    private Long commercialOrderId;
-	
-	
-    /** The offer template code. */
-	@Schema(description = "The offer template code") 
-    private String offerTemplateCode;
+    private List<ServiceToUpdateDto> productsToSuspend = new ArrayList<ServiceToUpdateDto>();
     
-    /** The discountPlan code. */
-	@Schema(description = "The discountPlan code") 
-    private String discountPlanCode;
+    private List<ServiceToUpdateDto> productsToReactivate = new ArrayList<ServiceToUpdateDto>();
     
-    private List<OrderProductDto> orderProducts = new ArrayList<OrderProductDto>();
+    private List<ServiceToUpdateDto> productsToTerminate = new ArrayList<ServiceToUpdateDto>();
+    
+    private List<ServiceToUpdateDto> productsToActivate = new ArrayList<ServiceToUpdateDto>();
+    
+    private List<ServiceToUpdateDto> productsToRestart = new ArrayList<ServiceToUpdateDto>();
      
-    private List<OrderAttributeDto> orderAttributes =new ArrayList<OrderAttributeDto>();
-    
-    /** The delivery date. */
-	@Schema(description = "The delivery date") 
-    private Date deliveryDate;
-	
-	/** The userAccount code. */
-	private String userAccountCode;
-	
-	/** Order line type */
-    @Schema(description = "The order line type")
-    private OfferLineTypeEnum orderLineType;
 
     public OrderAmendementDTO() {
 	}
  
-	
-	
-	public OrderAmendementDTO(OrderOffer orderOffer) {
+	public OrderAmendementDTO(String subscriptionCode, String consumer, List<ServiceToUpdateDto> productsToSuspend,
+			List<ServiceToUpdateDto> productsToReactivate, List<ServiceToUpdateDto> productsToTerminate,
+			List<ServiceToUpdateDto> productsToActivate, List<ServiceToUpdateDto> productsToRestart) {
 		super();
-		this.orderOfferId = orderOffer.getId();
-		this.commercialOrderId = orderOffer.getOrder().getId();
-		this.offerTemplateCode = orderOffer.getOfferTemplate().getCode();
-        this.deliveryDate = orderOffer.getDeliveryDate();
-        this.orderLineType = orderOffer.getOrderLineType();
-	}
- 
-
-	private void init(OrderOffer orderOffer) {
-		this.orderOfferId = orderOffer.getId();
-		this.commercialOrderId = orderOffer.getOrder()!=null?orderOffer.getOrder().getId():null;
-		this.offerTemplateCode = orderOffer.getOfferTemplate()!=null?orderOffer.getOfferTemplate().getCode():null;
-		this.deliveryDate = orderOffer.getDeliveryDate();
-        this.orderLineType = orderOffer.getOrderLineType();
-        this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
-	}
-	public OrderAmendementDTO(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
-		init(orderOffer);
-		if(loadOrderProduct) {
-			orderProducts=new ArrayList<OrderProductDto>();
-			for(OrderProduct orderProduct:orderOffer.getProducts()) {
-				orderProducts.add(new OrderProductDto(orderProduct,loadOrderProdAttribute));
-			}
-		}
-		if(loadOrderAttributes) {
-			orderAttributes=new ArrayList<OrderAttributeDto>();
-			for(OrderAttribute orderAttribute:orderOffer.getOrderAttributes()) {
-				orderAttributes.add(new OrderAttributeDto(orderAttribute));
-			}
-	}
-	}
-	
-	
-	/**
-	 * @return the commercialOrderId
-	 */
-	public Long getCommercialOrderId() {
-		return commercialOrderId;
-	}
-  
-	/**
-	 * @param commercialOrderId the commercialOrderId to set
-	 */
-	public void setCommercialOrderId(Long commercialOrderId) {
-		this.commercialOrderId = commercialOrderId;
+		this.subscriptionCode = subscriptionCode;
+		this.consumer = consumer;
+		this.productsToSuspend = productsToSuspend;
+		this.productsToReactivate = productsToReactivate;
+		this.productsToTerminate = productsToTerminate;
+		this.productsToActivate = productsToActivate;
+		this.productsToRestart = productsToRestart;
 	}
 
-	/**
-	 * @return the offerTemplateCode
-	 */
-	public String getOfferTemplateCode() {
-		return offerTemplateCode;
+	public String getSubscriptionCode() {
+		return subscriptionCode;
 	}
 
-	/**
-	 * @param offerTemplateCode the offerTemplateCode to set
-	 */
-	public void setOfferTemplateCode(String offerTemplateCode) {
-		this.offerTemplateCode = offerTemplateCode;
+	public void setSubscriptionCode(String subscriptionCode) {
+		this.subscriptionCode = subscriptionCode;
 	}
 
-
-
-	/**
-	 * @return the orderOfferId
-	 */
-	public Long getOrderOfferId() {
-		return orderOfferId;
+	public String getConsumer() {
+		return consumer;
 	}
 
-
-
-	/**
-	 * @param orderOfferId the orderOfferId to set
-	 */
-	public void setOrderOfferId(Long orderOfferId) {
-		this.orderOfferId = orderOfferId;
+	public void setConsumer(String consumer) {
+		this.consumer = consumer;
 	}
 
-
-
-
-
-	/**
-	 * @return the orderProducts
-	 */
-	public List<OrderProductDto> getOrderProducts() {
-		return orderProducts;
+	public List<ServiceToUpdateDto> getProductsToSuspend() {
+		return productsToSuspend;
 	}
 
-
-
-	/**
-	 * @param orderProducts the orderProducts to set
-	 */
-	public void setOrderProducts(List<OrderProductDto> orderProducts) {
-		this.orderProducts = orderProducts;
+	public void setProductsToSuspend(List<ServiceToUpdateDto> productsToSuspend) {
+		this.productsToSuspend = productsToSuspend;
 	}
 
-
-
-	/**
-	 * @return the orderAttributes
-	 */
-	public List<OrderAttributeDto> getOrderAttributes() {
-		return orderAttributes;
+	public List<ServiceToUpdateDto> getProductsToReactivate() {
+		return productsToReactivate;
 	}
 
-
-
-	/**
-	 * @param orderAttributes the orderAttributes to set
-	 */
-	public void setOrderAttributes(List<OrderAttributeDto> orderAttributes) {
-		this.orderAttributes = orderAttributes;
+	public void setProductsToReactivate(List<ServiceToUpdateDto> productsToReactivate) {
+		this.productsToReactivate = productsToReactivate;
 	}
 
-
-
-	public String getDiscountPlanCode() {
-		return discountPlanCode;
+	public List<ServiceToUpdateDto> getProductsToTerminate() {
+		return productsToTerminate;
 	}
 
-
-
-	public void setDiscountPlanCode(String discountPlanCode) {
-		this.discountPlanCode = discountPlanCode;
+	public void setProductsToTerminate(List<ServiceToUpdateDto> productsToTerminate) {
+		this.productsToTerminate = productsToTerminate;
 	}
 
-
-
-	public Date getDeliveryDate() {
-		return deliveryDate;
+	public List<ServiceToUpdateDto> getProductsToActivate() {
+		return productsToActivate;
 	}
 
-
-
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
+	public void setProductsToActivate(List<ServiceToUpdateDto> productsToActivate) {
+		this.productsToActivate = productsToActivate;
 	}
 
-
-
-	/**
-	 * @return the userAccountCode
-	 */
-	public String getUserAccountCode() {
-		return userAccountCode;
+	public List<ServiceToUpdateDto> getProductsToRestart() {
+		return productsToRestart;
 	}
 
-
-
-	/**
-	 * @param userAccountCode the userAccountCode to set
-	 */
-	public void setUserAccountCode(String userAccountCode) {
-		this.userAccountCode = userAccountCode;
+	public void setProductsToRestart(List<ServiceToUpdateDto> productsToRestart) {
+		this.productsToRestart = productsToRestart;
 	}
-
-    public void setOrderLineType(OfferLineTypeEnum orderLineType) {
-        this.orderLineType = orderLineType;
-    }
-
-    public OfferLineTypeEnum getOrderLineType() {
-        return orderLineType;
-    }
  
 }

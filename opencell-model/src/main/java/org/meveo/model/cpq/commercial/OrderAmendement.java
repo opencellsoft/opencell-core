@@ -40,7 +40,7 @@ public class OrderAmendement extends BusinessCFEntity {
 	
 	@OneToOne
     @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
+    private UserAccount consumer;
 
 	@OneToMany(mappedBy = "orderAmendement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToSuspend = new ArrayList<OrderProduct>();
@@ -63,7 +63,7 @@ public class OrderAmendement extends BusinessCFEntity {
 			List<OrderProduct> productsToRestart) {
 		super();
 		this.subscription = subscription;
-		this.userAccount = userAccount;
+		this.consumer = userAccount;
 		this.productsToSuspend = productsToSuspend;
 		this.productsToReactivate = productsToReactivate;
 		this.productsToTerminate = productsToTerminate;
@@ -80,11 +80,11 @@ public class OrderAmendement extends BusinessCFEntity {
 	}
 
 	public UserAccount getUserAccount() {
-		return userAccount;
+		return consumer;
 	}
 
 	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
+		this.consumer = userAccount;
 	}
 
 	public List<OrderProduct> getProductsToSuspend() {
