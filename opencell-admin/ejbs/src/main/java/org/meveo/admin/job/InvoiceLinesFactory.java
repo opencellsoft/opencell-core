@@ -114,7 +114,12 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        
+        if(record.get("parameter_2") != null) {
+            String accountingArticleCode = (String) record.get("parameter_2");
+            if(!accountingArticleCode.isBlank()) {
+                invoiceLine.setAccountingArticle(accountingArticleService.findByCode(accountingArticleCode));
+            }
+        }
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
         	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((BigInteger) record.get("charge_instance_id")).longValue());
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
