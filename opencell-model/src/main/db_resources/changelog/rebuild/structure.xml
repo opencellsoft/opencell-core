@@ -5691,6 +5691,7 @@
             <column name="display_orders" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="current_invoice_nb" type="bigint" />
             <column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="display_user_account_hierarchy" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="default_invoice_subcategory_id" type="bigint"/>
             <column name="default_generic_article_id" type="bigint"/>
             <column name="default_discount_article_id" type="bigint"/>
@@ -17139,6 +17140,7 @@
     <changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI" />
     <changeSet id="#INTRD-5343_2022-02_25" author="hichamELHALOUI" />
     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <changeSet id="#INTRD-5458_20220304" author="TarikRabeh"/>
     <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql"/>
     <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

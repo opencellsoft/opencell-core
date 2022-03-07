@@ -4,7 +4,6 @@ import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.billing.BillingProcessTypesEnum.AUTOMATIC;
 import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
 import static org.meveo.model.billing.BillingRunStatusEnum.*;
@@ -16,6 +15,7 @@ import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -26,7 +26,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -75,7 +74,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private static BigDecimal amountWithoutTax = ZERO;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running InvoiceSplitJob with parameter={}", jobInstance.getParametres());
         try {
