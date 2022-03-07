@@ -3043,7 +3043,7 @@
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="code" type="varchar(255)" />
-            <column name="description" type="${type.text}" />
+            <column name="description" type="varchar(4000)" />
             <column name="do_not_trigger_invoicing" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -9341,7 +9341,7 @@
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="unit_price_without_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="amount_without_tax_with_discount" type="numeric(23, 12)" />
+            <column name="amount_without_tax_without_discount" type="numeric(23, 12)" />
             <column name="tax_amount" type="numeric(23, 12)" />
             <column name="tax_rate" type="numeric(23, 12)" />
 
@@ -9356,6 +9356,8 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
+     		<column name="quantity" type="numeric(19,2)"/>
+     		<column name="discounted_quote_price" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -14671,11 +14673,11 @@
                                  constraintName="fk_dunning_settings_collection_plan_statuses_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
-         <!--                    
+         <!--
         <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
-                                 -->     
-                                 
+                                 -->
+
          <createTable tableName="invoice_dunning_statuses">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
@@ -14749,14 +14751,14 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>
 
-		<!-- 
+		<!--
         <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
-                                  
+
 
         <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
-                                
+
 
         <addForeignKeyConstraint constraintName="fk_dunning_pause_reasons_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons" referencedColumnNames="id" />
@@ -14766,7 +14768,7 @@
 
         <addForeignKeyConstraint constraintName="fk_dunning_stop_reasons_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
-                                 
+
                                   -->
 
     </changeSet>
@@ -14890,7 +14892,7 @@
     							 baseColumnNames="dunning_settings_id"
     							 baseTableName="collection_plan_status"
     							 referencedColumnNames="id"/>
-    							 <!-- 
+    							 <!--
         <addForeignKeyConstraint constraintName="fk_collection_plan_status_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="collection_plan_status" referencedColumnNames="id" />  -->
 
@@ -14989,6 +14991,34 @@
         <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
    	</changeSet>
 
+   	
+    <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
+        <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+	</changeSet>
+
+
+    <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
+        <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+	</changeSet>
+
+    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
+        <sql>
+            create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
+            create index cpq_tag_seller_id_index on cpq_tag (seller_id);
+            create index cpq_tag_tag_type_id_index on cpq_tag (tag_type_id);
+            create index cpq_tag_type_seller_id_index on cpq_tag_type (seller_id);
+            create index cpq_commercial_rule_header_attribute_id_index on cpq_commercial_rule_header (attribute_id);
+            create index cpq_commercial_rule_header_grouped_attributes_id_index on cpq_commercial_rule_header (grouped_attributes_id);
+            create index cpq_commercial_rule_header_grouped_service_id_index on cpq_commercial_rule_header (grouped_service_id);
+            create index cpq_commercial_rule_header_offer_template_id_index on cpq_commercial_rule_header (offer_template_id);
+            create index cpq_commercial_rule_header_product_id_index on cpq_commercial_rule_header (product_id);
+            create index cpq_commercial_rule_header_product_version_id_index on cpq_commercial_rule_header (product_version_id);
+            create index cpq_commercial_rule_header_service_template_id_index on cpq_commercial_rule_header (service_template_id);
+            create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
+        </sql>
+    </changeSet>
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -15901,7 +15931,7 @@
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
     <changeSet id="#5257_20210519" author="AndriusKarpavicius"/>
     <changeSet id="#533_20210526" author="NabilOuachi"/>
-    <changeSet id="#5869_20210521" author="NabilOuachi"/>    
+    <changeSet id="#5869_20210521" author="NabilOuachi"/>
     <changeSet id="#5595_540582_20210528" author="TarikFA." />
     <changeSet id="#6147_20210530" author="anasseh" />
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
@@ -15979,7 +16009,10 @@
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
-	<!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+    <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql"/>
+    <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle"/>
+    <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

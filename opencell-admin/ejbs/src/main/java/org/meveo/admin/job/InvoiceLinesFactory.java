@@ -73,14 +73,14 @@ public class InvoiceLinesFactory {
 
     private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, boolean isEnterprise) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((BigInteger) id).longValue())));
-        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((BigInteger) id).longValue())));
+        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, id)));
+        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, id)));
+        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, id)));
+        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, id)));
+        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, id)));
+        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, id)));
+        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
+        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));
         if (invoiceLine.getValueDate() == null) {
@@ -101,23 +101,22 @@ public class InvoiceLinesFactory {
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);
         
-        invoiceLine.setLabel((String) record.get("label"));
-        invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal)record.get("unit_amount_without_tax") : (BigDecimal) record.get("unit_amount_with_tax"));
-        invoiceLine.setRawAmount(isEnterprise ? (BigDecimal)record.get("sum_without_tax") : (BigDecimal) record.get("sum_with_tax"));
+        invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) record.getOrDefault("unit_amount_without_tax", ZERO) : (BigDecimal) record.getOrDefault("unit_amount_with_tax", ZERO));
+        invoiceLine.setRawAmount(isEnterprise ? amountWithoutTax : amountWithTax);
         DatePeriod validity = new DatePeriod();
         validity.setFrom(ofNullable((Date) record.get("start_date")).orElse((Date) record.get("usage_date")));
         validity.setTo(ofNullable((Date) record.get("end_date")).orElse(null));
         if(record.get("subscription_id") != null) {
-            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, ((BigInteger) record.get("subscription_id")).longValue());
+            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, record.get("subscription_id"));
             invoiceLine.setSubscription(subscription);
             if(record.get("commercial_order_id") != null) {
-            	invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((BigInteger) record.get("subscription_id")).longValue()));
+            	invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, record.get("subscription_id")));
             }
         }
         invoiceLine.setValidity(validity);
         
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
-        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((BigInteger) record.get("charge_instance_id")).longValue());
+        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
             Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
             List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
@@ -126,7 +125,7 @@ public class InvoiceLinesFactory {
                     .orElseThrow(() -> new BusinessException("No accountingArticle found"));
             invoiceLine.setAccountingArticle(accountingArticle);
         }
-
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         return invoiceLine;
     }
 

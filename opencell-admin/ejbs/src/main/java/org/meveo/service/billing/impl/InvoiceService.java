@@ -1050,6 +1050,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             rtUpdates.add(new Object[] { subAggregate, rts });
                         }
                         subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
+                        invoiceAgregateService.create(subAggregate);
                     }
 
                     setInvoiceDueDate(invoice, rtGroup.getBillingCycle());
@@ -5156,8 +5157,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setNewInvoicingProcess(true);
                     invoice.setHasMinimum(true);
                     if (invoice.getId() == null) {
+                        // temporary set random string in the invoice number to avoid violate constraint uk_billing_invoice on oracle while running InvoicingJobV2
+                        invoice.setInvoiceNumber(UUID.randomUUID().toString());
                         this.create(invoice);
-
                     } else {
                         for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
                             if (invoiceAggregate.getId() == null) {

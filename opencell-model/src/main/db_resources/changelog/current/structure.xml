@@ -9723,7 +9723,7 @@ public class OrderAdvancement extends ModuleScript {
     		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid">
 	  	<createIndex indexName="billing_wallet_operation_charge_instance_idx" tableName="billing_wallet_operation">
 	      	<column name="charge_instance_id"/>
@@ -9746,5 +9746,55 @@ public class OrderAdvancement extends ModuleScript {
         <!--  comment is reserved word in oracle database-->
         <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
         <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+    </changeSet>
+
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+     </changeSet>
+     
+     <changeSet id="#INTRD-5385_20220228" author="TarikFA.">
+     	<addColumn tableName="cpq_quote_price">
+     		<column name="quantity" type="numeric(19,2)"/>
+     	</addColumn>
+     	<addColumn tableName="cpq_quote_price">
+     		<column name="discounted_quote_price" type="bigint"/>
+     	</addColumn>
+     	<renameColumn tableName="cpq_quote_price" oldColumnName="amount_without_tax_with_discount" newColumnName="amount_without_tax_without_discount"/>
+        <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
+     </changeSet>
+    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
+        <sql>
+            create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
+            create index cpq_tag_seller_id_index on cpq_tag (seller_id);
+            create index cpq_tag_tag_type_id_index on cpq_tag (tag_type_id);
+            create index cpq_tag_type_seller_id_index on cpq_tag_type (seller_id);
+            create index cpq_commercial_rule_header_attribute_id_index on cpq_commercial_rule_header (attribute_id);
+            create index cpq_commercial_rule_header_grouped_attributes_id_index on cpq_commercial_rule_header (grouped_attributes_id);
+            create index cpq_commercial_rule_header_grouped_service_id_index on cpq_commercial_rule_header (grouped_service_id);
+            create index cpq_commercial_rule_header_offer_template_id_index on cpq_commercial_rule_header (offer_template_id);
+            create index cpq_commercial_rule_header_product_id_index on cpq_commercial_rule_header (product_id);
+            create index cpq_commercial_rule_header_product_version_id_index on cpq_commercial_rule_header (product_version_id);
+            create index cpq_commercial_rule_header_service_template_id_index on cpq_commercial_rule_header (service_template_id);
+            create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
+        </sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql">
+        <modifyDataType columnName="description" newDataType="varchar(4000)" tableName="billing_rated_transaction" />
+    </changeSet>
+    <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle">
+        <!-- fixing compatibility problem with oracle-->
+        <renameColumn newColumnName="long_description" oldColumnName="description" tableName="billing_rated_transaction"/>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="description" type="varchar(4000)"/>
+        </addColumn>
+        <sql>
+            update billing_rated_transaction
+            set description = DBMS_LOB.SUBSTR(long_description, 4000, 1)
+            where long_description is not null ;
+        </sql>
+        <dropColumn columnName="long_description" tableName="billing_rated_transaction" />
     </changeSet>
 </databaseChangeLog>

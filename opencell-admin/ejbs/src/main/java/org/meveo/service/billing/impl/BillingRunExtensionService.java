@@ -90,6 +90,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics, int count, BillingRunStatusEnum status) {
+    	billingRun = refreshOrRetrieve(billingRun);
         billingRun.setBillableBillingAcountNumber(count);
         billingRun.setPrAmountTax(basicStatistics.getSumAmountWithTax());
         billingRun.setPrAmountWithoutTax(basicStatistics.getSumAmountWithoutTax());
