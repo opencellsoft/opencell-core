@@ -357,13 +357,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 Element iban = doc.createElement("iban");
                 Element bic = doc.createElement("bic");
                 String bankIcs = appBankCoordinates.getIcs();
-                Text icsTxt = doc.createTextNode(bankIcs != null ? bankIcs : "");
+                Text icsTxt = this.createTextNode(doc, bankIcs != null ? bankIcs : "");
                 ics.appendChild(icsTxt);
                 String bankIban = appBankCoordinates.getIban();
-                Text ibanTxt = doc.createTextNode(bankIban != null ? bankIban : "");
+                Text ibanTxt = this.createTextNode(doc, bankIban != null ? bankIban : "");
                 iban.appendChild(ibanTxt);
                 String bankBic = appBankCoordinates.getBic();
-                Text bicTxt = doc.createTextNode(bankBic != null ? bankBic : "");
+                Text bicTxt = this.createTextNode(doc, bankBic != null ? bankBic : "");
                 bic.appendChild(bicTxt);
                 bankCoordinates.appendChild(ics);
                 bankCoordinates.appendChild(iban);
@@ -507,7 +507,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element email = doc.createElement("email");
         if(billingAccount.getContactInformation() != null) {
             String billingEmail = billingAccount.getContactInformation().getEmail();
-            Text emailTxt = doc.createTextNode(billingEmail != null ? billingEmail : "");
+            Text emailTxt = this.createTextNode(doc, billingEmail != null ? billingEmail : "");
             email.appendChild(emailTxt);
             billingAccountTag.appendChild(email);
         }
@@ -519,7 +519,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Date invoiceDateData = invoice.getInvoiceDate();
         if (invoiceDateData != null) {
             Element invoiceDate = doc.createElement("invoiceDate");
-            Text invoiceDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoiceDateData, invoiceDateFormat));
+            Text invoiceDateTxt = this.createTextNode(doc, DateUtils.formatDateWithPattern(invoiceDateData, invoiceDateFormat));
             invoiceDate.appendChild(invoiceDateTxt);
             header.appendChild(invoiceDate);
         }
@@ -527,7 +527,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Date dueDateData = invoice.getDueDate();
         if (dueDateData != null) {
             Element dueDate = doc.createElement("dueDate");
-            Text dueDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(dueDateData, invoiceDateFormat));
+            Text dueDateTxt = this.createTextNode(doc, DateUtils.formatDateWithPattern(dueDateData, invoiceDateFormat));
             dueDate.appendChild(dueDateTxt);
             header.appendChild(dueDate);
         }
@@ -535,7 +535,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         PaymentMethodEnum paymentMethodData = invoice.getPaymentMethodType();
         if (paymentMethodData != null) {
             Element paymentMethod = doc.createElement("paymentMethod");
-            paymentMethod.appendChild(doc.createTextNode(paymentMethodData.name()));
+            paymentMethod.appendChild(this.createTextNode(doc, paymentMethodData.name()));
             header.appendChild(paymentMethod);
         }
 
@@ -554,19 +554,19 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element amount = doc.createElement("amount");
         invoiceTag.appendChild(amount);
         Element currency = doc.createElement("currency");
-        Text currencyTxt = doc.createTextNode(currencyCode);
+        Text currencyTxt = this.createTextNode(doc, currencyCode);
         currency.appendChild(currencyTxt);
         amount.appendChild(currency);
 
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
 
-        Text amountWithoutTaxTxt = doc.createTextNode(toPlainString(amountWithoutTax2));
+        Text amountWithoutTaxTxt = this.createTextNode(doc, toPlainString(amountWithoutTax2));
         amountWithoutTax.appendChild(amountWithoutTaxTxt);
         amount.appendChild(amountWithoutTax);
 
         Element amountWithTax = doc.createElement("amountWithTax");
         BigDecimal iAmountWithTax = invoice.getAmountWithTax();
-        Text amountWithTaxTxt = doc.createTextNode(toPlainString(iAmountWithTax));
+        Text amountWithTaxTxt = this.createTextNode(doc, toPlainString(iAmountWithTax));
         amountWithTax.appendChild(amountWithTaxTxt);
         amount.appendChild(amountWithTax);
 
@@ -578,12 +578,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         /*
-         * Element balanceElement = doc.createElement("balance"); Text balanceTxt = doc.createTextNode(round(balance)); balanceElement.appendChild(balanceTxt);
+         * Element balanceElement = doc.createElement("balance"); Text balanceTxt = this.createTextNode(doc, round(balance)); balanceElement.appendChild(balanceTxt);
          * amount.appendChild(balanceElement);
          */
 
         Element netToPayElement = doc.createElement("netToPay");
-        Text netToPayTxt = doc.createTextNode(toPlainString(netToPay));
+        Text netToPayTxt = this.createTextNode(doc, toPlainString(netToPay));
         netToPayElement.appendChild(netToPayTxt);
         amount.appendChild(netToPayElement);
 
@@ -749,11 +749,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subscriptionTag.setAttribute("description", subscription.getDescription() != null ? subscription.getDescription() : "");
                     subscriptionTag.setAttribute("offerCode", offer != null ? offer.getCode() : "");
                     Element subscriptionDateTag = doc.createElement("subscriptionDate");
-                    Text subscriptionDateText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat));
+                    Text subscriptionDateText = this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat));
                     subscriptionDateTag.appendChild(subscriptionDateText);
                     subscriptionTag.appendChild(subscriptionDateTag);
                     Element endAgreementTag = doc.createElement("endAgreementDate");
-                    Text endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat));
+                    Text endAgreementText = this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat));
                     endAgreementTag.appendChild(endAgreementText);
                     subscriptionTag.appendChild(endAgreementTag);
                     addCustomFields(subscription, doc, subscriptionTag);
@@ -865,9 +865,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element calendarTag = doc.createElement("calendar");
         Text calendarText = null;
         if (serviceTemplate.getInvoicingCalendar() != null) {
-            calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
+            calendarText = this.createTextNode(doc, serviceTemplate.getInvoicingCalendar().getCode());
         } else {
-            calendarText = doc.createTextNode("");
+            calendarText = this.createTextNode(doc, "");
         }
         calendarTag.appendChild(calendarText);
         addCustomFields(serviceInstance, doc, serviceTag, true);
@@ -958,42 +958,42 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element addressTag = doc.createElement("address");
         Element address1 = doc.createElement("address1");
         if (seller.getAddress() != null && seller.getAddress().getAddress1() != null) {
-            Text adress1Txt = doc.createTextNode(seller.getAddress().getAddress1());
+            Text adress1Txt = this.createTextNode(doc, seller.getAddress().getAddress1());
             address1.appendChild(adress1Txt);
         }
         addressTag.appendChild(address1);
 
         Element address2 = doc.createElement("address2");
         if (seller.getAddress() != null && seller.getAddress().getAddress2() != null) {
-            Text adress2Txt = doc.createTextNode(seller.getAddress().getAddress2());
+            Text adress2Txt = this.createTextNode(doc, seller.getAddress().getAddress2());
             address2.appendChild(adress2Txt);
         }
         addressTag.appendChild(address2);
 
         Element address3 = doc.createElement("address3");
         if (seller.getAddress() != null && seller.getAddress().getAddress3() != null) {
-            Text adress3Txt = doc.createTextNode(seller.getAddress().getAddress3() != null ? seller.getAddress().getAddress3() : "");
+            Text adress3Txt = this.createTextNode(doc, seller.getAddress().getAddress3() != null ? seller.getAddress().getAddress3() : "");
             address3.appendChild(adress3Txt);
         }
         addressTag.appendChild(address3);
 
         Element city = doc.createElement("city");
         if (seller.getAddress() != null && seller.getAddress().getCity() != null) {
-            Text cityTxt = doc.createTextNode(seller.getAddress().getCity() != null ? seller.getAddress().getCity() : "");
+            Text cityTxt = this.createTextNode(doc, seller.getAddress().getCity() != null ? seller.getAddress().getCity() : "");
             city.appendChild(cityTxt);
         }
         addressTag.appendChild(city);
 
         Element postalCode = doc.createElement("postalCode");
         if (seller.getAddress() != null && seller.getAddress().getZipCode() != null) {
-            Text postalCodeTxt = doc.createTextNode(seller.getAddress().getZipCode() != null ? seller.getAddress().getZipCode() : "");
+            Text postalCodeTxt = this.createTextNode(doc, seller.getAddress().getZipCode() != null ? seller.getAddress().getZipCode() : "");
             postalCode.appendChild(postalCodeTxt);
         }
         addressTag.appendChild(postalCode);
 
         Element state = doc.createElement("state");
         if (seller.getAddress() != null && seller.getAddress().getState()!=null) {
-	        Text stateTxt = doc.createTextNode(seller.getAddress().getState());
+	        Text stateTxt = this.createTextNode(doc, seller.getAddress().getState());
 	        state.appendChild(stateTxt);
         }
         addressTag.appendChild(state);
@@ -1003,14 +1003,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         seller = sellerService.refreshOrRetrieve(seller);
 		if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
 			Country countryEntity = seller.getAddress().getCountry();
-            Text countryTxt = doc.createTextNode(countryEntity != null ? countryEntity.getCountryCode() : "");
+            Text countryTxt = this.createTextNode(doc, countryEntity != null ? countryEntity.getCountryCode() : "");
             country.appendChild(countryTxt);
             Text countryNameTxt;
             if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countryEntity.getDescriptionI18n().get(languageCode));
+                countryNameTxt = this.createTextNode(doc, countryEntity.getDescriptionI18n().get(languageCode));
             } else {
-                countryNameTxt = doc.createTextNode(countryEntity.getDescription());
+                countryNameTxt = this.createTextNode(doc, countryEntity.getDescription());
             }
             countryName.appendChild(countryNameTxt);
         }
@@ -1045,20 +1045,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     descriptionMap.put(translationKey, descTranslated);
                 }
 
-                Text titleTxt = doc.createTextNode(descTranslated);
+                Text titleTxt = this.createTextNode(doc, descTranslated);
                 quality.appendChild(titleTxt);
             }
             nameTag.appendChild(quality);
             if (account.getName() != null && account.getName().getFirstName() != null) {
                 Element firstName = doc.createElement("firstName");
-                Text firstNameTxt = doc.createTextNode(account.getName().getFirstName());
+                Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
                 firstName.appendChild(firstNameTxt);
                 nameTag.appendChild(firstName);
             }
 
             Element name = doc.createElement("name");
             if (account.getName() != null && account.getName().getLastName() != null) {
-                Text nameTxt = doc.createTextNode(account.getName().getLastName());
+                Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
                 name.appendChild(nameTxt);
             }
             nameTag.appendChild(name);
@@ -1066,42 +1066,42 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element addressTag = doc.createElement("address");
         Element address1 = doc.createElement("address1");
         if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
-            Text adress1Txt = doc.createTextNode(account.getAddress().getAddress1());
+            Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
             address1.appendChild(adress1Txt);
         }
         addressTag.appendChild(address1);
 
         Element address2 = doc.createElement("address2");
         if (account.getAddress() != null && account.getAddress().getAddress2() != null) {
-            Text adress2Txt = doc.createTextNode(account.getAddress().getAddress2());
+            Text adress2Txt = this.createTextNode(doc, account.getAddress().getAddress2());
             address2.appendChild(adress2Txt);
         }
         addressTag.appendChild(address2);
 
         Element address3 = doc.createElement("address3");
         if (account.getAddress() != null && account.getAddress().getAddress3() != null) {
-            Text adress3Txt = doc.createTextNode(account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
+            Text adress3Txt = this.createTextNode(doc, account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
             address3.appendChild(adress3Txt);
         }
         addressTag.appendChild(address3);
 
         Element city = doc.createElement("city");
         if (account.getAddress() != null && account.getAddress().getCity() != null) {
-            Text cityTxt = doc.createTextNode(account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
+            Text cityTxt = this.createTextNode(doc, account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
             city.appendChild(cityTxt);
         }
         addressTag.appendChild(city);
 
         Element postalCode = doc.createElement("postalCode");
         if (account.getAddress() != null && account.getAddress().getZipCode() != null) {
-            Text postalCodeTxt = doc.createTextNode(account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
+            Text postalCodeTxt = this.createTextNode(doc, account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
             postalCode.appendChild(postalCodeTxt);
         }
         addressTag.appendChild(postalCode);
 
         Element state = doc.createElement("state");
         if (account.getAddress() != null && account.getAddress().getState()!=null) {
-	        Text stateTxt = doc.createTextNode(account.getAddress().getState());
+	        Text stateTxt = this.createTextNode(doc, account.getAddress().getState());
 	        state.appendChild(stateTxt);
         }
         addressTag.appendChild(state);
@@ -1109,7 +1109,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
+            Text countryTxt = this.createTextNode(doc, account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
 
             String translationKey = "C_" + account.getAddress().getCountry() + "_" + languageCode;
@@ -1126,7 +1126,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
                 descriptionMap.put(translationKey, descTranslated);
             }
-            Text countryNameTxt = doc.createTextNode(descTranslated);
+            Text countryNameTxt = this.createTextNode(doc, descTranslated);
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);
@@ -1148,27 +1148,27 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             parent.appendChild(providerContactTag);
             if (account.getPrimaryContact().getFirstName() != null) {
                 Element firstName = doc.createElement("firstName");
-                Text firstNameTxt = doc.createTextNode(account.getPrimaryContact().getFirstName());
+                Text firstNameTxt = this.createTextNode(doc, account.getPrimaryContact().getFirstName());
                 firstName.appendChild(firstNameTxt);
                 providerContactTag.appendChild(firstName);
             }
 
             if (account.getPrimaryContact().getLastName() != null) {
                 Element name = doc.createElement("lastname");
-                Text nameTxt = doc.createTextNode(account.getPrimaryContact().getLastName());
+                Text nameTxt = this.createTextNode(doc, account.getPrimaryContact().getLastName());
                 name.appendChild(nameTxt);
                 providerContactTag.appendChild(name);
             }
 
             if (account.getPrimaryContact().getEmail() != null) {
                 Element email = doc.createElement("email");
-                Text emailTxt = doc.createTextNode(account.getPrimaryContact().getEmail());
+                Text emailTxt = this.createTextNode(doc, account.getPrimaryContact().getEmail());
                 email.appendChild(emailTxt);
                 providerContactTag.appendChild(email);
             }
             if (account.getPrimaryContact().getFax() != null) {
                 Element fax = doc.createElement("fax");
-                Text faxTxt = doc.createTextNode(account.getPrimaryContact().getFax());
+                Text faxTxt = this.createTextNode(doc, account.getPrimaryContact().getFax());
                 fax.appendChild(faxTxt);
                 providerContactTag.appendChild(fax);
 
@@ -1176,13 +1176,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             if (account.getPrimaryContact().getMobile() != null) {
 
                 Element mobile = doc.createElement("mobile");
-                Text mobileTxt = doc.createTextNode(account.getPrimaryContact().getMobile());
+                Text mobileTxt = this.createTextNode(doc, account.getPrimaryContact().getMobile());
                 mobile.appendChild(mobileTxt);
                 providerContactTag.appendChild(mobile);
             }
             if (account.getPrimaryContact().getPhone() != null) {
                 Element phone = doc.createElement("phone");
-                Text phoneTxt = doc.createTextNode(account.getPrimaryContact().getPhone());
+                Text phoneTxt = this.createTextNode(doc, account.getPrimaryContact().getPhone());
                 phone.appendChild(phoneTxt);
                 providerContactTag.appendChild(phone);
             }
@@ -1234,41 +1234,41 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 paymentMethod.appendChild(bankCoordinatesElement);
 
                 String bankCodeData = bankCoordinates.getBankCode();
-                Text bankCodeTxt = doc.createTextNode(bankCodeData != null ? bankCodeData : "");
+                Text bankCodeTxt = this.createTextNode(doc, bankCodeData != null ? bankCodeData : "");
                 bankCode.appendChild(bankCodeTxt);
 
                 String branchCodeData = bankCoordinates.getBranchCode();
-                Text branchCodeTxt = doc.createTextNode(branchCodeData != null ? branchCodeData : "");
+                Text branchCodeTxt = this.createTextNode(doc, branchCodeData != null ? branchCodeData : "");
                 branchCode.appendChild(branchCodeTxt);
 
                 String accountNumberData = bankCoordinates.getAccountNumber();
-                Text accountNumberTxt = doc.createTextNode(accountNumberData != null ? accountNumberData : "");
+                Text accountNumberTxt = this.createTextNode(doc, accountNumberData != null ? accountNumberData : "");
                 accountNumber.appendChild(accountNumberTxt);
 
                 String accountOwnerData = bankCoordinates.getAccountOwner();
-                Text accountOwnerTxt = doc.createTextNode(accountOwnerData != null ? accountOwnerData : "");
+                Text accountOwnerTxt = this.createTextNode(doc, accountOwnerData != null ? accountOwnerData : "");
                 accountOwner.appendChild(accountOwnerTxt);
 
-                Text keyTxt = doc.createTextNode(bankCoordinates.getKey() != null ? bankCoordinates.getKey() : "");
+                Text keyTxt = this.createTextNode(doc, bankCoordinates.getKey() != null ? bankCoordinates.getKey() : "");
                 key.appendChild(keyTxt);
 
                 String ibanData = bankCoordinates.getIban();
-                Text ibanTxt = doc.createTextNode(ibanData != null ? ibanData : "");
+                Text ibanTxt = this.createTextNode(doc, ibanData != null ? ibanData : "");
                 iban.appendChild(ibanTxt);
 
                 String bicData = bankCoordinates.getBic();
-                Text bicTxt = doc.createTextNode(bicData != null ? bicData : "");
+                Text bicTxt = this.createTextNode(doc, bicData != null ? bicData : "");
                 bic.appendChild(bicTxt);
                 String bankNameData = bankCoordinates.getBankName();
-                Text bankNameTxt = doc.createTextNode(bankNameData != null ? bankNameData : "");
+                Text bankNameTxt = this.createTextNode(doc, bankNameData != null ? bankNameData : "");
                 bankName.appendChild(bankNameTxt);
 
                 String mandateIdentificationData = directDebitPayment.getMandateIdentification();
-                Text mandateIdentificationTxt = doc.createTextNode(mandateIdentificationData != null ? mandateIdentificationData : "");
+                Text mandateIdentificationTxt = this.createTextNode(doc, mandateIdentificationData != null ? mandateIdentificationData : "");
                 mandateIdentification.appendChild(mandateIdentificationTxt);
 
                 String mandateDateData = DateUtils.formatDateWithPattern(directDebitPayment.getMandateDate(), DEFAULT_DATE_TIME_PATTERN);
-                Text mandateDateTxt = doc.createTextNode(mandateDateData != null ? mandateDateData : "");
+                Text mandateDateTxt = this.createTextNode(doc, mandateDateData != null ? mandateDateData : "");
                 mandateDate.appendChild(mandateDateTxt);
             }
 
@@ -1285,16 +1285,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             cardInformationElement.appendChild(expiration);
             paymentMethod.appendChild(cardInformationElement);
 
-            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getCardType().name());
+            Text cardTypeTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getCardType().name());
             cardType.appendChild(cardTypeTxt);
 
-            Text ownerTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getOwner());
+            Text ownerTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getOwner());
             owner.appendChild(ownerTxt);
 
-            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getHiddenCardNumber());
+            Text cardNumberTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getHiddenCardNumber());
             cardNumber.appendChild(cardNumberTxt);
 
-            Text expirationTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getExpirationMonthAndYear());
+            Text expirationTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getExpirationMonthAndYear());
             expiration.appendChild(expirationTxt);
         }
     }
@@ -1338,7 +1338,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategory.setAttribute("sortIndex", (invoiceSubCategory.getSortIndex() != null) ? invoiceSubCategory.getSortIndex() + "" : "");
                     Element line = doc.createElement("line");
                     Element lebel = doc.createElement("label");
-                    Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+                    Text lebelTxt = this.createTextNode(doc, ratedTransaction.getDescription());
                     lebel.appendChild(lebelTxt);
                     Date periodStartDateRT = ratedTransaction.getStartDate();
                     Date periodEndDateRT = ratedTransaction.getEndDate();
@@ -1351,24 +1351,24 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 
                     Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                    Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                    Text lineUnitAmountWithoutTaxTxt = this.createTextNode(doc, ratedTransaction.getUnitAmountWithoutTax().toPlainString());
                     lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
                     line.appendChild(lineUnitAmountWithoutTax);
     
                     Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                    Text lineAmountWithoutTaxTxt = doc.createTextNode(toPlainString(ratedTransaction.getAmountWithoutTax()));
+                    Text lineAmountWithoutTaxTxt = this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithoutTax()));
                     lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
                     line.appendChild(lineAmountWithoutTax);
     
                     if (!enterprise) {
                         Element lineAmountWithTax = doc.createElement("amountWithTax");
-                        Text lineAmountWithTaxTxt = doc.createTextNode(toPlainString(ratedTransaction.getAmountWithTax()));
+                        Text lineAmountWithTaxTxt = this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithTax()));
                         lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                         line.appendChild(lineAmountWithTax);
                     }
     
                     Element quantity = doc.createElement("quantity");
-                    Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                    Text quantityTxt = this.createTextNode(doc, ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
                     quantity.appendChild(quantityTxt);
                     line.appendChild(quantity);
                     line.appendChild(lebel);
@@ -1504,7 +1504,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 category.setAttribute("sortIndex", (invoiceCategory.getSortIndex() != null) ? invoiceCategory.getSortIndex() + "" : "");
                 categoriesList.add(category);
                 Element amountWithoutTax = doc.createElement("amountWithoutTax");
-                Text amountWithoutTaxTxt = doc.createTextNode(toPlainString(categoryInvoiceAgregate.getAmountWithoutTax()));
+                Text amountWithoutTaxTxt = this.createTextNode(doc, toPlainString(categoryInvoiceAgregate.getAmountWithoutTax()));
                 amountWithoutTax.appendChild(amountWithoutTaxTxt);
                 category.appendChild(amountWithoutTax);
                 addCustomFields(invoiceCategory, doc, category);
@@ -1651,7 +1651,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             }
                             if (ratedTransaction.getParameterExtra() != null) {
                                 Element paramExtra = doc.createElement("paramExtra");
-                                paramExtra.appendChild(doc.createTextNode(ratedTransaction.getParameterExtra()));
+                                paramExtra.appendChild(this.createTextNode(doc, ratedTransaction.getParameterExtra()));
                                 line.appendChild(paramExtra);
                             }
     
@@ -1681,20 +1681,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             }
     
                             Element lebel = doc.createElement("label");
-                            Text lebelTxt = doc.createTextNode(description != null ? description : "");
+                            Text lebelTxt = this.createTextNode(doc, description != null ? description : "");
     
                             lebel.appendChild(lebelTxt);
                             line.appendChild(lebel);
     
                             if (!StringUtils.isBlank(ratedTransaction.getUnityDescription())) {
                                 Element lineUnit = doc.createElement("unit");
-                                Text lineUnitTxt = doc.createTextNode(ratedTransaction.getUnityDescription());
+                                Text lineUnitTxt = this.createTextNode(doc, ratedTransaction.getUnityDescription());
                                 lineUnit.appendChild(lineUnitTxt);
                                 line.appendChild(lineUnit);
                             }
                             if (!StringUtils.isBlank(ratedTransaction.getRatingUnitDescription())) {
                                 Element lineRatingUnit = doc.createElement("ratingUnit");
-                                Text lineUnitTxt = doc.createTextNode(ratedTransaction.getRatingUnitDescription());
+                                Text lineUnitTxt = this.createTextNode(doc, ratedTransaction.getRatingUnitDescription());
                                 lineRatingUnit.appendChild(lineUnitTxt);
                                 line.appendChild(lineRatingUnit);
                             }
@@ -1704,29 +1704,29 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             	ratedTransaction.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithTax().subtract(ratedTransaction.getUnitAmountTax()));
 							}
                             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                            Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                            Text lineUnitAmountWithoutTaxTxt = this.createTextNode(doc, ratedTransaction.getUnitAmountWithoutTax().toPlainString());
                             lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
                             line.appendChild(lineUnitAmountWithoutTax);
                             
                             Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                            Text lineAmountWithoutTaxTxt = doc.createTextNode(toPlainString(ratedTransaction.getAmountWithoutTax()));
+                            Text lineAmountWithoutTaxTxt = this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithoutTax()));
                             lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
                             line.appendChild(lineAmountWithoutTax);
     
                             if (!enterprise) {
                                 Element lineAmountWithTax = doc.createElement("amountWithTax");
-                                Text lineAmountWithTaxTxt = doc.createTextNode(toPlainString(ratedTransaction.getAmountWithTax()));
+                                Text lineAmountWithTaxTxt = this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithTax()));
                                 lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                                 line.appendChild(lineAmountWithTax);
                             }
     
                             Element quantity = doc.createElement("quantity");
-                            Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                            Text quantityTxt = this.createTextNode(doc, ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
                             quantity.appendChild(quantityTxt);
                             line.appendChild(quantity);
     
                             Element usageDate = doc.createElement("usageDate");
-                            Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
+                            Text usageDateTxt = this.createTextNode(doc, DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
                             usageDate.appendChild(usageDateTxt);
                             line.appendChild(usageDate);
                             EDR edr = ratedTransaction.getEdr();
@@ -1861,22 +1861,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
 
                 Element taxName = doc.createElement("name");
-                Text taxNameTxt = doc.createTextNode(descTranslated);
+                Text taxNameTxt = this.createTextNode(doc, descTranslated);
                 taxName.appendChild(taxNameTxt);
                 tax.appendChild(taxName);
 
                 Element percent = doc.createElement("percent");
-                Text percentTxt = doc.createTextNode(toPlainString(taxInvoiceAgregate.getTaxPercent()));
+                Text percentTxt = this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getTaxPercent()));
                 percent.appendChild(percentTxt);
                 tax.appendChild(percent);
 
                 Element taxAmount = doc.createElement("amount");
-                Text amountTxt = doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountTax()));
+                Text amountTxt = this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountTax()));
                 taxAmount.appendChild(amountTxt);
                 tax.appendChild(taxAmount);
 
                 Element amountHT = doc.createElement("amountHT");
-                Text amountHTTxt = doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountWithoutTax()));
+                Text amountHTTxt = this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax()));
                 amountHT.appendChild(amountHTTxt);
                 tax.appendChild(amountHT);
 
@@ -1979,7 +1979,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             categories.appendChild(category);
 
             Element amountWithoutTax = doc.createElement("amountWithoutTax");
-            Text amountWithoutTaxTxt = doc.createTextNode(toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax()));
+            Text amountWithoutTaxTxt = this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax()));
             amountWithoutTax.appendChild(amountWithoutTaxTxt);
             category.appendChild(amountWithoutTax);
             if (xmlInvoiceHeaderCategoryDTO.getSubCategoryInvoiceAgregates() != null) {
@@ -2097,5 +2097,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             result += inv.getInvoiceNumber() + " ";
         }
         return result;
+    }
+
+    private Text createTextNode(Document doc, String data) {
+        if (data != null) {
+            return doc.createTextNode(data);
+        } else {
+            return doc.createTextNode("");
+        }
     }
 }
