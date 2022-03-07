@@ -72,7 +72,7 @@ public class CurrencyApi extends BaseApi {
         return result;
     }
 
-    public void create(CurrencyDto postData) throws MeveoApiException, BusinessException {
+    public CurrencyDto create(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             String generatedCode = getGenericCode(Currency.class.getName());
             if (generatedCode != null) {
@@ -111,6 +111,7 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
         tradingCurrencyService.create(tradingCurrency);
+        return new CurrencyDto(currency);
     }
 
     public CurrencyDto find(String code) throws MissingParameterException, EntityDoesNotExistsException {

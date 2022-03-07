@@ -1296,7 +1296,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
-        invoice = invoiceService.refreshOrRetrieve(invoice);
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
             ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
             if (scriptInstance != null) {
@@ -5255,8 +5254,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setNewInvoicingProcess(true);
                     invoice.setHasMinimum(true);
                     if (invoice.getId() == null) {
+                        // temporary set random string in the invoice number to avoid violate constraint uk_billing_invoice on oracle while running InvoicingJobV2
+                        invoice.setInvoiceNumber(UUID.randomUUID().toString());
                         this.create(invoice);
-
                     } else {
                         for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
                             if (invoiceAggregate.getId() == null) {
@@ -5469,7 +5469,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                 (discountPlanItem.getDiscountValue().divide(hundred)).multiply(invoiceLine.getAmountWithoutTax()));
                     }
                 }
-                invoiceLine.setDiscountRate(invoiceLineDiscountAmount);
+                invoiceLine.setDiscountAmount(invoiceLineDiscountAmount);
                 invoiceLinesService.update(invoiceLine);
             }
         }

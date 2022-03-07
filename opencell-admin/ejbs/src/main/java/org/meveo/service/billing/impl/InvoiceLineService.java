@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
@@ -19,7 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -226,48 +226,50 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
 
- public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, OrderOffer orderOffer,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-	  
-       BillingAccount billingAccount = null;
-    	InvoiceLine invoiceLine = new InvoiceLine();
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
+                                         ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
+                                         OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
+                                         BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+        BillingAccount billingAccount = null;
+        InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
-        invoiceLine.setLabel(accountingArticle.getDescription()); 
+        invoiceLine.setLabel(accountingArticle.getDescription());
         invoiceLine.setProduct(productVersion.getProduct());
         invoiceLine.setProductVersion(productVersion);
         invoiceLine.setOrderLot(orderLot);
         invoiceLine.setOfferTemplate(offerTemplate);
         invoiceLine.setOrderOffer(orderOffer);
-        invoiceLine.setQuoteOffer(orderOffer.getQuoteOffer());
+        ofNullable(orderOffer).ifPresent(offer -> invoiceLine.setQuoteOffer(offer.getQuoteOffer()));
         if (entityToInvoice instanceof CpqQuote) {
             entityToInvoice = cpqQuoteService.retrieveIfNotManaged((CpqQuote) entityToInvoice);
-            CpqQuote quote =((CpqQuote) entityToInvoice);
+            CpqQuote quote = ((CpqQuote) entityToInvoice);
             invoiceLine.setQuote(quote);
             billingAccount = quote.getBillableAccount();
             invoiceLine.setBillingAccount(billingAccount);
         }
-        CommercialOrder commercialOrder=null;
+        CommercialOrder commercialOrder = null;
         if (entityToInvoice instanceof CommercialOrder) {
-        	entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
-        	commercialOrder = ((CommercialOrder) entityToInvoice);
-        	invoiceLine.setCommercialOrder(commercialOrder);
-        	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
+            entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
+            commercialOrder = ((CommercialOrder) entityToInvoice);
+            invoiceLine.setCommercialOrder(commercialOrder);
+            invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
             billingAccount = commercialOrder.getBillingAccount();
-        	invoiceLine.setBillingAccount(billingAccount);
+            invoiceLine.setBillingAccount(billingAccount);
         }
         if (entityToInvoice instanceof BillingAccount) {
-        	entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
-        	billingAccount = ((BillingAccount) entityToInvoice);
-        	invoiceLine.setBillingAccount(billingAccount);
+            entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
+            billingAccount = ((BillingAccount) entityToInvoice);
+            invoiceLine.setBillingAccount(billingAccount);
 
         }
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
-        amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null)?amountWithoutTaxToBeInvoiced:accountingArticle.getUnitPrice();
+        amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null) ? amountWithoutTaxToBeInvoiced : accountingArticle.getUnitPrice();
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
         invoiceLine.setTaxRate(totalTaxRate);
-      
+
         invoiceLine.setValueDate(new Date());
         create(invoiceLine);
         commit();
@@ -480,19 +482,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
 		}
-		Optional.ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
-		Optional.ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
-		Optional.ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
-		Optional.ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
-		Optional.ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
-		Optional.ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
-		Optional.ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
-		Optional.ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
-		Optional.ofNullable(resource.getValueDate()).ifPresent(invoiceLine::setValueDate);
-		Optional.ofNullable(resource.getOrderNumber()).ifPresent(invoiceLine::setOrderNumber);
-		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
-		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
-		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+		ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
+		ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
+		ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
+		ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
+		ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
+		ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
+		ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
+		ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
+		ofNullable(resource.getValueDate()).ifPresent(invoiceLine::setValueDate);
+		ofNullable(resource.getOrderNumber()).ifPresent(invoiceLine::setOrderNumber);
+		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
+		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
+		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
 		AccountingArticle accountingArticle=null;
 		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
@@ -741,7 +743,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param result
 	 * @param aggregationConfiguration
 	 * @param billingRun
-	 * @param billableEntity
+	 * @param be billableEntity
 	 * @param basicStatistics
 	 * @return
 	 */

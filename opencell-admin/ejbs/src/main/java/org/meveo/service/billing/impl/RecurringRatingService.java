@@ -454,11 +454,12 @@ public class RecurringRatingService extends RatingService implements Serializabl
                     edrService.create(triggeredEdr);
                 }
             }
-            if(forSchedule){
-                for (WalletOperation wo : ratingResult.getWalletOperations()) {
+
+            for (WalletOperation wo : ratingResult.getWalletOperations()) {
+                if(forSchedule){
                     wo.changeStatus(WalletOperationStatusEnum.SCHEDULED);
-                    walletOperationService.chargeWalletOperation(wo);
                 }
+                walletOperationService.chargeWalletOperation(wo);
             }
         }
 

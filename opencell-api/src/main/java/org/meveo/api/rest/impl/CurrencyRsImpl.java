@@ -68,7 +68,9 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.create(postData);
+            CurrencyDto resultDto = currencyApi.create(postData);
+            result.setEntityId(resultDto.getId());
+
         } catch (Exception e) {
             processException(e, result);
         }
