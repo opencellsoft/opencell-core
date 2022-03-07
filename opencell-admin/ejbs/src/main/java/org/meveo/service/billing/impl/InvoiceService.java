@@ -2740,13 +2740,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (isPrepaid) {
             invoiceType = invoiceTypeService.getDefaultPrepaid();
-
-        } else if (isDraft) {
-            invoiceType = invoiceTypeService.getDefaultDraft();
-
         } else if (isDepositInvoice) {
             invoiceType = invoiceTypeService.getDefaultDeposit();
-
         } else {
             if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
                 String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
@@ -3712,6 +3707,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Update net to pay amount
         final BigDecimal amountWithTax = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+
+        if(discountAggregates != null && !discountAggregates.isEmpty()) {
+            BigDecimal amountDiscount = discountAggregates.get(0).getAmountWithoutTax();
+            if(amountDiscount != null && !amountDiscount.equals(BigDecimal.ZERO)) {
+                invoice.setDiscountAmount(amountDiscount.abs());
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
+            }
+        }
     }
 
     private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
@@ -5247,8 +5250,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setNewInvoicingProcess(true);
                     invoice.setHasMinimum(true);
                     if (invoice.getId() == null) {
+                        // temporary set random string in the invoice number to avoid violate constraint uk_billing_invoice on oracle while running InvoicingJobV2
+                        invoice.setInvoiceNumber(UUID.randomUUID().toString());
                         this.create(invoice);
-
                     } else {
                         for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
                             if (invoiceAggregate.getId() == null) {
@@ -5450,6 +5454,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
+            if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null) {
+                BigDecimal hundred = new BigDecimal(100);
+                BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
+                for (DiscountPlanItem discountPlanItem : invoiceLine.getDiscountPlan().getDiscountPlanItems()) {
+                    if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
+                        invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
+                    } else {
+                        invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(
+                                (discountPlanItem.getDiscountValue().divide(hundred)).multiply(invoiceLine.getAmountWithoutTax()));
+                    }
+                }
+                invoiceLine.setDiscountAmount(invoiceLineDiscountAmount);
+                invoiceLinesService.update(invoiceLine);
+            }
         }
         if(billingRun != null) {
             billingRun.setStatus(BillingRunStatusEnum.TAX_COMPUTED);
