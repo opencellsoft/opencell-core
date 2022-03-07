@@ -32,6 +32,7 @@ import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -43,6 +44,8 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InvoiceLinesFactory {
 
@@ -58,12 +61,13 @@ public class InvoiceLinesFactory {
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
 
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * @param record        map of ratedTransaction
      * @param configuration aggregation configuration
      * @param result        JobExecutionResultImpl
-     * @param billingRun 
+     * @param billingRun
      * @return new InvoiceLine
      */
     public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
@@ -82,7 +86,8 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
         ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
 
-        invoiceLine.setValueDate((Date) record.get("usage_date"));
+        Date usageDate = getUsageDate((String) record.get("usage_date"));
+        invoiceLine.setValueDate(usageDate);
         if (invoiceLine.getValueDate() == null) {
             invoiceLine.setValueDate(new Date());
         }
@@ -100,11 +105,11 @@ public class InvoiceLinesFactory {
         invoiceLine.setAmountWithoutTax(amounts[0]);
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);
-        
+
         invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) record.getOrDefault("unit_amount_without_tax", ZERO) : (BigDecimal) record.getOrDefault("unit_amount_with_tax", ZERO));
         invoiceLine.setRawAmount(isEnterprise ? amountWithoutTax : amountWithTax);
         DatePeriod validity = new DatePeriod();
-        validity.setFrom(ofNullable((Date) record.get("start_date")).orElse((Date) record.get("usage_date")));
+        validity.setFrom(ofNullable((Date) record.get("start_date")).orElse(usageDate));
         validity.setTo(ofNullable((Date) record.get("end_date")).orElse(null));
         if(record.get("subscription_id") != null) {
             Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, record.get("subscription_id"));
@@ -114,7 +119,7 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        
+
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
         	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
@@ -127,6 +132,20 @@ public class InvoiceLinesFactory {
         }
         invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         return invoiceLine;
+    }
+
+    private Date getUsageDate(String usageDateString) {
+        try {
+            if (usageDateString != null) {
+                if (usageDateString.length() == 7) {
+                    usageDateString = usageDateString.concat("-01");
+                }
+                return DateUtils.parseDate(usageDateString);
+            }
+        } catch (Exception e) {
+            log.error("cannot parse this {} to date", usageDateString);
+        }
+        return null;
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
