@@ -16,6 +16,7 @@ import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -75,7 +76,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private static BigDecimal amountWithoutTax = ZERO;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running InvoiceSplitJob with parameter={}", jobInstance.getParametres());
         try {
