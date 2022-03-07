@@ -26,8 +26,8 @@ public class EntityReferenceOracleJsonSearchFunction implements SQLFunction {
         if (args.size() > 2) {
             customFieldValueProperty = (String) args.get(2);
         }
-        String fragment = " (" + entityColumnName + "." + customFieldName + "[0]." + customFieldValueProperty + ".code)";
-        return fragment;
+        // use JSON_VALUE Ex. SELECT JSON_VALUE('{"ANIMALS":"1","DOG":"D1","CAT":"C1"}', '$.CAT') AS value FROM dual
+        return " JSON_VALUE("+ entityColumnName + ", '$." + customFieldName + "[0]." + customFieldValueProperty + ".code')";
     }
 
     @Override
