@@ -35,6 +35,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -61,6 +62,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  *
  */
 @Entity
+@ObservableEntity
 @Table(name = "cpq_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
