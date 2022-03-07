@@ -10386,6 +10386,7 @@
             <column name="cpq_quote_id" type="bigint"/>
             <column name="quote_offer_id" type="bigint"/>
             <column name="order_offer_id" type="bigint"/>
+	     	<column name="discounted_invoice_line" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -16048,6 +16049,12 @@
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+    
+      <changeSet id="#INTRD-5529_20220304_build" author="TarikFA.">
+	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
+	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+      </changeSet>
+      
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -17089,6 +17096,7 @@
     <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE"/>
     <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki" />
     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <changeSet id="#INTRD-5529_20220304" author="TarikFA." />
     <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql"/>
     <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
