@@ -7,7 +7,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +31,7 @@ import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -43,6 +43,8 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InvoiceLinesFactory {
 
@@ -58,20 +60,21 @@ public class InvoiceLinesFactory {
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
 
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * @param record        map of ratedTransaction
      * @param configuration aggregation configuration
      * @param result        JobExecutionResultImpl
-     * @param billingRun 
+     * @param billingRun
      * @return new InvoiceLine
      */
     public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
-        InvoiceLine invoiceLine = initInvoiceLine(record, result, appProvider, billingRun, configuration.isEnterprise());
+        InvoiceLine invoiceLine = initInvoiceLine(record, result, appProvider, billingRun, configuration);
         return invoiceLine;
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, boolean isEnterprise) {
+    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = new InvoiceLine();
         ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, id)));
         ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, id)));
@@ -82,7 +85,8 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
         ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
 
-        invoiceLine.setValueDate((Date) record.get("usage_date"));
+        Date usageDate = getUsageDate((String) record.get("usage_date"), configuration.getDateAggregationOption());
+        invoiceLine.setValueDate(usageDate);
         if (invoiceLine.getValueDate() == null) {
             invoiceLine.setValueDate(new Date());
         }
@@ -100,11 +104,12 @@ public class InvoiceLinesFactory {
         invoiceLine.setAmountWithoutTax(amounts[0]);
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);
-        
+
+        boolean isEnterprise = configuration.isEnterprise();
         invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) record.getOrDefault("unit_amount_without_tax", ZERO) : (BigDecimal) record.getOrDefault("unit_amount_with_tax", ZERO));
         invoiceLine.setRawAmount(isEnterprise ? amountWithoutTax : amountWithTax);
         DatePeriod validity = new DatePeriod();
-        validity.setFrom(ofNullable((Date) record.get("start_date")).orElse((Date) record.get("usage_date")));
+        validity.setFrom(ofNullable((Date) record.get("start_date")).orElse(usageDate));
         validity.setTo(ofNullable((Date) record.get("end_date")).orElse(null));
         if(record.get("subscription_id") != null) {
             Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, record.get("subscription_id"));
@@ -114,7 +119,7 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        
+
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
         	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
@@ -127,6 +132,33 @@ public class InvoiceLinesFactory {
         }
         invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         return invoiceLine;
+    }
+
+    /**
+     * get usage date from string.
+     *
+     * @param usageDateString       a date string
+     * @param dateAggregationOption a date aggregation option.
+     * @return a date
+     */
+    private Date getUsageDate(String usageDateString, AggregationConfiguration.DateAggregationOption dateAggregationOption) {
+        try {
+            if (usageDateString != null) {
+                if (usageDateString.length() == 7) {
+                    if (AggregationConfiguration.DateAggregationOption.MONTH_OF_USAGE_DATE.equals(dateAggregationOption)) {
+                        usageDateString = usageDateString.concat("-01");
+                    } else if (AggregationConfiguration.DateAggregationOption.WEEK_OF_USAGE_DATE.equals(dateAggregationOption)) {
+                        int year = Integer.parseInt(usageDateString.split("-")[0]);
+                        int week = Integer.parseInt(usageDateString.split("-")[1]);
+                        return DateUtils.getFirstDayFromYearAndWeek(year, week);
+                    }
+                }
+                return DateUtils.parseDate(usageDateString);
+            }
+        } catch (Exception e) {
+            log.error("cannot parse this {} to date", usageDateString);
+        }
+        return null;
     }
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
