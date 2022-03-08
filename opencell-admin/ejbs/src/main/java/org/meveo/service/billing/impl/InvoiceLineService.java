@@ -4,6 +4,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
@@ -866,15 +867,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void deleteByDiscountedPlan(InvoiceLine invoiceLineId) {
-		
-		if(invoiceLineId == null || invoiceLineId.getId() == null) return;
-		
-		 QueryBuilder queryBuilder = new QueryBuilder("from InvoiceLine il ", "il");
-		 queryBuilder.addCriterionEntity("il.discountedInvoiceLine", invoiceLineId);
-		 Query query = queryBuilder.getQuery(getEntityManager());
-		 var ids = ((List<InvoiceLine>)query.getResultList()).stream().map(InvoiceLine::getId).collect(Collectors.toSet());
-		 remove(ids);
-	}
-
+    private void deleteByDiscountedPlan(InvoiceLine invoiceLine) {
+        if (invoiceLine == null || invoiceLine.getId() == null) {
+            return;
+        }
+        QueryBuilder queryBuilder = new QueryBuilder("from InvoiceLine il ", "il");
+        queryBuilder.addCriterionEntity("il.discountedInvoiceLine", invoiceLine);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        List<InvoiceLine> invoiceLines = query.getResultList();
+        if(invoiceLines != null && !invoiceLines.isEmpty()) {
+            var ids = invoiceLines.stream()
+                    .map(InvoiceLine::getId)
+                    .collect(toSet());
+            remove(ids);
+        }
+    }
 }
