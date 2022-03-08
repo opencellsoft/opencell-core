@@ -1,14 +1,9 @@
 package org.meveo.admin.sepa;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.security.MessageDigest;
-import java.util.Date;
-
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ArConfig;
+import org.meveo.commons.encryption.EncryptionFactory;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
@@ -22,6 +17,12 @@ import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 /**
  * The Class PaynumFile.
@@ -155,8 +156,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
      */
     private static String getSecretCode(CustomerAccount customerAccount) throws Exception {
         String code = customerAccount.getContactInformationNullSafe().getEmail();
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(code.getBytes("UTF-8"));
+        byte[] hash = EncryptionFactory.digest(code.getBytes(StandardCharsets.UTF_8));
         return Base64.encodeBase64URLSafeString(hash);
     }
 

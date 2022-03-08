@@ -1,11 +1,7 @@
 package org.meveo.commons.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
+import org.apache.commons.codec.binary.Base64;
+import org.meveo.commons.encryption.EncryptionFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -13,8 +9,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 
 public class AesEncrypt {
 
@@ -89,8 +89,7 @@ public class AesEncrypt {
 	 */
 	public String encryptText(String msg, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException,
 			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		this.cipher.init(Cipher.ENCRYPT_MODE, key);
-		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
+		return EncryptionFactory.encrypt(msg);
 	}
 
 	/**
@@ -105,8 +104,7 @@ public class AesEncrypt {
 	 */
 	public String decryptText(String msg, SecretKey key)
 			throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
-		this.cipher.init(Cipher.DECRYPT_MODE, key);
-		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
+		return EncryptionFactory.decrypt(msg);
 	}
 
 	/**
