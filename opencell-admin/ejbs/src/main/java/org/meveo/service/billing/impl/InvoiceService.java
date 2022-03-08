@@ -4835,7 +4835,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     protected InvoiceLinesToInvoice getInvoiceLinesGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
             Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum) throws BusinessException {
         List<InvoiceLine> invoiceLines = existingInvoice != null ? invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId())
-                : getInvoiceLines(entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
+                : getInvoiceLines(billingRun, entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
         boolean moreIls = invoiceLines.size() == rtPaginationSize;
         if (log.isDebugEnabled()) {
             log.debug("Split {} Invoice Lines for {}/{} in to billing account/seller/invoice type groups. {} invoice Lines to retrieve.", invoiceLines.size(), entityToInvoice.getClass().getSimpleName(),
@@ -4954,8 +4954,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return defaultPaymentMethod;
     }
 
-    private List<InvoiceLine> getInvoiceLines(IBillableEntity entityToInvoice, Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
-        return invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter,filterParams, rtPaginationSize);
+    private List<InvoiceLine> getInvoiceLines(BillingRun billingRun,IBillableEntity entityToInvoice, Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
+        return invoiceLinesService.listInvoiceLinesToInvoice(billingRun, entityToInvoice, firstTransactionDate, lastTransactionDate, filter,filterParams, rtPaginationSize);
     }
     
     private Seller getSelectedSeller(InvoiceLine invoiceLine) {
@@ -4973,7 +4973,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				return invoiceLine.getQuote().getSeller();
 			}
 		}
-		if(invoice.getCpqQuote()!=null) {
+		if(invoice!=null && invoice.getCpqQuote()!=null) {
 			if(invoice.getCpqQuote().getSeller()!=null) {
 				return invoice.getCpqQuote().getSeller();
 			}
@@ -5128,9 +5128,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     minInvoiceLine.setAccountingArticle(accountingArticleService.retrieveIfNotManaged(minInvoiceLine.getAccountingArticle()));
                     invoiceLinesService.create(minInvoiceLine);
                 }
-                if(billingRun != null) {
-                    billingRun.setStatus(BillingRunStatusEnum.MINIMUM_ADDED);
-                }
                 hasMin = true;
                 commit();
             }
@@ -5226,9 +5223,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setHasMinimum(hasMin);
 
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun, billingRun);
-                    if(billingRun != null) {
-                        billingRun.setStatus(BillingRunStatusEnum.DISCOUNT_ADDED);
-                    }
                     List<Object[]> ilMassUpdates = new ArrayList<>();
                     List<Object[]> ilUpdates = new ArrayList<>();
 
@@ -5318,9 +5312,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
-            if(billingRun != null) {
-                billingRun.setStatus(BillingRunStatusEnum.THRESHOLD_CHECKED);
-            }
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         return invoiceList;
@@ -5483,10 +5474,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceLinesService.update(invoiceLine);
             }
         }
-        if(billingRun != null) {
-            billingRun.setStatus(BillingRunStatusEnum.TAX_COMPUTED);
-        }
-
         if (moreInvoiceLinesExpected) {
             return;
         }
