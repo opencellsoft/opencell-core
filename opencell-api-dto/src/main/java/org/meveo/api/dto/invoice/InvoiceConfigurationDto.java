@@ -95,7 +95,9 @@ public class InvoiceConfigurationDto implements Serializable {
     /** Default invoice minimum accounting article */
     private String defaultInvoiceMinimumArticleCode;
     
-    
+    /** Display user account hierarchy. */
+    private Boolean displayUserAccountHierarchy = Boolean.FALSE;    
+
 
 	/**
      * Instantiates a new invoice configuration dto.
@@ -126,6 +128,7 @@ public class InvoiceConfigurationDto implements Serializable {
         defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle() != null ? invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode() : null;
         defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle() != null ? invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode() : null;
         defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle() != null ? invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode() : null;
+        displayUserAccountHierarchy = invoiceConfiguration.isDisplayUserAccountHierarchy();
     }
 
     /**
@@ -373,7 +376,8 @@ public class InvoiceConfigurationDto implements Serializable {
         return "InvoiceConfigurationDto [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers
                 + ", displayEdrs=" + displayEdrs + ", displayPricePlans=" + displayPricePlans + ", displayCfAsXML=" + displayCfAsXML + ", displayProvider=" + displayProvider
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
-                + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations+"]";
+                + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations
+                + ", displayUserAccountHierarchy="+displayUserAccountHierarchy+"]";
     }
     
     /**
@@ -456,4 +460,12 @@ public class InvoiceConfigurationDto implements Serializable {
 		this.defaultInvoiceMinimumArticleCode = defaultInvoiceMinimumArticleCode;
 	}
 
+	public Boolean getDisplayUserAccountHierarchy() {
+		return displayUserAccountHierarchy;
+	}
+
+	public void setDisplayUserAccountHierarchy(Boolean displayUserAccountHierarchy) {
+		this.displayUserAccountHierarchy = displayUserAccountHierarchy;
+	}
+	
 }
