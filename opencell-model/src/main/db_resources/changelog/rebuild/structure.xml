@@ -4717,7 +4717,6 @@
             <column name="check_threshold" type="varchar(25)"/>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="minimum_article_id" type="bigint" />
-            <column name="anonymization_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-245">
@@ -6180,7 +6179,7 @@
             <column name="entity_class" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="disable" type="${type.boolean}" defaultValueNumeric="0">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -7793,7 +7792,7 @@
 			<column name="entity_class" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-            <column name="disable" type="${type.boolean}" defaultValueNumeric="0" >
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0" >
                 <constraints nullable="false" />
             </column>
 		</createTable>
